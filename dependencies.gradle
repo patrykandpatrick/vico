@@ -40,6 +40,8 @@ ext {
 
     liftchart_core_dependencies = [
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
+            [configuration: "testImplementation", dependency: kotlin_libs.test],
+            [configuration: "testImplementation", dependency: test_libs.junit],
     ]
 
     liftchart_view_dependencies = [
