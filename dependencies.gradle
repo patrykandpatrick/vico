@@ -43,7 +43,7 @@ ext {
     ]
 
     liftchart_view_dependencies = [
-            [configuration: "implementation", dependency: project(':liftchart-core')],
+            [configuration: "api", dependency: project(':liftchart-core')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
@@ -52,7 +52,7 @@ ext {
     ]
 
     liftchart_compose_dependencies = [
-            [configuration: "implementation", dependency: project(':liftchart-core')],
+            [configuration: "api", dependency: project(':liftchart-core')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
