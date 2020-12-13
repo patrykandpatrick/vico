@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_core.data_set
 import pl.patrykgoworowski.liftchart_core.data_set.EntryCollection.Companion.NO_VALUE
 
 
-class ArrayListEntryCollection : EntryCollection<AnyEntry, ArrayList<AnyEntry>> {
+class ArrayListEntryCollection : EntryCollection<ArrayList<AnyEntry>> {
 
     override val entries: ArrayList<AnyEntry> = ArrayList()
 

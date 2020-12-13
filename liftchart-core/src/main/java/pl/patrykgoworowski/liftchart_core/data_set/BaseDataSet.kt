@@ -5,11 +5,11 @@ import pl.patrykgoworowski.liftchart_core.entry.DataEntry
 
 typealias AnyEntry = DataEntry<*, *>
 
-abstract class BaseDataSet<Color, Canvas, Bounds, T: AnyEntry, C: Collection<T>>(
+abstract class BaseDataSet<Color, Canvas, Bounds, C: Collection<AnyEntry>>(
     color: Color,
     segmentSpec: SegmentSpec,
-    entryCollection: EntryCollection<T, C>
-) : EntryCollection<T, C> by entryCollection {
+    entryCollection: EntryCollection<C>
+) : EntryCollection<C> by entryCollection {
 
     var color: Color = color
 

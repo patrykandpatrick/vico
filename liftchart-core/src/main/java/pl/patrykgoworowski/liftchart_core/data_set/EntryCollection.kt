@@ -1,6 +1,6 @@
 package pl.patrykgoworowski.liftchart_core.data_set
 
-interface EntryCollection<T : AnyEntry, C : Collection<T>> {
+interface EntryCollection<C : Collection<AnyEntry>> {
 
     val entries: Collection<AnyEntry>
 
