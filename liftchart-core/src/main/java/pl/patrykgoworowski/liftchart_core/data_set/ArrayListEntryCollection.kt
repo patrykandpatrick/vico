@@ -18,9 +18,17 @@ class ArrayListEntryCollection : EntryCollection<ArrayList<AnyEntry>> {
     override val maxY: Float by this::_maxY
 
     override fun setEntries(entries: ArrayList<AnyEntry>) {
-        entries.clear()
-        entries.addAll(entries)
+        setEntries(entries as List<AnyEntry>)
+    }
+
+    override fun setEntries(entries: List<AnyEntry>) {
+        this.entries.clear()
+        this.entries.addAll(entries)
         recalculateMinMax()
+    }
+
+    override fun setEntries(vararg entries: AnyEntry) {
+        setEntries(ArrayList(entries.toList()))
     }
 
     override fun plusAssign(entry: AnyEntry) {
