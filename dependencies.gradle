@@ -51,6 +51,7 @@ ext {
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "implementation", dependency: material_libs.main],
+            [configuration: "testImplementation", dependency: test_libs.junit],
     ]
 
     liftchart_compose_dependencies = [
@@ -62,6 +63,7 @@ ext {
             [configuration: "implementation", dependency: jetpack_compose_libs.material],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
+            [configuration: "testImplementation", dependency: test_libs.junit],
     ]
 
 }
