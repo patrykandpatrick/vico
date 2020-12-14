@@ -1,20 +1,23 @@
 package pl.patrykgoworowski.liftchart_core.data_set
 
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_core.data_set.segment.SegmentSpec
 import pl.patrykgoworowski.liftchart_core.entry.DataEntry
 
 typealias AnyEntry = DataEntry<*, *>
 
-abstract class BaseDataSet<Color, Canvas, Bounds, C: Collection<AnyEntry>>(
-    color: Color,
-    segmentSpec: SegmentSpec,
-    entryCollection: EntryCollection<C>
-) : EntryCollection<C> by entryCollection {
+abstract class BaseDataSet<Spec: SegmentSpec, C: Collection<AnyEntry>>(
+    color: Int = Color.BLACK,
+    segmentSpec: Spec,
+    entryManager: EntryManager<C>
+) : EntryManager<C> by entryManager {
 
-    var color: Color = color
+    var color: Int = color
 
-    var segmentSpec: SegmentSpec = segmentSpec
+    var segmentSpec: Spec = segmentSpec
 
-    abstract fun draw(canvas: Canvas, bounds: Bounds, segmentWidth: Float, animationOffset: Float)
+    abstract fun draw(canvas: Canvas, bounds: RectF, segmentWidth: Float, animationOffset: Float)
 
 }
