@@ -14,6 +14,8 @@ interface EntryCollection<C : Collection<AnyEntry>> {
         get() = entries.size
 
     fun setEntries(entries: C)
+    fun setEntries(entries: List<AnyEntry>)
+    fun setEntries(vararg entries: AnyEntry)
 
     operator fun plusAssign(entry: AnyEntry)
     operator fun plusAssign(entries: Collection<AnyEntry>)
