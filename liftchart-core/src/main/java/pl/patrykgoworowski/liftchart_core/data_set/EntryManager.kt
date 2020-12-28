@@ -1,6 +1,6 @@
 package pl.patrykgoworowski.liftchart_core.data_set
 
-interface EntryManager<C : Collection<AnyEntry>> {
+interface EntryManager<T: AnyEntry> {
 
     val entries: Collection<AnyEntry>
 
@@ -13,9 +13,8 @@ interface EntryManager<C : Collection<AnyEntry>> {
     val size: Int
         get() = entries.size
 
-    fun setEntries(entries: C)
-    fun setEntries(entries: List<AnyEntry>)
-    fun setEntries(vararg entries: AnyEntry)
+    fun setEntries(entries: Collection<T>)
+    fun setEntries(vararg entries: T)
 
     operator fun plusAssign(entry: AnyEntry)
     operator fun plusAssign(entries: Collection<AnyEntry>)

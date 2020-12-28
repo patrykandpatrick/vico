@@ -4,7 +4,7 @@ data class FloatEntry(override val x: Float, override val y: Float) : DataEntry<
 
 fun entryOf(x: Float, y: Float) = FloatEntry(x, y)
 
-fun entriesOf(vararg pairs: Pair<Float, Float>): List<FloatEntry> =
+fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> =
     pairs.map { pair ->
-        FloatEntry(pair.first, pair.second)
+        FloatEntry(pair.first.toFloat(), pair.second.toFloat())
     }

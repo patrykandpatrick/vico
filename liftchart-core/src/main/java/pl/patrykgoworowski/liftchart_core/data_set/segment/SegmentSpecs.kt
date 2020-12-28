@@ -3,21 +3,14 @@ package pl.patrykgoworowski.liftchart_core.data_set.segment
 import pl.patrykgoworowski.liftchart_core.extension.dp
 
 interface SegmentSpec {
-    val minWidth: Float
-    val preferredWidth: Float
-}
-
-interface BarSegmentSpec : SegmentSpec {
+    val width: Float
     val spacing: Float
 }
 
-fun DefaultSegmentSpec() = object : SegmentSpec {
-    override val minWidth: Float = 4f.dp
-    override val preferredWidth: Float = 8f.dp
-}
-
-fun DefaultBarSegmentSpec() = object : BarSegmentSpec {
-    override val minWidth: Float = 4f.dp
-    override val preferredWidth: Float = 8f.dp
-    override val spacing: Float = 4f.dp
+fun SegmentSpec(
+    preferredWidth: Float = 8f.dp,
+    spacing: Float = 4f.dp
+) = object : SegmentSpec {
+    override val width: Float = preferredWidth
+    override val spacing: Float = spacing
 }

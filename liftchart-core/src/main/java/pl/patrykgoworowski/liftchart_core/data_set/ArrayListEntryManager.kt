@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_core.data_set
 import pl.patrykgoworowski.liftchart_core.data_set.EntryManager.Companion.NO_VALUE
 
 
-class ArrayListEntryManager : EntryManager<ArrayList<AnyEntry>> {
+class ArrayListEntryManager<T: AnyEntry> : EntryManager<T> {
 
     override val entries: ArrayList<AnyEntry> = ArrayList()
 
@@ -17,17 +17,13 @@ class ArrayListEntryManager : EntryManager<ArrayList<AnyEntry>> {
     override val minY: Float by this::_minY
     override val maxY: Float by this::_maxY
 
-    override fun setEntries(entries: ArrayList<AnyEntry>) {
-        setEntries(entries as List<AnyEntry>)
-    }
-
-    override fun setEntries(entries: List<AnyEntry>) {
+    override fun setEntries(entries: Collection<T>) {
         this.entries.clear()
         this.entries.addAll(entries)
         recalculateMinMax()
     }
 
-    override fun setEntries(vararg entries: AnyEntry) {
+    override fun setEntries(vararg entries: T) {
         setEntries(ArrayList(entries.toList()))
     }
 
