@@ -16,5 +16,8 @@
     <inspection_tool class="PreviewNeedsComposableAnnotation" enabled="true" level="ERROR" enabled_by_default="true">
       <option name="previewFile" value="true" />
     </inspection_tool>
+    <inspection_tool class="RedundantVisibilityModifier" enabled="true" level="INFORMATION" enabled_by_default="true">
+      <scope name="Project Files" level="WARNING" enabled="true" />
+    </inspection_tool>
   </profile>
 </component>
