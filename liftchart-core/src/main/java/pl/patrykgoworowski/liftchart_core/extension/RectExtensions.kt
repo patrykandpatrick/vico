@@ -10,3 +10,12 @@ fun RectF.updateBounds(
 ) {
     set(left, top, right, bottom)
 }
+
+fun RectF.set(
+    left: Number,
+    top: Number,
+    right: Number,
+    bottom: Number
+) {
+    set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+}

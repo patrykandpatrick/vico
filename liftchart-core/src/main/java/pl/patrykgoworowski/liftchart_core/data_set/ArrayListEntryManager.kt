@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_core.data_set
 
-import pl.patrykgoworowski.liftchart_core.data_set.EntryManager.Companion.NO_VALUE
+import pl.patrykgoworowski.liftchart_core.data_set.entry.EntryManager
+import pl.patrykgoworowski.liftchart_core.data_set.entry.EntryManager.Companion.NO_VALUE
 
 
 class ArrayListEntryManager<T: AnyEntry> : EntryManager<T> {

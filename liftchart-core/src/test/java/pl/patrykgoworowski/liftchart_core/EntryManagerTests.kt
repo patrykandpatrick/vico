@@ -4,7 +4,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import pl.patrykgoworowski.liftchart_core.data_set.ArrayListEntryManager
-import pl.patrykgoworowski.liftchart_core.data_set.EntryManager.Companion.NO_VALUE
+import pl.patrykgoworowski.liftchart_core.data_set.entry.EntryManager.Companion.NO_VALUE
 import pl.patrykgoworowski.liftchart_core.entry.entriesOf
 import pl.patrykgoworowski.liftchart_core.entry.entryOf
 

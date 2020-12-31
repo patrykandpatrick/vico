@@ -1,4 +1,6 @@
-package pl.patrykgoworowski.liftchart_core.data_set
+package pl.patrykgoworowski.liftchart_core.data_set.entry
+
+import pl.patrykgoworowski.liftchart_core.data_set.AnyEntry
 
 interface EntryManager<T: AnyEntry> {
 

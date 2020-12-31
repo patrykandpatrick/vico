@@ -6,7 +6,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import pl.patrykgoworowski.liftchart_core.data_set.DataSet
-import pl.patrykgoworowski.liftchart_core.data_set.segment.DrawSegmentSpec
+import pl.patrykgoworowski.liftchart_core.extension.set
 import pl.patrykgoworowski.liftchart_view.extension.measureDimension
 
 class LiftChartContentView @JvmOverloads constructor(
@@ -16,29 +16,37 @@ class LiftChartContentView @JvmOverloads constructor(
 
     private val bounds = RectF()
 
-    private val drawSegmentSpec = DrawSegmentSpec()
-
-    val dataSets: ArrayList<DataSet> = ArrayList()
+    var dataSet: DataSet? = null
+        set(value) {
+            field = value
+            value?.setBounds(bounds)
+        }
 
     override fun onDraw(canvas: Canvas) {
-        dataSets.forEach { dataSet ->
-            dataSet.draw(canvas, bounds, drawSegmentSpec, 0f)
-        }
+        dataSet?.draw(canvas, 0f)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = when (MeasureSpec.getMode(widthMeasureSpec)) {
             MeasureSpec.UNSPECIFIED ->
-                dataSets.maxOf { it.getMeasuredWidth() }
+                dataSet.getMeasuredWidth()
             MeasureSpec.AT_MOST ->
-                minOf(dataSets.maxOf { it.getMeasuredWidth() }, MeasureSpec.getSize(widthMeasureSpec))
+                minOf(dataSet.getMeasuredWidth(), MeasureSpec.getSize(widthMeasureSpec))
             else ->
                 measureDimension(MeasureSpec.getSize(widthMeasureSpec), widthMeasureSpec)
         }
         val height = measureDimension(MeasureSpec.getSize(heightMeasureSpec), heightMeasureSpec)
         setMeasuredDimension(width, height)
 
-        bounds.set(0f, 0f, width.toFloat(), height.toFloat())
+        bounds.set(
+            paddingLeft,
+            paddingTop,
+            width - paddingRight,
+            height - paddingBottom
+        )
+        dataSet?.setBounds(bounds)
     }
+
+    private fun DataSet?.getMeasuredWidth() = this?.getMeasuredWidth() ?: 0
 
 }

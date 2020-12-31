@@ -7,7 +7,9 @@
     tools:context=".MainActivity">
 
     <pl.patrykgoworowski.liftchart_view.view.LiftChartContentView
+        android:id="@+id/chart_content"
         android:layout_width="match_parent"
-        android:layout_height="200dp"/>
+        android:layout_height="200dp"
+        android:background="#4a000000"/>
 
 </LinearLayout>
