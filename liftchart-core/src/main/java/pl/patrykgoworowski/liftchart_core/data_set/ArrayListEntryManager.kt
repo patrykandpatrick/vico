@@ -30,12 +30,12 @@ class ArrayListEntryManager<T: AnyEntry> : EntryManager<T> {
 
     override fun plusAssign(entry: AnyEntry) {
         entries += entry
-        recalculateMinMax()
+        recalculateMinMax(entry)
     }
 
     override fun plusAssign(entries: Collection<AnyEntry>) {
         this.entries.addAll(entries)
-        recalculateMinMax()
+        recalculateMinMax(entries)
     }
 
     override fun minusAssign(entry: AnyEntry) {
@@ -48,13 +48,17 @@ class ArrayListEntryManager<T: AnyEntry> : EntryManager<T> {
         recalculateMinMax()
     }
 
-    private fun recalculateMinMax() {
+    private fun recalculateMinMax(entries: Collection<AnyEntry> = this.entries) {
         entries.forEach { entry ->
-            _minX = if (_minX == NO_VALUE) entry.x else _minX.coerceAtMost(entry.x)
-            _maxX = _maxX.coerceAtLeast(entry.x)
-            _minY = if (_minY == NO_VALUE) entry.y else _minY.coerceAtMost(entry.y)
-            _maxY = _maxY.coerceAtLeast(entry.y)
+            recalculateMinMax(entry)
         }
+    }
+
+    private fun recalculateMinMax(entry: AnyEntry) {
+        _minX = if (_minX == NO_VALUE) entry.x else _minX.coerceAtMost(entry.x)
+        _maxX = _maxX.coerceAtLeast(entry.x)
+        _minY = if (_minY == NO_VALUE) entry.y else _minY.coerceAtMost(entry.y)
+        _maxY = _maxY.coerceAtLeast(entry.y)
     }
 
 }
