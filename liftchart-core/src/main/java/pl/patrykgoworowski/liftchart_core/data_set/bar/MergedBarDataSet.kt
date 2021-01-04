@@ -34,13 +34,15 @@ class MergedBarDataSet public constructor() :
         maxY = groupMode.calculateMaxY(dataSets.asList())
     }
 
-    override fun getMeasuredWidth(): Int = when (groupMode) {
-        GroupMode.Overlay,
-        GroupMode.Stack -> dataSets.maxOfOrNull { it.getMeasuredWidth() } ?: 0
-        GroupMode.Grouped -> {
-            val length = dataSets.maxX - dataSets.minX
-            (((length + 1) * barWidth + (length * (barSpacing + barInnerSpacing))) * dataSets.size).roundToInt()
+    override fun getMeasuredWidth(): Int {
+        val multiplier = when (groupMode) {
+            GroupMode.Overlay,
+            GroupMode.Stack, -> 1
+            GroupMode.Grouped -> dataSets.size
         }
+        val length = dataSets.maxX - dataSets.minX
+        val segmentWidth = (barWidth * multiplier) + (barInnerSpacing * (multiplier - 1))
+        return ((segmentWidth * (length + 1)) + (barSpacing * length)).roundToInt()
     }
 
     override fun setBounds(bounds: RectF) {
@@ -56,8 +58,6 @@ class MergedBarDataSet public constructor() :
         if (dataSets.isEmpty()) return
         val heightMultiplier = bounds.height() / maxY
         val bottom = bounds.bottom
-        val segmentSize =
-            drawBarWidth * dataSets.size + drawBarInnerSpacing * (dataSets.size - 1) + drawBarSpacing
 
         var drawingStart: Float
 
@@ -78,13 +78,21 @@ class MergedBarDataSet public constructor() :
                         height = entry.y * heightMultiplier
                         entryOffset = (drawBarWidth + drawBarSpacing) * entry.x
                         startX = drawingStart + entryOffset
-                        barRect.set(startX, bottom - (height + cumulatedHeight), startX + drawBarWidth, bottom - cumulatedHeight)
+                        barRect.set(
+                            startX,
+                            bottom - (height + cumulatedHeight),
+                            startX + drawBarWidth,
+                            bottom - cumulatedHeight
+                        )
                         dataSet.drawBar(canvas, entry, bounds, barRect, animationOffset)
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                 }
             }
             GroupMode.Grouped -> {
+                val segmentSize = (drawBarWidth * dataSets.size) +
+                        (drawBarInnerSpacing * (dataSets.size - 1)) + drawBarSpacing
+
                 dataSets.forEachIndexed { index, dataSet ->
                     drawingStart = bounds.left + ((drawBarWidth + drawBarInnerSpacing) * index)
                     dataSet.entries.forEach { entry ->
@@ -141,5 +149,4 @@ class MergedBarDataSet public constructor() :
         }
 
     }
-
 }
