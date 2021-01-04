@@ -12,3 +12,9 @@ internal fun View.measureDimension(desiredSize: Int, measureSpec: Int): Int {
         else -> desiredSize
     }
 }
+
+internal val Int.specSize: Int
+    get() = View.MeasureSpec.getSize(this)
+
+internal val Int.specMode: Int
+    get() = View.MeasureSpec.getMode(this)

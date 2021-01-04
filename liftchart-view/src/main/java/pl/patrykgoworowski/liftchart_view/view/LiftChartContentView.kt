@@ -8,6 +8,7 @@ import android.view.View
 import pl.patrykgoworowski.liftchart_core.data_set.DataSet
 import pl.patrykgoworowski.liftchart_core.extension.set
 import pl.patrykgoworowski.liftchart_view.extension.measureDimension
+import pl.patrykgoworowski.liftchart_view.extension.specSize
 
 class LiftChartContentView @JvmOverloads constructor(
     context: Context,
@@ -28,12 +29,9 @@ class LiftChartContentView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = when (MeasureSpec.getMode(widthMeasureSpec)) {
-            MeasureSpec.UNSPECIFIED ->
-                dataSet.getMeasuredWidth()
-            MeasureSpec.AT_MOST ->
-                minOf(dataSet.getMeasuredWidth(), MeasureSpec.getSize(widthMeasureSpec))
-            else ->
-                measureDimension(MeasureSpec.getSize(widthMeasureSpec), widthMeasureSpec)
+            MeasureSpec.UNSPECIFIED -> dataSet.getMeasuredWidth()
+            MeasureSpec.AT_MOST -> minOf(dataSet.getMeasuredWidth(), widthMeasureSpec.specSize)
+            else -> measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
         }
         val height = measureDimension(MeasureSpec.getSize(heightMeasureSpec), heightMeasureSpec)
         setMeasuredDimension(width, height)
