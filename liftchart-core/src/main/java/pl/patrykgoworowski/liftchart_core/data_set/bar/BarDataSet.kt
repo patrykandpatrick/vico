@@ -7,7 +7,6 @@ import pl.patrykgoworowski.liftchart_core.data_set.DataSet
 import pl.patrykgoworowski.liftchart_core.data_set.entry.EntryManager
 import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_WIDTH
-import pl.patrykgoworowski.liftchart_core.delegates.observable
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
@@ -22,9 +21,11 @@ public open class BarDataSet<T: AnyEntry>(
     private var drawBarWidth = DEF_BAR_WIDTH
     private var drawBarSpacing = DEF_BAR_SPACING
 
-    var color: Int by observable(Color.MAGENTA) { newColor ->
-        paint.color = newColor
-    }
+    var color: Int
+        get() = paint.color
+        set(value) {
+            paint.color = value
+        }
 
     var barWidth: Float = DEF_BAR_WIDTH
     var barSpacing: Float = DEF_BAR_SPACING
@@ -33,7 +34,7 @@ public open class BarDataSet<T: AnyEntry>(
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     init {
-        paint.color = color
+        paint.color = Color.MAGENTA
     }
 
     override fun setBounds(bounds: RectF) {
@@ -45,14 +46,13 @@ public open class BarDataSet<T: AnyEntry>(
         canvas: Canvas,
         animationOffset: Float
     ) {
-        //barDrawSegmentSpec.copyValues(drawSegmentSpec)
         val heightMultiplier = bounds.height() / maxY
         val bottom = bounds.bottom
         val drawingStart = bounds.left
 
         entries.forEach { entry ->
             val height = entry.y * heightMultiplier
-            val startX = drawingStart + (drawBarWidth + drawBarSpacing) * entry.x
+            val startX = drawingStart + (drawBarWidth + drawBarSpacing) * entry.x / step
             barRect.set(startX, bottom - height, startX + drawBarWidth, bottom)
             drawBar(canvas, entry, bounds, barRect, animationOffset)
         }
@@ -80,8 +80,8 @@ public open class BarDataSet<T: AnyEntry>(
     }
 
     override fun getMeasuredWidth(): Int {
-        val length = abs(maxX) - abs(minY)
-        return ((length + 1) * barWidth + (length * barSpacing)).roundToInt()
+        val length = (abs(maxX) - abs(minX)) / step
+        return (((barWidth * (length + 1)) + (barSpacing * length)) / 1).roundToInt()
     }
 
 }

@@ -12,6 +12,8 @@ interface EntryManager<T: AnyEntry> {
     val minY: Float
     val maxY: Float
 
+    val step: Float
+
     val size: Int
         get() = entries.size
 
