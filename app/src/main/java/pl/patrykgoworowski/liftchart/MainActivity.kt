@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
     private val dataSet by lazy {
         (BarDataSet<AnyEntry>().apply {
-            setEntries(entriesOf(0 to 1, .1 to 1, 2 to 5))
+            setEntries(entriesOf(0 to 1, 1 to 1, 2 to 5))
             barPathCreator = CutCornerBarPath(topLeft = 8f.dp)
             color = ContextCompat.getColor(this@MainActivity, R.color.teal_200)
         } + BarDataSet<AnyEntry>().apply {
@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         Text(
             text = text,
             style = MaterialTheme.typography.body1,
+            color = MaterialTheme.colors.onSurface,
             modifier = modifier
                 .padding(Dp(16f))
         )
