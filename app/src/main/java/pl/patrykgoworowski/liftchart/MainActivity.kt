@@ -2,6 +2,7 @@ package pl.patrykgoworowski.liftchart
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -12,38 +13,42 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import pl.patrykgoworowski.liftchart.ui.MainTheme
-import pl.patrykgoworowski.liftchart_compose.components.ChartContent
-import pl.patrykgoworowski.liftchart_core.data_set.AnyEntry
-import pl.patrykgoworowski.liftchart_core.data_set.bar.BarDataSet
+import pl.patrykgoworowski.liftchart.ui.purple200
+import pl.patrykgoworowski.liftchart.ui.teal200
+import pl.patrykgoworowski.liftchart.ui.teal700
+import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryList
+import pl.patrykgoworowski.liftchart_common.entry.entriesOf
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedBarDataSet
 import pl.patrykgoworowski.liftchart_core.data_set.bar.CutCornerBarPath
-import pl.patrykgoworowski.liftchart_core.data_set.bar.MergedBarDataSet
-import pl.patrykgoworowski.liftchart_core.data_set.mergeable.plus
-import pl.patrykgoworowski.liftchart_core.entry.entriesOf
-import pl.patrykgoworowski.liftchart_core.extension.dp
+import pl.patrykgoworowski.liftchart_view.extension.dp
 import pl.patrykgoworowski.liftchart_view.view.LiftChartContentView
 
 class MainActivity : AppCompatActivity() {
 
+    private val entries1 = entriesOf(0 to 1, 1 to 2, 2 to 5)
+    private val entries2 = entriesOf(0f to 2, 1 to 1, 2 to 5)
+    private val entries3 = entriesOf(0 to 2, 1 to 1, 2 to 4)
+
     private val dataSet by lazy {
-        (BarDataSet<AnyEntry>().apply {
-            setEntries(entriesOf(0 to 1, 1 to 1, 2 to 5))
-            barPathCreator = CutCornerBarPath(topLeft = 8f.dp)
-            color = ContextCompat.getColor(this@MainActivity, R.color.teal_200)
-        } + BarDataSet<AnyEntry>().apply {
-            setEntries(entriesOf(0 to 2, 1 to 1, 2 to 5))
-            color = ContextCompat.getColor(this@MainActivity, R.color.purple_200)
-        } + BarDataSet<AnyEntry>().apply {
-            setEntries(entriesOf(0 to 2, 1 to 1, 2 to 4))
-            barPathCreator = CutCornerBarPath(topRight = 8f.dp)
-            color = ContextCompat.getColor(this@MainActivity, R.color.teal_700)
-        }).apply {
-            groupMode = MergedBarDataSet.GroupMode.Stack
-        }
-//        BarDataSet<AnyEntry>().apply {
-//            setEntries(entriesOf(0 to 2, .1f to 1, 2 to 4))
-//            barPathCreator = CutCornerBarPath(topRight = 8f.dp)
-//            color = ContextCompat.getColor(this@MainActivity, R.color.teal_700)
-//        }
+        MergedBarDataSet<AnyEntry>(
+            entryCollections = listOf(EntryList(entries1), EntryList(entries2), EntryList(entries3)),
+            colors = listOf(
+                ContextCompat.getColor(this@MainActivity, R.color.teal_200),
+                ContextCompat.getColor(this@MainActivity, R.color.purple_200),
+                ContextCompat.getColor(this@MainActivity, R.color.teal_700)
+            ),
+            barPathCreators = listOf(
+                CutCornerBarPath(topLeft = 8f.dp),
+                CutCornerBarPath(bottomRight = 8f.dp),
+            )
+        )
+//        BarDataSet<AnyEntry>(
+//            EntryList(entries1),
+//            barPathCreator = CutCornerBarPath(topLeft = 8f.dp),
+//            color = ContextCompat.getColor(this@MainActivity, R.color.teal_200)
+//        )
     }
 
     private val chartModifier = Modifier
@@ -54,7 +59,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MainTheme {
-                Column {
+                ScrollableColumn {
 
                     Header(text = "View based LiftChart")
 
@@ -73,9 +78,23 @@ class MainActivity : AppCompatActivity() {
 
                     Spacer(modifier = Modifier.preferredHeight(Dp(8f)))
 
-                    ChartContent(
+                    BarDataSet(
+                        entryCollection = EntryList(entries1),
                         modifier = chartModifier,
-                        dataSet = dataSet
+                        color = teal200,
+                        barPathCreator = CutCornerBarPath(topLeft = 8f.dp)
+                    )
+
+                    Spacer(modifier = Modifier.preferredHeight(Dp(24f)))
+
+                    MergedBarDataSet(
+                        modifier = chartModifier,
+                        entryCollections = listOf(EntryList(entries1), EntryList(entries2), EntryList(entries3)),
+                        colors = listOf(teal200, purple200, teal700),
+                        barPathCreators = listOf(
+                            CutCornerBarPath(topLeft = 8f.dp),
+                            CutCornerBarPath(bottomRight = 8f.dp),
+                        )
                     )
                 }
             }

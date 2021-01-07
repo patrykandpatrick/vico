@@ -1,12 +1,12 @@
-package pl.patrykgoworowski.liftchart_core.data_set
+package pl.patrykgoworowski.liftchart_common.data_set.entry
 
-import pl.patrykgoworowski.liftchart_core.data_set.entry.EntryManager
-import pl.patrykgoworowski.liftchart_core.data_set.entry.EntryManager.Companion.NO_VALUE
+import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection.Companion.NO_VALUE
 import kotlin.math.abs
 import kotlin.math.min
 
 
-class ArrayListEntryManager<T : AnyEntry> : EntryManager<T> {
+class EntryList<T : AnyEntry>() : EntryCollection<T> {
 
     override val entries: ArrayList<AnyEntry> = ArrayList()
 
@@ -21,6 +21,16 @@ class ArrayListEntryManager<T : AnyEntry> : EntryManager<T> {
     override val minY: Float by this::_minY
     override val maxY: Float by this::_maxY
     override val step: Float by this::_step
+
+    constructor(entries: Collection<T>): this() {
+        this.entries.addAll(entries)
+        recalculateMinMax()
+    }
+
+    constructor(vararg entries: T): this() {
+        this.entries.addAll(entries)
+        recalculateMinMax()
+    }
 
     override fun setEntries(entries: Collection<T>) {
         this.entries.clear()

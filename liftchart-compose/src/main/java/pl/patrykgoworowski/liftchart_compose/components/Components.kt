@@ -6,14 +6,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.tooling.preview.Preview
-import pl.patrykgoworowski.liftchart_core.data_set.AnyEntry
-import pl.patrykgoworowski.liftchart_core.data_set.DataSet
-import pl.patrykgoworowski.liftchart_core.data_set.bar.BarDataSet
-import pl.patrykgoworowski.liftchart_core.entry.entriesOf
+import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 
 @Composable
-fun ChartContent(modifier: Modifier = Modifier, dataSet: DataSet) {
+fun ChartContent(modifier: Modifier = Modifier, dataSet: DataSetRenderer) {
 
     //dataSet.setColor(Color.Magenta)
     val bounds = RectF()
@@ -26,12 +22,4 @@ fun ChartContent(modifier: Modifier = Modifier, dataSet: DataSet) {
             dataSet.draw(canvas.nativeCanvas, 0f)
         }
     }
-}
-
-@Preview
-@Composable
-fun PreviewChartContent() {
-    val dataSet = BarDataSet<AnyEntry>()
-    dataSet.setEntries(entriesOf(1 to 1, 2 to 2, 3 to 3, 5 to 8))
-    ChartContent(dataSet = dataSet)
 }

@@ -1,25 +1,32 @@
 package pl.patrykgoworowski.liftchart_core.data_set.bar
 
-import android.graphics.*
-import pl.patrykgoworowski.liftchart_core.data_set.AnyEntry
-import pl.patrykgoworowski.liftchart_core.data_set.ArrayListEntryManager
-import pl.patrykgoworowski.liftchart_core.data_set.DataSet
-import pl.patrykgoworowski.liftchart_core.data_set.entry.EntryManager
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_SPACING
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_WIDTH
+import android.graphics.Canvas
+import android.graphics.Color.MAGENTA
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
+import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-public open class BarDataSet<T: AnyEntry>(
-    entryManager: EntryManager<T> = ArrayListEntryManager()
-) : EntryManager<T> by entryManager, DataSet {
+public open class CoreBarDataSet<T: AnyEntry>(
+    entryCollection: EntryCollection<T>
+) :  DataSetRenderer() {
 
-    private val bounds: RectF = RectF()
+    override val bounds: RectF = RectF()
     private val barPath = Path()
     private val barRect = RectF()
 
-    private var drawBarWidth = DEF_BAR_WIDTH
-    private var drawBarSpacing = DEF_BAR_SPACING
+    private val entries by entryCollection::entries
+    private val minX by entryCollection::minX
+    private val maxX by entryCollection::maxX
+    private val maxY by entryCollection::maxY
+    private val step by entryCollection::step
+
+    private var drawBarWidth = 0f
+    private var drawBarSpacing = 0f
 
     var color: Int
         get() = paint.color
@@ -27,14 +34,14 @@ public open class BarDataSet<T: AnyEntry>(
             paint.color = value
         }
 
-    var barWidth: Float = DEF_BAR_WIDTH
-    var barSpacing: Float = DEF_BAR_SPACING
+    var barWidth: Float = 0f
+    var barSpacing: Float = 0f
     var barPathCreator: BarPathCreator = DefaultBarPath()
 
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     init {
-        paint.color = Color.MAGENTA
+        paint.color = MAGENTA
     }
 
     override fun setBounds(bounds: RectF) {
@@ -58,7 +65,7 @@ public open class BarDataSet<T: AnyEntry>(
         }
     }
 
-    public fun drawBar(canvas: Canvas,
+    private fun drawBar(canvas: Canvas,
                 entry: AnyEntry,
                 bounds: RectF,
                 barBounds: RectF,

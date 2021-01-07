@@ -5,7 +5,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import pl.patrykgoworowski.liftchart_core.data_set.DataSet
+import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_core.extension.set
 import pl.patrykgoworowski.liftchart_view.extension.measureDimension
 import pl.patrykgoworowski.liftchart_view.extension.specSize
@@ -17,7 +17,7 @@ class LiftChartContentView @JvmOverloads constructor(
 
     private val bounds = RectF()
 
-    var dataSet: DataSet? = null
+    var dataSet: DataSetRenderer? = null
         set(value) {
             field = value
             value?.setBounds(bounds)
@@ -45,6 +45,6 @@ class LiftChartContentView @JvmOverloads constructor(
         dataSet?.setBounds(bounds)
     }
 
-    private fun DataSet?.getMeasuredWidth() = this?.getMeasuredWidth() ?: 0
+    private fun DataSetRenderer?.getMeasuredWidth() = this?.getMeasuredWidth() ?: 0
 
 }

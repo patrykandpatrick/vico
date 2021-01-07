@@ -1,11 +1,12 @@
-package pl.patrykgoworowski.liftchart_core.data_set.mergeable
+package pl.patrykgoworowski.liftchart_common.data_set.mergeable
 
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_core.data_set.DataSet
+import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 
-abstract class AbstractMergedDataSet<T: DataSet, R: MergedDataSet<T, R>> public constructor() : MergedDataSet<T, R> {
+abstract class AbstractMergedDataSet<T: DataSetRenderer, R: MergedDataSet<T>> public constructor() :
+    MergedDataSet<T>() {
 
-    protected val bounds = RectF()
+    override val bounds = RectF()
     protected val dataSets = ArrayList<T>()
 
     public constructor(vararg dataSets: T) : this() {
@@ -15,14 +16,12 @@ abstract class AbstractMergedDataSet<T: DataSet, R: MergedDataSet<T, R>> public 
     override fun getMeasuredWidth(): Int =
         dataSets.maxOfOrNull { it.getMeasuredWidth() } ?: 0
 
-    override fun add(vararg other: T): R {
+    override fun add(vararg other: T) {
         other.forEach { dataSet -> dataSet.setBounds(bounds) }
         dataSets.addAll(other)
-        return this as R
     }
 
-    override fun remove(vararg other: T): R {
+    override fun remove(vararg other: T) {
         dataSets.removeAll(other)
-        return this as R
     }
 }

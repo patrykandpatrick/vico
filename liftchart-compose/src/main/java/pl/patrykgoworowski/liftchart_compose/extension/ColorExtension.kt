@@ -11,3 +11,5 @@ val Long.color: Color
 
 val Int.color: Color
     get() = Color(this)
+
+val List<Color>.colorInts get() = map { it.colorInt }

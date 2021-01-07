@@ -5,7 +5,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import pl.patrykgoworowski.liftchart_core.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
 import pl.patrykgoworowski.liftchart_core.extension.setBounds
 import pl.patrykgoworowski.liftchart_core.extension.updateBounds
 

@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.entry
+package pl.patrykgoworowski.liftchart_common.entry
 
 data class FloatEntry(override val x: Float, override val y: Float) : DataEntry<Float, Float>
 

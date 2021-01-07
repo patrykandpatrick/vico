@@ -1,8 +1,8 @@
-package pl.patrykgoworowski.liftchart_core.data_set.entry
+package pl.patrykgoworowski.liftchart_common.data_set.entry
 
-import pl.patrykgoworowski.liftchart_core.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
 
-interface EntryManager<T: AnyEntry> {
+interface EntryCollection<T: AnyEntry> {
 
     val entries: Collection<AnyEntry>
 

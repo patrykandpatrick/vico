@@ -3,12 +3,13 @@ package pl.patrykgoworowski.liftchart_core
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import pl.patrykgoworowski.liftchart_core.data_set.ArrayListEntryManager
-import pl.patrykgoworowski.liftchart_core.data_set.entry.EntryManager.Companion.NO_VALUE
-import pl.patrykgoworowski.liftchart_core.entry.entriesOf
-import pl.patrykgoworowski.liftchart_core.entry.entryOf
+import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection.Companion.NO_VALUE
+import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryList
+import pl.patrykgoworowski.liftchart_common.entry.entriesOf
+import pl.patrykgoworowski.liftchart_common.entry.entryOf
 
-class EntryManagerTests {
+class EntryCollectionTests {
 
     private val entry1 = entryOf(1f, 1f)
     private val entry2 = entryOf(0, 0)
@@ -21,7 +22,7 @@ class EntryManagerTests {
 
     @Test
     fun testCollectionModifications() {
-        val entryCollection = ArrayListEntryManager()
+        val entryCollection = EntryList<AnyEntry>()
 
         fun assertSize(size: Int) {
             assertEquals(size, entryCollection.size)
@@ -46,7 +47,7 @@ class EntryManagerTests {
 
     @Test
     fun testSizes() {
-        val entryCollection = ArrayListEntryManager()
+        val entryCollection = EntryList<AnyEntry>()
 
         assertEquals(entryCollection.minX, NO_VALUE)
         assertEquals(entryCollection.maxX, NO_VALUE)

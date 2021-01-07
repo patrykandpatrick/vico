@@ -1,13 +1,12 @@
-package pl.patrykgoworowski.liftchart_core.data_set.default
+package pl.patrykgoworowski.liftchart_common.data_set.mergeable
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_core.data_set.DataSet
-import pl.patrykgoworowski.liftchart_core.data_set.mergeable.AbstractMergedDataSet
+import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 
-class DefaultMergedDataSet(): AbstractMergedDataSet<DataSet, DefaultMergedDataSet>() {
+class DefaultMergedDataSet(): AbstractMergedDataSet<DataSetRenderer, DefaultMergedDataSet>() {
 
-    public constructor(vararg dataSets: DataSet) : this() {
+    public constructor(vararg dataSets: DataSetRenderer) : this() {
         this.dataSets.addAll(dataSets)
     }
 

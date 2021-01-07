@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.entry
+package pl.patrykgoworowski.liftchart_common.entry
 
 interface DataEntry<X, Y> {
     val x: Float
