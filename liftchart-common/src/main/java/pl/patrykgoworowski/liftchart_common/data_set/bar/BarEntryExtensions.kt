@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.data_set.bar
+package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection

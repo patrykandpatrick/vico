@@ -7,3 +7,7 @@ import androidx.compose.ui.unit.Dp
 @Composable
 val Dp.pixels: Float
     get() = value * AmbientDensity.current.density
+
+@Composable
+val density: Float
+    get() = AmbientDensity.current.density

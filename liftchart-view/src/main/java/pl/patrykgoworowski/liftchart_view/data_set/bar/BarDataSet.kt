@@ -2,12 +2,12 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Color.MAGENTA
 import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.bar.CoreBarDataSet
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
-import pl.patrykgoworowski.liftchart_core.data_set.bar.BarPathCreator
-import pl.patrykgoworowski.liftchart_core.data_set.bar.CoreBarDataSet
-import pl.patrykgoworowski.liftchart_core.data_set.bar.DefaultBarPath
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_SPACING
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_WIDTH
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_view.extension.dp
 
 public open class BarDataSet<T: AnyEntry>(

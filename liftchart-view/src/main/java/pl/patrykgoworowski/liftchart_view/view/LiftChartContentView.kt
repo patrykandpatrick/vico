@@ -6,7 +6,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
-import pl.patrykgoworowski.liftchart_core.extension.set
+import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_view.extension.measureDimension
 import pl.patrykgoworowski.liftchart_view.extension.specSize
 

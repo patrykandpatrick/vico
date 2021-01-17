@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core
+package pl.patrykgoworowski.liftchart_common
 
 import org.junit.Assert.assertEquals
 import org.junit.Before

@@ -3,7 +3,10 @@ package pl.patrykgoworowski.liftchart
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -11,17 +14,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.content.ContextCompat
+import pl.patrykgoworowski.liftchart.extension.colors
 import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart.ui.purple200
 import pl.patrykgoworowski.liftchart.ui.teal200
 import pl.patrykgoworowski.liftchart.ui.teal700
 import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.CutCornerBarPath
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryList
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedBarDataSet
-import pl.patrykgoworowski.liftchart_core.data_set.bar.CutCornerBarPath
+import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedBarDataSet
 import pl.patrykgoworowski.liftchart_view.extension.dp
 import pl.patrykgoworowski.liftchart_view.view.LiftChartContentView
 
@@ -34,11 +38,7 @@ class MainActivity : AppCompatActivity() {
     private val dataSet by lazy {
         MergedBarDataSet<AnyEntry>(
             entryCollections = listOf(EntryList(entries1), EntryList(entries2), EntryList(entries3)),
-            colors = listOf(
-                ContextCompat.getColor(this@MainActivity, R.color.teal_200),
-                ContextCompat.getColor(this@MainActivity, R.color.purple_200),
-                ContextCompat.getColor(this@MainActivity, R.color.teal_700)
-            ),
+            colors = colors { intArrayOf(R.color.teal_200, R.color.purple_200, R.color.teal_700) },
             barPathCreators = listOf(
                 CutCornerBarPath(topLeft = 8f.dp),
                 CutCornerBarPath(bottomRight = 8f.dp),

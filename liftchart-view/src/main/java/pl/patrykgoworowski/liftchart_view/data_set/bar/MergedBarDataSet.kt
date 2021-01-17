@@ -1,12 +1,13 @@
 package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.bar.CoreMergedBarDataSet
+import pl.patrykgoworowski.liftchart_common.data_set.bar.GroupMode
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
-import pl.patrykgoworowski.liftchart_core.data_set.bar.BarPathCreator
-import pl.patrykgoworowski.liftchart_core.data_set.bar.CoreMergedBarDataSet
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_INNER_SPACING
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_SPACING
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_WIDTH
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_INNER_SPACING
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_view.extension.dp
 
 class MergedBarDataSet<T: AnyEntry>(
@@ -17,7 +18,6 @@ class MergedBarDataSet<T: AnyEntry>(
     groupMode: GroupMode = GroupMode.Stack,
     colors: List<Int> = emptyList(),
     barPathCreators: List<BarPathCreator> = emptyList(),
-
     ) : CoreMergedBarDataSet<T>(entryCollections) {
 
     init {

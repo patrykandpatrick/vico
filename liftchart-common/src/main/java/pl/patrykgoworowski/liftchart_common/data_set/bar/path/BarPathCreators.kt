@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.data_set.bar
+package pl.patrykgoworowski.liftchart_common.data_set.bar.path
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -6,22 +6,9 @@ import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
-import pl.patrykgoworowski.liftchart_core.extension.setBounds
-import pl.patrykgoworowski.liftchart_core.extension.updateBounds
+import pl.patrykgoworowski.liftchart_common.extension.setBounds
+import pl.patrykgoworowski.liftchart_common.extension.updateBounds
 
-interface BarPathCreator {
-    fun drawBarPath(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        drawBounds: RectF,
-        barBounds: RectF,
-        animationOffset: Float,
-        entry: AnyEntry
-    )
-
-    fun getMinHeight(barBounds: RectF): Float
-}
 
 fun DefaultBarPath(): BarPathCreator = object : BarPathCreator {
 

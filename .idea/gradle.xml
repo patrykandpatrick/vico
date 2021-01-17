@@ -13,7 +13,6 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/liftchart-common" />
             <option value="$PROJECT_DIR$/liftchart-compose" />
-            <option value="$PROJECT_DIR$/liftchart-core" />
             <option value="$PROJECT_DIR$/liftchart-view" />
           </set>
         </option>

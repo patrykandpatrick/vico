@@ -1,6 +1,5 @@
 rootProject.name = "LiftChart"
 include ':app'
-include ':liftchart-core'
 include ':liftchart-view'
 include ':liftchart-compose'
 include ':liftchart-common'

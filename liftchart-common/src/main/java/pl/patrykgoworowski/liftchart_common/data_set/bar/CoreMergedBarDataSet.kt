@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.data_set.bar
+package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -6,12 +6,14 @@ import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_INNER_SPACING
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_SPACING
-import pl.patrykgoworowski.liftchart_core.defaults.DEF_BAR_WIDTH
-import pl.patrykgoworowski.liftchart_core.extension.getOrDefault
-import pl.patrykgoworowski.liftchart_core.extension.getRepeatingOrDefault
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_INNER_SPACING
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
+import pl.patrykgoworowski.liftchart_common.extension.getOrDefault
+import pl.patrykgoworowski.liftchart_common.extension.getRepeatingOrDefault
 import kotlin.math.roundToInt
 
 typealias AnyBarDataSet = CoreBarDataSet<AnyEntry>
@@ -144,20 +146,4 @@ open class CoreMergedBarDataSet<T: AnyEntry> public constructor(
         }
     }
 
-    enum class GroupMode {
-        Stack, Grouped;
-
-        fun <T: AnyEntry> calculateMaxY(entryCollections: Collection<EntryCollection<T>>): Float = when (this) {
-            Grouped -> entryCollections.maxY
-            Stack -> {
-                entryCollections.fold(HashMap<Float, Float>()) { map, dataSet ->
-                    dataSet.entries.forEach { entry ->
-                        map[entry.x] = map.getOrElse(entry.x) { 0f } + entry.y
-                    }
-                    map
-                }.values.maxOrNull() ?: 0f
-            }
-        }
-
-    }
 }

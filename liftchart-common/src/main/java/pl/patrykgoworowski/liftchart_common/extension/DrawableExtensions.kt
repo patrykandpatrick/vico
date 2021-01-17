@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.extension
+package pl.patrykgoworowski.liftchart_common.extension
 
 import android.graphics.drawable.Drawable
 

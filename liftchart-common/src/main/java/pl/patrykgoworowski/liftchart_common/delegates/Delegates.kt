@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.delegates
+package pl.patrykgoworowski.liftchart_common.delegates
 
 import kotlin.properties.ObservableProperty
 import kotlin.properties.ReadWriteProperty

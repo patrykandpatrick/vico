@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.defaults
+package pl.patrykgoworowski.liftchart_common.defaults
 
 
 const val DEF_BAR_WIDTH = 16f

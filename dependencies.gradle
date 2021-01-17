@@ -44,15 +44,7 @@ ext {
             [configuration: "testImplementation", dependency: test_libs.junit],
     ]
 
-    liftchart_core_dependencies = [
-            [configuration: "implementation", dependency: project(':liftchart-common')],
-            [configuration: "implementation", dependency: kotlin_libs.std_lib],
-            [configuration: "testImplementation", dependency: kotlin_libs.test],
-            [configuration: "testImplementation", dependency: test_libs.junit],
-    ]
-
     liftchart_view_dependencies = [
-            [configuration: "implementation", dependency: project(':liftchart-core')],
             [configuration: "api", dependency: project(':liftchart-common')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
@@ -63,7 +55,6 @@ ext {
     ]
 
     liftchart_compose_dependencies = [
-            [configuration: "implementation", dependency: project(':liftchart-core')],
             [configuration: "api", dependency: project(':liftchart-common')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],

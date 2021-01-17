@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.data_set.bar
+package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.Color.MAGENTA
@@ -7,11 +7,13 @@ import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
 import kotlin.math.abs
 import kotlin.math.roundToInt
 
-public open class CoreBarDataSet<T: AnyEntry>(
+public open class CoreBarDataSet<T: AnyEntry> (
     entryCollection: EntryCollection<T>
 ) :  DataSetRenderer() {
 
@@ -45,6 +47,7 @@ public open class CoreBarDataSet<T: AnyEntry>(
     }
 
     override fun setBounds(bounds: RectF) {
+        if (this.bounds == bounds) return
         this.bounds.set(bounds)
         calculateDrawSegmentSpec(bounds)
     }

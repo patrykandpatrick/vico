@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_core.extension
+package pl.patrykgoworowski.liftchart_common.extension
 
 fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =
     getOrNull(index) ?: getDefault().also { add(it) }
