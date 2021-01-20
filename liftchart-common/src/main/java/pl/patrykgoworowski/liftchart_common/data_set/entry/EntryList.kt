@@ -1,7 +1,9 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry
 
+import android.util.Log
 import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection.Companion.NO_VALUE
+import pl.patrykgoworowski.liftchart_common.entry.FloatEntry
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -22,14 +24,25 @@ class EntryList<T : AnyEntry>() : EntryCollection<T> {
     override val maxY: Float by this::_maxY
     override val step: Float by this::_step
 
-    constructor(entries: Collection<T>): this() {
+    constructor(entries: Collection<T>) : this() {
         this.entries.addAll(entries)
         recalculateMinMax()
     }
 
-    constructor(vararg entries: T): this() {
+    constructor(vararg entries: T) : this() {
         this.entries.addAll(entries)
         recalculateMinMax()
+    }
+
+    constructor(vararg entries: Pair<Number, Number>) : this() {
+        this.entries.addAll(
+            entries.map { (x, y) ->
+                Log.d("Test", "${hashCode()} adding $x, $y")
+                FloatEntry(x.toFloat(), y.toFloat())
+            }
+        )
+        recalculateMinMax()
+        Log.d("Test", "${hashCode()} added ${this.entries.size}")
     }
 
     override fun setEntries(entries: Collection<T>) {
