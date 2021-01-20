@@ -3,6 +3,7 @@ ext {
     def androidx_libs = [
             appcompat : [group: 'androidx.appcompat', name: 'appcompat', version: androidx_appcompat_version],
             core : [group: 'androidx.core', name: 'core-ktx', version: androidx_core_version],
+            viewmodel : [group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: viewmodel_version],
     ]
 
     def jetpack_compose_libs = [
@@ -29,6 +30,7 @@ ext {
             [configuration: "implementation", dependency: project(':liftchart-compose')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
+            [configuration: "implementation", dependency: androidx_libs.viewmodel],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
             [configuration: "implementation", dependency: jetpack_compose_libs.material],
