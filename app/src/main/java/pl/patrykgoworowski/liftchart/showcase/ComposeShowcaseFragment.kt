@@ -22,6 +22,7 @@ import pl.patrykgoworowski.liftchart.ui.purple200
 import pl.patrykgoworowski.liftchart.ui.teal200
 import pl.patrykgoworowski.liftchart.ui.teal700
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.CutCornerBarPath
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedBarDataSet
 import pl.patrykgoworowski.liftchart_view.extension.dp
@@ -64,8 +65,9 @@ class ComposeShowcaseFragment: Fragment() {
                         entryCollections = viewModel.allEntries,
                         colors = listOf(teal200, purple200, teal700),
                         barPathCreators = listOf(
-                            CutCornerBarPath(topLeft = 8f.dp),
                             CutCornerBarPath(bottomRight = 8f.dp),
+                            DefaultBarPath(),
+                            CutCornerBarPath(topLeft = 8f.dp)
                         )
                     )
                 }

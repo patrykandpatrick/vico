@@ -7,12 +7,17 @@
     tools:context=".MainActivity">
 
     <pl.patrykgoworowski.liftchart_view.view.LiftChartContentView
-        android:id="@+id/chart_content"
+        android:id="@+id/bar_chart"
         android:layout_width="match_parent"
         android:layout_height="200dp"/>
 
     <Space
         android:layout_width="wrap_content"
         android:layout_height="24dp"/>
+
+    <pl.patrykgoworowski.liftchart_view.view.LiftChartContentView
+        android:id="@+id/merged_bar_chart"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
 
 </LinearLayout>
