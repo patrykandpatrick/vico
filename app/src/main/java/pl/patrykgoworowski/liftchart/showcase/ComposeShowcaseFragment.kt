@@ -15,17 +15,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart.ui.purple200
 import pl.patrykgoworowski.liftchart.ui.teal200
 import pl.patrykgoworowski.liftchart.ui.teal700
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.CutCornerBarPath
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedBarDataSet
-import pl.patrykgoworowski.liftchart_view.extension.dp
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.CutCornerBarPath
 
 class ComposeShowcaseFragment: Fragment() {
 
@@ -49,25 +49,25 @@ class ComposeShowcaseFragment: Fragment() {
             MainTheme {
                 ScrollableColumn {
 
-                    Spacer(modifier = Modifier.preferredHeight(Dp(8f)))
+                    Spacer(modifier = Modifier.preferredHeight(8.dp))
 
                     BarDataSet(
                         entryCollection = viewModel.entries1,
                         modifier = chartModifier,
                         color = teal200,
-                        barPathCreator = CutCornerBarPath(topLeft = 8f.dp)
+                        barPathCreator = CutCornerBarPath(topLeft = 8.dp)
                     )
 
-                    Spacer(modifier = Modifier.preferredHeight(Dp(24f)))
+                    Spacer(modifier = Modifier.preferredHeight(24.dp))
 
                     MergedBarDataSet(
                         modifier = chartModifier,
                         entryCollections = viewModel.allEntries,
                         colors = listOf(teal200, purple200, teal700),
                         barPathCreators = listOf(
-                            CutCornerBarPath(bottomRight = 8f.dp),
+                            CutCornerBarPath(bottomRight = 8.dp),
                             DefaultBarPath(),
-                            CutCornerBarPath(topLeft = 8f.dp)
+                            CutCornerBarPath(topLeft = 8.dp)
                         )
                     )
                 }
