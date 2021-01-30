@@ -14,6 +14,7 @@ import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.extension.getOrDefault
 import pl.patrykgoworowski.liftchart_common.extension.getRepeatingOrDefault
+import pl.patrykgoworowski.liftchart_common.extension.set
 import kotlin.math.roundToInt
 
 typealias AnyBarDataSet = CoreBarDataSet<AnyEntry>
@@ -104,9 +105,9 @@ open class CoreMergedBarDataSet<T: AnyEntry> public constructor(
                         val cumulatedHeight = heightMap.getOrElse(entry.x) { 0f }
                         barRect.set(
                             left,
-                            bottom - (height + cumulatedHeight),
+                            (bottom - (height + cumulatedHeight)).roundToInt(),
                             left + drawBarWidth,
-                            bottom - cumulatedHeight
+                            (bottom - cumulatedHeight).roundToInt()
                         )
                         heightMap[entry.x] = cumulatedHeight + height
                     }

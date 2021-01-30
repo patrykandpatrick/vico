@@ -21,7 +21,11 @@ fun DefaultBarPath(): BarPathCreator = object : BarPathCreator {
         animationOffset: Float,
         entry: AnyEntry
     ) {
-        barPath.addRect(barBounds, Path.Direction.CCW)
+        barPath.moveTo(barBounds.left, barBounds.top)
+        barPath.lineTo(barBounds.right, barBounds.top)
+        barPath.lineTo(barBounds.right, barBounds.bottom)
+        barPath.lineTo(barBounds.left, barBounds.bottom)
+        barPath.close()
         canvas.drawPath(barPath, paint)
     }
 
@@ -35,18 +39,22 @@ fun RoundedCornerBarPath(
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f,
-): BarPathCreator = object : BarPathCreator {
+): BarPathCreator = object : CornerBarPathCreator(topLeft, topRight, bottomRight, bottomLeft) {
 
-    val radii = FloatArray(8)
+    private val radii = FloatArray(8)
 
-    override fun drawBarPath(
+    override fun drawBarPathWithCorners(
         canvas: Canvas,
         paint: Paint,
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
         animationOffset: Float,
-        entry: AnyEntry
+        entry: AnyEntry,
+        topLeft: Float,
+        topRight: Float,
+        bottomRight: Float,
+        bottomLeft: Float
     ) {
         if (barBounds.height() == 0f) return
         radii[0] = topLeft
@@ -74,19 +82,23 @@ fun CutCornerBarPath(
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f
-): BarPathCreator = object : BarPathCreator {
+): BarPathCreator = object : CornerBarPathCreator(topLeft, topRight, bottomRight, bottomLeft) {
 
-    override fun drawBarPath(
+    private val minHeight = getMinimumHeight(topLeft, topRight, bottomRight, bottomLeft)
+
+    override fun drawBarPathWithCorners(
         canvas: Canvas,
         paint: Paint,
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
         animationOffset: Float,
-        entry: AnyEntry
+        entry: AnyEntry,
+        topLeft: Float,
+        topRight: Float,
+        bottomRight: Float,
+        bottomLeft: Float
     ) {
-        if (barBounds.height() == 0f) return
-        overrideBoundsWithMinSize(barBounds, topLeft, topRight, bottomRight, bottomLeft)
         barPath.moveTo(barBounds.left, barBounds.top + topLeft)
         barPath.lineTo(barBounds.left + topLeft, barBounds.top)
         barPath.lineTo(barBounds.right - topRight, barBounds.top)
@@ -99,29 +111,9 @@ fun CutCornerBarPath(
         canvas.drawPath(barPath, paint)
     }
 
-    override fun getMinHeight(barBounds: RectF): Float =
-        getMinimumHeight(topLeft, topRight, bottomRight, bottomLeft)
+    override fun getMinHeight(barBounds: RectF): Float = minHeight
 
-}
 
-private fun getMinimumHeight(
-    topLeft: Float,
-    topRight: Float,
-    bottomRight: Float,
-    bottomLeft: Float
-): Float = maxOf(topLeft + bottomLeft, topRight + bottomRight)
-
-private fun overrideBoundsWithMinSize(
-    bounds: RectF,
-    topLeft: Float,
-    topRight: Float,
-    bottomRight: Float,
-    bottomLeft: Float
-) {
-    bounds.top = minOf(
-        bounds.top,
-        bounds.bottom - getMinimumHeight(topLeft, topRight, bottomRight, bottomLeft)
-    )
 }
 
 fun SkewedBarPath(strength: Float = 1f): BarPathCreator = object : BarPathCreator {
