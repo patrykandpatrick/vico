@@ -30,17 +30,12 @@ public open class CoreBarDataSet<T: AnyEntry> (
     private var drawBarWidth = 0f
     private var drawBarSpacing = 0f
 
-    var color: Int
-        get() = paint.color
-        set(value) {
-            paint.color = value
-        }
-
     var barWidth: Float = 0f
     var barSpacing: Float = 0f
     var barPathCreator: BarPathCreator = DefaultBarPath()
 
     val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    var color: Int by paint::color
 
     init {
         paint.color = MAGENTA
