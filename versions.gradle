@@ -10,8 +10,10 @@ ext {
     androidx_core_version = "1.5.0-alpha05"
     androidx_appcompat_version = "1.2.0"
     compose_version = '1.0.0-alpha08'
+    coroutines_version = '1.4.1'
     junit_version = '1.1.2'
     kotlin_version = "1.4.21"
+    lifecycle_runtime_version = "2.3.0-alpha04"
     material_version = "1.2.1"
     viewmodel_version = "2.3.0-beta01"
 

@@ -3,6 +3,7 @@ ext {
     def androidx_libs = [
             appcompat : [group: 'androidx.appcompat', name: 'appcompat', version: androidx_appcompat_version],
             core : [group: 'androidx.core', name: 'core-ktx', version: androidx_core_version],
+            lifecycle : [group: 'androidx.lifecycle', name: 'lifecycle-runtime-ktx', version: lifecycle_runtime_version],
             viewmodel : [group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: viewmodel_version],
     ]
 
@@ -13,6 +14,8 @@ ext {
     ]
 
     def kotlin_libs = [
+            coroutines_android : [group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-android', version: coroutines_version],
+            coroutines : [group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: coroutines_version],
             std_lib : [group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version],
             test : [group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: kotlin_version],
     ]
@@ -30,10 +33,12 @@ ext {
             [configuration: "implementation", dependency: project(':liftchart-compose')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
+            [configuration: "implementation", dependency: androidx_libs.lifecycle],
             [configuration: "implementation", dependency: androidx_libs.viewmodel],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
             [configuration: "implementation", dependency: jetpack_compose_libs.material],
+            [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "implementation", dependency: material_libs.main],
@@ -41,6 +46,7 @@ ext {
     ]
 
     liftchart_common_dependencies = [
+            [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "testImplementation", dependency: test_libs.junit],
@@ -51,6 +57,8 @@ ext {
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
+            [configuration: "implementation", dependency: kotlin_libs.coroutines],
+            [configuration: "implementation", dependency: kotlin_libs.coroutines_android],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "implementation", dependency: material_libs.main],
             [configuration: "testImplementation", dependency: test_libs.junit],
@@ -63,6 +71,7 @@ ext {
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
             [configuration: "implementation", dependency: jetpack_compose_libs.material],
+            [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "testImplementation", dependency: test_libs.junit],
