@@ -14,19 +14,21 @@
             android:layout_width="wrap_content"
             android:layout_height="8dp"/>
 
-        <pl.patrykgoworowski.liftchart_view.view.LiftChartContentView
+        <pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
             android:id="@+id/bar_chart"
             android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+            android:layout_height="200dp"
+            android:background="@color/black"/>
 
         <Space
             android:layout_width="wrap_content"
             android:layout_height="24dp"/>
 
-        <pl.patrykgoworowski.liftchart_view.view.LiftChartContentView
+        <pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
             android:id="@+id/merged_bar_chart"
             android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+            android:layout_height="200dp"
+            android:background="@color/black"/>
 
     </LinearLayout>
 

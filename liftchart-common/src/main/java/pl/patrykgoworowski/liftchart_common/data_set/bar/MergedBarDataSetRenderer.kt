@@ -4,51 +4,42 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
-import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
-import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
-import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_INNER_SPACING
-import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_COLOR
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_MERGED_BAR_INNER_SPACING
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.extension.getOrDefault
 import pl.patrykgoworowski.liftchart_common.extension.getRepeatingOrDefault
 import pl.patrykgoworowski.liftchart_common.extension.set
 import kotlin.math.roundToInt
 
-typealias AnyBarDataSet = CoreBarDataSet<AnyEntry>
+open class MergedBarDataSetRenderer<Entry: AnyEntry> public constructor(
+    colors: List<Int> = listOf(DEF_COLOR),
+    var barWidth: Float = DEF_BAR_WIDTH,
+    var barSpacing: Float = DEF_MERGED_BAR_SPACING,
+    var barInnerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
+) {
 
-open class CoreMergedBarDataSet<T: AnyEntry> public constructor(
-) : DataSetRenderer() {
-
-    private val entryCollections = ArrayList<EntryCollection<T>>()
     private val paints = ArrayList<Paint>()
     private val barRect = RectF()
     private val barPath = Path()
     private val heightMap = HashMap<Float, Float>()
+    private val bounds: RectF = RectF()
 
-    private var maxY: Float = 0f
     private var drawBarWidth = 0f
     private var drawBarSpacing = 0f
     private var drawBarInnerSpacing = 0f
 
     val barPathCreators = ArrayList<BarPathCreator>()
 
-    var barWidth: Float = DEF_BAR_WIDTH
-    var barSpacing: Float = DEF_BAR_SPACING
-    var barInnerSpacing: Float = DEF_BAR_INNER_SPACING
+    public var groupMode: MergeMode = MergeMode.Grouped
 
-    override val bounds: RectF = RectF()
-
-    public var groupMode: GroupMode = GroupMode.Grouped
-
-    public constructor(entryCollections: Collection<EntryCollection<T>>): this() {
-        this.entryCollections.addAll(entryCollections)
-    }
-
-    public constructor(vararg entryCollections: EntryCollection<T>) : this() {
-        this.entryCollections.addAll(entryCollections)
+    init {
+        setColors(colors)
     }
 
     fun setColors(colors: List<Int>) {
@@ -57,31 +48,26 @@ open class CoreMergedBarDataSet<T: AnyEntry> public constructor(
         }
     }
 
-    override fun getMeasuredWidth(): Int {
-        maxY = groupMode.calculateMaxY(entryCollections)
-
-        val multiplier = when (groupMode) {
-            GroupMode.Stack -> 1
-            GroupMode.Grouped -> entryCollections.size
-        }
-        val length = (entryCollections.maxX - entryCollections.minX) / entryCollections.step
+    fun getMeasuredWidth(model: MultiEntriesModel<Entry>): Int {
+        val multiplier = groupMode.getWidthMultiplier(model)
+        val length = (model.maxX - model.minX) / model.step
         val segmentWidth = (barWidth * multiplier) + (barInnerSpacing * (multiplier - 1))
         return ((segmentWidth * (length + 1)) + (barSpacing * length)).roundToInt()
     }
 
-    override fun setBounds(bounds: RectF) {
+    fun setBounds(bounds: RectF, model: MultiEntriesModel<Entry>) {
         this.bounds.set(bounds)
-        calculateDrawSegmentSpec(bounds)
+        calculateDrawSegmentSpec(model)
     }
 
-    override fun draw(
+    fun draw(
         canvas: Canvas,
-        animationOffset: Float
+        model: MultiEntriesModel<Entry>
     ) {
-        if (entryCollections.isEmpty()) return
-        val heightMultiplier = bounds.height() / maxY
+        if (model.entryCollections.isEmpty()) return
+        val heightMultiplier = bounds.height() / groupMode.getMaxY(model)
         val bottom = bounds.bottom
-        val step = entryCollections.step
+        val step = model.step
 
         var drawingStart: Float
 
@@ -89,19 +75,19 @@ open class CoreMergedBarDataSet<T: AnyEntry> public constructor(
         var left: Float
         var entryOffset: Float
 
-        entryCollections.forEachIndexed { index, entryCollection ->
+        model.entryCollections.forEachIndexed { index, entryCollection ->
 
             val paint = paints.getRepeatingOrDefault(index) { Paint() }
             val barPathCreator = barPathCreators.getRepeatingOrDefault(index) { DefaultBarPath() }
 
             drawingStart = getDrawingStart(index)
 
-            entryCollection.entries.forEach { entry ->
+            entryCollection.forEach { entry ->
                 height = entry.y * heightMultiplier
-                entryOffset = getSegmentSize() * entry.x / step
+                entryOffset = getSegmentSize(model.entryCollections.size) * entry.x / step
                 left = drawingStart + entryOffset
                 when (groupMode) {
-                    GroupMode.Stack -> {
+                    MergeMode.Stack -> {
                         val cumulatedHeight = heightMap.getOrElse(entry.x) { 0f }
                         barRect.set(
                             left,
@@ -111,30 +97,30 @@ open class CoreMergedBarDataSet<T: AnyEntry> public constructor(
                         )
                         heightMap[entry.x] = cumulatedHeight + height
                     }
-                    GroupMode.Grouped -> {
+                    MergeMode.Grouped -> {
                         barRect.set(left, bottom - height, left + drawBarWidth, bottom)
                     }
                 }
                 barPath.reset()
-                barPathCreator.drawBarPath(canvas, paint, barPath, bounds, barRect, animationOffset, entry)
+                barPathCreator.drawBarPath(canvas, paint, barPath, bounds, barRect, entry)
             }
         }
         heightMap.clear()
     }
 
-    private fun getSegmentSize(): Float = when (groupMode) {
-            GroupMode.Stack -> drawBarWidth + drawBarSpacing
-            GroupMode.Grouped -> (drawBarWidth * entryCollections.size) +
-                    (drawBarInnerSpacing * (entryCollections.size - 1)) + drawBarSpacing
+    private fun getSegmentSize(entryCollectionSize: Int): Float = when (groupMode) {
+            MergeMode.Stack -> drawBarWidth + drawBarSpacing
+            MergeMode.Grouped -> (drawBarWidth * entryCollectionSize) +
+                    (drawBarInnerSpacing * (entryCollectionSize - 1)) + drawBarSpacing
         }
 
     private fun getDrawingStart(entryCollectionIndex: Int): Float = when (groupMode) {
-        GroupMode.Stack -> bounds.left
-        GroupMode.Grouped -> bounds.left + ((drawBarWidth + drawBarInnerSpacing) * entryCollectionIndex)
+        MergeMode.Stack -> bounds.left
+        MergeMode.Grouped -> bounds.left + ((drawBarWidth + drawBarInnerSpacing) * entryCollectionIndex)
     }
 
-    private fun calculateDrawSegmentSpec(bounds: RectF) {
-        val measuredWidth = getMeasuredWidth()
+    private fun calculateDrawSegmentSpec(model: MultiEntriesModel<Entry>) {
+        val measuredWidth = getMeasuredWidth(model)
         if (bounds.width() >= measuredWidth) {
             drawBarWidth = barWidth
             drawBarSpacing = barSpacing

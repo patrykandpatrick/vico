@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.AnyEntry
 
 abstract class CornerBarPathCreator(
     private val topLeft: Float = 0f,
@@ -28,7 +28,6 @@ abstract class CornerBarPathCreator(
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
-        animationOffset: Float,
         entry: AnyEntry
     ) {
         when {
@@ -53,7 +52,6 @@ abstract class CornerBarPathCreator(
             barPath,
             drawBounds,
             barBounds,
-            animationOffset,
             entry,
             tL,
             tR,
@@ -68,7 +66,6 @@ abstract class CornerBarPathCreator(
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
-        animationOffset: Float,
         entry: AnyEntry,
         topLeft: Float,
         topRight: Float,

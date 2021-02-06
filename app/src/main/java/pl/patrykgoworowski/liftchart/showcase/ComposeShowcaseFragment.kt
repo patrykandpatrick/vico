@@ -5,14 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.preferredHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -34,8 +36,10 @@ class ComposeShowcaseFragment: Fragment() {
     }
 
     private val chartModifier = Modifier
-        .fillMaxWidth()
+        //.fillMaxWidth()
+        .wrapContentWidth()
         .preferredHeight(Dp(200f))
+        .background(Color.Black)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,7 +56,7 @@ class ComposeShowcaseFragment: Fragment() {
                     Spacer(modifier = Modifier.preferredHeight(8.dp))
 
                     BarDataSet(
-                        entryCollection = viewModel.entries1,
+                        singleEntryCollection = viewModel.entries,
                         modifier = chartModifier,
                         color = teal200,
                         barPathCreator = CutCornerBarPath(topLeft = 8.dp)
@@ -62,7 +66,7 @@ class ComposeShowcaseFragment: Fragment() {
 
                     MergedBarDataSet(
                         modifier = chartModifier,
-                        entryCollections = viewModel.allEntries,
+                        multiEntryCollection = viewModel.multiEntries,
                         colors = listOf(teal200, purple200, teal700),
                         barPathCreators = listOf(
                             CutCornerBarPath(bottomRight = 8.dp),

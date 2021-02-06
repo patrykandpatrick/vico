@@ -5,7 +5,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.extension.setBounds
 import pl.patrykgoworowski.liftchart_common.extension.updateBounds
 
@@ -18,7 +18,6 @@ fun DefaultBarPath(): BarPathCreator = object : BarPathCreator {
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
-        animationOffset: Float,
         entry: AnyEntry
     ) {
         barPath.moveTo(barBounds.left, barBounds.top)
@@ -49,7 +48,6 @@ fun RoundedCornerBarPath(
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
-        animationOffset: Float,
         entry: AnyEntry,
         topLeft: Float,
         topRight: Float,
@@ -92,7 +90,6 @@ fun CutCornerBarPath(
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
-        animationOffset: Float,
         entry: AnyEntry,
         topLeft: Float,
         topRight: Float,
@@ -124,7 +121,6 @@ fun SkewedBarPath(strength: Float = 1f): BarPathCreator = object : BarPathCreato
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
-        animationOffset: Float,
         entry: AnyEntry
     ) {
         val skewedX =
@@ -156,7 +152,6 @@ fun DrawableBarPath(
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
-        animationOffset: Float,
         entry: AnyEntry
     ) {
         if (barBounds.height() == 0f) return
@@ -174,7 +169,6 @@ fun DrawableBarPath(
                 barPath,
                 drawBounds,
                 barBounds,
-                animationOffset,
                 entry
             )
         }

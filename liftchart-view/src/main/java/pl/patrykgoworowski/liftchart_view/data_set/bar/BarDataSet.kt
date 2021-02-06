@@ -1,22 +1,34 @@
 package pl.patrykgoworowski.liftchart_view.data_set.bar
 
+import android.graphics.Canvas
 import android.graphics.Color.MAGENTA
-import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
-import pl.patrykgoworowski.liftchart_common.data_set.bar.CoreBarDataSet
+import android.graphics.RectF
+import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.bar.BarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
-import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.emptySingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
+import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
+import pl.patrykgoworowski.liftchart_view.data_set.ViewDataSetRenderer
 import pl.patrykgoworowski.liftchart_view.extension.dp
 
 public open class BarDataSet<T: AnyEntry>(
-    entryCollection: EntryCollection<T>,
     color: Int = MAGENTA,
     barWidth: Float = DEF_BAR_WIDTH.dp,
     barSpacing: Float = DEF_BAR_SPACING.dp,
     barPathCreator: BarPathCreator = DefaultBarPath()
-) : CoreBarDataSet<T>(entryCollection) {
+) : BarDataSetRenderer<T>(color, barWidth, barSpacing, barPathCreator), ViewDataSetRenderer {
+
+    private val listeners = ArrayList<UpdateRequestListener>()
+
+    var model: SingleEntriesModel<T> = emptySingleEntriesModel()
+        set(value) {
+            field = value
+            listeners.forEach { it() }
+        }
 
     init {
         this.color = color
@@ -25,4 +37,21 @@ public open class BarDataSet<T: AnyEntry>(
         this.barPathCreator = barPathCreator
     }
 
+    override fun setBounds(bounds: RectF) {
+        setBounds(bounds, model)
+    }
+
+    override fun draw(canvas: Canvas) {
+        draw(canvas, model)
+    }
+
+    override fun addListener(listener: UpdateRequestListener) {
+        listeners += listener
+    }
+
+    override fun removeListener(listener: UpdateRequestListener) {
+        listeners -= listener
+    }
+
+    override fun getMeasuredWidth(): Int = getMeasuredWidth(model)
 }

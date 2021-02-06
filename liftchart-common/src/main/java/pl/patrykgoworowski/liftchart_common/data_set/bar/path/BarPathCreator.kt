@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.data_set.AnyEntry
+import pl.patrykgoworowski.liftchart_common.AnyEntry
 
 interface BarPathCreator {
     fun drawBarPath(
@@ -13,7 +13,6 @@ interface BarPathCreator {
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
-        animationOffset: Float,
         entry: AnyEntry
     )
 
