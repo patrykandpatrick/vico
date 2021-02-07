@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
@@ -22,7 +23,7 @@ open class MergedBarDataSetRenderer<Entry: AnyEntry> public constructor(
     var barWidth: Float = DEF_BAR_WIDTH,
     var barSpacing: Float = DEF_MERGED_BAR_SPACING,
     var barInnerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
-) {
+) : DataSetRenderer<MultiEntriesModel<Entry>> {
 
     private val paints = ArrayList<Paint>()
     private val barRect = RectF()
@@ -48,19 +49,19 @@ open class MergedBarDataSetRenderer<Entry: AnyEntry> public constructor(
         }
     }
 
-    fun getMeasuredWidth(model: MultiEntriesModel<Entry>): Int {
+    override fun getMeasuredWidth(model: MultiEntriesModel<Entry>): Int {
         val multiplier = groupMode.getWidthMultiplier(model)
         val length = (model.maxX - model.minX) / model.step
         val segmentWidth = (barWidth * multiplier) + (barInnerSpacing * (multiplier - 1))
         return ((segmentWidth * (length + 1)) + (barSpacing * length)).roundToInt()
     }
 
-    fun setBounds(bounds: RectF, model: MultiEntriesModel<Entry>) {
+    override fun setBounds(bounds: RectF, model: MultiEntriesModel<Entry>) {
         this.bounds.set(bounds)
         calculateDrawSegmentSpec(model)
     }
 
-    fun draw(
+    override fun draw(
         canvas: Canvas,
         model: MultiEntriesModel<Entry>
     ) {

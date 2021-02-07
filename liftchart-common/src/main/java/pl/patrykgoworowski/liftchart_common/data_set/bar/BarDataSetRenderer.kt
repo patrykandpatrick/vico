@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
@@ -19,7 +20,7 @@ public open class BarDataSetRenderer<Entry : AnyEntry>(
     var barWidth: Float = DEF_BAR_WIDTH,
     var barSpacing: Float = DEF_BAR_SPACING,
     var barPathCreator: BarPathCreator = DefaultBarPath()
-) {
+) : DataSetRenderer<SingleEntriesModel<Entry>> {
 
     private val barPath = Path()
     private val barRect = RectF()
@@ -35,12 +36,12 @@ public open class BarDataSetRenderer<Entry : AnyEntry>(
         this.color = color
     }
 
-    fun setBounds(bounds: RectF, model: SingleEntriesModel<Entry>) {
+    override fun setBounds(bounds: RectF, model: SingleEntriesModel<Entry>) {
         this.bounds.set(bounds)
         calculateDrawSegmentSpec(model)
     }
 
-    fun draw(canvas: Canvas, model: SingleEntriesModel<Entry>) {
+    override fun draw(canvas: Canvas, model: SingleEntriesModel<Entry>) {
         val heightMultiplier = bounds.height() / model.maxY
         val bottom = bounds.bottom
         val drawingStart = bounds.left
@@ -75,7 +76,7 @@ public open class BarDataSetRenderer<Entry : AnyEntry>(
         }
     }
 
-    fun getMeasuredWidth(model: SingleEntriesModel<Entry>): Int {
+    override fun getMeasuredWidth(model: SingleEntriesModel<Entry>): Int {
         val length = (abs(model.maxX) - abs(model.minX)) / model.step
         return (((barWidth * (length + 1)) + (barSpacing * length)) / 1).roundToInt()
     }

@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.BarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedBarDataSetRenderer
@@ -41,7 +42,6 @@ fun BarDataSet(
     barSpacing: Dp = DEF_BAR_SPACING.dp,
 ) {
     val dataSet = remember { BarDataSetRenderer<AnyEntry>() }
-    val bounds = remember { RectF() }
     val model = singleEntryCollection.collectAsState
 
     dataSet.barPathCreator = barPathCreator
@@ -49,17 +49,11 @@ fun BarDataSet(
     dataSet.barWidth = barWidth.pixels
     dataSet.barSpacing = barSpacing.pixels
 
-    Canvas(
-        modifier = modifier
-            .preferredWidth(dataSet.getMeasuredWidth(model.value).pxToDp)
-            .preferredHeight(DEF_CHART_WIDTH.dp)
-    ) {
-        bounds.set(0f, 0f, size.width, size.height)
-        dataSet.setBounds(bounds, model.value)
-        dataSet.draw(drawContext.canvas.nativeCanvas, model.value)
-    }
-
-   // DrawDataSet(modifier = modifier, bounds = bounds, dataSet = dataSet)
+    DataSet(
+        modifier = modifier,
+        dataSet = dataSet,
+        model = model.value
+    )
 }
 
 @Composable
@@ -74,7 +68,6 @@ fun MergedBarDataSet(
     barInnerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
 ) {
     val dataSet = remember { MergedBarDataSetRenderer<AnyEntry>() }
-    val bounds = remember { RectF() }
     val model = multiEntryCollection.collectAsState
 
     dataSet.barPathCreators.setAll(barPathCreators)
@@ -84,13 +77,23 @@ fun MergedBarDataSet(
     dataSet.barSpacing = barSpacing.pixels
     dataSet.barInnerSpacing = barInnerSpacing.pixels
 
+    DataSet(
+        modifier = modifier,
+        dataSet = dataSet,
+        model = model.value
+    )
+}
+
+@Composable
+fun <Model>DataSet(modifier: Modifier, dataSet: DataSetRenderer<Model>, model: Model) {
+    val bounds = remember { RectF() }
     Canvas(
         modifier = modifier
-            .preferredWidth(dataSet.getMeasuredWidth(model.value).pxToDp)
+            .preferredWidth(dataSet.getMeasuredWidth(model).pxToDp)
             .preferredHeight(DEF_CHART_WIDTH.dp)
     ) {
         bounds.set(0f, 0f, size.width, size.height)
-        dataSet.setBounds(bounds, model.value)
-        dataSet.draw(drawContext.canvas.nativeCanvas, model.value)
+        dataSet.setBounds(bounds, model)
+        dataSet.draw(drawContext.canvas.nativeCanvas, model)
     }
 }
