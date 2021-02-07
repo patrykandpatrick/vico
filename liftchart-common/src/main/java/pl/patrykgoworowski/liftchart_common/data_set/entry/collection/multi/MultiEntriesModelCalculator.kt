@@ -25,17 +25,13 @@ class MultiEntriesModelCalculator: SingleEntryModelCalculator() {
     }
 
     private fun calculateMinMax(data: List<List<AnyEntry>>) {
-        data.forEachIndexed { index, entryCollection ->
+        data.forEach { entryCollection ->
             calculateMinMax(entryCollection)
             calculateStep(entryCollection)
-
-            if (index == 0) {
-                stackedMinY = minY
-                stackedMaxY = maxY
-            } else {
-                stackedMinY += minY
-                stackedMaxY += maxY
-            }
+        }
+        stackedMap.values.forEach { y ->
+            stackedMinY = min(stackedMinY, y)
+            stackedMaxY = max(stackedMaxY, y)
         }
     }
 
@@ -46,10 +42,6 @@ class MultiEntriesModelCalculator: SingleEntryModelCalculator() {
             minY = minY.coerceAtMost(entry.y)
             maxY = maxY.coerceAtLeast(entry.y)
             stackedMap[entry.x] = stackedMap.getOrElse(entry.x) { 0f } + entry.y
-        }
-        stackedMap.values.forEach { y ->
-            stackedMinY = min(stackedMinY, y)
-            stackedMaxY = max(stackedMaxY, y)
         }
     }
 

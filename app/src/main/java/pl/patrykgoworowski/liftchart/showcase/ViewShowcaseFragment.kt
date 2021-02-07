@@ -54,7 +54,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 DefaultBarPath(),
                 CutCornerBarPath(topLeft = 8f.dp),
             ),
-            mergeMode = MergeMode.Grouped
+            mergeMode = MergeMode.Stack
         )
 
         viewModel.multiEntries.collectAsFlow

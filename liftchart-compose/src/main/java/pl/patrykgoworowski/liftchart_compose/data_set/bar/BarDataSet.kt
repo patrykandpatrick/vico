@@ -2,6 +2,7 @@ package pl.patrykgoworowski.liftchart_compose.data_set.bar
 
 import android.graphics.RectF
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.preferredHeight
 import androidx.compose.foundation.layout.preferredWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -21,6 +22,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.Mult
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
@@ -50,6 +52,7 @@ fun BarDataSet(
     Canvas(
         modifier = modifier
             .preferredWidth(dataSet.getMeasuredWidth(model.value).pxToDp)
+            .preferredHeight(DEF_CHART_WIDTH.dp)
     ) {
         bounds.set(0f, 0f, size.width, size.height)
         dataSet.setBounds(bounds, model.value)
@@ -84,6 +87,7 @@ fun MergedBarDataSet(
     Canvas(
         modifier = modifier
             .preferredWidth(dataSet.getMeasuredWidth(model.value).pxToDp)
+            .preferredHeight(DEF_CHART_WIDTH.dp)
     ) {
         bounds.set(0f, 0f, size.width, size.height)
         dataSet.setBounds(bounds, model.value)

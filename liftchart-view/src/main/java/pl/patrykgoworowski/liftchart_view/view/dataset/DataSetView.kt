@@ -6,6 +6,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
+import pl.patrykgoworowski.liftchart_common.defaults.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.ViewDataSetRenderer
@@ -61,7 +62,15 @@ class DataSetView @JvmOverloads constructor(
             )
             else -> measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
         }
-        val height = measureDimension(MeasureSpec.getSize(heightMeasureSpec), heightMeasureSpec)
+
+        val height = when (MeasureSpec.getMode(heightMeasureSpec)) {
+            MeasureSpec.UNSPECIFIED -> DEF_CHART_WIDTH.dpInt + verticalPadding
+            MeasureSpec.AT_MOST -> minOf(
+                DEF_CHART_WIDTH.dpInt + verticalPadding,
+                heightMeasureSpec.specSize
+            )
+            else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
+        }
         setMeasuredDimension(width, height)
 
         bounds.set(

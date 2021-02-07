@@ -10,3 +10,6 @@ inline val Int.dp: Int
 
 inline val Float.pxToDp: Float
     get() = this / Resources.getSystem().displayMetrics.density
+
+internal inline val Float.dpInt: Int
+    get() = dp.toInt()

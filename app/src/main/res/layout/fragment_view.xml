@@ -17,7 +17,7 @@
         <pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
             android:id="@+id/bar_chart"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:background="@color/black"/>
 
         <Space
@@ -27,7 +27,7 @@
         <pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
             android:id="@+id/merged_bar_chart"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_height="wrap_content"
             android:background="@color/black"/>
 
     </LinearLayout>

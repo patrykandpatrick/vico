@@ -1,9 +1,7 @@
 package pl.patrykgoworowski.liftchart_common
 
 import org.junit.Assert.assertEquals
-import org.junit.Before
 import org.junit.Test
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection.Companion.NO_VALUE
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryList
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 import pl.patrykgoworowski.liftchart_common.entry.entryOf
@@ -13,11 +11,6 @@ class SingleEntryCollectionTests {
     private val entry1 = entryOf(1f, 1f)
     private val entry2 = entryOf(0, 0)
     private val entries3 = entriesOf(3 to 4, 8 to 28)
-
-    @Before
-    fun setUp() {
-
-    }
 
     @Test
     fun testCollectionModifications() {
@@ -48,11 +41,6 @@ class SingleEntryCollectionTests {
     fun testSizes() {
         val entryCollection = SingleEntryList<AnyEntry>()
 
-        assertEquals(entryCollection.minX, NO_VALUE)
-        assertEquals(entryCollection.maxX, NO_VALUE)
-        assertEquals(entryCollection.minY, NO_VALUE)
-        assertEquals(entryCollection.maxY, NO_VALUE)
-
         entryCollection += entry1
 
         assertEquals(entryCollection.minX, 1f)
@@ -67,8 +55,6 @@ class SingleEntryCollectionTests {
         assertEquals(entryCollection.maxX, 8f)
         assertEquals(entryCollection.minY, 0f)
         assertEquals(entryCollection.maxY, 28f)
-
     }
-
 
 }

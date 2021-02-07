@@ -28,6 +28,38 @@ class SingleEntryList<Entry : AnyEntry>() : SingleEntryCollection<Entry> {
         refreshModel()
     }
 
+    fun addEntry(entry: Entry) {
+        if (data.add(entry)) {
+            refreshModel()
+        }
+    }
+
+    fun removeEntry(entry: Entry) {
+        if (data.remove(entry)) {
+            refreshModel()
+        }
+    }
+
+    fun addEntries(entries: Collection<Entry>) {
+        if (data.addAll(entries)) {
+            refreshModel()
+        }
+    }
+
+    fun removeEntries(entries: Collection<Entry>) {
+        if (data.removeAll(entries)) {
+            refreshModel()
+        }
+    }
+
+    operator fun plusAssign(entry: Entry) = addEntry(entry)
+
+    operator fun plusAssign(entries: Collection<Entry>) = addEntries(entries)
+
+    operator fun minusAssign(entry: Entry) = removeEntry(entry)
+
+    operator fun minusAssign(entries: Collection<Entry>) = removeEntries(entries)
+
     private fun refreshModel() {
         calculator.calculateData(data)
         notifyChange()
