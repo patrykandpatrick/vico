@@ -9,10 +9,7 @@ import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.ViewDataSetRenderer
-import pl.patrykgoworowski.liftchart_view.extension.measureDimension
-import pl.patrykgoworowski.liftchart_view.extension.parentOrOwnWidth
-import pl.patrykgoworowski.liftchart_view.extension.specSize
-import pl.patrykgoworowski.liftchart_view.extension.widthIsWrapContent
+import pl.patrykgoworowski.liftchart_view.extension.*
 
 class DataSetView @JvmOverloads constructor(
     context: Context,
@@ -57,8 +54,11 @@ class DataSetView @JvmOverloads constructor(
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = when (MeasureSpec.getMode(widthMeasureSpec)) {
-            MeasureSpec.UNSPECIFIED -> dataSet.getMeasuredWidth()
-            MeasureSpec.AT_MOST -> minOf(dataSet.getMeasuredWidth(), widthMeasureSpec.specSize)
+            MeasureSpec.UNSPECIFIED -> dataSet.getMeasuredWidth() + horizontalPadding
+            MeasureSpec.AT_MOST -> minOf(
+                dataSet.getMeasuredWidth() + horizontalPadding,
+                widthMeasureSpec.specSize
+            )
             else -> measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
         }
         val height = measureDimension(MeasureSpec.getSize(heightMeasureSpec), heightMeasureSpec)
