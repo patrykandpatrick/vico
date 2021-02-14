@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi
 
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.entry.entryOf
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 
 class MultiEntryList<Entry : AnyEntry>() :
@@ -51,7 +52,11 @@ class MultiEntryList<Entry : AnyEntry>() :
     }
 
     private fun notifyChange() {
-        model = MultiEntriesModel(data, minX, maxX, minY, maxY, stackedMinY, stackedMaxY, step)
+        val mergedEntries = calculator.stackedMap.map { (x, y) ->
+            entryOf(x, y)
+        }
+
+        model = MultiEntriesModel(data, mergedEntries, minX, maxX, minY, maxY, stackedMinY, stackedMaxY, step)
         listeners.forEach { it(model) }
     }
 }

@@ -2,6 +2,7 @@ package pl.patrykgoworowski.liftchart_view.extension
 
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
 import kotlin.math.min
 
@@ -38,3 +39,6 @@ internal var View.verticalPadding: Int
     set(value) {
         updatePadding(top = value / 2, bottom = value / 2)
     }
+
+internal val View.isLTR: Boolean
+    get() = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR

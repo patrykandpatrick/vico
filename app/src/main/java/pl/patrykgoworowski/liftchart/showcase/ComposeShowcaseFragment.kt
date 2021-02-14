@@ -24,12 +24,15 @@ import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart.ui.purple200
 import pl.patrykgoworowski.liftchart.ui.teal200
 import pl.patrykgoworowski.liftchart.ui.teal700
+import pl.patrykgoworowski.liftchart_common.data_set.axis.*
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
+import pl.patrykgoworowski.liftchart_common.extension.plusAssign
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedBarDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.CutCornerBarPath
+import java.util.*
 
-class ComposeShowcaseFragment: Fragment() {
+class ComposeShowcaseFragment : Fragment() {
 
     private val viewModel: ShowcaseViewModel by lazy {
         ViewModelProvider(requireActivity()).get(ShowcaseViewModel::class.java)
@@ -48,6 +51,13 @@ class ComposeShowcaseFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val composeView = view as ComposeView
+
+        val axisMap = EnumMap<Position, AxisRenderer>(Position::class.java)
+        axisMap += VerticalAxis(StartAxis)
+        axisMap += VerticalAxis(EndAxis)
+        axisMap += HorizontalAxis(TopAxis)
+        axisMap += HorizontalAxis(BottomAxis)
+
         composeView.setContent {
             MainTheme {
                 ScrollableColumn {
@@ -58,7 +68,8 @@ class ComposeShowcaseFragment: Fragment() {
                         singleEntryCollection = viewModel.entries,
                         modifier = chartModifier,
                         color = teal200,
-                        barPathCreator = CutCornerBarPath(topLeft = 8.dp)
+                        barPathCreator = CutCornerBarPath(topLeft = 8.dp),
+                        axisMap = axisMap,
                     )
 
                     Spacer(modifier = Modifier.preferredHeight(24.dp))
@@ -70,8 +81,9 @@ class ComposeShowcaseFragment: Fragment() {
                         barPathCreators = listOf(
                             CutCornerBarPath(bottomRight = 8.dp),
                             DefaultBarPath(),
-                            CutCornerBarPath(topLeft = 8.dp)
-                        )
+                            CutCornerBarPath(topLeft = 8.dp),
+                        ),
+                        axisMap = axisMap,
                     )
                 }
             }

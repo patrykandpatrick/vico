@@ -2,11 +2,12 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.Color.MAGENTA
-import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.axis.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.bar.BarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.emptySingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
@@ -37,13 +38,7 @@ public open class BarDataSet<T: AnyEntry>(
         this.barPathCreator = barPathCreator
     }
 
-    override fun setBounds(bounds: RectF) {
-        setBounds(bounds, model)
-    }
-
-    override fun draw(canvas: Canvas) {
-        draw(canvas, model)
-    }
+    override fun draw(canvas: Canvas): AxisModel? = draw(canvas, model)
 
     override fun addListener(listener: UpdateRequestListener) {
         listeners += listener
@@ -54,4 +49,7 @@ public open class BarDataSet<T: AnyEntry>(
     }
 
     override fun getMeasuredWidth(): Int = getMeasuredWidth(model)
+
+    override fun getEntriesModel(): EntriesModel = model
+
 }

@@ -1,11 +1,12 @@
 package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
-import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.axis.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedBarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
@@ -38,13 +39,7 @@ class MergedBarDataSet<Entry: AnyEntry>(
         this.groupMode = mergeMode
     }
 
-    override fun setBounds(bounds: RectF) {
-        setBounds(bounds, model)
-    }
-
-    override fun draw(canvas: Canvas) {
-        draw(canvas, model)
-    }
+    override fun draw(canvas: Canvas): AxisModel? = draw(canvas, model)
 
     override fun addListener(listener: UpdateRequestListener) {
         listeners += listener
@@ -55,4 +50,7 @@ class MergedBarDataSet<Entry: AnyEntry>(
     }
 
     override fun getMeasuredWidth(): Int = getMeasuredWidth(model)
+
+    override fun getEntriesModel(): EntriesModel = model
+
 }

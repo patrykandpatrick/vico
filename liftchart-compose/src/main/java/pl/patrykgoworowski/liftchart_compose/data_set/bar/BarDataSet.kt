@@ -10,17 +10,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.platform.AmbientLayoutDirection
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.axis.AxisRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.axis.Position
 import pl.patrykgoworowski.liftchart_common.data_set.bar.BarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedBarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
+import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_CHART_WIDTH
@@ -40,7 +46,8 @@ fun BarDataSet(
     barPathCreator: BarPathCreator = DefaultBarPath(),
     barWidth: Dp = DEF_BAR_WIDTH.dp,
     barSpacing: Dp = DEF_BAR_SPACING.dp,
-) {
+    axisMap: Map<Position, AxisRenderer> = emptyMap(),
+    ) {
     val dataSet = remember { BarDataSetRenderer<AnyEntry>() }
     val model = singleEntryCollection.collectAsState
 
@@ -52,8 +59,9 @@ fun BarDataSet(
     DataSet(
         modifier = modifier,
         dataSet = dataSet,
-        model = model.value
-    )
+        model = model.value,
+        axisMap = axisMap,
+        )
 }
 
 @Composable
@@ -66,7 +74,8 @@ fun MergedBarDataSet(
     barWidth: Dp = DEF_BAR_WIDTH.dp,
     barSpacing: Dp = DEF_BAR_SPACING.dp,
     barInnerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
-) {
+    axisMap: Map<Position, AxisRenderer> = emptyMap(),
+    ) {
     val dataSet = remember { MergedBarDataSetRenderer<AnyEntry>() }
     val model = multiEntryCollection.collectAsState
 
@@ -80,20 +89,41 @@ fun MergedBarDataSet(
     DataSet(
         modifier = modifier,
         dataSet = dataSet,
-        model = model.value
+        model = model.value,
+        axisMap = axisMap,
     )
 }
 
 @Composable
-fun <Model>DataSet(modifier: Modifier, dataSet: DataSetRenderer<Model>, model: Model) {
+fun <Model : EntriesModel> DataSet(
+    modifier: Modifier,
+    dataSet: DataSetRenderer<Model>,
+    model: Model,
+    axisMap: Map<Position, AxisRenderer>
+) {
     val bounds = remember { RectF() }
+
+    val virtualLayout = remember { VirtualLayout(true) }
+    virtualLayout.isLTR = AmbientLayoutDirection.current == LayoutDirection.Ltr
+
     Canvas(
         modifier = modifier
-            .preferredWidth(dataSet.getMeasuredWidth(model).pxToDp)
+            .preferredWidth(
+                virtualLayout.getMeasuredWidth(
+                    dataSet.getMeasuredWidth(model),
+                    model,
+                    axisMap
+                ).pxToDp
+            )
             .preferredHeight(DEF_CHART_WIDTH.dp)
     ) {
         bounds.set(0f, 0f, size.width, size.height)
-        dataSet.setBounds(bounds, model)
-        dataSet.draw(drawContext.canvas.nativeCanvas, model)
+        virtualLayout.setBounds(bounds, dataSet, model, axisMap)
+        dataSet.draw(drawContext.canvas.nativeCanvas, model)?.let { axisModel ->
+            axisMap.forEach { (_, axis) ->
+                axis.isLTR = virtualLayout.isLTR
+                axis.draw(drawContext.canvas.nativeCanvas, axisModel)
+            }
+        }
     }
 }

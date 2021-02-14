@@ -4,7 +4,7 @@ import android.graphics.Color
 
 
 const val DEF_BAR_WIDTH = 16f
-const val DEF_BAR_SPACING = 10f
+const val DEF_BAR_SPACING = 8f
 const val DEF_MERGED_BAR_SPACING = 20f
 const val DEF_MERGED_BAR_INNER_SPACING = 4f
 const val DEF_COLOR = Color.MAGENTA

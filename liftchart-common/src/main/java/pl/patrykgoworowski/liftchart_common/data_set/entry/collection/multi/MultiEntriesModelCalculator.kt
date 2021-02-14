@@ -7,7 +7,7 @@ import kotlin.math.min
 
 class MultiEntriesModelCalculator: SingleEntryModelCalculator() {
 
-    private val stackedMap: HashMap<Float, Float> = HashMap()
+    val stackedMap: HashMap<Float, Float> = HashMap()
 
     var stackedMinY: Float = Float.MAX_VALUE
     var stackedMaxY: Float = Float.MIN_VALUE
