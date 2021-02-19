@@ -23,7 +23,9 @@ import pl.patrykgoworowski.liftchart.ui.purple200
 import pl.patrykgoworowski.liftchart.ui.teal200
 import pl.patrykgoworowski.liftchart.ui.teal700
 import pl.patrykgoworowski.liftchart_common.data_set.axis.*
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
+import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.PercentageFormatAxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
 import pl.patrykgoworowski.liftchart_common.extension.plusAssign
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedBarDataSet
@@ -51,10 +53,14 @@ class ComposeShowcaseFragment : Fragment() {
         val composeView = view as ComposeView
 
         val axisMap = EnumMap<Position, AxisRenderer>(Position::class.java)
-        axisMap += VerticalAxis(StartAxis)
+        axisMap += VerticalAxis(StartAxis).apply {
+            valueFormatter = PercentageFormatAxisValueFormatter()
+        }
         axisMap += VerticalAxis(EndAxis)
         axisMap += HorizontalAxis(TopAxis)
-        axisMap += HorizontalAxis(BottomAxis)
+        axisMap += HorizontalAxis(BottomAxis).apply {
+            valueFormatter = DecimalFormatAxisValueFormatter()
+        }
 
         composeView.setContent {
             MainTheme {
@@ -66,7 +72,7 @@ class ComposeShowcaseFragment : Fragment() {
                         singleEntryCollection = viewModel.entries,
                         modifier = chartModifier,
                         color = teal200,
-                        barPathCreator = CutCornerBarPath(topLeft = 8.dp),
+                        shape = CutCornerBarPath(topLeft = 8.dp),
                         axisMap = axisMap,
                     )
 
@@ -76,9 +82,9 @@ class ComposeShowcaseFragment : Fragment() {
                         modifier = chartModifier,
                         multiEntryCollection = viewModel.multiEntries,
                         colors = listOf(teal200, purple200, teal700),
-                        barPathCreators = listOf(
+                        shapes = listOf(
                             CutCornerBarPath(bottomRight = 8.dp),
-                            DefaultBarPath(),
+                            RectShape(),
                             CutCornerBarPath(topLeft = 8.dp),
                         ),
                         axisMap = axisMap,

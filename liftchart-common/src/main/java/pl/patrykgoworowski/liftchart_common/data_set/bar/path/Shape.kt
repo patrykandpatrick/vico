@@ -6,14 +6,21 @@ import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.AnyEntry
 
-interface BarPathCreator {
-    fun drawBarPath(
+interface Shape {
+    fun drawEntryShape(
         canvas: Canvas,
         paint: Paint,
         barPath: Path,
         drawBounds: RectF,
         barBounds: RectF,
         entry: AnyEntry
+    )
+
+    fun drawShape(
+        canvas: Canvas,
+        paint: Paint,
+        path: Path,
+        bounds: RectF
     )
 
     fun getMinHeight(barBounds: RectF): Float = 0f

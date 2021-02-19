@@ -4,6 +4,8 @@ import android.graphics.RectF
 
 interface BoundsAware {
 
+    val bounds: RectF
+
     fun setBounds(
         left: Number,
         top: Number,

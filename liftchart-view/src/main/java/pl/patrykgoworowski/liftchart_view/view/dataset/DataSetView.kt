@@ -30,13 +30,12 @@ class DataSetView @JvmOverloads constructor(
         private var previousDataSetWidth = 0
 
         override fun invoke() {
-            val dataSet = dataSet ?: return
             if (ViewCompat.isAttachedToWindow(this@DataSetView)) {
-                val dataSetWidth = dataSet.getMeasuredWidth()
+                val contentWidth = getMeasuredContentWidth()
                 val parentOrOwnWidth = parentOrOwnWidth
                 if (widthIsWrapContent &&
-                    width != dataSetWidth &&
-                    dataSetWidth <= parentOrOwnWidth &&
+                    width != contentWidth &&
+                    contentWidth <= parentOrOwnWidth &&
                     previousDataSetWidth <= parentOrOwnWidth
                 ) {
                     requestLayout()
@@ -66,24 +65,19 @@ class DataSetView @JvmOverloads constructor(
     }
 
     override fun onDraw(canvas: Canvas) {
-        val axisModel = dataSet?.draw(canvas)
-        axisModel?.let { model ->
+        val dataSet = dataSet ?: return
+        dataSet.getAxisModel().let { model ->
             axisMap.forEach { (_, axis) ->
                 axis.draw(canvas, model)
             }
         }
+        dataSet.draw(canvas)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         val width = when (MeasureSpec.getMode(widthMeasureSpec)) {
             MeasureSpec.UNSPECIFIED,
-            MeasureSpec.AT_MOST -> (dataSet?.let { viewDataSet ->
-                virtualLayout.getMeasuredWidth(
-                    viewDataSet.getMeasuredWidth(),
-                    viewDataSet.getEntriesModel(),
-                    axisMap
-                )
-            } ?: 0) + horizontalPadding
+            MeasureSpec.AT_MOST -> getMeasuredContentWidth()
             else -> measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
         }
 
@@ -106,6 +100,15 @@ class DataSetView @JvmOverloads constructor(
         updateBounds()
     }
 
+    private fun getMeasuredContentWidth(): Int {
+        val dataSet = dataSet ?: return horizontalPadding
+        return virtualLayout.getMeasuredWidth(
+            dataSet.getMeasuredWidth(),
+            dataSet.getEntriesModel(),
+            axisMap
+        ) + horizontalPadding
+    }
+
     public fun addAxis(axisRenderer: AxisRenderer) {
         axisRenderer.isLTR = isLTR
         axisMap += axisRenderer
@@ -120,11 +123,8 @@ class DataSetView @JvmOverloads constructor(
     }
 
     private fun updateBounds() {
-        dataSet?.let { viewDataSet ->
-            virtualLayout.setBounds(
-                contentBounds, viewDataSet, viewDataSet.getEntriesModel(), axisMap
-            )
-        }
+        val dataSet = dataSet ?: return
+        virtualLayout.setBounds(contentBounds, dataSet, dataSet.getEntriesModel(), axisMap)
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {
@@ -135,5 +135,3 @@ class DataSetView @JvmOverloads constructor(
         }
     }
 }
-
-private fun ViewDataSetRenderer?.getMeasuredWidth() = this?.getMeasuredWidth() ?: 0

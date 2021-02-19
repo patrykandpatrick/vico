@@ -39,34 +39,35 @@ public open class VirtualLayout(
             right = contentBounds.right - endSize,
             bottom = contentBounds.bottom - bottomSize)
 
-        axisMap[START]?.setBounds(
-            left = if (isLTR) contentBounds.left else contentBounds.right - endSize,
-            top = contentBounds.top + topSize,
-            right = if (isLTR) contentBounds.left + startSize else contentBounds.right,
-            bottom = contentBounds.bottom - bottomSize
-        )
-
-        axisMap[TOP]?.setBounds(
-            left = contentBounds.left + startSize,
-            top = contentBounds.top,
-            right = contentBounds.right - endSize,
-            bottom = contentBounds.top + topSize
-        )
-
-        axisMap[END]?.setBounds(
-            left = if (isLTR) contentBounds.right - endSize else contentBounds.left,
-            top = contentBounds.top + topSize,
-            right = if (isLTR) contentBounds.right else contentBounds.left + endSize,
-            bottom = contentBounds.bottom - bottomSize
-        )
-
-        axisMap[BOTTOM]?.setBounds(
-            left = contentBounds.left + startSize,
-            top = contentBounds.bottom - bottomSize,
-            right = contentBounds.right - endSize,
-            bottom = contentBounds.bottom
-        )
-
+        axisMap.forEach { (position, axisRenderer) ->
+            axisRenderer.setDataSetBounds(dataSet.bounds)
+            when (position) {
+                START -> axisRenderer.setBounds(
+                    left = if (isLTR) contentBounds.left else contentBounds.right - endSize,
+                    top = contentBounds.top + topSize,
+                    right = if (isLTR) contentBounds.left + startSize else contentBounds.right,
+                    bottom = contentBounds.bottom - bottomSize
+                )
+                TOP -> axisRenderer.setBounds(
+                    left = contentBounds.left + startSize,
+                    top = contentBounds.top,
+                    right = contentBounds.right - endSize,
+                    bottom = contentBounds.top + topSize
+                )
+                END -> axisRenderer.setBounds(
+                    left = if (isLTR) contentBounds.right - endSize else contentBounds.left,
+                    top = contentBounds.top + topSize,
+                    right = if (isLTR) contentBounds.right else contentBounds.left + endSize,
+                    bottom = contentBounds.bottom - bottomSize
+                )
+                BOTTOM -> axisRenderer.setBounds(
+                    left = contentBounds.left + startSize,
+                    top = contentBounds.bottom - bottomSize,
+                    right = contentBounds.right - endSize,
+                    bottom = contentBounds.bottom
+                )
+            }
+        }
     }
 
 }

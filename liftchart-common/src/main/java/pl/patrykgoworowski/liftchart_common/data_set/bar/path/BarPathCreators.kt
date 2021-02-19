@@ -10,9 +10,9 @@ import pl.patrykgoworowski.liftchart_common.extension.setBounds
 import pl.patrykgoworowski.liftchart_common.extension.updateBounds
 
 
-fun DefaultBarPath(): BarPathCreator = object : BarPathCreator {
+fun RectShape(): Shape = object : Shape {
 
-    override fun drawBarPath(
+    override fun drawEntryShape(
         canvas: Canvas,
         paint: Paint,
         barPath: Path,
@@ -20,25 +20,39 @@ fun DefaultBarPath(): BarPathCreator = object : BarPathCreator {
         barBounds: RectF,
         entry: AnyEntry
     ) {
-        barPath.moveTo(barBounds.left, barBounds.top)
-        barPath.lineTo(barBounds.right, barBounds.top)
-        barPath.lineTo(barBounds.right, barBounds.bottom)
-        barPath.lineTo(barBounds.left, barBounds.bottom)
-        barPath.close()
-        canvas.drawPath(barPath, paint)
+        drawShape(
+            canvas,
+            paint,
+            barPath,
+            barBounds
+        )
+    }
+
+    override fun drawShape(
+        canvas: Canvas,
+        paint: Paint,
+        path: Path,
+        bounds: RectF
+    ) {
+        path.moveTo(bounds.left, bounds.top)
+        path.lineTo(bounds.right, bounds.top)
+        path.lineTo(bounds.right, bounds.bottom)
+        path.lineTo(bounds.left, bounds.bottom)
+        path.close()
+        canvas.drawPath(path, paint)
     }
 
     override fun getMinHeight(barBounds: RectF): Float = 0f
 }
 
-fun RoundedCornerBarPath(all: Float): BarPathCreator = RoundedCornerBarPath(all, all, all, all)
+fun RoundedCornersShape(all: Float): Shape = RoundedCornersShape(all, all, all, all)
 
-fun RoundedCornerBarPath(
+fun RoundedCornersShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f,
-): BarPathCreator = object : CornerBarPathCreator(topLeft, topRight, bottomRight, bottomLeft) {
+): Shape = object : CornerShape(topLeft, topRight, bottomRight, bottomLeft) {
 
     private val radii = FloatArray(8)
 
@@ -46,9 +60,7 @@ fun RoundedCornerBarPath(
         canvas: Canvas,
         paint: Paint,
         barPath: Path,
-        drawBounds: RectF,
         barBounds: RectF,
-        entry: AnyEntry,
         topLeft: Float,
         topRight: Float,
         bottomRight: Float,
@@ -73,14 +85,14 @@ fun RoundedCornerBarPath(
 
 }
 
-fun CutCornerBarPath(all: Float): BarPathCreator = CutCornerBarPath(all, all, all, all)
+fun CutCornerBarPath(all: Float): Shape = CutCornerBarPath(all, all, all, all)
 
 fun CutCornerBarPath(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f
-): BarPathCreator = object : CornerBarPathCreator(topLeft, topRight, bottomRight, bottomLeft) {
+): Shape = object : CornerShape(topLeft, topRight, bottomRight, bottomLeft) {
 
     private val minHeight = getMinimumHeight(topLeft, topRight, bottomRight, bottomLeft)
 
@@ -88,9 +100,7 @@ fun CutCornerBarPath(
         canvas: Canvas,
         paint: Paint,
         barPath: Path,
-        drawBounds: RectF,
         barBounds: RectF,
-        entry: AnyEntry,
         topLeft: Float,
         topRight: Float,
         bottomRight: Float,
@@ -110,43 +120,17 @@ fun CutCornerBarPath(
 
     override fun getMinHeight(barBounds: RectF): Float = minHeight
 
-
-}
-
-fun SkewedBarPath(strength: Float = 1f): BarPathCreator = object : BarPathCreator {
-
-    override fun drawBarPath(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        drawBounds: RectF,
-        barBounds: RectF,
-        entry: AnyEntry
-    ) {
-        val skewedX =
-            barBounds.left + (barBounds.width() * strength * (barBounds.height() / drawBounds.height()))
-        barPath.moveTo(skewedX, barBounds.top)
-        barPath.lineTo(skewedX + barBounds.width(), barBounds.top)
-
-        barPath.lineTo(barBounds.right, barBounds.bottom)
-        barPath.lineTo(barBounds.left, barBounds.bottom)
-        barPath.close()
-        canvas.drawPath(barPath, paint)
-    }
-
-    override fun getMinHeight(barBounds: RectF): Float = 0f
-
 }
 
 fun DrawableBarPath(
     drawable: Drawable,
-    otherCreator: BarPathCreator? = DefaultBarPath()
-): BarPathCreator = object : BarPathCreator {
+    otherCreator: Shape? = RectShape()
+): Shape = object : Shape {
 
     private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
             drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
 
-    override fun drawBarPath(
+    override fun drawEntryShape(
         canvas: Canvas,
         paint: Paint,
         barPath: Path,
@@ -161,15 +145,40 @@ fun DrawableBarPath(
         drawable.draw(canvas)
         otherCreator ?: return
 
+
         barBounds.updateBounds(top = drawable.bounds.bottom.toFloat())
         if (barBounds.height() > otherCreator.getMinHeight(barBounds)) {
-            otherCreator.drawBarPath(
+            otherCreator.drawEntryShape(
                 canvas,
                 paint,
                 barPath,
                 drawBounds,
                 barBounds,
                 entry
+            )
+        }
+    }
+
+    override fun drawShape(
+        canvas: Canvas,
+        paint: Paint,
+        path: Path,
+        bounds: RectF
+    ) {
+        if (bounds.height() == 0f) return
+        val drawableHeight = bounds.width() * ratio
+        val top = minOf(bounds.top, bounds.bottom - drawableHeight)
+        drawable.setBounds(bounds.left, top, bounds.right, top + drawableHeight)
+        drawable.draw(canvas)
+        otherCreator ?: return
+
+        bounds.updateBounds(top = drawable.bounds.bottom.toFloat())
+        if (bounds.height() > otherCreator.getMinHeight(bounds)) {
+            otherCreator.drawShape(
+                canvas,
+                paint,
+                path,
+                bounds
             )
         }
     }

@@ -2,10 +2,10 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.AnyEntry
-import pl.patrykgoworowski.liftchart_common.data_set.axis.AxisModel
+import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedBarDataSetRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.Shape
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
@@ -22,7 +22,7 @@ class MergedBarDataSet<Entry: AnyEntry>(
     barInnerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
     mergeMode: MergeMode = MergeMode.Stack,
     colors: List<Int> = emptyList(),
-    barPathCreators: List<BarPathCreator> = emptyList(),
+    shapes: List<Shape> = emptyList(),
 ) : MergedBarDataSetRenderer<Entry>(colors, barWidth, barSpacing, barInnerSpacing), ViewDataSetRenderer {
 
     private val listeners = ArrayList<UpdateRequestListener>()
@@ -35,11 +35,13 @@ class MergedBarDataSet<Entry: AnyEntry>(
 
     init {
         setColors(colors)
-        this.barPathCreators.addAll(barPathCreators)
+        this.barPathCreators.addAll(shapes)
         this.groupMode = mergeMode
     }
 
-    override fun draw(canvas: Canvas): AxisModel? = draw(canvas, model)
+    override fun draw(canvas: Canvas) = draw(canvas, model)
+
+    override fun getAxisModel(): AxisModel = getAxisModel(model)
 
     override fun addListener(listener: UpdateRequestListener) {
         listeners += listener

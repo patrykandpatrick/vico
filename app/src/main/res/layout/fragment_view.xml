@@ -16,7 +16,7 @@
 
         <pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
             android:id="@+id/bar_chart"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
         <Space

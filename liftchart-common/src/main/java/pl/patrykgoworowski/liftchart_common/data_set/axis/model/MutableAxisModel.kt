@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis
+package pl.patrykgoworowski.liftchart_common.data_set.axis.model
 
 import pl.patrykgoworowski.liftchart_common.AnyEntry
 

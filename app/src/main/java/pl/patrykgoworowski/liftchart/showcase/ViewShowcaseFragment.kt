@@ -12,13 +12,17 @@ import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
 import pl.patrykgoworowski.liftchart.extension.color
 import pl.patrykgoworowski.liftchart.extension.colors
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.data_set.axis.*
+import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.path.CutCornerBarPath
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
 import pl.patrykgoworowski.liftchart_view.data_set.bar.BarDataSet
 import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedBarDataSet
 import pl.patrykgoworowski.liftchart_view.extension.dp
+import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
 
 
 class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
@@ -30,16 +34,48 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val binding = FragmentViewBinding.bind(view)
 
+        setUpBar(binding.barChart)
+        setUpMergedBar(binding.mergedBarChart)
+    }
+
+    private fun setUpBar(dataSetView: DataSetView) {
+        val startAxis = VerticalAxis(StartAxis).apply {
+            valueFormatter = PercentageFormatAxisValueFormatter()
+        }
+        val endAxis = VerticalAxis(EndAxis)
+        val topAxis = HorizontalAxis(TopAxis)
+        val bottomAxis = HorizontalAxis(BottomAxis).apply {
+            valueFormatter = DecimalFormatAxisValueFormatter()
+        }
+
         val barDataSet = BarDataSet<AnyEntry>(
             color = requireContext().color { R.color.teal_200 },
-            barPathCreator = CutCornerBarPath(topLeft = 8f.dp)
+            shape = CutCornerBarPath(topLeft = 8f.dp)
         )
 
         viewModel.entries.collectAsFlow
             .onEach { barDataSet.model = it }
             .launchIn(lifecycleScope)
 
-        binding.barChart.dataSet = barDataSet
+        dataSetView.apply {
+            dataSet = barDataSet
+            addAxis(startAxis)
+            addAxis(endAxis)
+            addAxis(topAxis)
+            addAxis(bottomAxis)
+        }
+    }
+
+    private fun setUpMergedBar(dataSetView: DataSetView) {
+
+        val startAxis = VerticalAxis(StartAxis).apply {
+            valueFormatter = PercentageFormatAxisValueFormatter()
+        }
+        val endAxis = VerticalAxis(EndAxis)
+        val topAxis = HorizontalAxis(TopAxis)
+        val bottomAxis = HorizontalAxis(BottomAxis).apply {
+            valueFormatter = DecimalFormatAxisValueFormatter()
+        }
 
         val mergedBarDataSet = MergedBarDataSet<AnyEntry>(
             colors = requireContext().colors {
@@ -49,9 +85,9 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                     R.color.teal_700
                 )
             },
-            barPathCreators = listOf(
+            shapes = listOf(
                 CutCornerBarPath(bottomRight = 8f.dp),
-                DefaultBarPath(),
+                RectShape(),
                 CutCornerBarPath(topLeft = 8f.dp),
             ),
             mergeMode = MergeMode.Stack
@@ -61,7 +97,13 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             .onEach { mergedBarDataSet.model = it }
             .launchIn(lifecycleScope)
 
-        binding.mergedBarChart.dataSet = mergedBarDataSet
+        dataSetView.apply {
+            dataSet = mergedBarDataSet
+            addAxis(startAxis)
+            addAxis(endAxis)
+            addAxis(topAxis)
+            addAxis(bottomAxis)
+        }
     }
 
 }

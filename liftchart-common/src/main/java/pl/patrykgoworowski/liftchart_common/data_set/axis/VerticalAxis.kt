@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.util.Log
+import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import kotlin.properties.Delegates.observable
 
@@ -36,29 +36,29 @@ class VerticalAxis(
     var tickCount = 4
 
     override fun onSetBounds(left: Number, top: Number, right: Number, bottom: Number) {
-        val topBound = drawBounds.top - (tickMarkThickness / 2)
-        val bottomBound = drawBounds.bottom + (tickMarkThickness / 2)
+        val topBound = bounds.top - (tick.thickness / 2)
+        val bottomBound = bounds.bottom + (tick.thickness / 2)
         when (position) {
             StartAxis -> axisBounds.set(
-                drawBounds.right - (axisThickness + padding),
+                bounds.right - (line.thickness + padding),
                 topBound,
-                drawBounds.right - padding,
+                bounds.right - padding,
                 bottomBound
             )
             EndAxis -> axisBounds.set(
-                drawBounds.left + padding,
+                bounds.left + padding,
                 topBound,
-                drawBounds.left + axisThickness + padding,
+                bounds.left + line.thickness + padding,
                 bottomBound
             )
         }
     }
 
     override fun onDraw(canvas: Canvas, model: AxisModel) {
-        canvas.drawRect(axisBounds, axisPaint)
+        line.draw(canvas, axisBounds)
 
-        val labels = getLabels(0f, model.maxY)
-        val axisStep = drawBounds.height() / tickCount
+        val labels = getLabels(model)
+        val axisStep = bounds.height() / tickCount
 
         val tickLeftX = if (isLeft) {
             axisBounds.left - tickMarkLength
@@ -80,17 +80,33 @@ class VerticalAxis(
 
         var tickCenterY: Float
         var textY: Float
+
         for (index in 0..tickCount) {
 
-            tickCenterY = drawBounds.bottom - (axisStep * index)
-            canvas.drawRect(
-                tickLeftX,
-                tickCenterY - (tickMarkThickness / 2),
-                tickRightX,
-                tickCenterY + (tickMarkThickness / 2),
-                axisPaint
+            tickCenterY = bounds.bottom - (axisStep * index)
+
+            tick.drawHorizontal(
+                canvas = canvas,
+                left = tickLeftX,
+                right = tickRightX,
+                tickCenterY
             )
-            labelPaint.getTextBounds(TEXT_MEASUREMENT_CHAR, 0, TEXT_MEASUREMENT_CHAR.length, xTextBounds)
+
+            if (guideline.shouldDraw) {
+                guideline.drawHorizontal(
+                    canvas = canvas,
+                    left = dataSetBounds.left - if (isLeft) padding else 0f,
+                    right = dataSetBounds.right + if (isLeft) padding else 0f,
+                    centerY = tickCenterY
+                )
+            }
+
+            labelPaint.getTextBounds(
+                TEXT_MEASUREMENT_CHAR,
+                0,
+                TEXT_MEASUREMENT_CHAR.length,
+                xTextBounds
+            )
             textY = tickCenterY + (xTextBounds.height() / 2)
             labels.getOrNull(index)?.let { label ->
                 canvas.drawText(
@@ -103,22 +119,21 @@ class VerticalAxis(
         }
     }
 
-    private fun getLabels(minY: Float, maxY: Float): List<String> {
+    private fun getLabels(model: EntriesModel): List<String> {
         labels.clear()
-        val step = (maxY - minY) / tickCount
+        val step = model.maxY / tickCount
         for (index in tickCount downTo 0) {
-            labels += (maxY - (step * index)).toString()
+            val value = (model.maxY - (step * index))
+            labels += valueFormatter.formatValue(value, model)
         }
         return labels
     }
 
     override fun getSize(model: EntriesModel): Float {
-        val widestTextWidth = getLabels(0f, model.maxY).maxOf { label ->
-            labelPaint.measureText(label).also {
-                Log.d("Test", "measuring $label, width=$it")
-            }
+        val widestTextWidth = getLabels(model).maxOf { label ->
+            labelPaint.measureText(label)
         }
-        return axisThickness + padding + tickMarkThickness + textPadding + widestTextWidth
+        return line.thickness + padding + tickMarkLength + textPadding + widestTextWidth
     }
 
 }

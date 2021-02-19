@@ -21,8 +21,8 @@ import pl.patrykgoworowski.liftchart_common.data_set.axis.Position
 import pl.patrykgoworowski.liftchart_common.data_set.bar.BarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedBarDataSetRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.BarPathCreator
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.DefaultBarPath
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
+import pl.patrykgoworowski.liftchart_common.data_set.bar.path.Shape
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
@@ -43,7 +43,7 @@ fun BarDataSet(
     singleEntryCollection: SingleEntryCollection<AnyEntry>,
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colors.secondary,
-    barPathCreator: BarPathCreator = DefaultBarPath(),
+    shape: Shape = RectShape(),
     barWidth: Dp = DEF_BAR_WIDTH.dp,
     barSpacing: Dp = DEF_BAR_SPACING.dp,
     axisMap: Map<Position, AxisRenderer> = emptyMap(),
@@ -51,7 +51,7 @@ fun BarDataSet(
     val dataSet = remember { BarDataSetRenderer<AnyEntry>() }
     val model = singleEntryCollection.collectAsState
 
-    dataSet.barPathCreator = barPathCreator
+    dataSet.shape = shape
     dataSet.color = color.colorInt
     dataSet.barWidth = barWidth.pixels
     dataSet.barSpacing = barSpacing.pixels
@@ -70,7 +70,7 @@ fun MergedBarDataSet(
     modifier: Modifier = Modifier,
     colors: List<Color> = listOf(MaterialTheme.colors.secondary),
     mergeMode: MergeMode = MergeMode.Stack,
-    barPathCreators: List<BarPathCreator> = emptyList(),
+    shapes: List<Shape> = emptyList(),
     barWidth: Dp = DEF_BAR_WIDTH.dp,
     barSpacing: Dp = DEF_BAR_SPACING.dp,
     barInnerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
@@ -79,7 +79,7 @@ fun MergedBarDataSet(
     val dataSet = remember { MergedBarDataSetRenderer<AnyEntry>() }
     val model = multiEntryCollection.collectAsState
 
-    dataSet.barPathCreators.setAll(barPathCreators)
+    dataSet.barPathCreators.setAll(shapes)
     dataSet.setColors(colors.colorInts)
     dataSet.groupMode = mergeMode
     dataSet.barWidth = barWidth.pixels
@@ -117,13 +117,15 @@ fun <Model : EntriesModel> DataSet(
             )
             .preferredHeight(DEF_CHART_WIDTH.dp)
     ) {
+
         bounds.set(0f, 0f, size.width, size.height)
         virtualLayout.setBounds(bounds, dataSet, model, axisMap)
-        dataSet.draw(drawContext.canvas.nativeCanvas, model)?.let { axisModel ->
+        dataSet.getAxisModel(model).let { axisModel ->
             axisMap.forEach { (_, axis) ->
                 axis.isLTR = virtualLayout.isLTR
                 axis.draw(drawContext.canvas.nativeCanvas, axisModel)
             }
         }
+        dataSet.draw(drawContext.canvas.nativeCanvas, model)
     }
 }
