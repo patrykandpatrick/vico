@@ -24,9 +24,9 @@ public abstract class BaseLabeledAxisRenderer(
         textAlign = Paint.Align.CENTER
     }
 
-    var line: AxisComponent = AxisComponent(Color.GRAY, 8f)
-    var tick: AxisComponent = AxisComponent(Color.GRAY)
-    var guideline: AxisComponent = AxisComponent(Color.LTGRAY)
+    var axis: AxisComponent = AxisComponent(Color.BLUE, 0f)
+    var tick: AxisComponent = AxisComponent(Color.GRAY, 4f)
+    var guideline: AxisComponent = AxisComponent(Color.GRAY, 4f)
 
     var textPadding = 12f
     var padding: Float = 8f
