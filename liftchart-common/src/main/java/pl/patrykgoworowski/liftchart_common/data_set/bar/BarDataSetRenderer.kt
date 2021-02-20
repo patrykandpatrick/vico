@@ -76,8 +76,9 @@ public open class BarDataSetRenderer<Entry : AnyEntry>(
             maxX = model.maxX
             minY = model.minY
             maxY = model.maxY
-            xSegmentWidth = drawBarWidth / model.step
-            xSegmentSpacing = drawBarSpacing / model.step
+            step = model.step
+            xSegmentWidth = drawBarWidth
+            xSegmentSpacing = drawBarSpacing
             entries.setAll(model.entries)
         }
 

@@ -58,44 +58,47 @@ class HorizontalAxis(
         var index = 0
         var tickMarkCenter: Float
         var lastSegmentPos = bounds.left
-        var lastSegmentCenter: Float
+        var xValue = model.minX
 
+        val centeredStep = model.xSegmentWidth / 2
+
+        val tickStepWidth = when(tickType) {
+            TickType.Minor -> model.xSegmentWidth + (model.xSegmentSpacing / 2)
+            TickType.Major -> centeredStep
+        }
 
         while (lastSegmentPos + tick.thickness < bounds.right) {
 
-            lastSegmentCenter = lastSegmentPos + (model.xSegmentWidth / 2)
+            tickMarkCenter = lastSegmentPos + tickStepWidth
 
-            tickMarkCenter = when(tickType) {
-                TickType.Minor -> lastSegmentPos + model.xSegmentWidth + (model.xSegmentSpacing / 2)
-                TickType.Major -> lastSegmentCenter
-            }
-
-            tick.drawVertical(
-                canvas = canvas,
-                top = tickMarkTop,
-                bottom = tickMarkBottom,
-                centerX = tickMarkCenter
-            )
-
-            if (guideline.shouldDraw) {
-                guideline.drawVertical(
+            if (tickMarkCenter < bounds.right) {
+                tick.drawVertical(
                     canvas = canvas,
-                    top = dataSetBounds.top - if (isBottom) 0f else padding,
-                    bottom = dataSetBounds.bottom + if (isBottom) padding else 0f,
+                    top = tickMarkTop,
+                    bottom = tickMarkBottom,
                     centerX = tickMarkCenter
                 )
+
+                if (guideline.shouldDraw) {
+                    guideline.drawVertical(
+                        canvas = canvas,
+                        top = dataSetBounds.top - if (isBottom) 0f else padding,
+                        bottom = dataSetBounds.bottom + if (isBottom) padding else 0f,
+                        centerX = tickMarkCenter
+                    )
+                }
             }
 
-            model.entries.getOrNull(index)?.x?.let { value ->
-                canvas.drawText(
-                    valueFormatter.formatValue(value, model),
-                    lastSegmentCenter,
-                    textY,
-                    labelPaint
-                )
-            }
+            canvas.drawText(
+                valueFormatter.formatValue(xValue, model),
+                lastSegmentPos + centeredStep,
+                textY,
+                labelPaint
+            )
 
-            lastSegmentPos += (model.xSegmentWidth / model.step) + model.xSegmentSpacing
+            xValue += model.step
+
+            lastSegmentPos += model.xSegmentWidth + model.xSegmentSpacing
             index++
         }
     }

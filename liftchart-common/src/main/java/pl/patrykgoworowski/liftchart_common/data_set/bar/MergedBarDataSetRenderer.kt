@@ -132,8 +132,9 @@ open class MergedBarDataSetRenderer<Entry: AnyEntry> public constructor(
             maxX = model.maxX
             minY = model.minY
             maxY = groupMode.getMaxY(model)
+            step = model.step
             xSegmentWidth = getSegmentSize(model.entryCollections.size)
-            xSegmentSpacing = drawBarSpacing / model.step
+            xSegmentSpacing = drawBarSpacing
             entries.setAll(model.mergedEntries)
         }
 
