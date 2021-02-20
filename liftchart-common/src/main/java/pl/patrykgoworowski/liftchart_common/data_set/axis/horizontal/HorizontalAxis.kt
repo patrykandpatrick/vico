@@ -1,7 +1,11 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis
+package pl.patrykgoworowski.liftchart_common.data_set.axis.horizontal
 
 import android.graphics.Canvas
 import android.graphics.Color
+import pl.patrykgoworowski.liftchart_common.data_set.axis.BaseLabeledAxisRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.axis.BottomAxis
+import pl.patrykgoworowski.liftchart_common.data_set.axis.HorizontalAxisPosition
+import pl.patrykgoworowski.liftchart_common.data_set.axis.TopAxis
 import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.extension.textHeight
@@ -14,6 +18,8 @@ class HorizontalAxis(
 
     private val isBottom = position == BottomAxis
 
+    public var tickType: TickType = TickType.Minor
+
     override var isLTR: Boolean = false
     override var isVisible: Boolean = true
 
@@ -21,7 +27,7 @@ class HorizontalAxis(
         when (position) {
             TopAxis -> axisBounds.set(
                 bounds.left,
-                bounds.bottom - (line.thickness + padding),
+                bounds.bottom - (axis.thickness + padding),
                 bounds.right,
                 bounds.bottom - padding
             )
@@ -29,13 +35,13 @@ class HorizontalAxis(
                 bounds.left,
                 bounds.top + padding,
                 bounds.right,
-                bounds.top + line.thickness + padding
+                bounds.top + axis.thickness + padding
             )
         }
     }
 
     override fun onDraw(canvas: Canvas, model: AxisModel) {
-        line.draw(canvas, axisBounds)
+        axis.draw(canvas, axisBounds)
 
         val tickMarkTop = if (isBottom) {
             axisBounds.bottom
@@ -52,9 +58,18 @@ class HorizontalAxis(
         var index = 0
         var tickMarkCenter: Float
         var lastSegmentPos = bounds.left
+        var lastSegmentCenter: Float
+
 
         while (lastSegmentPos + tick.thickness < bounds.right) {
-            tickMarkCenter = lastSegmentPos + (model.xSegmentWidth / 2)
+
+            lastSegmentCenter = lastSegmentPos + (model.xSegmentWidth / 2)
+
+            tickMarkCenter = when(tickType) {
+                TickType.Minor -> lastSegmentPos + model.xSegmentWidth + (model.xSegmentSpacing / 2)
+                TickType.Major -> lastSegmentCenter
+            }
+
             tick.drawVertical(
                 canvas = canvas,
                 top = tickMarkTop,
@@ -74,7 +89,7 @@ class HorizontalAxis(
             model.entries.getOrNull(index)?.x?.let { value ->
                 canvas.drawText(
                     valueFormatter.formatValue(value, model),
-                    tickMarkCenter,
+                    lastSegmentCenter,
                     textY,
                     labelPaint
                 )
@@ -86,7 +101,11 @@ class HorizontalAxis(
     }
 
     override fun getSize(model: EntriesModel): Float {
-        return line.thickness + padding + tickMarkLength + textPadding + labelPaint.textHeight
+        return axis.thickness + padding + tickMarkLength + textPadding + labelPaint.textHeight
+    }
+
+    enum class TickType {
+        Minor, Major
     }
 
 }

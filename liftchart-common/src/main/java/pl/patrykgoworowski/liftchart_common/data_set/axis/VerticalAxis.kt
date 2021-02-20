@@ -40,7 +40,7 @@ class VerticalAxis(
         val bottomBound = bounds.bottom + (tick.thickness / 2)
         when (position) {
             StartAxis -> axisBounds.set(
-                bounds.right - (line.thickness + padding),
+                bounds.right - (axis.thickness + padding),
                 topBound,
                 bounds.right - padding,
                 bottomBound
@@ -48,14 +48,14 @@ class VerticalAxis(
             EndAxis -> axisBounds.set(
                 bounds.left + padding,
                 topBound,
-                bounds.left + line.thickness + padding,
+                bounds.left + axis.thickness + padding,
                 bottomBound
             )
         }
     }
 
     override fun onDraw(canvas: Canvas, model: AxisModel) {
-        line.draw(canvas, axisBounds)
+        axis.draw(canvas, axisBounds)
 
         val labels = getLabels(model)
         val axisStep = bounds.height() / tickCount
@@ -133,7 +133,7 @@ class VerticalAxis(
         val widestTextWidth = getLabels(model).maxOf { label ->
             labelPaint.measureText(label)
         }
-        return line.thickness + padding + tickMarkLength + textPadding + widestTextWidth
+        return axis.thickness + padding + tickMarkLength + textPadding + widestTextWidth
     }
 
 }
