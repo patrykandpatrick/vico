@@ -8,8 +8,6 @@ import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.axis.model.MutableAxisModel
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.Shape
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_COLOR
@@ -19,6 +17,8 @@ import pl.patrykgoworowski.liftchart_common.extension.getOrDefault
 import pl.patrykgoworowski.liftchart_common.extension.getRepeatingOrDefault
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.extension.setAll
+import pl.patrykgoworowski.liftchart_common.path.RectShape
+import pl.patrykgoworowski.liftchart_common.path.Shape
 import kotlin.math.roundToInt
 
 open class MergedBarDataSetRenderer<Entry: AnyEntry> public constructor(

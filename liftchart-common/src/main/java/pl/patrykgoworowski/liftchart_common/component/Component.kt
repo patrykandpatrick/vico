@@ -4,8 +4,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.Shape
+import pl.patrykgoworowski.liftchart_common.path.RectShape
+import pl.patrykgoworowski.liftchart_common.path.Shape
 
 public abstract class Component(
     color: Int

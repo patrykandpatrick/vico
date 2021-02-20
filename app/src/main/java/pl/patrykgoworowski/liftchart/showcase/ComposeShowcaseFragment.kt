@@ -19,14 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import pl.patrykgoworowski.liftchart.ui.MainTheme
-import pl.patrykgoworowski.liftchart.ui.purple200
-import pl.patrykgoworowski.liftchart.ui.teal200
-import pl.patrykgoworowski.liftchart.ui.teal700
+import pl.patrykgoworowski.liftchart.ui.byzantine
+import pl.patrykgoworowski.liftchart.ui.flickrPink
+import pl.patrykgoworowski.liftchart.ui.trypanPurple
 import pl.patrykgoworowski.liftchart_common.data_set.axis.*
 import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.PercentageFormatAxisValueFormatter
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
 import pl.patrykgoworowski.liftchart_common.extension.plusAssign
+import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedBarDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.CutCornerBarPath
@@ -66,12 +66,12 @@ class ComposeShowcaseFragment : Fragment() {
             MainTheme {
                 ScrollableColumn {
 
-                    Spacer(modifier = Modifier.preferredHeight(8.dp))
+                    Spacer(modifier = Modifier.preferredHeight(24.dp))
 
                     BarDataSet(
                         singleEntryCollection = viewModel.entries,
                         modifier = chartModifier,
-                        color = teal200,
+                        color = flickrPink,
                         shape = CutCornerBarPath(topLeft = 8.dp),
                         axisMap = axisMap,
                     )
@@ -81,7 +81,7 @@ class ComposeShowcaseFragment : Fragment() {
                     MergedBarDataSet(
                         modifier = chartModifier,
                         multiEntryCollection = viewModel.multiEntries,
-                        colors = listOf(teal200, purple200, teal700),
+                        colors = listOf(flickrPink, byzantine, trypanPurple),
                         shapes = listOf(
                             CutCornerBarPath(bottomRight = 8.dp),
                             RectShape(),

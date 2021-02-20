@@ -16,9 +16,9 @@ import pl.patrykgoworowski.liftchart_common.data_set.axis.*
 import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.CutCornerBarPath
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
+import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath
+import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_view.data_set.bar.BarDataSet
 import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedBarDataSet
 import pl.patrykgoworowski.liftchart_view.extension.dp
@@ -49,7 +49,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         }
 
         val barDataSet = BarDataSet<AnyEntry>(
-            color = requireContext().color { R.color.teal_200 },
+            color = requireContext().color { R.color.flickr_pink },
             shape = CutCornerBarPath(topLeft = 8f.dp)
         )
 
@@ -80,9 +80,9 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val mergedBarDataSet = MergedBarDataSet<AnyEntry>(
             colors = requireContext().colors {
                 intArrayOf(
-                    R.color.teal_200,
-                    R.color.purple_200,
-                    R.color.teal_700
+                    R.color.flickr_pink,
+                    R.color.byzantine,
+                    R.color.trypan_purple
                 )
             },
             shapes = listOf(

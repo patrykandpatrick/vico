@@ -21,8 +21,6 @@ import pl.patrykgoworowski.liftchart_common.data_set.axis.Position
 import pl.patrykgoworowski.liftchart_common.data_set.bar.BarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedBarDataSetRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.Shape
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
@@ -32,6 +30,8 @@ import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.extension.setAll
+import pl.patrykgoworowski.liftchart_common.path.RectShape
+import pl.patrykgoworowski.liftchart_common.path.Shape
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.colorInts

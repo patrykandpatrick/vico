@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_common.data_set.bar.path
+package pl.patrykgoworowski.liftchart_common.path
 
 import android.graphics.Canvas
 import android.graphics.Paint

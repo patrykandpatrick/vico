@@ -8,14 +8,14 @@ import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.axis.model.MutableAxisModel
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RectShape
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.Shape
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_COLOR
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.extension.setAll
+import pl.patrykgoworowski.liftchart_common.path.RectShape
+import pl.patrykgoworowski.liftchart_common.path.Shape
 import kotlin.math.abs
 import kotlin.math.roundToInt
 

@@ -1,10 +1,11 @@
-package pl.patrykgoworowski.liftchart_common.data_set.bar.path
+package pl.patrykgoworowski.liftchart_common.path
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import kotlin.math.absoluteValue
 
 abstract class CornerShape(
     private val topLeft: Float = 0f,
@@ -44,10 +45,11 @@ abstract class CornerShape(
         path: Path,
         bounds: RectF
     ) {
+        val height = bounds.height().absoluteValue
         when {
-            bounds.height() == 0f -> return
-            bounds.height() < minHeight -> {
-                val scale = bounds.height() / minHeight
+            height == 0f -> return
+            height < minHeight -> {
+                val scale = height / minHeight
                 tL = topLeft * scale
                 tR = topRight * scale
                 bR = bottomRight * scale

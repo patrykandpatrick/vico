@@ -7,15 +7,15 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = purple500,
-    primaryVariant = purple700,
-    secondary = teal700
+    primary = purple,
+    primaryVariant = trypanPurple,
+    secondary = flickrPink
 )
 
 private val LightColorPalette = lightColors(
-    primary = purple200,
-    primaryVariant = purple500,
-    secondary = teal200)
+    primary = flickrPink,
+    primaryVariant = byzantine,
+    secondary = purple)
 
 @Composable
 fun MainTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {

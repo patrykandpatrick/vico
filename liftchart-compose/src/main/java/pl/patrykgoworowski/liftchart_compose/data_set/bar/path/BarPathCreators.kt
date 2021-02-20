@@ -2,9 +2,9 @@ package pl.patrykgoworowski.liftchart_compose.data_set.bar.path
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.CutCornerBarPath
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.RoundedCornersShape
-import pl.patrykgoworowski.liftchart_common.data_set.bar.path.Shape
+import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath
+import pl.patrykgoworowski.liftchart_common.path.RoundedCornersShape
+import pl.patrykgoworowski.liftchart_common.path.Shape
 import pl.patrykgoworowski.liftchart_compose.extension.density
 
 @Composable

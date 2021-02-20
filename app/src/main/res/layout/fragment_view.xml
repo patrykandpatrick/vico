@@ -12,7 +12,7 @@
 
         <Space
             android:layout_width="wrap_content"
-            android:layout_height="8dp"/>
+            android:layout_height="24dp"/>
 
         <pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
             android:id="@+id/bar_chart"
