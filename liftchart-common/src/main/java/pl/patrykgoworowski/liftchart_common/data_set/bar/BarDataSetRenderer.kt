@@ -16,7 +16,6 @@ import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 public open class BarDataSetRenderer<Entry : AnyEntry>(
@@ -59,11 +58,11 @@ public open class BarDataSetRenderer<Entry : AnyEntry>(
 
         val heightMultiplier = bounds.height() / model.maxY
         val bottom = bounds.bottom
-        val drawingStart = bounds.left
+        val drawingStart = bounds.left + (drawBarSpacing / 2)
 
         model.entries.forEach { entry ->
             val height = entry.y * heightMultiplier
-            val startX = drawingStart + (drawBarWidth + drawBarSpacing) * entry.x / model.step
+            val startX = drawingStart + (drawBarWidth + drawBarSpacing) * (entry.x - model.minX) / model.step
             barRect.set(startX, bottom - height, startX + drawBarWidth, bottom)
             drawBar(canvas, entry, bounds, barRect)
         }
@@ -107,8 +106,8 @@ public open class BarDataSetRenderer<Entry : AnyEntry>(
     }
 
     override fun getMeasuredWidth(model: SingleEntriesModel<Entry>): Int {
-        val length = (abs(model.maxX) - abs(model.minX)) / model.step
-        return (((barWidth * (length + 1)) + (barSpacing * length)) / 1).roundToInt()
+        val length = model.getEntriesLength()
+        return ((barWidth * length) + (barSpacing * length)).roundToInt()
     }
 
 }

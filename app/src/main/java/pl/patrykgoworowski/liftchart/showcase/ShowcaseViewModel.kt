@@ -17,7 +17,7 @@ import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 class ShowcaseViewModel : ViewModel() {
 
     private val generator = RandomEntriesGenerator()
-    private val multiGenerator = RandomEntriesGenerator(0..5)
+    private val multiGenerator = RandomEntriesGenerator(0..3)
 
     //val entries1 = SingleEntryList<AnyEntry>(generator.generateRandomEntries())
 

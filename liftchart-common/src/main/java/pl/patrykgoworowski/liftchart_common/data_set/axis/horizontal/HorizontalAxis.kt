@@ -2,12 +2,14 @@ package pl.patrykgoworowski.liftchart_common.data_set.axis.horizontal
 
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.data_set.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.axis.BottomAxis
 import pl.patrykgoworowski.liftchart_common.data_set.axis.HorizontalAxisPosition
 import pl.patrykgoworowski.liftchart_common.data_set.axis.TopAxis
 import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.textHeight
 
 class HorizontalAxis(
@@ -55,52 +57,71 @@ class HorizontalAxis(
             tickMarkTop - textPadding - labelPaint.descent()
         }
 
-        var index = 0
-        var tickMarkCenter: Float
-        var lastSegmentPos = bounds.left
-        var xValue = model.minX
+        val entriesLength = model.getEntriesLength()
+        val tickCount: Int
+        val tickDrawStep = tickDrawBounds.width() / entriesLength
+        var tickDrawCenter: Float
+        var textDrawCenter = tickDrawBounds.left + tickDrawStep.half
 
-        val centeredStep = model.xSegmentWidth / 2
-
-        val tickStepWidth = when(tickType) {
-            TickType.Minor -> model.xSegmentWidth + (model.xSegmentSpacing / 2)
-            TickType.Major -> centeredStep
+        when (tickType) {
+            TickType.Minor -> {
+                tickCount = entriesLength + 1
+                tickDrawCenter = tickDrawBounds.left
+            }
+            TickType.Major -> {
+                tickCount = entriesLength
+                tickDrawCenter = textDrawCenter
+            }
         }
 
-        while (lastSegmentPos + tick.thickness < bounds.right) {
+        for (index in 0 until tickCount) {
 
-            tickMarkCenter = lastSegmentPos + tickStepWidth
-
-            if (tickMarkCenter < bounds.right) {
-                tick.drawVertical(
-                    canvas = canvas,
-                    top = tickMarkTop,
-                    bottom = tickMarkBottom,
-                    centerX = tickMarkCenter
-                )
-
-                if (guideline.shouldDraw) {
-                    guideline.drawVertical(
-                        canvas = canvas,
-                        top = dataSetBounds.top - if (isBottom) 0f else padding,
-                        bottom = dataSetBounds.bottom + if (isBottom) padding else 0f,
-                        centerX = tickMarkCenter
-                    )
-                }
-            }
-
-            canvas.drawText(
-                valueFormatter.formatValue(xValue, model),
-                lastSegmentPos + centeredStep,
-                textY,
-                labelPaint
+            axis.drawVerticalTick(
+                canvas = canvas,
+                top = tickMarkTop,
+                bottom = tickMarkBottom,
+                centerX = tickDrawCenter
             )
 
-            xValue += model.step
+            if (guideline.shouldDraw) {
+                guideline.drawVertical(
+                    canvas = canvas,
+                    top = dataSetBounds.top,
+                    bottom = dataSetBounds.bottom,
+                    centerX = tickDrawCenter
+                )
+            }
 
-            lastSegmentPos += model.xSegmentWidth + model.xSegmentSpacing
-            index++
+            if (index < entriesLength) {
+                canvas.drawText(
+                    valueFormatter.formatValue(index + model.minX, model),
+                    textDrawCenter,
+                    textY,
+                    labelPaint
+                )
+            }
+            tickDrawCenter += tickDrawStep
+            textDrawCenter += tickDrawStep
         }
+
+        axis.drawAxis(canvas, axisBounds)
+    }
+
+    private fun updateTickDrawBounds() {
+        val left: Float
+        val right: Float
+
+        when (tickType) {
+            TickType.Minor -> {
+                left = bounds.left - axis.thickness.half
+                right = bounds.right + axis.thickness.half
+            }
+            TickType.Major -> {
+                left = bounds.left
+                right = bounds.right
+            }
+        }
+        tickDrawBounds.set(left, bounds.top, right, bounds.bottom)
     }
 
     override fun getSize(model: EntriesModel): Float {
