@@ -8,13 +8,13 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.data_set.axis.*
 import pl.patrykgoworowski.liftchart_common.data_set.axis.horizontal.HorizontalAxis
-import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.extension.minusAssign
 import pl.patrykgoworowski.liftchart_common.extension.plusAssign
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
-import pl.patrykgoworowski.liftchart_view.data_set.ViewDataSetRenderer
+import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
+import pl.patrykgoworowski.liftchart_view.data_set.layout.ViewVirtualLayout
 import pl.patrykgoworowski.liftchart_view.extension.*
 import java.util.*
 import kotlin.properties.Delegates.observable
@@ -48,11 +48,11 @@ class DataSetView @JvmOverloads constructor(
         }
     }
 
-    private val virtualLayout = VirtualLayout(isLTR)
+    private val virtualLayout = ViewVirtualLayout(isLTR)
 
     private val axisMap: EnumMap<Position, AxisRenderer> = EnumMap(Position::class.java)
 
-    var dataSet: ViewDataSetRenderer? by observable(null) { _, oldValue, newValue ->
+    var dataSet: DataSetRendererWithModel<*>? by observable(null) { _, oldValue, newValue ->
         oldValue?.removeListener(updateRequestListener)
         newValue?.addListener(updateRequestListener)
         updateBounds()
@@ -103,11 +103,7 @@ class DataSetView @JvmOverloads constructor(
 
     private fun getMeasuredContentWidth(): Int {
         val dataSet = dataSet ?: return horizontalPadding
-        return virtualLayout.getMeasuredWidth(
-            dataSet.getMeasuredWidth(),
-            dataSet.getEntriesModel(),
-            axisMap
-        ) + horizontalPadding
+        return virtualLayout.getMeasuredWidth(dataSet, axisMap) + horizontalPadding
     }
 
     public fun addAxis(axisRenderer: AxisRenderer) {
@@ -125,7 +121,7 @@ class DataSetView @JvmOverloads constructor(
 
     private fun updateBounds() {
         val dataSet = dataSet ?: return
-        virtualLayout.setBounds(contentBounds, dataSet, dataSet.getEntriesModel(), axisMap)
+        virtualLayout.setBounds(contentBounds, dataSet, axisMap)
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {

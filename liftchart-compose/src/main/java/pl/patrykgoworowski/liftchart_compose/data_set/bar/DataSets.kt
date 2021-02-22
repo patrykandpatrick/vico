@@ -109,11 +109,7 @@ fun <Model : EntriesModel> DataSet(
     Canvas(
         modifier = modifier
             .preferredWidth(
-                virtualLayout.getMeasuredWidth(
-                    dataSet.getMeasuredWidth(model),
-                    model,
-                    axisMap
-                ).pxToDp
+                virtualLayout.getMeasuredWidth(dataSet, model, axisMap).pxToDp
             )
             .preferredHeight(DEF_CHART_WIDTH.dp)
     ) {
