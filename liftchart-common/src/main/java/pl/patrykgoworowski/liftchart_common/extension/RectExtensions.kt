@@ -11,6 +11,19 @@ fun RectF.updateBounds(
     set(left, top, right, bottom)
 }
 
+fun RectF.updateBy(
+    left: Float = 0f,
+    top: Float = 0f,
+    right: Float = 0f,
+    bottom: Float = 0f
+) {
+    set(
+        left = this.left + left,
+        top = this.top + top,
+        right = this.right + right,
+        bottom = this.bottom + bottom)
+}
+
 fun RectF.set(
     left: Number,
     top: Number,

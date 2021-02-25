@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
 public abstract class Component(
@@ -15,8 +14,6 @@ public abstract class Component(
     protected val drawBounds: RectF = RectF()
     protected val path: Path = Path()
 
-    public var shape: Shape = RectShape()
-
     public var color by paint::color
 
     init {
@@ -25,6 +22,7 @@ public abstract class Component(
 
     open fun draw(
         canvas: Canvas,
+        shape: Shape,
         left: Float,
         top: Float,
         right: Float,
@@ -33,14 +31,14 @@ public abstract class Component(
         drawBounds.set(left, top, right, bottom)
         path.reset()
         shape.drawShape(canvas, paint, path, drawBounds)
-
     }
 
     open fun draw(
         canvas: Canvas,
+        shape: Shape,
         bounds: RectF
     ) {
-        draw(canvas, bounds.left, bounds.top, bounds.right, bounds.bottom)
+        draw(canvas, shape, bounds.left, bounds.top, bounds.right, bounds.bottom)
     }
 
 }

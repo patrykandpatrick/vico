@@ -5,6 +5,8 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.text.TextPaint
 import pl.patrykgoworowski.liftchart_common.data_set.axis.component.AxisComponent
+import pl.patrykgoworowski.liftchart_common.data_set.axis.component.GuidelineComponent
+import pl.patrykgoworowski.liftchart_common.data_set.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.DefaultAxisFormatter
 import pl.patrykgoworowski.liftchart_common.extension.set
@@ -15,7 +17,6 @@ public abstract class BaseLabeledAxisRenderer(
     textColor: Int
 ) : AxisRenderer {
 
-    protected val dataSetBounds: RectF = RectF()
     protected val axisBounds = RectF()
 
     val labelPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG).apply {
@@ -24,15 +25,17 @@ public abstract class BaseLabeledAxisRenderer(
         textAlign = Paint.Align.CENTER
     }
 
-    var axis: AxisComponent = AxisComponent(Color.BLUE, 0f)
-    var tick: AxisComponent = AxisComponent(Color.GRAY, 4f)
-    var guideline: AxisComponent = AxisComponent(Color.GRAY, 4f)
+    override var axis: AxisComponent = AxisComponent(Color.BLUE, 4f)
+    override var tick: TickComponent = TickComponent(Color.BLUE, 4f)
+    override var guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f)
 
     var textPadding = 12f
-    var padding: Float = 8f
-    var tickMarkLength = 8f
 
     override val bounds: RectF = RectF()
+    override val dataSetBounds: RectF = RectF()
+
+    override val axisThickness: Float
+        get() = axis.thickness
 
     override var isVisible: Boolean = true
 
@@ -40,10 +43,7 @@ public abstract class BaseLabeledAxisRenderer(
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
         bounds.set(left, top, right, bottom)
-        onSetBounds(left, top, right, bottom)
     }
-
-    abstract fun onSetBounds(left: Number, top: Number, right: Number, bottom: Number)
 
     override fun setDataSetBounds(left: Number, top: Number, right: Number, bottom: Number) {
         dataSetBounds.set(left, top, right, bottom)

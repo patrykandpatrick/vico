@@ -5,3 +5,9 @@ inline val Int.half: Int
 
 inline val Float.half: Float
     get() = this / 2
+
+inline val Number?.orZeroInt: Int
+    get() = this?.toInt() ?: 0
+
+inline val Float?.orZero: Float
+    get() = this ?: 0f

@@ -12,6 +12,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.Sin
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_COLOR
+import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 import pl.patrykgoworowski.liftchart_common.path.RectShape
@@ -58,7 +59,7 @@ public open class BarDataSetRenderer<Entry : AnyEntry>(
 
         val heightMultiplier = bounds.height() / model.maxY
         val bottom = bounds.bottom
-        val drawingStart = bounds.left + (drawBarSpacing / 2)
+        val drawingStart = bounds.left + drawBarSpacing.half
 
         model.entries.forEach { entry ->
             val height = entry.y * heightMultiplier

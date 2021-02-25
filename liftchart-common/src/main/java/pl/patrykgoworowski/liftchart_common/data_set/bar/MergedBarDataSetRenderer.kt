@@ -13,13 +13,9 @@ import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_COLOR
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_MERGED_BAR_SPACING
-import pl.patrykgoworowski.liftchart_common.extension.getOrDefault
-import pl.patrykgoworowski.liftchart_common.extension.getRepeatingOrDefault
-import pl.patrykgoworowski.liftchart_common.extension.set
-import pl.patrykgoworowski.liftchart_common.extension.setAll
+import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
-import kotlin.math.abs
 import kotlin.math.roundToInt
 
 open class MergedBarDataSetRenderer<Entry: AnyEntry> public constructor(
@@ -58,9 +54,9 @@ open class MergedBarDataSetRenderer<Entry: AnyEntry> public constructor(
 
     override fun getMeasuredWidth(model: MultiEntriesModel<Entry>): Int {
         val multiplier = groupMode.getWidthMultiplier(model)
-        val length = ((abs(model.maxX) - abs(model.minX)) / model.step) + 1
+        val length = model.getEntriesLength()
         val segmentWidth = (barWidth * multiplier) + (barInnerSpacing * (multiplier - 1))
-        return ((segmentWidth * length) + (barSpacing * (length + 1))).roundToInt()
+        return ((segmentWidth * length) + (barSpacing * length)).roundToInt()
     }
 
     override fun setBounds(
@@ -145,9 +141,12 @@ open class MergedBarDataSetRenderer<Entry: AnyEntry> public constructor(
                     (drawBarInnerSpacing * (entryCollectionSize - 1))
         }
 
-    private fun getDrawingStart(entryCollectionIndex: Int): Float = when (groupMode) {
-        MergeMode.Stack -> bounds.left + drawBarSpacing
-        MergeMode.Grouped -> bounds.left + ((drawBarWidth + drawBarInnerSpacing) * entryCollectionIndex) + drawBarSpacing
+    private fun getDrawingStart(entryCollectionIndex: Int): Float {
+        val baseLeft = bounds.left + drawBarSpacing.half
+        return when (groupMode) {
+            MergeMode.Stack -> baseLeft
+            MergeMode.Grouped -> baseLeft + ((drawBarWidth + drawBarInnerSpacing) * entryCollectionIndex)
+        }
     }
 
     private fun calculateDrawSegmentSpecIfNeeded(model: MultiEntriesModel<Entry>) {

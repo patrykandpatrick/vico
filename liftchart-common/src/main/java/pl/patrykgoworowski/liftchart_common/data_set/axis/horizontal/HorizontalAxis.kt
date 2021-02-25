@@ -19,38 +19,46 @@ class HorizontalAxis(
 ) : BaseLabeledAxisRenderer(position, textSize, textColor) {
 
     private val isBottom = position == BottomAxis
+    private val isTop = position == TopAxis
+
+    private val tickDrawBounds = RectF()
 
     public var tickType: TickType = TickType.Minor
 
     override var isLTR: Boolean = false
     override var isVisible: Boolean = true
 
-    override fun onSetBounds(left: Number, top: Number, right: Number, bottom: Number) {
+    init {
+//        axis.thickness = 16f
+    }
+
+    private fun updateAxisBounds() {
         when (position) {
             TopAxis -> axisBounds.set(
                 bounds.left,
-                bounds.bottom - (axis.thickness + padding),
+                bounds.bottom,
                 bounds.right,
-                bounds.bottom - padding
+                bounds.bottom + axis.thickness
             )
             BottomAxis -> axisBounds.set(
                 bounds.left,
-                bounds.top + padding,
+                bounds.top,
                 bounds.right,
-                bounds.top + axis.thickness + padding
+                bounds.top + axis.thickness
             )
         }
     }
 
     override fun onDraw(canvas: Canvas, model: AxisModel) {
-        axis.draw(canvas, axisBounds)
+        updateAxisBounds()
+        updateTickDrawBounds()
 
         val tickMarkTop = if (isBottom) {
-            axisBounds.bottom
+            axisBounds.top
         } else {
-            axisBounds.top - tickMarkLength
+            axisBounds.top - tick.length
         }
-        val tickMarkBottom = tickMarkTop + tickMarkLength
+        val tickMarkBottom = tickMarkTop + axis.thickness + tick.length
         val textY = if (isBottom) {
             tickMarkBottom + textPadding - labelPaint.ascent()
         } else {
@@ -74,9 +82,11 @@ class HorizontalAxis(
             }
         }
 
+        var valueIndex: Float = model.minX
+
         for (index in 0 until tickCount) {
 
-            axis.drawVerticalTick(
+            tick.drawVertical(
                 canvas = canvas,
                 top = tickMarkTop,
                 bottom = tickMarkBottom,
@@ -94,38 +104,27 @@ class HorizontalAxis(
 
             if (index < entriesLength) {
                 canvas.drawText(
-                    valueFormatter.formatValue(index + model.minX, model),
+                    valueFormatter.formatValue(valueIndex, model),
                     textDrawCenter,
                     textY,
                     labelPaint
                 )
+                valueIndex += model.step
             }
             tickDrawCenter += tickDrawStep
             textDrawCenter += tickDrawStep
         }
 
-        axis.drawAxis(canvas, axisBounds)
+        axis.draw(canvas, axisBounds)
     }
 
     private fun updateTickDrawBounds() {
-        val left: Float
-        val right: Float
-
-        when (tickType) {
-            TickType.Minor -> {
-                left = bounds.left - axis.thickness.half
-                right = bounds.right + axis.thickness.half
-            }
-            TickType.Major -> {
-                left = bounds.left
-                right = bounds.right
-            }
-        }
-        tickDrawBounds.set(left, bounds.top, right, bounds.bottom)
+        tickDrawBounds.set(bounds.left, bounds.top, bounds.right, bounds.bottom)
     }
 
     override fun getSize(model: EntriesModel): Float {
-        return axis.thickness + padding + tickMarkLength + textPadding + labelPaint.textHeight
+        return (if (isBottom) axis.thickness else 0f) +
+                tick.length + textPadding + labelPaint.textHeight
     }
 
     enum class TickType {
