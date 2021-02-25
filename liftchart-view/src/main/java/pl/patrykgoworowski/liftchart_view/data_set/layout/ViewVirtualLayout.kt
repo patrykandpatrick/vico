@@ -1,8 +1,8 @@
 package pl.patrykgoworowski.liftchart_view.data_set.layout
 
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.data_set.axis.AxisRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.axis.Position
+import pl.patrykgoworowski.liftchart_common.axis.AxisRenderer
+import pl.patrykgoworowski.liftchart_common.axis.Position
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel

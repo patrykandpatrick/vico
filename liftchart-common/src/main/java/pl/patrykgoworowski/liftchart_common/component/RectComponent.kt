@@ -1,12 +1,11 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis.component
+package pl.patrykgoworowski.liftchart_common.component
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
-public open class AxisComponent(
+public open class RectComponent(
     color: Int,
     public var thickness: Float = 2f,
     public var shape: Shape = RectShape(),

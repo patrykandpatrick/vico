@@ -1,8 +1,8 @@
 package pl.patrykgoworowski.liftchart_view.data_set
 
 import android.graphics.Canvas
+import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 

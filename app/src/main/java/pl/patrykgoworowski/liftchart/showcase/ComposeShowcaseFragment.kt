@@ -22,9 +22,11 @@ import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart.ui.byzantine
 import pl.patrykgoworowski.liftchart.ui.flickrPink
 import pl.patrykgoworowski.liftchart.ui.trypanPurple
-import pl.patrykgoworowski.liftchart_common.data_set.axis.*
-import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.DecimalFormatAxisValueFormatter
-import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.PercentageFormatAxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.*
+import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
+import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.extension.plusAssign
 import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet

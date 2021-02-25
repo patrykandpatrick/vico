@@ -1,10 +1,10 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis
+package pl.patrykgoworowski.liftchart_common.axis
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.extension.half
 import kotlin.properties.Delegates.observable

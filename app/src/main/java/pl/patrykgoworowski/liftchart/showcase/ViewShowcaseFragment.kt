@@ -12,10 +12,10 @@ import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
 import pl.patrykgoworowski.liftchart.extension.color
 import pl.patrykgoworowski.liftchart.extension.colors
 import pl.patrykgoworowski.liftchart_common.AnyEntry
-import pl.patrykgoworowski.liftchart_common.data_set.axis.*
-import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.DecimalFormatAxisValueFormatter
-import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.PercentageFormatAxisValueFormatter
-import pl.patrykgoworowski.liftchart_common.data_set.axis.horizontal.HorizontalAxis
+import pl.patrykgoworowski.liftchart_common.axis.*
+import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
 import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath

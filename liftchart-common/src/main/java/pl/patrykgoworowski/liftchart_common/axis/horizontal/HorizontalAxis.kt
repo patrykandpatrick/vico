@@ -1,13 +1,13 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis.horizontal
+package pl.patrykgoworowski.liftchart_common.axis.horizontal
 
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.data_set.axis.BaseLabeledAxisRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.axis.BottomAxis
-import pl.patrykgoworowski.liftchart_common.data_set.axis.HorizontalAxisPosition
-import pl.patrykgoworowski.liftchart_common.data_set.axis.TopAxis
-import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
+import pl.patrykgoworowski.liftchart_common.axis.BottomAxis
+import pl.patrykgoworowski.liftchart_common.axis.HorizontalAxisPosition
+import pl.patrykgoworowski.liftchart_common.axis.TopAxis
+import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.textHeight

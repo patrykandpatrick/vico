@@ -1,5 +1,6 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis.component
+package pl.patrykgoworowski.liftchart_common.axis.component
 
+import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
@@ -9,5 +10,5 @@ public open class TickComponent(
     thickness: Float,
     public var length: Float = 2 * thickness,
     shape: Shape = RectShape(),
-) : AxisComponent(color, thickness, shape) {
+) : RectComponent(color, thickness, shape) {
 }

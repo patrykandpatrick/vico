@@ -5,9 +5,9 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.axis.model.MutableAxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
-import pl.patrykgoworowski.liftchart_common.data_set.axis.model.MutableAxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.defaults.DEF_BAR_WIDTH

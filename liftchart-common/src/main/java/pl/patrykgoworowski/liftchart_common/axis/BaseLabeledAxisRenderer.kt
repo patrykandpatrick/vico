@@ -1,14 +1,14 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis
+package pl.patrykgoworowski.liftchart_common.axis
 
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.text.TextPaint
-import pl.patrykgoworowski.liftchart_common.data_set.axis.component.AxisComponent
-import pl.patrykgoworowski.liftchart_common.data_set.axis.component.GuidelineComponent
-import pl.patrykgoworowski.liftchart_common.data_set.axis.component.TickComponent
-import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.AxisValueFormatter
-import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.DefaultAxisFormatter
+import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
+import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
+import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.formatter.DefaultAxisFormatter
+import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.extension.set
 
 public abstract class BaseLabeledAxisRenderer(
@@ -25,7 +25,7 @@ public abstract class BaseLabeledAxisRenderer(
         textAlign = Paint.Align.CENTER
     }
 
-    override var axis: AxisComponent = AxisComponent(Color.BLUE, 4f)
+    override var axis: RectComponent = RectComponent(Color.BLUE, 4f)
     override var tick: TickComponent = TickComponent(Color.BLUE, 4f)
     override var guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f)
 

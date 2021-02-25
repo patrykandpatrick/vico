@@ -15,9 +15,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.axis.AxisRenderer
+import pl.patrykgoworowski.liftchart_common.axis.Position
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.axis.AxisRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.axis.Position
 import pl.patrykgoworowski.liftchart_common.data_set.bar.BarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedBarDataSetRenderer

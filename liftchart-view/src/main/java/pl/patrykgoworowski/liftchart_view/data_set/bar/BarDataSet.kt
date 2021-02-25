@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 import android.graphics.Canvas
 import android.graphics.Color.MAGENTA
 import pl.patrykgoworowski.liftchart_common.AnyEntry
-import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.bar.BarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.emptySingleEntriesModel

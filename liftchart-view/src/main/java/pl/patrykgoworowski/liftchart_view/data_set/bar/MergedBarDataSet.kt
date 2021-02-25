@@ -2,7 +2,7 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.AnyEntry
-import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedBarDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel

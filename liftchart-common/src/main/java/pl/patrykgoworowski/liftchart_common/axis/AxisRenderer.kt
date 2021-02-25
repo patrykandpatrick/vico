@@ -1,13 +1,13 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis
+package pl.patrykgoworowski.liftchart_common.axis
 
 import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.BoundsAware
-import pl.patrykgoworowski.liftchart_common.data_set.axis.component.AxisComponent
-import pl.patrykgoworowski.liftchart_common.data_set.axis.component.GuidelineComponent
-import pl.patrykgoworowski.liftchart_common.data_set.axis.component.TickComponent
-import pl.patrykgoworowski.liftchart_common.data_set.axis.formatter.AxisValueFormatter
-import pl.patrykgoworowski.liftchart_common.data_set.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
+import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
+import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 
 interface AxisRenderer : BoundsAware {
@@ -16,7 +16,7 @@ interface AxisRenderer : BoundsAware {
     val dataSetBounds: RectF
     val axisThickness: Float
 
-    var axis: AxisComponent
+    var axis: RectComponent
     var tick: TickComponent
     var guideline: GuidelineComponent
     var isLTR: Boolean

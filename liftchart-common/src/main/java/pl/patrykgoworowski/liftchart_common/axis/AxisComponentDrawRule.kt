@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_common.data_set.axis
+package pl.patrykgoworowski.liftchart_common.axis
 
 fun interface AxisComponentDrawRule {
     fun getShouldDraw(index: Int, count: Int): Boolean
