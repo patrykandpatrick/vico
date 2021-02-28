@@ -8,7 +8,7 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.axis.*
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
-import pl.patrykgoworowski.liftchart_common.defaults.DEF_CHART_WIDTH
+import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.extension.minusAssign
 import pl.patrykgoworowski.liftchart_common.extension.plusAssign
 import pl.patrykgoworowski.liftchart_common.extension.set

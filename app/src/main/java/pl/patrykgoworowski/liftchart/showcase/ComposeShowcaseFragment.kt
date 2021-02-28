@@ -28,9 +28,9 @@ import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisV
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.extension.plusAssign
-import pl.patrykgoworowski.liftchart_common.path.RectShape
-import pl.patrykgoworowski.liftchart_compose.data_set.bar.BarDataSet
-import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedBarDataSet
+import pl.patrykgoworowski.liftchart_compose.component.rectComponent
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedColumnChart
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.CutCornerBarPath
 import java.util.*
 
@@ -40,10 +40,11 @@ class ComposeShowcaseFragment : Fragment() {
         ViewModelProvider(requireActivity()).get(ShowcaseViewModel::class.java)
     }
 
-    private val chartModifier = Modifier
-        //.fillMaxWidth()
-        .wrapContentWidth()
-        //.background(Color.Black)
+    private val chartModifier
+        get() = Modifier
+            //.fillMaxWidth()
+            .wrapContentWidth()
+            //.background(Color.LightGray)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -70,25 +71,35 @@ class ComposeShowcaseFragment : Fragment() {
 
                     Spacer(modifier = Modifier.preferredHeight(24.dp))
 
-                    BarDataSet(
+                    ColumnChart(
                         singleEntryCollection = viewModel.entries,
                         modifier = chartModifier,
-                        color = flickrPink,
-                        shape = CutCornerBarPath(topLeft = 8.dp),
+                        column = rectComponent(
+                            color = flickrPink,
+                            thickness = 16.dp,
+                            shape = CutCornerBarPath(topLeft = 8f.dp)
+                        ),
                         axisMap = axisMap,
                     )
 
                     Spacer(modifier = Modifier.preferredHeight(24.dp))
 
-                    MergedBarDataSet(
+                    MergedColumnChart(
                         modifier = chartModifier,
                         multiEntryCollection = viewModel.multiEntries,
-                        colors = listOf(flickrPink, byzantine, trypanPurple),
-                        shapes = listOf(
-                            CutCornerBarPath(bottomRight = 8.dp),
-                            RectShape(),
-                            CutCornerBarPath(topLeft = 8.dp),
+                        columns = listOf(
+                            rectComponent(
+                                color = flickrPink,
+                                shape = CutCornerBarPath(topLeft = 8.dp)
+                            ),
+                            rectComponent(color = byzantine, thickness = 24.dp),
+                            rectComponent(
+                                color = trypanPurple,
+                                shape = CutCornerBarPath(topRight = 8.dp)
+                            ),
                         ),
+                        innerSpacing = 4.dp,
+                        spacing = 24.dp,
                         axisMap = axisMap,
                     )
                 }

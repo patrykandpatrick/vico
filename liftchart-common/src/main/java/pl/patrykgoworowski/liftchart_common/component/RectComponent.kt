@@ -1,25 +1,22 @@
 package pl.patrykgoworowski.liftchart_common.component
 
 import android.graphics.Canvas
-import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
 public open class RectComponent(
     color: Int,
     public var thickness: Float = 2f,
-    public var shape: Shape = RectShape(),
-) : Component(color) {
+    shape: Shape = RectShape(),
+) : Component(shape, color) {
+
+    var thicknessScale: Float = 1f
+
+    val scaledThickness: Float
+        get() = thickness * thicknessScale
 
     val shouldDraw: Boolean
         get() = thickness > 0f
-
-    public open fun draw(
-        canvas: Canvas,
-        bounds: RectF,
-    ) {
-        draw(canvas, shape, bounds)
-    }
 
     public open fun drawHorizontal(
         canvas: Canvas,
@@ -29,11 +26,10 @@ public open class RectComponent(
     ) {
         draw(
             canvas = canvas,
-            shape = shape,
             left = left,
-            top = centerY - (thickness / 2),
+            top = centerY - (scaledThickness / 2),
             right = right,
-            bottom =centerY + (thickness / 2)
+            bottom =centerY + (scaledThickness / 2)
         )
     }
 
@@ -45,10 +41,9 @@ public open class RectComponent(
     ) {
         draw(
             canvas = canvas,
-            shape = shape,
-            left = centerX - (thickness / 2),
+            left = centerX - (scaledThickness / 2),
             top = top,
-            right = centerX + (thickness / 2),
+            right = centerX + (scaledThickness / 2),
             bottom =bottom
         )
     }

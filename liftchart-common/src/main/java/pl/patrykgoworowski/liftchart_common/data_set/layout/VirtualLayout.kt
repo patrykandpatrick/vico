@@ -27,9 +27,6 @@ public open class VirtualLayout(
                     } else 0
                 }
             )
-            .minus(
-               0// (axisMap.left?.axisThickness.orZeroInt + axisMap.right?.axisThickness.orZeroInt).half
-            )
 
     public open fun <Model: EntriesModel> setBounds(
         contentBounds: RectF,
@@ -37,10 +34,11 @@ public open class VirtualLayout(
         model: Model,
         axisMap: Map<Position, AxisRenderer>,
     ) {
-        val startSize = axisMap[START]?.getSize(model) ?: 0f
-        val topSize = axisMap[TOP]?.getSize(model) ?: 0f
-        val endSize = axisMap[END]?.getSize(model) ?: 0f
-        val bottomSize = axisMap[BOTTOM]?.getSize(model) ?: 0f
+        val axisModel = dataSet.getAxisModel(model)
+        val startSize = axisMap[START]?.getSize(axisModel) ?: 0f
+        val topSize = axisMap[TOP]?.getSize(axisModel) ?: 0f
+        val endSize = axisMap[END]?.getSize(axisModel) ?: 0f
+        val bottomSize = axisMap[BOTTOM]?.getSize(axisModel) ?: 0f
 
         dataSet.setBounds(
             left = contentBounds.left + startSize,

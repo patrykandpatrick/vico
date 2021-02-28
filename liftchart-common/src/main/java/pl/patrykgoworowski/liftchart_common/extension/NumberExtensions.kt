@@ -1,5 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.extension
 
+import kotlin.math.roundToInt
+
 inline val Int.half: Int
     get() = this / 2
 
@@ -11,3 +13,6 @@ inline val Number?.orZeroInt: Int
 
 inline val Float?.orZero: Float
     get() = this ?: 0f
+
+inline val Float.round: Float
+    get() = roundToInt().toFloat()

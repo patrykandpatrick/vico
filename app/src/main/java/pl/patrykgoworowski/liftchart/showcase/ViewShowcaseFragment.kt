@@ -10,18 +10,17 @@ import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.liftchart.R
 import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
 import pl.patrykgoworowski.liftchart.extension.color
-import pl.patrykgoworowski.liftchart.extension.colors
 import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.axis.*
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
+import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
 import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath
-import pl.patrykgoworowski.liftchart_common.path.RectShape
-import pl.patrykgoworowski.liftchart_view.data_set.bar.BarDataSet
-import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedBarDataSet
+import pl.patrykgoworowski.liftchart_view.data_set.bar.ColumnDataSet
+import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedColumnDataSet
 import pl.patrykgoworowski.liftchart_view.extension.dp
 import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
 
@@ -49,9 +48,12 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             valueFormatter = DecimalFormatAxisValueFormatter()
         }
 
-        val barDataSet = BarDataSet<AnyEntry>(
-            color = requireContext().color { R.color.flickr_pink },
-            shape = CutCornerBarPath(topLeft = 8f.dp)
+        val barDataSet = ColumnDataSet<AnyEntry>(
+            column = RectComponent(
+                color = requireContext().color { R.color.flickr_pink },
+                shape = CutCornerBarPath(topLeft = 8f.dp),
+                thickness = 16f.dp
+            )
         )
 
         viewModel.entries.collectAsFlow
@@ -78,18 +80,22 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             valueFormatter = DecimalFormatAxisValueFormatter()
         }
 
-        val mergedBarDataSet = MergedBarDataSet<AnyEntry>(
-            colors = requireContext().colors {
-                intArrayOf(
-                    R.color.flickr_pink,
-                    R.color.byzantine,
-                    R.color.trypan_purple
-                )
-            },
-            shapes = listOf(
-                CutCornerBarPath(bottomRight = 8f.dp),
-                RectShape(),
-                CutCornerBarPath(topLeft = 8f.dp),
+        val mergedBarDataSet = MergedColumnDataSet<AnyEntry>(
+            columns = listOf(
+                RectComponent(
+                    color = requireContext().color { R.color.flickr_pink },
+                    thickness = 16f.dp,
+                    shape = CutCornerBarPath(topLeft = 8f.dp)
+                ),
+                RectComponent(
+                    color = requireContext().color { R.color.byzantine },
+                    thickness = 16f.dp,
+                ),
+                RectComponent(
+                    color = requireContext().color { R.color.trypan_purple },
+                    thickness = 16f.dp,
+                    shape = CutCornerBarPath(topRight = 8f.dp)
+                ),
             ),
             mergeMode = MergeMode.Stack
         )

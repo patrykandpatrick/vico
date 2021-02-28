@@ -7,7 +7,8 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
 public abstract class Component(
-    color: Int
+    public var shape: Shape,
+    color: Int,
 ) {
 
     protected val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -22,7 +23,6 @@ public abstract class Component(
 
     open fun draw(
         canvas: Canvas,
-        shape: Shape,
         left: Float,
         top: Float,
         right: Float,
@@ -35,10 +35,9 @@ public abstract class Component(
 
     open fun draw(
         canvas: Canvas,
-        shape: Shape,
         bounds: RectF
     ) {
-        draw(canvas, shape, bounds.left, bounds.top, bounds.right, bounds.bottom)
+        draw(canvas, bounds.left, bounds.top, bounds.right, bounds.bottom)
     }
 
 }
