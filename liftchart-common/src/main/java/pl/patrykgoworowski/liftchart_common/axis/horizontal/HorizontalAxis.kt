@@ -2,21 +2,27 @@ package pl.patrykgoworowski.liftchart_common.axis.horizontal
 
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.BottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.HorizontalAxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.TopAxis
+import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
+import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.extension.half
-import pl.patrykgoworowski.liftchart_common.extension.textHeight
 
 class HorizontalAxis(
     override val position: HorizontalAxisPosition,
-    textSize: Float = 32f,
-    textColor: Int = Color.DKGRAY,
-) : BaseLabeledAxisRenderer(position, textSize, textColor) {
+    label: TextComponent = TextComponent(),
+    axis: RectComponent = RectComponent(Color.BLUE, 4f),
+    tick: TickComponent = TickComponent(Color.BLUE, 4f),
+    guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
+) : BaseLabeledAxisRenderer(position, label, axis, tick, guideline) {
 
     private val isBottom = position == BottomAxis
     private val isTop = position == TopAxis
@@ -30,6 +36,7 @@ class HorizontalAxis(
 
     init {
 //        axis.thickness = 16f
+        label.textAlign = Paint.Align.CENTER
     }
 
     private fun updateAxisBounds() {
@@ -59,10 +66,11 @@ class HorizontalAxis(
             axisBounds.top - tick.length
         }
         val tickMarkBottom = tickMarkTop + axis.thickness + tick.length
+        val halfLabelSize = label.getHeight().half
         val textY = if (isBottom) {
-            tickMarkBottom + textPadding - labelPaint.ascent()
+            tickMarkBottom + textPadding + halfLabelSize
         } else {
-            tickMarkTop - textPadding - labelPaint.descent()
+            tickMarkTop - textPadding - halfLabelSize
         }
 
         val entriesLength = model.getEntriesLength()
@@ -103,11 +111,11 @@ class HorizontalAxis(
             }
 
             if (index < entriesLength) {
-                canvas.drawText(
+                label.drawTextCenteredVertically(
+                    canvas,
                     valueFormatter.formatValue(valueIndex, model),
                     textDrawCenter,
-                    textY,
-                    labelPaint
+                    textY
                 )
                 valueIndex += model.step
             }
@@ -124,7 +132,7 @@ class HorizontalAxis(
 
     override fun getSize(model: EntriesModel): Float {
         return (if (isBottom) axis.thickness else 0f) +
-                tick.length + textPadding + labelPaint.textHeight
+                tick.length + textPadding + label.getHeight()
     }
 
     enum class TickType {

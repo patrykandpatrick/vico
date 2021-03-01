@@ -3,30 +3,30 @@ package pl.patrykgoworowski.liftchart_common.axis
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
+import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
+import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.extension.half
 import kotlin.properties.Delegates.observable
 
 class VerticalAxis(
     override val position: VerticalAxisPosition,
-    textSize: Float = 32f,
-    textColor: Int = Color.DKGRAY,
-) : BaseLabeledAxisRenderer(position, textSize, textColor) {
-
-    companion object {
-        const val TEXT_MEASUREMENT_CHAR = "1"
-    }
+    label: TextComponent = TextComponent(),
+    axis: RectComponent = RectComponent(Color.BLUE, 4f),
+    tick: TickComponent = TickComponent(Color.BLUE, 4f),
+    guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
+) : BaseLabeledAxisRenderer(position, label, axis, tick, guideline) {
 
     private val isLeft: Boolean
         get() = (position == StartAxis && isLTR) || (position == EndAxis && !isLTR)
 
     private val labels = ArrayList<String>()
-    private val xTextBounds = Rect()
 
     override var isLTR: Boolean by observable(true) { _, _, isLTR ->
-        labelPaint.textAlign = if (isLeft) {
+        label.textAlign = if (isLeft) {
             Paint.Align.RIGHT
         } else {
             Paint.Align.LEFT
@@ -80,7 +80,6 @@ class VerticalAxis(
         }
 
         var tickCenterY: Float
-        var textY: Float
 
         for (index in 0..tickCount) {
 
@@ -102,19 +101,12 @@ class VerticalAxis(
                 )
             }
 
-            labelPaint.getTextBounds(
-                TEXT_MEASUREMENT_CHAR,
-                0,
-                TEXT_MEASUREMENT_CHAR.length,
-                xTextBounds
-            )
-            textY = tickCenterY + (xTextBounds.height() / 2)
             labels.getOrNull(index)?.let { label ->
-                canvas.drawText(
+                this.label.drawTextCenteredVertically(
+                    canvas,
                     label,
                     labelX,
-                    textY,
-                    labelPaint
+                    tickCenterY
                 )
             }
         }
@@ -133,7 +125,7 @@ class VerticalAxis(
 
     override fun getSize(model: EntriesModel): Float {
         val widestTextWidth = getLabels(model).maxOf { label ->
-            labelPaint.measureText(label)
+            this.label.getWidth(label)
         }
         return axis.thickness.half + tick.length + textPadding + widestTextWidth
     }
