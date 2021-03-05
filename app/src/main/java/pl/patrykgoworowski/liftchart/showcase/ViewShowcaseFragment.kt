@@ -11,7 +11,8 @@ import pl.patrykgoworowski.liftchart.R
 import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
 import pl.patrykgoworowski.liftchart.extension.color
 import pl.patrykgoworowski.liftchart_common.AnyEntry
-import pl.patrykgoworowski.liftchart_common.axis.*
+import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
@@ -39,14 +40,16 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
     }
 
     private fun setUpBar(dataSetView: DataSetView) {
-        val startAxis = VerticalAxis(StartAxis).apply {
-            valueFormatter = PercentageFormatAxisValueFormatter()
-        }
-        val endAxis = VerticalAxis(EndAxis)
-        val topAxis = HorizontalAxis(TopAxis)
-        val bottomAxis = HorizontalAxis(BottomAxis).apply {
-            valueFormatter = DecimalFormatAxisValueFormatter()
-        }
+        val axes = AxisManager(
+            VerticalAxis().apply {
+                valueFormatter = PercentageFormatAxisValueFormatter()
+            },
+            HorizontalAxis(),
+            VerticalAxis(),
+            HorizontalAxis().apply {
+                valueFormatter = DecimalFormatAxisValueFormatter()
+            }
+        )
 
         val barDataSet = ColumnDataSet<AnyEntry>(
             column = RectComponent(
@@ -62,23 +65,22 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         dataSetView.apply {
             dataSet = barDataSet
-            addAxis(startAxis)
-            addAxis(endAxis)
-            addAxis(topAxis)
-            addAxis(bottomAxis)
+            axisManager = axes
         }
     }
 
     private fun setUpMergedBar(dataSetView: DataSetView) {
 
-        val startAxis = VerticalAxis(StartAxis).apply {
-            valueFormatter = PercentageFormatAxisValueFormatter()
-        }
-        val endAxis = VerticalAxis(EndAxis)
-        val topAxis = HorizontalAxis(TopAxis)
-        val bottomAxis = HorizontalAxis(BottomAxis).apply {
-            valueFormatter = DecimalFormatAxisValueFormatter()
-        }
+        val axes = AxisManager(
+            VerticalAxis().apply {
+                valueFormatter = PercentageFormatAxisValueFormatter()
+            },
+            HorizontalAxis(),
+            VerticalAxis(),
+            HorizontalAxis().apply {
+                valueFormatter = DecimalFormatAxisValueFormatter()
+            }
+        )
 
         val mergedBarDataSet = MergedColumnDataSet<AnyEntry>(
             columns = listOf(
@@ -106,10 +108,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         dataSetView.apply {
             dataSet = mergedBarDataSet
-            addAxis(startAxis)
-            addAxis(endAxis)
-            addAxis(topAxis)
-            addAxis(bottomAxis)
+            axisManager = axes
         }
     }
 

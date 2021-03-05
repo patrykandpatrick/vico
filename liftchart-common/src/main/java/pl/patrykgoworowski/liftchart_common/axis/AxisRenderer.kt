@@ -11,9 +11,8 @@ import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 
-interface AxisRenderer : BoundsAware {
+interface AxisRenderer<Position: AxisPosition> : BoundsAware {
 
-    val position: AxisPosition
     val dataSetBounds: RectF
     val axisThickness: Float
 
@@ -25,17 +24,15 @@ interface AxisRenderer : BoundsAware {
     var isVisible: Boolean
     var valueFormatter: AxisValueFormatter
 
-    fun draw(canvas: Canvas, model: AxisModel) {
+    fun draw(canvas: Canvas, model: AxisModel, position: Position) {
         if (isVisible) {
-            onDraw(canvas, model)
+            onDraw(canvas, model, position)
         }
     }
 
-    fun onDraw(canvas: Canvas, model: AxisModel)
+    fun onDraw(canvas: Canvas, model: AxisModel, position: Position)
 
-    fun getAxisPosition(): Position = position.position
-
-    fun getSize(model: EntriesModel): Float
+    fun getSize(model: EntriesModel, position: Position): Float
 
     fun setDataSetBounds(
         left: Number,

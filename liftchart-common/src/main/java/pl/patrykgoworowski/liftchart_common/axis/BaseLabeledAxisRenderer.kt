@@ -10,13 +10,12 @@ import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.extension.set
 
-public abstract class BaseLabeledAxisRenderer(
-    override val position: AxisPosition,
+public abstract class BaseLabeledAxisRenderer<Position: AxisPosition>(
     override var label: TextComponent = TextComponent(),
     override var axis: RectComponent = RectComponent(Color.BLUE, 4f),
     override var tick: TickComponent = TickComponent(Color.BLUE, 4f),
     override var guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
-) : AxisRenderer {
+) : AxisRenderer<Position> {
 
     protected val axisBounds = RectF()
 

@@ -17,15 +17,11 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesMod
 import pl.patrykgoworowski.liftchart_common.extension.half
 
 class HorizontalAxis(
-    override val position: HorizontalAxisPosition,
     label: TextComponent = TextComponent(),
     axis: RectComponent = RectComponent(Color.BLUE, 4f),
     tick: TickComponent = TickComponent(Color.BLUE, 4f),
     guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
-) : BaseLabeledAxisRenderer(position, label, axis, tick, guideline) {
-
-    private val isBottom = position == BottomAxis
-    private val isTop = position == TopAxis
+) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline) {
 
     private val tickDrawBounds = RectF()
 
@@ -39,7 +35,7 @@ class HorizontalAxis(
         label.textAlign = Paint.Align.CENTER
     }
 
-    private fun updateAxisBounds() {
+    private fun updateAxisBounds(position: HorizontalAxisPosition) {
         when (position) {
             TopAxis -> axisBounds.set(
                 bounds.left,
@@ -56,18 +52,18 @@ class HorizontalAxis(
         }
     }
 
-    override fun onDraw(canvas: Canvas, model: AxisModel) {
-        updateAxisBounds()
+    override fun onDraw(canvas: Canvas, model: AxisModel, position: HorizontalAxisPosition) {
+        updateAxisBounds(position)
         updateTickDrawBounds()
 
-        val tickMarkTop = if (isBottom) {
+        val tickMarkTop = if (position.isBottom) {
             axisBounds.top
         } else {
             axisBounds.top - tick.length
         }
         val tickMarkBottom = tickMarkTop + axis.thickness + tick.length
         val halfLabelSize = label.getHeight().half
-        val textY = if (isBottom) {
+        val textY = if (position.isBottom) {
             tickMarkBottom + textPadding + halfLabelSize
         } else {
             tickMarkTop - textPadding - halfLabelSize
@@ -130,8 +126,8 @@ class HorizontalAxis(
         tickDrawBounds.set(bounds.left, bounds.top, bounds.right, bounds.bottom)
     }
 
-    override fun getSize(model: EntriesModel): Float {
-        return (if (isBottom) axis.thickness else 0f) +
+    override fun getSize(model: EntriesModel, position: HorizontalAxisPosition): Float {
+        return (if (position.isBottom) axis.thickness else 0f) +
                 tick.length + textPadding + label.getHeight()
     }
 

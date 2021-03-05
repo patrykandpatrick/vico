@@ -7,10 +7,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.axis.*
-import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
-import pl.patrykgoworowski.liftchart_common.extension.minusAssign
-import pl.patrykgoworowski.liftchart_common.extension.plusAssign
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
@@ -50,27 +47,18 @@ class DataSetView @JvmOverloads constructor(
 
     private val virtualLayout = ViewVirtualLayout(isLTR)
 
-    private val axisMap: EnumMap<Position, AxisRenderer> = EnumMap(Position::class.java)
-
     var dataSet: DataSetRendererWithModel<*>? by observable(null) { _, oldValue, newValue ->
         oldValue?.removeListener(updateRequestListener)
         newValue?.addListener(updateRequestListener)
         updateBounds()
     }
 
-    init {
-        addAxis(VerticalAxis(StartAxis))
-        addAxis(HorizontalAxis(TopAxis))
-        addAxis(VerticalAxis(EndAxis))
-        addAxis(HorizontalAxis(BottomAxis))
-    }
+    var axisManager = AxisManager()
 
     override fun onDraw(canvas: Canvas) {
         val dataSet = dataSet ?: return
         dataSet.getAxisModel().let { model ->
-            axisMap.forEach { (_, axis) ->
-                axis.draw(canvas, model)
-            }
+            axisManager.draw(canvas, model)
         }
         dataSet.draw(canvas)
     }
@@ -103,32 +91,16 @@ class DataSetView @JvmOverloads constructor(
 
     private fun getMeasuredContentWidth(): Int {
         val dataSet = dataSet ?: return horizontalPadding
-        return virtualLayout.getMeasuredWidth(dataSet, axisMap) + horizontalPadding
-    }
-
-    public fun addAxis(axisRenderer: AxisRenderer) {
-        axisRenderer.isLTR = isLTR
-        axisMap += axisRenderer
-    }
-
-    public fun removeAxis(axisRenderer: AxisRenderer) {
-        axisMap -= axisRenderer
-    }
-
-    public fun getAxis(position: Position): AxisRenderer? {
-        return axisMap[position]
+        return virtualLayout.getMeasuredWidth(dataSet, axisManager) + horizontalPadding
     }
 
     private fun updateBounds() {
         val dataSet = dataSet ?: return
-        virtualLayout.setBounds(contentBounds, dataSet, axisMap)
+        virtualLayout.setBounds(contentBounds, dataSet, axisManager)
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {
         val isLTR = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
         virtualLayout.isLTR = isLTR
-        axisMap.values.forEach { axis ->
-            axis.isLTR = isLTR
-        }
     }
 }

@@ -22,17 +22,16 @@ import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart.ui.byzantine
 import pl.patrykgoworowski.liftchart.ui.flickrPink
 import pl.patrykgoworowski.liftchart.ui.trypanPurple
-import pl.patrykgoworowski.liftchart_common.axis.*
+import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
-import pl.patrykgoworowski.liftchart_common.extension.plusAssign
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedColumnChart
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.CutCornerBarPath
-import java.util.*
 
 class ComposeShowcaseFragment : Fragment() {
 
@@ -55,15 +54,16 @@ class ComposeShowcaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val composeView = view as ComposeView
 
-        val axisMap = EnumMap<Position, AxisRenderer>(Position::class.java)
-        axisMap += VerticalAxis(StartAxis).apply {
-            valueFormatter = PercentageFormatAxisValueFormatter()
-        }
-        axisMap += VerticalAxis(EndAxis)
-        axisMap += HorizontalAxis(TopAxis)
-        axisMap += HorizontalAxis(BottomAxis).apply {
-            valueFormatter = DecimalFormatAxisValueFormatter()
-        }
+        val axisManager = AxisManager(
+            VerticalAxis().apply {
+                valueFormatter = PercentageFormatAxisValueFormatter()
+            },
+            HorizontalAxis(),
+            VerticalAxis(),
+            HorizontalAxis().apply {
+                valueFormatter = DecimalFormatAxisValueFormatter()
+            }
+        )
 
         composeView.setContent {
             MainTheme {
@@ -79,7 +79,7 @@ class ComposeShowcaseFragment : Fragment() {
                             thickness = 16.dp,
                             shape = CutCornerBarPath(topLeft = 8f.dp)
                         ),
-                        axisMap = axisMap,
+                        axisManager = axisManager,
                     )
 
                     Spacer(modifier = Modifier.preferredHeight(24.dp))
@@ -100,7 +100,7 @@ class ComposeShowcaseFragment : Fragment() {
                         ),
                         innerSpacing = 4.dp,
                         spacing = 24.dp,
-                        axisMap = axisMap,
+                        axisManager = axisManager,
                     )
                 }
             }

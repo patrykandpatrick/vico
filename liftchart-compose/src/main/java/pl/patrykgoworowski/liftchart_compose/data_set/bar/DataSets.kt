@@ -14,8 +14,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.AnyEntry
-import pl.patrykgoworowski.liftchart_common.axis.AxisRenderer
-import pl.patrykgoworowski.liftchart_common.axis.Position
+import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
@@ -49,7 +48,7 @@ fun ColumnChart(
     modifier: Modifier = Modifier,
     column: RectComponent = defaultColumnComponent,
     spacing: Dp = DEF_BAR_SPACING.dp,
-    axisMap: Map<Position, AxisRenderer> = emptyMap(),
+    axisManager: AxisManager = AxisManager(),
 ) {
     val dataSet = remember {
         ColumnDataSetRenderer<AnyEntry>(
@@ -64,7 +63,7 @@ fun ColumnChart(
         modifier = modifier,
         dataSet = dataSet,
         model = model.value,
-        axisMap = axisMap,
+        axisManager = axisManager,
     )
 }
 
@@ -76,7 +75,7 @@ fun MergedColumnChart(
     mergeMode: MergeMode = MergeMode.Stack,
     spacing: Dp = DEF_BAR_SPACING.dp,
     innerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
-    axisMap: Map<Position, AxisRenderer> = emptyMap(),
+    axisManager: AxisManager = AxisManager(),
 ) {
     val dataSet = remember { MergedColumnDataSetRenderer<AnyEntry>(columns, mergeMode = mergeMode) }
     val model = multiEntryCollection.collectAsState
@@ -88,7 +87,7 @@ fun MergedColumnChart(
         modifier = modifier,
         dataSet = dataSet,
         model = model.value,
-        axisMap = axisMap,
+        axisManager = axisManager,
     )
 }
 
@@ -97,7 +96,7 @@ fun <Model : EntriesModel> DataSet(
     modifier: Modifier,
     dataSet: DataSetRenderer<Model>,
     model: Model,
-    axisMap: Map<Position, AxisRenderer>
+    axisManager: AxisManager = AxisManager(),
 ) {
     val bounds = remember { RectF() }
 
@@ -107,19 +106,17 @@ fun <Model : EntriesModel> DataSet(
     Canvas(
         modifier = modifier
             .preferredWidth(
-                virtualLayout.getMeasuredWidth(dataSet, model, axisMap).pxToDp
+                virtualLayout.getMeasuredWidth(dataSet, model, axisManager).pxToDp
             )
             .preferredHeight(DEF_CHART_WIDTH.dp)
     ) {
 
         bounds.set(0f, 0f, size.width, size.height)
-        virtualLayout.setBounds(bounds, dataSet, model, axisMap)
+        virtualLayout.setBounds(bounds, dataSet, model, axisManager)
+        val canvas = drawContext.canvas.nativeCanvas
         dataSet.getAxisModel(model).let { axisModel ->
-            axisMap.forEach { (_, axis) ->
-                axis.isLTR = virtualLayout.isLTR
-                axis.draw(drawContext.canvas.nativeCanvas, axisModel)
-            }
+            axisManager.draw(canvas, axisModel)
         }
-        dataSet.draw(drawContext.canvas.nativeCanvas, model)
+        dataSet.draw(canvas, model)
     }
 }
