@@ -4,11 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -67,9 +63,9 @@ class ComposeShowcaseFragment : Fragment() {
 
         composeView.setContent {
             MainTheme {
-                ScrollableColumn {
+                Column {
 
-                    Spacer(modifier = Modifier.preferredHeight(24.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     ColumnChart(
                         singleEntryCollection = viewModel.entries,
@@ -82,7 +78,7 @@ class ComposeShowcaseFragment : Fragment() {
                         axisManager = axisManager,
                     )
 
-                    Spacer(modifier = Modifier.preferredHeight(24.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
                     MergedColumnChart(
                         modifier = chartModifier,

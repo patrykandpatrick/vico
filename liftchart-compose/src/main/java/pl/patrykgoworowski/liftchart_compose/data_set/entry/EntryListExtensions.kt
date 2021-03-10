@@ -10,10 +10,11 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.Mult
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 
-@Composable
-val <T: AnyEntry> SingleEntryCollection<T>.collectAsState: State<SingleEntriesModel<T>>
+val <T : AnyEntry> SingleEntryCollection<T>.collectAsState: State<SingleEntriesModel<T>>
+    @Composable
     get() = collectAsStateFlow.collectAsState()
 
-@Composable
-val <T: AnyEntry> MultiEntryCollection<T>.collectAsState: State<MultiEntriesModel<T>>
+
+val <T : AnyEntry> MultiEntryCollection<T>.collectAsState: State<MultiEntriesModel<T>>
+    @Composable
     get() = collectAsStateFlow.collectAsState()

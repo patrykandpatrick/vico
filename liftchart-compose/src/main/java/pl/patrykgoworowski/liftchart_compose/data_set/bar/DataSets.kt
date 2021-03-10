@@ -2,14 +2,15 @@ package pl.patrykgoworowski.liftchart_compose.data_set.bar
 
 import android.graphics.RectF
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.preferredHeight
-import androidx.compose.foundation.layout.preferredWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.platform.AmbientLayoutDirection
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -27,15 +28,18 @@ import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedColumnDataSetRend
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryList
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
+import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.extension.pxToDp
 
-@Composable
+
 val defaultColumnComponent: RectComponent
+    @Composable
     get() = RectComponent(
         color = MaterialTheme.colors.secondary.colorInt,
         thickness = DEF_BAR_WIDTH.dp.pixels,
@@ -101,14 +105,14 @@ fun <Model : EntriesModel> DataSet(
     val bounds = remember { RectF() }
 
     val virtualLayout = remember { VirtualLayout(true) }
-    virtualLayout.isLTR = AmbientLayoutDirection.current == LayoutDirection.Ltr
+    virtualLayout.isLTR = LocalLayoutDirection.current == LayoutDirection.Ltr
 
     Canvas(
         modifier = modifier
-            .preferredWidth(
+            .width(
                 virtualLayout.getMeasuredWidth(dataSet, model, axisManager).pxToDp
             )
-            .preferredHeight(DEF_CHART_WIDTH.dp)
+            .height(DEF_CHART_WIDTH.dp)
     ) {
 
         bounds.set(0f, 0f, size.width, size.height)
@@ -119,4 +123,10 @@ fun <Model : EntriesModel> DataSet(
         }
         dataSet.draw(canvas, model)
     }
+}
+
+@Preview("Column Chart", showBackground = false)
+@Composable
+fun PreviewColumnChart() {
+    ColumnChart(singleEntryCollection = SingleEntryList(entriesOf(0 to 1, 1 to 2, 2 to 3)))
 }
