@@ -10,6 +10,7 @@ import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 
 interface AxisRenderer<Position: AxisPosition> : BoundsAware {
 
@@ -48,5 +49,10 @@ interface AxisRenderer<Position: AxisPosition> : BoundsAware {
             bounds.right,
             bounds.bottom
         )
+
+    fun getDrawExtends(
+        outDimensions: Dimensions<Float>,
+        model: EntriesModel,
+    ): Dimensions<Float>
 
 }

@@ -20,10 +20,3 @@ object TopAxis : HorizontalAxisPosition()
 object BottomAxis : HorizontalAxisPosition()
 object StartAxis : VerticalAxisPosition()
 object EndAxis : VerticalAxisPosition()
-
-enum class Position {
-    START,
-    TOP,
-    END,
-    BOTTOM
-}

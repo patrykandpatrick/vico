@@ -7,6 +7,20 @@ data class Dimensions<T: Number>(
     var bottom: T
 ) {
 
+    fun set(all: T) = set(all, all, all, all)
+
+    fun set(
+        start: T,
+        top: T,
+        end: T,
+        bottom: T,
+    ): Dimensions<T> = apply {
+        this.start = start
+        this.top = top
+        this.end = end
+        this.bottom = bottom
+    }
+
     fun setLeft(isLTR: Boolean, value: T): Dimensions<T> {
         if (isLTR) start = value
         else end = value

@@ -3,12 +3,14 @@ package pl.patrykgoworowski.liftchart_common.axis
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Rect
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 
 class VerticalAxis(
@@ -19,6 +21,7 @@ class VerticalAxis(
 ) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline) {
 
     private val labels = ArrayList<String>()
+    private val tempBounds = Rect()
 
     override var isLTR: Boolean = true
 
@@ -118,6 +121,24 @@ class VerticalAxis(
             labels += valueFormatter.formatValue(value, model)
         }
         return labels
+    }
+
+    override fun getDrawExtends(
+        outDimensions: Dimensions<Float>,
+        model: EntriesModel
+    ): Dimensions<Float> {
+        val labels = getLabels(model)
+        if (labels.isEmpty()) return outDimensions.set(0f)
+
+        fun getHalfLabelHeight(text: String): Float =
+            label.getTextBounds(text).height().half.toFloat()
+
+        return outDimensions.set(
+            start = 0f,
+            top = getHalfLabelHeight(labels.first()),
+            end = 0f,
+            bottom = getHalfLabelHeight(labels.last())
+        )
     }
 
     override fun getSize(model: EntriesModel, position: VerticalAxisPosition): Float {
