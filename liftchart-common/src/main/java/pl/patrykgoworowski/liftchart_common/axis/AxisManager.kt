@@ -24,6 +24,20 @@ public open class AxisManager(
     private val endDimensions = floatDimensions()
     private val bottomDimensions = floatDimensions()
 
+    private val hasLeftAxis: Boolean
+        get() = leftAxis != null
+
+    private val hasTopAxis: Boolean
+        get() = topAxis != null
+
+    private val hasRightAxis: Boolean
+        get() = rightAxis != null
+
+    private val hasBottomAxis: Boolean
+        get() = bottomAxis != null
+
+    public var isLTR: Boolean = true
+
     @Suppress("UNCHECKED_CAST")
     val axes: Map<AxisPosition, AxisRenderer<AxisPosition>>
         get() = buildMap {
@@ -33,19 +47,15 @@ public open class AxisManager(
             bottomAxis?.let { put(BottomAxis, it as AxisRenderer<AxisPosition>) }
         }
 
-    fun getLeftAxis(isLTR: Boolean): AxisRenderer<VerticalAxisPosition>? =
-        if (isLTR) startAxis else endAxis
+    public val leftAxis: AxisRenderer<VerticalAxisPosition>?
+        get() = if (isLTR) startAxis else endAxis
 
-    fun getRightAxis(isLTR: Boolean): AxisRenderer<VerticalAxisPosition>? =
-        if (isLTR) endAxis else startAxis
+    public val rightAxis: AxisRenderer<VerticalAxisPosition>?
+        get() = if (isLTR) endAxis else startAxis
 
     fun getAxisWidth(model: AxisModel): Float =
         startAxis?.getSize(model, StartAxis).orZero +
-                endAxis?.getSize(model, EndAxis).orZero + 0
-//                maxOf(
-//                    topAxis?.getDrawExtends(axesDimensions, model)?.let { it.start + it.end }.orZero,
-//                    bottomAxis?.getDrawExtends(axesDimensions, model)?.let { it.start + it.end }.orZero,
-//                )
+                endAxis?.getSize(model, EndAxis).orZero
 
     fun getAxesDimensions(
         outDimensions: Dimensions<Float>,
@@ -83,40 +93,80 @@ public open class AxisManager(
         contentBounds: RectF,
         dataSetBounds: RectF,
         axisModel: AxisModel,
-        isLTR: Boolean
     ) {
         getAxesDimensions(tempDimensions, axisModel)
 
-        axes.forEach { (_, axis) -> axis.dataSetBounds.set(dataSetBounds) }
-        
+        val horizontalAxisLeftDrawBound = dataSetBounds.left + (leftAxis?.axisThickness?.half
+            ?: -tempDimensions.getLeft(isLTR))
+
+        val horizontalAxisRightDrawBound = dataSetBounds.right - (rightAxis?.axisThickness?.half
+            ?: -tempDimensions.getRight(isLTR))
+
         startAxis?.let { axis ->
             axis.setBounds(
                 left = if (isLTR) contentBounds.left else contentBounds.right - tempDimensions.end,
                 top = contentBounds.top + tempDimensions.top,
-                right = if (isLTR) contentBounds.left + tempDimensions.start + axis.axisThickness.half else contentBounds.right,
+                right = if (isLTR)
+                    contentBounds.left + tempDimensions.start + axis.axisThickness.half
+                else
+                    contentBounds.right,
                 bottom = contentBounds.bottom - tempDimensions.bottom
             )
+            axis.dataSetBounds.set(
+                horizontalAxisLeftDrawBound,
+                dataSetBounds.top + if (hasTopAxis) axis.tick.thickness else -axis.tick.thickness,
+                horizontalAxisRightDrawBound,
+                dataSetBounds.bottom + if (hasBottomAxis) 0f else axis.tick.thickness
+            )
         }
-        topAxis?.setBounds(
-            left = contentBounds.left + tempDimensions.start,
-            top = contentBounds.top,
-            right = contentBounds.right - tempDimensions.end,
-            bottom = contentBounds.top + tempDimensions.top
-        )
+        topAxis?.let { axis ->
+            axis.setBounds(
+                left = contentBounds.left + tempDimensions.start,
+                top = contentBounds.top,
+                right = contentBounds.right - tempDimensions.end,
+                bottom = contentBounds.top + tempDimensions.top
+            )
+            axis.dataSetBounds.set(
+                horizontalAxisLeftDrawBound,
+                dataSetBounds.top,
+                horizontalAxisRightDrawBound,
+                dataSetBounds.bottom
+            )
+        }
         endAxis?.let { axis ->
             axis.setBounds(
-                left = if (isLTR) contentBounds.right - (tempDimensions.end + axis.axisThickness.half) else contentBounds.left,
+                left = if (isLTR)
+                    contentBounds.right - (tempDimensions.end + axis.axisThickness.half)
+                else
+                    contentBounds.left,
                 top = contentBounds.top + tempDimensions.top,
-                right = if (isLTR) contentBounds.right else contentBounds.left + tempDimensions.end,
+                right = if (isLTR)
+                    contentBounds.right
+                else
+                    contentBounds.left + tempDimensions.end,
                 bottom = contentBounds.bottom - tempDimensions.bottom
             )
+            axis.dataSetBounds.set(
+                horizontalAxisLeftDrawBound,
+                dataSetBounds.top + if (hasTopAxis) axis.tick.thickness else -axis.tick.thickness,
+                horizontalAxisRightDrawBound,
+                dataSetBounds.bottom + if (hasBottomAxis) 0f else axis.tick.thickness
+            )
         }
-        bottomAxis?.setBounds(
-            left = contentBounds.left + tempDimensions.start,
-            top = contentBounds.bottom - tempDimensions.bottom,
-            right = contentBounds.right - tempDimensions.end,
-            bottom = contentBounds.bottom
-        )
+        bottomAxis?.let { axis ->
+            axis.setBounds(
+                left = contentBounds.left + tempDimensions.start,
+                top = contentBounds.bottom - tempDimensions.bottom,
+                right = contentBounds.right - tempDimensions.end,
+                bottom = contentBounds.bottom
+            )
+            axis.dataSetBounds.set(
+                horizontalAxisLeftDrawBound,
+                dataSetBounds.top,
+                horizontalAxisRightDrawBound,
+                dataSetBounds.bottom
+            )
+        }
     }
 
     fun draw(
@@ -127,6 +177,5 @@ public open class AxisManager(
             axis.draw(canvas, axisModel, position)
         }
     }
-
 
 }

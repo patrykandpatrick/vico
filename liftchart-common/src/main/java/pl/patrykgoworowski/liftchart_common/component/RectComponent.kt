@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.component
 
 import android.graphics.Canvas
+import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
@@ -29,9 +30,22 @@ public open class RectComponent(
             left = left,
             top = centerY - (scaledThickness / 2),
             right = right,
-            bottom =centerY + (scaledThickness / 2)
+            bottom = centerY + (scaledThickness / 2)
         )
     }
+
+    public open fun fitsInHorizontal(
+        left: Float,
+        right: Float,
+        centerY: Float,
+        boundingBox: RectF
+    ): Boolean = fitsIn(
+        left = left,
+        top = centerY - (scaledThickness / 2),
+        right = right,
+        bottom = centerY + (scaledThickness / 2),
+        boundingBox = boundingBox
+    )
 
     public open fun drawVertical(
         canvas: Canvas,
@@ -44,8 +58,21 @@ public open class RectComponent(
             left = centerX - (scaledThickness / 2),
             top = top,
             right = centerX + (scaledThickness / 2),
-            bottom =bottom
+            bottom = bottom
         )
     }
+
+    public open fun fitsInVertical(
+        top: Float,
+        bottom: Float,
+        centerX: Float,
+        boundingBox: RectF
+    ): Boolean = fitsIn(
+        left = centerX - (scaledThickness / 2),
+        top = top,
+        right = centerX + (scaledThickness / 2),
+        bottom = bottom,
+        boundingBox = boundingBox
+    )
 
 }

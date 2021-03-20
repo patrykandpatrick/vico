@@ -17,8 +17,6 @@ public abstract class BaseLabeledAxisRenderer<Position: AxisPosition>(
     override var guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
 ) : AxisRenderer<Position> {
 
-    protected val axisBounds = RectF()
-
     var textPadding = 12f
 
     override val bounds: RectF = RectF()

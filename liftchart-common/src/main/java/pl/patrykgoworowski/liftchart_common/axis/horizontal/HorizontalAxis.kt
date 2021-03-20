@@ -3,11 +3,9 @@ package pl.patrykgoworowski.liftchart_common.axis.horizontal
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.BottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.HorizontalAxisPosition
-import pl.patrykgoworowski.liftchart_common.axis.TopAxis
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
@@ -24,43 +22,20 @@ class HorizontalAxis(
     guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
 ) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline) {
 
-    private val tickDrawBounds = RectF()
-
     public var tickType: TickType = TickType.Minor
 
     override var isLTR: Boolean = false
     override var isVisible: Boolean = true
 
     init {
-//        axis.thickness = 16f
         label.textAlign = Paint.Align.CENTER
     }
 
-    private fun updateAxisBounds(position: HorizontalAxisPosition) {
-        when (position) {
-            TopAxis -> axisBounds.set(
-                bounds.left,
-                bounds.bottom,
-                bounds.right,
-                bounds.bottom + axis.thickness
-            )
-            BottomAxis -> axisBounds.set(
-                bounds.left,
-                bounds.top,
-                bounds.right,
-                bounds.top + axis.thickness
-            )
-        }
-    }
-
     override fun onDraw(canvas: Canvas, model: AxisModel, position: HorizontalAxisPosition) {
-        updateAxisBounds(position)
-        updateTickDrawBounds()
-
         val tickMarkTop = if (position.isBottom) {
-            axisBounds.top
+            bounds.top
         } else {
-            axisBounds.top - tick.length
+            bounds.bottom - tick.length
         }
         val tickMarkBottom = tickMarkTop + axis.thickness + tick.length
         val halfLabelSize = label.getHeight().half
@@ -72,14 +47,14 @@ class HorizontalAxis(
 
         val entriesLength = model.getEntriesLength()
         val tickCount: Int
-        val tickDrawStep = tickDrawBounds.width() / entriesLength
+        val tickDrawStep = bounds.width() / entriesLength
         var tickDrawCenter: Float
-        var textDrawCenter = tickDrawBounds.left + tickDrawStep.half
+        var textDrawCenter = bounds.left + tickDrawStep.half
 
         when (tickType) {
             TickType.Minor -> {
                 tickCount = entriesLength + 1
-                tickDrawCenter = tickDrawBounds.left
+                tickDrawCenter = bounds.left
             }
             TickType.Major -> {
                 tickCount = entriesLength
@@ -88,6 +63,9 @@ class HorizontalAxis(
         }
 
         var valueIndex: Float = model.minX
+
+        val guidelineTop = dataSetBounds.top
+        val guidelineBottom = dataSetBounds.bottom
 
         for (index in 0 until tickCount) {
 
@@ -98,11 +76,18 @@ class HorizontalAxis(
                 centerX = tickDrawCenter
             )
 
-            if (guideline.shouldDraw) {
+            if (guideline.shouldDraw &&
+                guideline.fitsInVertical(
+                    guidelineTop,
+                    guidelineBottom,
+                    tickDrawCenter,
+                    dataSetBounds
+                )
+            ) {
                 guideline.drawVertical(
                     canvas = canvas,
-                    top = dataSetBounds.top,
-                    bottom = dataSetBounds.bottom,
+                    top = guidelineTop,
+                    bottom = guidelineBottom,
                     centerX = tickDrawCenter
                 )
             }
@@ -120,11 +105,16 @@ class HorizontalAxis(
             textDrawCenter += tickDrawStep
         }
 
-        axis.draw(canvas, axisBounds)
-    }
-
-    private fun updateTickDrawBounds() {
-        tickDrawBounds.set(bounds.left, bounds.top, bounds.right, bounds.bottom)
+        axis.drawHorizontal(
+            canvas = canvas,
+            left = dataSetBounds.left,
+            right = dataSetBounds.right,
+            centerY = if (position is BottomAxis) {
+                bounds.top + axis.thickness.half
+            } else {
+                bounds.bottom + axis.thickness.half
+            }
+        )
     }
 
     override fun getDrawExtends(

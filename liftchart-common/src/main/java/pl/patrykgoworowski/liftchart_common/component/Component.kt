@@ -11,7 +11,7 @@ public abstract class Component(
     color: Int,
 ) {
 
-    protected val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     protected val drawBounds: RectF = RectF()
     protected val path: Path = Path()
 
@@ -39,5 +39,13 @@ public abstract class Component(
     ) {
         draw(canvas, bounds.left, bounds.top, bounds.right, bounds.bottom)
     }
+
+    open fun fitsIn(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+        boundingBox: RectF
+    ): Boolean = boundingBox.contains(left, top, right, bottom)
 
 }

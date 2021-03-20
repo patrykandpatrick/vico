@@ -25,3 +25,16 @@ public inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
     }
     return sum
 }
+
+public inline fun <T> Iterable<T>.forEachIndexedExtended(
+    selector: (index: Int, isFirst: Boolean, isLast: Boolean, value: T) -> Unit
+) {
+    var index = 0
+    val iterator = iterator()
+    var next: T
+    while (iterator.hasNext()) {
+        next = iterator.next()
+        selector(index, index == 0, !iterator.hasNext(), next)
+        index++
+    }
+}

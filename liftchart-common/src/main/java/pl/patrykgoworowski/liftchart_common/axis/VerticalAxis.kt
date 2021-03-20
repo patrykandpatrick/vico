@@ -3,7 +3,6 @@ package pl.patrykgoworowski.liftchart_common.axis
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Rect
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
@@ -21,7 +20,6 @@ class VerticalAxis(
 ) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline) {
 
     private val labels = ArrayList<String>()
-    private val tempBounds = Rect()
 
     override var isLTR: Boolean = true
 
@@ -29,27 +27,7 @@ class VerticalAxis(
 
     var tickCount = 4
 
-    private fun updateAxisBounds(position: VerticalAxisPosition) {
-        val topBound = bounds.top
-        val bottomBound = bounds.bottom + axis.thickness
-        when (position) {
-            StartAxis -> axisBounds.set(
-                bounds.right - axis.thickness,
-                topBound,
-                bounds.right,
-                bottomBound
-            )
-            EndAxis -> axisBounds.set(
-                bounds.left,
-                topBound,
-                bounds.left + axis.thickness,
-                bottomBound
-            )
-        }
-    }
-
     override fun onDraw(canvas: Canvas, model: AxisModel, position: VerticalAxisPosition) {
-        updateAxisBounds(position)
         val isLeft = position.isLeft(isLTR)
 
         label.textAlign = if (isLeft) {
@@ -62,15 +40,15 @@ class VerticalAxis(
         val axisStep = bounds.height() / tickCount
 
         val tickLeftX = if (isLeft) {
-            axisBounds.left - tick.length
+            bounds.right - (axis.thickness + tick.length)
         } else {
-            axisBounds.right
+            bounds.left
         }
 
         val tickRightX = if (isLeft) {
-            axisBounds.left
+            bounds.right
         } else {
-            axisBounds.right + tick.length
+            bounds.left + axis.thickness + tick.length
         }
 
         val labelX = if (isLeft) {
@@ -92,7 +70,17 @@ class VerticalAxis(
                 tickCenterY
             )
 
-            if (guideline.shouldDraw && guideline.drawRule.getShouldDraw(index, tickCount + 1)) {
+            val guidelineLeft = dataSetBounds.left
+            val guidelineRight = dataSetBounds.right
+
+            if (guideline.shouldDraw &&
+                guideline.fitsInHorizontal(
+                    guidelineLeft,
+                    guidelineRight,
+                    tickCenterY,
+                    dataSetBounds
+                )
+            ) {
                 guideline.drawHorizontal(
                     canvas = canvas,
                     left = dataSetBounds.left,
@@ -110,7 +98,16 @@ class VerticalAxis(
                 )
             }
         }
-        axis.draw(canvas, axisBounds)
+        axis.drawVertical(
+            canvas = canvas,
+            top = bounds.top,
+            bottom = bounds.bottom + axis.thickness,
+            centerX = if (isLeft) {
+                bounds.right - axis.thickness.half
+            } else {
+                bounds.left + axis.thickness.half
+            }
+        )
     }
 
     private fun getLabels(model: EntriesModel): List<String> {
@@ -131,11 +128,11 @@ class VerticalAxis(
         if (labels.isEmpty()) return outDimensions.set(0f)
 
         fun getHalfLabelHeight(text: String): Float =
-            label.getTextBounds(text).height().half.toFloat()
+            label.getTextBounds(text).height().half * 1.2f
 
         return outDimensions.set(
             start = 0f,
-            top = getHalfLabelHeight(labels.first()),
+            top = getHalfLabelHeight(labels.first()) - axisThickness,
             end = 0f,
             bottom = getHalfLabelHeight(labels.last())
         )
