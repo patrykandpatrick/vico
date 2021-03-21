@@ -20,7 +20,8 @@ class HorizontalAxis(
     axis: RectComponent = RectComponent(Color.BLUE, 4f),
     tick: TickComponent = TickComponent(Color.BLUE, 4f),
     guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
-) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline) {
+    textPadding: Float = 12f,
+) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline, textPadding) {
 
     public var tickType: TickType = TickType.Minor
 

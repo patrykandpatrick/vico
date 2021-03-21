@@ -17,7 +17,8 @@ class VerticalAxis(
     axis: RectComponent = RectComponent(Color.BLUE, 4f),
     tick: TickComponent = TickComponent(Color.BLUE, 4f),
     guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
-) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline) {
+    textPadding: Float = 12f,
+) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline, textPadding) {
 
     private val labels = ArrayList<String>()
 
