@@ -23,11 +23,13 @@ import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
+import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedColumnChart
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.CutCornerBarPath
+import pl.patrykgoworowski.liftchart_compose.extension.pixels
 
 class ComposeShowcaseFragment : Fragment() {
 
@@ -50,19 +52,22 @@ class ComposeShowcaseFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val composeView = view as ComposeView
 
-        val axisManager = AxisManager(
-            VerticalAxis().apply {
-                valueFormatter = PercentageFormatAxisValueFormatter()
-            },
-            HorizontalAxis(),
-            VerticalAxis(),
-            HorizontalAxis().apply {
-                valueFormatter = DecimalFormatAxisValueFormatter()
-            }
-        )
-
         composeView.setContent {
             MainTheme {
+
+                val axisManager = AxisManager(
+                    VerticalAxis().apply {
+                        valueFormatter = PercentageFormatAxisValueFormatter()
+                    },
+                    HorizontalAxis(),
+                    VerticalAxis(
+                        label = TextComponent().apply { setPadding(start = 8f.dp.pixels) }
+                    ),
+                    HorizontalAxis().apply {
+                        valueFormatter = DecimalFormatAxisValueFormatter()
+                    }
+                )
+
                 Column {
 
                     Spacer(modifier = Modifier.height(24.dp))

@@ -14,7 +14,6 @@ public abstract class BaseLabeledAxisRenderer<Position: AxisPosition>(
     override var axis: RectComponent,
     override var tick: TickComponent,
     override var guideline: GuidelineComponent,
-    public var textPadding: Float,
 ) : AxisRenderer<Position> {
 
     override val bounds: RectF = RectF()

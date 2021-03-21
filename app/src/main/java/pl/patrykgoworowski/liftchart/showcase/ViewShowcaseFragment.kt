@@ -19,10 +19,10 @@ import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
+import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath
 import pl.patrykgoworowski.liftchart_view.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedColumnDataSet
-import pl.patrykgoworowski.liftchart_view.extension.dp
 import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
 
 

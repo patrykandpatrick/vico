@@ -10,9 +10,9 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.emptySingleEntriesModel
+import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
-import pl.patrykgoworowski.liftchart_view.extension.dp
 
 public open class ColumnDataSet<Entry : AnyEntry>(
     column: RectComponent = RectComponent(MAGENTA, DEF_BAR_WIDTH.dp),

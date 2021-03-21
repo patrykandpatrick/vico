@@ -8,6 +8,7 @@ import android.view.View
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.axis.*
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
+import pl.patrykgoworowski.liftchart_common.extension.dpInt
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel

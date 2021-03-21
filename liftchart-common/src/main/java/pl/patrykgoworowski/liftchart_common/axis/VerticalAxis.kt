@@ -1,8 +1,11 @@
 package pl.patrykgoworowski.liftchart_common.axis
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
+import pl.patrykgoworowski.liftchart_common.DEF_AXIS_COMPONENT
+import pl.patrykgoworowski.liftchart_common.DEF_GUIDELINE_COMPONENT
+import pl.patrykgoworowski.liftchart_common.DEF_LABEL_COMPONENT
+import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
@@ -11,18 +14,20 @@ import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
+import kotlin.properties.Delegates.observable
 
 class VerticalAxis(
-    label: TextComponent = TextComponent(),
-    axis: RectComponent = RectComponent(Color.BLUE, 4f),
-    tick: TickComponent = TickComponent(Color.BLUE, 4f),
-    guideline: GuidelineComponent = GuidelineComponent(Color.GRAY, 4f),
-    textPadding: Float = 12f,
-) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline, textPadding) {
+    label: TextComponent = DEF_LABEL_COMPONENT,
+    axis: RectComponent = DEF_AXIS_COMPONENT,
+    tick: TickComponent = DEF_TICK_COMPONENT,
+    guideline: GuidelineComponent = DEF_GUIDELINE_COMPONENT,
+) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline) {
 
     private val labels = ArrayList<String>()
 
-    override var isLTR: Boolean = true
+    override var isLTR: Boolean by observable(true) { _, _, value ->
+        label.isLTR = isLTR
+    }
 
     override var isVisible: Boolean = true
 
@@ -53,9 +58,9 @@ class VerticalAxis(
         }
 
         val labelX = if (isLeft) {
-            tickLeftX - textPadding
+            tickLeftX
         } else {
-            tickRightX + textPadding
+            tickRightX
         }
 
         var tickCenterY: Float
@@ -143,7 +148,7 @@ class VerticalAxis(
         val widestTextWidth = getLabels(model).maxOf { label ->
             this.label.getWidth(label)
         }
-        return axis.thickness.half + tick.length + textPadding + widestTextWidth
+        return axis.thickness.half + tick.length + widestTextWidth
     }
 
 }

@@ -5,9 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.tabs.TabLayoutMediator
 import pl.patrykgoworowski.liftchart.databinding.ActivityMainBinding
 import pl.patrykgoworowski.liftchart.showcase.ShowcaseFragmentAdapter
+import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.path.RoundedCornersShape
 import pl.patrykgoworowski.liftchart_common.path.getDrawable
-import pl.patrykgoworowski.liftchart_view.extension.dp
 
 class MainActivity : AppCompatActivity() {
 
