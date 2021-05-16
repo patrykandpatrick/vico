@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_compose.data_set.bar
 
 import android.graphics.RectF
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -13,7 +14,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
@@ -33,6 +33,7 @@ import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.extension.pxToDp
+import kotlin.system.measureTimeMillis
 
 
 val defaultColumnComponent: RectComponent
@@ -44,15 +45,15 @@ val defaultColumnComponent: RectComponent
     )
 
 @Composable
-fun <T : AnyEntry> ColumnChart(
-    singleEntryCollection: SingleEntryCollection<T>,
+fun ColumnChart(
+    singleEntryCollection: SingleEntryCollection,
     modifier: Modifier = Modifier,
     column: RectComponent = defaultColumnComponent,
     spacing: Dp = DEF_BAR_SPACING.dp,
     axisManager: AxisManager = AxisManager(),
 ) {
     val dataSet = remember {
-        ColumnDataSetRenderer<T>(
+        ColumnDataSetRenderer(
             column = column,
             spacing = 0f,
         )
@@ -69,8 +70,8 @@ fun <T : AnyEntry> ColumnChart(
 }
 
 @Composable
-fun <T : AnyEntry> MergedColumnChart(
-    multiEntryCollection: MultiEntryCollection<T>,
+fun MergedColumnChart(
+    multiEntryCollection: MultiEntryCollection,
     modifier: Modifier = Modifier,
     columns: List<RectComponent> = listOf(defaultColumnComponent),
     mergeMode: MergeMode = MergeMode.Stack,
@@ -78,7 +79,7 @@ fun <T : AnyEntry> MergedColumnChart(
     innerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
     axisManager: AxisManager = AxisManager(),
 ) {
-    val dataSet = remember { MergedColumnDataSetRenderer<T>(columns, mergeMode = mergeMode) }
+    val dataSet = remember { MergedColumnDataSetRenderer(columns, mergeMode = mergeMode) }
     val model = multiEntryCollection.collectAsState
 
     dataSet.spacing = spacing.pixels

@@ -1,7 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry
 
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
+import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -21,13 +21,13 @@ open class SingleEntryModelCalculator {
         step = Float.MAX_VALUE
     }
 
-    fun calculateData(entries: Collection<AnyEntry>) {
+    fun calculateData(entries: Collection<DataEntry>) {
         resetValues()
         calculateMinMax(entries)
         calculateStep(entries)
     }
 
-    open fun calculateMinMax(entries: Collection<AnyEntry>) {
+    open fun calculateMinMax(entries: Collection<DataEntry>) {
         entries.forEach { entry ->
             minX = minX.coerceAtMost(entry.x)
             maxX = maxX.coerceAtLeast(entry.x)
@@ -36,10 +36,10 @@ open class SingleEntryModelCalculator {
         }
     }
 
-    fun calculateStep(entries: Collection<AnyEntry>) {
+    fun calculateStep(entries: Collection<DataEntry>) {
         val iterator = entries.iterator()
-        var currentEntry: AnyEntry
-        var previousEntry: AnyEntry? = null
+        var currentEntry: DataEntry
+        var previousEntry: DataEntry? = null
         while (iterator.hasNext()) {
             currentEntry = iterator.next()
             previousEntry?.let { prevEntry ->

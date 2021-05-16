@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.liftchart.R
 import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
 import pl.patrykgoworowski.liftchart.extension.color
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
@@ -51,7 +50,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             }
         )
 
-        val barDataSet = ColumnDataSet<AnyEntry>(
+        val barDataSet = ColumnDataSet(
             column = RectComponent(
                 color = requireContext().color { R.color.flickr_pink },
                 shape = CutCornerBarPath(topLeft = 8f.dp),
@@ -82,7 +81,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             }
         )
 
-        val mergedBarDataSet = MergedColumnDataSet<AnyEntry>(
+        val mergedBarDataSet = MergedColumnDataSet(
             columns = listOf(
                 RectComponent(
                     color = requireContext().color { R.color.flickr_pink },

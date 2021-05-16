@@ -2,7 +2,6 @@ package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableAxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
@@ -14,12 +13,12 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.Mult
 import pl.patrykgoworowski.liftchart_common.extension.*
 import kotlin.math.roundToInt
 
-open class MergedColumnDataSetRenderer<Entry : AnyEntry> public constructor(
+open class MergedColumnDataSetRenderer public constructor(
     public val columns: List<RectComponent>,
     public var spacing: Float = DEF_MERGED_BAR_SPACING,
     public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped
-) : DataSetRenderer<MultiEntriesModel<Entry>> {
+) : DataSetRenderer<MultiEntriesModel> {
 
     private val heightMap = HashMap<Float, Float>()
     private val axisModel = MutableAxisModel()
@@ -32,10 +31,10 @@ open class MergedColumnDataSetRenderer<Entry : AnyEntry> public constructor(
         if (columns.isEmpty()) throw IllegalStateException(ERR_COLUMN_LIST_EMPTY)
     }
 
-    override fun getMeasuredWidth(model: MultiEntriesModel<Entry>): Int {
+    override fun getMeasuredWidth(model: MultiEntriesModel): Int {
         val length = model.getEntriesLength()
         val segmentWidth = getSegmentSize(model.entryCollections.size, false)
-        return ((segmentWidth * length) + (spacing * length)).roundToInt()//.also { Log.d("Test", "measured=$it") }
+        return ((segmentWidth * length) + (spacing * length)).roundToInt()
     }
 
     override fun setBounds(
@@ -50,7 +49,7 @@ open class MergedColumnDataSetRenderer<Entry : AnyEntry> public constructor(
 
     override fun draw(
         canvas: Canvas,
-        model: MultiEntriesModel<Entry>
+        model: MultiEntriesModel
     ) {
         if (model.entryCollections.isEmpty()) return
 
@@ -109,7 +108,7 @@ open class MergedColumnDataSetRenderer<Entry : AnyEntry> public constructor(
         heightMap.clear()
     }
 
-    override fun getAxisModel(model: MultiEntriesModel<Entry>): AxisModel =
+    override fun getAxisModel(model: MultiEntriesModel): AxisModel =
         axisModel.apply {
             calculateDrawSegmentSpecIfNeeded(model)
             minX = model.minX
@@ -119,7 +118,7 @@ open class MergedColumnDataSetRenderer<Entry : AnyEntry> public constructor(
             step = model.step
             xSegmentWidth = getSegmentSize(model.entryCollections.size)
             xSegmentSpacing = spacing * drawScale
-            entries.setAll(model.mergedEntries)
+            entries.setAll(model.entries)
         }
 
     private fun getSegmentSize(entryCollectionSize: Int, scaled: Boolean = true): Float =
@@ -153,7 +152,7 @@ open class MergedColumnDataSetRenderer<Entry : AnyEntry> public constructor(
         return thickness
     }
 
-    private fun calculateDrawSegmentSpecIfNeeded(model: MultiEntriesModel<Entry>) {
+    private fun calculateDrawSegmentSpecIfNeeded(model: MultiEntriesModel) {
         if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(model)
         drawScale = if (bounds.width() >= measuredWidth) {

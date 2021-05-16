@@ -1,19 +1,19 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single
 
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
+import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 
-typealias SingleEntriesModelListener<Entry> = (SingleEntriesModel<Entry>) -> Unit
+typealias SingleEntriesModelListener = (SingleEntriesModel) -> Unit
 
-interface SingleEntryCollection<Entry: AnyEntry> : EntryCollection {
+interface SingleEntryCollection : EntryCollection {
 
-    val data: Collection<Entry>
-    val model: SingleEntriesModel<Entry>
+    val data: Collection<DataEntry>
+    val model: SingleEntriesModel
 
-    fun setEntries(entries: Collection<Entry>)
+    fun setEntries(entries: Collection<DataEntry>)
 
-    fun addOnEntriesChangedListener(listener: SingleEntriesModelListener<Entry>)
-    fun removeOnEntriesChangedListener(listener: SingleEntriesModelListener<Entry>)
+    fun addOnEntriesChangedListener(listener: SingleEntriesModelListener)
+    fun removeOnEntriesChangedListener(listener: SingleEntriesModelListener)
 
     companion object {
         const val NO_VALUE = -1f

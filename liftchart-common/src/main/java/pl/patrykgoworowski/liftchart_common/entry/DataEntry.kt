@@ -1,6 +1,6 @@
 package pl.patrykgoworowski.liftchart_common.entry
 
-interface DataEntry<X, Y> {
+interface DataEntry {
     val x: Float
     val y: Float
 }

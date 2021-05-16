@@ -1,19 +1,18 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi
 
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
+import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 
-typealias MultiEntriesModelListener<T> = (MultiEntriesModel<T>) -> Unit
+typealias MultiEntriesModelListener = (MultiEntriesModel) -> Unit
 
-interface MultiEntryCollection<Entry : AnyEntry> :
-    EntryCollection {
+interface MultiEntryCollection : EntryCollection {
 
     val stackedMinY: Float
     val stackedMaxY: Float
-    val model: MultiEntriesModel<Entry>
+    val model: MultiEntriesModel
 
-    fun setEntryCollection(entryCollections: List<List<Entry>>)
+    fun setEntryCollection(entryCollections: List<List<DataEntry>>)
 
-    fun addOnEntriesChangedListener(listener: MultiEntriesModelListener<Entry>)
-    fun removeOnEntriesChangedListener(listener: MultiEntriesModelListener<Entry>)
+    fun addOnEntriesChangedListener(listener: MultiEntriesModelListener)
+    fun removeOnEntriesChangedListener(listener: MultiEntriesModelListener)
 }

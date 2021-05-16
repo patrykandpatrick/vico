@@ -5,7 +5,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.sendBlocking
 import kotlinx.coroutines.flow.*
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModelListener
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
@@ -13,10 +12,10 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.Sin
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModelListener
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 
-val <T: AnyEntry> SingleEntryCollection<T>.collectAsFlow: Flow<SingleEntriesModel<T>>
+val SingleEntryCollection.collectAsFlow: Flow<SingleEntriesModel>
         get() = callbackFlow {
 
-            val listener: SingleEntriesModelListener<T> = { entriesModel ->
+            val listener: SingleEntriesModelListener = { entriesModel ->
                 sendBlocking((entriesModel))
             }
 
@@ -26,14 +25,14 @@ val <T: AnyEntry> SingleEntryCollection<T>.collectAsFlow: Flow<SingleEntriesMode
             }
         }.flowOn(Dispatchers.IO)
 
-val <T: AnyEntry> SingleEntryCollection<T>.collectAsStateFlow: StateFlow<SingleEntriesModel<T>>
+val SingleEntryCollection.collectAsStateFlow: StateFlow<SingleEntriesModel>
     get() = collectAsFlow
         .stateIn(GlobalScope, SharingStarted.Lazily, model)
 
-val <T: AnyEntry> MultiEntryCollection<T>.collectAsFlow: Flow<MultiEntriesModel<T>>
+val MultiEntryCollection.collectAsFlow: Flow<MultiEntriesModel>
     get() = callbackFlow {
 
-        val listener: MultiEntriesModelListener<T> = { entriesModel ->
+        val listener: MultiEntriesModelListener = { entriesModel ->
             sendBlocking((entriesModel))
         }
 
@@ -43,6 +42,6 @@ val <T: AnyEntry> MultiEntryCollection<T>.collectAsFlow: Flow<MultiEntriesModel<
         }
     }.flowOn(Dispatchers.IO)
 
-val <T: AnyEntry> MultiEntryCollection<T>.collectAsStateFlow: StateFlow<MultiEntriesModel<T>>
+val MultiEntryCollection.collectAsStateFlow: StateFlow<MultiEntriesModel>
     get() = collectAsFlow
         .stateIn(GlobalScope, SharingStarted.Lazily, model)

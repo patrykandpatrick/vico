@@ -1,16 +1,16 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi
 
-import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.entry.entryOf
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 
-class MultiEntryList<Entry : AnyEntry>() :
-    MultiEntryCollection<Entry> {
+class MultiEntryList() :
+    MultiEntryCollection {
 
     private val calculator = MultiEntriesModelCalculator()
-    private val listeners: ArrayList<MultiEntriesModelListener<Entry>> = ArrayList()
+    private val listeners: ArrayList<MultiEntriesModelListener> = ArrayList()
 
-    override var model: MultiEntriesModel<Entry> = emptyMultiEntriesModel()
+    override var model: MultiEntriesModel = emptyMultiEntriesModel()
 
     override val minX: Float by calculator::minX
     override val maxX: Float by calculator::maxX
@@ -20,17 +20,17 @@ class MultiEntryList<Entry : AnyEntry>() :
     override val stackedMaxY: Float by calculator::stackedMaxY
     override val stackedMinY: Float by calculator::stackedMinY
 
-    val data: ArrayList<List<Entry>> = ArrayList()
+    val data: ArrayList<List<DataEntry>> = ArrayList()
 
-    constructor(entryCollections: List<List<Entry>>) : this() {
+    constructor(entryCollections: List<List<DataEntry>>) : this() {
         setEntryCollection(entryCollections)
     }
 
-    constructor(vararg entryCollections: List<Entry>) : this() {
+    constructor(vararg entryCollections: List<DataEntry>) : this() {
         setEntryCollection(entryCollections.toList())
     }
 
-    override fun setEntryCollection(entryCollections: List<List<Entry>>) {
+    override fun setEntryCollection(entryCollections: List<List<DataEntry>>) {
         data.setAll(entryCollections)
         refreshModel()
     }
@@ -42,12 +42,12 @@ class MultiEntryList<Entry : AnyEntry>() :
         notifyChange()
     }
 
-    override fun addOnEntriesChangedListener(listener: MultiEntriesModelListener<Entry>) {
+    override fun addOnEntriesChangedListener(listener: MultiEntriesModelListener) {
         listeners += listener
         listener(model)
     }
 
-    override fun removeOnEntriesChangedListener(listener: MultiEntriesModelListener<Entry>) {
+    override fun removeOnEntriesChangedListener(listener: MultiEntriesModelListener) {
         listeners -= listener
     }
 

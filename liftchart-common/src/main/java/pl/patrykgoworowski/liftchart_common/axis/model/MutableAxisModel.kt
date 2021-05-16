@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.axis.model
 
-import pl.patrykgoworowski.liftchart_common.AnyEntry
+import pl.patrykgoworowski.liftchart_common.entry.DataEntry
+
 
 data class MutableAxisModel(
     override var minX: Float = 0f,
@@ -10,5 +11,5 @@ data class MutableAxisModel(
     override var step: Float = 1f,
     override var xSegmentWidth: Float = 1f,
     override var xSegmentSpacing: Float = 1f,
-    override val entries: ArrayList<AnyEntry> = ArrayList(),
+    override val entries: ArrayList<DataEntry> = ArrayList(),
 ) : AxisModel

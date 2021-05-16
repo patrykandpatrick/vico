@@ -1,7 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi
 
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.SingleEntryModelCalculator
+import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import kotlin.math.max
 import kotlin.math.min
 
@@ -19,12 +19,12 @@ class MultiEntriesModelCalculator: SingleEntryModelCalculator() {
         stackedMap.clear()
     }
 
-    fun calculateData(data: List<List<AnyEntry>>) {
+    fun calculateData(data: List<List<DataEntry>>) {
         resetValues()
         calculateMinMax(data)
     }
 
-    private fun calculateMinMax(data: List<List<AnyEntry>>) {
+    private fun calculateMinMax(data: List<List<DataEntry>>) {
         data.forEach { entryCollection ->
             calculateMinMax(entryCollection)
             calculateStep(entryCollection)
@@ -35,7 +35,7 @@ class MultiEntriesModelCalculator: SingleEntryModelCalculator() {
         }
     }
 
-    override fun calculateMinMax(entries: Collection<AnyEntry>) {
+    override fun calculateMinMax(entries: Collection<DataEntry>) {
         entries.forEach { entry ->
             minX = minX.coerceAtMost(entry.x)
             maxX = maxX.coerceAtLeast(entry.x)

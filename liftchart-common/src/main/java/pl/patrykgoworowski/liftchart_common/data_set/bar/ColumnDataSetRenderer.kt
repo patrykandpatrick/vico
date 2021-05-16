@@ -2,7 +2,6 @@ package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableAxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
@@ -13,10 +12,10 @@ import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 import kotlin.math.roundToInt
 
-public open class ColumnDataSetRenderer<Entry : AnyEntry>(
+public open class ColumnDataSetRenderer(
     val column: RectComponent,
     var spacing: Float,
-) : DataSetRenderer<SingleEntriesModel<Entry>> {
+) : DataSetRenderer<SingleEntriesModel> {
 
     private val axisModel = MutableAxisModel()
 
@@ -37,7 +36,7 @@ public open class ColumnDataSetRenderer<Entry : AnyEntry>(
         isScaleCalculated = false
     }
 
-    override fun draw(canvas: Canvas, model: SingleEntriesModel<Entry>) {
+    override fun draw(canvas: Canvas, model: SingleEntriesModel) {
         calculateDrawSegmentSpecIfNeeded(model)
 
         val spacing = spacing * drawScale
@@ -54,7 +53,7 @@ public open class ColumnDataSetRenderer<Entry : AnyEntry>(
         }
     }
 
-    override fun getAxisModel(model: SingleEntriesModel<Entry>): AxisModel =
+    override fun getAxisModel(model: SingleEntriesModel): AxisModel =
         axisModel.apply {
             calculateDrawSegmentSpecIfNeeded(model)
             minX = model.minX
@@ -67,7 +66,7 @@ public open class ColumnDataSetRenderer<Entry : AnyEntry>(
             entries.setAll(model.entries)
         }
 
-    private fun calculateDrawSegmentSpecIfNeeded(model: SingleEntriesModel<Entry>) {
+    private fun calculateDrawSegmentSpecIfNeeded(model: SingleEntriesModel) {
         if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(model)
         drawScale = if (bounds.width() >= measuredWidth) {
@@ -79,7 +78,7 @@ public open class ColumnDataSetRenderer<Entry : AnyEntry>(
         isScaleCalculated = true
     }
 
-    override fun getMeasuredWidth(model: SingleEntriesModel<Entry>): Int {
+    override fun getMeasuredWidth(model: SingleEntriesModel): Int {
         val length = model.getEntriesLength()
         return ((column.thickness * length) + (spacing * length)).roundToInt()
     }

@@ -1,10 +1,10 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single
 
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 
-data class SingleEntriesModel<T: AnyEntry>(
-    val entries: List<T>,
+data class SingleEntriesModel(
+    override val entries: List<DataEntry>,
     override val minX: Float,
     override val maxX: Float,
     override val minY: Float,
@@ -12,5 +12,5 @@ data class SingleEntriesModel<T: AnyEntry>(
     override val step: Float
 ) : EntriesModel
 
-fun <T: AnyEntry> emptySingleEntriesModel(): SingleEntriesModel<T> =
+fun emptySingleEntriesModel(): SingleEntriesModel =
     SingleEntriesModel(emptyList(), 1f, 1f, 1f, 1f, 1f)

@@ -2,7 +2,6 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.Color.MAGENTA
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
@@ -14,15 +13,15 @@ import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
 
-public open class ColumnDataSet<Entry : AnyEntry>(
+public open class ColumnDataSet(
     column: RectComponent = RectComponent(MAGENTA, DEF_BAR_WIDTH.dp),
     spacing: Float = DEF_BAR_SPACING.dp,
-) : ColumnDataSetRenderer<Entry>(column, spacing),
-    DataSetRendererWithModel<SingleEntriesModel<Entry>> {
+) : ColumnDataSetRenderer(column, spacing),
+    DataSetRendererWithModel<SingleEntriesModel> {
 
     private val listeners = ArrayList<UpdateRequestListener>()
 
-    var model: SingleEntriesModel<Entry> = emptySingleEntriesModel()
+    var model: SingleEntriesModel = emptySingleEntriesModel()
         set(value) {
             field = value
             listeners.forEach { it() }
@@ -42,6 +41,6 @@ public open class ColumnDataSet<Entry : AnyEntry>(
 
     override fun getMeasuredWidth(): Int = getMeasuredWidth(model)
 
-    override fun getEntriesModel(): SingleEntriesModel<Entry> = model
+    override fun getEntriesModel(): SingleEntriesModel = model
 
 }

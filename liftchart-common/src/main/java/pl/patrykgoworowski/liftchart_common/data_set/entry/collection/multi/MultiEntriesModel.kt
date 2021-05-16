@@ -1,12 +1,11 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi
 
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
-import pl.patrykgoworowski.liftchart_common.entry.FloatEntry
+import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 
-data class MultiEntriesModel<T: AnyEntry>(
-    val entryCollections: List<List<T>>,
-    val mergedEntries: List<FloatEntry>,
+data class MultiEntriesModel(
+    val entryCollections: List<List<DataEntry>>,
+    override val entries: List<DataEntry>,
     override val minX: Float,
     override val maxX: Float,
     override val minY: Float,
@@ -16,7 +15,7 @@ data class MultiEntriesModel<T: AnyEntry>(
     override val step: Float
 ): EntriesModel
 
-fun <T: AnyEntry> emptyMultiEntriesModel(): MultiEntriesModel<T> =
+fun emptyMultiEntriesModel(): MultiEntriesModel =
     MultiEntriesModel(
         emptyList(),
         emptyList(),

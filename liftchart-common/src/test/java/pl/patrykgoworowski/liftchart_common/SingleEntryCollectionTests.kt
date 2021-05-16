@@ -14,7 +14,7 @@ class SingleEntryCollectionTests {
 
     @Test
     fun testCollectionModifications() {
-        val entryCollection = SingleEntryList<AnyEntry>()
+        val entryCollection = SingleEntryList()
 
         fun assertSize(size: Int) {
             assertEquals(size, entryCollection.data.size)
@@ -39,7 +39,7 @@ class SingleEntryCollectionTests {
 
     @Test
     fun testSizes() {
-        val entryCollection = SingleEntryList<AnyEntry>()
+        val entryCollection = SingleEntryList()
 
         entryCollection += entry1
 
