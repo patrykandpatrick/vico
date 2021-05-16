@@ -5,28 +5,11 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import pl.patrykgoworowski.liftchart_common.extension.setBounds
 import pl.patrykgoworowski.liftchart_common.extension.updateBounds
 
 
 fun RectShape(): Shape = object : Shape {
-
-    override fun drawEntryShape(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        drawBounds: RectF,
-        barBounds: RectF,
-        entry: AnyEntry
-    ) {
-        drawShape(
-            canvas,
-            paint,
-            barPath,
-            barBounds
-        )
-    }
 
     override fun drawShape(
         canvas: Canvas,
@@ -129,35 +112,6 @@ fun DrawableBarPath(
 
     private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
             drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
-
-    override fun drawEntryShape(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        drawBounds: RectF,
-        barBounds: RectF,
-        entry: AnyEntry
-    ) {
-        if (barBounds.height() == 0f) return
-        val drawableHeight = barBounds.width() * ratio
-        val top = minOf(barBounds.top, barBounds.bottom - drawableHeight)
-        drawable.setBounds(barBounds.left, top, barBounds.right, top + drawableHeight)
-        drawable.draw(canvas)
-        otherCreator ?: return
-
-
-        barBounds.updateBounds(top = drawable.bounds.bottom.toFloat())
-        if (barBounds.height() > otherCreator.getMinHeight(barBounds)) {
-            otherCreator.drawEntryShape(
-                canvas,
-                paint,
-                barPath,
-                drawBounds,
-                barBounds,
-                entry
-            )
-        }
-    }
 
     override fun drawShape(
         canvas: Canvas,

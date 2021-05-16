@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 import kotlin.math.absoluteValue
 
 abstract class CornerShape(
@@ -21,22 +20,6 @@ abstract class CornerShape(
 
     private val minHeight by lazy {
         getMinimumHeight(topLeft, topRight, bottomRight, bottomLeft)
-    }
-
-    override fun drawEntryShape(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        drawBounds: RectF,
-        barBounds: RectF,
-        entry: AnyEntry
-    ) {
-       drawShape(
-           canvas,
-           paint,
-           barPath,
-           barBounds
-       )
     }
 
     override fun drawShape(

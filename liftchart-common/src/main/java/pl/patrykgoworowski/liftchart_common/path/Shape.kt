@@ -4,17 +4,8 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.AnyEntry
 
 interface Shape {
-    fun drawEntryShape(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        drawBounds: RectF,
-        barBounds: RectF,
-        entry: AnyEntry
-    )
 
     fun drawShape(
         canvas: Canvas,
