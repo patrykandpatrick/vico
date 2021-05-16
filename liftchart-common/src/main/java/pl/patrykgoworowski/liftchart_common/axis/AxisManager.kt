@@ -38,15 +38,6 @@ public open class AxisManager(
 
     public var isLTR: Boolean = true
 
-    @Suppress("UNCHECKED_CAST")
-    val axes: Map<AxisPosition, AxisRenderer<AxisPosition>>
-        get() = buildMap {
-            startAxis?.let { put(StartAxis, it as AxisRenderer<AxisPosition>) }
-            topAxis?.let { put(TopAxis, it as AxisRenderer<AxisPosition>) }
-            endAxis?.let { put(EndAxis, it as AxisRenderer<AxisPosition>) }
-            bottomAxis?.let { put(BottomAxis, it as AxisRenderer<AxisPosition>) }
-        }
-
     public val leftAxis: AxisRenderer<VerticalAxisPosition>?
         get() = if (isLTR) startAxis else endAxis
 
@@ -173,9 +164,10 @@ public open class AxisManager(
         canvas: Canvas,
         axisModel: AxisModel,
     ) {
-        axes.forEach { (position, axis) ->
-            axis.draw(canvas, axisModel, position)
-        }
+        startAxis?.draw(canvas, axisModel, StartAxis)
+        topAxis?.draw(canvas, axisModel, TopAxis)
+        endAxis?.draw(canvas, axisModel, EndAxis)
+        bottomAxis?.draw(canvas, axisModel, BottomAxis)
     }
 
 }
