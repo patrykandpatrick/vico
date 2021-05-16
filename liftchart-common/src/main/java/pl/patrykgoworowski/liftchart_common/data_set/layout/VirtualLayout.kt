@@ -28,8 +28,8 @@ public open class VirtualLayout(
         axisManager: AxisManager,
     ) {
         val axisModel = dataSet.getAxisModel(model)
-        axisManager.getAxesDimensions(axesDimensions, axisModel)
         axisManager.isLTR = isLTR
+        axisManager.getAxesDimensions(axesDimensions, axisModel)
 
         dataSet.setBounds(
             left = contentBounds.left + axesDimensions.getLeft(isLTR),
@@ -38,7 +38,7 @@ public open class VirtualLayout(
             bottom = contentBounds.bottom - axesDimensions.bottom
         )
 
-        axisManager.setAxesBounds(contentBounds, dataSet.bounds, axisModel)
+        axisManager.setAxesBounds(contentBounds, dataSet.bounds, axesDimensions)
     }
 
 }

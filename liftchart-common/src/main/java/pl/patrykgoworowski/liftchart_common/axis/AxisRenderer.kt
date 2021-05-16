@@ -33,7 +33,7 @@ interface AxisRenderer<Position: AxisPosition> : BoundsAware {
 
     fun onDraw(canvas: Canvas, model: AxisModel, position: Position)
 
-    fun getSize(model: EntriesModel, position: Position): Float
+    fun getSize(model: AxisModel, position: Position): Float
 
     fun setDataSetBounds(
         left: Number,

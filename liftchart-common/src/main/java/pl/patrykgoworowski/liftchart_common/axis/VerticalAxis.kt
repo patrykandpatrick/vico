@@ -96,11 +96,12 @@ class VerticalAxis(
             }
 
             labels.getOrNull(index)?.let { label ->
-                this.label.drawTextCenteredVertically(
+                this.label.drawTextVertically(
                     canvas,
                     label,
                     labelX,
-                    tickCenterY
+                    tickCenterY,
+                    TextComponent.VerticalPosition.Center,
                 )
             }
         }
@@ -144,7 +145,7 @@ class VerticalAxis(
         )
     }
 
-    override fun getSize(model: EntriesModel, position: VerticalAxisPosition): Float {
+    override fun getSize(model: AxisModel, position: VerticalAxisPosition): Float {
         val widestTextWidth = getLabels(model).maxOf { label ->
             this.label.getWidth(label)
         }

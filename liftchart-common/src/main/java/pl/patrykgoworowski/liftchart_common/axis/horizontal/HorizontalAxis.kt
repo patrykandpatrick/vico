@@ -14,6 +14,7 @@ import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
+import pl.patrykgoworowski.liftchart_common.component.TextComponent.VerticalPosition
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
@@ -25,6 +26,8 @@ class HorizontalAxis(
     tick: TickComponent = DEF_TICK_COMPONENT,
     guideline: GuidelineComponent = DEF_GUIDELINE_COMPONENT,
 ) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline) {
+
+    private val labels = ArrayList<String>()
 
     public var tickType: TickType = TickType.Minor
 
@@ -45,18 +48,14 @@ class HorizontalAxis(
             bounds.bottom - tick.length
         }
         val tickMarkBottom = tickMarkTop + axis.thickness + tick.length
-        val halfLabelSize = label.getHeight().half
-        val textY = if (position.isBottom) {
-            tickMarkBottom + halfLabelSize
-        } else {
-            tickMarkTop - halfLabelSize
-        }
 
         val entriesLength = model.getEntriesLength()
         val tickCount: Int
         val tickDrawStep = bounds.width() / entriesLength
         var tickDrawCenter: Float
         var textDrawCenter = bounds.left + tickDrawStep.half
+
+        val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
         when (tickType) {
             TickType.Minor -> {
@@ -100,11 +99,13 @@ class HorizontalAxis(
             }
 
             if (index < entriesLength) {
-                label.drawTextCenteredVertically(
+                label.drawTextVertically(
                     canvas,
                     valueFormatter.formatValue(valueIndex, model),
                     textDrawCenter,
-                    textY
+                    textY,
+                    if (position.isBottom) VerticalPosition.Top else VerticalPosition.Bottom,
+                    tickDrawStep.toInt()
                 )
                 valueIndex += model.step
             }
@@ -132,8 +133,20 @@ class HorizontalAxis(
         return outDimensions.setHorizontal(if (tickType == TickType.Minor) tick.thickness.half else 0f)
     }
 
-    override fun getSize(model: EntriesModel, position: HorizontalAxisPosition): Float {
-        return (if (position.isBottom) axis.thickness else 0f) + tick.length + label.getHeight()
+    override fun getSize(model: AxisModel, position: HorizontalAxisPosition): Float {
+        val highestLabelHeight = getLabels(model)
+            .maxOf { label.getHeight(it, model.xSegmentWidth.toInt()) }
+        return (if (position.isBottom) axis.thickness else 0f) + tick.length + highestLabelHeight
+    }
+
+    private fun getLabels(model: EntriesModel): List<String> {
+        labels.clear()
+        val range = (model.maxX - model.minX).toInt()
+        for (index in range downTo 0) {
+            val value = (model.maxX - (model.step * index))
+            labels += valueFormatter.formatValue(value, model)
+        }
+        return labels
     }
 
     enum class TickType {

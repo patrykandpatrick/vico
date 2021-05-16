@@ -18,7 +18,6 @@ public open class AxisManager(
     public open var bottomAxis: AxisRenderer<HorizontalAxisPosition>? = HorizontalAxis(),
 ) {
 
-    private val tempDimensions = floatDimensions()
     private val startDimensions = floatDimensions()
     private val topDimensions = floatDimensions()
     private val endDimensions = floatDimensions()
@@ -83,25 +82,24 @@ public open class AxisManager(
     fun setAxesBounds(
         contentBounds: RectF,
         dataSetBounds: RectF,
-        axisModel: AxisModel,
+        axesDimensions: Dimensions<Float>,
     ) {
-        getAxesDimensions(tempDimensions, axisModel)
 
         val horizontalAxisLeftDrawBound = dataSetBounds.left + (leftAxis?.axisThickness?.half
-            ?: -tempDimensions.getLeft(isLTR))
+            ?: -axesDimensions.getLeft(isLTR))
 
         val horizontalAxisRightDrawBound = dataSetBounds.right - (rightAxis?.axisThickness?.half
-            ?: -tempDimensions.getRight(isLTR))
+            ?: -axesDimensions.getRight(isLTR))
 
         startAxis?.let { axis ->
             axis.setBounds(
-                left = if (isLTR) contentBounds.left else contentBounds.right - tempDimensions.end,
-                top = contentBounds.top + tempDimensions.top,
+                left = if (isLTR) contentBounds.left else contentBounds.right - axesDimensions.end,
+                top = contentBounds.top + axesDimensions.top,
                 right = if (isLTR)
-                    contentBounds.left + tempDimensions.start + axis.axisThickness.half
+                    contentBounds.left + axesDimensions.start + axis.axisThickness.half
                 else
                     contentBounds.right,
-                bottom = contentBounds.bottom - tempDimensions.bottom
+                bottom = contentBounds.bottom - axesDimensions.bottom
             )
             axis.dataSetBounds.set(
                 horizontalAxisLeftDrawBound,
@@ -112,10 +110,10 @@ public open class AxisManager(
         }
         topAxis?.let { axis ->
             axis.setBounds(
-                left = contentBounds.left + tempDimensions.start,
+                left = contentBounds.left + axesDimensions.start,
                 top = contentBounds.top,
-                right = contentBounds.right - tempDimensions.end,
-                bottom = contentBounds.top + tempDimensions.top
+                right = contentBounds.right - axesDimensions.end,
+                bottom = contentBounds.top + axesDimensions.top
             )
             axis.dataSetBounds.set(
                 horizontalAxisLeftDrawBound,
@@ -127,15 +125,15 @@ public open class AxisManager(
         endAxis?.let { axis ->
             axis.setBounds(
                 left = if (isLTR)
-                    contentBounds.right - (tempDimensions.end + axis.axisThickness.half)
+                    contentBounds.right - (axesDimensions.end + axis.axisThickness.half)
                 else
                     contentBounds.left,
-                top = contentBounds.top + tempDimensions.top,
+                top = contentBounds.top + axesDimensions.top,
                 right = if (isLTR)
                     contentBounds.right
                 else
-                    contentBounds.left + tempDimensions.end,
-                bottom = contentBounds.bottom - tempDimensions.bottom
+                    contentBounds.left + axesDimensions.end,
+                bottom = contentBounds.bottom - axesDimensions.bottom
             )
             axis.dataSetBounds.set(
                 horizontalAxisLeftDrawBound,
@@ -146,9 +144,9 @@ public open class AxisManager(
         }
         bottomAxis?.let { axis ->
             axis.setBounds(
-                left = contentBounds.left + tempDimensions.start,
-                top = contentBounds.bottom - tempDimensions.bottom,
-                right = contentBounds.right - tempDimensions.end,
+                left = contentBounds.left + axesDimensions.start,
+                top = contentBounds.bottom - axesDimensions.bottom,
+                right = contentBounds.right - axesDimensions.end,
                 bottom = contentBounds.bottom
             )
             axis.dataSetBounds.set(
