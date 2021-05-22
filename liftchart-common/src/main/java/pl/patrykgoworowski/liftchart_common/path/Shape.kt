@@ -14,8 +14,6 @@ interface Shape {
         bounds: RectF
     )
 
-    fun getMinHeight(barBounds: RectF): Float = 0f
-
     fun getMinimumHeight(
         topLeft: Float,
         topRight: Float,

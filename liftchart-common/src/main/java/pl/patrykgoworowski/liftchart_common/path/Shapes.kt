@@ -25,7 +25,6 @@ fun RectShape(): Shape = object : Shape {
         canvas.drawPath(path, paint)
     }
 
-    override fun getMinHeight(barBounds: RectF): Float = 0f
 }
 
 fun RoundedCornersShape(all: Float): Shape = RoundedCornersShape(all, all, all, all)
@@ -63,9 +62,6 @@ fun RoundedCornersShape(
         canvas.drawPath(barPath, paint)
     }
 
-    override fun getMinHeight(barBounds: RectF): Float =
-        getMinimumHeight(topLeft, topRight, bottomRight, bottomLeft)
-
 }
 
 fun CutCornerBarPath(all: Float): Shape = CutCornerBarPath(all, all, all, all)
@@ -76,8 +72,6 @@ fun CutCornerBarPath(
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f
 ): Shape = object : CornerShape(topLeft, topRight, bottomRight, bottomLeft) {
-
-    private val minHeight = getMinimumHeight(topLeft, topRight, bottomRight, bottomLeft)
 
     override fun drawBarPathWithCorners(
         canvas: Canvas,
@@ -100,8 +94,6 @@ fun CutCornerBarPath(
         barPath.close()
         canvas.drawPath(barPath, paint)
     }
-
-    override fun getMinHeight(barBounds: RectF): Float = minHeight
 
 }
 
@@ -127,7 +119,7 @@ fun DrawableBarPath(
         otherCreator ?: return
 
         bounds.updateBounds(top = drawable.bounds.bottom.toFloat())
-        if (bounds.height() > otherCreator.getMinHeight(bounds)) {
+        if (bounds.height() > 0) {
             otherCreator.drawShape(
                 canvas,
                 paint,
@@ -136,7 +128,5 @@ fun DrawableBarPath(
             )
         }
     }
-
-    override fun getMinHeight(barBounds: RectF): Float = barBounds.width() * ratio
 
 }
