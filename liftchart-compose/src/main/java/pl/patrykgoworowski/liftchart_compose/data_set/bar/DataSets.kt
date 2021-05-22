@@ -1,7 +1,6 @@
 package pl.patrykgoworowski.liftchart_compose.data_set.bar
 
 import android.graphics.RectF
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -33,7 +32,6 @@ import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.extension.pxToDp
-import kotlin.system.measureTimeMillis
 
 
 val defaultColumnComponent: RectComponent
@@ -116,9 +114,7 @@ fun <Model : EntriesModel> DataSet(
         bounds.set(0f, 0f, size.width, size.height)
         virtualLayout.setBounds(bounds, dataSet, model, axisManager)
         val canvas = drawContext.canvas.nativeCanvas
-        dataSet.getAxisModel(model).let { axisModel ->
-            axisManager.draw(canvas, axisModel)
-        }
+        axisManager.draw(canvas, model)
         dataSet.draw(canvas, model)
     }
 }

@@ -115,6 +115,7 @@ class VerticalAxis(
                 bounds.left + axis.thickness.half
             }
         )
+        label.clearLayoutCache()
     }
 
     private fun getLabels(model: EntriesModel): List<String> {

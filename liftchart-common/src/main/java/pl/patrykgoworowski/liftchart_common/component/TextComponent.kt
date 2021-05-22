@@ -18,7 +18,8 @@ public open class TextComponent(
     shape: Shape = RectShape(),
     color: Int = Color.GRAY,
     textColor: Int = DKGRAY,
-    textSize: Float = 12f.sp
+    textSize: Float = 12f.sp,
+    val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
 ) : Component(shape, color), Padding by DefaultPadding() {
 
     public val textPaint = TextPaint()
@@ -32,6 +33,7 @@ public open class TextComponent(
     private var layout: StaticLayout = staticLayout("", textPaint, 0)
 
     private val measurementBounds = Rect()
+    private val layoutCache = HashMap<Int, StaticLayout>()
 
     init {
         textPaint.color = textColor
@@ -48,7 +50,7 @@ public open class TextComponent(
     ) {
 
         val layoutWidth = minOf(textPaint.measureText(text).toInt(), width)
-        layout = staticLayout(text, textPaint, layoutWidth, ellipsize = TextUtils.TruncateAt.END)
+        layout = getLayout(text, width)
         val layoutHeight = layout.height
 
         val adjustedX = getAdjustedX(textX)
@@ -112,9 +114,17 @@ public open class TextComponent(
         text: String = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
     ): Float {
-        layout = staticLayout(text, textPaint, width, ellipsize = TextUtils.TruncateAt.END)
-        return layout.height + padding.top + padding.bottom
+        return getLayout(text, width).height + padding.top + padding.bottom
     }
+
+    public fun clearLayoutCache() {
+        layoutCache.clear()
+    }
+
+    private fun getLayout(text: String, width: Int): StaticLayout =
+        layoutCache.getOrPut(text.hashCode() + 31 * width) {
+            staticLayout(text, textPaint, width, ellipsize = ellipsize)
+        }
 
     enum class VerticalPosition {
         Top,

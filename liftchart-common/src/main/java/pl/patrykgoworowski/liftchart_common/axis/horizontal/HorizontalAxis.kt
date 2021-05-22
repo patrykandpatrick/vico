@@ -124,6 +124,7 @@ class HorizontalAxis(
                 bounds.bottom + axis.thickness.half
             }
         )
+        label.clearLayoutCache()
     }
 
     override fun getDrawExtends(
