@@ -15,11 +15,13 @@ interface AxisRenderer<Position: AxisPosition> : BoundsAware {
 
     val dataSetBounds: RectF
     val axisThickness: Float
+    val tickThickness: Float
+    val tickLength: Float
 
-    var label: TextComponent
-    var axis: RectComponent
-    var tick: TickComponent
-    var guideline: GuidelineComponent
+    var label: TextComponent?
+    var axis: RectComponent?
+    var tick: TickComponent?
+    var guideline: GuidelineComponent?
     var isLTR: Boolean
     var isVisible: Boolean
     var valueFormatter: AxisValueFormatter

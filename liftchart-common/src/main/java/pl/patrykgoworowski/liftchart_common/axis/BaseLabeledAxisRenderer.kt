@@ -7,20 +7,34 @@ import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DefaultAxisFormatter
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
+import pl.patrykgoworowski.liftchart_common.extension.orZero
 import pl.patrykgoworowski.liftchart_common.extension.set
+import kotlin.properties.Delegates
 
 public abstract class BaseLabeledAxisRenderer<Position: AxisPosition>(
-    override var label: TextComponent,
-    override var axis: RectComponent,
-    override var tick: TickComponent,
-    override var guideline: GuidelineComponent,
+    override var label: TextComponent?,
+    override var axis: RectComponent?,
+    override var tick: TickComponent?,
+    override var guideline: GuidelineComponent?,
 ) : AxisRenderer<Position> {
+
+    protected val labels = ArrayList<String>()
 
     override val bounds: RectF = RectF()
     override val dataSetBounds: RectF = RectF()
 
     override val axisThickness: Float
-        get() = axis.thickness
+        get() = axis?.thickness.orZero
+
+    override val tickLength: Float
+        get() = tick?.length.orZero
+
+    override val tickThickness: Float
+        get() = tick?.thickness.orZero
+
+    override var isLTR: Boolean by Delegates.observable(true) { _, _, value ->
+        label?.isLTR = isLTR
+    }
 
     override var isVisible: Boolean = true
 

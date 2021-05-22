@@ -18,37 +18,31 @@ import pl.patrykgoworowski.liftchart_common.component.TextComponent.VerticalPosi
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
-import kotlin.properties.Delegates.observable
+import pl.patrykgoworowski.liftchart_common.extension.orZero
 
 class HorizontalAxis(
-    label: TextComponent = DEF_LABEL_COMPONENT,
-    axis: RectComponent = DEF_AXIS_COMPONENT,
-    tick: TickComponent = DEF_TICK_COMPONENT,
-    guideline: GuidelineComponent = DEF_GUIDELINE_COMPONENT,
+    label: TextComponent? = DEF_LABEL_COMPONENT,
+    axis: RectComponent? = DEF_AXIS_COMPONENT,
+    tick: TickComponent? = DEF_TICK_COMPONENT,
+    guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
 ) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline),
     HorizontalAxisRenderer {
 
-    private val labels = ArrayList<String>()
-
     public var tickType: TickType = TickType.Minor
-
-    override var isLTR: Boolean by observable(true) { _, _, value ->
-        label.isLTR = isLTR
-    }
 
     override var isVisible: Boolean = true
 
     init {
-        label.textAlign = Paint.Align.CENTER
+        label?.textAlign = Paint.Align.CENTER
     }
 
     override fun onDraw(canvas: Canvas, model: EntriesModel, position: HorizontalAxisPosition) {
         val tickMarkTop = if (position.isBottom) {
             bounds.top
         } else {
-            bounds.bottom - tick.length
+            bounds.bottom - tickLength
         }
-        val tickMarkBottom = tickMarkTop + axis.thickness + tick.length
+        val tickMarkBottom = tickMarkTop + axisThickness + tickLength
 
         val entriesLength = model.getEntriesLength()
         val tickCount: Int
@@ -76,31 +70,30 @@ class HorizontalAxis(
 
         for (index in 0 until tickCount) {
 
-            tick.drawVertical(
+            tick?.drawVertical(
                 canvas = canvas,
                 top = tickMarkTop,
                 bottom = tickMarkBottom,
                 centerX = tickDrawCenter
             )
 
-            if (guideline.shouldDraw &&
-                guideline.fitsInVertical(
-                    guidelineTop,
-                    guidelineBottom,
-                    tickDrawCenter,
-                    dataSetBounds
-                )
-            ) {
-                guideline.drawVertical(
-                    canvas = canvas,
-                    top = guidelineTop,
-                    bottom = guidelineBottom,
-                    centerX = tickDrawCenter
-                )
-            }
+            guideline?.takeIf {
+                it.shouldDraw &&
+                        it.fitsInVertical(
+                            guidelineTop,
+                            guidelineBottom,
+                            tickDrawCenter,
+                            dataSetBounds
+                        )
+            }?.drawVertical(
+                canvas = canvas,
+                top = guidelineTop,
+                bottom = guidelineBottom,
+                centerX = tickDrawCenter
+            )
 
             if (index < entriesLength) {
-                label.drawTextVertically(
+                label?.drawTextVertically(
                     canvas,
                     valueFormatter.formatValue(valueIndex, model),
                     textDrawCenter,
@@ -114,17 +107,17 @@ class HorizontalAxis(
             textDrawCenter += tickDrawStep
         }
 
-        axis.drawHorizontal(
+        axis?.drawHorizontal(
             canvas = canvas,
             left = dataSetBounds.left,
             right = dataSetBounds.right,
             centerY = if (position is BottomAxis) {
-                bounds.top + axis.thickness.half
+                bounds.top + axis?.thickness?.half.orZero
             } else {
-                bounds.bottom + axis.thickness.half
+                bounds.bottom + axis?.thickness?.half.orZero
             }
         )
-        label.clearLayoutCache()
+        label?.clearLayoutCache()
     }
 
     override fun getDrawExtends(
@@ -132,7 +125,10 @@ class HorizontalAxis(
         model: EntriesModel
     ): Dimensions<Float> {
         outDimensions.setVertical(0f)
-        return outDimensions.setHorizontal(if (tickType == TickType.Minor) tick.thickness.half else 0f)
+        return outDimensions.setHorizontal(
+            if (tickType == TickType.Minor) tick?.thickness?.half.orZero
+            else 0f
+        )
     }
 
     override fun getHeight(
@@ -142,8 +138,8 @@ class HorizontalAxis(
     ): Float {
         val labelWidth = (width / model.getEntriesLength()).toInt()
         val highestLabelHeight = getLabels(model)
-            .maxOf { label.getHeight(it, labelWidth) }
-        return (if (position.isBottom) axis.thickness else 0f) + tick.length + highestLabelHeight
+            .maxOf { label?.getHeight(it, labelWidth).orZero }
+        return (if (position.isBottom) axisThickness else 0f) + tickLength + highestLabelHeight
     }
 
     private fun getLabels(model: EntriesModel): List<String> {
