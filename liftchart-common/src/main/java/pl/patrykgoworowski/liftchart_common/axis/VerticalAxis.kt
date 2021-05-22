@@ -8,7 +8,6 @@ import pl.patrykgoworowski.liftchart_common.DEF_LABEL_COMPONENT
 import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
-import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
@@ -21,7 +20,8 @@ class VerticalAxis(
     axis: RectComponent = DEF_AXIS_COMPONENT,
     tick: TickComponent = DEF_TICK_COMPONENT,
     guideline: GuidelineComponent = DEF_GUIDELINE_COMPONENT,
-) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline) {
+) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline),
+    VerticalAxisRenderer {
 
     private val labels = ArrayList<String>()
 
@@ -33,7 +33,7 @@ class VerticalAxis(
 
     var tickCount = 4
 
-    override fun onDraw(canvas: Canvas, model: AxisModel, position: VerticalAxisPosition) {
+    override fun onDraw(canvas: Canvas, model: EntriesModel, position: VerticalAxisPosition) {
         val isLeft = position.isLeft(isLTR)
 
         label.textAlign = if (isLeft) {
@@ -145,7 +145,10 @@ class VerticalAxis(
         )
     }
 
-    override fun getSize(model: AxisModel, position: VerticalAxisPosition): Float {
+    override fun getWidth(
+        model: EntriesModel,
+        position: VerticalAxisPosition,
+    ): Float {
         val widestTextWidth = getLabels(model).maxOf { label ->
             this.label.getWidth(label)
         }

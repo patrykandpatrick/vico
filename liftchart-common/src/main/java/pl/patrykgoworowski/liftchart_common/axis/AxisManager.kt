@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_common.axis
 import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
-import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.floatDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
@@ -12,10 +12,10 @@ import pl.patrykgoworowski.liftchart_common.extension.orZero
 
 @OptIn(ExperimentalStdlibApi::class)
 public open class AxisManager(
-    public open var startAxis: AxisRenderer<VerticalAxisPosition>? = VerticalAxis(),
-    public open var topAxis: AxisRenderer<HorizontalAxisPosition>? = null,
-    public open var endAxis: AxisRenderer<VerticalAxisPosition>? = null,
-    public open var bottomAxis: AxisRenderer<HorizontalAxisPosition>? = HorizontalAxis(),
+    public open var startAxis: VerticalAxisRenderer? = VerticalAxis(),
+    public open var topAxis: HorizontalAxisRenderer? = null,
+    public open var endAxis: VerticalAxisRenderer? = null,
+    public open var bottomAxis: HorizontalAxisRenderer? = HorizontalAxis(),
 ) {
 
     private val startDimensions = floatDimensions()
@@ -43,36 +43,42 @@ public open class AxisManager(
     public val rightAxis: AxisRenderer<VerticalAxisPosition>?
         get() = if (isLTR) endAxis else startAxis
 
-    fun getAxisWidth(model: AxisModel): Float =
-        startAxis?.getSize(model, StartAxis).orZero +
-                endAxis?.getSize(model, EndAxis).orZero
+    fun getAxisWidth(model: EntriesModel): Float =
+        startAxis?.getWidth(model, StartAxis).orZero +
+                endAxis?.getWidth(model, EndAxis).orZero
 
     fun getAxesDimensions(
         outDimensions: Dimensions<Float>,
-        axisModel: AxisModel,
+        model: EntriesModel,
+        contentBounds: RectF,
     ): Dimensions<Float> {
-        startAxis?.getDrawExtends(startDimensions, axisModel).orElse { startDimensions.set(0f) }
-        topAxis?.getDrawExtends(topDimensions, axisModel).orElse { topDimensions.set(0f) }
-        endAxis?.getDrawExtends(endDimensions, axisModel).orElse { endDimensions.set(0f) }
-        bottomAxis?.getDrawExtends(bottomDimensions, axisModel).orElse { bottomDimensions.set(0f) }
+        startAxis?.getDrawExtends(startDimensions, model).orElse { startDimensions.set(0f) }
+        topAxis?.getDrawExtends(topDimensions, model).orElse { topDimensions.set(0f) }
+        endAxis?.getDrawExtends(endDimensions, model).orElse { endDimensions.set(0f) }
+        bottomAxis?.getDrawExtends(bottomDimensions, model).orElse { bottomDimensions.set(0f) }
 
         outDimensions.start = maxOf(
-            startAxis?.getSize(axisModel, StartAxis).orZero,
+            startAxis?.getWidth(model, StartAxis).orZero,
             topDimensions.start,
             bottomDimensions.start
         )
-        outDimensions.top = maxOf(
-            topAxis?.getSize(axisModel, TopAxis).orZero,
-            startDimensions.top,
-            endDimensions.top
-        )
+
         outDimensions.end = maxOf(
-            endAxis?.getSize(axisModel, EndAxis).orZero,
+            endAxis?.getWidth(model, EndAxis).orZero,
             topDimensions.end,
             bottomDimensions.end
         )
+
+        val width = contentBounds.width() - (outDimensions.start + outDimensions.end)
+
+        outDimensions.top = maxOf(
+            topAxis?.getHeight(model, TopAxis, width).orZero,
+            startDimensions.top,
+            endDimensions.top
+        )
+
         outDimensions.bottom = maxOf(
-            bottomAxis?.getSize(axisModel, BottomAxis).orZero,
+            bottomAxis?.getHeight(model, BottomAxis, width).orZero,
             startDimensions.bottom,
             endDimensions.bottom
         )
@@ -160,12 +166,12 @@ public open class AxisManager(
 
     fun draw(
         canvas: Canvas,
-        axisModel: AxisModel,
+        model: EntriesModel,
     ) {
-        startAxis?.draw(canvas, axisModel, StartAxis)
-        topAxis?.draw(canvas, axisModel, TopAxis)
-        endAxis?.draw(canvas, axisModel, EndAxis)
-        bottomAxis?.draw(canvas, axisModel, BottomAxis)
+        startAxis?.draw(canvas, model, StartAxis)
+        topAxis?.draw(canvas, model, TopAxis)
+        endAxis?.draw(canvas, model, EndAxis)
+        bottomAxis?.draw(canvas, model, BottomAxis)
     }
 
 }

@@ -2,7 +2,6 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.Color.MAGENTA
-import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
@@ -28,8 +27,6 @@ public open class ColumnDataSet(
         }
 
     override fun draw(canvas: Canvas) = draw(canvas, model)
-
-    override fun getAxisModel(): AxisModel = getAxisModel(model)
 
     override fun addListener(listener: UpdateRequestListener) {
         listeners += listener

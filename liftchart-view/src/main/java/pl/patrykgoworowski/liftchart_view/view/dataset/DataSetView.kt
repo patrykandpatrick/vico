@@ -58,9 +58,7 @@ class DataSetView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         val dataSet = dataSet ?: return
-        dataSet.getAxisModel().let { model ->
-            axisManager.draw(canvas, model)
-        }
+        axisManager.draw(canvas, dataSet.getEntriesModel())
         dataSet.draw(canvas)
     }
 

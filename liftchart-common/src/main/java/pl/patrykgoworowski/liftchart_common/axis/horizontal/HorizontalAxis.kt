@@ -9,9 +9,9 @@ import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.BottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.HorizontalAxisPosition
+import pl.patrykgoworowski.liftchart_common.axis.HorizontalAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
-import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent.VerticalPosition
@@ -25,7 +25,8 @@ class HorizontalAxis(
     axis: RectComponent = DEF_AXIS_COMPONENT,
     tick: TickComponent = DEF_TICK_COMPONENT,
     guideline: GuidelineComponent = DEF_GUIDELINE_COMPONENT,
-) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline) {
+) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline),
+    HorizontalAxisRenderer {
 
     private val labels = ArrayList<String>()
 
@@ -41,7 +42,7 @@ class HorizontalAxis(
         label.textAlign = Paint.Align.CENTER
     }
 
-    override fun onDraw(canvas: Canvas, model: AxisModel, position: HorizontalAxisPosition) {
+    override fun onDraw(canvas: Canvas, model: EntriesModel, position: HorizontalAxisPosition) {
         val tickMarkTop = if (position.isBottom) {
             bounds.top
         } else {
@@ -133,9 +134,14 @@ class HorizontalAxis(
         return outDimensions.setHorizontal(if (tickType == TickType.Minor) tick.thickness.half else 0f)
     }
 
-    override fun getSize(model: AxisModel, position: HorizontalAxisPosition): Float {
+    override fun getHeight(
+        model: EntriesModel,
+        position: HorizontalAxisPosition,
+        width: Float
+    ): Float {
+        val labelWidth = (width / model.getEntriesLength()).toInt()
         val highestLabelHeight = getLabels(model)
-            .maxOf { label.getHeight(it, model.xSegmentWidth.toInt()) }
+            .maxOf { label.getHeight(it, labelWidth) }
         return (if (position.isBottom) axis.thickness else 0f) + tick.length + highestLabelHeight
     }
 

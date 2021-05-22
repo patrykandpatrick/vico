@@ -2,15 +2,16 @@ package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.axis.model.AxisModel
-import pl.patrykgoworowski.liftchart_common.axis.model.MutableAxisModel
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
-import pl.patrykgoworowski.liftchart_common.extension.*
+import pl.patrykgoworowski.liftchart_common.extension.getRepeating
+import pl.patrykgoworowski.liftchart_common.extension.half
+import pl.patrykgoworowski.liftchart_common.extension.round
+import pl.patrykgoworowski.liftchart_common.extension.set
 import kotlin.math.roundToInt
 
 open class MergedColumnDataSetRenderer public constructor(
@@ -21,7 +22,6 @@ open class MergedColumnDataSetRenderer public constructor(
 ) : DataSetRenderer<MultiEntriesModel> {
 
     private val heightMap = HashMap<Float, Float>()
-    private val axisModel = MutableAxisModel()
     override val bounds: RectF = RectF()
 
     private var drawScale: Float = 1f
@@ -107,19 +107,6 @@ open class MergedColumnDataSetRenderer public constructor(
         }
         heightMap.clear()
     }
-
-    override fun getAxisModel(model: MultiEntriesModel): AxisModel =
-        axisModel.apply {
-            calculateDrawSegmentSpecIfNeeded(model)
-            minX = model.minX
-            maxX = model.maxX
-            minY = model.minY
-            maxY = mergeMode.getMaxY(model)
-            step = model.step
-            xSegmentWidth = getSegmentSize(model.entryCollections.size)
-            xSegmentSpacing = spacing * drawScale
-            entries.setAll(model.entries)
-        }
 
     private fun getSegmentSize(entryCollectionSize: Int, scaled: Boolean = true): Float =
         when (mergeMode) {

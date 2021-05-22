@@ -12,14 +12,14 @@ public open class VirtualLayout(
 ) {
 
     val axesDimensions: Dimensions<Float> = floatDimensions()
-    public open fun <Model> getMeasuredWidth(
+    public open fun <Model: EntriesModel> getMeasuredWidth(
         dataSet: DataSetRenderer<Model>,
         model: Model,
         axisManager: AxisManager,
     ): Int =
         dataSet
             .getMeasuredWidth(model)
-            .plus(axisManager.getAxisWidth(dataSet.getAxisModel(model)).toInt())
+            .plus(axisManager.getAxisWidth(model).toInt())
 
     public open fun <Model: EntriesModel> setBounds(
         contentBounds: RectF,
@@ -27,9 +27,8 @@ public open class VirtualLayout(
         model: Model,
         axisManager: AxisManager,
     ) {
-        val axisModel = dataSet.getAxisModel(model)
         axisManager.isLTR = isLTR
-        axisManager.getAxesDimensions(axesDimensions, axisModel)
+        axisManager.getAxesDimensions(axesDimensions, model, contentBounds)
 
         dataSet.setBounds(
             left = contentBounds.left + axesDimensions.getLeft(isLTR),
