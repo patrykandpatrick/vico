@@ -157,7 +157,7 @@ public open class AxisManager(
             )
             axis.dataSetBounds.set(
                 horizontalAxisLeftDrawBound,
-                dataSetBounds.top,
+                dataSetBounds.top + if (hasTopAxis) axis.axisThickness else 0f,
                 horizontalAxisRightDrawBound,
                 dataSetBounds.bottom
             )
