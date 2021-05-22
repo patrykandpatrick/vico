@@ -28,7 +28,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedColumnChart
-import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.CutCornerBarPath
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.cutCornerBarPath
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 
 class ComposeShowcaseFragment : Fragment() {
@@ -78,7 +78,7 @@ class ComposeShowcaseFragment : Fragment() {
                         column = rectComponent(
                             color = flickrPink,
                             thickness = 16.dp,
-                            shape = CutCornerBarPath(topLeft = 8f.dp)
+                            shape = cutCornerBarPath(topLeft = 8f.dp)
                         ),
                         axisManager = axisManager,
                     )
@@ -91,12 +91,12 @@ class ComposeShowcaseFragment : Fragment() {
                         columns = listOf(
                             rectComponent(
                                 color = flickrPink,
-                                shape = CutCornerBarPath(topLeft = 8.dp)
+                                shape = cutCornerBarPath(topLeft = 8.dp)
                             ),
                             rectComponent(color = byzantine, thickness = 24.dp),
                             rectComponent(
                                 color = trypanPurple,
-                                shape = CutCornerBarPath(topRight = 8.dp)
+                                shape = cutCornerBarPath(topRight = 8.dp)
                             ),
                         ),
                         innerSpacing = 4.dp,
