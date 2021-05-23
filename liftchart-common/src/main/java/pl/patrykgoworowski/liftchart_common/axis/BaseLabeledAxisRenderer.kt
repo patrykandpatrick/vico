@@ -33,7 +33,7 @@ public abstract class BaseLabeledAxisRenderer<Position: AxisPosition>(
         get() = tick?.thickness.orZero
 
     override var isLTR: Boolean by Delegates.observable(true) { _, _, value ->
-        label?.isLTR = isLTR
+        label?.isLTR = value
     }
 
     override var isVisible: Boolean = true
