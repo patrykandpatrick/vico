@@ -17,8 +17,8 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.Sin
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
-import pl.patrykgoworowski.liftchart_compose.data_set.bar.path.chartShape
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
+import pl.patrykgoworowski.liftchart_compose.path.chartShape
 
 @Preview("Sample DataSet")
 @Composable

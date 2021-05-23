@@ -10,12 +10,12 @@ import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultPadding
 import pl.patrykgoworowski.liftchart_common.component.dimension.Padding
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.sp
-import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
+import pl.patrykgoworowski.liftchart_common.path.rectShape
 import pl.patrykgoworowski.liftchart_common.text.staticLayout
 
 public open class TextComponent(
-    shape: Shape = RectShape(),
+    shape: Shape = rectShape(),
     color: Int = Color.GRAY,
     textColor: Int = DKGRAY,
     textSize: Float = 12f.sp,

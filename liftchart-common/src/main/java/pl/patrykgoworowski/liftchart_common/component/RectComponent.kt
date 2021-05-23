@@ -2,13 +2,13 @@ package pl.patrykgoworowski.liftchart_common.component
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
+import pl.patrykgoworowski.liftchart_common.path.rectShape
 
 public open class RectComponent(
     color: Int,
     public var thickness: Float = 2f,
-    shape: Shape = RectShape(),
+    shape: Shape = rectShape(),
 ) : Component(shape, color) {
 
     var thicknessScale: Float = 1f

@@ -6,8 +6,8 @@ import com.google.android.material.tabs.TabLayoutMediator
 import pl.patrykgoworowski.liftchart.databinding.ActivityMainBinding
 import pl.patrykgoworowski.liftchart.showcase.ShowcaseFragmentAdapter
 import pl.patrykgoworowski.liftchart_common.extension.dp
-import pl.patrykgoworowski.liftchart_common.path.RoundedCornersShape
 import pl.patrykgoworowski.liftchart_common.path.getDrawable
+import pl.patrykgoworowski.liftchart_common.path.roundedCornersShape
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
             viewPager.adapter = ShowcaseFragmentAdapter(this@MainActivity)
 
             tabLayout.setSelectedTabIndicator(
-                RoundedCornersShape(
+                roundedCornersShape(
                     topLeft = 3f.dp,
                     topRight = 3f.dp
                 ).getDrawable(intrinsicHeight = 3.dp)

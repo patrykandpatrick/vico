@@ -9,7 +9,7 @@ import pl.patrykgoworowski.liftchart_common.extension.setBounds
 import pl.patrykgoworowski.liftchart_common.extension.updateBounds
 
 
-fun RectShape(): Shape = object : Shape {
+fun rectShape(): Shape = object : Shape {
 
     override fun drawShape(
         canvas: Canvas,
@@ -27,9 +27,9 @@ fun RectShape(): Shape = object : Shape {
 
 }
 
-fun RoundedCornersShape(all: Float): Shape = RoundedCornersShape(all, all, all, all)
+fun roundedCornersShape(all: Float): Shape = roundedCornersShape(all, all, all, all)
 
-fun RoundedCornersShape(
+fun roundedCornersShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,
@@ -64,9 +64,9 @@ fun RoundedCornersShape(
 
 }
 
-fun CutCornerBarPath(all: Float): Shape = CutCornerBarPath(all, all, all, all)
+fun cutCornerShape(all: Float): Shape = cutCornerShape(all, all, all, all)
 
-fun CutCornerBarPath(
+fun cutCornerShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,
@@ -97,9 +97,10 @@ fun CutCornerBarPath(
 
 }
 
-fun DrawableBarPath(
+fun drawableShape(
     drawable: Drawable,
-    otherCreator: Shape? = RectShape()
+    keepAspectRatio: Boolean = false,
+    otherCreator: Shape? = rectShape()
 ): Shape = object : Shape {
 
     private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
@@ -112,7 +113,7 @@ fun DrawableBarPath(
         bounds: RectF
     ) {
         if (bounds.height() == 0f) return
-        val drawableHeight = bounds.width() * ratio
+        val drawableHeight = if (keepAspectRatio) bounds.width() * ratio else bounds.height()
         val top = minOf(bounds.top, bounds.bottom - drawableHeight)
         drawable.setBounds(bounds.left, top, bounds.right, top + drawableHeight)
         drawable.draw(canvas)

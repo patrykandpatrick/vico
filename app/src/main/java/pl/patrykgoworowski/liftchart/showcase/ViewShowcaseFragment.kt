@@ -19,7 +19,7 @@ import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
 import pl.patrykgoworowski.liftchart_common.extension.dp
-import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath
+import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_view.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedColumnDataSet
 import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
@@ -53,7 +53,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val barDataSet = ColumnDataSet(
             column = RectComponent(
                 color = requireContext().color { R.color.flickr_pink },
-                shape = CutCornerBarPath(topLeft = 8f.dp),
+                shape = cutCornerShape(topLeft = 8f.dp),
                 thickness = 16f.dp
             )
         )
@@ -86,7 +86,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 RectComponent(
                     color = requireContext().color { R.color.flickr_pink },
                     thickness = 16f.dp,
-                    shape = CutCornerBarPath(topLeft = 8f.dp)
+                    shape = cutCornerShape(topLeft = 8f.dp)
                 ),
                 RectComponent(
                     color = requireContext().color { R.color.byzantine },
@@ -95,7 +95,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 RectComponent(
                     color = requireContext().color { R.color.trypan_purple },
                     thickness = 16f.dp,
-                    shape = CutCornerBarPath(topRight = 8f.dp)
+                    shape = cutCornerShape(topRight = 8f.dp)
                 ),
             ),
             mergeMode = MergeMode.Stack

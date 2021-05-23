@@ -27,7 +27,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesMod
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
-import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath
+import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
@@ -39,7 +39,7 @@ val defaultColumnComponent: RectComponent
     get() = RectComponent(
         color = MaterialTheme.colors.secondary.colorInt,
         thickness = DEF_BAR_WIDTH.dp.pixels,
-        shape = CutCornerBarPath(topLeft = 8f.dp.pixels)
+        shape = cutCornerShape(topLeft = 8f.dp.pixels)
     )
 
 @Composable

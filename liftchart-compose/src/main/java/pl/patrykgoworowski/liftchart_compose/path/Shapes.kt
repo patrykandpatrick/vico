@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_compose.data_set.bar.path
+package pl.patrykgoworowski.liftchart_compose.path
 
 import android.graphics.*
 import androidx.compose.runtime.Composable
@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
-import pl.patrykgoworowski.liftchart_common.path.CutCornerBarPath
-import pl.patrykgoworowski.liftchart_common.path.RoundedCornersShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
+import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
+import pl.patrykgoworowski.liftchart_common.path.roundedCornersShape
 import pl.patrykgoworowski.liftchart_compose.extension.density
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
@@ -58,17 +58,17 @@ fun Path.addRoundRect(bounds: RectF, rect: RoundRect, radii: FloatArray) {
 }
 
 @Composable
-fun roundedCornerBarPath(
+fun roundedCornerShape(
     all: Dp = Dp(0f),
-): Shape = RoundedCornersShape(all.value * density)
+): Shape = roundedCornersShape(all.value * density)
 
 @Composable
-fun roundedCornerBarPath(
+fun roundedCornerShape(
     topLeft: Dp = Dp(0f),
     topRight: Dp = Dp(0f),
     bottomRight: Dp = Dp(0f),
     bottomLeft: Dp = Dp(0f),
-): Shape = RoundedCornersShape(
+): Shape = roundedCornersShape(
     topLeft.value * density,
     topRight.value * density,
     bottomRight.value * density,
@@ -76,17 +76,17 @@ fun roundedCornerBarPath(
 )
 
 @Composable
-fun cutCornerBarPath(
+fun cutCornerShape(
     all: Dp = Dp(0f),
-): Shape = CutCornerBarPath(all.value * density)
+): Shape = cutCornerShape(all.value * density)
 
 @Composable
-fun cutCornerBarPath(
+fun cutCornerShape(
     topLeft: Dp = Dp(0f),
     topRight: Dp = Dp(0f),
     bottomRight: Dp = Dp(0f),
     bottomLeft: Dp = Dp(0f),
-): Shape = CutCornerBarPath(
+): Shape = cutCornerShape(
     topLeft.value * density,
     topRight.value * density,
     bottomRight.value * density,
