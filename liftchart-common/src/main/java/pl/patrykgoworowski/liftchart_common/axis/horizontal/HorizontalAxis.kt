@@ -17,6 +17,7 @@ import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent.VerticalPosition
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
+import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 
@@ -121,7 +122,7 @@ class HorizontalAxis(
     }
 
     override fun getDrawExtends(
-        outDimensions: Dimensions<Float>,
+        outDimensions: MutableDimensions<Float>,
         model: EntriesModel
     ): Dimensions<Float> {
         outDimensions.setVertical(0f)

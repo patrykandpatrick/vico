@@ -105,10 +105,10 @@ fun <Model : EntriesModel> DataSet(
 
     Canvas(
         modifier = modifier
+            .height(DEF_CHART_WIDTH.dp)
             .width(
                 virtualLayout.getMeasuredWidth(dataSet, model, axisManager).pxToDp
             )
-            .height(DEF_CHART_WIDTH.dp)
     ) {
 
         bounds.set(0f, 0f, size.width, size.height)

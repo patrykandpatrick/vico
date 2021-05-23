@@ -1,10 +1,10 @@
 package pl.patrykgoworowski.liftchart_common.component.dimension
 
-import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
+import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 
 public interface Padding {
 
-    public val padding: Dimensions<Float>
+    public val padding: MutableDimensions<Float>
 
     public fun setPadding(
         start: Float = 0f,

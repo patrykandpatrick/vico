@@ -5,12 +5,12 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
+import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.floatDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orElse
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 
-@OptIn(ExperimentalStdlibApi::class)
 public open class AxisManager(
     public open var startAxis: VerticalAxisRenderer? = VerticalAxis(),
     public open var topAxis: HorizontalAxisRenderer? = null,
@@ -48,7 +48,7 @@ public open class AxisManager(
                 endAxis?.getWidth(model, EndAxis).orZero
 
     fun getAxesDimensions(
-        outDimensions: Dimensions<Float>,
+        outDimensions: MutableDimensions<Float>,
         model: EntriesModel,
         contentBounds: RectF,
     ): Dimensions<Float> {

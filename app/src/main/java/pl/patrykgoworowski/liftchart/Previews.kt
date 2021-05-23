@@ -1,16 +1,20 @@
-package pl.patrykgoworowski.liftchart_compose
+package pl.patrykgoworowski.liftchart
 
-import android.graphics.Color
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Divider
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
+import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryList
@@ -29,19 +33,25 @@ fun SampleDataSet(modifier: Modifier = Modifier) {
         axisManager = AxisManager(
             startAxis = VerticalAxis(
                 label = TextComponent(
-                    textColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.medium).colorInt,
-                    color = Color.TRANSPARENT,
+                    textColor = MaterialTheme.colors.primary.colorInt,
+                    color = MaterialTheme.colors.primary.copy(0.1f).colorInt,
+                    shape = CutCornerShape(CornerSize(0), CornerSize(50), CornerSize(50), CornerSize(0)).chartShape(),
                     textSize = 10f.dp,
-                ),
+                ).apply {
+                        padding.apply {
+                            end = 8f.dp
+                            start = 2f.dp
+                        }
+                },
                 axis = null,
                 tick = null,
-                guideline = null,
+                guideline = GuidelineComponent(MaterialTheme.colors.primary.copy(0.1f).colorInt, 1f.dp),
             ),
             topAxis = null,
             endAxis = null,
             bottomAxis = null),
         column = RectComponent(
-            LocalContentColor.current.colorInt,
+            MaterialTheme.colors.primary.colorInt,
             thickness = 8f.dp,
             shape = CutCornerShape(Dp(4f)).chartShape()
         )
@@ -52,8 +62,10 @@ fun SampleDataSet(modifier: Modifier = Modifier) {
 @Composable
 fun SampleCard() {
     Card(
-        modifier = Modifier,
-        shape = RoundedCornerShape(Dp(8f))
+        modifier = Modifier
+            .padding(Dp(8f)),
+        shape = RoundedCornerShape(Dp(8f)),
+        elevation = Dp(4f)
     ) {
         Column(
             modifier = Modifier.padding(Dp(16f))
