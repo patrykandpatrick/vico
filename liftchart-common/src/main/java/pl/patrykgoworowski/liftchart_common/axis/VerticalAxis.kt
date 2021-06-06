@@ -134,7 +134,7 @@ class VerticalAxis(
         val step = model.maxY / maxLabelCount
         for (index in maxLabelCount downTo 0) {
             val value = (model.maxY - (step * index))
-            labels += valueFormatter.formatValue(value, model)
+            labels += valueFormatter.formatValue(value, index, model)
         }
         return labels
     }

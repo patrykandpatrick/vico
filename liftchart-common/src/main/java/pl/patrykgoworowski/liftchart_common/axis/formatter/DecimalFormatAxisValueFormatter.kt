@@ -11,7 +11,7 @@ class DecimalFormatAxisValueFormatter(
 
     constructor(pattern: String) : this(DecimalFormat(pattern))
 
-    override fun formatValue(value: Float, model: EntriesModel): String {
+    override fun formatValue(value: Float, index: Int, model: EntriesModel): String {
         return decimalFormat.format(value)
     }
 

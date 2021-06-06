@@ -11,7 +11,7 @@ class PercentageFormatAxisValueFormatter(
 
     constructor() : this(DEF_PATTERN)
 
-    override fun formatValue(value: Float, model: EntriesModel): String {
+    override fun formatValue(value: Float, index: Int, model: EntriesModel): String {
         val percentage = value / model.maxY
         return decimalFormat.format(percentage)
     }

@@ -4,6 +4,6 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesMod
 
 object DefaultAxisFormatter : AxisValueFormatter {
 
-    override fun formatValue(value: Float, model: EntriesModel): String = value.toString()
+    override fun formatValue(value: Float, index: Int, model: EntriesModel): String = value.toString()
 
 }

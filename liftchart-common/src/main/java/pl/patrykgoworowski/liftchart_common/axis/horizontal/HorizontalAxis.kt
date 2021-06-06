@@ -100,7 +100,7 @@ class HorizontalAxis(
             if (index < entriesLength) {
                 label?.drawTextVertically(
                     canvas,
-                    valueFormatter.formatValue(valueIndex, model),
+                    valueFormatter.formatValue(valueIndex, index, model),
                     textDrawCenter,
                     textY,
                     if (position.isBottom) VerticalPosition.Top else VerticalPosition.Bottom,
