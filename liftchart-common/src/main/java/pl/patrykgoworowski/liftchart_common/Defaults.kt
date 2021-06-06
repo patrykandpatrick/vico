@@ -21,3 +21,7 @@ val DEF_TICK_COMPONENT: TickComponent
 
 val DEF_GUIDELINE_COMPONENT: GuidelineComponent
     get() = GuidelineComponent(Color.GRAY, 1f.dp)
+
+val DEF_LABEL_LINE_COUNT = 1
+val DEF_LABEL_COUNT = 99
+val DEF_LABEL_SPACING = 16f.dp

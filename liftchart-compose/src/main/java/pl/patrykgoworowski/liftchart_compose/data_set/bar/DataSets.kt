@@ -2,8 +2,8 @@ package pl.patrykgoworowski.liftchart_compose.data_set.bar
 
 import android.graphics.RectF
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -31,7 +31,6 @@ import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
-import pl.patrykgoworowski.liftchart_compose.extension.pxToDp
 
 
 val defaultColumnComponent: RectComponent
@@ -106,15 +105,13 @@ fun <Model : EntriesModel> DataSet(
     Canvas(
         modifier = modifier
             .height(DEF_CHART_WIDTH.dp)
-            .width(
-                virtualLayout.getMeasuredWidth(dataSet, model, axisManager).pxToDp
-            )
+            .fillMaxWidth()
     ) {
-
         bounds.set(0f, 0f, size.width, size.height)
         virtualLayout.setBounds(bounds, dataSet, model, axisManager)
         val canvas = drawContext.canvas.nativeCanvas
-        axisManager.draw(canvas, model)
+        val segmentProperties = dataSet.getSegmentProperties(model)
+        axisManager.draw(canvas, model, segmentProperties)
         dataSet.draw(canvas, model)
     }
 }

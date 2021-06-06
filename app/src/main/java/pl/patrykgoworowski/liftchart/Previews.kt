@@ -24,7 +24,7 @@ import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.path.chartShape
 
-@Preview("Sample DataSet")
+@Preview("Sample DataSet", widthDp = 200)
 @Composable
 fun SampleDataSet(modifier: Modifier = Modifier) {
     ColumnChart(
@@ -35,7 +35,12 @@ fun SampleDataSet(modifier: Modifier = Modifier) {
                 label = TextComponent(
                     textColor = MaterialTheme.colors.primary.colorInt,
                     color = MaterialTheme.colors.primary.copy(0.1f).colorInt,
-                    shape = CutCornerShape(CornerSize(0), CornerSize(50), CornerSize(50), CornerSize(0)).chartShape(),
+                    shape = CutCornerShape(
+                        CornerSize(0),
+                        CornerSize(50),
+                        CornerSize(50),
+                        CornerSize(0)
+                    ).chartShape(),
                     textSize = 10f.dp,
                 ).apply {
                         padding.apply {

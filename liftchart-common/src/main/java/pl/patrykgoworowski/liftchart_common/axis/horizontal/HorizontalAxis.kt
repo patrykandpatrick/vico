@@ -16,6 +16,7 @@ import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent.VerticalPosition
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
@@ -31,13 +32,16 @@ class HorizontalAxis(
 
     public var tickType: TickType = TickType.Minor
 
-    override var isVisible: Boolean = true
-
     init {
         label?.textAlign = Paint.Align.CENTER
     }
 
-    override fun onDraw(canvas: Canvas, model: EntriesModel, position: HorizontalAxisPosition) {
+    override fun onDraw(
+        canvas: Canvas,
+        model: EntriesModel,
+        segmentProperties: SegmentProperties,
+        position: HorizontalAxisPosition,
+    ) {
         val tickMarkTop = if (position.isBottom) {
             bounds.top
         } else {
@@ -45,9 +49,9 @@ class HorizontalAxis(
         }
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
 
-        val entriesLength = model.getEntriesLength()
+        val entriesLength = (bounds.width() / segmentProperties.segmentWidth).toInt()
         val tickCount: Int
-        val tickDrawStep = bounds.width() / entriesLength
+        val tickDrawStep = segmentProperties.segmentWidth
         var tickDrawCenter: Float
         var textDrawCenter = bounds.left + tickDrawStep.half
 
@@ -133,24 +137,10 @@ class HorizontalAxis(
     }
 
     override fun getHeight(
-        model: EntriesModel,
         position: HorizontalAxisPosition,
-        width: Float
-    ): Float {
-        val labelWidth = (width / model.getEntriesLength()).toInt()
-        val highestLabelHeight = getLabels(model)
-            .maxOf { label?.getHeight(it, labelWidth).orZero }
-        return (if (position.isBottom) axisThickness else 0f) + tickLength + highestLabelHeight
-    }
-
-    private fun getLabels(model: EntriesModel): List<String> {
-        labels.clear()
-        val range = (model.maxX - model.minX).toInt()
-        for (index in range downTo 0) {
-            val value = (model.maxX - (model.step * index))
-            labels += valueFormatter.formatValue(value, model)
-        }
-        return labels
+    ): Int {
+        return ((if (position.isBottom) axisThickness else 0f) + tickLength + label?.allLinesHeight.orZero)
+            .toInt()
     }
 
     enum class TickType {

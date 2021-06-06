@@ -8,11 +8,6 @@ import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
 
 public open class ViewVirtualLayout(isLTR: Boolean) : VirtualLayout(isLTR) {
 
-    public open fun <Model: EntriesModel> getMeasuredWidth(
-        dataSet: DataSetRendererWithModel<Model>,
-        axisManager: AxisManager,
-    ): Int = getMeasuredWidth(dataSet, dataSet.getEntriesModel(), axisManager)
-
     public open fun <Model: EntriesModel> setBounds(
         contentBounds: RectF,
         dataSet: DataSetRendererWithModel<Model>,

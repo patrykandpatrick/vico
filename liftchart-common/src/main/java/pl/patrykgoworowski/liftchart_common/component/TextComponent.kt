@@ -6,13 +6,16 @@ import android.graphics.Paint.Align.*
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
+import pl.patrykgoworowski.liftchart_common.DEF_LABEL_LINE_COUNT
 import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultPadding
 import pl.patrykgoworowski.liftchart_common.component.dimension.Padding
 import pl.patrykgoworowski.liftchart_common.extension.half
+import pl.patrykgoworowski.liftchart_common.extension.lineHeight
 import pl.patrykgoworowski.liftchart_common.extension.sp
 import pl.patrykgoworowski.liftchart_common.path.Shape
 import pl.patrykgoworowski.liftchart_common.path.rectShape
 import pl.patrykgoworowski.liftchart_common.text.staticLayout
+import kotlin.math.roundToInt
 
 public open class TextComponent(
     shape: Shape = rectShape(),
@@ -20,9 +23,16 @@ public open class TextComponent(
     textColor: Int = DKGRAY,
     textSize: Float = 12f.sp,
     val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    val lineCount: Int = DEF_LABEL_LINE_COUNT,
 ) : Component(shape, color), Padding by DefaultPadding() {
 
     public val textPaint = TextPaint()
+
+    public val lineHeight: Int
+        get() = textPaint.lineHeight.roundToInt()
+
+    public val allLinesHeight: Int
+        get() = lineHeight * lineCount
 
     public var isLTR: Boolean = true
     public var textColor: Int by textPaint::color
@@ -123,7 +133,7 @@ public open class TextComponent(
 
     private fun getLayout(text: String, width: Int): StaticLayout =
         layoutCache.getOrPut(text.hashCode() + 31 * width) {
-            staticLayout(text, textPaint, width, ellipsize = ellipsize)
+            staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
         }
 
     enum class VerticalPosition {

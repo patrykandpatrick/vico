@@ -8,6 +8,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedColumnDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
@@ -41,5 +42,7 @@ class MergedColumnDataSet(
     override fun getMeasuredWidth(): Int = getMeasuredWidth(model)
 
     override fun getEntriesModel(): MultiEntriesModel = model
+
+    override fun getSegmentProperties(): SegmentProperties = getSegmentProperties(model)
 
 }

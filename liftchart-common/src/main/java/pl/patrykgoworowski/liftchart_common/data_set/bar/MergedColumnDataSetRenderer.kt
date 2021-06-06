@@ -8,6 +8,8 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
+import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.getRepeating
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.round
@@ -26,6 +28,10 @@ open class MergedColumnDataSetRenderer public constructor(
 
     private var drawScale: Float = 1f
     private var isScaleCalculated = false
+    private var scaledSpacing = spacing
+    private var scaledInnerSpacing = innerSpacing
+
+    private val segmentProperties = MutableSegmentProperties()
 
     init {
         if (columns.isEmpty()) throw IllegalStateException(ERR_COLUMN_LIST_EMPTY)
@@ -68,7 +74,6 @@ open class MergedColumnDataSetRenderer public constructor(
         var columnTop: Float
         var columnBottom: Float
 
-        val spacing = spacing * drawScale
         val segmentSize = getSegmentSize(model.entryCollections.size)
 
         model.entryCollections.forEachIndexed { index, entryCollection ->
@@ -77,7 +82,7 @@ open class MergedColumnDataSetRenderer public constructor(
 
             entryCollection.forEach { entry ->
                 height = entry.y * heightMultiplier
-                entryOffset = (segmentSize + spacing) * (entry.x - model.minX) / step
+                entryOffset = (segmentSize + scaledSpacing) * (entry.x - model.minX) / step
                 columnCenterX = drawingStart + entryOffset
                 column = columns.getRepeating(index)
 
@@ -108,11 +113,19 @@ open class MergedColumnDataSetRenderer public constructor(
         heightMap.clear()
     }
 
+    override fun getSegmentProperties(model: MultiEntriesModel): SegmentProperties {
+        calculateDrawSegmentSpecIfNeeded(model)
+        return segmentProperties.apply {
+            contentWidth = getSegmentSize(entryCollectionSize = model.entryCollections.size)
+            marginWidth = scaledSpacing
+        }
+    }
+
     private fun getSegmentSize(entryCollectionSize: Int, scaled: Boolean = true): Float =
         when (mergeMode) {
             MergeMode.Stack -> columns.maxOf { it.thickness }
             MergeMode.Grouped -> {
-                val innerSpacing = if (scaled) innerSpacing * drawScale else innerSpacing
+                val innerSpacing = if (scaled) scaledInnerSpacing else innerSpacing
                 getCumulatedThickness(entryCollectionSize, scaled) +
                         (innerSpacing * (entryCollectionSize - 1))
             }
@@ -123,7 +136,7 @@ open class MergedColumnDataSetRenderer public constructor(
         return when (mergeMode) {
             MergeMode.Stack -> baseLeft
             MergeMode.Grouped -> baseLeft + (getCumulatedThickness(entryCollectionIndex, true)
-                    + ((innerSpacing * drawScale) * entryCollectionIndex))
+                    + (scaledInnerSpacing * entryCollectionIndex))
         }
     }
 
@@ -142,12 +155,10 @@ open class MergedColumnDataSetRenderer public constructor(
     private fun calculateDrawSegmentSpecIfNeeded(model: MultiEntriesModel) {
         if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(model)
-        drawScale = if (bounds.width() >= measuredWidth) {
-            1f
-        } else {
-            bounds.width() / measuredWidth
-        }
+        drawScale = minOf(bounds.width() / measuredWidth, 1f)
         columns.forEach { column -> column.thicknessScale = drawScale }
+        scaledSpacing = spacing * drawScale
+        scaledInnerSpacing = innerSpacing * drawScale
         isScaleCalculated = true
     }
 

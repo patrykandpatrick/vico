@@ -17,5 +17,8 @@ inline val Number?.orZeroInt: Int
 inline val Float?.orZero: Float
     get() = this ?: 0f
 
+inline val Int?.orZero: Int
+    get() = this ?: 0
+
 inline val Float.round: Float
     get() = roundToInt().toFloat()

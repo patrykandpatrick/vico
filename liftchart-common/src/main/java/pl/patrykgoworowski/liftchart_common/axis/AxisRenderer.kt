@@ -9,15 +9,22 @@ import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 
-interface AxisRenderer<Position: AxisPosition> : BoundsAware {
+interface AxisRenderer<Position : AxisPosition> : BoundsAware {
 
     val dataSetBounds: RectF
     val axisThickness: Float
     val tickThickness: Float
     val tickLength: Float
+
+    public val labelLineHeight: Int
+        get() = label?.lineHeight ?: 0
+
+    public val labelAllLinesHeight: Int
+        get() = label?.allLinesHeight ?: 0
 
     var label: TextComponent?
     var axis: RectComponent?
@@ -27,13 +34,23 @@ interface AxisRenderer<Position: AxisPosition> : BoundsAware {
     var isVisible: Boolean
     var valueFormatter: AxisValueFormatter
 
-    fun draw(canvas: Canvas, model: EntriesModel, position: Position) {
+    fun draw(
+        canvas: Canvas,
+        model: EntriesModel,
+        segmentProperties: SegmentProperties,
+        position: Position,
+    ) {
         if (isVisible) {
-            onDraw(canvas, model, position)
+            onDraw(canvas, model, segmentProperties, position)
         }
     }
 
-    fun onDraw(canvas: Canvas, model: EntriesModel, position: Position)
+    fun onDraw(
+        canvas: Canvas,
+        model: EntriesModel,
+        segmentProperties: SegmentProperties,
+        position: Position,
+    )
 
     fun setDataSetBounds(
         left: Number,

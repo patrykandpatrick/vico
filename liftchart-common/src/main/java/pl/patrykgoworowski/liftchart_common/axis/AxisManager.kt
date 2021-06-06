@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.floatDimensions
@@ -43,45 +44,42 @@ public open class AxisManager(
     public val rightAxis: AxisRenderer<VerticalAxisPosition>?
         get() = if (isLTR) endAxis else startAxis
 
-    fun getAxisWidth(model: EntriesModel): Float =
-        startAxis?.getWidth(model, StartAxis).orZero +
-                endAxis?.getWidth(model, EndAxis).orZero
-
     fun getAxesDimensions(
         outDimensions: MutableDimensions<Float>,
         model: EntriesModel,
-        contentBounds: RectF,
+        availableHeight: Int,
     ): Dimensions<Float> {
         startAxis?.getDrawExtends(startDimensions, model).orElse { startDimensions.set(0f) }
         topAxis?.getDrawExtends(topDimensions, model).orElse { topDimensions.set(0f) }
         endAxis?.getDrawExtends(endDimensions, model).orElse { endDimensions.set(0f) }
         bottomAxis?.getDrawExtends(bottomDimensions, model).orElse { bottomDimensions.set(0f) }
 
-        outDimensions.start = maxOf(
-            startAxis?.getWidth(model, StartAxis).orZero,
-            topDimensions.start,
-            bottomDimensions.start
-        )
-
-        outDimensions.end = maxOf(
-            endAxis?.getWidth(model, EndAxis).orZero,
-            topDimensions.end,
-            bottomDimensions.end
-        )
-
-        val width = contentBounds.width() - (outDimensions.start + outDimensions.end)
-
         outDimensions.top = maxOf(
-            topAxis?.getHeight(model, TopAxis, width).orZero,
+            topAxis?.getHeight(TopAxis)?.toFloat().orZero,
             startDimensions.top,
             endDimensions.top
         )
 
         outDimensions.bottom = maxOf(
-            bottomAxis?.getHeight(model, BottomAxis, width).orZero,
+            bottomAxis?.getHeight(BottomAxis)?.toFloat().orZero,
             startDimensions.bottom,
             endDimensions.bottom
         )
+
+        val height = (availableHeight - (outDimensions.bottom + outDimensions.top)).toInt()
+
+        outDimensions.start = maxOf(
+            startAxis?.getWidth(model, StartAxis, height)?.toFloat().orZero,
+            topDimensions.start,
+            bottomDimensions.start
+        )
+
+        outDimensions.end = maxOf(
+            endAxis?.getWidth(model, EndAxis, height)?.toFloat().orZero,
+            topDimensions.end,
+            bottomDimensions.end
+        )
+
         return outDimensions
     }
 
@@ -167,11 +165,12 @@ public open class AxisManager(
     fun draw(
         canvas: Canvas,
         model: EntriesModel,
+        segmentProperties: SegmentProperties,
     ) {
-        startAxis?.draw(canvas, model, StartAxis)
-        topAxis?.draw(canvas, model, TopAxis)
-        endAxis?.draw(canvas, model, EndAxis)
-        bottomAxis?.draw(canvas, model, BottomAxis)
+        startAxis?.draw(canvas, model, segmentProperties, StartAxis)
+        topAxis?.draw(canvas, model, segmentProperties, TopAxis)
+        endAxis?.draw(canvas, model, segmentProperties, EndAxis)
+        bottomAxis?.draw(canvas, model, segmentProperties, BottomAxis)
     }
 
 }

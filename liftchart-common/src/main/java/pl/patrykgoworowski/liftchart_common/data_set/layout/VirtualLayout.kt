@@ -13,23 +13,14 @@ public open class VirtualLayout(
 
     private val axesDimensions: MutableDimensions<Float> = floatDimensions()
 
-    public open fun <Model: EntriesModel> getMeasuredWidth(
-        dataSet: DataSetRenderer<Model>,
-        model: Model,
-        axisManager: AxisManager,
-    ): Int =
-        dataSet
-            .getMeasuredWidth(model)
-            .plus(axisManager.getAxisWidth(model).toInt())
-
-    public open fun <Model: EntriesModel> setBounds(
+    public open fun <Model : EntriesModel> setBounds(
         contentBounds: RectF,
         dataSet: DataSetRenderer<Model>,
         model: Model,
         axisManager: AxisManager,
     ) {
         axisManager.isLTR = isLTR
-        axisManager.getAxesDimensions(axesDimensions, model, contentBounds)
+        axisManager.getAxesDimensions(axesDimensions, model, contentBounds.height().toInt())
 
         dataSet.setBounds(
             left = contentBounds.left + axesDimensions.getLeft(isLTR),

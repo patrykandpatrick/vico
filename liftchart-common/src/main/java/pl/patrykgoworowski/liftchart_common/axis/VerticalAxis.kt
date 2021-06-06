@@ -2,15 +2,13 @@ package pl.patrykgoworowski.liftchart_common.axis
 
 import android.graphics.Canvas
 import android.graphics.Paint
-import pl.patrykgoworowski.liftchart_common.DEF_AXIS_COMPONENT
-import pl.patrykgoworowski.liftchart_common.DEF_GUIDELINE_COMPONENT
-import pl.patrykgoworowski.liftchart_common.DEF_LABEL_COMPONENT
-import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
+import pl.patrykgoworowski.liftchart_common.*
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
@@ -25,12 +23,17 @@ class VerticalAxis(
 ) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline),
     VerticalAxisRenderer {
 
-    override var isVisible: Boolean = true
+    override var maxLabelCount: Int = DEF_LABEL_COUNT
+    override var labelSpacing: Float = DEF_LABEL_SPACING
 
-    var tickCount = 4
-
-    override fun onDraw(canvas: Canvas, model: EntriesModel, position: VerticalAxisPosition) {
+    override fun onDraw(
+        canvas: Canvas,
+        model: EntriesModel,
+        segmentProperties: SegmentProperties,
+        position: VerticalAxisPosition,
+    ) {
         val isLeft = position.isLeft(isLTR)
+        val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
 
         label?.textAlign = if (isLeft) {
             Paint.Align.RIGHT
@@ -38,8 +41,8 @@ class VerticalAxis(
             Paint.Align.LEFT
         }
 
-        val labels = getLabels(model)
-        val axisStep = bounds.height() / tickCount
+        val labels = getLabels(model, drawLabelCount)
+        val axisStep = bounds.height() / drawLabelCount
 
         val tickLeftX = if (isLeft) {
             bounds.right - (axisThickness + tickLength)
@@ -61,7 +64,7 @@ class VerticalAxis(
 
         var tickCenterY: Float
 
-        for (index in 0..tickCount) {
+        for (index in 0..drawLabelCount) {
 
             tickCenterY = bounds.bottom - (axisStep * index) + (axisThickness / 2)
 
@@ -72,14 +75,11 @@ class VerticalAxis(
                 tickCenterY
             )
 
-            val guidelineLeft = dataSetBounds.left
-            val guidelineRight = dataSetBounds.right
-
             guideline?.takeIf {
                 it.shouldDraw &&
                         it.fitsInHorizontal(
-                            guidelineLeft,
-                            guidelineRight,
+                            dataSetBounds.left,
+                            dataSetBounds.right,
                             tickCenterY,
                             dataSetBounds
                         )
@@ -113,10 +113,26 @@ class VerticalAxis(
         label?.clearLayoutCache()
     }
 
-    private fun getLabels(model: EntriesModel): List<String> {
+    private fun getDrawLabelCount(availableHeight: Int): Int {
+        val labelComponent = label ?: return maxLabelCount
+        val height = labelComponent.getHeight()
+        var result = 0f
+        var addition: Float
+        for (i in 0 until maxLabelCount) {
+            addition = if (i > 0) height + labelSpacing else height
+            if (result + addition > availableHeight) return i
+            result += addition
+        }
+        return maxLabelCount
+    }
+
+    private fun getLabels(
+        model: EntriesModel,
+        maxLabelCount: Int = this.maxLabelCount,
+    ): List<String> {
         labels.clear()
-        val step = model.maxY / tickCount
-        for (index in tickCount downTo 0) {
+        val step = model.maxY / maxLabelCount
+        for (index in maxLabelCount downTo 0) {
             val value = (model.maxY - (step * index))
             labels += valueFormatter.formatValue(value, model)
         }
@@ -144,13 +160,14 @@ class VerticalAxis(
     override fun getWidth(
         model: EntriesModel,
         position: VerticalAxisPosition,
-    ): Float {
+        availableHeight: Int,
+    ): Int {
         val widestTextWidth = label?.let { label ->
-            getLabels(model).maxOf { labelText ->
+            getLabels(model, getDrawLabelCount(availableHeight)).maxOf { labelText ->
                 label.getWidth(labelText)
             }
         }.orZero
-        return axisThickness.half + tickLength + widestTextWidth
+        return (axisThickness.half + tickLength + widestTextWidth).toInt()
     }
 
 }
