@@ -71,7 +71,6 @@ class DataSetView @JvmOverloads constructor(
     }
 
     private fun updateBounds() {
-        if (!ViewCompat.isLaidOut(this)) return
         val dataSet = dataSet ?: return
         virtualLayout.setBounds(contentBounds, dataSet, axisManager)
     }
