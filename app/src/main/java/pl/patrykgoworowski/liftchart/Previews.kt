@@ -36,16 +36,16 @@ fun SampleDataSet(modifier: Modifier = Modifier) {
                     textColor = MaterialTheme.colors.primary.colorInt,
                     color = MaterialTheme.colors.primary.copy(0.1f).colorInt,
                     shape = CutCornerShape(
-                        CornerSize(0),
+                        CornerSize(25),
                         CornerSize(50),
                         CornerSize(50),
-                        CornerSize(0)
+                        CornerSize(25)
                     ).chartShape(),
                     textSize = 10f.dp,
                 ).apply {
                         padding.apply {
                             end = 8f.dp
-                            start = 2f.dp
+                            start = 4f.dp
                         }
                 },
                 axis = null,
