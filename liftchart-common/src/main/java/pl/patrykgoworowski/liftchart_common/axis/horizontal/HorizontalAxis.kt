@@ -83,13 +83,12 @@ class HorizontalAxis(
             )
 
             guideline?.takeIf {
-                it.shouldDraw &&
-                        it.fitsInVertical(
-                            guidelineTop,
-                            guidelineBottom,
-                            tickDrawCenter,
-                            dataSetBounds
-                        )
+                it.fitsInVertical(
+                    guidelineTop,
+                    guidelineBottom,
+                    tickDrawCenter,
+                    dataSetBounds
+                )
             }?.drawVertical(
                 canvas = canvas,
                 top = guidelineTop,

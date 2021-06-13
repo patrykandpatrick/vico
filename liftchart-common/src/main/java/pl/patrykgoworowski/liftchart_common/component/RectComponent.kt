@@ -82,6 +82,7 @@ public open class RectComponent(
         right: Float,
         bottom: Float
     ) {
+        if (left == right || top == bottom) return //Skip drawing shape that will be invisible.
         val centerX = left + ((right - left) / 2)
         val centerY = top + ((bottom - top) / 2)
         drawBounds.set(

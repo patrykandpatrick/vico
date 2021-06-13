@@ -18,7 +18,11 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware {
     val dataSetBounds: RectF
     val axisThickness: Float
     val tickThickness: Float
+    val guidelineThickness: Float
     val tickLength: Float
+
+    public val maxAnyAxisLineThickness: Float
+        get() = maxOf(axisThickness, tickThickness, guidelineThickness)
 
     public val labelLineHeight: Int
         get() = label?.lineHeight ?: 0

@@ -75,13 +75,12 @@ class VerticalAxis(
             )
 
             guideline?.takeIf {
-                it.shouldDraw &&
-                        it.fitsInHorizontal(
-                            dataSetBounds.left,
-                            dataSetBounds.right,
-                            tickCenterY,
-                            dataSetBounds
-                        )
+                it.fitsInHorizontal(
+                    dataSetBounds.left,
+                    dataSetBounds.right,
+                    tickCenterY,
+                    dataSetBounds
+                )
             }?.drawHorizontal(
                 canvas = canvas,
                 left = dataSetBounds.left,

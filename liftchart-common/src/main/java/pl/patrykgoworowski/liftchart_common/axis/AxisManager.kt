@@ -107,9 +107,9 @@ public open class AxisManager(
             )
             axis.dataSetBounds.set(
                 horizontalAxisLeftDrawBound,
-                dataSetBounds.top + if (hasTopAxis) axis.tickThickness else -axis.tickThickness,
+                dataSetBounds.top + axis.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
                 horizontalAxisRightDrawBound,
-                dataSetBounds.bottom + if (hasBottomAxis) 0f else axis.tickThickness
+                dataSetBounds.bottom + if (hasBottomAxis) 0f else axis.maxAnyAxisLineThickness
             )
         }
         topAxis?.let { axis ->
@@ -141,9 +141,9 @@ public open class AxisManager(
             )
             axis.dataSetBounds.set(
                 horizontalAxisLeftDrawBound,
-                dataSetBounds.top + if (hasTopAxis) axis.tickThickness else -axis.tickThickness,
+                dataSetBounds.top + axis.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
                 horizontalAxisRightDrawBound,
-                dataSetBounds.bottom + if (hasBottomAxis) 0f else axis.tickThickness
+                dataSetBounds.bottom + if (hasBottomAxis) 0f else axis.maxAnyAxisLineThickness
             )
         }
         bottomAxis?.let { axis ->

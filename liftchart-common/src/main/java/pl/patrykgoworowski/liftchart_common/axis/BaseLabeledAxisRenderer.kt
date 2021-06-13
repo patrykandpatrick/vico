@@ -32,6 +32,9 @@ public abstract class BaseLabeledAxisRenderer<Position: AxisPosition>(
     override val tickThickness: Float
         get() = tick?.thickness.orZero
 
+    override val guidelineThickness: Float
+        get() = guideline?.thickness.orZero
+
     override var isLTR: Boolean by Delegates.observable(true) { _, _, value ->
         label?.isLTR = value
     }
