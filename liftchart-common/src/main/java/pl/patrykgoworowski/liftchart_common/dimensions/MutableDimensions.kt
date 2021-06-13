@@ -7,6 +7,12 @@ class MutableDimensions(
     override var bottom: Float,
 ) : Dimensions {
 
+    val horizontal: Float
+        get() = start + end
+
+    val vertical: Float
+        get() = top + bottom
+
     fun set(all: Float) = set(all, all, all, all)
 
     fun set(
@@ -34,14 +40,14 @@ class MutableDimensions(
     }
 
     fun setHorizontal(value: Float): Dimensions {
-        start = value
-        end = value
+        start = if (value == 0f) value else value / 2
+        end = if (value == 0f) value else value / 2
         return this
     }
 
     fun setVertical(value: Float): Dimensions {
-        top = value
-        bottom = value
+        top = if (value == 0f) value else value / 2
+        bottom = if (value == 0f) value else value / 2
         return this
     }
 
