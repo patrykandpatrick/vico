@@ -4,7 +4,7 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
-import pl.patrykgoworowski.liftchart_common.axis.formatter.DefaultAxisFormatter
+import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.TextComponent
 import pl.patrykgoworowski.liftchart_common.extension.orZero
@@ -38,7 +38,7 @@ public abstract class BaseLabeledAxisRenderer<Position: AxisPosition>(
 
     override var isVisible: Boolean = true
 
-    override var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
+    override var valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter()
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
         bounds.set(left, top, right, bottom)
