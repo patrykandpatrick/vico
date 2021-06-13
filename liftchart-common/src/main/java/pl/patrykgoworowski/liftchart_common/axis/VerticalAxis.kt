@@ -13,7 +13,6 @@ import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
-import pl.patrykgoworowski.liftchart_common.extension.orZeroInt
 
 class VerticalAxis(
     label: TextComponent? = DEF_LABEL_COMPONENT,
@@ -147,7 +146,7 @@ class VerticalAxis(
         if (labels.isEmpty()) return outDimensions.set(0f)
 
         fun getHalfLabelHeight(text: String): Float =
-            label?.getTextBounds(text)?.height()?.half.orZeroInt * 1.2f
+            label?.getHeight(text)?.half.orZero
 
         return outDimensions.set(
             start = 0f,
