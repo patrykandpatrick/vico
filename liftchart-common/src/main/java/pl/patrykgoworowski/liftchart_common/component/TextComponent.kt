@@ -78,10 +78,10 @@ public open class TextComponent(
         val centeredY = adjustedY - layoutHeight.half
 
         canvas.save()
-        canvas.translate(adjustedX, centeredY)
         if (rotationDegrees != 0f) {
-            canvas.rotate(rotationDegrees, adjustedX, centeredY)
+            canvas.rotate(45f, adjustedX, adjustedY)
         }
+        canvas.translate(adjustedX, centeredY)
 
         layout.draw(canvas)
 
