@@ -30,14 +30,7 @@ public abstract class Component(
         right: Float,
         bottom: Float
     ) {
-        val centerX = left + ((right - left) / 2)
-        val centerY = top + ((bottom - top) / 2)
-        drawBounds.set(
-            minOf(left + margins.start, centerX),
-            minOf(top + margins.top, centerY),
-            maxOf(right - margins.end, centerX),
-            maxOf(bottom - margins.bottom, centerY)
-        )
+        drawBounds.set(left, top, right, bottom)
         path.reset()
         shape.drawShape(canvas, paint, path, drawBounds)
     }

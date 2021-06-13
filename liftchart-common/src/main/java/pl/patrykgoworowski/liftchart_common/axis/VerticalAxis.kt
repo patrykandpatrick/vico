@@ -162,12 +162,12 @@ class VerticalAxis(
         position: VerticalAxisPosition,
         availableHeight: Int,
     ): Int {
-        val widestTextWidth = label?.let { label ->
+        val widestTextComponentWidth = label?.let { label ->
             getLabels(model, getDrawLabelCount(availableHeight)).maxOf { labelText ->
                 label.getWidth(labelText)
             }
         }.orZero
-        return (axisThickness.half + tickLength + widestTextWidth).toInt()
+        return (axisThickness + tickLength + widestTextComponentWidth).toInt()
     }
 
 }

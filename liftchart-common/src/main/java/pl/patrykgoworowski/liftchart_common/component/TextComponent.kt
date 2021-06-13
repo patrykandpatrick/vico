@@ -89,9 +89,9 @@ public open class TextComponent(
     }
 
     private fun getAdjustedX(textX: Float) = when (textAlign) {
-        LEFT -> textX + padding.getLeft(isLTR)
+        LEFT -> textX + padding.getLeft(isLTR) + margins.getLeft(isLTR)
         CENTER -> textX
-        RIGHT -> textX - padding.getRight(isLTR)
+        RIGHT -> textX - (padding.getRight(isLTR) + margins.getRight(isLTR))
     }
 
     private fun getAdjustedY(
@@ -117,14 +117,14 @@ public open class TextComponent(
 
     public fun getWidth(text: String, outBounds: Rect = measurementBounds): Float {
         getTextBounds(text, outBounds)
-        return outBounds.width() + padding.start + padding.end
+        return outBounds.width() + padding.horizontal + margins.horizontal
     }
 
     public fun getHeight(
         text: String = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
     ): Float {
-        return getLayout(text, width).height + padding.top + padding.bottom
+        return getLayout(text, width).height + padding.vertical + margins.vertical
     }
 
     public fun clearLayoutCache() {
