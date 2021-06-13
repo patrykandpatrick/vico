@@ -140,9 +140,9 @@ class VerticalAxis(
     }
 
     override fun getDrawExtends(
-        outDimensions: MutableDimensions<Float>,
+        outDimensions: MutableDimensions,
         model: EntriesModel
-    ): Dimensions<Float> {
+    ): Dimensions {
         val labels = getLabels(model)
         if (labels.isEmpty()) return outDimensions.set(0f)
 

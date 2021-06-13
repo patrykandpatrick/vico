@@ -62,7 +62,9 @@ class ComposeShowcaseFragment : Fragment() {
                     },
                     HorizontalAxis(),
                     VerticalAxis(
-                        label = TextComponent().apply { setPadding(start = 8f.dp.pixels) }
+                        label = TextComponent().apply {
+                            setMargins(start = 8f.dp.pixels)
+                        }
                     ),
                     HorizontalAxis().apply {
                         valueFormatter = DecimalFormatAxisValueFormatter()

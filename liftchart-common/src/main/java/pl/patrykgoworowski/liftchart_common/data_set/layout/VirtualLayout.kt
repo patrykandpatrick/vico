@@ -11,7 +11,7 @@ public open class VirtualLayout(
     var isLTR: Boolean
 ) {
 
-    private val axesDimensions: MutableDimensions<Float> = floatDimensions()
+    private val axesDimensions: MutableDimensions = floatDimensions()
 
     public open fun <Model : EntriesModel> setBounds(
         contentBounds: RectF,

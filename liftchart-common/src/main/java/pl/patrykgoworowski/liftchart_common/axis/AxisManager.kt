@@ -45,10 +45,10 @@ public open class AxisManager(
         get() = if (isLTR) endAxis else startAxis
 
     fun getAxesDimensions(
-        outDimensions: MutableDimensions<Float>,
+        outDimensions: MutableDimensions,
         model: EntriesModel,
         availableHeight: Int,
-    ): Dimensions<Float> {
+    ): Dimensions {
         startAxis?.getDrawExtends(startDimensions, model).orElse { startDimensions.set(0f) }
         topAxis?.getDrawExtends(topDimensions, model).orElse { topDimensions.set(0f) }
         endAxis?.getDrawExtends(endDimensions, model).orElse { endDimensions.set(0f) }
@@ -86,7 +86,7 @@ public open class AxisManager(
     fun setAxesBounds(
         contentBounds: RectF,
         dataSetBounds: RectF,
-        axesDimensions: Dimensions<Float>,
+        axesDimensions: Dimensions,
     ) {
 
         val horizontalAxisLeftDrawBound = dataSetBounds.left + (leftAxis?.axisThickness?.half

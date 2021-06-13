@@ -126,9 +126,9 @@ class HorizontalAxis(
     }
 
     override fun getDrawExtends(
-        outDimensions: MutableDimensions<Float>,
+        outDimensions: MutableDimensions,
         model: EntriesModel
-    ): Dimensions<Float> {
+    ): Dimensions {
         outDimensions.setVertical(0f)
         return outDimensions.setHorizontal(
             if (tickType == TickType.Minor) tick?.thickness?.half.orZero

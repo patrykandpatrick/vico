@@ -4,12 +4,14 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultMargins
+import pl.patrykgoworowski.liftchart_common.component.dimension.Margins
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
 public abstract class Component(
     public var shape: Shape,
     color: Int,
-) {
+) : Margins by DefaultMargins() {
 
     val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     protected val drawBounds: RectF = RectF()
@@ -28,7 +30,14 @@ public abstract class Component(
         right: Float,
         bottom: Float
     ) {
-        drawBounds.set(left, top, right, bottom)
+        val centerX = left + ((right - left) / 2)
+        val centerY = top + ((bottom - top) / 2)
+        drawBounds.set(
+            minOf(left + margins.start, centerX),
+            minOf(top + margins.top, centerY),
+            maxOf(right - margins.end, centerX),
+            maxOf(bottom - margins.bottom, centerY)
+        )
         path.reset()
         shape.drawShape(canvas, paint, path, drawBounds)
     }

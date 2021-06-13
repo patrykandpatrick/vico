@@ -59,6 +59,7 @@ public open class TextComponent(
         width: Int = Int.MAX_VALUE,
     ) {
 
+        if (text.isBlank()) return
         val layoutWidth = minOf(textPaint.measureText(text).toInt(), width)
         layout = getLayout(text, width)
         val layoutHeight = layout.height
@@ -66,7 +67,6 @@ public open class TextComponent(
         val adjustedX = getAdjustedX(textX)
         val adjustedY = getAdjustedY(textY, layoutHeight, verticalPosition)
         val baseLeft = getBaseLeft(adjustedX, layoutWidth)
-
         draw(
             canvas = canvas,
             left = baseLeft - padding.getLeft(isLTR),

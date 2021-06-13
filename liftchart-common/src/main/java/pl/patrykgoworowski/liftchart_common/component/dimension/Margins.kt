@@ -2,23 +2,23 @@ package pl.patrykgoworowski.liftchart_common.component.dimension
 
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 
-public interface Padding {
+public interface Margins {
 
-    public val padding: MutableDimensions
+    public val margins: MutableDimensions
 
-    public fun setPadding(
+    public fun setMargins(
         start: Float = 0f,
         top: Float = 0f,
         end: Float = 0f,
         bottom: Float = 0f,
     ) {
-        padding.set(start, top, end, bottom)
+        margins.set(start, top, end, bottom)
     }
 
-    public fun setPadding(
+    public fun setMargins(
         all: Float = 0f
     ) {
-        padding.set(all)
+        margins.set(all)
     }
 
 }

@@ -1,11 +1,11 @@
 package pl.patrykgoworowski.liftchart_common.dimensions
 
-interface Dimensions<T: Number> {
+interface Dimensions {
 
-    val start: T
-    val top: T
-    val end: T
-    val bottom: T
+    val start: Float
+    val top: Float
+    val end: Float
+    val bottom: Float
 
     fun getLeft(isLTR: Boolean) = if (isLTR) start else end
 

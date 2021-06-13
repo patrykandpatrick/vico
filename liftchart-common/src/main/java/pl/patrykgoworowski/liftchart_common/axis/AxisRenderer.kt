@@ -68,8 +68,8 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware {
         )
 
     fun getDrawExtends(
-        outDimensions: MutableDimensions<Float>,
+        outDimensions: MutableDimensions,
         model: EntriesModel,
-    ): Dimensions<Float>
+    ): Dimensions
 
 }
