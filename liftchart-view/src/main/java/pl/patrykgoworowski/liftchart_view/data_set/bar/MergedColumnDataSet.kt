@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
+import android.graphics.PointF
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
@@ -29,7 +30,7 @@ class MergedColumnDataSet(
             listeners.forEach { it() }
         }
 
-    override fun draw(canvas: Canvas) = draw(canvas, model)
+    override fun draw(canvas: Canvas, pointF: PointF?) = draw(canvas, model, pointF)
 
     override fun addListener(listener: UpdateRequestListener) {
         listeners += listener

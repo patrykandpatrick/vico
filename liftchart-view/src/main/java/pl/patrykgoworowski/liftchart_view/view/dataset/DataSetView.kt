@@ -1,15 +1,19 @@
 package pl.patrykgoworowski.liftchart_view.view.dataset
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.axis.*
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.extension.dpInt
 import pl.patrykgoworowski.liftchart_common.extension.set
+import pl.patrykgoworowski.liftchart_common.motion_event.ChartMotionEventHandler
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
 import pl.patrykgoworowski.liftchart_view.data_set.layout.ViewVirtualLayout
@@ -32,6 +36,9 @@ class DataSetView @JvmOverloads constructor(
     }
 
     private val virtualLayout = ViewVirtualLayout(isLTR)
+    private val motionEventHandler = ChartMotionEventHandler(this::handleEvent)
+
+    private var touchPoint: PointF? = null
 
     var dataSet: DataSetRendererWithModel<*>? by observable(null) { _, oldValue, newValue ->
         oldValue?.removeListener(updateRequestListener)
@@ -41,11 +48,22 @@ class DataSetView @JvmOverloads constructor(
 
     var axisManager = AxisManager()
 
+    @SuppressLint("ClickableViewAccessibility")
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        return if (motionEventHandler.handleTouchPoint(event)) true
+        else super.onTouchEvent(event)
+    }
+
+    private fun handleEvent(pointF: PointF?) {
+        touchPoint = pointF
+        invalidate()
+    }
+
     override fun onDraw(canvas: Canvas) {
         val dataSet = dataSet ?: return
         val segmentProperties = dataSet.getSegmentProperties()
         axisManager.draw(canvas, dataSet.getEntriesModel(), segmentProperties)
-        dataSet.draw(canvas)
+        dataSet.draw(canvas, touchPoint)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

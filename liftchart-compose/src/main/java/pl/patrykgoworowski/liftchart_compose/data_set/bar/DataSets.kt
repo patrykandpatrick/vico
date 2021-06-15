@@ -1,14 +1,17 @@
 package pl.patrykgoworowski.liftchart_compose.data_set.bar
 
+import android.graphics.PointF
 import android.graphics.RectF
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -27,6 +30,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesMod
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
+import pl.patrykgoworowski.liftchart_common.motion_event.ChartMotionEventHandler
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
@@ -99,6 +103,8 @@ fun <Model : EntriesModel> DataSet(
 ) {
     val bounds = remember { RectF() }
 
+    val (touchPoint, setTouchPoint) = remember { mutableStateOf<PointF?>(null) }
+    val touchPointHandler = remember { ChartMotionEventHandler { setTouchPoint(it) } }
     val virtualLayout = remember { VirtualLayout(true) }
     virtualLayout.isLTR = LocalLayoutDirection.current == LayoutDirection.Ltr
 
@@ -106,12 +112,13 @@ fun <Model : EntriesModel> DataSet(
         modifier = modifier
             .height(DEF_CHART_WIDTH.dp)
             .fillMaxWidth()
+            .pointerInteropFilter(onTouchEvent = touchPointHandler::handleTouchPoint)
     ) {
         bounds.set(0f, 0f, size.width, size.height)
         virtualLayout.setBounds(bounds, dataSet, model, axisManager)
         val canvas = drawContext.canvas.nativeCanvas
         val segmentProperties = dataSet.getSegmentProperties(model)
         axisManager.draw(canvas, model, segmentProperties)
-        dataSet.draw(canvas, model)
+        dataSet.draw(canvas, model, touchPoint)
     }
 }

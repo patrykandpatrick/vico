@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
@@ -35,7 +36,7 @@ public open class ColumnDataSetRenderer(
         isScaleCalculated = false
     }
 
-    override fun draw(canvas: Canvas, model: SingleEntriesModel) {
+    override fun draw(canvas: Canvas, model: SingleEntriesModel, touchPoint: PointF?) {
         calculateDrawSegmentSpecIfNeeded(model)
 
         val heightMultiplier = bounds.height() / model.maxY

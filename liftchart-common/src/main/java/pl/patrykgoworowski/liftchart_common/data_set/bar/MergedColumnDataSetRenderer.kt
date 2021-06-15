@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import android.graphics.Canvas
+import android.graphics.PointF
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
@@ -55,7 +56,8 @@ open class MergedColumnDataSetRenderer public constructor(
 
     override fun draw(
         canvas: Canvas,
-        model: MultiEntriesModel
+        model: MultiEntriesModel,
+        touchPoint: PointF?
     ) {
         if (model.entryCollections.isEmpty()) return
 
