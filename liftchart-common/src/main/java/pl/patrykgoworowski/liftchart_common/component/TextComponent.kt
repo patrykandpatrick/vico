@@ -24,7 +24,7 @@ public open class TextComponent(
     textSize: Float = 12f.sp,
     val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     val lineCount: Int = DEF_LABEL_LINE_COUNT,
-) : Component(shape, color), Padding by DefaultPadding() {
+) : ShapeComponent(shape, color), Padding by DefaultPadding() {
 
     public val textPaint = TextPaint()
 
