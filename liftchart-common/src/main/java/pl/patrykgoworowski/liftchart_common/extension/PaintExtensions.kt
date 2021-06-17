@@ -15,3 +15,6 @@ val Paint.textHeight: Float
         getFontMetrics(fm)
         return fm.descent - fm.ascent
     }
+
+fun Paint.measureText(text: CharSequence) =
+    measureText(text, 0, text.length)

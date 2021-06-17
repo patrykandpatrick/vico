@@ -1,30 +1,35 @@
 package pl.patrykgoworowski.liftchart_common.component
 
-import android.graphics.*
+import android.graphics.Canvas
 import android.graphics.Color.DKGRAY
+import android.graphics.Color.LTGRAY
+import android.graphics.Paint
 import android.graphics.Paint.Align.*
+import android.graphics.Rect
+import android.graphics.Typeface
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import pl.patrykgoworowski.liftchart_common.DEF_LABEL_LINE_COUNT
+import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultMargins
 import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultPadding
+import pl.patrykgoworowski.liftchart_common.component.dimension.Margins
 import pl.patrykgoworowski.liftchart_common.component.dimension.Padding
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.lineHeight
+import pl.patrykgoworowski.liftchart_common.extension.measureText
 import pl.patrykgoworowski.liftchart_common.extension.sp
-import pl.patrykgoworowski.liftchart_common.path.Shape
-import pl.patrykgoworowski.liftchart_common.path.rectShape
+import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_common.text.staticLayout
 import kotlin.math.roundToInt
 
 public open class TextComponent(
-    shape: Shape = rectShape(),
-    color: Int = Color.GRAY,
-    textColor: Int = DKGRAY,
+    color: Int = DKGRAY,
     textSize: Float = 12f.sp,
-    val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    val lineCount: Int = DEF_LABEL_LINE_COUNT,
-) : ShapeComponent(shape, color), Padding by DefaultPadding() {
+    public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    public val lineCount: Int = DEF_LABEL_LINE_COUNT,
+    public open val background: ShapeComponent? = ShapeComponent(pillShape(), LTGRAY),
+) : Padding by DefaultPadding(), Margins by DefaultMargins() {
 
     public val textPaint = TextPaint()
 
@@ -35,7 +40,7 @@ public open class TextComponent(
         get() = lineHeight * lineCount
 
     public var isLTR: Boolean = true
-    public var textColor: Int by textPaint::color
+    public var color: Int by textPaint::color
     public var textSize: Float by textPaint::textSize
     public var textAlign: Paint.Align by textPaint::textAlign
     public var typeface: Typeface by textPaint::typeface
@@ -46,13 +51,13 @@ public open class TextComponent(
     private val layoutCache = HashMap<Int, StaticLayout>()
 
     init {
-        textPaint.color = textColor
+        textPaint.color = color
         textPaint.textSize = textSize
     }
 
     public fun drawTextVertically(
         canvas: Canvas,
-        text: String,
+        text: CharSequence,
         textX: Float,
         textY: Float,
         verticalPosition: VerticalPosition,
@@ -67,7 +72,8 @@ public open class TextComponent(
         val adjustedX = getAdjustedX(textX)
         val adjustedY = getAdjustedY(textY, layoutHeight, verticalPosition)
         val baseLeft = getBaseLeft(adjustedX, layoutWidth)
-        draw(
+
+        background?.draw(
             canvas = canvas,
             left = baseLeft - padding.getLeft(isLTR),
             top = adjustedY - ((layoutHeight / 2) + padding.top),
@@ -110,18 +116,12 @@ public open class TextComponent(
         RIGHT -> adjustedX - layoutWidth
     }
 
-    public fun getTextBounds(text: String, outBounds: Rect = measurementBounds): Rect {
-        textPaint.getTextBounds(text, 0, text.length, outBounds)
-        return outBounds
-    }
-
-    public fun getWidth(text: String, outBounds: Rect = measurementBounds): Float {
-        getTextBounds(text, outBounds)
-        return outBounds.width() + padding.horizontal + margins.horizontal
+    public fun getWidth(text: CharSequence): Float {
+        return textPaint.measureText(text) + padding.horizontal + margins.horizontal
     }
 
     public fun getHeight(
-        text: String = TEXT_MEASUREMENT_CHAR,
+        text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
     ): Float {
         return getLayout(text, width).height + padding.vertical + margins.vertical
@@ -131,7 +131,7 @@ public open class TextComponent(
         layoutCache.clear()
     }
 
-    private fun getLayout(text: String, width: Int): StaticLayout =
+    private fun getLayout(text: CharSequence, width: Int): StaticLayout =
         layoutCache.getOrPut(text.hashCode() + 31 * width) {
             staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
         }
