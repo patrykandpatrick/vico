@@ -13,6 +13,7 @@ import pl.patrykgoworowski.liftchart_common.axis.*
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.extension.dpInt
 import pl.patrykgoworowski.liftchart_common.extension.set
+import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.motion_event.ChartMotionEventHandler
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
@@ -47,6 +48,7 @@ class DataSetView @JvmOverloads constructor(
     }
 
     var axisManager = AxisManager()
+    var marker: Marker? = null
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -63,7 +65,7 @@ class DataSetView @JvmOverloads constructor(
         val dataSet = dataSet ?: return
         val segmentProperties = dataSet.getSegmentProperties()
         axisManager.draw(canvas, dataSet.getEntriesModel(), segmentProperties)
-        dataSet.draw(canvas, touchPoint)
+        dataSet.draw(canvas, touchPoint, marker)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

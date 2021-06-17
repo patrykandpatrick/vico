@@ -30,6 +30,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesMod
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
+import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.motion_event.ChartMotionEventHandler
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
@@ -100,6 +101,7 @@ fun <Model : EntriesModel> DataSet(
     dataSet: DataSetRenderer<Model>,
     model: Model,
     axisManager: AxisManager = AxisManager(),
+    marker: Marker? = null,
 ) {
     val bounds = remember { RectF() }
 
@@ -119,6 +121,6 @@ fun <Model : EntriesModel> DataSet(
         val canvas = drawContext.canvas.nativeCanvas
         val segmentProperties = dataSet.getSegmentProperties(model)
         axisManager.draw(canvas, model, segmentProperties)
-        dataSet.draw(canvas, model, touchPoint)
+        dataSet.draw(canvas, model, touchPoint, marker)
     }
 }

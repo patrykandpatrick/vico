@@ -11,6 +11,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.Mult
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.dp
+import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
 
@@ -30,7 +31,11 @@ class MergedColumnDataSet(
             listeners.forEach { it() }
         }
 
-    override fun draw(canvas: Canvas, pointF: PointF?) = draw(canvas, model, pointF)
+    override fun draw(
+        canvas: Canvas,
+        pointF: PointF?,
+        marker: Marker?,
+    ) = draw(canvas, model, pointF, marker)
 
     override fun addListener(listener: UpdateRequestListener) {
         listeners += listener

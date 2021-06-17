@@ -8,8 +8,10 @@ import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
+import pl.patrykgoworowski.liftchart_common.extension.findClosestPositiveValue
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.set
+import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.roundToInt
 
 public open class ColumnDataSetRenderer(
@@ -24,6 +26,8 @@ public open class ColumnDataSetRenderer(
     private val scaledColumnThickness by column::scaledThickness
     private val segmentProperties = MutableSegmentProperties()
 
+    private val markerLocationMap = HashMap<Float, Marker.EntryModel>()
+
     override val bounds: RectF = RectF()
 
     override fun setBounds(
@@ -36,19 +40,48 @@ public open class ColumnDataSetRenderer(
         isScaleCalculated = false
     }
 
-    override fun draw(canvas: Canvas, model: SingleEntriesModel, touchPoint: PointF?) {
+    override fun draw(
+        canvas: Canvas,
+        model: SingleEntriesModel,
+        touchPoint: PointF?,
+        marker: Marker?
+    ) {
+        markerLocationMap.clear()
         calculateDrawSegmentSpecIfNeeded(model)
 
         val heightMultiplier = bounds.height() / model.maxY
         val bottom = bounds.bottom
         val drawingStart = bounds.left + scaledSpacing.half
+        val entries = model.entries
 
-        model.entries.forEach { entry ->
+        entries.forEach { entry ->
             val height = entry.y * heightMultiplier
-            val startX = drawingStart + scaledColumnThickness.half +
+            val top = bottom - height
+            val columnCenterX = drawingStart + scaledColumnThickness.half +
                     (scaledColumnThickness + scaledSpacing) * (entry.x - model.minX) / model.step
-            column.drawVertical(canvas, bottom - height, bottom, startX)
+            if (touchPoint != null && marker != null) {
+                markerLocationMap[columnCenterX] = Marker.EntryModel(
+                    PointF(columnCenterX, top),
+                    entry,
+                    column.color,
+                )
+            }
+            column.drawVertical(canvas, top, bottom, columnCenterX)
         }
+
+        if (touchPoint == null || marker == null) return
+        getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+            marker.draw(
+                canvas,
+                bounds,
+                listOf(markerModel),
+                entries,
+            )
+        }
+    }
+
+    private fun getClosestMarkerEntryPositionModel(touchPoint: PointF): Marker.EntryModel? {
+        return markerLocationMap.keys.findClosestPositiveValue(touchPoint.x)?.let(markerLocationMap::get)
     }
 
     private fun calculateDrawSegmentSpecIfNeeded(model: SingleEntriesModel) {

@@ -11,10 +11,8 @@ import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
-import pl.patrykgoworowski.liftchart_common.extension.getRepeating
-import pl.patrykgoworowski.liftchart_common.extension.half
-import pl.patrykgoworowski.liftchart_common.extension.round
-import pl.patrykgoworowski.liftchart_common.extension.set
+import pl.patrykgoworowski.liftchart_common.extension.*
+import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.roundToInt
 
 open class MergedColumnDataSetRenderer public constructor(
@@ -33,6 +31,8 @@ open class MergedColumnDataSetRenderer public constructor(
     private var scaledInnerSpacing = innerSpacing
 
     private val segmentProperties = MutableSegmentProperties()
+
+    private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
 
     init {
         if (columns.isEmpty()) throw IllegalStateException(ERR_COLUMN_LIST_EMPTY)
@@ -57,8 +57,10 @@ open class MergedColumnDataSetRenderer public constructor(
     override fun draw(
         canvas: Canvas,
         model: MultiEntriesModel,
-        touchPoint: PointF?
+        touchPoint: PointF?,
+        marker: Marker?
     ) {
+        markerLocationMap.clear()
         if (model.entryCollections.isEmpty()) return
 
         calculateDrawSegmentSpecIfNeeded(model)
@@ -96,11 +98,29 @@ open class MergedColumnDataSetRenderer public constructor(
                         columnCenterX += segmentSize.half
 
                         heightMap[entry.x] = cumulatedHeight + height
+                        if (touchPoint != null && marker != null) {
+                            markerLocationMap.getOrPut(columnCenterX) { ArrayList() }
+                                .add(Marker.EntryModel(
+                                    PointF(columnCenterX, columnTop),
+                                    entry,
+                                    column.color,
+                                ))
+                        }
                     }
                     MergeMode.Grouped -> {
                         columnTop = bottom - height
                         columnBottom = bottom
                         columnCenterX += column.scaledThickness.half
+
+                        if (touchPoint != null && marker != null) {
+                            markerLocationMap[columnCenterX] = arrayListOf(
+                                Marker.EntryModel(
+                                    PointF(columnCenterX, columnTop),
+                                    entry,
+                                    column.color,
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -112,7 +132,22 @@ open class MergedColumnDataSetRenderer public constructor(
                 )
             }
         }
+
         heightMap.clear()
+
+        if (touchPoint == null || marker == null) return
+        getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+            marker.draw(
+                canvas,
+                bounds,
+                markerModel,
+                model.entries,
+            )
+        }
+    }
+
+    private fun getClosestMarkerEntryPositionModel(touchPoint: PointF): List<Marker.EntryModel>? {
+        return markerLocationMap.keys.findClosestPositiveValue(touchPoint.x)?.let(markerLocationMap::get)
     }
 
     override fun getSegmentProperties(model: MultiEntriesModel): SegmentProperties {

@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.extension
 
 import pl.patrykgoworowski.liftchart_common.constants.ERR_REPEATING_COLLECTION_EMPTY
+import kotlin.math.abs
 
 fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =
     getOrNull(index) ?: getDefault().also { add(it) }
@@ -37,4 +38,17 @@ public inline fun <T> Iterable<T>.forEachIndexedExtended(
         selector(index, index == 0, !iterator.hasNext(), next)
         index++
     }
+}
+
+fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
+    if (isEmpty()) return null
+    var closestValue: Float? = null
+    forEach { checkedValue ->
+        closestValue = when {
+            closestValue == null -> checkedValue
+            abs(closestValue!! - value) > abs(checkedValue - value) -> checkedValue
+            else -> closestValue
+        }
+    }
+    return closestValue
 }
