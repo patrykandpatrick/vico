@@ -64,6 +64,48 @@ fun roundedCornersShape(
 
 }
 
+fun pillShape() = roundedCornersShape(100, 100, 100, 100)
+
+fun roundedCornersShape(
+    topLeftPercent: Int = 0,
+    topRightPercent: Int = 0,
+    bottomRightPercent: Int = 0,
+    bottomLeftPercent: Int = 0,
+): Shape = object : CornerShape(
+    topLeftPercent,
+    topRightPercent,
+    bottomRightPercent,
+    bottomLeftPercent,
+) {
+
+    private val radii = FloatArray(8)
+
+    override fun drawBarPathWithCorners(
+        canvas: Canvas,
+        paint: Paint,
+        barPath: Path,
+        barBounds: RectF,
+        topLeft: Float,
+        topRight: Float,
+        bottomRight: Float,
+        bottomLeft: Float
+    ) {
+        if (barBounds.height() == 0f) return
+        radii[0] = topLeft
+        radii[1] = topLeft
+        radii[2] = topRight
+        radii[3] = topRight
+        radii[4] = bottomRight
+        radii[5] = bottomRight
+        radii[6] = bottomLeft
+        radii[7] = bottomLeft
+        overrideBoundsWithMinSize(barBounds, topLeft, topRight, bottomRight, bottomLeft)
+        barPath.addRoundRect(barBounds, radii, Path.Direction.CCW)
+        canvas.drawPath(barPath, paint)
+    }
+
+}
+
 fun cutCornerShape(all: Float): Shape = cutCornerShape(all, all, all, all)
 
 fun cutCornerShape(
