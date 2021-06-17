@@ -1,14 +1,12 @@
 package pl.patrykgoworowski.liftchart_common.component
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.RectF
+import android.graphics.*
+import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
 public open class ShapeComponent(
     public var shape: Shape,
-    color: Int,
+    color: Int = Color.BLACK,
 ) : Component() {
 
     val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -38,11 +36,21 @@ public open class ShapeComponent(
         shape.drawShape(canvas, paint, path, drawBounds)
     }
 
-    open fun fitsIn(
+    public open fun fitsIn(
         left: Float,
         top: Float,
         right: Float,
         bottom: Float,
         boundingBox: RectF
     ): Boolean = boundingBox.contains(left, top, right, bottom)
+
+    public open fun setShadow(
+        radius: Float,
+        dx: Float = 0f,
+        dy: Float = 0f,
+        color: Int = DEF_SHADOW_COLOR,
+    ) {
+      paint.setShadowLayer(radius, dx, dy, color)
+    }
+
 }
