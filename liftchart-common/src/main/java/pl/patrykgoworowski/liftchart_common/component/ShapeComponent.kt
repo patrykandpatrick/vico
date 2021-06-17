@@ -6,7 +6,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
-public abstract class ShapeComponent(
+public open class ShapeComponent(
     public var shape: Shape,
     color: Int,
 ) : Component() {
@@ -28,7 +28,12 @@ public abstract class ShapeComponent(
         right: Float,
         bottom: Float
     ) {
-        drawBounds.set(left, top, right, bottom)
+        drawBounds.set(
+            left + margins.start,
+            top + margins.top,
+            right - margins.end,
+            bottom - margins.bottom,
+        )
         path.reset()
         shape.drawShape(canvas, paint, path, drawBounds)
     }
