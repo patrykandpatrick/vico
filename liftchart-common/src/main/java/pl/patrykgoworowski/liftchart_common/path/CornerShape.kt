@@ -56,10 +56,11 @@ abstract class CornerShape(
                 bL = bottomLeft * scale
             }
             else -> {
-                tL = topLeft * if (isRelative) bounds.width().half / 100f else 1f
-                tR = topRight * if (isRelative) bounds.width().half / 100f else 1f
-                bR = bottomRight * if (isRelative) bounds.width().half / 100f else 1f
-                bL = bottomLeft * if (isRelative) bounds.width().half / 100f else 1f
+                val halfOfSmallerSide = minOf(bounds.width(), bounds.height()).half
+                tL = topLeft * if (isRelative) halfOfSmallerSide / 100f else 1f
+                tR = topRight * if (isRelative) halfOfSmallerSide / 100f else 1f
+                bR = bottomRight * if (isRelative) halfOfSmallerSide / 100f else 1f
+                bL = bottomLeft * if (isRelative) halfOfSmallerSide / 100f else 1f
             }
         }
         drawBarPathWithCorners(
