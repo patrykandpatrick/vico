@@ -7,6 +7,12 @@ sealed class AxisPosition {
     val isBottom: Boolean
         get() = this is BottomAxis
 
+    val isStart: Boolean
+        get() = this is StartAxis
+
+    val isEnd: Boolean
+        get() = this is EndAxis
+
     fun isLeft(isLtr: Boolean): Boolean = this is StartAxis && isLtr
 
     fun isRight(isLtr: Boolean): Boolean = this is EndAxis && isLtr

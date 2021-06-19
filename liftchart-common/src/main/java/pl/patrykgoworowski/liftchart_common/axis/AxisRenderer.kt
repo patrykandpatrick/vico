@@ -7,7 +7,7 @@ import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
-import pl.patrykgoworowski.liftchart_common.component.TextComponent
+import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions

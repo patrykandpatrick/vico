@@ -1,7 +1,6 @@
 package pl.patrykgoworowski.liftchart_common.axis.horizontal
 
 import android.graphics.Canvas
-import android.graphics.Paint
 import pl.patrykgoworowski.liftchart_common.DEF_AXIS_COMPONENT
 import pl.patrykgoworowski.liftchart_common.DEF_GUIDELINE_COMPONENT
 import pl.patrykgoworowski.liftchart_common.DEF_LABEL_COMPONENT
@@ -13,8 +12,8 @@ import pl.patrykgoworowski.liftchart_common.axis.HorizontalAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
-import pl.patrykgoworowski.liftchart_common.component.TextComponent
-import pl.patrykgoworowski.liftchart_common.component.TextComponent.VerticalPosition
+import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
+import pl.patrykgoworowski.liftchart_common.component.text.VerticalPosition
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
@@ -30,11 +29,10 @@ class HorizontalAxis(
 ) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline),
     HorizontalAxisRenderer {
 
-    public var tickType: TickType = TickType.Minor
+    private val HorizontalAxisPosition.textVerticalPosition: VerticalPosition
+        get() = if (isBottom) VerticalPosition.Top else VerticalPosition.Bottom
 
-    init {
-        label?.textAlign = Paint.Align.CENTER
-    }
+    public var tickType: TickType = TickType.Minor
 
     override fun onDraw(
         canvas: Canvas,
@@ -97,13 +95,13 @@ class HorizontalAxis(
             )
 
             if (index < entriesLength) {
-                label?.drawTextVertically(
+                label?.drawText(
                     canvas,
                     valueFormatter.formatValue(valueIndex, index, model),
                     textDrawCenter,
                     textY,
-                    if (position.isBottom) VerticalPosition.Top else VerticalPosition.Bottom,
-                    tickDrawStep.toInt()
+                    verticalPosition = position.textVerticalPosition,
+                    width = tickDrawStep.toInt(),
                 )
                 valueIndex += model.step
             }

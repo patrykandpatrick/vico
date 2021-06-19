@@ -6,7 +6,7 @@ import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
-import pl.patrykgoworowski.liftchart_common.component.TextComponent
+import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 import pl.patrykgoworowski.liftchart_common.extension.set
 import kotlin.properties.Delegates

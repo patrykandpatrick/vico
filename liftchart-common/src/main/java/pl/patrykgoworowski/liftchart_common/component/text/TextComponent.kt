@@ -1,16 +1,15 @@
-package pl.patrykgoworowski.liftchart_common.component
+package pl.patrykgoworowski.liftchart_common.component.text
 
 import android.graphics.Canvas
 import android.graphics.Color.DKGRAY
 import android.graphics.Color.LTGRAY
 import android.graphics.Paint
-import android.graphics.Paint.Align.*
-import android.graphics.Rect
 import android.graphics.Typeface
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import pl.patrykgoworowski.liftchart_common.DEF_LABEL_LINE_COUNT
+import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultMargins
 import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultPadding
 import pl.patrykgoworowski.liftchart_common.component.dimension.Margins
@@ -47,7 +46,6 @@ public open class TextComponent(
     public var rotationDegrees: Float = 0f
     private var layout: StaticLayout = staticLayout("", textPaint, 0)
 
-    private val measurementBounds = Rect()
     private val layoutCache = HashMap<Int, StaticLayout>()
 
     init {
@@ -55,65 +53,69 @@ public open class TextComponent(
         textPaint.textSize = textSize
     }
 
-    public fun drawTextVertically(
+    public fun drawText(
         canvas: Canvas,
         text: CharSequence,
         textX: Float,
         textY: Float,
-        verticalPosition: VerticalPosition,
+        horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
+        verticalPosition: VerticalPosition = VerticalPosition.Center,
         width: Int = Int.MAX_VALUE,
     ) {
 
         if (text.isBlank()) return
         val layoutWidth = minOf(textPaint.measureText(text).toInt(), width)
-        layout = getLayout(text, width)
+        layout = getLayout(text, layoutWidth)
         val layoutHeight = layout.height
 
-        val adjustedX = getAdjustedX(textX)
-        val adjustedY = getAdjustedY(textY, layoutHeight, verticalPosition)
-        val baseLeft = getBaseLeft(adjustedX, layoutWidth)
+        val textStartPosition = horizontalPosition.getTextStartPosition(textX, layoutWidth)
+        val textTopPosition = verticalPosition.getTextTopPosition(textY, layoutHeight)
 
         background?.draw(
             canvas = canvas,
-            left = baseLeft - padding.getLeft(isLTR),
-            top = adjustedY - ((layoutHeight / 2) + padding.top),
-            right = baseLeft + layoutWidth + padding.getRight(isLTR),
-            bottom = adjustedY + ((layoutHeight / 2) + padding.bottom)
+            left = textStartPosition - padding.getLeft(isLTR),
+            top = textTopPosition - ((layoutHeight / 2) + padding.top),
+            right = textStartPosition + layoutWidth + padding.getRight(isLTR),
+            bottom = textTopPosition + ((layoutHeight / 2) + padding.bottom)
         )
 
-        val centeredY = adjustedY - layoutHeight.half
+        val centeredY = textTopPosition - layoutHeight.half
 
         canvas.save()
         if (rotationDegrees != 0f) {
-            canvas.rotate(45f, adjustedX, adjustedY)
+            canvas.rotate(45f, textStartPosition, textTopPosition)
         }
-        canvas.translate(adjustedX, centeredY)
+        canvas.translate(textStartPosition, centeredY)
 
         layout.draw(canvas)
 
         canvas.restore()
     }
 
-    private fun getAdjustedX(textX: Float) = when (textAlign) {
-        LEFT -> textX + padding.getLeft(isLTR) + margins.getLeft(isLTR)
-        CENTER -> textX
-        RIGHT -> textX - (padding.getRight(isLTR) + margins.getRight(isLTR))
+    private fun HorizontalPosition.getTextStartPosition(baseXPosition: Float, width: Int) = when (this) {
+        HorizontalPosition.Start ->
+            if (isLTR) getTextLeftPosition(baseXPosition)
+            else getTextRightPosition(baseXPosition, width)
+        HorizontalPosition.Center ->
+            baseXPosition - width.half
+        HorizontalPosition.End ->
+            if (isLTR) getTextRightPosition(baseXPosition, width)
+            else getTextLeftPosition(baseXPosition)
     }
 
-    private fun getAdjustedY(
+    private fun getTextLeftPosition(baseXPosition: Float): Float =
+        baseXPosition + padding.getLeft(isLTR) + margins.getLeft(isLTR)
+
+    private fun getTextRightPosition(baseXPosition: Float, width: Int): Float =
+        baseXPosition - (padding.getRight(isLTR) + margins.getRight(isLTR) + width)
+
+    private fun VerticalPosition.getTextTopPosition(
         textY: Float,
         layoutHeight: Int,
-        verticalPosition: VerticalPosition,
-    ) = when (verticalPosition) {
+    ) = when (this) {
         VerticalPosition.Top -> textY + layoutHeight.half
         VerticalPosition.Center -> textY
         VerticalPosition.Bottom -> textY - layoutHeight.half
-    }
-
-    private fun getBaseLeft(adjustedX: Float, layoutWidth: Int) = when (textAlign) {
-        LEFT -> adjustedX
-        CENTER -> adjustedX - (layoutWidth / 2)
-        RIGHT -> adjustedX - layoutWidth
     }
 
     public fun getWidth(text: CharSequence): Float {
@@ -135,12 +137,6 @@ public open class TextComponent(
         layoutCache.getOrPut(text.hashCode() + 31 * width) {
             staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
         }
-
-    enum class VerticalPosition {
-        Top,
-        Center,
-        Bottom
-    }
 
     companion object {
         const val TEXT_MEASUREMENT_CHAR = "1"
