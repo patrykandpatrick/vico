@@ -76,3 +76,9 @@ fun StaticLayout.getBounds(outBounds: Rect) {
         outBounds.top = top
     }
 }
+
+val StaticLayout.widestLineWidth: Float
+get() =
+    (0 until lineCount).maxOf { lineIndex ->
+        getLineWidth(lineIndex)
+    }

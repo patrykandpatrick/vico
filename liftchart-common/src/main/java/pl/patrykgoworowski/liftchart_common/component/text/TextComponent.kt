@@ -3,7 +3,6 @@ package pl.patrykgoworowski.liftchart_common.component.text
 import android.graphics.Canvas
 import android.graphics.Color.DKGRAY
 import android.graphics.Color.LTGRAY
-import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -20,6 +19,7 @@ import pl.patrykgoworowski.liftchart_common.extension.measureText
 import pl.patrykgoworowski.liftchart_common.extension.sp
 import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_common.text.staticLayout
+import pl.patrykgoworowski.liftchart_common.text.widestLineWidth
 import kotlin.math.roundToInt
 
 public open class TextComponent(
@@ -41,7 +41,6 @@ public open class TextComponent(
     public var isLTR: Boolean = true
     public var color: Int by textPaint::color
     public var textSize: Float by textPaint::textSize
-    public var textAlign: Paint.Align by textPaint::textAlign
     public var typeface: Typeface by textPaint::typeface
     public var rotationDegrees: Float = 0f
     private var layout: StaticLayout = staticLayout("", textPaint, 0)
@@ -64,8 +63,8 @@ public open class TextComponent(
     ) {
 
         if (text.isBlank()) return
-        val layoutWidth = minOf(textPaint.measureText(text).toInt(), width)
-        layout = getLayout(text, layoutWidth)
+        layout = getLayout(text, width)
+        val layoutWidth = layout.widestLineWidth
         val layoutHeight = layout.height
 
         val textStartPosition = horizontalPosition.getTextStartPosition(textX, layoutWidth)
@@ -92,7 +91,7 @@ public open class TextComponent(
         canvas.restore()
     }
 
-    private fun HorizontalPosition.getTextStartPosition(baseXPosition: Float, width: Int) = when (this) {
+    private fun HorizontalPosition.getTextStartPosition(baseXPosition: Float, width: Float) = when (this) {
         HorizontalPosition.Start ->
             if (isLTR) getTextLeftPosition(baseXPosition)
             else getTextRightPosition(baseXPosition, width)
@@ -106,7 +105,7 @@ public open class TextComponent(
     private fun getTextLeftPosition(baseXPosition: Float): Float =
         baseXPosition + padding.getLeft(isLTR) + margins.getLeft(isLTR)
 
-    private fun getTextRightPosition(baseXPosition: Float, width: Int): Float =
+    private fun getTextRightPosition(baseXPosition: Float, width: Float): Float =
         baseXPosition - (padding.getRight(isLTR) + margins.getRight(isLTR) + width)
 
     private fun VerticalPosition.getTextTopPosition(
