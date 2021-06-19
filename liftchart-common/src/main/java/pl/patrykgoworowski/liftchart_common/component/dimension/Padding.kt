@@ -16,6 +16,13 @@ public interface Padding {
     }
 
     public fun setPadding(
+        horizontal: Float = 0f,
+        vertical: Float = 0f,
+    ) {
+        padding.set(horizontal, vertical, horizontal, vertical)
+    }
+
+    public fun setPadding(
         all: Float = 0f
     ) {
         padding.set(all)
