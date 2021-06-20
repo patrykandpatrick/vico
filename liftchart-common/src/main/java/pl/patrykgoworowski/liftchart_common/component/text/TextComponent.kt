@@ -112,9 +112,9 @@ public open class TextComponent(
         textY: Float,
         layoutHeight: Int,
     ) = when (this) {
-        VerticalPosition.Top -> textY + layoutHeight.half
+        VerticalPosition.Top -> textY + layoutHeight.half + padding.top + margins.top
         VerticalPosition.Center -> textY
-        VerticalPosition.Bottom -> textY - layoutHeight.half
+        VerticalPosition.Bottom -> textY - (layoutHeight.half + padding.bottom + margins.bottom)
     }
 
     public fun getWidth(text: CharSequence): Float {
