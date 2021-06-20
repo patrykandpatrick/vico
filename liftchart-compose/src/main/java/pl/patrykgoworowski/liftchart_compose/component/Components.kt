@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
@@ -31,5 +32,18 @@ fun shapeComponent(
     color: Color
 ): ShapeComponent = ShapeComponent(
     shape = shape.chartShape(),
+    color = color.toArgb(),
+)
+
+@Composable
+fun ShapeComponent.setShadow(
+    radius: Dp,
+    dx: Dp,
+    dy: Dp,
+    color: Color = Color(DEF_SHADOW_COLOR),
+) = setShadow(
+    radius = radius.pixels,
+    dx = dx.pixels,
+    dy = dy.pixels,
     color = color.toArgb(),
 )
