@@ -136,8 +136,10 @@ class HorizontalAxis(
     override fun getHeight(
         position: HorizontalAxisPosition,
     ): Int {
-        return ((if (position.isBottom) axisThickness else 0f) + tickLength + label?.allLinesHeight.orZero)
-            .toInt()
+        return ((if (position.isBottom) axisThickness else 0f)
+                + tickLength
+                + label?.getHeight().orZero
+                ).toInt()
     }
 
     enum class TickType {
