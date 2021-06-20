@@ -7,6 +7,10 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import pl.patrykgoworowski.liftchart_common.extension.setBounds
 import pl.patrykgoworowski.liftchart_common.extension.updateBounds
+import pl.patrykgoworowski.liftchart_common.path.corner.Corner
+import pl.patrykgoworowski.liftchart_common.path.corner.CorneredShape
+import pl.patrykgoworowski.liftchart_common.path.corner.CutCornerTreatment
+import pl.patrykgoworowski.liftchart_common.path.corner.RoundedCornerTreatment
 
 
 fun rectShape(): Shape = object : Shape {
@@ -34,35 +38,12 @@ fun roundedCornersShape(
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f,
-): Shape = object : CornerShape(topLeft, topRight, bottomRight, bottomLeft) {
-
-    private val radii = FloatArray(8)
-
-    override fun drawBarPathWithCorners(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        barBounds: RectF,
-        topLeft: Float,
-        topRight: Float,
-        bottomRight: Float,
-        bottomLeft: Float
-    ) {
-        if (barBounds.height() == 0f) return
-        radii[0] = topLeft
-        radii[1] = topLeft
-        radii[2] = topRight
-        radii[3] = topRight
-        radii[4] = bottomRight
-        radii[5] = bottomRight
-        radii[6] = bottomLeft
-        radii[7] = bottomLeft
-        overrideBoundsWithMinSize(barBounds, topLeft, topRight, bottomRight, bottomLeft)
-        barPath.addRoundRect(barBounds, radii, Path.Direction.CCW)
-        canvas.drawPath(barPath, paint)
-    }
-
-}
+): Shape = CorneredShape(
+    Corner.Absolute(topLeft, RoundedCornerTreatment),
+    Corner.Absolute(topRight, RoundedCornerTreatment),
+    Corner.Absolute(bottomRight, RoundedCornerTreatment),
+    Corner.Absolute(bottomLeft, RoundedCornerTreatment),
+)
 
 fun pillShape() = roundedCornersShape(100, 100, 100, 100)
 
@@ -71,40 +52,12 @@ fun roundedCornersShape(
     topRightPercent: Int = 0,
     bottomRightPercent: Int = 0,
     bottomLeftPercent: Int = 0,
-): Shape = object : CornerShape(
-    topLeftPercent,
-    topRightPercent,
-    bottomRightPercent,
-    bottomLeftPercent,
-) {
-
-    private val radii = FloatArray(8)
-
-    override fun drawBarPathWithCorners(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        barBounds: RectF,
-        topLeft: Float,
-        topRight: Float,
-        bottomRight: Float,
-        bottomLeft: Float
-    ) {
-        if (barBounds.height() == 0f) return
-        radii[0] = topLeft
-        radii[1] = topLeft
-        radii[2] = topRight
-        radii[3] = topRight
-        radii[4] = bottomRight
-        radii[5] = bottomRight
-        radii[6] = bottomLeft
-        radii[7] = bottomLeft
-        overrideBoundsWithMinSize(barBounds, topLeft, topRight, bottomRight, bottomLeft)
-        barPath.addRoundRect(barBounds, radii, Path.Direction.CCW)
-        canvas.drawPath(barPath, paint)
-    }
-
-}
+): Shape = CorneredShape(
+    Corner.Relative(topLeftPercent, RoundedCornerTreatment),
+    Corner.Relative(topRightPercent, RoundedCornerTreatment),
+    Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
+    Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
+)
 
 fun cutCornerShape(all: Float): Shape = cutCornerShape(all, all, all, all)
 
@@ -113,31 +66,12 @@ fun cutCornerShape(
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f
-): Shape = object : CornerShape(topLeft, topRight, bottomRight, bottomLeft) {
-
-    override fun drawBarPathWithCorners(
-        canvas: Canvas,
-        paint: Paint,
-        barPath: Path,
-        barBounds: RectF,
-        topLeft: Float,
-        topRight: Float,
-        bottomRight: Float,
-        bottomLeft: Float
-    ) {
-        barPath.moveTo(barBounds.left, barBounds.top + topLeft)
-        barPath.lineTo(barBounds.left + topLeft, barBounds.top)
-        barPath.lineTo(barBounds.right - topRight, barBounds.top)
-        barPath.lineTo(barBounds.right, barBounds.top + topRight)
-        barPath.lineTo(barBounds.right, barBounds.bottom - bottomRight)
-        barPath.lineTo(barBounds.right - bottomRight, barBounds.bottom)
-        barPath.lineTo(barBounds.left + bottomLeft, barBounds.bottom)
-        barPath.lineTo(barBounds.left, barBounds.bottom - bottomLeft)
-        barPath.close()
-        canvas.drawPath(barPath, paint)
-    }
-
-}
+): Shape = CorneredShape(
+    Corner.Absolute(topLeft, CutCornerTreatment),
+    Corner.Absolute(topRight, CutCornerTreatment),
+    Corner.Absolute(bottomRight, CutCornerTreatment),
+    Corner.Absolute(bottomLeft, CutCornerTreatment),
+)
 
 fun drawableShape(
     drawable: Drawable,
