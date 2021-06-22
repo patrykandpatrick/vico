@@ -10,14 +10,12 @@ public open class ChartMotionEventHandler(
 
     public fun handleTouchPoint(motionEvent: MotionEvent): Boolean =
         when (motionEvent.action) {
-            MotionEvent.ACTION_DOWN -> {
-                onTouchPoint(motionEvent.pointF)
-                true
-            }
+            MotionEvent.ACTION_DOWN,
             MotionEvent.ACTION_MOVE -> {
                 onTouchPoint(motionEvent.pointF)
                 true
             }
+            MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_UP -> {
                 onTouchPoint(null)
                 true
