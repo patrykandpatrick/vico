@@ -97,6 +97,28 @@ class ComposeShowcaseFragment : Fragment() {
                         spacing = 24.dp,
                         axisManager = axisManager,
                     )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    MergedColumnChart(
+                        modifier = chartModifier,
+                        mergeMode = MergeMode.Stack,
+                        multiEntryCollection = viewModel.multiEntries,
+                        columns = listOf(
+                            rectComponent(
+                                color = flickrPink,
+                                shape = CutCornerShape(bottomEnd = 8.dp)
+                            ),
+                            rectComponent(color = byzantine),
+                            rectComponent(
+                                color = trypanPurple,
+                                shape = CutCornerShape(topStart = 8.dp)
+                            ),
+                        ),
+                        innerSpacing = 4.dp,
+                        spacing = 24.dp,
+                        axisManager = axisManager,
+                    )
                 }
             }
         }

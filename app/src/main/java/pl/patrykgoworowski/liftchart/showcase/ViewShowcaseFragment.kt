@@ -15,6 +15,7 @@ import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
+import pl.patrykgoworowski.liftchart_common.component.MarkerComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
@@ -35,7 +36,8 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val binding = FragmentViewBinding.bind(view)
 
         setUpBar(binding.barChart)
-        setUpMergedBar(binding.mergedBarChart)
+        setUpGroupedBar(binding.groupedColumnChart)
+        setUpStackedBar(binding.stackedColumnChart)
     }
 
     private fun setUpBar(dataSetView: DataSetView) {
@@ -68,7 +70,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         }
     }
 
-    private fun setUpMergedBar(dataSetView: DataSetView) {
+    private fun setUpGroupedBar(dataSetView: DataSetView) {
 
         val axes = AxisManager(
             VerticalAxis().apply {
@@ -90,12 +92,56 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 ),
                 RectComponent(
                     color = requireContext().color { R.color.byzantine },
-                    thickness = 16f.dp,
+                    thickness = 24f.dp,
                 ),
                 RectComponent(
                     color = requireContext().color { R.color.trypan_purple },
                     thickness = 16f.dp,
                     shape = cutCornerShape(topRight = 8f.dp)
+                ),
+            ),
+            mergeMode = MergeMode.Grouped
+        )
+
+        viewModel.multiEntries.collectAsFlow
+            .onEach { mergedBarDataSet.model = it }
+            .launchIn(lifecycleScope)
+
+        dataSetView.apply {
+            dataSet = mergedBarDataSet
+            axisManager = axes
+            marker = MarkerComponent()
+        }
+    }
+
+    private fun setUpStackedBar(dataSetView: DataSetView) {
+
+        val axes = AxisManager(
+            VerticalAxis().apply {
+                valueFormatter = PercentageFormatAxisValueFormatter()
+            },
+            HorizontalAxis(),
+            VerticalAxis(),
+            HorizontalAxis().apply {
+                valueFormatter = DecimalFormatAxisValueFormatter()
+            }
+        )
+
+        val mergedBarDataSet = MergedColumnDataSet(
+            columns = listOf(
+                RectComponent(
+                    color = requireContext().color { R.color.flickr_pink },
+                    thickness = 16f.dp,
+                    shape = cutCornerShape(bottomRight = 8f.dp)
+                ),
+                RectComponent(
+                    color = requireContext().color { R.color.byzantine },
+                    thickness = 16f.dp,
+                ),
+                RectComponent(
+                    color = requireContext().color { R.color.trypan_purple },
+                    thickness = 16f.dp,
+                    shape = cutCornerShape(topLeft = 8f.dp)
                 ),
             ),
             mergeMode = MergeMode.Stack
