@@ -9,5 +9,5 @@ fun TextUnit.pixelSize(density: Density) =
     when (type) {
         TextUnitType.Sp -> with(density) { toPx() }
         TextUnitType.Em -> value
-        TextUnitType.Unspecified -> DEF_LABEL_SIZE
+        else -> DEF_LABEL_SIZE
     }
