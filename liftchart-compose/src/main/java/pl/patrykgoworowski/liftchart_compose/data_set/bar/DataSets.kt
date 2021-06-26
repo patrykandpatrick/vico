@@ -106,7 +106,6 @@ fun <Model : EntriesModel> DataSet(
     val bounds = remember { RectF() }
 
     val (touchPoint, setTouchPoint) = remember { mutableStateOf<PointF?>(null) }
-    val touchPointHandler = remember { ChartMotionEventHandler { setTouchPoint(it) } }
     val virtualLayout = remember { VirtualLayout(true) }
     virtualLayout.isLTR = LocalLayoutDirection.current == LayoutDirection.Ltr
 
@@ -114,7 +113,7 @@ fun <Model : EntriesModel> DataSet(
         modifier = modifier
             .height(DEF_CHART_WIDTH.dp)
             .fillMaxWidth()
-            .pointerInteropFilter(onTouchEvent = touchPointHandler::handleTouchPoint)
+            .chartTouchEvent(setTouchPoint)
     ) {
         bounds.set(0f, 0f, size.width, size.height)
         virtualLayout.setBounds(bounds, dataSet, model, axisManager)
