@@ -1,10 +1,11 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry
 
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.channels.sendBlocking
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.channels.trySendBlocking
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flowOn
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModelListener
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
@@ -16,7 +17,7 @@ val SingleEntryCollection.collectAsFlow: Flow<SingleEntriesModel>
         get() = callbackFlow {
 
             val listener: SingleEntriesModelListener = { entriesModel ->
-                sendBlocking((entriesModel))
+                trySendBlocking(entriesModel)
             }
 
             addOnEntriesChangedListener(listener)
@@ -25,15 +26,11 @@ val SingleEntryCollection.collectAsFlow: Flow<SingleEntriesModel>
             }
         }.flowOn(Dispatchers.IO)
 
-val SingleEntryCollection.collectAsStateFlow: StateFlow<SingleEntriesModel>
-    get() = collectAsFlow
-        .stateIn(GlobalScope, SharingStarted.Lazily, model)
-
 val MultiEntryCollection.collectAsFlow: Flow<MultiEntriesModel>
     get() = callbackFlow {
 
         val listener: MultiEntriesModelListener = { entriesModel ->
-            sendBlocking((entriesModel))
+            trySendBlocking(entriesModel)
         }
 
         addOnEntriesChangedListener(listener)
@@ -41,7 +38,3 @@ val MultiEntryCollection.collectAsFlow: Flow<MultiEntriesModel>
             removeOnEntriesChangedListener(listener)
         }
     }.flowOn(Dispatchers.IO)
-
-val MultiEntryCollection.collectAsStateFlow: StateFlow<MultiEntriesModel>
-    get() = collectAsFlow
-        .stateIn(GlobalScope, SharingStarted.Lazily, model)
