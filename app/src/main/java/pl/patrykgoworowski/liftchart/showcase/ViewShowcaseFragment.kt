@@ -42,12 +42,12 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
     private fun setUpBar(dataSetView: DataSetView) {
         val axes = AxisManager(
-            VerticalAxis().apply {
+            VerticalAxis.start().apply {
                 valueFormatter = PercentageFormatAxisValueFormatter()
             },
-            HorizontalAxis(),
-            VerticalAxis(),
-            HorizontalAxis().apply {
+            HorizontalAxis.top(),
+            VerticalAxis.end(),
+            HorizontalAxis.bottom().apply {
                 valueFormatter = DecimalFormatAxisValueFormatter()
             }
         )
@@ -73,12 +73,12 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
     private fun setUpGroupedBar(dataSetView: DataSetView) {
 
         val axes = AxisManager(
-            VerticalAxis().apply {
+            VerticalAxis.start().apply {
                 valueFormatter = PercentageFormatAxisValueFormatter()
             },
-            HorizontalAxis(),
-            VerticalAxis(),
-            HorizontalAxis().apply {
+            HorizontalAxis.top(),
+            VerticalAxis.end(),
+            HorizontalAxis.bottom().apply {
                 valueFormatter = DecimalFormatAxisValueFormatter()
             }
         )
@@ -117,12 +117,12 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
     private fun setUpStackedBar(dataSetView: DataSetView) {
 
         val axes = AxisManager(
-            VerticalAxis().apply {
+            VerticalAxis.start().apply {
                 valueFormatter = PercentageFormatAxisValueFormatter()
             },
-            HorizontalAxis(),
-            VerticalAxis(),
-            HorizontalAxis().apply {
+            HorizontalAxis.top(),
+            VerticalAxis.end(),
+            HorizontalAxis.bottom().apply {
                 valueFormatter = DecimalFormatAxisValueFormatter()
             }
         )

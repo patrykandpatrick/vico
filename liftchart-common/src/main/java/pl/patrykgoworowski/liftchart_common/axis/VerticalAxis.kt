@@ -14,12 +14,13 @@ import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 
-class VerticalAxis(
-    label: TextComponent? = DEF_LABEL_COMPONENT,
-    axis: RectComponent? = DEF_AXIS_COMPONENT,
-    tick: TickComponent? = DEF_TICK_COMPONENT,
-    guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
-) : BaseLabeledAxisRenderer<AxisPosition.Vertical>(label, axis, tick, guideline) {
+class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
+    override val position: Position,
+    label: TextComponent?,
+    axis: RectComponent?,
+    tick: TickComponent?,
+    guideline: GuidelineComponent?,
+) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
     private val AxisPosition.Vertical.textHorizontalPosition: HorizontalPosition
         get() = if (isStart) HorizontalPosition.End else HorizontalPosition.Start
@@ -31,7 +32,6 @@ class VerticalAxis(
         canvas: Canvas,
         model: EntriesModel,
         segmentProperties: SegmentProperties,
-        position: AxisPosition.Vertical,
     ) {
         val isLeft = position.isLeft(isLTR)
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
@@ -144,26 +144,60 @@ class VerticalAxis(
             label?.getHeight(text)?.half.orZero
 
         return outDimensions.set(
-            start = 0f,
+            start = if (position.isStart) getDesiredWidth(model).toFloat() else 0f,
             top = getHalfLabelHeight(labels.first()) - axisThickness,
-            end = 0f,
+            end = if (position.isEnd) getDesiredWidth(model).toFloat() else 0f,
             bottom = getHalfLabelHeight(labels.last())
         )
     }
 
-    override fun getDesiredHeight(position: AxisPosition.Vertical): Int = 0
+    override fun getDesiredHeight(): Int = 0
 
+    /**
+     * Estimates a width of this [VerticalAxis] by calculating:
+     * — Widest label width, by using fixed label count equal to [MEASUREMENT_LABEL_COUNT],
+     * — [axisThickness],
+     * — [tickLength].
+     * @return Estimated width of this [VerticalAxis] that should be enough to fit its contents
+     * in [draw] function.
+     */
     override fun getDesiredWidth(
         model: EntriesModel,
-        position: AxisPosition.Vertical,
-        availableHeight: Int,
     ): Int {
         val widestTextComponentWidth = label?.let { label ->
-            getLabels(model, getDrawLabelCount(availableHeight)).maxOf { labelText ->
-                label.getWidth(labelText)
-            }
+            getLabels(model, MEASUREMENT_LABEL_COUNT).maxOf(label::getWidth)
         }.orZero
         return (axisThickness + tickLength + widestTextComponentWidth).toInt()
+    }
+
+    companion object {
+        private const val MEASUREMENT_LABEL_COUNT = 5
+
+        fun start(
+            label: TextComponent? = DEF_LABEL_COMPONENT,
+            axis: RectComponent? = DEF_AXIS_COMPONENT,
+            tick: TickComponent? = DEF_TICK_COMPONENT,
+            guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+        ): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
+            position = AxisPosition.Vertical.Start,
+            label = label,
+            axis = axis,
+            tick = tick,
+            guideline = guideline,
+        )
+
+        fun end(
+            label: TextComponent? = DEF_LABEL_COMPONENT,
+            axis: RectComponent? = DEF_AXIS_COMPONENT,
+            tick: TickComponent? = DEF_TICK_COMPONENT,
+            guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+        ): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
+            position = AxisPosition.Vertical.End,
+            label = label,
+            axis = axis,
+            tick = tick,
+            guideline = guideline,
+        )
     }
 
 }

@@ -10,10 +10,10 @@ import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 
 private val entryList = SingleEntryList(entriesOf(0 to 1, 1 to 2, 2 to 3, 3 to 4))
 
-private val topAxis = HorizontalAxis()
-private val startAxis = VerticalAxis()
-private val bottomAxis = HorizontalAxis()
-private val endAxis = VerticalAxis()
+private val topAxis = HorizontalAxis.top()
+private val startAxis = VerticalAxis.start()
+private val bottomAxis = HorizontalAxis.bottom()
+private val endAxis = VerticalAxis.end()
 
 @Preview("Column Chart Left", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable

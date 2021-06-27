@@ -14,6 +14,7 @@ import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 
 interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
+    val position: Position
     val dataSetBounds: RectF
     val axisThickness: Float
     val tickThickness: Float
@@ -41,10 +42,9 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         canvas: Canvas,
         model: EntriesModel,
         segmentProperties: SegmentProperties,
-        position: Position,
     ) {
         if (isVisible) {
-            onDraw(canvas, model, segmentProperties, position)
+            onDraw(canvas, model, segmentProperties)
         }
     }
 
@@ -52,7 +52,6 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         canvas: Canvas,
         model: EntriesModel,
         segmentProperties: SegmentProperties,
-        position: Position,
     )
 
     fun setDataSetBounds(
@@ -72,10 +71,8 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     fun getDesiredWidth(
         model: EntriesModel,
-        position: Position,
-        availableHeight: Int,
     ): Int
 
-    fun getDesiredHeight(position: Position): Int
+    fun getDesiredHeight(): Int
 
 }

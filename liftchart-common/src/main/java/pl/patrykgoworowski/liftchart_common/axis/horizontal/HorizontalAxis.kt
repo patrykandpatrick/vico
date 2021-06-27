@@ -19,12 +19,13 @@ import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 
-class HorizontalAxis(
+class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
+    override val position: Position,
     label: TextComponent? = DEF_LABEL_COMPONENT,
     axis: RectComponent? = DEF_AXIS_COMPONENT,
     tick: TickComponent? = DEF_TICK_COMPONENT,
     guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
-) : BaseLabeledAxisRenderer<AxisPosition.Horizontal>(label, axis, tick, guideline) {
+) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Top else VerticalPosition.Bottom
@@ -35,7 +36,6 @@ class HorizontalAxis(
         canvas: Canvas,
         model: EntriesModel,
         segmentProperties: SegmentProperties,
-        position: AxisPosition.Horizontal,
     ) {
         val tickMarkTop = if (position.isBottom) {
             bounds.top
@@ -123,16 +123,17 @@ class HorizontalAxis(
         outDimensions: MutableDimensions,
         model: EntriesModel
     ): Dimensions {
-        outDimensions.setVertical(0f)
-        return outDimensions.setHorizontal(
-            if (tickType == TickType.Minor) tick?.thickness?.half.orZero
-            else 0f
-        )
+        return outDimensions.apply {
+            setHorizontal(
+                if (tickType == TickType.Minor) tick?.thickness?.half.orZero
+                else 0f
+            )
+            top = if (position.isTop) getDesiredHeight().toFloat() else 0f
+            bottom = if (position.isBottom) getDesiredHeight().toFloat() else 0f
+        }
     }
 
-    override fun getDesiredHeight(
-        position: AxisPosition.Horizontal,
-    ): Int {
+    override fun getDesiredHeight(): Int {
         return ((if (position.isBottom) axisThickness else 0f)
                 + tickLength
                 + label?.getHeight().orZero
@@ -140,13 +141,39 @@ class HorizontalAxis(
     }
 
     override fun getDesiredWidth(
-        model: EntriesModel,
-        position: AxisPosition.Horizontal,
-        availableHeight: Int
+        model: EntriesModel
     ): Int = 0
 
     enum class TickType {
         Minor, Major
+    }
+
+    companion object {
+        fun top(
+            label: TextComponent? = DEF_LABEL_COMPONENT,
+            axis: RectComponent? = DEF_AXIS_COMPONENT,
+            tick: TickComponent? = DEF_TICK_COMPONENT,
+            guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+        ): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
+            position = AxisPosition.Horizontal.Top,
+            label = label,
+            axis = axis,
+            tick = tick,
+            guideline = guideline,
+        )
+
+        fun bottom(
+            label: TextComponent? = DEF_LABEL_COMPONENT,
+            axis: RectComponent? = DEF_AXIS_COMPONENT,
+            tick: TickComponent? = DEF_TICK_COMPONENT,
+            guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+        ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
+            position = AxisPosition.Horizontal.Bottom,
+            label = label,
+            axis = axis,
+            tick = tick,
+            guideline = guideline,
+        )
     }
 
 }

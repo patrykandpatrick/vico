@@ -51,7 +51,7 @@ class ComposeShowcaseFragment : Fragment() {
             MainTheme {
 
                 val axisManager = AxisManager(
-                    VerticalAxis().apply {
+                    VerticalAxis.start().apply {
                         valueFormatter = PercentageFormatAxisValueFormatter()
                         axis = null
                         tick = null

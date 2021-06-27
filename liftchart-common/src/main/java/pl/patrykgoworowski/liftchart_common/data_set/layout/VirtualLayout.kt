@@ -20,7 +20,7 @@ public open class VirtualLayout(
         axisManager: AxisManager,
     ) {
         axisManager.isLTR = isLTR
-        axisManager.getAxesDimensions(axesDimensions, model, contentBounds.height().toInt())
+        axisManager.getAxesDimensions(axesDimensions, model)
 
         dataSet.setBounds(
             left = contentBounds.left + axesDimensions.getLeft(isLTR),
