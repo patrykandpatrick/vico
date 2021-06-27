@@ -27,25 +27,25 @@ class MutableDimensions(
         this.bottom = bottom
     }
 
-    fun setLeft(isLTR: Boolean, value: Float): Dimensions {
+    fun setLeft(isLTR: Boolean, value: Float): MutableDimensions {
         if (isLTR) start = value
         else end = value
         return this
     }
 
-    fun setRight(isLTR: Boolean, value: Float): Dimensions {
+    fun setRight(isLTR: Boolean, value: Float): MutableDimensions {
         if (isLTR) end = value
         else start = value
         return this
     }
 
-    fun setHorizontal(value: Float): Dimensions {
+    fun setHorizontal(value: Float): MutableDimensions {
         start = if (value == 0f) value else value / 2
         end = if (value == 0f) value else value / 2
         return this
     }
 
-    fun setVertical(value: Float): Dimensions {
+    fun setVertical(value: Float): MutableDimensions {
         top = if (value == 0f) value else value / 2
         bottom = if (value == 0f) value else value / 2
         return this
