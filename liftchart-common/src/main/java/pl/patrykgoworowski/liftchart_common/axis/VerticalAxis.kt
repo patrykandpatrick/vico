@@ -19,20 +19,19 @@ class VerticalAxis(
     axis: RectComponent? = DEF_AXIS_COMPONENT,
     tick: TickComponent? = DEF_TICK_COMPONENT,
     guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
-) : BaseLabeledAxisRenderer<VerticalAxisPosition>(label, axis, tick, guideline),
-    VerticalAxisRenderer {
+) : BaseLabeledAxisRenderer<AxisPosition.Vertical>(label, axis, tick, guideline) {
 
-    private val VerticalAxisPosition.textHorizontalPosition: HorizontalPosition
+    private val AxisPosition.Vertical.textHorizontalPosition: HorizontalPosition
         get() = if (isStart) HorizontalPosition.End else HorizontalPosition.Start
 
-    override var maxLabelCount: Int = DEF_LABEL_COUNT
-    override var labelSpacing: Float = DEF_LABEL_SPACING
+    var maxLabelCount: Int = DEF_LABEL_COUNT
+    var labelSpacing: Float = DEF_LABEL_SPACING
 
     override fun onDraw(
         canvas: Canvas,
         model: EntriesModel,
         segmentProperties: SegmentProperties,
-        position: VerticalAxisPosition,
+        position: AxisPosition.Vertical,
     ) {
         val isLeft = position.isLeft(isLTR)
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
@@ -134,7 +133,7 @@ class VerticalAxis(
         return labels
     }
 
-    override fun getDrawExtends(
+    override fun getInsets(
         outDimensions: MutableDimensions,
         model: EntriesModel
     ): Dimensions {
@@ -152,9 +151,11 @@ class VerticalAxis(
         )
     }
 
-    override fun getWidth(
+    override fun getDesiredHeight(position: AxisPosition.Vertical): Int = 0
+
+    override fun getDesiredWidth(
         model: EntriesModel,
-        position: VerticalAxisPosition,
+        position: AxisPosition.Vertical,
         availableHeight: Int,
     ): Int {
         val widestTextComponentWidth = label?.let { label ->

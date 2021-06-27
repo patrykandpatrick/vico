@@ -9,14 +9,13 @@ import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.floatDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
-import pl.patrykgoworowski.liftchart_common.extension.orElse
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 
 public open class AxisManager(
-    public open var startAxis: VerticalAxisRenderer? = VerticalAxis(),
-    public open var topAxis: HorizontalAxisRenderer? = null,
-    public open var endAxis: VerticalAxisRenderer? = null,
-    public open var bottomAxis: HorizontalAxisRenderer? = HorizontalAxis(),
+    public open var startAxis: AxisRenderer<AxisPosition.Vertical>? = VerticalAxis(),
+    public open var topAxis: AxisRenderer<AxisPosition.Horizontal>? = null,
+    public open var endAxis: AxisRenderer<AxisPosition.Vertical>? = null,
+    public open var bottomAxis: AxisRenderer<AxisPosition.Horizontal>? = HorizontalAxis(),
 ) {
 
     private val startDimensions = floatDimensions()
@@ -38,10 +37,10 @@ public open class AxisManager(
 
     public var isLTR: Boolean = true
 
-    public val leftAxis: AxisRenderer<VerticalAxisPosition>?
+    public val leftAxis: AxisRenderer<AxisPosition.Vertical>?
         get() = if (isLTR) startAxis else endAxis
 
-    public val rightAxis: AxisRenderer<VerticalAxisPosition>?
+    public val rightAxis: AxisRenderer<AxisPosition.Vertical>?
         get() = if (isLTR) endAxis else startAxis
 
     fun getAxesDimensions(
@@ -49,19 +48,22 @@ public open class AxisManager(
         model: EntriesModel,
         availableHeight: Int,
     ): Dimensions {
-        startAxis?.getDrawExtends(startDimensions, model).orElse { startDimensions.set(0f) }
-        topAxis?.getDrawExtends(topDimensions, model).orElse { topDimensions.set(0f) }
-        endAxis?.getDrawExtends(endDimensions, model).orElse { endDimensions.set(0f) }
-        bottomAxis?.getDrawExtends(bottomDimensions, model).orElse { bottomDimensions.set(0f) }
+
+        resetDimensions()
+
+        startAxis?.getInsets(startDimensions, model)
+        topAxis?.getInsets(topDimensions, model)
+        endAxis?.getInsets(endDimensions, model)
+        bottomAxis?.getInsets(bottomDimensions, model)
 
         outDimensions.top = maxOf(
-            topAxis?.getHeight(TopAxis)?.toFloat().orZero,
+            topAxis?.getDesiredHeight(AxisPosition.Horizontal.Top)?.toFloat().orZero,
             startDimensions.top,
             endDimensions.top
         )
 
         outDimensions.bottom = maxOf(
-            bottomAxis?.getHeight(BottomAxis)?.toFloat().orZero,
+            bottomAxis?.getDesiredHeight(AxisPosition.Horizontal.Bottom)?.toFloat().orZero,
             startDimensions.bottom,
             endDimensions.bottom
         )
@@ -69,13 +71,13 @@ public open class AxisManager(
         val height = (availableHeight - (outDimensions.bottom + outDimensions.top)).toInt()
 
         outDimensions.start = maxOf(
-            startAxis?.getWidth(model, StartAxis, height)?.toFloat().orZero,
+            startAxis?.getDesiredWidth(model, AxisPosition.Vertical.Start, height)?.toFloat().orZero,
             topDimensions.start,
             bottomDimensions.start
         )
 
         outDimensions.end = maxOf(
-            endAxis?.getWidth(model, EndAxis, height)?.toFloat().orZero,
+            endAxis?.getDesiredWidth(model, AxisPosition.Vertical.End, height)?.toFloat().orZero,
             topDimensions.end,
             bottomDimensions.end
         )
@@ -167,10 +169,17 @@ public open class AxisManager(
         model: EntriesModel,
         segmentProperties: SegmentProperties,
     ) {
-        startAxis?.draw(canvas, model, segmentProperties, StartAxis)
-        topAxis?.draw(canvas, model, segmentProperties, TopAxis)
-        endAxis?.draw(canvas, model, segmentProperties, EndAxis)
-        bottomAxis?.draw(canvas, model, segmentProperties, BottomAxis)
+        startAxis?.draw(canvas, model, segmentProperties, AxisPosition.Vertical.Start)
+        topAxis?.draw(canvas, model, segmentProperties, AxisPosition.Horizontal.Top)
+        endAxis?.draw(canvas, model, segmentProperties, AxisPosition.Vertical.End)
+        bottomAxis?.draw(canvas, model, segmentProperties, AxisPosition.Horizontal.Bottom)
+    }
+
+    private fun resetDimensions() {
+        startDimensions.set(0f)
+        topDimensions.set(0f)
+        endDimensions.set(0f)
+        bottomDimensions.set(0f)
     }
 
 }

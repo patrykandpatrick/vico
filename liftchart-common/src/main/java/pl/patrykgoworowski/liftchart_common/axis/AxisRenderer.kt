@@ -10,10 +10,9 @@ import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
-import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
-import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
+import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 
-interface AxisRenderer<Position : AxisPosition> : BoundsAware {
+interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     val dataSetBounds: RectF
     val axisThickness: Float
@@ -71,9 +70,12 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware {
             bounds.bottom
         )
 
-    fun getDrawExtends(
-        outDimensions: MutableDimensions,
+    fun getDesiredWidth(
         model: EntriesModel,
-    ): Dimensions
+        position: Position,
+        availableHeight: Int,
+    ): Int
+
+    fun getDesiredHeight(position: Position): Int
 
 }

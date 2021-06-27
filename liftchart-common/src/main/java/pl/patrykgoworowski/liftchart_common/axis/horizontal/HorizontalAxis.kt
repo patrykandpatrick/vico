@@ -5,10 +5,8 @@ import pl.patrykgoworowski.liftchart_common.DEF_AXIS_COMPONENT
 import pl.patrykgoworowski.liftchart_common.DEF_GUIDELINE_COMPONENT
 import pl.patrykgoworowski.liftchart_common.DEF_LABEL_COMPONENT
 import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
+import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
-import pl.patrykgoworowski.liftchart_common.axis.BottomAxis
-import pl.patrykgoworowski.liftchart_common.axis.HorizontalAxisPosition
-import pl.patrykgoworowski.liftchart_common.axis.HorizontalAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
@@ -26,10 +24,9 @@ class HorizontalAxis(
     axis: RectComponent? = DEF_AXIS_COMPONENT,
     tick: TickComponent? = DEF_TICK_COMPONENT,
     guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
-) : BaseLabeledAxisRenderer<HorizontalAxisPosition>(label, axis, tick, guideline),
-    HorizontalAxisRenderer {
+) : BaseLabeledAxisRenderer<AxisPosition.Horizontal>(label, axis, tick, guideline) {
 
-    private val HorizontalAxisPosition.textVerticalPosition: VerticalPosition
+    private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Top else VerticalPosition.Bottom
 
     public var tickType: TickType = TickType.Minor
@@ -38,7 +35,7 @@ class HorizontalAxis(
         canvas: Canvas,
         model: EntriesModel,
         segmentProperties: SegmentProperties,
-        position: HorizontalAxisPosition,
+        position: AxisPosition.Horizontal,
     ) {
         val tickMarkTop = if (position.isBottom) {
             bounds.top
@@ -113,7 +110,7 @@ class HorizontalAxis(
             canvas = canvas,
             left = dataSetBounds.left,
             right = dataSetBounds.right,
-            centerY = if (position is BottomAxis) {
+            centerY = if (position is AxisPosition.Horizontal.Bottom) {
                 bounds.top + axis?.thickness?.half.orZero
             } else {
                 bounds.bottom + axis?.thickness?.half.orZero
@@ -122,7 +119,7 @@ class HorizontalAxis(
         label?.clearLayoutCache()
     }
 
-    override fun getDrawExtends(
+    override fun getInsets(
         outDimensions: MutableDimensions,
         model: EntriesModel
     ): Dimensions {
@@ -133,14 +130,20 @@ class HorizontalAxis(
         )
     }
 
-    override fun getHeight(
-        position: HorizontalAxisPosition,
+    override fun getDesiredHeight(
+        position: AxisPosition.Horizontal,
     ): Int {
         return ((if (position.isBottom) axisThickness else 0f)
                 + tickLength
                 + label?.getHeight().orZero
                 ).toInt()
     }
+
+    override fun getDesiredWidth(
+        model: EntriesModel,
+        position: AxisPosition.Horizontal,
+        availableHeight: Int
+    ): Int = 0
 
     enum class TickType {
         Minor, Major

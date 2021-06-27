@@ -2,27 +2,28 @@ package pl.patrykgoworowski.liftchart_common.axis
 
 sealed class AxisPosition {
     val isTop: Boolean
-        get() = this is TopAxis
+        get() = this is Horizontal.Top
 
     val isBottom: Boolean
-        get() = this is BottomAxis
+        get() = this is Horizontal.Bottom
 
     val isStart: Boolean
-        get() = this is StartAxis
+        get() = this is Vertical.Start
 
     val isEnd: Boolean
-        get() = this is EndAxis
+        get() = this is Vertical.End
 
-    fun isLeft(isLtr: Boolean): Boolean = this is StartAxis && isLtr
+    fun isLeft(isLtr: Boolean): Boolean = this is Vertical.Start && isLtr
 
-    fun isRight(isLtr: Boolean): Boolean = this is EndAxis && isLtr
+    fun isRight(isLtr: Boolean): Boolean = this is Vertical.End && isLtr
+
+    sealed class Horizontal : AxisPosition() {
+        object Top : Horizontal()
+        object Bottom : Horizontal()
+    }
+
+    sealed class Vertical : AxisPosition() {
+        object Start : Vertical()
+        object End : Vertical()
+    }
 }
-
-sealed class HorizontalAxisPosition : AxisPosition()
-
-sealed class VerticalAxisPosition : AxisPosition()
-
-object TopAxis : HorizontalAxisPosition()
-object BottomAxis : HorizontalAxisPosition()
-object StartAxis : VerticalAxisPosition()
-object EndAxis : VerticalAxisPosition()
