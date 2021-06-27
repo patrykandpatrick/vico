@@ -75,7 +75,7 @@ public open class CorneredShape(
         )
 
         path.lineTo(bounds.right, bounds.bottom - bR)
-        topRight.cornerTreatment.createCorner(
+        bottomRight.cornerTreatment.createCorner(
             x1 = bounds.right,
             y1 = bounds.bottom - bR,
             x2 = bounds.right - bR,
@@ -85,7 +85,7 @@ public open class CorneredShape(
         )
 
         path.lineTo(bounds.left + bL, bounds.bottom)
-        topRight.cornerTreatment.createCorner(
+        bottomLeft.cornerTreatment.createCorner(
             x1 = bounds.left + bL,
             y1 = bounds.bottom,
             x2 = bounds.left,
@@ -94,7 +94,14 @@ public open class CorneredShape(
             path
         )
         path.close()
+        onShapePathCreated(path, bounds)
+
         canvas.drawPath(path, paint)
     }
+
+    protected open fun onShapePathCreated(
+            path: Path,
+            bounds: RectF,
+    ) {}
 
 }
