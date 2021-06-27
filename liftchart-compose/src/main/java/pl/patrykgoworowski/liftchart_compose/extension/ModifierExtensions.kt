@@ -7,6 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 
+inline fun Modifier.runIf(predicate: Boolean, action: Modifier.() -> Modifier) =
+    if (predicate) action() else this
+
+
 fun Modifier.chartTouchEvent(
     setTouchPoint: (PointF?) -> Unit,
 ): Modifier =
