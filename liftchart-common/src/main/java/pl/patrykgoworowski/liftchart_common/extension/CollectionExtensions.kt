@@ -52,3 +52,8 @@ fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
     }
     return closestValue
 }
+
+fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
+    fold(0f) { sum, element ->
+        sum + selector(element)
+    } / size

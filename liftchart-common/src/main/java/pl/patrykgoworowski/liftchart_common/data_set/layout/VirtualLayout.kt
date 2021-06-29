@@ -1,35 +1,60 @@
 package pl.patrykgoworowski.liftchart_common.data_set.layout
 
 import android.graphics.RectF
+import android.util.Log
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
+import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.floatDimensions
+import kotlin.math.max
+import kotlin.system.measureTimeMillis
 
 public open class VirtualLayout(
     var isLTR: Boolean
 ) {
 
-    private val axesDimensions: MutableDimensions = floatDimensions()
+    private val tempInsetters = ArrayList<DataSetInsetter>(5)
+    private val finalInsets: MutableDimensions = floatDimensions()
+    private val tempInsets: MutableDimensions = floatDimensions()
 
     public open fun <Model : EntriesModel> setBounds(
         contentBounds: RectF,
         dataSet: DataSetRenderer<Model>,
         model: Model,
         axisManager: AxisManager,
+        vararg dataSetInsetter: DataSetInsetter?,
     ) {
-        axisManager.isLTR = isLTR
-        axisManager.getAxesDimensions(axesDimensions, model)
+        tempInsetters.clear()
+        finalInsets.set(0f)
+        val time = measureTimeMillis {
+            axisManager.isLTR = isLTR
+            axisManager.addInsetters(tempInsetters)
+            dataSetInsetter.forEach { it?.let(tempInsetters::add) }
 
-        dataSet.setBounds(
-            left = contentBounds.left + axesDimensions.getLeft(isLTR),
-            top = contentBounds.top + axesDimensions.top,
-            right = contentBounds.right - axesDimensions.getRight(isLTR),
-            bottom = contentBounds.bottom - axesDimensions.bottom
-        )
+            tempInsetters.forEach { insetter ->
+                insetter.getInsets(tempInsets, model)
+                finalInsets.setAllGreater(tempInsets)
+            }
 
-        axisManager.setAxesBounds(contentBounds, dataSet.bounds, axesDimensions)
+            dataSet.setBounds(
+                left = contentBounds.left + finalInsets.getLeft(isLTR),
+                top = contentBounds.top + finalInsets.top,
+                right = contentBounds.right - finalInsets.getRight(isLTR),
+                bottom = contentBounds.bottom - finalInsets.bottom
+            )
+        }
+        Log.d("Test", "Measuring took $time ms.")
+        axisManager.setAxesBounds(contentBounds, dataSet.bounds, finalInsets)
+    }
+
+    fun MutableDimensions.setAllGreater(other: Dimensions) {
+        start = max(start, other.start)
+        top = max(top, other.top)
+        end = max(end, other.end)
+        bottom = max(bottom, other.bottom)
     }
 
 }

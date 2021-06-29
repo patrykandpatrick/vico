@@ -67,6 +67,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         dataSetView.apply {
             dataSet = barDataSet
             axisManager = axes
+            marker = MarkerComponent()
         }
     }
 
@@ -154,6 +155,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         dataSetView.apply {
             dataSet = mergedBarDataSet
             axisManager = axes
+            marker = MarkerComponent()
         }
     }
 

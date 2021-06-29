@@ -22,12 +22,15 @@ import pl.patrykgoworowski.liftchart_common.text.staticLayout
 import pl.patrykgoworowski.liftchart_common.text.widestLineWidth
 import kotlin.math.roundToInt
 
+typealias OnPreDrawListener =
+            (canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float) -> Unit
+
 public open class TextComponent(
     color: Int = DKGRAY,
     textSize: Float = 12f.sp,
     public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
-    public open val background: ShapeComponent? = ShapeComponent(pillShape(), LTGRAY),
+    public open var background: ShapeComponent? = ShapeComponent(pillShape(), LTGRAY),
 ) : Padding by DefaultPadding(), Margins by DefaultMargins() {
 
     public val textPaint = TextPaint()
@@ -60,6 +63,7 @@ public open class TextComponent(
         horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
         verticalPosition: VerticalPosition = VerticalPosition.Center,
         width: Int = Int.MAX_VALUE,
+        onPreDraw: OnPreDrawListener? = null,
     ) {
 
         if (text.isBlank()) return
@@ -70,12 +74,19 @@ public open class TextComponent(
         val textStartPosition = horizontalPosition.getTextStartPosition(textX, layoutWidth)
         val textTopPosition = verticalPosition.getTextTopPosition(textY, layoutHeight)
 
+        val bgLeft = textStartPosition - padding.getLeft(isLTR)
+        val bgTop = textTopPosition - ((layoutHeight / 2) + padding.top)
+        val bgRight = textStartPosition + layoutWidth + padding.getRight(isLTR)
+        val bgBottom = textTopPosition + ((layoutHeight / 2) + padding.bottom)
+
+        onPreDraw?.invoke(canvas, bgLeft, bgTop, bgRight, bgBottom)
+
         background?.draw(
             canvas = canvas,
-            left = textStartPosition - padding.getLeft(isLTR),
-            top = textTopPosition - ((layoutHeight / 2) + padding.top),
-            right = textStartPosition + layoutWidth + padding.getRight(isLTR),
-            bottom = textTopPosition + ((layoutHeight / 2) + padding.bottom)
+            left = bgLeft,
+            top = bgTop,
+            right = bgRight,
+            bottom = bgBottom,
         )
 
         val centeredY = textTopPosition - layoutHeight.half

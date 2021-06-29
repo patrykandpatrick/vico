@@ -11,12 +11,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.component.MarkerComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
@@ -31,11 +31,12 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.Mult
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
 import pl.patrykgoworowski.liftchart_common.marker.Marker
-import pl.patrykgoworowski.liftchart_common.motion_event.ChartMotionEventHandler
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
+import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
 import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
+import pl.patrykgoworowski.liftchart_compose.extension.runIf
 
 
 val defaultColumnComponent: RectComponent
@@ -53,6 +54,7 @@ fun ColumnChart(
     column: RectComponent = defaultColumnComponent,
     spacing: Dp = DEF_BAR_SPACING.dp,
     axisManager: AxisManager = AxisManager(),
+    marker: Marker? = MarkerComponent(),
 ) {
     val dataSet = remember {
         ColumnDataSetRenderer(
@@ -61,13 +63,14 @@ fun ColumnChart(
         )
     }
     dataSet.spacing = spacing.pixels
-    val model = singleEntryCollection.collectAsState
+    val model = singleEntryCollection.collectAsState()
 
     DataSet(
         modifier = modifier,
         dataSet = dataSet,
         model = model.value,
         axisManager = axisManager,
+        marker = marker,
     )
 }
 
@@ -80,9 +83,10 @@ fun MergedColumnChart(
     spacing: Dp = DEF_BAR_SPACING.dp,
     innerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
     axisManager: AxisManager = AxisManager(),
+    marker: Marker? = MarkerComponent(),
 ) {
     val dataSet = remember { MergedColumnDataSetRenderer(columns, mergeMode = mergeMode) }
-    val model = multiEntryCollection.collectAsState
+    val model = multiEntryCollection.collectAsState()
 
     dataSet.spacing = spacing.pixels
     dataSet.innerSpacing = innerSpacing.pixels
@@ -92,6 +96,7 @@ fun MergedColumnChart(
         dataSet = dataSet,
         model = model.value,
         axisManager = axisManager,
+        marker = marker,
     )
 }
 
@@ -100,8 +105,8 @@ fun <Model : EntriesModel> DataSet(
     modifier: Modifier,
     dataSet: DataSetRenderer<Model>,
     model: Model,
-    axisManager: AxisManager = AxisManager(),
-    marker: Marker? = null,
+    axisManager: AxisManager,
+    marker: Marker?,
 ) {
     val bounds = remember { RectF() }
 
@@ -113,10 +118,10 @@ fun <Model : EntriesModel> DataSet(
         modifier = modifier
             .height(DEF_CHART_WIDTH.dp)
             .fillMaxWidth()
-            .chartTouchEvent(setTouchPoint)
+            .runIf(marker != null) { chartTouchEvent(setTouchPoint) }
     ) {
         bounds.set(0f, 0f, size.width, size.height)
-        virtualLayout.setBounds(bounds, dataSet, model, axisManager)
+        virtualLayout.setBounds(bounds, dataSet, model, axisManager, marker)
         val canvas = drawContext.canvas.nativeCanvas
         val segmentProperties = dataSet.getSegmentProperties(model)
         axisManager.draw(canvas, model, segmentProperties)

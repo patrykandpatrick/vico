@@ -52,7 +52,7 @@ class DataSetView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return if (motionEventHandler.handleTouchPoint(event)) true
+        return if (marker != null && motionEventHandler.handleTouchPoint(event)) true
         else super.onTouchEvent(event)
     }
 
@@ -92,7 +92,7 @@ class DataSetView @JvmOverloads constructor(
 
     private fun updateBounds() {
         val dataSet = dataSet ?: return
-        virtualLayout.setBounds(contentBounds, dataSet, axisManager)
+        virtualLayout.setBounds(contentBounds, dataSet, axisManager, marker)
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {

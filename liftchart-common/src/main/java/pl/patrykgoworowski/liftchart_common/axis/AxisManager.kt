@@ -5,9 +5,8 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
+import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
-import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
-import pl.patrykgoworowski.liftchart_common.dimensions.floatDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 
 public open class AxisManager(
@@ -16,11 +15,6 @@ public open class AxisManager(
     public open var endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
     public open var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = HorizontalAxis.bottom(),
 ) {
-
-    private val startDimensions = floatDimensions()
-    private val topDimensions = floatDimensions()
-    private val endDimensions = floatDimensions()
-    private val bottomDimensions = floatDimensions()
 
     private val hasLeftAxis: Boolean
         get() = leftAxis != null
@@ -42,47 +36,11 @@ public open class AxisManager(
     public val rightAxis: AxisRenderer<*>?
         get() = if (isLTR) endAxis else startAxis
 
-    fun getAxesDimensions(
-        outDimensions: MutableDimensions,
-        model: EntriesModel,
-    ): Dimensions {
-
-        resetDimensions()
-
-        startAxis?.getInsets(startDimensions, model)
-        topAxis?.getInsets(topDimensions, model)
-        endAxis?.getInsets(endDimensions, model)
-        bottomAxis?.getInsets(bottomDimensions, model)
-
-        outDimensions.top = maxOf(
-            startDimensions.top,
-            topDimensions.top,
-            endDimensions.top,
-            bottomDimensions.top,
-        )
-
-        outDimensions.bottom = maxOf(
-            startDimensions.bottom,
-            topDimensions.bottom,
-            endDimensions.bottom,
-            bottomDimensions.bottom,
-        )
-
-        outDimensions.start = maxOf(
-            startDimensions.start,
-            topDimensions.start,
-            endDimensions.start,
-            bottomDimensions.start
-        )
-
-        outDimensions.end = maxOf(
-            startDimensions.end,
-            topDimensions.end,
-            endDimensions.end,
-            bottomDimensions.end
-        )
-
-        return outDimensions
+    fun addInsetters(destination: MutableList<DataSetInsetter>) {
+        startAxis?.let(destination::add)
+        topAxis?.let(destination::add)
+        endAxis?.let(destination::add)
+        bottomAxis?.let(destination::add)
     }
 
     fun setAxesBounds(
@@ -173,13 +131,6 @@ public open class AxisManager(
         topAxis?.draw(canvas, model, segmentProperties)
         endAxis?.draw(canvas, model, segmentProperties)
         bottomAxis?.draw(canvas, model, segmentProperties)
-    }
-
-    private fun resetDimensions() {
-        startDimensions.set(0f)
-        topDimensions.set(0f)
-        endDimensions.set(0f)
-        bottomDimensions.set(0f)
     }
 
 }
