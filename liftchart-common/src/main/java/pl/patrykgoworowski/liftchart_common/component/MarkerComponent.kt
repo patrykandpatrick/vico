@@ -16,11 +16,8 @@ import pl.patrykgoworowski.liftchart_common.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.marker.MarkerLabelFormatter
 import pl.patrykgoworowski.liftchart_common.path.DashedShape
-import pl.patrykgoworowski.liftchart_common.path.corner.Corner
 import pl.patrykgoworowski.liftchart_common.path.corner.MarkerCorneredShape
-import pl.patrykgoworowski.liftchart_common.path.corner.RoundedCornerTreatment
 import pl.patrykgoworowski.liftchart_common.path.pillShape
-import pl.patrykgoworowski.liftchart_common.path.rectShape
 
 public open class MarkerComponent(
     private val label: TextComponent = TextComponent(),
@@ -29,25 +26,19 @@ public open class MarkerComponent(
             pillShape(), 8f.dp, 4f.dp
         )
     ),
-    private val background: ShapeComponent = ShapeComponent(rectShape(), Color.WHITE)
-) : Marker {
+    shape: MarkerCorneredShape = MarkerCorneredShape(pillShape()),
+    color: Int = Color.WHITE
+) : Marker, ShapeComponent<MarkerCorneredShape>(shape, color) {
 
     init {
-        background.apply {
-            color = Color.WHITE
-            shape = MarkerCorneredShape(
-                topLeft = Corner.Relative(100, RoundedCornerTreatment),
-                topRight = Corner.Relative(100, RoundedCornerTreatment),
-                bottomLeft = Corner.Relative(100, RoundedCornerTreatment),
-                bottomRight = Corner.Relative(100, RoundedCornerTreatment),
-            )
-            paint.setShadowLayer(4f.dp, 0f, 2f.dp, 0x8A000000.toInt())
-        }
+        setShadow(4f.dp, dy =  2f.dp)
         label.apply {
             background = null
             setPadding(8f.dp, 4f.dp)
         }
     }
+
+    private val markerTempBounds = RectF()
 
     val outer = ShapeComponent(pillShape())
     val center = ShapeComponent(pillShape()).apply {
@@ -64,7 +55,7 @@ public open class MarkerComponent(
     )
 
     private val markerHeight: Float
-        get() = label.getHeight() + (background.shape as? MarkerCorneredShape)?.tickSize.orZero
+        get() = label.getHeight() + shape.tickSize.orZero
 
     public var entryTipSize: Float = 42f.dp
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
@@ -102,14 +93,41 @@ public open class MarkerComponent(
         markedEntries: List<Marker.EntryModel>,
         allEntries: List<DataEntry>,
     ) {
-        val x = markedEntries.averageOf { it.location.x }
+        val text = labelFormatter.getLabel(markedEntries, allEntries)
+        val entryX = markedEntries.averageOf { it.location.x }
+        val x = overrideXPositionToFit(entryX, bounds, text)
+
         label.drawText(
             canvas = canvas,
-            text = labelFormatter.getLabel(markedEntries, allEntries),
+            text = text,
             textX = x,
             textY = bounds.top + label.allLinesHeight.half + label.padding.top - markerHeight,
         ) { textCanvas, left, top, right, bottom ->
-            background.draw(textCanvas, left, top, right, bottom)
+            markerTempBounds.set(left, top, right, bottom)
+            drawMarkerBackground(textCanvas, markerTempBounds, bounds, entryX)
+        }
+    }
+
+    private fun drawMarkerBackground(
+        canvas: Canvas,
+        bounds: RectF,
+        contentBounds: RectF,
+        entryX: Float,
+    ) {
+        path.reset()
+        shape.drawMarker(canvas, paint, path, bounds, contentBounds, entryX)
+    }
+
+    private fun overrideXPositionToFit(
+        xPosition: Float,
+        bounds: RectF,
+        text: CharSequence,
+    ): Float {
+        val halfOfTextWidth = label.getWidth(text).half
+        return when {
+            xPosition - halfOfTextWidth < bounds.left -> bounds.left + halfOfTextWidth
+            xPosition + halfOfTextWidth > bounds.right -> bounds.right - halfOfTextWidth
+            else -> xPosition
         }
     }
 

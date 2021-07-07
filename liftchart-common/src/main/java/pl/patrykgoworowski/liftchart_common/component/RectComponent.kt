@@ -9,7 +9,7 @@ public open class RectComponent(
     color: Int,
     public var thickness: Float = 2f,
     shape: Shape = rectShape(),
-) : ShapeComponent(shape, color) {
+) : ShapeComponent<Shape>(shape, color) {
 
     var thicknessScale: Float = 1f
 

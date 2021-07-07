@@ -9,10 +9,10 @@ import pl.patrykgoworowski.liftchart_common.path.Shape
 import kotlin.math.absoluteValue
 
 public open class CorneredShape(
-    private val topLeft: Corner,
-    private val topRight: Corner,
-    private val bottomRight: Corner,
-    private val bottomLeft: Corner,
+    public val topLeft: Corner,
+    public val topRight: Corner,
+    public val bottomRight: Corner,
+    public val bottomLeft: Corner,
 ) : Shape {
 
     private var tL = 0f
@@ -34,6 +34,14 @@ public open class CorneredShape(
         paint: Paint,
         path: Path,
         bounds: RectF
+    ) {
+        createPath(path, bounds)
+        canvas.drawPath(path, paint)
+    }
+
+    protected open fun createPath(
+        path: Path,
+        bounds: RectF,
     ) {
         val height = bounds.height().absoluteValue
         when {
@@ -94,14 +102,6 @@ public open class CorneredShape(
             path
         )
         path.close()
-        onShapePathCreated(path, bounds)
-
-        canvas.drawPath(path, paint)
     }
-
-    protected open fun onShapePathCreated(
-            path: Path,
-            bounds: RectF,
-    ) {}
 
 }

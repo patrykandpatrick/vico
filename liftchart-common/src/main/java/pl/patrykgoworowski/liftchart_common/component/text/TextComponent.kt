@@ -15,8 +15,8 @@ import pl.patrykgoworowski.liftchart_common.component.dimension.Margins
 import pl.patrykgoworowski.liftchart_common.component.dimension.Padding
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.lineHeight
-import pl.patrykgoworowski.liftchart_common.extension.measureText
 import pl.patrykgoworowski.liftchart_common.extension.sp
+import pl.patrykgoworowski.liftchart_common.path.Shape
 import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_common.text.staticLayout
 import pl.patrykgoworowski.liftchart_common.text.widestLineWidth
@@ -30,7 +30,7 @@ public open class TextComponent(
     textSize: Float = 12f.sp,
     public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
-    public open var background: ShapeComponent? = ShapeComponent(pillShape(), LTGRAY),
+    public open var background: ShapeComponent<Shape>? = ShapeComponent(pillShape(), LTGRAY),
 ) : Padding by DefaultPadding(), Margins by DefaultMargins() {
 
     public val textPaint = TextPaint()
@@ -129,7 +129,7 @@ public open class TextComponent(
     }
 
     public fun getWidth(text: CharSequence): Float {
-        return textPaint.measureText(text) + padding.horizontal + margins.horizontal
+        return getLayout(text).widestLineWidth + padding.horizontal + margins.horizontal
     }
 
     public fun getHeight(
@@ -143,7 +143,7 @@ public open class TextComponent(
         layoutCache.clear()
     }
 
-    private fun getLayout(text: CharSequence, width: Int): StaticLayout =
+    private fun getLayout(text: CharSequence, width: Int = Int.MAX_VALUE): StaticLayout =
         layoutCache.getOrPut(text.hashCode() + 31 * width) {
             staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
         }

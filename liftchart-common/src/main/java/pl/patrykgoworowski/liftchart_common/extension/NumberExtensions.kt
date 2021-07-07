@@ -22,3 +22,6 @@ inline val Int?.orZero: Int
 
 inline val Float.round: Float
     get() = roundToInt().toFloat()
+
+fun Float.between(min: Float, max: Float): Float =
+    minOf(maxOf(this, min), max)

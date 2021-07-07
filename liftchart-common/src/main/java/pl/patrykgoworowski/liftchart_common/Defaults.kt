@@ -28,4 +28,6 @@ val DEF_LABEL_COUNT = 99
 val DEF_LABEL_SIZE = 12f.sp
 val DEF_LABEL_SPACING = 16f.dp
 
+val DEF_MARKER_TICK_SIZE = 6f.dp
+
 public val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()

@@ -38,7 +38,7 @@ fun roundedCornersShape(
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f,
-): Shape = CorneredShape(
+): CorneredShape = CorneredShape(
     Corner.Absolute(topLeft, RoundedCornerTreatment),
     Corner.Absolute(topRight, RoundedCornerTreatment),
     Corner.Absolute(bottomRight, RoundedCornerTreatment),
@@ -52,7 +52,7 @@ fun roundedCornersShape(
     topRightPercent: Int = 0,
     bottomRightPercent: Int = 0,
     bottomLeftPercent: Int = 0,
-): Shape = CorneredShape(
+): CorneredShape = CorneredShape(
     Corner.Relative(topLeftPercent, RoundedCornerTreatment),
     Corner.Relative(topRightPercent, RoundedCornerTreatment),
     Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
@@ -66,7 +66,7 @@ fun cutCornerShape(
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f
-): Shape = CorneredShape(
+): CorneredShape = CorneredShape(
     Corner.Absolute(topLeft, CutCornerTreatment),
     Corner.Absolute(topRight, CutCornerTreatment),
     Corner.Absolute(bottomRight, CutCornerTreatment),

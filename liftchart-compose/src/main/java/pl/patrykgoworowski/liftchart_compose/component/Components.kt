@@ -30,13 +30,13 @@ public fun rectComponent(
 fun shapeComponent(
     shape: Shape,
     color: Color
-): ShapeComponent = ShapeComponent(
+): ShapeComponent<pl.patrykgoworowski.liftchart_common.path.Shape> = ShapeComponent(
     shape = shape.chartShape(),
     color = color.toArgb(),
 )
 
 @Composable
-fun ShapeComponent.setShadow(
+fun <T: pl.patrykgoworowski.liftchart_common.path.Shape> ShapeComponent<T>.setShadow(
     radius: Dp,
     dx: Dp,
     dy: Dp,

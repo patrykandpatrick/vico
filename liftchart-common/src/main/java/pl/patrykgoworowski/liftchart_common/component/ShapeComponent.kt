@@ -4,8 +4,8 @@ import android.graphics.*
 import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
-public open class ShapeComponent(
-    public var shape: Shape,
+public open class ShapeComponent <T: Shape> (
+    public var shape: T,
     color: Int = Color.BLACK,
 ) : Component() {
 
