@@ -14,8 +14,7 @@ sealed class Corner(
         cornerTreatment: CornerTreatment,
     ) : Corner(size, cornerTreatment) {
 
-        override fun getCornerSize(availableCornerSize: Float): Float =
-            minOf(availableCornerSize, absoluteSize)
+        override fun getCornerSize(availableCornerSize: Float): Float = absoluteSize
 
     }
 

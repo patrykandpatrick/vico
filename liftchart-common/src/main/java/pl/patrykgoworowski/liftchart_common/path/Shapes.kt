@@ -45,7 +45,7 @@ fun roundedCornersShape(
     Corner.Absolute(bottomLeft, RoundedCornerTreatment),
 )
 
-fun pillShape() = roundedCornersShape(100, 100, 100, 100)
+fun pillShape() = roundedCornersShape(50, 50, 50, 50)
 
 fun roundedCornersShape(
     topLeftPercent: Int = 0,

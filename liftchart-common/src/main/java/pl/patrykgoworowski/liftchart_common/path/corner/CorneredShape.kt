@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.path.Shape
 import kotlin.math.absoluteValue
 
@@ -20,12 +19,17 @@ public open class CorneredShape(
     private var bR = 0f
     private var bL = 0f
 
-    private val minHeight by lazy {
-        getMinimumHeight(
-            topLeft.absoluteSize,
-            topRight.absoluteSize,
-            bottomRight.absoluteSize,
-            bottomLeft.absoluteSize
+    private fun getCornerScale(width: Float, height: Float): Float {
+        val availableSize = minOf(width, height)
+        val tL = topLeft.getCornerSize(availableSize)
+        val tR = topRight.getCornerSize(availableSize)
+        val bR = bottomRight.getCornerSize(availableSize)
+        val bL = bottomLeft.getCornerSize(availableSize)
+        return minOf(
+            width / (tL + tR),
+            width / (bL+ bR),
+            height / (tL + bL),
+            height / (tR + bR),
         )
     }
 
@@ -43,24 +47,17 @@ public open class CorneredShape(
         path: Path,
         bounds: RectF,
     ) {
-        val height = bounds.height().absoluteValue
-        when {
-            height == 0f -> return
-            height < minHeight -> {
-                val scale = height / minHeight
-                tL = topLeft.absoluteSize * scale
-                tR = topRight.absoluteSize * scale
-                bR = bottomRight.absoluteSize * scale
-                bL = bottomLeft.absoluteSize * scale
-            }
-            else -> {
-                val halfOfSmallerSide = minOf(bounds.width(), bounds.height()).half
-                tL = topLeft.getCornerSize(halfOfSmallerSide)
-                tR = topRight.getCornerSize(halfOfSmallerSide)
-                bR = bottomRight.getCornerSize(halfOfSmallerSide)
-                bL = bottomLeft.getCornerSize(halfOfSmallerSide)
-            }
-        }
+        val width = bounds.width()
+        val height = bounds.height()
+        if (width == 0f || height == 0f) return
+
+        val size = minOf(width, height).absoluteValue
+        val scale = getCornerScale(width, height).coerceAtMost(1f)
+
+        tL = topLeft.getCornerSize(size) * scale
+        tR = topRight.getCornerSize(size) * scale
+        bR = bottomRight.getCornerSize(size) * scale
+        bL = bottomLeft.getCornerSize(size) * scale
 
         path.moveTo(bounds.left, bounds.top + tL)
         topLeft.cornerTreatment.createCorner(

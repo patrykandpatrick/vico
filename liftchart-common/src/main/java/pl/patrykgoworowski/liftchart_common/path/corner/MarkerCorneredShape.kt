@@ -6,7 +6,6 @@ import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.DEF_MARKER_TICK_SIZE
 import pl.patrykgoworowski.liftchart_common.extension.between
-import pl.patrykgoworowski.liftchart_common.extension.half
 
 public open class MarkerCorneredShape(
     topLeft: Corner,
@@ -17,6 +16,11 @@ public open class MarkerCorneredShape(
 ) : CorneredShape(
     topLeft, topRight, bottomRight, bottomLeft
 ) {
+
+    constructor(
+        all: Corner,
+        tickSize: Float = DEF_MARKER_TICK_SIZE,
+    ) : this(all, all, all, all, tickSize)
 
     constructor(
         corneredShape: CorneredShape,
@@ -38,7 +42,7 @@ public open class MarkerCorneredShape(
         tickX: Float,
     ) {
         createPath(path = path, bounds = bounds)
-        val availableCornerSize = minOf(bounds.width(), bounds.height()).half
+        val availableCornerSize = minOf(bounds.width(), bounds.height())
 
         val minLeft = contentBounds.left + bottomLeft.getCornerSize(availableCornerSize)
         val maxLeft = contentBounds.right - (bottomRight.getCornerSize(availableCornerSize) + (tickSize * 2))
