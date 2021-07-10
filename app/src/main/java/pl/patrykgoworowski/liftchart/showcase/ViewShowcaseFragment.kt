@@ -10,7 +10,10 @@ import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.liftchart.R
 import pl.patrykgoworowski.liftchart.component.view.getMarkerComponent
 import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
+import pl.patrykgoworowski.liftchart.extension.byzantine
 import pl.patrykgoworowski.liftchart.extension.color
+import pl.patrykgoworowski.liftchart.extension.flickrPink
+import pl.patrykgoworowski.liftchart.extension.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
@@ -19,6 +22,7 @@ import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
+import pl.patrykgoworowski.liftchart_common.data_set.extension.setVerticalGradient
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
@@ -44,6 +48,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
     }
 
     private fun setUpBar(dataSetView: DataSetView, marker: Marker?) {
+        val context = dataSetView.context
         val axes = AxisManager(
             VerticalAxis.start().apply {
                 valueFormatter = PercentageFormatAxisValueFormatter()
@@ -57,11 +62,13 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         val barDataSet = ColumnDataSet(
             column = RectComponent(
-                color = requireContext().color { R.color.flickr_pink },
+                color = context.flickrPink,
                 shape = cutCornerShape(topLeft = 8f.dp),
                 thickness = 16f.dp
             )
-        )
+        ).apply {
+            setVerticalGradient(intArrayOf(context.flickrPink, context.trypanPurple))
+        }
 
         viewModel.entries.collectAsFlow
             .onEach { barDataSet.model = it }
@@ -90,16 +97,16 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val mergedBarDataSet = MergedColumnDataSet(
             columns = listOf(
                 RectComponent(
-                    color = requireContext().color { R.color.flickr_pink },
+                    color = requireContext().flickrPink,
                     thickness = 16f.dp,
                     shape = cutCornerShape(topLeft = 8f.dp)
                 ),
                 RectComponent(
-                    color = requireContext().color { R.color.byzantine },
+                    color = requireContext().byzantine,
                     thickness = 24f.dp,
                 ),
                 RectComponent(
-                    color = requireContext().color { R.color.trypan_purple },
+                    color = requireContext().trypanPurple,
                     thickness = 16f.dp,
                     shape = cutCornerShape(topRight = 8f.dp)
                 ),

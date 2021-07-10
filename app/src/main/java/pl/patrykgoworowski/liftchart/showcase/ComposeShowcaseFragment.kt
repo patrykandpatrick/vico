@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -74,6 +75,7 @@ class ComposeShowcaseFragment : Fragment() {
                         },
                         axisManager = axisManager,
                         marker = markerComponent(),
+                        columnBrush = Brush.verticalGradient(colors = listOf(flickrPink, trypanPurple))
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))

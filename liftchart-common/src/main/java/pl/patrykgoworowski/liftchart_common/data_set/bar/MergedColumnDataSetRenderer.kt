@@ -9,6 +9,7 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.extension.PaintModifier
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.*
@@ -25,6 +26,7 @@ open class MergedColumnDataSetRenderer public constructor(
     private val heightMap = HashMap<Float, Float>()
     override val bounds: RectF = RectF()
 
+    override var columnPaintModifier: PaintModifier? = null
     private var drawScale: Float = 1f
     private var isScaleCalculated = false
     private var scaledSpacing = spacing
@@ -82,13 +84,15 @@ open class MergedColumnDataSetRenderer public constructor(
 
         model.entryCollections.forEachIndexed { index, entryCollection ->
 
+            column = columns.getRepeating(index)
+            columnPaintModifier?.modifyPaint(column.paint, bounds, index)
             drawingStart = getDrawingStart(index)
 
             entryCollection.forEach { entry ->
                 height = entry.y * heightMultiplier
                 entryOffset = (segmentSize + scaledSpacing) * (entry.x - model.minX) / step
                 columnCenterX = drawingStart + entryOffset
-                column = columns.getRepeating(index)
+
 
                 when (mergeMode) {
                     MergeMode.Stack -> {

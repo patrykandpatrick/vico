@@ -4,6 +4,16 @@ import android.content.Context
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import pl.patrykgoworowski.liftchart.R
+
+val Context.flickrPink: Int
+    get() = ContextCompat.getColor(this, R.color.flickr_pink)
+
+val Context.byzantine: Int
+    get() = ContextCompat.getColor(this, R.color.byzantine)
+
+val Context.trypanPurple: Int
+    get() = ContextCompat.getColor(this, R.color.trypan_purple)
 
 inline fun Context.color(resIdBlock: () -> Int): Int =
     ContextCompat.getColor(this, resIdBlock())

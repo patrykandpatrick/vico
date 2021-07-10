@@ -6,6 +6,7 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.extension.PaintModifier
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.findClosestPositiveValue
@@ -28,6 +29,7 @@ public open class ColumnDataSetRenderer(
 
     private val markerLocationMap = HashMap<Float, Marker.EntryModel>()
 
+    override var columnPaintModifier: PaintModifier? = null
     override val bounds: RectF = RectF()
 
     override fun setBounds(
@@ -53,6 +55,7 @@ public open class ColumnDataSetRenderer(
         val bottom = bounds.bottom
         val drawingStart = bounds.left + scaledSpacing.half
         val entries = model.entries
+        columnPaintModifier?.modifyPaint(column.paint, bounds, 0)
 
         entries.forEach { entry ->
             val height = entry.y * heightMultiplier
