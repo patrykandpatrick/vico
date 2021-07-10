@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
                 roundedCornersShape(
                     topLeft = 3f.dp,
                     topRight = 3f.dp
-                ).getDrawable(intrinsicHeight = 3.dp)
+                ).getDrawable(intrinsicHeight = 3.dp.toInt())
             )
             //tabLayout.setSelectedTabIndicator(RectShape().drawable)
 

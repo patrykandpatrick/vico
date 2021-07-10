@@ -5,8 +5,8 @@ import android.content.res.Resources
 inline val Float.dp: Float
     get() = this * Resources.getSystem().displayMetrics.density
 
-inline val Int.dp: Int
-    get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+inline val Int.dp: Float
+    get() = (this * Resources.getSystem().displayMetrics.density)
 
 inline val Float.sp: Float
     get() = this * Resources.getSystem().displayMetrics.scaledDensity
