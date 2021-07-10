@@ -11,9 +11,9 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorSurface</item>
-        <item name="android:windowLightStatusBar">@bool/is_day</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">@bool/is_day</item>
         <item name="android:navigationBarColor">?attr/colorSurface</item>
-        <item name="android:windowLightNavigationBar">@bool/is_day</item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">@bool/is_day</item>
         <!-- Customize your theme here. -->
         <item name="actionBarTheme">@style/ActionBarTheme</item>
         <item name="actionBarStyle">@style/ActionBarStyle</item>
