@@ -7,7 +7,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.OverlayingComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
@@ -45,21 +44,8 @@ public fun rectComponent(
 fun shapeComponent(
     shape: Shape,
     color: Color
-): ShapeComponent<pl.patrykgoworowski.liftchart_common.path.Shape> = ShapeComponent(
+): ShapeComponent<ChartShape> = ShapeComponent(
     shape = shape.chartShape(),
-    color = color.toArgb(),
-)
-
-@Composable
-fun <T: ChartShape> ShapeComponent<T>.setShadow(
-    radius: Dp,
-    dx: Dp = 0.dp,
-    dy: Dp = 0.dp,
-    color: Color = Color(DEF_SHADOW_COLOR),
-) = setShadow(
-    radius = radius.pixels,
-    dx = dx.pixels,
-    dy = dy.pixels,
     color = color.toArgb(),
 )
 

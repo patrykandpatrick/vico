@@ -15,6 +15,7 @@ import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_compose.component.*
 import pl.patrykgoworowski.liftchart_compose.component.dimension.setPadding
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
+import pl.patrykgoworowski.liftchart_compose.extension.setShadow
 
 @Composable
 fun markerComponent(): Marker {
