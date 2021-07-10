@@ -4,7 +4,7 @@ import android.graphics.*
 import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
-public open class ShapeComponent <T: Shape> (
+public open class ShapeComponent<T : Shape>(
     public var shape: T,
     color: Int = Color.BLACK,
 ) : Component() {
@@ -44,13 +44,13 @@ public open class ShapeComponent <T: Shape> (
         boundingBox: RectF
     ): Boolean = boundingBox.contains(left, top, right, bottom)
 
-    public open fun setShadow(
+    public fun setShadow(
         radius: Float,
         dx: Float = 0f,
         dy: Float = 0f,
         color: Int = DEF_SHADOW_COLOR,
     ) {
-      paint.setShadowLayer(radius, dx, dy, color)
+        paint.setShadowLayer(radius, dx, dy, color)
     }
 
 }

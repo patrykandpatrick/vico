@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
-import pl.patrykgoworowski.liftchart_common.component.MarkerComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
@@ -35,7 +34,6 @@ import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
-import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.extension.runIf
 
@@ -55,7 +53,7 @@ fun ColumnChart(
     column: RectComponent = defaultColumnComponent,
     spacing: Dp = DEF_BAR_SPACING.dp,
     axisManager: AxisManager = AxisManager(),
-    marker: Marker? = MarkerComponent(),
+    marker: Marker? = null,
 ) {
     val dataSet = remember {
         ColumnDataSetRenderer(
@@ -84,7 +82,7 @@ fun MergedColumnChart(
     spacing: Dp = DEF_BAR_SPACING.dp,
     innerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
     axisManager: AxisManager = AxisManager(),
-    marker: Marker? = MarkerComponent(),
+    marker: Marker? = null,
 ) {
     val dataSet = remember { MergedColumnDataSetRenderer(columns, mergeMode = mergeMode) }
     val model = multiEntryCollection.collectAsState()

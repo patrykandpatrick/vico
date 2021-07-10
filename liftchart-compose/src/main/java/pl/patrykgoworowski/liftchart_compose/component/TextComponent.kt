@@ -16,7 +16,7 @@ import pl.patrykgoworowski.liftchart_compose.extension.pixelSize
 fun textComponent(
     color: Color,
     textSize: TextUnit,
-    background: ShapeComponent<Shape>,
+    background: ShapeComponent<Shape>?,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = DEF_LABEL_LINE_COUNT,
 ) : TextComponent = TextComponent(

@@ -15,13 +15,12 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import pl.patrykgoworowski.liftchart.component.compose.markerComponent
 import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart.ui.byzantine
 import pl.patrykgoworowski.liftchart.ui.flickrPink
 import pl.patrykgoworowski.liftchart.ui.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
-import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
-import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
@@ -74,6 +73,7 @@ class ComposeShowcaseFragment : Fragment() {
                                 setMargins(start = 0f)
                         },
                         axisManager = axisManager,
+                        marker = markerComponent(),
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -96,6 +96,7 @@ class ComposeShowcaseFragment : Fragment() {
                         innerSpacing = 4.dp,
                         spacing = 24.dp,
                         axisManager = axisManager,
+                        marker = markerComponent(),
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
@@ -118,6 +119,7 @@ class ComposeShowcaseFragment : Fragment() {
                         innerSpacing = 4.dp,
                         spacing = 24.dp,
                         axisManager = axisManager,
+                        marker = markerComponent(),
                     )
                 }
             }

@@ -1,7 +1,6 @@
 package pl.patrykgoworowski.liftchart_common.component
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
@@ -9,55 +8,27 @@ import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.extension.averageOf
-import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 import pl.patrykgoworowski.liftchart_common.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.marker.MarkerLabelFormatter
-import pl.patrykgoworowski.liftchart_common.path.DashedShape
 import pl.patrykgoworowski.liftchart_common.path.corner.MarkerCorneredShape
-import pl.patrykgoworowski.liftchart_common.path.pillShape
 
 public open class MarkerComponent(
-    private val label: TextComponent = TextComponent(),
-    private val guideline: RectComponent = RectComponent(
-        0x4A000000, 2f.dp, DashedShape(
-            pillShape(), 8f.dp, 4f.dp
-        )
-    ),
-    shape: MarkerCorneredShape = MarkerCorneredShape(pillShape()),
-    color: Int = Color.WHITE
-) : Marker, ShapeComponent<MarkerCorneredShape>(shape, color) {
-
-    init {
-        setShadow(4f.dp, dy =  2f.dp)
-        label.apply {
-            background = null
-            setPadding(8f.dp, 4f.dp)
-        }
-    }
+    private val label: TextComponent,
+    private val indicator: Component,
+    private val guideline: RectComponent,
+    shape: MarkerCorneredShape,
+    markerBackgroundColor: Int,
+) : Marker, ShapeComponent<MarkerCorneredShape>(shape, markerBackgroundColor) {
 
     private val markerTempBounds = RectF()
-
-    val outer = ShapeComponent(pillShape())
-    val center = ShapeComponent(pillShape()).apply {
-        setShadow(4f.dp, 0f, 1f.dp, 0x4A000000)
-    }
-    val dot = OverlayingComponent(
-        outer,
-        OverlayingComponent(
-            center,
-            ShapeComponent(pillShape(), Color.WHITE),
-            6f.dp,
-        ),
-        11f.dp
-    )
 
     private val markerHeight: Float
         get() = label.getHeight() + shape.tickSize.orZero
 
-    public var entryTipSize: Float = 42f.dp
+    public var indicatorSize: Float = 0f
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
 
@@ -69,18 +40,14 @@ public open class MarkerComponent(
     ) {
         drawGuideline(canvas, bounds, markedEntries)
 
-        markedEntries.forEachIndexed { index, model ->
+        markedEntries.forEachIndexed { _, model ->
             onApplyEntryColor?.invoke(model.color)
-
-            outer.color = model.color
-            outer.paint.alpha = 64
-            center.color = model.color
-            dot.draw(
+            indicator.draw(
                 canvas,
-                model.location.x - entryTipSize.half,
-                model.location.y - entryTipSize.half,
-                model.location.x + entryTipSize.half,
-                model.location.y + entryTipSize.half,
+                model.location.x - indicatorSize.half,
+                model.location.y - indicatorSize.half,
+                model.location.x + indicatorSize.half,
+                model.location.y + indicatorSize.half,
             )
 
         }

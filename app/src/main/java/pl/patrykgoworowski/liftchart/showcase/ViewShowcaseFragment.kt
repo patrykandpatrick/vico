@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.liftchart.R
+import pl.patrykgoworowski.liftchart.component.view.getMarkerComponent
 import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
 import pl.patrykgoworowski.liftchart.extension.color
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
@@ -15,11 +16,11 @@ import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
-import pl.patrykgoworowski.liftchart_common.component.MarkerComponent
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
 import pl.patrykgoworowski.liftchart_common.extension.dp
+import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_view.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedColumnDataSet
@@ -35,12 +36,14 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val binding = FragmentViewBinding.bind(view)
 
-        setUpBar(binding.barChart)
-        setUpGroupedBar(binding.groupedColumnChart)
-        setUpStackedBar(binding.stackedColumnChart)
+        val marker = getMarkerComponent(view.context)
+
+        setUpBar(binding.barChart, marker)
+        setUpGroupedBar(binding.groupedColumnChart, marker)
+        setUpStackedBar(binding.stackedColumnChart, marker)
     }
 
-    private fun setUpBar(dataSetView: DataSetView) {
+    private fun setUpBar(dataSetView: DataSetView, marker: Marker?) {
         val axes = AxisManager(
             VerticalAxis.start().apply {
                 valueFormatter = PercentageFormatAxisValueFormatter()
@@ -67,11 +70,11 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         dataSetView.apply {
             dataSet = barDataSet
             axisManager = axes
-            marker = MarkerComponent()
+            this.marker = marker
         }
     }
 
-    private fun setUpGroupedBar(dataSetView: DataSetView) {
+    private fun setUpGroupedBar(dataSetView: DataSetView, marker: Marker?) {
 
         val axes = AxisManager(
             VerticalAxis.start().apply {
@@ -111,11 +114,11 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         dataSetView.apply {
             dataSet = mergedBarDataSet
             axisManager = axes
-            marker = MarkerComponent()
+            this.marker = marker
         }
     }
 
-    private fun setUpStackedBar(dataSetView: DataSetView) {
+    private fun setUpStackedBar(dataSetView: DataSetView, marker: Marker?) {
 
         val axes = AxisManager(
             VerticalAxis.start().apply {
@@ -155,7 +158,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         dataSetView.apply {
             dataSet = mergedBarDataSet
             axisManager = axes
-            marker = MarkerComponent()
+            this.marker = marker
         }
     }
 
