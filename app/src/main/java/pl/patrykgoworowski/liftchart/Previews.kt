@@ -10,6 +10,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.sp
@@ -23,7 +24,6 @@ import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_compose.component.shapeComponent
 import pl.patrykgoworowski.liftchart_compose.component.textComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
-import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.path.chartShape
 
 @Preview("Sample DataSet", widthDp = 200)
@@ -55,7 +55,7 @@ fun SampleDataSet(modifier: Modifier = Modifier) {
                 axis = null,
                 tick = null,
                 guideline = GuidelineComponent(
-                    MaterialTheme.colors.primary.copy(0.1f).colorInt,
+                    MaterialTheme.colors.primary.copy(0.1f).toArgb(),
                     1f.dp
                 ),
             ),
@@ -64,7 +64,7 @@ fun SampleDataSet(modifier: Modifier = Modifier) {
             bottomAxis = null
         ),
         column = RectComponent(
-            MaterialTheme.colors.primary.colorInt,
+            MaterialTheme.colors.primary.toArgb(),
             thickness = 8f.dp,
             shape = CutCornerShape(Dp(4f)).chartShape()
         )

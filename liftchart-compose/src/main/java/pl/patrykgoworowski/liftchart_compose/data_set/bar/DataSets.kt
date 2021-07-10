@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -42,7 +43,7 @@ import pl.patrykgoworowski.liftchart_compose.extension.runIf
 val defaultColumnComponent: RectComponent
     @Composable
     get() = RectComponent(
-        color = MaterialTheme.colors.secondary.colorInt,
+        color = MaterialTheme.colors.secondary.toArgb(),
         thickness = DEF_BAR_WIDTH.dp.pixels,
         shape = cutCornerShape(topLeft = 8f.dp.pixels)
     )

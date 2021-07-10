@@ -11,7 +11,6 @@ import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
-import pl.patrykgoworowski.liftchart_compose.extension.colorInt
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.path.chartShape
 
@@ -21,7 +20,7 @@ public fun rectComponent(
     thickness: Dp = DEF_BAR_WIDTH.dp,
     shape: Shape = RectangleShape
 ): RectComponent = RectComponent(
-    color = color.colorInt,
+    color = color.toArgb(),
     thickness = thickness.pixels,
     shape = shape.chartShape(),
 )
