@@ -9,7 +9,7 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
-import pl.patrykgoworowski.liftchart_common.data_set.extension.PaintModifier
+import pl.patrykgoworowski.liftchart_common.data_set.modifier.PaintModifier
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.*

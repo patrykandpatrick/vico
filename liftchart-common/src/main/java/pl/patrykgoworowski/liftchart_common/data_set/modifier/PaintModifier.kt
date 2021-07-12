@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_common.data_set.extension
+package pl.patrykgoworowski.liftchart_common.data_set.modifier
 
 import android.graphics.Paint
 import android.graphics.RectF

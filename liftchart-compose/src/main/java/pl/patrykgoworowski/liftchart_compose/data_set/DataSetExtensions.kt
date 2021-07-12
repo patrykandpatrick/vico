@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
-import pl.patrykgoworowski.liftchart_common.data_set.extension.PaintModifier
+import pl.patrykgoworowski.liftchart_common.data_set.modifier.PaintModifier
 
 @Composable
 fun <Model: EntriesModel> DataSetRenderer<Model>.setBrush(
