@@ -2,7 +2,7 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.PointF
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSetRenderer
@@ -16,7 +16,7 @@ import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
 
 class ColumnDataSet(
-    columns: List<RectComponent>,
+    columns: List<LineComponent>,
     spacing: Float = DEF_BAR_SPACING.dp,
     innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
     mergeMode: MergeMode = MergeMode.Stack,
@@ -24,7 +24,7 @@ class ColumnDataSet(
     DataSetRendererWithModel<MultiEntriesModel> {
 
     constructor(
-        column: RectComponent,
+        column: LineComponent,
         spacing: Float = DEF_BAR_SPACING.dp
     ) : this(listOf(column), spacing)
 

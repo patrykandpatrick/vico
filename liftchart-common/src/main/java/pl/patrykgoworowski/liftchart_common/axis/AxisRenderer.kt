@@ -3,10 +3,9 @@ package pl.patrykgoworowski.liftchart_common.axis
 import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.BoundsAware
-import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
@@ -31,9 +30,9 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         get() = label?.allLinesHeight ?: 0
 
     var label: TextComponent?
-    var axis: RectComponent?
+    var axis: LineComponent?
     var tick: TickComponent?
-    var guideline: GuidelineComponent?
+    var guideline: LineComponent?
     var isLTR: Boolean
     var isVisible: Boolean
     var valueFormatter: AxisValueFormatter

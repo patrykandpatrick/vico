@@ -5,7 +5,7 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.path.Shape
 import pl.patrykgoworowski.liftchart_common.path.rectShape
 
-public open class RectComponent(
+public open class LineComponent(
     color: Int,
     public var thickness: Float = 2f,
     shape: Shape = rectShape(),
@@ -15,9 +15,6 @@ public open class RectComponent(
 
     val scaledThickness: Float
         get() = thickness * thicknessScale
-
-    val shouldDraw: Boolean
-        get() = thickness > 0f
 
     public open fun drawHorizontal(
         canvas: Canvas,

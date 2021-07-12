@@ -8,8 +8,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.component.Component
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.OverlayingComponent
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.path.DashedShape
@@ -23,7 +23,7 @@ public fun rectComponent(
     color: Color,
     thickness: Dp = DEF_BAR_WIDTH.dp,
     shape: Shape = RectangleShape
-): RectComponent = RectComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thickness = thickness.pixels,
     shape = shape.chartShape(),
@@ -34,7 +34,7 @@ public fun rectComponent(
     color: Color,
     thickness: Dp,
     shape: ChartShape,
-): RectComponent = RectComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thickness = thickness.pixels,
     shape = shape,

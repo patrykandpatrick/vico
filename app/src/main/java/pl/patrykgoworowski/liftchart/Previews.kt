@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
-import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryList
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 import pl.patrykgoworowski.liftchart_compose.component.dimension.setPadding
@@ -56,7 +56,7 @@ fun SampleDataSet(modifier: Modifier = Modifier) = MainTheme {
                 },
                 axis = null,
                 tick = null,
-                guideline = GuidelineComponent(
+                guideline = LineComponent(
                     colors.primary.copy(0.1f).toArgb(),
                     1f.dp.pixels,
                 ),

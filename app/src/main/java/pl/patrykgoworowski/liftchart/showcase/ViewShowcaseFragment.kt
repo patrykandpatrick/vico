@@ -19,7 +19,7 @@ import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
 import pl.patrykgoworowski.liftchart_common.data_set.modifier.setVerticalGradient
@@ -60,7 +60,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         )
 
         val barDataSet = ColumnDataSet(
-            column = RectComponent(
+            column = LineComponent(
                 color = context.flickrPink,
                 shape = cutCornerShape(topLeft = 8f.dp),
                 thickness = 16f.dp,
@@ -95,16 +95,16 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         val mergedBarDataSet = ColumnDataSet(
             columns = listOf(
-                RectComponent(
+                LineComponent(
                     color = requireContext().flickrPink,
                     thickness = 16f.dp,
                     shape = cutCornerShape(topLeft = 8f.dp)
                 ),
-                RectComponent(
+                LineComponent(
                     color = requireContext().byzantine,
                     thickness = 24f.dp,
                 ),
-                RectComponent(
+                LineComponent(
                     color = requireContext().trypanPurple,
                     thickness = 16f.dp,
                     shape = cutCornerShape(topRight = 8f.dp)
@@ -139,16 +139,16 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         val mergedBarDataSet = ColumnDataSet(
             columns = listOf(
-                RectComponent(
+                LineComponent(
                     color = requireContext().color { R.color.flickr_pink },
                     thickness = 16f.dp,
                     shape = cutCornerShape(bottomRight = 8f.dp)
                 ),
-                RectComponent(
+                LineComponent(
                     color = requireContext().color { R.color.byzantine },
                     thickness = 16f.dp,
                 ),
-                RectComponent(
+                LineComponent(
                     color = requireContext().color { R.color.trypan_purple },
                     thickness = 16f.dp,
                     shape = cutCornerShape(topLeft = 8f.dp)

@@ -1,9 +1,8 @@
 package pl.patrykgoworowski.liftchart_common
 
 import android.graphics.Color
-import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.extension.sp
@@ -14,14 +13,14 @@ val DEF_LABEL_COMPONENT: TextComponent
             setPadding(start = 4f.dp, top = 2f.dp, end = 4f.dp, bottom = 2f.dp)
         }
 
-val DEF_AXIS_COMPONENT: RectComponent
-    get() = RectComponent(Color.BLUE, 2f.dp)
+val DEF_AXIS_COMPONENT: LineComponent
+    get() = LineComponent(Color.BLUE, 2f.dp)
 
 val DEF_TICK_COMPONENT: TickComponent
     get() = TickComponent(Color.BLUE, 2f.dp)
 
-val DEF_GUIDELINE_COMPONENT: GuidelineComponent
-    get() = GuidelineComponent(Color.LTGRAY, 1f.dp)
+val DEF_GUIDELINE_COMPONENT: LineComponent
+    get() = LineComponent(Color.LTGRAY, 1f.dp)
 
 val DEF_LABEL_LINE_COUNT = 1
 val DEF_LABEL_COUNT = 99

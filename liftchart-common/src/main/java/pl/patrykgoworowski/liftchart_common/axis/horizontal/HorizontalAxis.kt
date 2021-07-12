@@ -7,9 +7,8 @@ import pl.patrykgoworowski.liftchart_common.DEF_LABEL_COMPONENT
 import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
-import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.text.VerticalPosition
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
@@ -22,9 +21,9 @@ import pl.patrykgoworowski.liftchart_common.extension.orZero
 class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
     override val position: Position,
     label: TextComponent? = DEF_LABEL_COMPONENT,
-    axis: RectComponent? = DEF_AXIS_COMPONENT,
+    axis: LineComponent? = DEF_AXIS_COMPONENT,
     tick: TickComponent? = DEF_TICK_COMPONENT,
-    guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
 ) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
@@ -151,9 +150,9 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
     companion object {
         fun top(
             label: TextComponent? = DEF_LABEL_COMPONENT,
-            axis: RectComponent? = DEF_AXIS_COMPONENT,
+            axis: LineComponent? = DEF_AXIS_COMPONENT,
             tick: TickComponent? = DEF_TICK_COMPONENT,
-            guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+            guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
         ): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
             position = AxisPosition.Horizontal.Top,
             label = label,
@@ -164,9 +163,9 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
 
         fun bottom(
             label: TextComponent? = DEF_LABEL_COMPONENT,
-            axis: RectComponent? = DEF_AXIS_COMPONENT,
+            axis: LineComponent? = DEF_AXIS_COMPONENT,
             tick: TickComponent? = DEF_TICK_COMPONENT,
-            guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+            guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
         ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
             position = AxisPosition.Horizontal.Bottom,
             label = label,

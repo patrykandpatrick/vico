@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_common.data_set.bar
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
@@ -17,7 +17,7 @@ import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.roundToInt
 
 open class ColumnDataSetRenderer public constructor(
-    public val columns: List<RectComponent>,
+    public val columns: List<LineComponent>,
     public var spacing: Float = DEF_MERGED_BAR_SPACING,
     public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped
@@ -76,7 +76,7 @@ open class ColumnDataSetRenderer public constructor(
         var height: Float
         var columnCenterX: Float
         var entryOffset: Float
-        var column: RectComponent
+        var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
 

@@ -2,9 +2,8 @@ package pl.patrykgoworowski.liftchart_common.axis
 
 import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.*
-import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.HorizontalPosition
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
@@ -17,9 +16,9 @@ import pl.patrykgoworowski.liftchart_common.extension.orZero
 class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
     override val position: Position,
     label: TextComponent?,
-    axis: RectComponent?,
+    axis: LineComponent?,
     tick: TickComponent?,
-    guideline: GuidelineComponent?,
+    guideline: LineComponent?,
 ) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
     private val AxisPosition.Vertical.textHorizontalPosition: HorizontalPosition
@@ -175,9 +174,9 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
 
         fun start(
             label: TextComponent? = DEF_LABEL_COMPONENT,
-            axis: RectComponent? = DEF_AXIS_COMPONENT,
+            axis: LineComponent? = DEF_AXIS_COMPONENT,
             tick: TickComponent? = DEF_TICK_COMPONENT,
-            guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+            guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
         ): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
             position = AxisPosition.Vertical.Start,
             label = label,
@@ -188,9 +187,9 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
 
         fun end(
             label: TextComponent? = DEF_LABEL_COMPONENT,
-            axis: RectComponent? = DEF_AXIS_COMPONENT,
+            axis: LineComponent? = DEF_AXIS_COMPONENT,
             tick: TickComponent? = DEF_TICK_COMPONENT,
-            guideline: GuidelineComponent? = DEF_GUIDELINE_COMPONENT,
+            guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
         ): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
             position = AxisPosition.Vertical.End,
             label = label,

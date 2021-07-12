@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
@@ -38,9 +38,9 @@ import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.extension.runIf
 
 
-val defaultColumnComponent: RectComponent
+val defaultColumnComponent: LineComponent
     @Composable
-    get() = RectComponent(
+    get() = LineComponent(
         color = MaterialTheme.colors.secondary.toArgb(),
         thickness = DEF_BAR_WIDTH.dp.pixels,
         shape = cutCornerShape(topLeft = 8f.dp.pixels)
@@ -50,7 +50,7 @@ val defaultColumnComponent: RectComponent
 fun ColumnChart(
     entryCollection: MultiEntryCollection,
     modifier: Modifier = Modifier,
-    column: RectComponent = defaultColumnComponent,
+    column: LineComponent = defaultColumnComponent,
     spacing: Dp = DEF_BAR_SPACING.dp,
     axisManager: AxisManager = AxisManager(),
     marker: Marker? = null,
@@ -76,7 +76,7 @@ fun ColumnChart(
 fun ColumnChart(
     entryCollection: MultiEntryCollection,
     modifier: Modifier = Modifier,
-    columns: List<RectComponent> = listOf(defaultColumnComponent),
+    columns: List<LineComponent> = listOf(defaultColumnComponent),
     mergeMode: MergeMode = MergeMode.Stack,
     spacing: Dp = DEF_BAR_SPACING.dp,
     innerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,

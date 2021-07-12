@@ -18,7 +18,7 @@ import pl.patrykgoworowski.liftchart_common.path.corner.MarkerCorneredShape
 public open class MarkerComponent(
     private val label: TextComponent,
     private val indicator: Component,
-    private val guideline: RectComponent,
+    private val guideline: LineComponent,
     shape: MarkerCorneredShape,
     markerBackgroundColor: Int,
 ) : Marker, ShapeComponent<MarkerCorneredShape>(shape, markerBackgroundColor) {

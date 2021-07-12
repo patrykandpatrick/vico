@@ -5,9 +5,9 @@ import android.graphics.Color
 import android.text.TextUtils
 import pl.patrykgoworowski.liftchart.R
 import pl.patrykgoworowski.liftchart.extension.getThemeColor
+import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.MarkerComponent
 import pl.patrykgoworowski.liftchart_common.component.OverlayingComponent
-import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.extension.copyColor
@@ -45,7 +45,7 @@ fun getMarkerComponent(context: Context): Marker {
         innerPaddingAll = 10.dp,
     )
 
-    val guideline = RectComponent(
+    val guideline = LineComponent(
         color = context.getThemeColor(R.attr.colorOnSurface).copyColor(alpha = 48),
         thickness = 2f.dp,
         shape = DashedShape(
