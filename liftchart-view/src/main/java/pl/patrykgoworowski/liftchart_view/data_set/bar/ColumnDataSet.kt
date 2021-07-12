@@ -1,29 +1,36 @@
 package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
-import android.graphics.Color.MAGENTA
 import android.graphics.PointF
 import pl.patrykgoworowski.liftchart_common.component.RectComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
-import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
+import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSetRenderer
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModel
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.emptySingleEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
 
-public open class ColumnDataSet(
-    column: RectComponent = RectComponent(MAGENTA, DEF_BAR_WIDTH.dp),
+class ColumnDataSet(
+    columns: List<RectComponent>,
     spacing: Float = DEF_BAR_SPACING.dp,
-) : ColumnDataSetRenderer(column, spacing),
-    DataSetRendererWithModel<SingleEntriesModel> {
+    innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
+    mergeMode: MergeMode = MergeMode.Stack,
+) : ColumnDataSetRenderer(columns, spacing, innerSpacing, mergeMode),
+    DataSetRendererWithModel<MultiEntriesModel> {
+
+    constructor(
+        column: RectComponent,
+        spacing: Float = DEF_BAR_SPACING.dp
+    ) : this(listOf(column), spacing)
 
     private val listeners = ArrayList<UpdateRequestListener>()
 
-    var model: SingleEntriesModel = emptySingleEntriesModel()
+    var model: MultiEntriesModel = emptyMultiEntriesModel()
         set(value) {
             field = value
             listeners.forEach { it() }
@@ -45,7 +52,7 @@ public open class ColumnDataSet(
 
     override fun getMeasuredWidth(): Int = getMeasuredWidth(model)
 
-    override fun getEntriesModel(): SingleEntriesModel = model
+    override fun getEntriesModel(): MultiEntriesModel = model
 
     override fun getSegmentProperties(): SegmentProperties = getSegmentProperties(model)
 

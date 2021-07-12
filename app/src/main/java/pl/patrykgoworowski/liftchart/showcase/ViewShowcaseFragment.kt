@@ -27,7 +27,6 @@ import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_view.data_set.bar.ColumnDataSet
-import pl.patrykgoworowski.liftchart_view.data_set.bar.MergedColumnDataSet
 import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
 
 
@@ -64,8 +63,8 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             column = RectComponent(
                 color = context.flickrPink,
                 shape = cutCornerShape(topLeft = 8f.dp),
-                thickness = 16f.dp
-            )
+                thickness = 16f.dp,
+            ),
         ).apply {
             setVerticalGradient(intArrayOf(context.flickrPink, context.trypanPurple))
         }
@@ -94,7 +93,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             }
         )
 
-        val mergedBarDataSet = MergedColumnDataSet(
+        val mergedBarDataSet = ColumnDataSet(
             columns = listOf(
                 RectComponent(
                     color = requireContext().flickrPink,
@@ -138,7 +137,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             }
         )
 
-        val mergedBarDataSet = MergedColumnDataSet(
+        val mergedBarDataSet = ColumnDataSet(
             columns = listOf(
                 RectComponent(
                     color = requireContext().color { R.color.flickr_pink },

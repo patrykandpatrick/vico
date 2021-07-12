@@ -25,7 +25,6 @@ import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
-import pl.patrykgoworowski.liftchart_compose.data_set.bar.MergedColumnChart
 
 class ComposeShowcaseFragment : Fragment() {
 
@@ -64,14 +63,14 @@ class ComposeShowcaseFragment : Fragment() {
                     Spacer(modifier = Modifier.height(24.dp))
 
                     ColumnChart(
-                        singleEntryCollection = viewModel.entries,
+                        entryCollection = viewModel.entries,
                         modifier = chartModifier,
                         column = rectComponent(
                             color = flickrPink,
                             thickness = 16.dp,
                             shape = CutCornerShape(topStart = 8f.dp)
                         ).apply {
-                                setMargins(start = 0f)
+                            setMargins(start = 0f)
                         },
                         axisManager = axisManager,
                         marker = markerComponent(),
@@ -80,10 +79,10 @@ class ComposeShowcaseFragment : Fragment() {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    MergedColumnChart(
+                    ColumnChart(
                         modifier = chartModifier,
                         mergeMode = MergeMode.Grouped,
-                        multiEntryCollection = viewModel.multiEntries,
+                        entryCollection = viewModel.multiEntries,
                         columns = listOf(
                             rectComponent(
                                 color = flickrPink,
@@ -103,10 +102,10 @@ class ComposeShowcaseFragment : Fragment() {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    MergedColumnChart(
+                    ColumnChart(
                         modifier = chartModifier,
                         mergeMode = MergeMode.Stack,
-                        multiEntryCollection = viewModel.multiEntries,
+                        entryCollection = viewModel.multiEntries,
                         columns = listOf(
                             rectComponent(
                                 color = flickrPink,

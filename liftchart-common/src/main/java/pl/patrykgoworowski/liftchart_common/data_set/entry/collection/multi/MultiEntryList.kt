@@ -23,15 +23,20 @@ class MultiEntryList() :
     val data: ArrayList<List<DataEntry>> = ArrayList()
 
     constructor(entryCollections: List<List<DataEntry>>) : this() {
-        setEntryCollection(entryCollections)
+        setEntries(entryCollections)
     }
 
     constructor(vararg entryCollections: List<DataEntry>) : this() {
-        setEntryCollection(entryCollections.toList())
+        setEntries(entryCollections.toList())
     }
 
-    override fun setEntryCollection(entryCollections: List<List<DataEntry>>) {
-        data.setAll(entryCollections)
+    override fun setEntries(entries: List<List<DataEntry>>) {
+        data.setAll(entries)
+        refreshModel()
+    }
+
+    override fun setEntries(vararg entries: List<DataEntry>) {
+        data.setAll(entries)
         refreshModel()
     }
 

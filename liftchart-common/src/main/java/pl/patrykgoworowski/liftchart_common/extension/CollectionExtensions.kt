@@ -19,6 +19,11 @@ public fun <T> ArrayList<T>.setAll(other: Collection<T>) {
     addAll(other)
 }
 
+public fun <T> ArrayList<T>.setAll(other: Array<out T>) {
+    clear()
+    addAll(other)
+}
+
 public inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
     var sum = 0f
     for (element in this) {

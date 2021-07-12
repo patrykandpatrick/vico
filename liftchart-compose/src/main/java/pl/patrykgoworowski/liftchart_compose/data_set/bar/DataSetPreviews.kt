@@ -5,10 +5,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryList
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryList
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 
-private val entryList = SingleEntryList(entriesOf(0 to 1, 1 to 2, 2 to 3, 3 to 4))
+private val entryList = MultiEntryList(entriesOf(0 to 1, 1 to 2, 2 to 3, 3 to 4))
 
 private val topAxis = HorizontalAxis.top()
 private val startAxis = VerticalAxis.start()
@@ -19,7 +19,7 @@ private val endAxis = VerticalAxis.end()
 @Composable
 fun PreviewColumnChartLeft() {
     ColumnChart(
-        singleEntryCollection = entryList,
+        entryCollection = entryList,
         axisManager = AxisManager(
             startAxis = startAxis,
             topAxis = null,
@@ -33,7 +33,7 @@ fun PreviewColumnChartLeft() {
 @Composable
 fun PreviewColumnChartTop() {
     ColumnChart(
-        singleEntryCollection = entryList,
+        entryCollection = entryList,
         axisManager = AxisManager(
             startAxis = null,
             topAxis = topAxis,
@@ -47,7 +47,7 @@ fun PreviewColumnChartTop() {
 @Composable
 fun PreviewColumnChartRight() {
     ColumnChart(
-        singleEntryCollection = entryList,
+        entryCollection = entryList,
         axisManager = AxisManager(
             startAxis = null,
             topAxis = null,
@@ -61,7 +61,7 @@ fun PreviewColumnChartRight() {
 @Composable
 fun PreviewColumnChartBottom() {
     ColumnChart(
-        singleEntryCollection = entryList,
+        entryCollection = entryList,
         axisManager = AxisManager(
             startAxis = null,
             topAxis = null,
@@ -75,7 +75,7 @@ fun PreviewColumnChartBottom() {
 @Composable
 fun PreviewColumnChartBottomLeft() {
     ColumnChart(
-        singleEntryCollection = entryList,
+        entryCollection = entryList,
         axisManager = AxisManager(
             startAxis = startAxis,
             topAxis = null,
@@ -89,7 +89,7 @@ fun PreviewColumnChartBottomLeft() {
 @Composable
 fun PreviewColumnChartTopRight() {
     ColumnChart(
-        singleEntryCollection = entryList,
+        entryCollection = entryList,
         axisManager = AxisManager(
             startAxis = null,
             topAxis = topAxis,
@@ -103,7 +103,7 @@ fun PreviewColumnChartTopRight() {
 @Composable
 fun PreviewColumnChartAll() {
     ColumnChart(
-        singleEntryCollection = entryList,
+        entryCollection = entryList,
         axisManager = AxisManager(
             startAxis = startAxis,
             topAxis = topAxis,

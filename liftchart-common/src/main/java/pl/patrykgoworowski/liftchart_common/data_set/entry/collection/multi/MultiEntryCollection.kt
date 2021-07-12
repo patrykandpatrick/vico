@@ -11,7 +11,8 @@ interface MultiEntryCollection : EntryCollection {
     val stackedMaxY: Float
     val model: MultiEntriesModel
 
-    fun setEntryCollection(entryCollections: List<List<DataEntry>>)
+    fun setEntries(entries: List<List<DataEntry>>)
+    fun setEntries(vararg entries: List<DataEntry>)
 
     fun addOnEntriesChangedListener(listener: MultiEntriesModelListener)
     fun removeOnEntriesChangedListener(listener: MultiEntriesModelListener)

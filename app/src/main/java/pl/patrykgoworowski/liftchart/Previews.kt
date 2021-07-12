@@ -20,7 +20,7 @@ import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.component.GuidelineComponent
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryList
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryList
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 import pl.patrykgoworowski.liftchart_compose.component.dimension.setPadding
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
@@ -36,7 +36,7 @@ fun SampleDataSet(modifier: Modifier = Modifier) = MainTheme {
     val colors = MaterialTheme.colors
     ColumnChart(
         modifier = modifier,
-        singleEntryCollection = SingleEntryList(entriesOf(1 to 1, 2 to 2, 3 to 3, 4 to 2)),
+        entryCollection = MultiEntryList(entriesOf(1 to 1, 2 to 2, 3 to 3, 4 to 2)),
         axisManager = AxisManager(
             startAxis = VerticalAxis.start(
                 label = textComponent(

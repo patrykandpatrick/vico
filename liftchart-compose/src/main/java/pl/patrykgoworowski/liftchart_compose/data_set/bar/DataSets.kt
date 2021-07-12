@@ -26,10 +26,8 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACI
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
-import pl.patrykgoworowski.liftchart_common.data_set.bar.MergedColumnDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
@@ -50,7 +48,7 @@ val defaultColumnComponent: RectComponent
 
 @Composable
 fun ColumnChart(
-    singleEntryCollection: SingleEntryCollection,
+    entryCollection: MultiEntryCollection,
     modifier: Modifier = Modifier,
     column: RectComponent = defaultColumnComponent,
     spacing: Dp = DEF_BAR_SPACING.dp,
@@ -58,16 +56,12 @@ fun ColumnChart(
     marker: Marker? = null,
     columnBrush: Brush? = null,
 ) {
-    val dataSet = remember {
-        ColumnDataSetRenderer(
-            column = column,
-            spacing = 0f,
-        )
-    }.apply {
-        this.spacing = spacing.pixels
-        if (columnBrush != null) setBrush(brush = columnBrush)
-    }
-    val model = singleEntryCollection.collectAsState()
+    val dataSet = remember { ColumnDataSetRenderer(columns = listOf(column)) }
+        .apply {
+            this.spacing = spacing.pixels
+            if (columnBrush != null) setBrush(brush = columnBrush)
+        }
+    val model = entryCollection.collectAsState()
 
     DataSet(
         modifier = modifier,
@@ -79,8 +73,8 @@ fun ColumnChart(
 }
 
 @Composable
-fun MergedColumnChart(
-    multiEntryCollection: MultiEntryCollection,
+fun ColumnChart(
+    entryCollection: MultiEntryCollection,
     modifier: Modifier = Modifier,
     columns: List<RectComponent> = listOf(defaultColumnComponent),
     mergeMode: MergeMode = MergeMode.Stack,
@@ -89,8 +83,8 @@ fun MergedColumnChart(
     axisManager: AxisManager = AxisManager(),
     marker: Marker? = null,
 ) {
-    val dataSet = remember { MergedColumnDataSetRenderer(columns, mergeMode = mergeMode) }
-    val model = multiEntryCollection.collectAsState()
+    val dataSet = remember { ColumnDataSetRenderer(columns, mergeMode = mergeMode) }
+    val model = entryCollection.collectAsState()
 
     dataSet.spacing = spacing.pixels
     dataSet.innerSpacing = innerSpacing.pixels
