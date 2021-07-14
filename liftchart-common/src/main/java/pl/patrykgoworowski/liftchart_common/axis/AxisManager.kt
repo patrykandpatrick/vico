@@ -3,6 +3,7 @@ package pl.patrykgoworowski.liftchart_common.axis
 import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
+import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
@@ -125,12 +126,13 @@ public open class AxisManager(
     fun draw(
         canvas: Canvas,
         model: EntriesModel,
+        dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
     ) {
-        startAxis?.draw(canvas, model, segmentProperties)
-        topAxis?.draw(canvas, model, segmentProperties)
-        endAxis?.draw(canvas, model, segmentProperties)
-        bottomAxis?.draw(canvas, model, segmentProperties)
+        startAxis?.draw(canvas, model, dataSetModel, segmentProperties)
+        topAxis?.draw(canvas, model, dataSetModel, segmentProperties)
+        endAxis?.draw(canvas, model, dataSetModel, segmentProperties)
+        bottomAxis?.draw(canvas, model, dataSetModel, segmentProperties)
     }
 
 }

@@ -62,3 +62,11 @@ fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
     fold(0f) { sum, element ->
         sum + selector(element)
     } / size
+
+public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
+    var sum = 0f
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}

@@ -3,6 +3,7 @@ package pl.patrykgoworowski.liftchart_common.data_set.bar
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
+import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
@@ -25,6 +26,11 @@ open class ColumnDataSetRenderer public constructor(
 
     private val heightMap = HashMap<Float, Float>()
     override val bounds: RectF = RectF()
+
+    override var minY: Float? = null
+    override var maxY: Float? = null
+    override var minX: Float? = null
+    override var maxX: Float? = null
 
     override var columnPaintModifier: PaintModifier? = null
     private var drawScale: Float = 1f
@@ -67,7 +73,11 @@ open class ColumnDataSetRenderer public constructor(
 
         calculateDrawSegmentSpecIfNeeded(model)
 
-        val heightMultiplier = bounds.height() / mergeMode.getMaxY(model)
+        val minYorZero = this.minY ?: 0f
+        val minX = minX ?: model.minX
+        val maxX = maxX ?: model.maxX
+
+        val heightMultiplier = bounds.height() / ((maxY ?: mergeMode.getMaxY(model)) - minYorZero)
         val bottom = bounds.bottom
         val step = model.step
 
@@ -79,6 +89,7 @@ open class ColumnDataSetRenderer public constructor(
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
+        val bottomCompensation = if (minYorZero < 0f) (minYorZero * heightMultiplier) else 0f
 
         val segmentSize = getSegmentSize(model.entryCollections.size)
 
@@ -89,31 +100,36 @@ open class ColumnDataSetRenderer public constructor(
             drawingStart = getDrawingStart(index)
 
             entryCollection.forEach { entry ->
+                if (entry.x !in minX..maxX) return@forEach
                 height = entry.y * heightMultiplier
                 entryOffset = (segmentSize + scaledSpacing) * (entry.x - model.minX) / step
                 columnCenterX = drawingStart + entryOffset
 
-
                 when (mergeMode) {
                     MergeMode.Stack -> {
                         val cumulatedHeight = heightMap.getOrElse(entry.x) { 0f }
-                        columnTop = (bottom - (height + cumulatedHeight)).round
-                        columnBottom = (bottom - cumulatedHeight).round
+                        columnBottom = (bottom + bottomCompensation - cumulatedHeight)
+                                .between(bounds.top, bounds.bottom)
+                        columnTop = (columnBottom - height).between(bounds.top, bounds.bottom)
                         columnCenterX += segmentSize.half
-
                         heightMap[entry.x] = cumulatedHeight + height
+
                         if (touchPoint != null && marker != null) {
-                            markerLocationMap.getOrPut(columnCenterX) { ArrayList() }
-                                .add(Marker.EntryModel(
-                                    PointF(columnCenterX, columnTop),
-                                    entry,
-                                    column.color,
-                                ))
+                            markerLocationMap.getOrPut(columnCenterX) { ArrayList(entryCollection.size) }
+                                .add(
+                                    Marker.EntryModel(
+                                        PointF(columnCenterX, columnTop),
+                                        entry,
+                                        column.color,
+                                    )
+                                )
                         }
                     }
                     MergeMode.Grouped -> {
-                        columnTop = bottom - height
-                        columnBottom = bottom
+                        columnBottom = (bottom + bottomCompensation)
+                                .between(bounds.top, bounds.bottom)
+                        columnTop = (columnBottom - height)
+                                .between(bounds.top, bounds.bottom)
                         columnCenterX += column.scaledThickness.half
 
                         if (touchPoint != null && marker != null) {
@@ -150,8 +166,16 @@ open class ColumnDataSetRenderer public constructor(
         }
     }
 
+    override fun setToAxisModel(axisModel: MutableDataSetModel, model: MultiEntriesModel) {
+        axisModel.minY = minY ?: axisModel.minY
+        axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
+        axisModel.minX = minX ?: axisModel.minX
+        axisModel.maxX = maxX ?: axisModel.maxX
+    }
+
     private fun getClosestMarkerEntryPositionModel(touchPoint: PointF): List<Marker.EntryModel>? {
-        return markerLocationMap.keys.findClosestPositiveValue(touchPoint.x)?.let(markerLocationMap::get)
+        return markerLocationMap.keys.findClosestPositiveValue(touchPoint.x)
+            ?.let(markerLocationMap::get)
     }
 
     override fun getSegmentProperties(model: MultiEntriesModel): SegmentProperties {

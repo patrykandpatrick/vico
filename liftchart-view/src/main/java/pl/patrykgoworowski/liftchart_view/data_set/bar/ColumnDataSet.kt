@@ -2,6 +2,7 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.PointF
+import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
@@ -56,4 +57,7 @@ class ColumnDataSet(
 
     override fun getSegmentProperties(): SegmentProperties = getSegmentProperties(model)
 
+    override fun setToAxisModel(axisModel: MutableDataSetModel) {
+        setToAxisModel(axisModel, model)
+    }
 }

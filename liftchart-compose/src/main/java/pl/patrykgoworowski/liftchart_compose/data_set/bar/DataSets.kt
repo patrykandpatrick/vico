@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
@@ -107,7 +108,7 @@ fun <Model : EntriesModel> DataSet(
     marker: Marker?,
 ) {
     val bounds = remember { RectF() }
-
+    val dataSetModel = remember { MutableDataSetModel() }
     val (touchPoint, setTouchPoint) = remember { mutableStateOf<PointF?>(null) }
     val virtualLayout = remember { VirtualLayout(true) }
     virtualLayout.isLTR = LocalLayoutDirection.current == LayoutDirection.Ltr
@@ -119,10 +120,11 @@ fun <Model : EntriesModel> DataSet(
             .runIf(marker != null) { chartTouchEvent(setTouchPoint) }
     ) {
         bounds.set(0f, 0f, size.width, size.height)
-        virtualLayout.setBounds(bounds, dataSet, model, axisManager, marker)
+        dataSet.setToAxisModel(dataSetModel, model)
+        virtualLayout.setBounds(bounds, dataSet, model, dataSetModel, axisManager, marker)
         val canvas = drawContext.canvas.nativeCanvas
         val segmentProperties = dataSet.getSegmentProperties(model)
-        axisManager.draw(canvas, model, segmentProperties)
+        axisManager.draw(canvas, model, dataSetModel, segmentProperties)
         dataSet.draw(canvas, model, touchPoint, marker)
     }
 }

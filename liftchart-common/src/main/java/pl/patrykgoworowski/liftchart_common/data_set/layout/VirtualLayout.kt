@@ -2,6 +2,7 @@ package pl.patrykgoworowski.liftchart_common.data_set.layout
 
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
@@ -22,6 +23,7 @@ public open class VirtualLayout(
         contentBounds: RectF,
         dataSet: DataSetRenderer<Model>,
         model: Model,
+        dataSetModel: DataSetModel,
         axisManager: AxisManager,
         vararg dataSetInsetter: DataSetInsetter?,
     ) {
@@ -32,7 +34,7 @@ public open class VirtualLayout(
         dataSetInsetter.forEach { it?.let(tempInsetters::add) }
 
         tempInsetters.forEach { insetter ->
-            insetter.getInsets(tempInsets, model)
+            insetter.getInsets(tempInsets, model, dataSetModel)
             finalInsets.setAllGreater(tempInsets)
         }
 

@@ -2,6 +2,7 @@ package pl.patrykgoworowski.liftchart_view.data_set
 
 import android.graphics.Canvas
 import android.graphics.PointF
+import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
@@ -15,4 +16,5 @@ interface DataSetRendererWithModel<Model: EntriesModel> : DataSetRenderer<Model>
     fun removeListener(listener: UpdateRequestListener)
     fun getEntriesModel(): Model
     fun getSegmentProperties(): SegmentProperties
+    fun setToAxisModel(axisModel: MutableDataSetModel)
 }

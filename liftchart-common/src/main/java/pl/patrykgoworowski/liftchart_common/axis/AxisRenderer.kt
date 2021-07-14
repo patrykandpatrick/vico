@@ -5,6 +5,7 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.BoundsAware
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
@@ -40,16 +41,18 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     fun draw(
         canvas: Canvas,
         model: EntriesModel,
+        dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
     ) {
         if (isVisible) {
-            onDraw(canvas, model, segmentProperties)
+            onDraw(canvas, model, dataSetModel, segmentProperties)
         }
     }
 
     fun onDraw(
         canvas: Canvas,
         model: EntriesModel,
+        dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
     )
 
@@ -70,6 +73,7 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     fun getDesiredWidth(
         model: EntriesModel,
+        dataSetModel: DataSetModel,
     ): Int
 
     fun getDesiredHeight(): Int

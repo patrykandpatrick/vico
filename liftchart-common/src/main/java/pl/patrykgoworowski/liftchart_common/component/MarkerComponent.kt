@@ -2,6 +2,7 @@ package pl.patrykgoworowski.liftchart_common.component
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
@@ -116,7 +117,11 @@ public open class MarkerComponent(
             }
     }
 
-    override fun getInsets(outDimensions: MutableDimensions, model: EntriesModel): Dimensions =
+    override fun getInsets(
+        outDimensions: MutableDimensions,
+        model: EntriesModel,
+        dataSetModel: DataSetModel
+    ): Dimensions =
         outDimensions.apply {
             top = markerHeight
         }

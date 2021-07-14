@@ -1,5 +1,6 @@
 package pl.patrykgoworowski.liftchart_common.axis.formatter
 
+import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -15,7 +16,12 @@ class DecimalFormatAxisValueFormatter(
         roundingMode: RoundingMode = RoundingMode.HALF_UP,
     ) : this(getDecimalFormat(pattern, roundingMode))
 
-    override fun formatValue(value: Float, index: Int, model: EntriesModel): String {
+    override fun formatValue(
+        value: Float,
+        index: Int,
+        model: EntriesModel,
+        dataSetModel: DataSetModel
+    ): String {
         return decimalFormat.format(value)
     }
 

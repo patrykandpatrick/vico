@@ -8,6 +8,7 @@ import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
+import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.text.VerticalPosition
@@ -34,6 +35,7 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
     override fun onDraw(
         canvas: Canvas,
         model: EntriesModel,
+        dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
     ) {
         val tickMarkTop = if (position.isBottom) {
@@ -93,7 +95,7 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
             if (index < entriesLength) {
                 label?.drawText(
                     canvas,
-                    valueFormatter.formatValue(valueIndex, index, model),
+                    valueFormatter.formatValue(valueIndex, index, model, dataSetModel),
                     textDrawCenter,
                     textY,
                     verticalPosition = position.textVerticalPosition,
@@ -120,7 +122,8 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
 
     override fun getInsets(
         outDimensions: MutableDimensions,
-        model: EntriesModel
+        model: EntriesModel,
+        dataSetModel: DataSetModel
     ): Dimensions {
         return outDimensions.apply {
             setHorizontal(
@@ -140,7 +143,8 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
     }
 
     override fun getDesiredWidth(
-        model: EntriesModel
+        model: EntriesModel,
+        dataSetModel: DataSetModel
     ): Int = 0
 
     enum class TickType {

@@ -10,6 +10,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.axis.*
+import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.extension.dpInt
 import pl.patrykgoworowski.liftchart_common.extension.set
@@ -28,6 +29,7 @@ class DataSetView @JvmOverloads constructor(
 ) : View(context, attrs) {
 
     private val contentBounds = RectF()
+    private val dataSetModel = MutableDataSetModel()
 
     private val updateRequestListener: UpdateRequestListener = {
         if (ViewCompat.isAttachedToWindow(this@DataSetView)) {
@@ -63,8 +65,9 @@ class DataSetView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         val dataSet = dataSet ?: return
+        dataSet.setToAxisModel(dataSetModel)
         val segmentProperties = dataSet.getSegmentProperties()
-        axisManager.draw(canvas, dataSet.getEntriesModel(), segmentProperties)
+        axisManager.draw(canvas, dataSet.getEntriesModel(), dataSetModel, segmentProperties)
         dataSet.draw(canvas, touchPoint, marker)
     }
 
@@ -92,7 +95,8 @@ class DataSetView @JvmOverloads constructor(
 
     private fun updateBounds() {
         val dataSet = dataSet ?: return
-        virtualLayout.setBounds(contentBounds, dataSet, axisManager, marker)
+        dataSet.setToAxisModel(dataSetModel)
+        virtualLayout.setBounds(contentBounds, dataSet, dataSetModel, axisManager, marker)
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {

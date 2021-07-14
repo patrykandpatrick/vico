@@ -3,6 +3,7 @@ package pl.patrykgoworowski.liftchart_common.axis
 import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.*
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
+import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.HorizontalPosition
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
@@ -30,12 +31,13 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
     override fun onDraw(
         canvas: Canvas,
         model: EntriesModel,
+        dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
     ) {
         val isLeft = position.isLeft(isLTR)
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
 
-        val labels = getLabels(model, drawLabelCount)
+        val labels = getLabels(model, dataSetModel, drawLabelCount)
         val axisStep = bounds.height() / drawLabelCount
 
         val tickLeftX = if (isLeft) {
@@ -120,32 +122,34 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
     }
 
     private fun getLabels(
-        model: EntriesModel,
+        entryModel: EntriesModel,
+        dataSetModel: DataSetModel,
         maxLabelCount: Int = this.maxLabelCount,
     ): List<String> {
         labels.clear()
-        val step = model.maxY / maxLabelCount
+        val step = (dataSetModel.maxY - dataSetModel.minY) / maxLabelCount
         for (index in maxLabelCount downTo 0) {
-            val value = (model.maxY - (step * index))
-            labels += valueFormatter.formatValue(value, index, model)
+            val value = dataSetModel.maxY - (step * index)
+            labels += valueFormatter.formatValue(value, index, entryModel, dataSetModel)
         }
         return labels
     }
 
     override fun getInsets(
         outDimensions: MutableDimensions,
-        model: EntriesModel
+        model: EntriesModel,
+        dataSetModel: DataSetModel
     ): Dimensions {
-        val labels = getLabels(model)
+        val labels = getLabels(model, dataSetModel)
         if (labels.isEmpty()) return outDimensions.set(0f)
 
         fun getHalfLabelHeight(text: String): Float =
             label?.getHeight(text)?.half.orZero
 
         return outDimensions.set(
-            start = if (position.isStart) getDesiredWidth(model).toFloat() else 0f,
+            start = if (position.isStart) getDesiredWidth(model, dataSetModel).toFloat() else 0f,
             top = getHalfLabelHeight(labels.first()) - axisThickness,
-            end = if (position.isEnd) getDesiredWidth(model).toFloat() else 0f,
+            end = if (position.isEnd) getDesiredWidth(model, dataSetModel).toFloat() else 0f,
             bottom = getHalfLabelHeight(labels.last())
         )
     }
@@ -162,9 +166,10 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
      */
     override fun getDesiredWidth(
         model: EntriesModel,
+        dataSetModel: DataSetModel,
     ): Int {
         val widestTextComponentWidth = label?.let { label ->
-            getLabels(model, MEASUREMENT_LABEL_COUNT).maxOf(label::getWidth)
+            getLabels(model, dataSetModel, MEASUREMENT_LABEL_COUNT).maxOf(label::getWidth)
         }.orZero
         return (axisThickness + tickLength + widestTextComponentWidth).toInt()
     }
