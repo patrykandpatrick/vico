@@ -4,7 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -16,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import pl.patrykgoworowski.liftchart.component.compose.ScrollableColumn
 import pl.patrykgoworowski.liftchart.component.compose.markerComponent
 import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart.ui.byzantine
@@ -58,7 +62,7 @@ class ComposeShowcaseFragment : Fragment() {
                     bottomAxis = null
                 )
 
-                Column {
+                ScrollableColumn {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
