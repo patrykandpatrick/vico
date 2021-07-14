@@ -113,17 +113,6 @@ open class ColumnDataSetRenderer public constructor(
                         columnTop = (columnBottom - height).between(bounds.top, bounds.bottom)
                         columnCenterX += segmentSize.half
                         heightMap[entry.x] = cumulatedHeight + height
-
-                        if (touchPoint != null && marker != null) {
-                            markerLocationMap.getOrPut(columnCenterX) { ArrayList(entryCollection.size) }
-                                .add(
-                                    Marker.EntryModel(
-                                        PointF(columnCenterX, columnTop),
-                                        entry,
-                                        column.color,
-                                    )
-                                )
-                        }
                     }
                     MergeMode.Grouped -> {
                         columnBottom = (bottom + bottomCompensation)
@@ -131,16 +120,13 @@ open class ColumnDataSetRenderer public constructor(
                         columnTop = (columnBottom - height)
                                 .between(bounds.top, bounds.bottom)
                         columnCenterX += column.scaledThickness.half
+                    }
+                }
 
-                        if (touchPoint != null && marker != null) {
-                            markerLocationMap[columnCenterX] = arrayListOf(
-                                Marker.EntryModel(
-                                    PointF(columnCenterX, columnTop),
-                                    entry,
-                                    column.color,
-                                )
-                            )
-                        }
+                if (touchPoint != null && marker != null) {
+                    markerLocationMap.updateList(columnCenterX, entryCollection.size) {
+                        add(Marker.EntryModel(
+                                PointF(columnCenterX, columnTop), entry, column.color))
                     }
                 }
 
