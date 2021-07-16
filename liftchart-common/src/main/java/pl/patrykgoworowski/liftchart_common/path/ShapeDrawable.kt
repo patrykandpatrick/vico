@@ -61,7 +61,7 @@ public class ShapeDrawable(
 
 }
 
-fun Shape.getDrawable(
+fun Shape.toDrawable(
     intrinsicWidth: Int = 0,
     intrinsicHeight: Int = 0,
 ): Drawable = ShapeDrawable(this, intrinsicWidth, intrinsicHeight)
