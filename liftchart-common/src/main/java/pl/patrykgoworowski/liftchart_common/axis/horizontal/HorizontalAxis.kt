@@ -120,7 +120,7 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
         label?.clearLayoutCache()
     }
 
-    override fun getInsets(
+    override fun getVerticalInsets(
         outDimensions: MutableDimensions,
         model: EntriesModel,
         dataSetModel: DataSetModel
@@ -135,6 +135,13 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
         }
     }
 
+    override fun getHorizontalInsets(
+        outDimensions: MutableDimensions,
+        availableHeight: Float,
+        model: EntriesModel,
+        dataSetModel: DataSetModel
+    ): Dimensions = outDimensions
+
     override fun getDesiredHeight(): Int {
         return ((if (position.isBottom) axisThickness else 0f)
                 + tickLength
@@ -143,9 +150,8 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
     }
 
     override fun getDesiredWidth(
-        model: EntriesModel,
-        dataSetModel: DataSetModel
-    ): Int = 0
+        labels: List<String>
+    ): Float = 0f
 
     enum class TickType {
         Minor, Major

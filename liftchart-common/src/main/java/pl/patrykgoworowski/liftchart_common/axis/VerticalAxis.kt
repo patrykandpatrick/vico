@@ -135,21 +135,28 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
         return labels
     }
 
-    override fun getInsets(
+    override fun getVerticalInsets(
         outDimensions: MutableDimensions,
         model: EntriesModel,
         dataSetModel: DataSetModel
+    ): Dimensions = outDimensions
+
+    override fun getHorizontalInsets(
+        outDimensions: MutableDimensions,
+        availableHeight: Float,
+        model: EntriesModel,
+        dataSetModel: DataSetModel
     ): Dimensions {
-        val labels = getLabels(model, dataSetModel)
+        val labels = getLabels(model, dataSetModel, getDrawLabelCount(availableHeight.toInt()))
         if (labels.isEmpty()) return outDimensions.set(0f)
 
         fun getHalfLabelHeight(text: String): Float =
             label?.getHeight(text)?.half.orZero
 
         return outDimensions.set(
-            start = if (position.isStart) getDesiredWidth(model, dataSetModel).toFloat() else 0f,
+            start = if (position.isStart) getDesiredWidth(labels) else 0f,
             top = getHalfLabelHeight(labels.first()) - axisThickness,
-            end = if (position.isEnd) getDesiredWidth(model, dataSetModel).toFloat() else 0f,
+            end = if (position.isEnd) getDesiredWidth(labels) else 0f,
             bottom = getHalfLabelHeight(labels.last())
         )
     }
@@ -157,25 +164,23 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
     override fun getDesiredHeight(): Int = 0
 
     /**
-     * Estimates a width of this [VerticalAxis] by calculating:
-     * — Widest label width, by using fixed label count equal to [MEASUREMENT_LABEL_COUNT],
+     * Calculates a width of this [VerticalAxis] by calculating:
+     * — Widest label width from passed [labels],
      * — [axisThickness],
      * — [tickLength].
-     * @return Estimated width of this [VerticalAxis] that should be enough to fit its contents
+     * @return Width of this [VerticalAxis] that should be enough to fit its contents
      * in [draw] function.
      */
     override fun getDesiredWidth(
-        model: EntriesModel,
-        dataSetModel: DataSetModel,
-    ): Int {
+        labels: List<String>,
+    ): Float {
         val widestTextComponentWidth = label?.let { label ->
-            getLabels(model, dataSetModel, MEASUREMENT_LABEL_COUNT).maxOf(label::getWidth)
+            labels.maxOf(label::getWidth)
         }.orZero
-        return (axisThickness + tickLength + widestTextComponentWidth).toInt()
+        return axisThickness.half + tickLength + widestTextComponentWidth
     }
 
     companion object {
-        private const val MEASUREMENT_LABEL_COUNT = 5
 
         fun start(
             label: TextComponent? = DEF_LABEL_COMPONENT,

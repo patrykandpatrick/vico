@@ -28,13 +28,20 @@ public open class VirtualLayout(
         vararg dataSetInsetter: DataSetInsetter?,
     ) {
         tempInsetters.clear()
-        finalInsets.set(0f)
+        finalInsets.clear()
         axisManager.isLTR = isLTR
         axisManager.addInsetters(tempInsetters)
         dataSetInsetter.forEach { it?.let(tempInsetters::add) }
 
         tempInsetters.forEach { insetter ->
-            insetter.getInsets(tempInsets, model, dataSetModel)
+            insetter.getVerticalInsets(tempInsets, model, dataSetModel)
+            finalInsets.setAllGreater(tempInsets)
+        }
+
+        val availableHeight = contentBounds.height() - finalInsets.vertical
+
+        tempInsetters.forEach { insetter ->
+            insetter.getHorizontalInsets(tempInsets, availableHeight, model, dataSetModel)
             finalInsets.setAllGreater(tempInsets)
         }
 

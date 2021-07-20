@@ -117,7 +117,7 @@ public open class MarkerComponent(
             }
     }
 
-    override fun getInsets(
+    override fun getVerticalInsets(
         outDimensions: MutableDimensions,
         model: EntriesModel,
         dataSetModel: DataSetModel
@@ -125,5 +125,12 @@ public open class MarkerComponent(
         outDimensions.apply {
             top = markerHeight
         }
+
+    override fun getHorizontalInsets(
+        outDimensions: MutableDimensions,
+        availableHeight: Float,
+        model: EntriesModel,
+        dataSetModel: DataSetModel
+    ): Dimensions = outDimensions
 
 }

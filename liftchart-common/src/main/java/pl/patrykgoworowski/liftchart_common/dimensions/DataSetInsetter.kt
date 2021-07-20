@@ -5,10 +5,17 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesMod
 
 interface DataSetInsetter {
 
-    fun getInsets(
+    fun getVerticalInsets(
         outDimensions: MutableDimensions,
         model: EntriesModel,
-        dataSetModel: DataSetModel
+        dataSetModel: DataSetModel,
+    ): Dimensions
+
+    fun getHorizontalInsets(
+        outDimensions: MutableDimensions,
+        availableHeight: Float,
+        model: EntriesModel,
+        dataSetModel: DataSetModel,
     ): Dimensions
 
 }

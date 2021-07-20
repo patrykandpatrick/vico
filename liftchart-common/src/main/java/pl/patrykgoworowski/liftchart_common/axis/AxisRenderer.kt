@@ -72,9 +72,8 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         )
 
     fun getDesiredWidth(
-        model: EntriesModel,
-        dataSetModel: DataSetModel,
-    ): Int
+        labels: List<String>,
+    ): Float
 
     fun getDesiredHeight(): Int
 
