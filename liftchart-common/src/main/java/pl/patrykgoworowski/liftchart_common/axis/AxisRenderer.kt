@@ -9,6 +9,7 @@ import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 
@@ -43,9 +44,10 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         model: EntriesModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
     ) {
         if (isVisible) {
-            onDraw(canvas, model, dataSetModel, segmentProperties)
+            onDraw(canvas, model, dataSetModel, segmentProperties, rendererViewState)
         }
     }
 
@@ -54,6 +56,7 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         model: EntriesModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
     )
 
     fun setDataSetBounds(

@@ -13,6 +13,7 @@ import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.text.VerticalPosition
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
@@ -37,6 +38,7 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
         model: EntriesModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
     ) {
         val tickMarkTop = if (position.isBottom) {
             bounds.top
@@ -49,14 +51,14 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
         val tickCount: Int
         val tickDrawStep = segmentProperties.segmentWidth
         var tickDrawCenter: Float
-        var textDrawCenter = bounds.left + tickDrawStep.half
+        var textDrawCenter = bounds.left + tickDrawStep.half - rendererViewState.horizontalScroll
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
         when (tickType) {
             TickType.Minor -> {
                 tickCount = entriesLength + 1
-                tickDrawCenter = bounds.left
+                tickDrawCenter = bounds.left - rendererViewState.horizontalScroll
             }
             TickType.Major -> {
                 tickCount = entriesLength

@@ -8,9 +8,10 @@ import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
-import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.modifier.PaintModifier
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.*
@@ -33,6 +34,10 @@ open class ColumnDataSetRenderer public constructor(
     override var maxX: Float? = null
 
     override var columnPaintModifier: PaintModifier? = null
+
+    override var isHorizontalScrollEnabled: Boolean = false
+    override var maxScrollAmount: Float = 0f
+
     private var drawScale: Float = 1f
     private var isScaleCalculated = false
     private var scaledSpacing = spacing
@@ -65,11 +70,12 @@ open class ColumnDataSetRenderer public constructor(
     override fun draw(
         canvas: Canvas,
         model: MultiEntriesModel,
-        touchPoint: PointF?,
+        rendererViewState: RendererViewState,
         marker: Marker?
     ) {
         markerLocationMap.clear()
         if (model.entryCollections.isEmpty()) return
+        val (touchPoint, scrollX) = rendererViewState
 
         calculateDrawSegmentSpecIfNeeded(model)
 
@@ -97,7 +103,7 @@ open class ColumnDataSetRenderer public constructor(
 
             column = columns.getRepeating(index)
             columnPaintModifier?.modifyPaint(column.paint, bounds, index)
-            drawingStart = getDrawingStart(index)
+            drawingStart = getDrawingStart(index) - scrollX
 
             entryCollection.forEach { entry ->
                 if (entry.x !in minX..maxX) return@forEach
@@ -109,24 +115,27 @@ open class ColumnDataSetRenderer public constructor(
                     MergeMode.Stack -> {
                         val cumulatedHeight = heightMap.getOrElse(entry.x) { 0f }
                         columnBottom = (bottom + bottomCompensation - cumulatedHeight)
-                                .between(bounds.top, bounds.bottom)
+                            .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).between(bounds.top, bounds.bottom)
                         columnCenterX += segmentSize.half
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                     MergeMode.Grouped -> {
                         columnBottom = (bottom + bottomCompensation)
-                                .between(bounds.top, bounds.bottom)
+                            .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height)
-                                .between(bounds.top, bounds.bottom)
+                            .between(bounds.top, bounds.bottom)
                         columnCenterX += column.scaledThickness.half
                     }
                 }
 
                 if (touchPoint != null && marker != null) {
                     markerLocationMap.updateList(columnCenterX, entryCollection.size) {
-                        add(Marker.EntryModel(
-                                PointF(columnCenterX, columnTop), entry, column.color))
+                        add(
+                            Marker.EntryModel(
+                                PointF(columnCenterX, columnTop), entry, column.color
+                            )
+                        )
                     }
                 }
 
@@ -206,7 +215,13 @@ open class ColumnDataSetRenderer public constructor(
     private fun calculateDrawSegmentSpecIfNeeded(model: MultiEntriesModel) {
         if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(model)
-        drawScale = minOf(bounds.width() / measuredWidth, 1f)
+        if (isHorizontalScrollEnabled) {
+            maxScrollAmount = maxOf(0f, measuredWidth - bounds.width())
+            drawScale = 1f
+        } else {
+            maxScrollAmount = 0f
+            drawScale = minOf(bounds.width() / measuredWidth, 1f)
+        }
         columns.forEach { column -> column.thicknessScale = drawScale }
         scaledSpacing = spacing * drawScale
         scaledInnerSpacing = innerSpacing * drawScale
