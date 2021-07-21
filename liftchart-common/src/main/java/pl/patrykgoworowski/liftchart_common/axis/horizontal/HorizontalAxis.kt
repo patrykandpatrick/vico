@@ -20,7 +20,7 @@ import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 
-class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
+class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
     override val position: Position,
     label: TextComponent? = DEF_LABEL_COMPONENT,
     axis: LineComponent? = DEF_AXIS_COMPONENT,
@@ -46,19 +46,28 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
             bounds.bottom - tickLength
         }
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
+        val scrollX = rendererViewState.horizontalScroll
+
+        val clipRestoreCount = canvas.save()
+        canvas.clipRect(
+            bounds.left,
+            minOf(bounds.top, dataSetBounds.top),
+            bounds.right,
+            maxOf(bounds.bottom, dataSetBounds.bottom)
+        )
 
         val entriesLength = (bounds.width() / segmentProperties.segmentWidth).toInt()
         val tickCount: Int
         val tickDrawStep = segmentProperties.segmentWidth
         var tickDrawCenter: Float
-        var textDrawCenter = bounds.left + tickDrawStep.half - rendererViewState.horizontalScroll
+        var textDrawCenter = bounds.left + tickDrawStep.half - scrollX
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
         when (tickType) {
             TickType.Minor -> {
                 tickCount = entriesLength + 1
-                tickDrawCenter = bounds.left - rendererViewState.horizontalScroll
+                tickDrawCenter = bounds.left - scrollX
             }
             TickType.Major -> {
                 tickCount = entriesLength
@@ -120,6 +129,8 @@ class HorizontalAxis <Position: AxisPosition.Horizontal> private constructor(
             }
         )
         label?.clearLayoutCache()
+
+        if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
     override fun getVerticalInsets(

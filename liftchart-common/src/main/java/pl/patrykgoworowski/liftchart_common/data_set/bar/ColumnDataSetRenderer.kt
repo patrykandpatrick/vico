@@ -77,6 +77,9 @@ open class ColumnDataSetRenderer public constructor(
         if (model.entryCollections.isEmpty()) return
         val (touchPoint, scrollX) = rendererViewState
 
+        val clipRestoreCount = canvas.save()
+        canvas.clipRect(bounds)
+
         calculateDrawSegmentSpecIfNeeded(model)
 
         val minYorZero = this.minY ?: 0f
@@ -116,15 +119,14 @@ open class ColumnDataSetRenderer public constructor(
                         val cumulatedHeight = heightMap.getOrElse(entry.x) { 0f }
                         columnBottom = (bottom + bottomCompensation - cumulatedHeight)
                             .between(bounds.top, bounds.bottom)
-                        columnTop = (columnBottom - height).between(bounds.top, bounds.bottom)
+                        columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += segmentSize.half
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                     MergeMode.Grouped -> {
                         columnBottom = (bottom + bottomCompensation)
                             .between(bounds.top, bounds.bottom)
-                        columnTop = (columnBottom - height)
-                            .between(bounds.top, bounds.bottom)
+                        columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += column.scaledThickness.half
                     }
                 }
@@ -133,7 +135,12 @@ open class ColumnDataSetRenderer public constructor(
                     markerLocationMap.updateList(columnCenterX, entryCollection.size) {
                         add(
                             Marker.EntryModel(
-                                PointF(columnCenterX, columnTop), entry, column.color
+                                PointF(
+                                    columnCenterX,
+                                    columnTop.between(bounds.top, bounds.bottom)
+                                ),
+                                entry,
+                                column.color,
                             )
                         )
                     }
@@ -149,6 +156,8 @@ open class ColumnDataSetRenderer public constructor(
         }
 
         heightMap.clear()
+
+        canvas.restoreToCount(clipRestoreCount)
 
         if (touchPoint == null || marker == null) return
         getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
