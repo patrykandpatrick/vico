@@ -19,6 +19,7 @@ import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
+import kotlin.math.ceil
 
 class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
     override val position: Position,
@@ -50,24 +51,25 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
 
         val clipRestoreCount = canvas.save()
         canvas.clipRect(
-            bounds.left,
+            bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
             minOf(bounds.top, dataSetBounds.top),
-            bounds.right,
+            bounds.right + if (tickType == TickType.Minor) tickThickness.half else 0f,
             maxOf(bounds.bottom, dataSetBounds.bottom)
         )
 
-        val entriesLength = (bounds.width() / segmentProperties.segmentWidth).toInt()
+        val entriesLength = ceil(bounds.width() / segmentProperties.segmentWidth).toInt() + 1
         val tickCount: Int
         val tickDrawStep = segmentProperties.segmentWidth
         var tickDrawCenter: Float
-        var textDrawCenter = bounds.left + tickDrawStep.half - scrollX
+        val scrollAdjustment = (scrollX / tickDrawStep).toInt()
+        var textDrawCenter = bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
         when (tickType) {
             TickType.Minor -> {
                 tickCount = entriesLength + 1
-                tickDrawCenter = bounds.left - scrollX
+                tickDrawCenter = bounds.left - scrollX + (tickDrawStep * scrollAdjustment)
             }
             TickType.Major -> {
                 tickCount = entriesLength
@@ -75,7 +77,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
             }
         }
 
-        var valueIndex: Float = model.minX
+        var valueIndex: Float = model.minX + scrollAdjustment * model.step
 
         val guidelineTop = dataSetBounds.top
         val guidelineBottom = dataSetBounds.bottom
