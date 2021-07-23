@@ -11,8 +11,8 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.Mult
 
 class ShowcaseViewModel : ViewModel() {
 
-    private val generator = RandomEntriesGenerator(0..12)
-    private val multiGenerator = RandomEntriesGenerator(0..5)
+    private val generator = RandomEntriesGenerator(0..24)
+    private val multiGenerator = RandomEntriesGenerator(0..8)
 
     val entries = MultiEntryList()
     val multiEntries = MultiEntryList()
