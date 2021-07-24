@@ -8,6 +8,7 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.axis.*
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
@@ -21,7 +22,7 @@ import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
 import pl.patrykgoworowski.liftchart_view.data_set.layout.ViewVirtualLayout
 import pl.patrykgoworowski.liftchart_view.extension.*
-import pl.patrykgoworowski.liftchart_view.motion_event.ChartMotionEventHandler
+import pl.patrykgoworowski.liftchart_view.motion_event.MotionEventHandler
 import java.util.*
 import kotlin.properties.Delegates.observable
 
@@ -41,9 +42,15 @@ class DataSetView @JvmOverloads constructor(
         }
     }
 
+    private val scroller = OverScroller(context)
     private val virtualLayout = ViewVirtualLayout(isLTR)
-    private val motionEventHandler =
-        ChartMotionEventHandler(true, ::handleEvent, scrollHandler::handleScrollDelta)
+    private val motionEventHandler = MotionEventHandler(
+        scroller = scroller,
+        scrollHandler = scrollHandler,
+        density = resources.displayMetrics.density,
+        onTouchPoint = ::handleTouchEvent,
+        requestInvalidate = { invalidate() }
+    )
 
     private val rendererViewState = MutableRendererViewState()
 
@@ -58,13 +65,17 @@ class DataSetView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return if (marker != null && motionEventHandler.handleTouchPoint(event)) true
-        else super.onTouchEvent(event)
+        return if (motionEventHandler.handleTouchPoint(event)) {
+            parent.requestDisallowInterceptTouchEvent(dataSet?.isHorizontalScrollEnabled == true)
+            true
+        } else {
+            parent.requestDisallowInterceptTouchEvent(false)
+            super.onTouchEvent(event)
+        }
     }
 
-    private fun handleEvent(pointF: PointF?) {
+    private fun handleTouchEvent(pointF: PointF?) {
         rendererViewState.markerTouchPoint = pointF
-        invalidate()
     }
 
     private fun handleHorizontalScroll(scroll: Float) {
@@ -72,13 +83,19 @@ class DataSetView @JvmOverloads constructor(
             horizontalScroll = scroll
             markerTouchPoint = null
         }
-        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
         val dataSet = dataSet ?: return
         dataSet.setToAxisModel(dataSetModel)
+        motionEventHandler.isHorizontalScrollEnabled = dataSet.isHorizontalScrollEnabled
         val segmentProperties = dataSet.getSegmentProperties()
+        if (scroller.computeScrollOffset()) {
+            scrollHandler.handleScroll(scroller.currX.toFloat())
+            handleHorizontalScroll(scrollHandler.currentScroll)
+            ViewCompat.postInvalidateOnAnimation(this@DataSetView)
+        }
+
         axisManager.draw(
             canvas, dataSet.getEntriesModel(), dataSetModel, segmentProperties,
             rendererViewState
