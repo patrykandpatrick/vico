@@ -44,6 +44,14 @@ public open class ShapeComponent<T : Shape>(
         boundingBox: RectF
     ): Boolean = boundingBox.contains(left, top, right, bottom)
 
+    public open fun intersects(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+        boundingBox: RectF
+    ): Boolean = boundingBox.intersects(left, top, right, bottom)
+
     public fun setShadow(
         radius: Float,
         dx: Float = 0f,

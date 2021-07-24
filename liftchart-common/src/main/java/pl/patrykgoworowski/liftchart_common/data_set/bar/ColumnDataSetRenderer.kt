@@ -131,6 +131,10 @@ open class ColumnDataSetRenderer public constructor(
                     }
                 }
 
+                if (!column.intersectsVertical(columnTop, columnBottom, columnCenterX, bounds)) {
+                    return@forEach
+                }
+
                 if (touchPoint != null && marker != null) {
                     markerLocationMap.updateList(columnCenterX, entryCollection.size) {
                         add(
