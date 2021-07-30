@@ -3,6 +3,7 @@ package pl.patrykgoworowski.liftchart
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updatePadding
+import com.google.android.material.shape.MaterialShapeDrawable
 import com.google.android.material.tabs.TabLayoutMediator
 import pl.patrykgoworowski.liftchart.databinding.ActivityMainBinding
 import pl.patrykgoworowski.liftchart.extension.enableEdgeToEdge
@@ -22,15 +23,20 @@ class MainActivity : AppCompatActivity() {
         binding.apply {
             viewPager.adapter = ShowcaseFragmentAdapter(this@MainActivity)
 
-            tabLayout.apply {
+            tabLayout.setSelectedTabIndicator(
+                roundedCornersShape(topLeftPercent = 100, topRightPercent = 100)
+                    .toDrawable(intrinsicHeight = 3.dp.toInt())
+            )
+
+            topBar.apply {
                 setOnApplyWindowInsetsListener { view, insets ->
                     view.updatePadding(top = insets.statusBarInsets.top)
                     insets
                 }
-                setSelectedTabIndicator(
-                        roundedCornersShape(topLeftPercent = 100, topRightPercent = 100)
-                                .toDrawable(intrinsicHeight = 3.dp.toInt())
-                )
+                background =
+                    MaterialShapeDrawable.createWithElevationOverlay(this@MainActivity).apply {
+                        elevation = topBar.elevation
+                    }
             }
 
             TabLayoutMediator(tabLayout, viewPager) { tab, position ->
