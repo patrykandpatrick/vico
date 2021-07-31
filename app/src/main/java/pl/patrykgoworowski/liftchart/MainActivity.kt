@@ -20,7 +20,8 @@ class MainActivity : AppCompatActivity() {
         window.enableEdgeToEdge()
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.apply {
+
+        with(binding) {
             viewPager.adapter = ShowcaseFragmentAdapter(this@MainActivity)
 
             tabLayout.setSelectedTabIndicator(
@@ -28,11 +29,12 @@ class MainActivity : AppCompatActivity() {
                     .toDrawable(intrinsicHeight = 3.dp.toInt())
             )
 
-            topBar.apply {
+            with(topBar) {
                 setOnApplyWindowInsetsListener { view, insets ->
                     view.updatePadding(top = insets.statusBarInsets.top)
                     insets
                 }
+
                 background =
                     MaterialShapeDrawable.createWithElevationOverlay(this@MainActivity).apply {
                         elevation = topBar.elevation
