@@ -19,6 +19,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import pl.patrykgoworowski.liftchart_common.MAX_ZOOM
+import pl.patrykgoworowski.liftchart_common.MIN_ZOOM
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
@@ -133,9 +135,11 @@ fun <Model : EntriesModel> DataSet(
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
     val scrollableState = remember { ScrollableState(scrollHandler::handleScrollDelta) }
     val transformableState = rememberTransformableState(onTransformation = { zoomChange, _, _ ->
+        val newZoom = zoom.value * zoomChange
+        if (newZoom !in MIN_ZOOM..MAX_ZOOM) return@rememberTransformableState
         val centerX = scrollHandler.currentScroll + (dataSet.bounds.width() - dataSet.bounds.left) / 2
         val zoomedCenterX = centerX * zoomChange
-        zoom.value *= zoomChange
+        zoom.value = newZoom
         scrollHandler.currentScroll += zoomedCenterX - centerX
     })
 
