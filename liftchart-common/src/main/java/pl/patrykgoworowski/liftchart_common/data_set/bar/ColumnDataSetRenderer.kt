@@ -3,6 +3,8 @@ package pl.patrykgoworowski.liftchart_common.data_set.bar
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
+import pl.patrykgoworowski.liftchart_common.MAX_ZOOM
+import pl.patrykgoworowski.liftchart_common.MIN_ZOOM
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
@@ -37,6 +39,10 @@ open class ColumnDataSetRenderer public constructor(
 
     override var isHorizontalScrollEnabled: Boolean = false
     override var maxScrollAmount: Float = 0f
+    override var zoom: Float? = null
+        set(value) {
+            field = value?.between(MIN_ZOOM, MAX_ZOOM)
+        }
 
     private var drawScale: Float = 1f
     private var isScaleCalculated = false
@@ -229,8 +235,8 @@ open class ColumnDataSetRenderer public constructor(
         if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(model)
         if (isHorizontalScrollEnabled) {
-            maxScrollAmount = maxOf(0f, measuredWidth - bounds.width())
-            drawScale = 1f
+            drawScale = zoom ?: 1f
+            maxScrollAmount = maxOf(0f, (measuredWidth * drawScale) - bounds.width())
         } else {
             maxScrollAmount = 0f
             drawScale = minOf(bounds.width() / measuredWidth, 1f)

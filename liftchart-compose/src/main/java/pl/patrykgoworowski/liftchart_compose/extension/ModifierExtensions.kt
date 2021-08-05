@@ -17,19 +17,24 @@ inline fun Modifier.runIf(
 
 fun Modifier.chartTouchEvent(
     isHorizontalScrollEnabled: Boolean = false,
+    isZoomEnabled: Boolean = false,
     setTouchPoint: (PointF?) -> Unit,
     scrollableState: ScrollableState?,
-): Modifier {
-
-    return pointerInput(Unit, Unit) {
-        detectTapGestures(
-            onPress = {
-                setTouchPoint(it.pointF)
-                awaitRelease()
-                setTouchPoint(null)
-            }
-        )
-    }.runIf(isHorizontalScrollEnabled,
+    transformableState: TransformableState?,
+): Modifier = pointerInput(Unit, Unit) {
+    detectTapGestures(
+        onPress = {
+            setTouchPoint(it.pointF)
+            awaitRelease()
+            setTouchPoint(null)
+        }
+    )
+}
+    .runIf(isZoomEnabled) {
+        if (transformableState == null) return@runIf this
+        transformable(transformableState)
+    }
+    .runIf(isHorizontalScrollEnabled,
         ifTrue = {
             if (scrollableState == null) return@runIf this
             scrollable(
@@ -45,8 +50,8 @@ fun Modifier.chartTouchEvent(
                     onDrag = { change, _ -> setTouchPoint(change.position.pointF) }
                 )
             }
-        })
-}
+        }
+    )
 
 
 private val Offset.pointF: PointF

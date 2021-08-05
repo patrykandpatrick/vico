@@ -4,6 +4,7 @@ import android.graphics.PointF
 import android.graphics.RectF
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.MaterialTheme
@@ -32,6 +33,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.Mult
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
+import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
@@ -110,10 +112,12 @@ fun <Model : EntriesModel> DataSet(
     axisManager: AxisManager,
     marker: Marker?,
     isHorizontalScrollEnabled: Boolean = true,
+    isZoomEnabled: Boolean = true,
 ) {
     val bounds = remember { RectF() }
     val dataSetModel = remember { MutableDataSetModel() }
     val rendererViewState = remember { mutableStateOf(MutableRendererViewState()) }
+    val zoom = remember { mutableStateOf(1f) }
     val setRendererViewState = rendererViewState.component2()
     val setTouchPoint = { pointF: PointF? ->
         setRendererViewState(rendererViewState.value.copy(markerTouchPoint = pointF))
@@ -128,6 +132,15 @@ fun <Model : EntriesModel> DataSet(
 
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
     val scrollableState = remember { ScrollableState(scrollHandler::handleScrollDelta) }
+    val transformableState = rememberTransformableState(onTransformation = { zoomChange, _, _ ->
+        val zoomDelta = zoomChange - 1f
+        /**
+         * Center of the DataSet. Currently the transformableState does not yield zoom's position on screen.
+         */
+        val touchPoint = dataSet.bounds.width().half
+        zoom.value += zoomDelta
+        scrollHandler.currentScroll = TODO("Calculate actual scroll")
+    })
 
     val virtualLayout = remember { VirtualLayout(true) }
     virtualLayout.isLTR = LocalLayoutDirection.current == LayoutDirection.Ltr
@@ -137,12 +150,19 @@ fun <Model : EntriesModel> DataSet(
             .height(DEF_CHART_WIDTH.dp)
             .fillMaxWidth()
             .runIf(marker != null) {
-                chartTouchEvent(isHorizontalScrollEnabled, setTouchPoint, scrollableState)
+                chartTouchEvent(
+                    isHorizontalScrollEnabled = isHorizontalScrollEnabled,
+                    isZoomEnabled = isZoomEnabled,
+                    setTouchPoint = setTouchPoint,
+                    scrollableState = scrollableState,
+                    transformableState = transformableState,
+                )
             }
     ) {
         bounds.set(0f, 0f, size.width, size.height)
         dataSet.setToAxisModel(dataSetModel, model)
-        dataSet.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+        dataSet.isHorizontalScrollEnabled = isHorizontalScrollEnabled || isZoomEnabled
+        dataSet.zoom = zoom.value
         virtualLayout.setBounds(bounds, dataSet, model, dataSetModel, axisManager, marker)
         val canvas = drawContext.canvas.nativeCanvas
         val segmentProperties = dataSet.getSegmentProperties(model)
