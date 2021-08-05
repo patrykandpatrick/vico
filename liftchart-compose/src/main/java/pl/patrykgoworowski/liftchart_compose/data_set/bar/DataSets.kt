@@ -133,13 +133,10 @@ fun <Model : EntriesModel> DataSet(
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
     val scrollableState = remember { ScrollableState(scrollHandler::handleScrollDelta) }
     val transformableState = rememberTransformableState(onTransformation = { zoomChange, _, _ ->
-        val zoomDelta = zoomChange - 1f
-        /**
-         * Center of the DataSet. Currently the transformableState does not yield zoom's position on screen.
-         */
-        val touchPoint = dataSet.bounds.width().half
-        zoom.value += zoomDelta
-        scrollHandler.currentScroll = TODO("Calculate actual scroll")
+        val centerX = scrollHandler.currentScroll + 470 // TODO: Replace hard-coded value of 470 px.
+        val zoomedCenterX = centerX * zoomChange
+        zoom.value *= zoomChange
+        scrollHandler.currentScroll += (centerX - zoomedCenterX)
     })
 
     val virtualLayout = remember { VirtualLayout(true) }
