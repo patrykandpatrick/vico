@@ -7,23 +7,30 @@ import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
-import pl.patrykgoworowski.liftchart_common.axis.*
+import pl.patrykgoworowski.liftchart_common.MAX_ZOOM
+import pl.patrykgoworowski.liftchart_common.MIN_ZOOM
+import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
 import pl.patrykgoworowski.liftchart_common.extension.dpInt
+import pl.patrykgoworowski.liftchart_common.extension.orZero
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
 import pl.patrykgoworowski.liftchart_view.data_set.layout.ViewVirtualLayout
-import pl.patrykgoworowski.liftchart_view.extension.*
+import pl.patrykgoworowski.liftchart_view.extension.isLTR
+import pl.patrykgoworowski.liftchart_view.extension.measureDimension
+import pl.patrykgoworowski.liftchart_view.extension.specSize
+import pl.patrykgoworowski.liftchart_view.extension.verticalPadding
+import pl.patrykgoworowski.liftchart_view.motion_event.ChartScaleGestureListener
 import pl.patrykgoworowski.liftchart_view.motion_event.MotionEventHandler
-import java.util.*
 import kotlin.properties.Delegates.observable
 
 class DataSetView @JvmOverloads constructor(
@@ -54,6 +61,16 @@ class DataSetView @JvmOverloads constructor(
 
     private val rendererViewState = MutableRendererViewState()
 
+    public var isZoomEnabled = true
+
+    public var scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
+        ChartScaleGestureListener(
+            getChartBounds = { dataSet?.bounds },
+            onZoom = this::handleZoom
+        )
+
+    public var scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
+
     var dataSet: DataSetRendererWithModel<*>? by observable(null) { _, oldValue, newValue ->
         oldValue?.removeListener(updateRequestListener)
         newValue?.addListener(updateRequestListener)
@@ -65,13 +82,26 @@ class DataSetView @JvmOverloads constructor(
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        return if (motionEventHandler.handleTouchPoint(event)) {
+        val scaleHandled = if (isZoomEnabled) scaleGestureDetector.onTouchEvent(event) else false
+        val touchHandled = motionEventHandler.handleTouchPoint(event)
+        return if (scaleHandled || touchHandled) {
             parent.requestDisallowInterceptTouchEvent(dataSet?.isHorizontalScrollEnabled == true)
             true
         } else {
             parent.requestDisallowInterceptTouchEvent(false)
             super.onTouchEvent(event)
         }
+    }
+
+    public fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
+        val dataSet = dataSet ?: return
+        val newZoom = (dataSet.zoom ?: 1f) * zoomChange
+        if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
+        val centerX = scrollHandler.currentScroll + focusX - dataSet.bounds.left.orZero
+        val zoomedCenterX = centerX * zoomChange
+        dataSet.zoom = newZoom
+        scrollHandler.currentScroll += zoomedCenterX - centerX
+        invalidate()
     }
 
     private fun handleTouchEvent(pointF: PointF?) {

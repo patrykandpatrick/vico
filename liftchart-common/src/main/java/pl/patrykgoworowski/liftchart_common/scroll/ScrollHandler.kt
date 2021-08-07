@@ -8,7 +8,7 @@ class ScrollHandler(
 
     var currentScroll: Float = 0f
         set(value) {
-            field = value
+            field = getClampedScroll(value)
             setScrollAmount(value)
         }
 

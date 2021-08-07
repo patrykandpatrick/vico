@@ -18,6 +18,7 @@ public interface DataSetRenderer<in Model: EntriesModel> : BoundsAware {
     public var columnPaintModifier: PaintModifier?
 
     public var isHorizontalScrollEnabled: Boolean
+    public var zoom: Float?
     public val maxScrollAmount: Float
 
     public fun draw(

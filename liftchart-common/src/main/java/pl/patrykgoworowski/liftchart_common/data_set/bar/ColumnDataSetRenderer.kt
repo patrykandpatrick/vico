@@ -37,6 +37,11 @@ open class ColumnDataSetRenderer public constructor(
 
     override var isHorizontalScrollEnabled: Boolean = false
     override var maxScrollAmount: Float = 0f
+    override var zoom: Float? = null
+        set(value) {
+            field = value
+            isScaleCalculated = false
+        }
 
     private var drawScale: Float = 1f
     private var isScaleCalculated = false
@@ -229,8 +234,8 @@ open class ColumnDataSetRenderer public constructor(
         if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(model)
         if (isHorizontalScrollEnabled) {
-            maxScrollAmount = maxOf(0f, measuredWidth - bounds.width())
-            drawScale = 1f
+            drawScale = zoom ?: 1f
+            maxScrollAmount = maxOf(0f, (measuredWidth * drawScale) - bounds.width())
         } else {
             maxScrollAmount = 0f
             drawScale = minOf(bounds.width() / measuredWidth, 1f)
