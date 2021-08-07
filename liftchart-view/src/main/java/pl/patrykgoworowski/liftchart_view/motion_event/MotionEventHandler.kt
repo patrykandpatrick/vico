@@ -21,27 +21,32 @@ public open class MotionEventHandler(
 
     private val velocityUnits = (400 * density).toInt()
     private val dragThreshold = 8f * density
-    private var initialX = - dragThreshold
+    private var initialX = -dragThreshold
     private var lastX = 0f
     private var currentX = 0f
     private var velocityTracker = VelocityTrackerHelper()
+    private var lastEventPointerCount = 0
 
-    public fun handleTouchPoint(motionEvent: MotionEvent): Boolean =
-        when (motionEvent.action and MotionEvent.ACTION_MASK) {
+    public fun handleTouchPoint(motionEvent: MotionEvent): Boolean {
+        val ignoreEvent = motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
+        lastEventPointerCount = motionEvent.pointerCount
+
+        return when (motionEvent.action and MotionEvent.ACTION_MASK) {
             MotionEvent.ACTION_DOWN -> {
                 scroller.abortAnimation()
                 initialX = motionEvent.x
                 onTouchPoint(motionEvent.pointF)
                 lastX = initialX
+                currentX = initialX
                 velocityTracker.get().addMovement(motionEvent)
                 requestInvalidate()
                 true
             }
             MotionEvent.ACTION_MOVE -> {
                 if (isHorizontalScrollEnabled) {
-                    velocityTracker.get().addMovement(motionEvent)
                     currentX = motionEvent.x
-                    if (abs(currentX - initialX) > dragThreshold) {
+                    if (abs(currentX - initialX) > dragThreshold && !ignoreEvent) {
+                        velocityTracker.get().addMovement(motionEvent)
                         scrollHandler.handleScrollDelta(currentX - lastX)
                         onTouchPoint(null)
                         requestInvalidate()
@@ -68,6 +73,7 @@ public open class MotionEventHandler(
             }
             else -> false
         }
+    }
 
     private class VelocityTrackerHelper {
 
