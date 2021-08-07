@@ -2,6 +2,7 @@
 package pl.patrykgoworowski.liftchart_compose.data_set
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
@@ -14,9 +15,11 @@ fun <Model: EntriesModel> DataSetRenderer<Model>.setBrush(
     brush: Brush,
     alpha: Float = 1f,
 ) {
-    val composePaint = Paint()
-    columnPaintModifier = PaintModifier { paint, bounds, entryCollectionIndex ->
-        brush.applyTo(Size(bounds.width(), bounds.height()), composePaint, alpha)
-        paint.shader = composePaint.shader
+    val composePaint = remember { Paint() }
+    columnPaintModifier = remember {
+        PaintModifier { paint, bounds, _ ->
+            brush.applyTo(Size(bounds.width(), bounds.height()), composePaint, alpha)
+            paint.shader = composePaint.shader
+        }
     }
 }
