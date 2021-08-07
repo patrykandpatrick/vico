@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updatePadding
+import com.google.android.material.shape.MaterialShapeDrawable
 import pl.patrykgoworowski.liftchart.databinding.ActivityMainBinding
 import pl.patrykgoworowski.liftchart.extension.enableEdgeToEdge
 import pl.patrykgoworowski.liftchart.extension.statusBarInsets
@@ -29,8 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         if (savedInstanceState == null) navigator.navigateTo(Navigator.Screen.ComposeShowcase)
 
-        binding.apply {
-
+        with(binding) {
             tabLayout.apply {
                 setOnApplyWindowInsetsListener { view, insets ->
                     view.updatePadding(top = insets.statusBarInsets.top)
