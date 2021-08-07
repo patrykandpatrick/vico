@@ -8,6 +8,7 @@ import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.HorizontalPosition
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
@@ -33,6 +34,7 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
         model: EntriesModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
     ) {
         val isLeft = position.isLeft(isLTR)
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())

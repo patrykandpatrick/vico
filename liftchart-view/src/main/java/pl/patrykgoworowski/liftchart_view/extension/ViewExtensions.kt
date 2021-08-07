@@ -2,6 +2,7 @@ package pl.patrykgoworowski.liftchart_view.extension
 
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
 import kotlin.math.min
@@ -42,3 +43,13 @@ internal var View.verticalPadding: Int
 
 internal val View.isLTR: Boolean
     get() = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR
+
+internal fun OverScroller.fling(
+    startX: Int = 0,
+    startY: Int = 0,
+    velocityX: Int = 0,
+    velocityY: Int = 0,
+) {
+    fling(startX, startY, velocityX, velocityY, Int.MIN_VALUE, Int.MAX_VALUE, Int.MIN_VALUE,
+        Int.MAX_VALUE)
+}

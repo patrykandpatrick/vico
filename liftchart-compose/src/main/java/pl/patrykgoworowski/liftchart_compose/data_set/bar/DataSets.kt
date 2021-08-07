@@ -3,6 +3,7 @@ package pl.patrykgoworowski.liftchart_compose.data_set.bar
 import android.graphics.PointF
 import android.graphics.RectF
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.MaterialTheme
@@ -24,14 +25,16 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
-import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
+import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.data_set.setBrush
 import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
@@ -106,10 +109,26 @@ fun <Model : EntriesModel> DataSet(
     model: Model,
     axisManager: AxisManager,
     marker: Marker?,
+    isHorizontalScrollEnabled: Boolean = true,
 ) {
     val bounds = remember { RectF() }
     val dataSetModel = remember { MutableDataSetModel() }
-    val (touchPoint, setTouchPoint) = remember { mutableStateOf<PointF?>(null) }
+    val rendererViewState = remember { mutableStateOf(MutableRendererViewState()) }
+    val setRendererViewState = rendererViewState.component2()
+    val setTouchPoint = { pointF: PointF? ->
+        setRendererViewState(rendererViewState.value.copy(markerTouchPoint = pointF))
+    }
+
+    val setHorizontalScroll = { scrollX: Float ->
+        setRendererViewState(rendererViewState.value.copy(
+            markerTouchPoint = null,
+            horizontalScroll = scrollX,
+        ))
+    }
+
+    val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
+    val scrollableState = remember { ScrollableState(scrollHandler::handleScrollDelta) }
+
     val virtualLayout = remember { VirtualLayout(true) }
     virtualLayout.isLTR = LocalLayoutDirection.current == LayoutDirection.Ltr
 
@@ -117,14 +136,18 @@ fun <Model : EntriesModel> DataSet(
         modifier = modifier
             .height(DEF_CHART_WIDTH.dp)
             .fillMaxWidth()
-            .runIf(marker != null) { chartTouchEvent(setTouchPoint) }
+            .runIf(marker != null) {
+                chartTouchEvent(isHorizontalScrollEnabled, setTouchPoint, scrollableState)
+            }
     ) {
         bounds.set(0f, 0f, size.width, size.height)
         dataSet.setToAxisModel(dataSetModel, model)
+        dataSet.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         virtualLayout.setBounds(bounds, dataSet, model, dataSetModel, axisManager, marker)
         val canvas = drawContext.canvas.nativeCanvas
         val segmentProperties = dataSet.getSegmentProperties(model)
-        axisManager.draw(canvas, model, dataSetModel, segmentProperties)
-        dataSet.draw(canvas, model, touchPoint, marker)
+        axisManager.draw(canvas, model, dataSetModel, segmentProperties, rendererViewState.value)
+        dataSet.draw(canvas, model, rendererViewState.value, marker)
+        scrollHandler.maxScrollDistance = dataSet.maxScrollAmount
     }
 }

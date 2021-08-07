@@ -72,6 +72,19 @@ public open class LineComponent(
         boundingBox = boundingBox
     )
 
+    public open fun intersectsVertical(
+        top: Float,
+        bottom: Float,
+        centerX: Float,
+        boundingBox: RectF
+    ): Boolean = intersects(
+        left = centerX - (scaledThickness / 2),
+        top = top,
+        right = centerX + (scaledThickness / 2),
+        bottom = bottom,
+        boundingBox = boundingBox
+    )
+
     override fun draw(
         canvas: Canvas,
         left: Float,

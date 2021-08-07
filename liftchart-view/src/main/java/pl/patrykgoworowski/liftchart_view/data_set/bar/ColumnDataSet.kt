@@ -1,7 +1,6 @@
 package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
-import android.graphics.PointF
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
@@ -10,6 +9,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
@@ -39,9 +39,9 @@ class ColumnDataSet(
 
     override fun draw(
         canvas: Canvas,
-        pointF: PointF?,
+        rendererViewState: RendererViewState,
         marker: Marker?,
-    ) = draw(canvas, model, pointF, marker)
+    ) = draw(canvas, model, rendererViewState, marker)
 
     override fun addListener(listener: UpdateRequestListener) {
         listeners += listener

@@ -2,8 +2,8 @@ package pl.patrykgoworowski.liftchart_common.data_set.modifier
 
 import android.graphics.LinearGradient
 import android.graphics.Shader
-import pl.patrykgoworowski.liftchart_common.data_set.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSetRenderer
 
 fun <Model: EntriesModel> DataSetRenderer<Model>.setGradient(
     x0: Float,

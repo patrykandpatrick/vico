@@ -67,6 +67,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             ),
         ).apply {
             setVerticalGradient(intArrayOf(context.flickrPink, context.trypanPurple))
+            isHorizontalScrollEnabled = true
         }
 
         viewModel.entries.collectAsFlow
@@ -111,7 +112,9 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 ),
             ),
             mergeMode = MergeMode.Grouped
-        )
+        ).apply {
+            isHorizontalScrollEnabled = true
+        }
 
         viewModel.multiEntries.collectAsFlow
             .onEach { mergedBarDataSet.model = it }
@@ -155,7 +158,9 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 ),
             ),
             mergeMode = MergeMode.Stack
-        )
+        ).apply {
+            isHorizontalScrollEnabled = true
+        }
 
         viewModel.multiEntries.collectAsFlow
             .onEach { mergedBarDataSet.model = it }
