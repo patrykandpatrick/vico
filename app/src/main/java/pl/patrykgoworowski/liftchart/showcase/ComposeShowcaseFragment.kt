@@ -26,8 +26,6 @@ import pl.patrykgoworowski.liftchart.ui.byzantine
 import pl.patrykgoworowski.liftchart.ui.flickrPink
 import pl.patrykgoworowski.liftchart.ui.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
-import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
-import pl.patrykgoworowski.liftchart_common.axis.formatter.PercentageFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
@@ -55,14 +53,7 @@ class ComposeShowcaseFragment : Fragment() {
         composeView.setContent {
             MainTheme {
 
-                val axisManager = AxisManager(
-                    VerticalAxis.start().apply {
-                        valueFormatter = PercentageFormatAxisValueFormatter()
-                        axis = null
-                        tick = null
-                    },
-                    bottomAxis = null
-                )
+                val axisManager = AxisManager()
 
                 ScrollableColumn {
 
