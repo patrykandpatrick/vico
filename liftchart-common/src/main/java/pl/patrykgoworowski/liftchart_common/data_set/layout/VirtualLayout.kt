@@ -29,6 +29,7 @@ public open class VirtualLayout(
     ) {
         tempInsetters.clear()
         finalInsets.clear()
+        tempInsets.clear()
         axisManager.isLTR = isLTR
         axisManager.addInsetters(tempInsetters)
         dataSetInsetter.forEach { it?.let(tempInsetters::add) }
