@@ -3,8 +3,6 @@ package pl.patrykgoworowski.liftchart_common.data_set.bar
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.MAX_ZOOM
-import pl.patrykgoworowski.liftchart_common.MIN_ZOOM
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
@@ -41,7 +39,8 @@ open class ColumnDataSetRenderer public constructor(
     override var maxScrollAmount: Float = 0f
     override var zoom: Float? = null
         set(value) {
-            field = value?.between(MIN_ZOOM, MAX_ZOOM)
+            field = value
+            isScaleCalculated = false
         }
 
     private var drawScale: Float = 1f
