@@ -33,6 +33,9 @@ fun RectF.set(
     set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
 }
 
+val RectF.isNotEmpty: Boolean
+    get() = left != 0f && top != 0f && right != 0f && bottom != 0f
+
 fun RectF.clear() {
     set(0, 0, 0, 0)
 }
@@ -55,3 +58,8 @@ fun RectF.set(
 fun RectF.start(isLTR: Boolean): Float = if (isLTR) left else right
 
 fun RectF.end(isLTR: Boolean): Float = if (isLTR) right else left
+
+operator fun RectF.component1(): Float = left
+operator fun RectF.component2(): Float = top
+operator fun RectF.component3(): Float = right
+operator fun RectF.component4(): Float = bottom
