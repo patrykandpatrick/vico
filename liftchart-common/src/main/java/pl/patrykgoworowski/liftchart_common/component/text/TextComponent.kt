@@ -8,11 +8,11 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import pl.patrykgoworowski.liftchart_common.DEF_LABEL_LINE_COUNT
-import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultMargins
 import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultPadding
 import pl.patrykgoworowski.liftchart_common.component.dimension.Margins
 import pl.patrykgoworowski.liftchart_common.component.dimension.Padding
+import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.lineHeight
 import pl.patrykgoworowski.liftchart_common.extension.sp

@@ -4,7 +4,6 @@ import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.BoundsAware
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
-import pl.patrykgoworowski.liftchart_common.data_set.modifier.PaintModifier
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 
@@ -14,8 +13,6 @@ public interface DataSetRenderer<in Model: EntriesModel> : BoundsAware {
     public var maxY :Float?
     public var minX :Float?
     public var maxX :Float?
-
-    public var columnPaintModifier: PaintModifier?
 
     public var isHorizontalScrollEnabled: Boolean
     public var zoom: Float?

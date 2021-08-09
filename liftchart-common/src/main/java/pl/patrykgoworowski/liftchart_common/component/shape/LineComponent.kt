@@ -1,7 +1,8 @@
-package pl.patrykgoworowski.liftchart_common.component
+package pl.patrykgoworowski.liftchart_common.component.shape
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.path.Shape
 import pl.patrykgoworowski.liftchart_common.path.rectShape
 
@@ -9,7 +10,8 @@ public open class LineComponent(
     color: Int,
     public var thickness: Float = 2f,
     shape: Shape = rectShape(),
-) : ShapeComponent<Shape>(shape, color) {
+    dynamicShader: DynamicShader? = null
+) : ShapeComponent<Shape>(shape, color, dynamicShader) {
 
     var thicknessScale: Float = 1f
 
@@ -85,14 +87,7 @@ public open class LineComponent(
         boundingBox = boundingBox
     )
 
-    override fun draw(
-        canvas: Canvas,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float
-    ) {
-        if (left == right || top == bottom) return //Skip drawing shape that will be invisible.
+    override fun updateDrawBounds(left: Float, top: Float, right: Float, bottom: Float) {
         val centerX = left + ((right - left) / 2)
         val centerY = top + ((bottom - top) / 2)
         drawBounds.set(
@@ -101,8 +96,6 @@ public open class LineComponent(
             maxOf(right - margins.end, centerX),
             maxOf(bottom - margins.bottom, centerY)
         )
-        path.reset()
-        shape.drawShape(canvas, paint, path, drawBounds)
     }
 
 }

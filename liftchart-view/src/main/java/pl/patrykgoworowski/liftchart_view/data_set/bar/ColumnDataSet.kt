@@ -2,7 +2,7 @@ package pl.patrykgoworowski.liftchart_view.data_set.bar
 
 import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSetRenderer

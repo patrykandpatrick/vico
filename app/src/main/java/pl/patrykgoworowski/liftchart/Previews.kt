@@ -10,7 +10,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -19,11 +18,12 @@ import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryList
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 import pl.patrykgoworowski.liftchart_compose.component.dimension.setPadding
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
+import pl.patrykgoworowski.liftchart_compose.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.liftchart_compose.component.shapeComponent
 import pl.patrykgoworowski.liftchart_compose.component.textComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
@@ -68,9 +68,9 @@ fun SampleDataSet(modifier: Modifier = Modifier) = MainTheme {
         column = rectComponent(
             colors.primary,
             thickness = 8f.dp,
-            shape = RoundedCornerShape(Dp(4f)).chartShape()
-        ),
-        columnBrush = Brush.verticalGradient(listOf(colors.primary, colors.secondary))
+            shape = RoundedCornerShape(Dp(4f)).chartShape(),
+            dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
+        )
     )
 }
 

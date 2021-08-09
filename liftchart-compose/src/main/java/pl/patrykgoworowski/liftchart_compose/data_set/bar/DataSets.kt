@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -22,7 +21,7 @@ import pl.patrykgoworowski.liftchart_common.MAX_ZOOM
 import pl.patrykgoworowski.liftchart_common.MIN_ZOOM
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
@@ -38,7 +37,6 @@ import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
-import pl.patrykgoworowski.liftchart_compose.data_set.setBrush
 import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.gesture.rememberOnZoom
@@ -60,12 +58,10 @@ fun ColumnChart(
     spacing: Dp = DEF_BAR_SPACING.dp,
     axisManager: AxisManager = AxisManager(),
     marker: Marker? = null,
-    columnBrush: Brush? = null,
 ) {
     val dataSet = remember { ColumnDataSetRenderer(columns = listOf(column)) }
         .apply {
             this.spacing = spacing.pixels
-            if (columnBrush != null) setBrush(brush = columnBrush)
         }
     val model = entryCollection.collectAsState()
 

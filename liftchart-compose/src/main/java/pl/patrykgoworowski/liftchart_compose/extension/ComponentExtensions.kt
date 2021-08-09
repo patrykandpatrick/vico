@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
-import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_compose.component.ChartShape
 
 @Composable

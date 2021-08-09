@@ -9,7 +9,7 @@ import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.text.VerticalPosition
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
@@ -83,7 +83,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         val guidelineBottom = dataSetBounds.bottom
 
         for (index in 0 until tickCount) {
-
+            tick?.setParentBounds(bounds)
             tick?.drawVertical(
                 canvas = canvas,
                 top = tickMarkTop,
@@ -91,6 +91,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
                 centerX = tickDrawCenter
             )
 
+            guideline?.setParentBounds(bounds)
             guideline?.takeIf {
                 it.fitsInVertical(
                     guidelineTop,
@@ -106,6 +107,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
             )
 
             if (index < entriesLength) {
+                label?.background?.setParentBounds(bounds)
                 label?.drawText(
                     canvas,
                     valueFormatter.formatValue(valueIndex, index, model, dataSetModel),
@@ -120,6 +122,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
             textDrawCenter += tickDrawStep
         }
 
+        axis?.setParentBounds(bounds)
         axis?.drawHorizontal(
             canvas = canvas,
             left = dataSetBounds.left,

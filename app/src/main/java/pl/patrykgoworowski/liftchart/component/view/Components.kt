@@ -5,10 +5,10 @@ import android.graphics.Color
 import android.text.TextUtils
 import pl.patrykgoworowski.liftchart.R
 import pl.patrykgoworowski.liftchart.extension.getThemeColor
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.MarkerComponent
 import pl.patrykgoworowski.liftchart_common.component.OverlayingComponent
-import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.extension.copyColor
 import pl.patrykgoworowski.liftchart_common.extension.dp

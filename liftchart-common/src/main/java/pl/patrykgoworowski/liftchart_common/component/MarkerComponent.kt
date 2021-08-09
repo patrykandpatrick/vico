@@ -3,6 +3,9 @@ package pl.patrykgoworowski.liftchart_common.component
 import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
@@ -22,7 +25,8 @@ public open class MarkerComponent(
     private val guideline: LineComponent,
     shape: MarkerCorneredShape,
     markerBackgroundColor: Int,
-) : Marker, ShapeComponent<MarkerCorneredShape>(shape, markerBackgroundColor) {
+    dynamicShader: DynamicShader? = null
+) : Marker, ShapeComponent<MarkerCorneredShape>(shape, markerBackgroundColor, dynamicShader) {
 
     private val markerTempBounds = RectF()
 
@@ -39,6 +43,8 @@ public open class MarkerComponent(
         markedEntries: List<Marker.EntryModel>,
         allEntries: List<DataEntry>
     ) {
+        setParentBounds(bounds)
+        applyShader(bounds.left, bounds.top, bounds.right, bounds.bottom)
         drawGuideline(canvas, bounds, markedEntries)
 
         markedEntries.forEachIndexed { _, model ->
@@ -104,6 +110,7 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
     ) {
+        guideline.setParentBounds(bounds)
         markedEntries
             .map { it.location.x }
             .toSet()

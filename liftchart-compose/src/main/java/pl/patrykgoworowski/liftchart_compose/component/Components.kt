@@ -8,9 +8,10 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.component.Component
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.OverlayingComponent
-import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.path.DashedShape
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
@@ -22,11 +23,13 @@ typealias ChartShape = pl.patrykgoworowski.liftchart_common.path.Shape
 public fun rectComponent(
     color: Color,
     thickness: Dp = DEF_BAR_WIDTH.dp,
-    shape: Shape = RectangleShape
+    shape: Shape = RectangleShape,
+    dynamicShader: DynamicShader? = null,
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thickness = thickness.pixels,
     shape = shape.chartShape(),
+    dynamicShader = dynamicShader,
 )
 
 @Composable
@@ -34,19 +37,23 @@ public fun rectComponent(
     color: Color,
     thickness: Dp,
     shape: ChartShape,
+    dynamicShader: DynamicShader? = null,
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thickness = thickness.pixels,
     shape = shape,
+    dynamicShader = dynamicShader,
 )
 
 @Composable
 fun shapeComponent(
     shape: Shape,
-    color: Color
+    color: Color,
+    shader: DynamicShader? = null,
 ): ShapeComponent<ChartShape> = ShapeComponent(
     shape = shape.chartShape(),
     color = color.toArgb(),
+    dynamicShader = shader,
 )
 
 @Composable
