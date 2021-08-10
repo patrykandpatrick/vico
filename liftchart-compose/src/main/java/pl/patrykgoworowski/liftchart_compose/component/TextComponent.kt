@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.TextUnit
 import pl.patrykgoworowski.liftchart_common.DEF_LABEL_LINE_COUNT
-import pl.patrykgoworowski.liftchart_common.component.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.path.Shape
 import pl.patrykgoworowski.liftchart_compose.extension.pixelSize

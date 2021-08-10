@@ -15,10 +15,10 @@ import pl.patrykgoworowski.liftchart.extension.color
 import pl.patrykgoworowski.liftchart.extension.flickrPink
 import pl.patrykgoworowski.liftchart.extension.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
-import pl.patrykgoworowski.liftchart_common.data_set.modifier.setVerticalGradient
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
@@ -51,9 +51,9 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 color = context.flickrPink,
                 shape = cutCornerShape(topLeft = 8f.dp),
                 thickness = 16f.dp,
+                dynamicShader = horizontalGradient(context.flickrPink, context.trypanPurple),
             ),
         ).apply {
-            setVerticalGradient(intArrayOf(context.flickrPink, context.trypanPurple))
             isHorizontalScrollEnabled = true
         }
 

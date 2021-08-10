@@ -13,7 +13,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -28,6 +27,7 @@ import pl.patrykgoworowski.liftchart.ui.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
+import pl.patrykgoworowski.liftchart_compose.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
 
 class ComposeShowcaseFragment : Fragment() {
@@ -65,13 +65,13 @@ class ComposeShowcaseFragment : Fragment() {
                         column = rectComponent(
                             color = flickrPink,
                             thickness = 16.dp,
-                            shape = CutCornerShape(topStart = 8f.dp)
+                            shape = CutCornerShape(topStart = 8f.dp),
+                            dynamicShader = horizontalGradient(arrayOf(flickrPink, trypanPurple)),
                         ).apply {
                             setMargins(start = 0f)
                         },
                         axisManager = axisManager,
                         marker = markerComponent(),
-                        columnBrush = Brush.verticalGradient(colors = listOf(flickrPink, trypanPurple))
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))

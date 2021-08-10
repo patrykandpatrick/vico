@@ -4,12 +4,11 @@ import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
-import pl.patrykgoworowski.liftchart_common.data_set.modifier.PaintModifier
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSetRenderer
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
@@ -32,8 +31,6 @@ open class ColumnDataSetRenderer public constructor(
     override var maxY: Float? = null
     override var minX: Float? = null
     override var maxX: Float? = null
-
-    override var columnPaintModifier: PaintModifier? = null
 
     override var isHorizontalScrollEnabled: Boolean = false
     override var maxScrollAmount: Float = 0f
@@ -110,7 +107,7 @@ open class ColumnDataSetRenderer public constructor(
         model.entryCollections.forEachIndexed { index, entryCollection ->
 
             column = columns.getRepeating(index)
-            columnPaintModifier?.modifyPaint(column.paint, bounds, index)
+            column.setParentBounds(bounds)
             drawingStart = getDrawingStart(index) - scrollX
 
             entryCollection.forEach { entry ->

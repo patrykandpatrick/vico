@@ -4,7 +4,7 @@ import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.*
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
-import pl.patrykgoworowski.liftchart_common.component.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.HorizontalPosition
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
@@ -66,6 +66,7 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
 
             tickCenterY = bounds.bottom - (axisStep * index) + (axisThickness / 2)
 
+            tick?.setParentBounds(bounds)
             tick?.drawHorizontal(
                 canvas = canvas,
                 left = tickLeftX,
@@ -73,6 +74,7 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
                 tickCenterY
             )
 
+            guideline?.setParentBounds(bounds)
             guideline?.takeIf {
                 it.fitsInHorizontal(
                     dataSetBounds.left,
@@ -88,6 +90,7 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
             )
 
             labels.getOrNull(index)?.let { label ->
+                this.label?.background?.setParentBounds(bounds)
                 this.label?.drawText(
                     canvas,
                     label,
@@ -97,6 +100,7 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
                 )
             }
         }
+        axis?.setParentBounds(bounds)
         axis?.drawVertical(
             canvas = canvas,
             top = bounds.top,
