@@ -2,7 +2,9 @@ package pl.patrykgoworowski.liftchart_common
 
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.TestDiffAnimator
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryList
+import pl.patrykgoworowski.liftchart_common.entry.FloatEntry
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 import pl.patrykgoworowski.liftchart_common.entry.entryOf
 
@@ -12,9 +14,11 @@ class SingleEntryCollectionTests {
     private val entry2 = entryOf(0, 0)
     private val entries3 = entriesOf(3 to 4, 8 to 28)
 
+    private val diffAnimator = TestDiffAnimator()
+
     @Test
     fun testCollectionModifications() {
-        val entryCollection = SingleEntryList()
+        val entryCollection = SingleEntryList(diffAnimator, false)
 
         fun assertSize(size: Int) {
             assertEquals(size, entryCollection.data.size)
@@ -39,7 +43,7 @@ class SingleEntryCollectionTests {
 
     @Test
     fun testSizes() {
-        val entryCollection = SingleEntryList()
+        val entryCollection = SingleEntryList(diffAnimator, false)
 
         entryCollection += entry1
 
@@ -55,6 +59,27 @@ class SingleEntryCollectionTests {
         assertEquals(entryCollection.maxX, 8f)
         assertEquals(entryCollection.minY, 0f)
         assertEquals(entryCollection.maxY, 28f)
+    }
+
+    @Test
+    fun `Test entry update while diff animation is running`() {
+        val first = entriesOf(0f to 2f, 1f to 0f)
+        val second = entriesOf(0f to 0f, 1f to 2f)
+
+        val entryCollection = SingleEntryList(diffAnimator)
+        entryCollection.setEntries(first)
+
+        fun assertEntriesAreEqual(entries: List<FloatEntry>) {
+            assertEquals(entries, entryCollection.model.entries)
+        }
+
+        diffAnimator.currentProgress = 1f
+        entryCollection.setEntries(second)
+        assertEntriesAreEqual(second)
+
+        entryCollection.setEntries(first)
+        diffAnimator.updateProgress(0.5f)
+        assertEntriesAreEqual(entriesOf(0f to 1f, 1f to 1f))
     }
 
 }

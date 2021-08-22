@@ -1,14 +1,23 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi
 
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DefaultDiffAnimator
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DefaultDiffProcessor
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DiffAnimator
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DiffProcessor
 import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.entry.entryOf
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 
-class MultiEntryList() :
-    MultiEntryCollection {
+class MultiEntryList(
+    public var diffAnimator: DiffAnimator = DefaultDiffAnimator(),
+    public var animateChanges: Boolean = true
+) : MultiEntryCollection {
 
     private val calculator = MultiEntriesModelCalculator()
+    private val diffProcessor: DiffProcessor<DataEntry> = DefaultDiffProcessor()
     private val listeners: ArrayList<MultiEntriesModelListener> = ArrayList()
+
+    public val data: ArrayList<List<DataEntry>> = ArrayList()
 
     override var model: MultiEntriesModel = emptyMultiEntriesModel()
 
@@ -20,8 +29,6 @@ class MultiEntryList() :
     override val stackedMaxY: Float by calculator::stackedMaxY
     override val stackedMinY: Float by calculator::stackedMinY
 
-    val data: ArrayList<List<DataEntry>> = ArrayList()
-
     constructor(entryCollections: List<List<DataEntry>>) : this() {
         setEntries(entryCollections)
     }
@@ -31,19 +38,27 @@ class MultiEntryList() :
     }
 
     override fun setEntries(entries: List<List<DataEntry>>) {
-        data.setAll(entries)
-        refreshModel()
+        if (animateChanges) {
+            diffProcessor.setEntries(
+                old = diffProcessor.progressDiff(diffAnimator.currentProgress),
+                new = entries,
+            )
+            diffAnimator.start { progress ->
+                refreshModel(diffProcessor.progressDiff(progress))
+            }
+        } else {
+            refreshModel(entries)
+        }
     }
 
     override fun setEntries(vararg entries: List<DataEntry>) {
-        data.setAll(entries)
-        refreshModel()
+        setEntries(entries.toList())
     }
 
-    private fun refreshModel() {
+    private fun refreshModel(entries: List<List<DataEntry>>) {
+        data.setAll(entries)
         calculator.resetValues()
         calculator.calculateData(data)
-
         notifyChange()
     }
 
