@@ -6,7 +6,7 @@ public class TestDiffAnimator : DiffAnimator {
 
     private var onProgress: ((progress: Float) -> Unit)? = null
     override var currentProgress: Float = 0f
-    override lateinit var  animationInterpolator: TimeInterpolator
+    override lateinit var animationInterpolator: TimeInterpolator
 
     override var animationDuration: Long = 0
 
