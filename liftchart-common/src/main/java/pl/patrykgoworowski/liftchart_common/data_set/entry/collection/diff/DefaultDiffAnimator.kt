@@ -49,6 +49,7 @@ class DefaultDiffAnimator(
 
     override fun cancel() {
         valueAnimator.cancel()
+        onProgress = null
     }
 
     companion object {
