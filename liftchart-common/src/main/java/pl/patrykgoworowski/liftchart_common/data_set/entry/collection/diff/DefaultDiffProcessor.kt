@@ -30,7 +30,6 @@ public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
                 map.map { (x, model) -> entryOf(x, model.progressDiff(progress)) }
             }
 
-
     private fun updateProgressMap() {
         progressMaps.clear()
         val maxListSize = maxOf(oldEntries.size, newEntries.size)
