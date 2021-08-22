@@ -10,7 +10,7 @@ interface SingleEntryCollection : EntryCollection {
     val data: Collection<DataEntry>
     val model: SingleEntriesModel
 
-    fun setEntries(entries: Collection<DataEntry>)
+    fun setEntries(entries: List<DataEntry>)
 
     fun addOnEntriesChangedListener(listener: SingleEntriesModelListener)
     fun removeOnEntriesChangedListener(listener: SingleEntriesModelListener)
