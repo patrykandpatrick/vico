@@ -103,16 +103,17 @@ public open class TextComponent(
         canvas.restore()
     }
 
-    private fun HorizontalPosition.getTextStartPosition(baseXPosition: Float, width: Float) = when (this) {
-        HorizontalPosition.Start ->
-            if (isLTR) getTextLeftPosition(baseXPosition)
-            else getTextRightPosition(baseXPosition, width)
-        HorizontalPosition.Center ->
-            baseXPosition - width.half
-        HorizontalPosition.End ->
-            if (isLTR) getTextRightPosition(baseXPosition, width)
-            else getTextLeftPosition(baseXPosition)
-    }
+    private fun HorizontalPosition.getTextStartPosition(baseXPosition: Float, width: Float) =
+        when (this) {
+            HorizontalPosition.Start ->
+                if (isLTR) getTextLeftPosition(baseXPosition)
+                else getTextRightPosition(baseXPosition, width)
+            HorizontalPosition.Center ->
+                baseXPosition - width.half
+            HorizontalPosition.End ->
+                if (isLTR) getTextRightPosition(baseXPosition, width)
+                else getTextLeftPosition(baseXPosition)
+        }
 
     private fun getTextLeftPosition(baseXPosition: Float): Float =
         baseXPosition + padding.getLeft(isLTR) + margins.getLeft(isLTR)
@@ -145,11 +146,9 @@ public open class TextComponent(
         width: Int = Int.MAX_VALUE,
         includePadding: Boolean = true,
         includeMargin: Boolean = true,
-    ): Float {
-        return getLayout(text, width).height +
-                (if (includePadding) padding.vertical else 0f) +
-                (if (includeMargin) margins.vertical else 0f)
-    }
+    ): Float = getLayout(text, width).height +
+            (if (includePadding) padding.vertical else 0f) +
+            (if (includeMargin) margins.vertical else 0f)
 
     public fun clearLayoutCache() {
         layoutCache.clear()
