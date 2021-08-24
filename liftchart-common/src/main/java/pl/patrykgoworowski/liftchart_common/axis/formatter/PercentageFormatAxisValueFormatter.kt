@@ -4,6 +4,7 @@ import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import java.text.DecimalFormat
 
+// TODO: Determine if this unused class can be deleted.
 class PercentageFormatAxisValueFormatter(
     pattern: String
 ) : AxisValueFormatter {
@@ -25,5 +26,4 @@ class PercentageFormatAxisValueFormatter(
     companion object {
         private const val DEF_PATTERN = "#.##%"
     }
-
 }
