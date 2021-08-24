@@ -93,7 +93,7 @@ class DataSetView @JvmOverloads constructor(
         }
     }
 
-    fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
+    fun handleZoom(focusX: Float, zoomChange: Float) {
         val dataSet = dataSet ?: return
         val newZoom = (dataSet.zoom ?: 1f) * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return

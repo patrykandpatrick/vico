@@ -1,6 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry
 
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.Sin
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntriesModelListener
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 
+@ExperimentalCoroutinesApi
 val SingleEntryCollection.collectAsFlow: Flow<SingleEntriesModel>
     get() = callbackFlow {
 

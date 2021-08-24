@@ -11,7 +11,7 @@ class RandomEntriesGenerator(
     fun generateRandomEntries(): List<FloatEntry> {
         val result = ArrayList<FloatEntry>()
         val yLength = yRange.last - yRange.first
-        val xCount = (Math.random() * (xRange.last - xRange.first)).toInt()
+        // val xCount = (Math.random() * (xRange.last - xRange.first)).toInt()
         for (x in xRange) {
         //for (x in 0..xCount) {
             result += entryOf(x.toFloat(), (Math.random() * yLength).toFloat())
