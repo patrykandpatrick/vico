@@ -25,11 +25,11 @@ import pl.patrykgoworowski.liftchart_compose.extension.setShadow
 fun markerComponent(): Marker {
     val colors = MaterialTheme.colors
     val label = textComponent(
-            color = colors.onSurface,
-            textSize = 12f.sp,
-            ellipsize = TextUtils.TruncateAt.END,
-            lineCount = 1,
-            background = null
+        color = colors.onSurface,
+        textSize = 12f.sp,
+        ellipsize = TextUtils.TruncateAt.END,
+        lineCount = 1,
+        background = null
     ).apply {
         setPadding(8f.dp, 4f.dp)
     }
@@ -39,36 +39,36 @@ fun markerComponent(): Marker {
     val indicatorOuter = ShapeComponent(pillShape(), Color.White.toArgb())
 
     val indicator = overlayingComponent(
-            outer = indicatorOuter,
-            inner = overlayingComponent(
-                    outer = indicatorCenter,
-                    inner = indicatorInner,
-                    innerPaddingAll = 5.dp
-            ),
-            innerPaddingAll = 10.dp,
+        outer = indicatorOuter,
+        inner = overlayingComponent(
+            outer = indicatorCenter,
+            inner = indicatorInner,
+            innerPaddingAll = 5.dp
+        ),
+        innerPaddingAll = 10.dp,
     )
 
     val guideline = rectComponent(
-            color = colors.onSurface.copy(alpha = 0.18f),
-            thickness = 2f.dp,
-            shape = dashedShape(
-                    shape = pillShape(),
-                    dashLength = 8f.dp,
-                    gapLength = 4f.dp
-            )
+        color = colors.onSurface.copy(alpha = 0.18f),
+        thickness = 2f.dp,
+        shape = dashedShape(
+            shape = pillShape(),
+            dashLength = 8f.dp,
+            gapLength = 4f.dp
+        )
     )
 
     val indicatorShadowSize = 12.dp.pixels
 
     return markerComponent(
-            label = label,
-            indicator = indicator,
-            guideline = guideline,
-            shape = MarkerCorneredShape(
-                    corneredShape = pillShape(),
-                    tickSize = 6.dp.pixels
-            ),
-            markerBackgroundColor = colors.surface,
+        label = label,
+        indicator = indicator,
+        guideline = guideline,
+        shape = MarkerCorneredShape(
+            corneredShape = pillShape(),
+            tickSize = 6.dp.pixels
+        ),
+        markerBackgroundColor = colors.surface,
     ).apply {
         onApplyEntryColor = { color ->
             indicatorCenter.color = color
@@ -83,13 +83,13 @@ fun markerComponent(): Marker {
 
 @Composable
 fun ScrollableColumn(
-        modifier: Modifier = Modifier,
-        content: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Column(
-            modifier = modifier
-                    .verticalScroll(scrollState, true)
+        modifier = modifier
+            .verticalScroll(scrollState, true)
     ) {
         content()
     }
