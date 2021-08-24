@@ -14,12 +14,12 @@ fun <T> List<T>.getRepeating(index: Int): T {
     return get(index % size.coerceAtLeast(1))
 }
 
-public fun <T> ArrayList<T>.setAll(other: Collection<T>) {
+public fun <T> MutableList<T>.setAll(other: Collection<T>) {
     clear()
     addAll(other)
 }
 
-public fun <T> ArrayList<T>.setAll(other: Array<out T>) {
+public fun <T> MutableList<T>.setAll(other: Array<out T>) {
     clear()
     addAll(other)
 }

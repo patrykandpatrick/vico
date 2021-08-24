@@ -3,6 +3,7 @@ package pl.patrykgoworowski.liftchart_common.component.text
 import android.graphics.Canvas
 import android.graphics.Color.DKGRAY
 import android.graphics.Color.LTGRAY
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -33,7 +34,7 @@ public open class TextComponent(
     public open var background: ShapeComponent<Shape>? = ShapeComponent(pillShape(), LTGRAY),
 ) : Padding by DefaultPadding(), Margins by DefaultMargins() {
 
-    public val textPaint = TextPaint()
+    public val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
     public val lineHeight: Int
         get() = textPaint.lineHeight.roundToInt()
@@ -72,7 +73,7 @@ public open class TextComponent(
         val layoutHeight = layout.height
 
         val textStartPosition = horizontalPosition.getTextStartPosition(textX, layoutWidth)
-        val textTopPosition = verticalPosition.getTextTopPosition(textY, layoutHeight)
+        val textTopPosition = verticalPosition.getTextTopPosition(textY, layoutHeight.toFloat())
 
         val bgLeft = textStartPosition - padding.getLeft(isLTR)
         val bgTop = textTopPosition - ((layoutHeight / 2) + padding.top)
@@ -102,16 +103,17 @@ public open class TextComponent(
         canvas.restore()
     }
 
-    private fun HorizontalPosition.getTextStartPosition(baseXPosition: Float, width: Float) = when (this) {
-        HorizontalPosition.Start ->
-            if (isLTR) getTextLeftPosition(baseXPosition)
-            else getTextRightPosition(baseXPosition, width)
-        HorizontalPosition.Center ->
-            baseXPosition - width.half
-        HorizontalPosition.End ->
-            if (isLTR) getTextRightPosition(baseXPosition, width)
-            else getTextLeftPosition(baseXPosition)
-    }
+    private fun HorizontalPosition.getTextStartPosition(baseXPosition: Float, width: Float) =
+        when (this) {
+            HorizontalPosition.Start ->
+                if (isLTR) getTextLeftPosition(baseXPosition)
+                else getTextRightPosition(baseXPosition, width)
+            HorizontalPosition.Center ->
+                baseXPosition - width.half
+            HorizontalPosition.End ->
+                if (isLTR) getTextRightPosition(baseXPosition, width)
+                else getTextLeftPosition(baseXPosition)
+        }
 
     private fun getTextLeftPosition(baseXPosition: Float): Float =
         baseXPosition + padding.getLeft(isLTR) + margins.getLeft(isLTR)
@@ -119,14 +121,21 @@ public open class TextComponent(
     private fun getTextRightPosition(baseXPosition: Float, width: Float): Float =
         baseXPosition - (padding.getRight(isLTR) + margins.getRight(isLTR) + width)
 
+    @JvmName("getTextTopPositionExt")
     private fun VerticalPosition.getTextTopPosition(
         textY: Float,
-        layoutHeight: Int,
+        layoutHeight: Float,
     ) = when (this) {
         VerticalPosition.Top -> textY + layoutHeight.half + padding.top + margins.top
         VerticalPosition.Center -> textY
         VerticalPosition.Bottom -> textY - (layoutHeight.half + padding.bottom + margins.bottom)
     }
+
+    public fun getTextTopPosition(
+        verticalPosition: VerticalPosition,
+        textY: Float,
+        layoutHeight: Float,
+    ) = verticalPosition.getTextTopPosition(textY, layoutHeight)
 
     public fun getWidth(text: CharSequence): Float {
         return getLayout(text).widestLineWidth + padding.horizontal + margins.horizontal
@@ -135,9 +144,11 @@ public open class TextComponent(
     public fun getHeight(
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
-    ): Float {
-        return getLayout(text, width).height + padding.vertical + margins.vertical
-    }
+        includePadding: Boolean = true,
+        includeMargin: Boolean = true,
+    ): Float = getLayout(text, width).height +
+            (if (includePadding) padding.vertical else 0f) +
+            (if (includeMargin) margins.vertical else 0f)
 
     public fun clearLayoutCache() {
         layoutCache.clear()

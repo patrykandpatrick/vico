@@ -3,12 +3,15 @@ package pl.patrykgoworowski.liftchart_compose.data_set.bar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
-import pl.patrykgoworowski.liftchart_common.axis.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
+import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryList
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
 
-private val entryList = MultiEntryList(entriesOf(0 to 1, 1 to 2, 2 to 3, 3 to 4))
+private val entryList = MultiEntryList(
+    entriesOf(0 to 1, 1 to 2, 2 to 3, 3 to 4),
+    animateChanges = false,
+)
 
 private val topAxis = HorizontalAxis.top()
 private val startAxis = VerticalAxis.start()

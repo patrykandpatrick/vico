@@ -1,12 +1,18 @@
-package pl.patrykgoworowski.liftchart_common.axis
+package pl.patrykgoworowski.liftchart_common.axis.vertical
 
 import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.*
+import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
+import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
+import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
+import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
+import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.HorizontalPosition
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
+import pl.patrykgoworowski.liftchart_common.component.text.VerticalPosition
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
@@ -23,44 +29,85 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
     guideline: LineComponent?,
 ) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
-    private val AxisPosition.Vertical.textHorizontalPosition: HorizontalPosition
-        get() = if (isStart) HorizontalPosition.End else HorizontalPosition.Start
+    private val isLeft = position.isLeft(isLTR)
 
-    var maxLabelCount: Int = DEF_LABEL_COUNT
-    var labelSpacing: Float = DEF_LABEL_SPACING
+    private val isLabelOutsideOnLeftOrInsideOnRight: Boolean
+        get() = (horizontalLabelPosition == Outside && isLeft) ||
+                (horizontalLabelPosition == Inside && !isLeft)
 
-    override fun onDraw(
+    private val textHorizontalPosition: HorizontalPosition
+        get() = if (isLabelOutsideOnLeftOrInsideOnRight) HorizontalPosition.End else HorizontalPosition.Start
+
+    public var maxLabelCount: Int = DEF_LABEL_COUNT
+    public var labelSpacing: Float = DEF_LABEL_SPACING
+
+    public var horizontalLabelPosition = Outside
+    public var verticalLabelPosition = Center
+
+    override fun drawBehindDataSet(
         canvas: Canvas,
         model: EntriesModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
     ) {
-        val isLeft = position.isLeft(isLTR)
+        val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
+
+        val axisStep = bounds.height() / drawLabelCount
+
+        var centerY: Float
+
+        for (index in 0..drawLabelCount) {
+
+            centerY = bounds.bottom - (axisStep * index) + (axisThickness / 2)
+
+            guideline?.setParentBounds(bounds)
+            guideline?.takeIf {
+                it.fitsInHorizontal(
+                    dataSetBounds.left,
+                    dataSetBounds.right,
+                    centerY,
+                    dataSetBounds
+                )
+            }?.drawHorizontal(
+                canvas = canvas,
+                left = dataSetBounds.left,
+                right = dataSetBounds.right,
+                centerY = centerY
+            )
+        }
+    }
+
+    override fun drawAboveDataSet(
+        canvas: Canvas,
+        model: EntriesModel,
+        dataSetModel: DataSetModel,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState
+    ) {
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
 
         val labels = getLabels(model, dataSetModel, drawLabelCount)
+        val labelHeight = label?.getHeight(includeMargin = false) ?: 0f
+        val labelTextHeight = label?.getHeight(includePadding = false, includeMargin = false) ?: 0f
         val axisStep = bounds.height() / drawLabelCount
 
-        val tickLeftX = if (isLeft) {
+        val tickLeftX = if (isLabelOutsideOnLeftOrInsideOnRight) {
             bounds.right - (axisThickness + tickLength)
         } else {
             bounds.left
         }
 
-        val tickRightX = if (isLeft) {
+        val tickRightX = if (isLabelOutsideOnLeftOrInsideOnRight) {
             bounds.right
         } else {
             bounds.left + axisThickness + tickLength
         }
 
-        val labelX = if (isLeft) {
-            tickLeftX
-        } else {
-            tickRightX
-        }
+        val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
 
         var tickCenterY: Float
+        val textPosition = verticalLabelPosition.textPosition
 
         for (index in 0..drawLabelCount) {
 
@@ -74,30 +121,29 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
                 tickCenterY
             )
 
-            guideline?.setParentBounds(bounds)
-            guideline?.takeIf {
-                it.fitsInHorizontal(
-                    dataSetBounds.left,
-                    dataSetBounds.right,
-                    tickCenterY,
-                    dataSetBounds
-                )
-            }?.drawHorizontal(
-                canvas = canvas,
-                left = dataSetBounds.left,
-                right = dataSetBounds.right,
-                centerY = tickCenterY
-            )
-
-            labels.getOrNull(index)?.let { label ->
-                this.label?.background?.setParentBounds(bounds)
-                this.label?.drawText(
-                    canvas,
-                    label,
-                    labelX,
-                    tickCenterY,
-                    horizontalPosition = position.textHorizontalPosition,
-                )
+            label?.let { label ->
+                val labelTop = label.getTextTopPosition(textPosition, tickCenterY, labelTextHeight)
+                labels.getOrNull(index)?.let { labelText ->
+                    if (
+                        (horizontalLabelPosition == Inside) &&
+                        (isNotInRestrictedBounds(
+                            labelX,
+                            labelTop - labelHeight.half,
+                            labelX,
+                            labelTop + labelHeight.half
+                        )) || horizontalLabelPosition == Outside
+                    ) {
+                        label.background?.setParentBounds(bounds)
+                        label.drawText(
+                            canvas,
+                            labelText,
+                            labelX,
+                            tickCenterY,
+                            horizontalPosition = textHorizontalPosition,
+                            verticalPosition = verticalLabelPosition.textPosition,
+                        )
+                    }
+                }
             }
         }
         axis?.setParentBounds(bounds)
@@ -175,15 +221,28 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
      * — [axisThickness],
      * — [tickLength].
      * @return Width of this [VerticalAxis] that should be enough to fit its contents
-     * in [draw] function.
+     * in [drawBehindDataSet] and [drawAboveDataSet] functions.
      */
     override fun getDesiredWidth(
         labels: List<String>,
     ): Float {
-        val widestTextComponentWidth = label?.let { label ->
-            labels.maxOf(label::getWidth)
-        }.orZero
-        return axisThickness.half + tickLength + widestTextComponentWidth
+        val maxLabelAndTickWidth = when (horizontalLabelPosition) {
+            Outside -> label?.let { label ->
+                labels.maxOf(label::getWidth)
+            }.orZero + tickLength
+            Inside -> 0f
+        }
+        return axisThickness.half + maxLabelAndTickWidth
+    }
+
+    public enum class HorizontalLabelPosition {
+        Outside, Inside
+    }
+
+    public enum class VerticalLabelPosition(val textPosition: VerticalPosition) {
+        Center(VerticalPosition.Center),
+        Top(VerticalPosition.Bottom),
+        Bottom(VerticalPosition.Top),
     }
 
     companion object {

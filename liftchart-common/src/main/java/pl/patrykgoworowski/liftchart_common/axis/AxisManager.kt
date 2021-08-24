@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
+import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
@@ -122,19 +123,40 @@ public open class AxisManager(
                 dataSetBounds.bottom
             )
         }
+        setRestrictedBounds()
     }
 
-    fun draw(
+    private fun setRestrictedBounds() {
+        startAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, bottomAxis?.bounds)
+        topAxis?.setRestrictedBounds(startAxis?.bounds, endAxis?.bounds, bottomAxis?.bounds)
+        endAxis?.setRestrictedBounds(topAxis?.bounds, startAxis?.bounds, bottomAxis?.bounds)
+        bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
+    }
+
+    fun drawBehindDataSet(
         canvas: Canvas,
         model: EntriesModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
     ) {
-        startAxis?.draw(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        topAxis?.draw(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        endAxis?.draw(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        bottomAxis?.draw(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        topAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        bottomAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        startAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        endAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+    }
+
+    fun drawAboveDataSet(
+        canvas: Canvas,
+        model: EntriesModel,
+        dataSetModel: DataSetModel,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
+    ) {
+        topAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        bottomAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        startAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        endAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
     }
 
 }

@@ -126,11 +126,21 @@ class DataSetView @JvmOverloads constructor(
             ViewCompat.postInvalidateOnAnimation(this@DataSetView)
         }
 
-        axisManager.draw(
-            canvas, dataSet.getEntriesModel(), dataSetModel, segmentProperties,
-            rendererViewState
+        axisManager.drawBehindDataSet(
+            canvas = canvas,
+            model = dataSet.getEntriesModel(),
+            dataSetModel = dataSetModel,
+            segmentProperties = segmentProperties,
+            rendererViewState = rendererViewState,
         )
         dataSet.draw(canvas, rendererViewState, marker)
+        axisManager.drawAboveDataSet(
+            canvas = canvas,
+            model = dataSet.getEntriesModel(),
+            dataSetModel = dataSetModel,
+            segmentProperties = segmentProperties,
+            rendererViewState = rendererViewState,
+        )
         scrollHandler.maxScrollDistance = dataSet.maxScrollAmount
     }
 
