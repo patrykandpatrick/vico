@@ -74,7 +74,12 @@ fun PreviewColumnChartBottom() {
     )
 }
 
-@Preview("Column Chart Bottom-Left", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
+@Preview(
+    "Column Chart Bottom-Left",
+    heightDp = 100,
+    showBackground = true,
+    backgroundColor = 0xFFFFFF
+)
 @Composable
 fun PreviewColumnChartBottomLeft() {
     ColumnChart(
@@ -88,7 +93,12 @@ fun PreviewColumnChartBottomLeft() {
     )
 }
 
-@Preview("Column Chart Top-Right", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
+@Preview(
+    "Column Chart Top-Right",
+    heightDp = 100,
+    showBackground = true,
+    backgroundColor = 0xFFFFFF
+)
 @Composable
 fun PreviewColumnChartTopRight() {
     ColumnChart(

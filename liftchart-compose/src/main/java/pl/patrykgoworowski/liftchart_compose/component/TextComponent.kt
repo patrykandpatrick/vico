@@ -19,7 +19,7 @@ fun textComponent(
     background: ShapeComponent<Shape>?,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = DEF_LABEL_LINE_COUNT,
-) : TextComponent = TextComponent(
+): TextComponent = TextComponent(
     color = color.toArgb(),
     textSize = textSize.pixelSize(LocalDensity.current),
     ellipsize = ellipsize,

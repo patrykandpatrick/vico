@@ -20,7 +20,8 @@ fun Modifier.chartTouchEvent(
             setTouchPoint(null)
         }
     )
-}.then(onZoom?.let(Modifier::zoomable) ?: Modifier)
+}
+    .then(onZoom?.let(Modifier::zoomable) ?: Modifier)
     .then(scrollableState?.let { state ->
         scrollable(
             state = state,
