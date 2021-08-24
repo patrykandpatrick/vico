@@ -5,4 +5,4 @@ import android.graphics.PointF
 data class MutableRendererViewState(
     override var markerTouchPoint: PointF? = null,
     override var horizontalScroll: Float = 0f,
-): RendererViewState
+) : RendererViewState

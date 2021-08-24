@@ -4,7 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.*
 import android.graphics.drawable.Drawable
 
-public class ShapeDrawable(
+class ShapeDrawable(
     private val shape: Shape,
     private val width: Int = 0,
     private val height: Int = 0,

@@ -38,11 +38,11 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
     private val textHorizontalPosition: HorizontalPosition
         get() = if (isLabelOutsideOnLeftOrInsideOnRight) HorizontalPosition.End else HorizontalPosition.Start
 
-    public var maxLabelCount: Int = DEF_LABEL_COUNT
-    public var labelSpacing: Float = DEF_LABEL_SPACING
+    var maxLabelCount: Int = DEF_LABEL_COUNT
+    var labelSpacing: Float = DEF_LABEL_SPACING
 
-    public var horizontalLabelPosition = Outside
-    public var verticalLabelPosition = Center
+    var horizontalLabelPosition = Outside
+    var verticalLabelPosition = Center
 
     override fun drawBehindDataSet(
         canvas: Canvas,

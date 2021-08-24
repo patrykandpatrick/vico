@@ -5,7 +5,7 @@ import pl.patrykgoworowski.liftchart_common.entry.entryOf
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 import java.util.*
 
-public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
+class DefaultDiffProcessor : DiffProcessor<DataEntry> {
 
     private val progressMaps = ArrayList<TreeMap<Float, ProgressModel>>()
 

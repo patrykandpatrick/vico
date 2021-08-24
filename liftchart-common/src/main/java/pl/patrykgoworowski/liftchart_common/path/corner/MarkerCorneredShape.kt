@@ -7,12 +7,12 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.DEF_MARKER_TICK_SIZE
 import pl.patrykgoworowski.liftchart_common.extension.between
 
-public open class MarkerCorneredShape(
+open class MarkerCorneredShape(
     topLeft: Corner,
     topRight: Corner,
     bottomRight: Corner,
     bottomLeft: Corner,
-    public val tickSize: Float = DEF_MARKER_TICK_SIZE,
+    val tickSize: Float = DEF_MARKER_TICK_SIZE,
 ) : CorneredShape(
     topLeft, topRight, bottomRight, bottomLeft
 ) {
@@ -33,7 +33,7 @@ public open class MarkerCorneredShape(
         tickSize = tickSize,
     )
 
-    public fun drawMarker(
+    fun drawMarker(
         canvas: Canvas,
         paint: Paint,
         path: Path,
@@ -45,7 +45,8 @@ public open class MarkerCorneredShape(
         val availableCornerSize = minOf(bounds.width(), bounds.height())
 
         val minLeft = contentBounds.left + bottomLeft.getCornerSize(availableCornerSize)
-        val maxLeft = contentBounds.right - (bottomRight.getCornerSize(availableCornerSize) + (tickSize * 2))
+        val maxLeft =
+            contentBounds.right - (bottomRight.getCornerSize(availableCornerSize) + (tickSize * 2))
 
         val tickTopLeft = (tickX - tickSize).between(minLeft, maxLeft)
         path.moveTo(tickTopLeft, bounds.bottom)

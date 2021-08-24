@@ -14,17 +14,17 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.Sin
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.single.SingleEntryCollection
 
 val SingleEntryCollection.collectAsFlow: Flow<SingleEntriesModel>
-        get() = callbackFlow {
+    get() = callbackFlow {
 
-            val listener: SingleEntriesModelListener = { entriesModel ->
-                trySendBlocking(entriesModel)
-            }
+        val listener: SingleEntriesModelListener = { entriesModel ->
+            trySendBlocking(entriesModel)
+        }
 
-            addOnEntriesChangedListener(listener)
-            awaitClose {
-                removeOnEntriesChangedListener(listener)
-            }
-        }.flowOn(Dispatchers.IO)
+        addOnEntriesChangedListener(listener)
+        awaitClose {
+            removeOnEntriesChangedListener(listener)
+        }
+    }.flowOn(Dispatchers.IO)
 
 val MultiEntryCollection.collectAsFlow: Flow<MultiEntriesModel>
     get() = callbackFlow {

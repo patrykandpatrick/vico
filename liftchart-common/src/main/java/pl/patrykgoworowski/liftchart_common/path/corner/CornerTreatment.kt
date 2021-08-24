@@ -2,9 +2,9 @@ package pl.patrykgoworowski.liftchart_common.path.corner
 
 import android.graphics.Path
 
-public interface CornerTreatment {
+interface CornerTreatment {
 
-    public fun createCorner(
+    fun createCorner(
         x1: Float,
         y1: Float,
         x2: Float,

@@ -6,29 +6,29 @@ import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
-public open class ShapeComponent<T : Shape>(
-    public var shape: T,
+open class ShapeComponent<T : Shape>(
+    var shape: T,
     color: Int = Color.BLACK,
-    public var dynamicShader: DynamicShader? = null
+    var dynamicShader: DynamicShader? = null
 ) : Component() {
 
     val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     protected val drawBounds: RectF = RectF()
     protected val path: Path = Path()
 
-    public val parentBounds = RectF()
+    val parentBounds = RectF()
 
-    public var color by paint::color
+    var color by paint::color
 
     init {
         paint.color = color
     }
 
-    public fun setParentBounds(bounds: RectF) {
+    fun setParentBounds(bounds: RectF) {
         parentBounds.set(bounds)
     }
 
-    public fun setParentBounds(
+    fun setParentBounds(
         left: Float,
         top: Float,
         right: Float,
@@ -62,7 +62,7 @@ public open class ShapeComponent<T : Shape>(
             ?.let { shader -> paint.shader = shader }
     }
 
-    public open fun updateDrawBounds(
+    open fun updateDrawBounds(
         left: Float,
         top: Float,
         right: Float,
@@ -76,7 +76,7 @@ public open class ShapeComponent<T : Shape>(
         )
     }
 
-    public open fun fitsIn(
+    open fun fitsIn(
         left: Float,
         top: Float,
         right: Float,
@@ -84,7 +84,7 @@ public open class ShapeComponent<T : Shape>(
         boundingBox: RectF
     ): Boolean = boundingBox.contains(left, top, right, bottom)
 
-    public open fun intersects(
+    open fun intersects(
         left: Float,
         top: Float,
         right: Float,
@@ -92,7 +92,7 @@ public open class ShapeComponent<T : Shape>(
         boundingBox: RectF
     ): Boolean = boundingBox.intersects(left, top, right, bottom)
 
-    public fun setShadow(
+    fun setShadow(
         radius: Float,
         dx: Float = 0f,
         dy: Float = 0f,
