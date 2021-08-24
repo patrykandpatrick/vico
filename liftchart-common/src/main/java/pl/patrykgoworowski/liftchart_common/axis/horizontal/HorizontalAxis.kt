@@ -32,7 +32,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Top else VerticalPosition.Bottom
 
-    public var tickType: TickType = TickType.Minor
+    var tickType: TickType = TickType.Minor
 
     override fun drawBehindDataSet(
         canvas: Canvas,
@@ -62,7 +62,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         val guidelineBottom = dataSetBounds.bottom
 
         for (index in 0 until tickCount) {
-
             guideline?.setParentBounds(bounds)
             guideline?.takeIf {
                 it.fitsInVertical(
@@ -92,11 +91,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState
     ) {
-        val tickMarkTop = if (position.isBottom) {
-            bounds.top
-        } else {
-            bounds.bottom - tickLength
-        }
+        val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val scrollX = rendererViewState.horizontalScroll
 
@@ -182,8 +177,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         outDimensions: MutableDimensions,
         model: EntriesModel,
         dataSetModel: DataSetModel
-    ): Dimensions {
-        return outDimensions.apply {
+    ): Dimensions =
+        outDimensions.apply {
             setHorizontal(
                 if (tickType == TickType.Minor) tick?.thickness?.half.orZero
                 else 0f
@@ -191,7 +186,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
             top = if (position.isTop) getDesiredHeight().toFloat() else 0f
             bottom = if (position.isBottom) getDesiredHeight().toFloat() else 0f
         }
-    }
 
     override fun getHorizontalInsets(
         outDimensions: MutableDimensions,
@@ -200,12 +194,11 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         dataSetModel: DataSetModel
     ): Dimensions = outDimensions
 
-    override fun getDesiredHeight(): Int {
-        return ((if (position.isBottom) axisThickness else 0f)
+    override fun getDesiredHeight() =
+        ((if (position.isBottom) axisThickness else 0f)
                 + tickLength
                 + label?.getHeight().orZero
                 ).toInt()
-    }
 
     override fun getDesiredWidth(
         labels: List<String>
@@ -242,5 +235,4 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
             guideline = guideline,
         )
     }
-
 }
