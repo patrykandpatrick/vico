@@ -34,12 +34,63 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
 
     public var tickType: TickType = TickType.Minor
 
-    override fun onDraw(
+    override fun drawBehindDataSet(
         canvas: Canvas,
         model: EntriesModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
+    ) {
+        val scrollX = rendererViewState.horizontalScroll
+
+        val clipRestoreCount = canvas.save()
+        canvas.clipRect(
+            bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
+            minOf(bounds.top, dataSetBounds.top),
+            bounds.right + if (tickType == TickType.Minor) tickThickness.half else 0f,
+            maxOf(bounds.bottom, dataSetBounds.bottom)
+        )
+
+        val entryLength = getEntryLength(segmentProperties.segmentWidth)
+        val tickCount = tickType.getTickCount(entryLength)
+        val tickDrawStep = segmentProperties.segmentWidth
+        val scrollAdjustment = (scrollX / tickDrawStep).toInt()
+        var textDrawCenter = bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
+        var tickDrawCenter = tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
+
+        val guidelineTop = dataSetBounds.top
+        val guidelineBottom = dataSetBounds.bottom
+
+        for (index in 0 until tickCount) {
+
+            guideline?.setParentBounds(bounds)
+            guideline?.takeIf {
+                it.fitsInVertical(
+                    guidelineTop,
+                    guidelineBottom,
+                    tickDrawCenter,
+                    dataSetBounds
+                )
+            }?.drawVertical(
+                canvas = canvas,
+                top = guidelineTop,
+                bottom = guidelineBottom,
+                centerX = tickDrawCenter
+            )
+
+            tickDrawCenter += tickDrawStep
+            textDrawCenter += tickDrawStep
+        }
+
+        if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
+    }
+
+    override fun drawAboveDataSet(
+        canvas: Canvas,
+        model: EntriesModel,
+        dataSetModel: DataSetModel,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState
     ) {
         val tickMarkTop = if (position.isBottom) {
             bounds.top
@@ -57,30 +108,16 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
             maxOf(bounds.bottom, dataSetBounds.bottom)
         )
 
-        val entriesLength = ceil(bounds.width() / segmentProperties.segmentWidth).toInt() + 1
-        val tickCount: Int
+        val entryLength = getEntryLength(segmentProperties.segmentWidth)
+        val tickCount = tickType.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
-        var tickDrawCenter: Float
         val scrollAdjustment = (scrollX / tickDrawStep).toInt()
         var textDrawCenter = bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
+        var tickDrawCenter = tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
-        when (tickType) {
-            TickType.Minor -> {
-                tickCount = entriesLength + 1
-                tickDrawCenter = bounds.left - scrollX + (tickDrawStep * scrollAdjustment)
-            }
-            TickType.Major -> {
-                tickCount = entriesLength
-                tickDrawCenter = textDrawCenter
-            }
-        }
-
         var valueIndex: Float = model.minX + scrollAdjustment * model.step
-
-        val guidelineTop = dataSetBounds.top
-        val guidelineBottom = dataSetBounds.bottom
 
         for (index in 0 until tickCount) {
             tick?.setParentBounds(bounds)
@@ -91,22 +128,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
                 centerX = tickDrawCenter
             )
 
-            guideline?.setParentBounds(bounds)
-            guideline?.takeIf {
-                it.fitsInVertical(
-                    guidelineTop,
-                    guidelineBottom,
-                    tickDrawCenter,
-                    dataSetBounds
-                )
-            }?.drawVertical(
-                canvas = canvas,
-                top = guidelineTop,
-                bottom = guidelineBottom,
-                centerX = tickDrawCenter
-            )
-
-            if (index < entriesLength) {
+            if (index < entryLength) {
                 label?.background?.setParentBounds(bounds)
                 label?.drawText(
                     canvas,
@@ -136,6 +158,24 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         label?.clearLayoutCache()
 
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
+    }
+
+    private fun getEntryLength(segmentWidth: Float) =
+        ceil(bounds.width() / segmentWidth).toInt() + 1
+
+    private fun TickType.getTickCount(entryLength: Int) = when(this) {
+        TickType.Minor -> entryLength + 1
+        TickType.Major -> entryLength
+    }
+
+    private fun TickType.getTickDrawCenter(
+        scrollX: Float,
+        tickDrawStep: Float,
+        scrollAdjustment: Int,
+        textDrawCenter: Float,
+    ) = when (this) {
+        TickType.Minor -> bounds.left - scrollX + (tickDrawStep * scrollAdjustment)
+        TickType.Major -> textDrawCenter
     }
 
     override fun getVerticalInsets(

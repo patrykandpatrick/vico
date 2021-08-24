@@ -21,6 +21,7 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     val tickThickness: Float
     val guidelineThickness: Float
     val tickLength: Float
+    val restrictedBounds: List<RectF>
 
     public val maxAnyAxisLineThickness: Float
         get() = maxOf(axisThickness, tickThickness, guidelineThickness)
@@ -36,7 +37,6 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     var tick: TickComponent?
     var guideline: LineComponent?
     var isLTR: Boolean
-    var isVisible: Boolean
     var valueFormatter: AxisValueFormatter
 
     fun draw(
@@ -46,12 +46,18 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
     ) {
-        if (isVisible) {
-            onDraw(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        }
+            drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
     }
 
-    fun onDraw(
+    fun drawBehindDataSet(
+        canvas: Canvas,
+        model: EntriesModel,
+        dataSetModel: DataSetModel,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
+    )
+
+    fun drawAboveDataSet(
         canvas: Canvas,
         model: EntriesModel,
         dataSetModel: DataSetModel,
@@ -77,6 +83,8 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     fun getDesiredWidth(
         labels: List<String>,
     ): Float
+
+    fun setRestrictedBounds(vararg bounds: RectF?)
 
     fun getDesiredHeight(): Int
 
