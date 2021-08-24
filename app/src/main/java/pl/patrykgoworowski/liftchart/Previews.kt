@@ -36,7 +36,10 @@ fun SampleDataSet(modifier: Modifier = Modifier) = MainTheme {
     val colors = MaterialTheme.colors
     ColumnChart(
         modifier = modifier,
-        entryCollection = MultiEntryList(entriesOf(1 to 1, 2 to 2, 3 to 3, 4 to 2)),
+        entryCollection = MultiEntryList(
+            entriesOf(1 to 1, 2 to 2, 3 to 3, 4 to 2),
+            animateChanges = false,
+        ),
         axisManager = AxisManager(
             startAxis = VerticalAxis.start(
                 label = textComponent(

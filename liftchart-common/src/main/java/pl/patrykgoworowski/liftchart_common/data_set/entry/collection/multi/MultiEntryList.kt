@@ -29,11 +29,17 @@ class MultiEntryList(
     override val stackedMaxY: Float by calculator::stackedMaxY
     override val stackedMinY: Float by calculator::stackedMinY
 
-    constructor(entryCollections: List<List<DataEntry>>) : this() {
+    constructor(
+        entryCollections: List<List<DataEntry>>,
+        animateChanges: Boolean = true,
+    ) : this(animateChanges = animateChanges) {
         setEntries(entryCollections)
     }
 
-    constructor(vararg entryCollections: List<DataEntry>) : this() {
+    constructor(
+        vararg entryCollections: List<DataEntry>,
+        animateChanges: Boolean = true,
+    ) : this(animateChanges = animateChanges) {
         setEntries(entryCollections.toList())
     }
 
