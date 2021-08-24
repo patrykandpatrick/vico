@@ -10,11 +10,11 @@ import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_view.extension.fling
 import kotlin.math.abs
 
-public open class MotionEventHandler(
+open class MotionEventHandler(
     private val scroller: OverScroller,
     private val scrollHandler: ScrollHandler,
     density: Float,
-    public var isHorizontalScrollEnabled: Boolean = false,
+    var isHorizontalScrollEnabled: Boolean = false,
     private val onTouchPoint: (PointF?) -> Unit,
     private val requestInvalidate: () -> Unit,
 ) {
@@ -27,8 +27,9 @@ public open class MotionEventHandler(
     private var velocityTracker = VelocityTrackerHelper()
     private var lastEventPointerCount = 0
 
-    public fun handleTouchPoint(motionEvent: MotionEvent): Boolean {
-        val ignoreEvent = motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
+    fun handleTouchPoint(motionEvent: MotionEvent): Boolean {
+        val ignoreEvent =
+            motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
         lastEventPointerCount = motionEvent.pointerCount
 
         return when (motionEvent.action and MotionEvent.ACTION_MASK) {
