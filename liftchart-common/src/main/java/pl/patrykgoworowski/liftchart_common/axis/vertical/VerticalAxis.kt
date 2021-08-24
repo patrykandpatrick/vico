@@ -104,11 +104,7 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
             bounds.left + axisThickness + tickLength
         }
 
-        val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) {
-            tickLeftX
-        } else {
-            tickRightX
-        }
+        val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
 
         var tickCenterY: Float
         val textPosition = verticalLabelPosition.textPosition
