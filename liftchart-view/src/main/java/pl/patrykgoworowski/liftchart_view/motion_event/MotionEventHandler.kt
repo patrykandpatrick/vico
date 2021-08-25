@@ -10,7 +10,7 @@ import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_view.extension.fling
 import kotlin.math.abs
 
-open class MotionEventHandler(
+public open class MotionEventHandler(
     private val scroller: OverScroller,
     private val scrollHandler: ScrollHandler,
     density: Float,
@@ -27,7 +27,7 @@ open class MotionEventHandler(
     private var velocityTracker = VelocityTrackerHelper()
     private var lastEventPointerCount = 0
 
-    fun handleTouchPoint(motionEvent: MotionEvent): Boolean {
+    public fun handleTouchPoint(motionEvent: MotionEvent): Boolean {
         val ignoreEvent =
             motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
         lastEventPointerCount = motionEvent.pointerCount

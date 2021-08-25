@@ -61,15 +61,15 @@ class DataSetView @JvmOverloads constructor(
 
     private val rendererViewState = MutableRendererViewState()
 
-    var isZoomEnabled = true
+    public var isZoomEnabled = true
 
-    var scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
+    public var scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
         ChartScaleGestureListener(
             getChartBounds = { dataSet?.bounds },
             onZoom = this::handleZoom
         )
 
-    var scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
+    public var scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
     var dataSet: DataSetRendererWithModel<*>? by observable(null) { _, oldValue, newValue ->
         oldValue?.removeListener(updateRequestListener)
@@ -93,7 +93,7 @@ class DataSetView @JvmOverloads constructor(
         }
     }
 
-    fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
+    public fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
         val dataSet = dataSet ?: return
         val newZoom = (dataSet.zoom ?: 1f) * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
