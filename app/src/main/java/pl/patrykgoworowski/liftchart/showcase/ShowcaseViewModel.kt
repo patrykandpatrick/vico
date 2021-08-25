@@ -17,7 +17,6 @@ class ShowcaseViewModel : ViewModel() {
     val entries = MultiEntryList()
     val multiEntries = MultiEntryList()
 
-
     init {
         viewModelScope.launch {
             while (currentCoroutineContext().isActive) {

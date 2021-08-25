@@ -38,7 +38,6 @@ class ShapeDrawable(
         updateColor()
     }
 
-
     override fun setState(stateSet: IntArray): Boolean {
         val result = super.setState(stateSet)
         updateColor()

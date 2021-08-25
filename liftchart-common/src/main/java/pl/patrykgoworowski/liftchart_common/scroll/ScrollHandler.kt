@@ -1,6 +1,5 @@
 package pl.patrykgoworowski.liftchart_common.scroll
 
-
 class ScrollHandler(
     private val setScrollAmount: (Float) -> Unit,
     var maxScrollDistance: Float = 0f,

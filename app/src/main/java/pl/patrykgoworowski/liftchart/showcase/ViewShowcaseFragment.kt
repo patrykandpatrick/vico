@@ -25,7 +25,6 @@ import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_view.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
 
-
 class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
     private val viewModel: ShowcaseViewModel by lazy {

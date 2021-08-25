@@ -41,7 +41,6 @@ import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.gesture.rememberOnZoom
 
-
 val defaultColumnComponent: LineComponent
     @Composable
     get() = LineComponent(

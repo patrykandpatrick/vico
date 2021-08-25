@@ -12,7 +12,6 @@ import pl.patrykgoworowski.liftchart_common.path.corner.CorneredShape
 import pl.patrykgoworowski.liftchart_common.path.corner.CutCornerTreatment
 import pl.patrykgoworowski.liftchart_common.path.corner.RoundedCornerTreatment
 
-
 fun rectShape(): Shape = object : Shape {
 
     override fun drawShape(
