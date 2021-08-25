@@ -42,8 +42,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         rendererViewState: RendererViewState,
     ) {
         val scrollX = rendererViewState.horizontalScroll
-
         val clipRestoreCount = canvas.save()
+
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
             minOf(bounds.top, dataSetBounds.top),
@@ -64,20 +64,22 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         val guidelineBottom = dataSetBounds.bottom
 
         for (index in 0 until tickCount) {
-            guideline?.setParentBounds(bounds)
-            guideline?.takeIf {
-                it.fitsInVertical(
-                    guidelineTop,
-                    guidelineBottom,
-                    tickDrawCenter,
-                    dataSetBounds
+            guideline?.run {
+                setParentBounds(bounds)
+                takeIf {
+                    it.fitsInVertical(
+                        guidelineTop,
+                        guidelineBottom,
+                        tickDrawCenter,
+                        dataSetBounds
+                    )
+                }?.drawVertical(
+                    canvas = canvas,
+                    top = guidelineTop,
+                    bottom = guidelineBottom,
+                    centerX = tickDrawCenter
                 )
-            }?.drawVertical(
-                canvas = canvas,
-                top = guidelineTop,
-                bottom = guidelineBottom,
-                centerX = tickDrawCenter
-            )
+            }
 
             tickDrawCenter += tickDrawStep
             textDrawCenter += tickDrawStep
@@ -96,8 +98,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val scrollX = rendererViewState.horizontalScroll
-
         val clipRestoreCount = canvas.save()
+
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
             minOf(bounds.top, dataSetBounds.top),
@@ -119,41 +121,49 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         var valueIndex: Float = model.minX + scrollAdjustment * model.step
 
         for (index in 0 until tickCount) {
-            tick?.setParentBounds(bounds)
-            tick?.drawVertical(
-                canvas = canvas,
-                top = tickMarkTop,
-                bottom = tickMarkBottom,
-                centerX = tickDrawCenter
-            )
+            tick?.run {
+                setParentBounds(bounds)
+                drawVertical(
+                    canvas = canvas,
+                    top = tickMarkTop,
+                    bottom = tickMarkBottom,
+                    centerX = tickDrawCenter
+                )
+            }
 
             if (index < entryLength) {
-                label?.background?.setParentBounds(bounds)
-                label?.drawText(
-                    canvas,
-                    valueFormatter.formatValue(valueIndex, index, model, dataSetModel),
-                    textDrawCenter,
-                    textY,
-                    verticalPosition = position.textVerticalPosition,
-                    width = tickDrawStep.toInt(),
-                )
+                label?.run {
+                    background?.setParentBounds(bounds)
+                    drawText(
+                        canvas,
+                        valueFormatter.formatValue(valueIndex, index, model, dataSetModel),
+                        textDrawCenter,
+                        textY,
+                        verticalPosition = position.textVerticalPosition,
+                        width = tickDrawStep.toInt(),
+                    )
+                }
+
                 valueIndex += model.step
             }
             tickDrawCenter += tickDrawStep
             textDrawCenter += tickDrawStep
         }
 
-        axis?.setParentBounds(bounds)
-        axis?.drawHorizontal(
-            canvas = canvas,
-            left = dataSetBounds.left,
-            right = dataSetBounds.right,
-            centerY = if (position is AxisPosition.Horizontal.Bottom) {
-                bounds.top + axis?.thickness?.half.orZero
-            } else {
-                bounds.bottom + axis?.thickness?.half.orZero
-            }
-        )
+        axis?.run {
+            setParentBounds(bounds)
+            drawHorizontal(
+                canvas = canvas,
+                left = dataSetBounds.left,
+                right = dataSetBounds.right,
+                centerY = if (position is AxisPosition.Horizontal.Bottom) {
+                    bounds.top + axis?.thickness?.half.orZero
+                } else {
+                    bounds.bottom + axis?.thickness?.half.orZero
+                }
+            )
+        }
+
         label?.clearLayoutCache()
 
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
