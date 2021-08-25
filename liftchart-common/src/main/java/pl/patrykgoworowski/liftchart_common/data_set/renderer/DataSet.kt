@@ -7,7 +7,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesMod
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 
-interface DataSetRenderer<in Model : EntriesModel> : BoundsAware {
+interface DataSet<in Model : EntriesModel> : BoundsAware {
 
     var minY: Float?
     var maxY: Float?

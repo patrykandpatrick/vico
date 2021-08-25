@@ -9,7 +9,7 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACI
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
-import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
@@ -17,12 +17,17 @@ import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.roundToInt
 
-open class ColumnDataSetRenderer(
+open class ColumnDataSet(
     val columns: List<LineComponent>,
     var spacing: Float = DEF_MERGED_BAR_SPACING,
     var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
     var mergeMode: MergeMode = MergeMode.Grouped
-) : DataSetRenderer<MultiEntriesModel> {
+) : DataSet<MultiEntriesModel> {
+
+    constructor(
+        column: LineComponent,
+        spacing: Float = DEF_MERGED_BAR_SPACING,
+    ) : this(columns = listOf(column), spacing = spacing)
 
     private val heightMap = HashMap<Float, Float>()
     override val bounds: RectF = RectF()

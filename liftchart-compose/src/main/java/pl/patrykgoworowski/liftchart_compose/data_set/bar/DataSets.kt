@@ -26,12 +26,12 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
-import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
-import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
@@ -58,7 +58,7 @@ fun ColumnChart(
     axisManager: AxisManager = AxisManager(),
     marker: Marker? = null,
 ) {
-    val dataSet = remember { ColumnDataSetRenderer(columns = listOf(column)) }
+    val dataSet = remember { ColumnDataSet(columns = listOf(column)) }
         .apply {
             this.spacing = spacing.pixels
         }
@@ -84,7 +84,7 @@ fun ColumnChart(
     axisManager: AxisManager = AxisManager(),
     marker: Marker? = null,
 ) {
-    val dataSet = remember { ColumnDataSetRenderer(columns, mergeMode = mergeMode) }
+    val dataSet = remember { ColumnDataSet(columns, mergeMode = mergeMode) }
     val model = entryCollection.collectAsState()
 
     dataSet.spacing = spacing.pixels
@@ -102,7 +102,7 @@ fun ColumnChart(
 @Composable
 fun <Model : EntriesModel> DataSet(
     modifier: Modifier,
-    dataSet: DataSetRenderer<Model>,
+    dataSet: DataSet<Model>,
     model: Model,
     axisManager: AxisManager,
     marker: Marker?,
