@@ -21,9 +21,7 @@ class DecimalFormatAxisValueFormatter(
         index: Int,
         model: EntriesModel,
         dataSetModel: DataSetModel
-    ): String {
-        return decimalFormat.format(value)
-    }
+    ): String = decimalFormat.format(value)
 
     companion object {
         private const val DEF_FORMAT = "#.##"
@@ -36,5 +34,4 @@ class DecimalFormatAxisValueFormatter(
                 this.roundingMode = roundingMode
             }
     }
-
 }

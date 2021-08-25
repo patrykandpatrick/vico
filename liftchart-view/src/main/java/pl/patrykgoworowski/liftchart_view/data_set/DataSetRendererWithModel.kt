@@ -9,13 +9,14 @@ import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 
-interface DataSetRendererWithModel<Model: EntriesModel> : DataSetRenderer<Model> {
+interface DataSetRendererWithModel<Model : EntriesModel> : DataSetRenderer<Model> {
     fun getMeasuredWidth(): Int
     fun draw(
         canvas: Canvas,
         rendererViewState: RendererViewState,
         marker: Marker?,
     )
+
     fun addListener(listener: UpdateRequestListener)
     fun removeListener(listener: UpdateRequestListener)
     fun getEntriesModel(): Model

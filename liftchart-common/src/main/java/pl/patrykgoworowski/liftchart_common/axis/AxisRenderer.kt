@@ -23,13 +23,13 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     val tickLength: Float
     val restrictedBounds: List<RectF>
 
-    public val maxAnyAxisLineThickness: Float
+    val maxAnyAxisLineThickness: Float
         get() = maxOf(axisThickness, tickThickness, guidelineThickness)
 
-    public val labelLineHeight: Int
+    val labelLineHeight: Int
         get() = label?.lineHeight ?: 0
 
-    public val labelAllLinesHeight: Int
+    val labelAllLinesHeight: Int
         get() = label?.allLinesHeight ?: 0
 
     var label: TextComponent?
@@ -46,7 +46,7 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
     ) {
-            drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
     }
 
     fun drawBehindDataSet(

@@ -12,7 +12,7 @@ object SharpCornerTreatment : CornerTreatment {
         y2: Float,
         cornerLocation: CornerLocation,
         path: Path
-    ) = when(cornerLocation) {
+    ) = when (cornerLocation) {
         CornerLocation.TopLeft -> {
             path.lineTo(x1, y2)
         }
@@ -58,7 +58,7 @@ object RoundedCornerTreatment : CornerTreatment {
         path: Path
     ) {
         val startAngle: Float
-        when(cornerLocation) {
+        when (cornerLocation) {
             CornerLocation.TopLeft -> {
                 startAngle = 180f
                 tempRect.set(x1, y2, (x2 * 2) - x1, (y1 * 2) - y2)

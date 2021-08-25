@@ -32,4 +32,4 @@ val DEF_MARKER_TICK_SIZE = 6f.dp
 val MAX_ZOOM = 10f
 val MIN_ZOOM = 0.1f
 
-public val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
+val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()

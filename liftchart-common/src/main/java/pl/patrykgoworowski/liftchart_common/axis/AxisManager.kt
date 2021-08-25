@@ -12,11 +12,11 @@ import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 
-public open class AxisManager(
-    public open var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = VerticalAxis.start(),
-    public open var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
-    public open var endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
-    public open var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = HorizontalAxis.bottom(),
+open class AxisManager(
+    open var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = VerticalAxis.start(),
+    open var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
+    open var endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
+    open var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = HorizontalAxis.bottom(),
 ) {
 
     private val hasLeftAxis: Boolean
@@ -31,12 +31,12 @@ public open class AxisManager(
     private val hasBottomAxis: Boolean
         get() = bottomAxis != null
 
-    public var isLTR: Boolean = true
+    var isLTR: Boolean = true
 
-    public val leftAxis: AxisRenderer<*>?
+    val leftAxis: AxisRenderer<*>?
         get() = if (isLTR) startAxis else endAxis
 
-    public val rightAxis: AxisRenderer<*>?
+    val rightAxis: AxisRenderer<*>?
         get() = if (isLTR) endAxis else startAxis
 
     fun addInsetters(destination: MutableList<DataSetInsetter>) {
@@ -140,10 +140,34 @@ public open class AxisManager(
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
     ) {
-        topAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        bottomAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        startAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        endAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        topAxis?.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
+        bottomAxis?.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
+        startAxis?.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
+        endAxis?.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
     }
 
     fun drawAboveDataSet(
@@ -154,8 +178,20 @@ public open class AxisManager(
         rendererViewState: RendererViewState,
     ) {
         topAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        bottomAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        startAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        bottomAxis?.drawAboveDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
+        startAxis?.drawAboveDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
         endAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
     }
 

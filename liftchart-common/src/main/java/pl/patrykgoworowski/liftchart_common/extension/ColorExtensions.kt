@@ -15,6 +15,5 @@ fun Int.copyColor(
         (green shl GREEN_BIT_SHIFT) or
         (blue shl BLUE_BIT_SHIFT)
 
-
 private fun Int.extractColorChannel(bitShift: Int): Int =
     this shr bitShift and 0xff

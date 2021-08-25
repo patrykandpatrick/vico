@@ -2,7 +2,6 @@
 
 package pl.patrykgoworowski.liftchart_compose.component.dimension
 
-
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp

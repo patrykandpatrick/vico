@@ -34,7 +34,13 @@ fun ComposeShape.chartShape(): Shape = object : Shape {
             density = density,
         )
         when (outline) {
-            is Outline.Rectangle -> path.addRect(bounds.left, bounds.top, bounds.right, bounds.bottom, Path.Direction.CCW)
+            is Outline.Rectangle -> path.addRect(
+                bounds.left,
+                bounds.top,
+                bounds.right,
+                bounds.bottom,
+                Path.Direction.CCW
+            )
             is Outline.Rounded -> path.addRoundRect(bounds, outline.roundRect, radii)
             is Outline.Generic -> {
                 matrix.setTranslate(bounds.left, bounds.top)

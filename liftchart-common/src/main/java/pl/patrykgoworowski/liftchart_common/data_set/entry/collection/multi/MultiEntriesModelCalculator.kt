@@ -5,7 +5,7 @@ import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import kotlin.math.max
 import kotlin.math.min
 
-class MultiEntriesModelCalculator: SingleEntryModelCalculator() {
+class MultiEntriesModelCalculator : SingleEntryModelCalculator() {
 
     val stackedMap: HashMap<Float, Float> = HashMap()
 

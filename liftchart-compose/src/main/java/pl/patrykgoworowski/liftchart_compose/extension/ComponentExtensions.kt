@@ -1,4 +1,5 @@
 @file:Suppress("ComposableNaming")
+
 package pl.patrykgoworowski.liftchart_compose.extension
 
 import androidx.compose.runtime.Composable
@@ -11,7 +12,7 @@ import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_compose.component.ChartShape
 
 @Composable
-fun <T: ChartShape> ShapeComponent<T>.setShadow(
+fun <T : ChartShape> ShapeComponent<T>.setShadow(
     radius: Dp,
     dx: Dp = 0.dp,
     dy: Dp = 0.dp,

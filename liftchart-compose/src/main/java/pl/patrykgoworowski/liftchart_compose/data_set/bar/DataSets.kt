@@ -41,7 +41,6 @@ import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.gesture.rememberOnZoom
 
-
 val defaultColumnComponent: LineComponent
     @Composable
     get() = LineComponent(
@@ -164,9 +163,21 @@ fun <Model : EntriesModel> DataSet(
         virtualLayout.setBounds(bounds, dataSet, model, dataSetModel, axisManager, marker)
         val canvas = drawContext.canvas.nativeCanvas
         val segmentProperties = dataSet.getSegmentProperties(model)
-        axisManager.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState.value)
+        axisManager.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState.value
+        )
         dataSet.draw(canvas, model, rendererViewState.value, marker)
-        axisManager.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState.value)
+        axisManager.drawAboveDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState.value
+        )
         scrollHandler.maxScrollDistance = dataSet.maxScrollAmount
     }
 }

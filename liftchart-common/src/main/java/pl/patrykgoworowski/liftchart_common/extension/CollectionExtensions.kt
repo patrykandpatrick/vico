@@ -14,17 +14,17 @@ fun <T> List<T>.getRepeating(index: Int): T {
     return get(index % size.coerceAtLeast(1))
 }
 
-public fun <T> MutableList<T>.setAll(other: Collection<T>) {
+fun <T> MutableList<T>.setAll(other: Collection<T>) {
     clear()
     addAll(other)
 }
 
-public fun <T> MutableList<T>.setAll(other: Array<out T>) {
+fun <T> MutableList<T>.setAll(other: Array<out T>) {
     clear()
     addAll(other)
 }
 
-public inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
+inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
     var sum = 0f
     for (element in this) {
         sum += selector(element)
@@ -32,7 +32,7 @@ public inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
     return sum
 }
 
-public inline fun <T> Iterable<T>.forEachIndexedExtended(
+inline fun <T> Iterable<T>.forEachIndexedExtended(
     selector: (index: Int, isFirst: Boolean, isLast: Boolean, value: T) -> Unit
 ) {
     var index = 0
@@ -63,7 +63,7 @@ fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
         sum + selector(element)
     } / size
 
-public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
+inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
     var sum = 0f
     for (element in this) {
         sum += selector(element)
@@ -72,9 +72,9 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
 }
 
 internal inline fun <K, V> HashMap<K, ArrayList<V>>.updateList(
-        key: K,
-        initialCapacity: Int = 0,
-        block: ArrayList<V>.() -> Unit,
+    key: K,
+    initialCapacity: Int = 0,
+    block: ArrayList<V>.() -> Unit,
 ) {
     block(getOrPut(key) { ArrayList(initialCapacity) })
 }

@@ -4,11 +4,11 @@ import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 
-public fun SpannableStringBuilder.appendCompat(
+fun SpannableStringBuilder.appendCompat(
     text: CharSequence,
     what: Any,
     flags: Int,
-) =
+): SpannableStringBuilder =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         append(text, what, flags)
     } else {
@@ -17,7 +17,7 @@ public fun SpannableStringBuilder.appendCompat(
         this
     }
 
-public fun <T> Iterable<T>.transformToSpannable(
+fun <T> Iterable<T>.transformToSpannable(
     separator: CharSequence = ", ",
     prefix: CharSequence = "",
     postfix: CharSequence = "",

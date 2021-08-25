@@ -13,7 +13,7 @@ data class MultiEntriesModel(
     val stackedMinY: Float,
     val stackedMaxY: Float,
     override val step: Float
-): EntriesModel
+) : EntriesModel
 
 fun emptyMultiEntriesModel(): MultiEntriesModel =
     MultiEntriesModel(

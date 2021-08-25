@@ -7,24 +7,25 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesMod
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 
-public interface DataSetRenderer<in Model: EntriesModel> : BoundsAware {
+interface DataSetRenderer<in Model : EntriesModel> : BoundsAware {
 
-    public var minY: Float?
-    public var maxY :Float?
-    public var minX :Float?
-    public var maxX :Float?
+    var minY: Float?
+    var maxY: Float?
+    var minX: Float?
+    var maxX: Float?
 
-    public var isHorizontalScrollEnabled: Boolean
-    public var zoom: Float?
-    public val maxScrollAmount: Float
+    var isHorizontalScrollEnabled: Boolean
+    var zoom: Float?
+    val maxScrollAmount: Float
 
-    public fun draw(
+    fun draw(
         canvas: Canvas,
         model: Model,
         rendererViewState: RendererViewState,
         marker: Marker?,
     )
-    public fun getMeasuredWidth(model: Model): Int
-    public fun getSegmentProperties(model: Model): SegmentProperties
-    public fun setToAxisModel(axisModel: MutableDataSetModel, model: Model)
+
+    fun getMeasuredWidth(model: Model): Int
+    fun getSegmentProperties(model: Model): SegmentProperties
+    fun setToAxisModel(axisModel: MutableDataSetModel, model: Model)
 }

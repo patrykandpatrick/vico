@@ -38,11 +38,11 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
     private val textHorizontalPosition: HorizontalPosition
         get() = if (isLabelOutsideOnLeftOrInsideOnRight) HorizontalPosition.End else HorizontalPosition.Start
 
-    public var maxLabelCount: Int = DEF_LABEL_COUNT
-    public var labelSpacing: Float = DEF_LABEL_SPACING
+    var maxLabelCount: Int = DEF_LABEL_COUNT
+    var labelSpacing: Float = DEF_LABEL_SPACING
 
-    public var horizontalLabelPosition = Outside
-    public var verticalLabelPosition = Center
+    var horizontalLabelPosition = Outside
+    var verticalLabelPosition = Center
 
     override fun drawBehindDataSet(
         canvas: Canvas,
@@ -58,7 +58,6 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
         var centerY: Float
 
         for (index in 0..drawLabelCount) {
-
             centerY = bounds.bottom - (axisStep * index) + (axisThickness / 2)
 
             guideline?.setParentBounds(bounds)
@@ -110,16 +109,17 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
         val textPosition = verticalLabelPosition.textPosition
 
         for (index in 0..drawLabelCount) {
-
             tickCenterY = bounds.bottom - (axisStep * index) + (axisThickness / 2)
 
-            tick?.setParentBounds(bounds)
-            tick?.drawHorizontal(
-                canvas = canvas,
-                left = tickLeftX,
-                right = tickRightX,
-                tickCenterY
-            )
+            tick?.run {
+                setParentBounds(bounds)
+                drawHorizontal(
+                    canvas = canvas,
+                    left = tickLeftX,
+                    right = tickRightX,
+                    tickCenterY
+                )
+            }
 
             label?.let { label ->
                 val labelTop = label.getTextTopPosition(textPosition, tickCenterY, labelTextHeight)
@@ -235,11 +235,11 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
         return axisThickness.half + maxLabelAndTickWidth
     }
 
-    public enum class HorizontalLabelPosition {
+    enum class HorizontalLabelPosition {
         Outside, Inside
     }
 
-    public enum class VerticalLabelPosition(val textPosition: VerticalPosition) {
+    enum class VerticalLabelPosition(val textPosition: VerticalPosition) {
         Center(VerticalPosition.Center),
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
@@ -273,5 +273,4 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
             guideline = guideline,
         )
     }
-
 }

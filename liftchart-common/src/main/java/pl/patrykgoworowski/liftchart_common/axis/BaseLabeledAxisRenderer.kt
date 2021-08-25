@@ -11,7 +11,7 @@ import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 import kotlin.properties.Delegates
 
-public abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
+abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
     override var label: TextComponent?,
     override var axis: LineComponent?,
     override var tick: TickComponent?,

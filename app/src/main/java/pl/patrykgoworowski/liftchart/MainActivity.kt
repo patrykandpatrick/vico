@@ -4,7 +4,6 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.updatePadding
-import com.google.android.material.shape.MaterialShapeDrawable
 import pl.patrykgoworowski.liftchart.databinding.ActivityMainBinding
 import pl.patrykgoworowski.liftchart.extension.enableEdgeToEdge
 import pl.patrykgoworowski.liftchart.extension.statusBarInsets

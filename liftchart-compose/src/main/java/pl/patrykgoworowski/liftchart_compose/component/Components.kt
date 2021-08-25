@@ -20,7 +20,7 @@ import pl.patrykgoworowski.liftchart_compose.path.chartShape
 typealias ChartShape = pl.patrykgoworowski.liftchart_common.path.Shape
 
 @Composable
-public fun rectComponent(
+fun rectComponent(
     color: Color,
     thickness: Dp = DEF_BAR_WIDTH.dp,
     shape: Shape = RectangleShape,
@@ -33,7 +33,7 @@ public fun rectComponent(
 )
 
 @Composable
-public fun rectComponent(
+fun rectComponent(
     color: Color,
     thickness: Dp,
     shape: ChartShape,

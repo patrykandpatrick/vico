@@ -17,16 +17,17 @@ class ShowcaseViewModel : ViewModel() {
     val entries = MultiEntryList()
     val multiEntries = MultiEntryList()
 
-
     init {
         viewModelScope.launch {
             while (currentCoroutineContext().isActive) {
                 entries.setEntries(generator.generateRandomEntries())
-                multiEntries.setEntries(listOf(
-                    multiGenerator.generateRandomEntries(),
-                    multiGenerator.generateRandomEntries(),
-                    multiGenerator.generateRandomEntries()
-                ))
+                multiEntries.setEntries(
+                    listOf(
+                        multiGenerator.generateRandomEntries(),
+                        multiGenerator.generateRandomEntries(),
+                        multiGenerator.generateRandomEntries()
+                    )
+                )
                 delay(2_000)
             }
         }
