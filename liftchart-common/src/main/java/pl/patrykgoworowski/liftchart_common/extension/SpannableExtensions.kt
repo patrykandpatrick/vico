@@ -8,7 +8,7 @@ fun SpannableStringBuilder.appendCompat(
     text: CharSequence,
     what: Any,
     flags: Int,
-) =
+): SpannableStringBuilder =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
         append(text, what, flags)
     } else {
