@@ -17,11 +17,11 @@ import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.roundToInt
 
-open class ColumnDataSetRenderer(
-    val columns: List<LineComponent>,
-    var spacing: Float = DEF_MERGED_BAR_SPACING,
-    var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
-    var mergeMode: MergeMode = MergeMode.Grouped
+open class ColumnDataSetRenderer public constructor(
+    public val columns: List<LineComponent>,
+    public var spacing: Float = DEF_MERGED_BAR_SPACING,
+    public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
+    public var mergeMode: MergeMode = MergeMode.Grouped
 ) : DataSetRenderer<MultiEntriesModel> {
 
     private val heightMap = HashMap<Float, Float>()

@@ -55,10 +55,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         val tickCount = tickType.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (scrollX / tickDrawStep).toInt()
-        var textDrawCenter =
-            bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
-        var tickDrawCenter =
-            tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
+        var textDrawCenter = bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
+        var tickDrawCenter = tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
 
         val guidelineTop = dataSetBounds.top
         val guidelineBottom = dataSetBounds.bottom
@@ -109,10 +107,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
         val tickCount = tickType.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (scrollX / tickDrawStep).toInt()
-        var textDrawCenter =
-            bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
-        var tickDrawCenter =
-            tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
+        var textDrawCenter = bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
+        var tickDrawCenter = tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
@@ -162,7 +158,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width() / segmentWidth).toInt() + 1
 
-    private fun TickType.getTickCount(entryLength: Int) = when (this) {
+    private fun TickType.getTickCount(entryLength: Int) = when(this) {
         TickType.Minor -> entryLength + 1
         TickType.Major -> entryLength
     }

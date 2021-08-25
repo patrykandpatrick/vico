@@ -7,11 +7,11 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.path.Shape
 import kotlin.math.absoluteValue
 
-open class CorneredShape(
-    val topLeft: Corner,
-    val topRight: Corner,
-    val bottomRight: Corner,
-    val bottomLeft: Corner,
+public open class CorneredShape(
+    public val topLeft: Corner,
+    public val topRight: Corner,
+    public val bottomRight: Corner,
+    public val bottomLeft: Corner,
 ) : Shape {
 
     private var tL = 0f
@@ -27,7 +27,7 @@ open class CorneredShape(
         val bL = bottomLeft.getCornerSize(availableSize)
         return minOf(
             width / (tL + tR),
-            width / (bL + bR),
+            width / (bL+ bR),
             height / (tL + bL),
             height / (tR + bR),
         )

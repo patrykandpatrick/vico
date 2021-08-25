@@ -4,7 +4,7 @@ import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 
-fun SpannableStringBuilder.appendCompat(
+public fun SpannableStringBuilder.appendCompat(
     text: CharSequence,
     what: Any,
     flags: Int,
@@ -17,7 +17,7 @@ fun SpannableStringBuilder.appendCompat(
         this
     }
 
-fun <T> Iterable<T>.transformToSpannable(
+public fun <T> Iterable<T>.transformToSpannable(
     separator: CharSequence = ", ",
     prefix: CharSequence = "",
     postfix: CharSequence = "",

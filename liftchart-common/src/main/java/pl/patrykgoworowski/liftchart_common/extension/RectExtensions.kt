@@ -21,8 +21,7 @@ fun RectF.updateBy(
         left = this.left + left,
         top = this.top + top,
         right = this.right + right,
-        bottom = this.bottom + bottom
-    )
+        bottom = this.bottom + bottom)
 }
 
 fun RectF.set(

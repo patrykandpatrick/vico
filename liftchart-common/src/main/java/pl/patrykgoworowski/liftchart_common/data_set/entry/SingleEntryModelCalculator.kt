@@ -44,10 +44,7 @@ open class SingleEntryModelCalculator {
             currentEntry = iterator.next()
             previousEntry?.let { prevEntry ->
                 val difference = abs(currentEntry.x - prevEntry.x)
-                step = if (step == SingleEntryCollection.NO_VALUE) difference else min(
-                    step,
-                    difference
-                )
+                step = if (step == SingleEntryCollection.NO_VALUE) difference else min(step, difference)
             }
 
             previousEntry = currentEntry

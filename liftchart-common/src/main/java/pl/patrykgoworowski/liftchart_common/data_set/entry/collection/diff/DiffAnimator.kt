@@ -2,16 +2,16 @@ package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff
 
 import android.animation.TimeInterpolator
 
-interface DiffAnimator {
+public interface DiffAnimator {
 
-    val currentProgress: Float
+    public val currentProgress: Float
 
-    var animationInterpolator: TimeInterpolator
+    public var animationInterpolator: TimeInterpolator
 
-    var animationDuration: Long
+    public var animationDuration: Long
 
-    fun start(onProgress: (progress: Float) -> Unit)
+    public fun start(onProgress: (progress: Float) -> Unit)
 
-    fun cancel()
+    public fun cancel()
 
 }

@@ -6,9 +6,9 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 
-interface Marker : DataSetInsetter {
+public interface Marker : DataSetInsetter {
 
-    fun draw(
+    public fun draw(
         canvas: Canvas,
         bounds: RectF,
         markedEntries: List<EntryModel>,

@@ -3,13 +3,13 @@ package pl.patrykgoworowski.liftchart_common.path.corner
 import pl.patrykgoworowski.liftchart_common.IllegalPercentageException
 
 sealed class Corner(
-    val absoluteSize: Float,
-    val cornerTreatment: CornerTreatment,
+    public val absoluteSize: Float,
+    public val cornerTreatment: CornerTreatment,
 ) {
 
-    abstract fun getCornerSize(availableCornerSize: Float): Float
+    public abstract fun getCornerSize(availableCornerSize: Float): Float
 
-    class Absolute(
+    public class Absolute(
         size: Float,
         cornerTreatment: CornerTreatment,
     ) : Corner(size, cornerTreatment) {
@@ -18,8 +18,8 @@ sealed class Corner(
 
     }
 
-    class Relative(
-        val percentage: Int,
+    public class Relative(
+        public val percentage: Int,
         cornerTreatment: CornerTreatment,
     ) : Corner(0f, cornerTreatment) {
 

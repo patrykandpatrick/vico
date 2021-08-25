@@ -3,8 +3,8 @@ package pl.patrykgoworowski.liftchart_common.component
 import android.graphics.Canvas
 
 class OverlayingComponent(
-    val outer: Component,
-    val inner: Component,
+    public val outer: Component,
+    public val inner: Component,
     innerPaddingStart: Float = 0f,
     innerPaddingTop: Float = 0f,
     innerPaddingEnd: Float = 0f,

@@ -26,27 +26,27 @@ import kotlin.math.roundToInt
 typealias OnPreDrawListener =
             (canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float) -> Unit
 
-open class TextComponent(
+public open class TextComponent(
     color: Int = DKGRAY,
     textSize: Float = 12f.sp,
-    val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    val lineCount: Int = DEF_LABEL_LINE_COUNT,
-    open var background: ShapeComponent<Shape>? = ShapeComponent(pillShape(), LTGRAY),
+    public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    public val lineCount: Int = DEF_LABEL_LINE_COUNT,
+    public open var background: ShapeComponent<Shape>? = ShapeComponent(pillShape(), LTGRAY),
 ) : Padding by DefaultPadding(), Margins by DefaultMargins() {
 
-    val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+    public val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
-    val lineHeight: Int
+    public val lineHeight: Int
         get() = textPaint.lineHeight.roundToInt()
 
-    val allLinesHeight: Int
+    public val allLinesHeight: Int
         get() = lineHeight * lineCount
 
-    var isLTR: Boolean = true
-    var color: Int by textPaint::color
-    var textSize: Float by textPaint::textSize
-    var typeface: Typeface by textPaint::typeface
-    var rotationDegrees: Float = 0f
+    public var isLTR: Boolean = true
+    public var color: Int by textPaint::color
+    public var textSize: Float by textPaint::textSize
+    public var typeface: Typeface by textPaint::typeface
+    public var rotationDegrees: Float = 0f
     private var layout: StaticLayout = staticLayout("", textPaint, 0)
 
     private val layoutCache = HashMap<Int, StaticLayout>()
@@ -56,7 +56,7 @@ open class TextComponent(
         textPaint.textSize = textSize
     }
 
-    fun drawText(
+    public fun drawText(
         canvas: Canvas,
         text: CharSequence,
         textX: Float,
@@ -131,17 +131,17 @@ open class TextComponent(
         VerticalPosition.Bottom -> textY - (layoutHeight.half + padding.bottom + margins.bottom)
     }
 
-    fun getTextTopPosition(
+    public fun getTextTopPosition(
         verticalPosition: VerticalPosition,
         textY: Float,
         layoutHeight: Float,
     ) = verticalPosition.getTextTopPosition(textY, layoutHeight)
 
-    fun getWidth(text: CharSequence): Float {
+    public fun getWidth(text: CharSequence): Float {
         return getLayout(text).widestLineWidth + padding.horizontal + margins.horizontal
     }
 
-    fun getHeight(
+    public fun getHeight(
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
         includePadding: Boolean = true,
@@ -150,7 +150,7 @@ open class TextComponent(
             (if (includePadding) padding.vertical else 0f) +
             (if (includeMargin) margins.vertical else 0f)
 
-    fun clearLayoutCache() {
+    public fun clearLayoutCache() {
         layoutCache.clear()
     }
 

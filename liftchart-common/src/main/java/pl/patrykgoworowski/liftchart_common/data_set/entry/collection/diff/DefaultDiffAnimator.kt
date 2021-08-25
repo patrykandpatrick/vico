@@ -53,7 +53,7 @@ class DefaultDiffAnimator(
     }
 
     companion object {
-        const val DEFAULT_ANIM_DURATION = 250L
+        public const val DEFAULT_ANIM_DURATION = 250L
     }
 
 }

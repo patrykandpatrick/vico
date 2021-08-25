@@ -5,7 +5,7 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.component.dimension.DefaultMargins
 import pl.patrykgoworowski.liftchart_common.component.dimension.Margins
 
-abstract class Component : Margins by DefaultMargins() {
+public abstract class Component() : Margins by DefaultMargins() {
 
     abstract fun draw(
         canvas: Canvas,

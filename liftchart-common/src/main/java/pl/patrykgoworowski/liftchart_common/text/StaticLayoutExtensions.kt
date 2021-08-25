@@ -26,7 +26,7 @@ fun staticLayout(
     ellipsize: TextUtils.TruncateAt? = null,
     ellipsizedWidth: Int = width,
     align: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
-): StaticLayout =
+    ): StaticLayout =
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         StaticLayout
             .Builder
@@ -78,7 +78,7 @@ fun StaticLayout.getBounds(outBounds: Rect) {
 }
 
 val StaticLayout.widestLineWidth: Float
-    get() =
-        (0 until lineCount).maxOf { lineIndex ->
-            getLineWidth(lineIndex)
-        }
+get() =
+    (0 until lineCount).maxOf { lineIndex ->
+        getLineWidth(lineIndex)
+    }

@@ -11,7 +11,7 @@ import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.floatDimensions
 import kotlin.math.max
 
-open class VirtualLayout(
+public open class VirtualLayout(
     var isLTR: Boolean
 ) {
 
@@ -19,7 +19,7 @@ open class VirtualLayout(
     private val finalInsets: MutableDimensions = floatDimensions()
     private val tempInsets: MutableDimensions = floatDimensions()
 
-    open fun <Model : EntriesModel> setBounds(
+    public open fun <Model : EntriesModel> setBounds(
         contentBounds: RectF,
         dataSet: DataSetRenderer<Model>,
         model: Model,

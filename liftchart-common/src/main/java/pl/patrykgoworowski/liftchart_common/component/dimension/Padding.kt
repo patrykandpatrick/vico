@@ -2,11 +2,11 @@ package pl.patrykgoworowski.liftchart_common.component.dimension
 
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 
-interface Padding {
+public interface Padding {
 
-    val padding: MutableDimensions
+    public val padding: MutableDimensions
 
-    fun setPadding(
+    public fun setPadding(
         start: Float = 0f,
         top: Float = 0f,
         end: Float = 0f,
@@ -15,14 +15,14 @@ interface Padding {
         padding.set(start, top, end, bottom)
     }
 
-    fun setPadding(
+    public fun setPadding(
         horizontal: Float = 0f,
         vertical: Float = 0f,
     ) {
         padding.set(horizontal, vertical, horizontal, vertical)
     }
 
-    fun setPadding(
+    public fun setPadding(
         all: Float = 0f
     ) {
         padding.set(all)
