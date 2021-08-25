@@ -46,7 +46,7 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
     ) {
-            drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
     }
 
     fun drawBehindDataSet(

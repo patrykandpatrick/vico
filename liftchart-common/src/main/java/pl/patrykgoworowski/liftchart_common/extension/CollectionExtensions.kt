@@ -72,9 +72,9 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
 }
 
 internal inline fun <K, V> HashMap<K, ArrayList<V>>.updateList(
-        key: K,
-        initialCapacity: Int = 0,
-        block: ArrayList<V>.() -> Unit,
+    key: K,
+    initialCapacity: Int = 0,
+    block: ArrayList<V>.() -> Unit,
 ) {
     block(getOrPut(key) { ArrayList(initialCapacity) })
 }

@@ -82,7 +82,17 @@ class MultiEntryList(
             entryOf(x, y)
         }
 
-        model = MultiEntriesModel(data, mergedEntries, minX, maxX, minY, maxY, stackedMinY, stackedMaxY, step)
+        model = MultiEntriesModel(
+            data,
+            mergedEntries,
+            minX,
+            maxX,
+            minY,
+            maxY,
+            stackedMinY,
+            stackedMaxY,
+            step
+        )
         listeners.forEach { it(model) }
     }
 }

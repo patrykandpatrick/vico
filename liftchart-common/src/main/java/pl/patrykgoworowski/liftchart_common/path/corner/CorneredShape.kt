@@ -27,7 +27,7 @@ public open class CorneredShape(
         val bL = bottomLeft.getCornerSize(availableSize)
         return minOf(
             width / (tL + tR),
-            width / (bL+ bR),
+            width / (bL + bR),
             height / (tL + bL),
             height / (tR + bR),
         )

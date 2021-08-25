@@ -140,10 +140,34 @@ public open class AxisManager(
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
     ) {
-        topAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        bottomAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        startAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        endAxis?.drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        topAxis?.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
+        bottomAxis?.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
+        startAxis?.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
+        endAxis?.drawBehindDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
     }
 
     fun drawAboveDataSet(
@@ -154,8 +178,20 @@ public open class AxisManager(
         rendererViewState: RendererViewState,
     ) {
         topAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        bottomAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-        startAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
+        bottomAxis?.drawAboveDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
+        startAxis?.drawAboveDataSet(
+            canvas,
+            model,
+            dataSetModel,
+            segmentProperties,
+            rendererViewState
+        )
         endAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
     }
 
