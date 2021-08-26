@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -21,20 +22,21 @@ import pl.patrykgoworowski.liftchart_common.MAX_ZOOM
 import pl.patrykgoworowski.liftchart_common.MIN_ZOOM
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
+import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
-import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_SPACING
-import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
-import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
-import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
+import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.constants.*
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
+import pl.patrykgoworowski.liftchart_common.data_set.line.LineDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
+import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
@@ -89,6 +91,39 @@ fun ColumnChart(
 
     dataSet.spacing = spacing.pixels
     dataSet.innerSpacing = innerSpacing.pixels
+
+    DataSet(
+        modifier = modifier,
+        dataSet = dataSet,
+        model = model.value,
+        axisManager = axisManager,
+        marker = marker,
+    )
+}
+
+@Composable
+fun LineChart(
+    entryCollection: MultiEntryCollection,
+    modifier: Modifier = Modifier,
+    point: Component? = ShapeComponent(pillShape()),
+    pointSize: Dp = 6.dp,
+    spacing: Dp = DEF_MERGED_BAR_SPACING.dp,
+    lineWidth: Dp = 2.dp,
+    lineColor: Color = Color.LightGray,
+    axisManager: AxisManager = AxisManager(),
+    marker: Marker? = null,
+) {
+    val dataSet = remember {
+        LineDataSet(point = point)
+    }
+    val model = entryCollection.collectAsState()
+
+    dataSet.apply {
+        this.pointSize = pointSize.pixels
+        this.spacing = spacing.pixels
+        this.lineWidth = lineWidth.pixels
+        this.lineColor = lineColor.toArgb()
+    }
 
     DataSet(
         modifier = modifier,

@@ -29,6 +29,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.LineChart
 
 class ComposeShowcaseFragment : Fragment() {
 
@@ -70,6 +71,17 @@ class ComposeShowcaseFragment : Fragment() {
                         ).apply {
                             setMargins(start = 0f)
                         },
+                        axisManager = axisManager,
+                        marker = markerComponent(),
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    LineChart(
+                        entryCollection = viewModel.entries,
+                        modifier = chartModifier,
+                        pointSize = 10.dp,
+                        lineColor = byzantine,
                         axisManager = axisManager,
                         marker = markerComponent(),
                     )
