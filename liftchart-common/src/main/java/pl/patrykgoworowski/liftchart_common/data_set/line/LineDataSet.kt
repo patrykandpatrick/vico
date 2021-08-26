@@ -4,6 +4,7 @@ import android.graphics.*
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
@@ -32,6 +33,10 @@ class LineDataSet(
         color = lineColor
     }
     private val linePath = Path()
+
+    private val lineBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val lineBackgroundPath = Path()
+
     private val segmentProperties = MutableSegmentProperties()
     private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
 
@@ -39,6 +44,7 @@ class LineDataSet(
 
     public var lineColor: Int by linePaint::color
     public var lineWidth: Float by linePaint::strokeWidth
+    public var lineBackgroundShader: DynamicShader? = null
 
     public var cubicStrength = 1f
 
@@ -80,6 +86,9 @@ class LineDataSet(
         if (model.entryCollections.isEmpty()) return
         val (touchPoint, scrollX) = rendererViewState
         linePath.rewind()
+        lineBackgroundPath.rewind()
+
+        val lineBackgroundShader = lineBackgroundShader
 
         val clipRestoreCount = canvas.save()
         canvas.clipRect(
@@ -115,10 +124,18 @@ class LineDataSet(
         ) { entry, x, y ->
             if (linePath.isEmpty) {
                 linePath.moveTo(x, y)
+                if (lineBackgroundShader != null) {
+                    lineBackgroundPath.moveTo(x, bounds.bottom)
+                    lineBackgroundPath.lineTo(x, y)
+                }
             } else {
                 cubicCurvature = (scaledSpacing * cubicStrength) *
                         min(1f, (abs((y - prevY) / bounds.bottom) * 4))
                 linePath.cubicTo(prevX + cubicCurvature, prevY, x - cubicCurvature, y, x, y)
+                if (lineBackgroundShader != null) {
+                    lineBackgroundPath.cubicTo(prevX + cubicCurvature,
+                        prevY, x - cubicCurvature, y, x, y)
+                }
             }
             prevX = x
             prevY = y
@@ -136,6 +153,12 @@ class LineDataSet(
             }
         }
 
+        if (lineBackgroundShader != null) {
+            lineBackgroundPaint.shader = lineBackgroundShader.provideShader(bounds)
+            lineBackgroundPath.lineTo(prevX, bounds.bottom)
+            lineBackgroundPath.close()
+            canvas.drawPath(lineBackgroundPath, lineBackgroundPaint)
+        }
         canvas.drawPath(linePath, linePaint)
 
         val point = point
