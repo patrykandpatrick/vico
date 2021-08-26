@@ -28,6 +28,7 @@ val SingleEntryCollection.collectAsFlow: Flow<SingleEntriesModel>
         }
     }.flowOn(Dispatchers.IO)
 
+@ExperimentalCoroutinesApi
 val MultiEntryCollection.collectAsFlow: Flow<MultiEntriesModel>
     get() = callbackFlow {
 
