@@ -47,18 +47,15 @@ open class ShapeComponent<T : Shape>(
         if (left == right || top == bottom) return //Skip drawing shape that will be invisible.
         updateDrawBounds(left, top, right, bottom)
         path.reset()
-        applyShader(left, top, right, bottom)
+        applyShader(parentBounds)
         shape.drawShape(canvas, paint, path, drawBounds)
     }
 
     protected fun applyShader(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
+        bounds: RectF,
     ) {
         dynamicShader
-            ?.provideShader(left, top, right, bottom, parentBounds)
+            ?.provideShader(bounds)
             ?.let { shader -> paint.shader = shader }
     }
 

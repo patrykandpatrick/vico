@@ -13,12 +13,12 @@ fun horizontalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(parentBounds: RectF): Shader =
+    override fun createShader(bounds: RectF): Shader =
         LinearGradient(
-            parentBounds.left,
-            parentBounds.top,
-            parentBounds.right,
-            parentBounds.top,
+            bounds.left,
+            bounds.top,
+            bounds.right,
+            bounds.top,
             colors,
             positions,
             Shader.TileMode.CLAMP,
@@ -34,12 +34,12 @@ fun verticalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(parentBounds: RectF): Shader =
+    override fun createShader(bounds: RectF): Shader =
         LinearGradient(
-            parentBounds.left,
-            parentBounds.top,
-            parentBounds.left,
-            parentBounds.bottom,
+            bounds.left,
+            bounds.top,
+            bounds.left,
+            bounds.bottom,
             colors,
             positions,
             Shader.TileMode.CLAMP,

@@ -6,11 +6,7 @@ import android.graphics.Shader
 fun interface DynamicShader {
 
     fun provideShader(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        parentBounds: RectF,
+        bounds: RectF,
     ): Shader
 
 }

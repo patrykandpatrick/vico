@@ -12,15 +12,11 @@ class StaticShader(private val brush: Brush) : DynamicShader {
     private var shader: Shader? = null
 
     override fun provideShader(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        parentBounds: RectF
+        bounds: RectF
     ): Shader = shader ?: kotlin.run {
         val tempPaint = Paint()
         brush.applyTo(
-            size = Size(parentBounds.width(), parentBounds.height()),
+            size = Size(bounds.width(), bounds.height()),
             p = tempPaint,
             alpha = 1f,
         )
