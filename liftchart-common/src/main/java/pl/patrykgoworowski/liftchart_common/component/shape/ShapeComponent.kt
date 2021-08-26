@@ -97,8 +97,9 @@ open class ShapeComponent<T : Shape>(
         dx: Float = 0f,
         dy: Float = 0f,
         color: Int = DEF_SHADOW_COLOR,
-    ) {
+    ): ShapeComponent<T> {
         paint.setShadowLayer(radius, dx, dy, color)
+        return this
     }
 
 }
