@@ -15,18 +15,19 @@ import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentPrope
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
+import kotlin.math.min
 import kotlin.math.roundToInt
 
 open class ColumnDataSet(
     val columns: List<LineComponent>,
-    var spacing: Float = DEF_MERGED_BAR_SPACING,
-    var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
+    var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
+    var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
     var mergeMode: MergeMode = MergeMode.Grouped
 ) : DataSet<MultiEntriesModel> {
 
     constructor(
         column: LineComponent,
-        spacing: Float = DEF_MERGED_BAR_SPACING,
+        spacing: Float = DEF_MERGED_BAR_SPACING.dp,
     ) : this(columns = listOf(column), spacing = spacing)
 
     private val heightMap = HashMap<Float, Float>()
@@ -101,7 +102,6 @@ open class ColumnDataSet(
 
         var height: Float
         var columnCenterX: Float
-        var entryOffset: Float
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
@@ -118,8 +118,8 @@ open class ColumnDataSet(
             entryCollection.forEach { entry ->
                 if (entry.x !in minX..maxX) return@forEach
                 height = entry.y * heightMultiplier
-                entryOffset = (segmentSize + scaledSpacing) * (entry.x - model.minX) / step
-                columnCenterX = drawingStart + entryOffset
+                columnCenterX = drawingStart +
+                        ((segmentSize + scaledSpacing) * (entry.x - model.minX) / step)
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -171,7 +171,7 @@ open class ColumnDataSet(
         canvas.restoreToCount(clipRestoreCount)
 
         if (touchPoint == null || marker == null) return
-        getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
             marker.draw(
                 canvas,
                 bounds,
@@ -182,15 +182,10 @@ open class ColumnDataSet(
     }
 
     override fun setToAxisModel(axisModel: MutableDataSetModel, model: MultiEntriesModel) {
-        axisModel.minY = minY ?: axisModel.minY
+        axisModel.minY = minY ?: min(model.minY, 0f)
         axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
-        axisModel.minX = minX ?: axisModel.minX
-        axisModel.maxX = maxX ?: axisModel.maxX
-    }
-
-    private fun getClosestMarkerEntryPositionModel(touchPoint: PointF): List<Marker.EntryModel>? {
-        return markerLocationMap.keys.findClosestPositiveValue(touchPoint.x)
-            ?.let(markerLocationMap::get)
+        axisModel.minX = minX ?: model.minX
+        axisModel.maxX = maxX ?: model.maxX
     }
 
     override fun getSegmentProperties(model: MultiEntriesModel): SegmentProperties {
@@ -212,7 +207,7 @@ open class ColumnDataSet(
         }
 
     private fun getDrawingStart(entryCollectionIndex: Int): Float {
-        val baseLeft = bounds.left + (spacing.half * drawScale)
+        val baseLeft = bounds.left + scaledSpacing.half
         return when (mergeMode) {
             MergeMode.Stack -> baseLeft
             MergeMode.Grouped -> baseLeft + (getCumulatedThickness(entryCollectionIndex, true)
