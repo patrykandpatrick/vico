@@ -40,6 +40,11 @@ class LineDataSet(
     private val segmentProperties = MutableSegmentProperties()
     private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
 
+    private val scaledSpacing: Float
+        get() = spacing * drawScale
+    private val scaledPointSize: Float
+        get() = pointSize * drawScale
+
     override val bounds: RectF = RectF()
 
     public var lineColor: Int by linePaint::color
@@ -55,8 +60,6 @@ class LineDataSet(
 
     private var drawScale: Float = 1f
     private var isScaleCalculated = false
-    private var scaledSpacing = spacing
-    private var scaledPointSize = pointSize
 
     override var isHorizontalScrollEnabled: Boolean = false
     override var maxScrollAmount: Float = 0f
@@ -93,9 +96,9 @@ class LineDataSet(
         val clipRestoreCount = canvas.save()
         canvas.clipRect(
             bounds.left,
-            bounds.top - scaledPointSize.half,
+            bounds.top - pointSize.half,
             bounds.right,
-            bounds.bottom + scaledPointSize.half
+            bounds.bottom + pointSize.half
         )
 
         calculateDrawSegmentSpecIfNeeded(model)
@@ -133,8 +136,10 @@ class LineDataSet(
                         min(1f, (abs((y - prevY) / bounds.bottom) * 4))
                 linePath.cubicTo(prevX + cubicCurvature, prevY, x - cubicCurvature, y, x, y)
                 if (lineBackgroundShader != null) {
-                    lineBackgroundPath.cubicTo(prevX + cubicCurvature,
-                        prevY, x - cubicCurvature, y, x, y)
+                    lineBackgroundPath.cubicTo(
+                        prevX + cubicCurvature,
+                        prevY, x - cubicCurvature, y, x, y
+                    )
                 }
             }
             prevX = x
@@ -174,10 +179,10 @@ class LineDataSet(
             ) { _, x, y ->
                 point.draw(
                     canvas = canvas,
-                    left = x - scaledPointSize.half,
-                    top = y - scaledPointSize.half,
-                    right = x + scaledPointSize.half,
-                    bottom = y + scaledPointSize.half,
+                    left = x - pointSize.half,
+                    top = y - pointSize.half,
+                    right = x + pointSize.half,
+                    bottom = y + pointSize.half,
                 )
             }
         }
@@ -253,8 +258,6 @@ class LineDataSet(
             maxScrollAmount = 0f
             drawScale = minOf(bounds.width() / measuredWidth, 1f)
         }
-        scaledSpacing = spacing * drawScale
-        scaledPointSize = pointSize * drawScale
         isScaleCalculated = true
     }
 
