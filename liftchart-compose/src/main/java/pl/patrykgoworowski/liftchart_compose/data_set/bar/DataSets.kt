@@ -24,7 +24,6 @@ import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
-import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.constants.*
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
@@ -36,7 +35,6 @@ import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
-import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
@@ -105,7 +103,7 @@ fun ColumnChart(
 fun LineChart(
     entryCollection: MultiEntryCollection,
     modifier: Modifier = Modifier,
-    point: Component? = ShapeComponent(pillShape()),
+    point: Component? = null,
     pointSize: Dp = 6.dp,
     spacing: Dp = DEF_MERGED_BAR_SPACING.dp,
     lineWidth: Dp = 2.dp,
