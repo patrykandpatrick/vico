@@ -57,6 +57,17 @@ fun shapeComponent(
 )
 
 @Composable
+fun shapeComponent(
+    shape: ChartShape,
+    color: Color,
+    shader: DynamicShader? = null,
+): ShapeComponent<ChartShape> = ShapeComponent(
+    shape = shape,
+    color = color.toArgb(),
+    dynamicShader = shader,
+)
+
+@Composable
 fun overlayingComponent(
     outer: Component,
     inner: Component,
