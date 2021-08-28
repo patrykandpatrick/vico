@@ -56,7 +56,7 @@ fun ColumnChartCard() = MainTheme {
                 startAxis = VerticalAxis.start(
                     label = textComponent(
                         color = colors.primary,
-                        textSize = 10f.sp,
+                        textSize = 10.sp,
                         background = shapeComponent(
                             shape = CutCornerShape(
                                 CornerSize(25),
@@ -67,13 +67,13 @@ fun ColumnChartCard() = MainTheme {
                             color = colors.primary.copy(0.1f),
                         )
                     ).apply {
-                        setPadding(end = 8f.dp, start = 4f.dp)
+                        setPadding(end = 8.dp, start = 4.dp)
                     },
                     axis = null,
                     tick = null,
                     guideline = LineComponent(
                         colors.primary.copy(0.1f).toArgb(),
-                        1f.dp.pixels,
+                        1.dp.pixels,
                     ),
                 ),
                 topAxis = null,
@@ -83,7 +83,7 @@ fun ColumnChartCard() = MainTheme {
             column = rectComponent(
                 colors.primary,
                 thickness = 8f.dp,
-                shape = RoundedCornerShape(Dp(4f)).chartShape(),
+                shape = RoundedCornerShape(4.dp).chartShape(),
                 dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
             )
         )

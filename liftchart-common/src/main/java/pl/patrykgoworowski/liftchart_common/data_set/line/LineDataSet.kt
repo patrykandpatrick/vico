@@ -134,8 +134,8 @@ class LineDataSet(
                     lineBackgroundPath.lineTo(x, y)
                 }
             } else {
-                cubicCurvature = (scaledSpacing * cubicStrength) *
-                        min(1f, (abs((y - prevY) / bounds.bottom) * 4))
+                cubicCurvature = scaledSpacing * cubicStrength *
+                        min(1f, abs((y - prevY) / bounds.bottom) * 4)
                 linePath.cubicTo(prevX + cubicCurvature, prevY, x - cubicCurvature, y, x, y)
                 if (lineBackgroundShader != null) {
                     lineBackgroundPath.cubicTo(
@@ -221,7 +221,7 @@ class LineDataSet(
                 if (entry.x !in (minX - step)..(maxX + step)) return@forEach2
 
                 x = drawingStart +
-                        ((segmentSize + scaledSpacing) * (entry.x - minX) / model.step)
+                        (segmentSize + scaledSpacing) * (entry.x - minX) / model.step
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }
@@ -235,7 +235,7 @@ class LineDataSet(
     }
 
     private fun getSegmentSize(scaled: Boolean = true): Float =
-        (if (scaled) scaledPointSize else pointSize)
+        if (scaled) scaledPointSize else pointSize
 
     override fun getSegmentProperties(model: MultiEntriesModel): SegmentProperties {
         calculateDrawSegmentSpecIfNeeded(model)
