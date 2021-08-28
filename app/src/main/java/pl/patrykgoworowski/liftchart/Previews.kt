@@ -73,7 +73,7 @@ fun ColumnChartCard() = MainTheme {
                     tick = null,
                     guideline = LineComponent(
                         colors.primary.copy(0.1f).toArgb(),
-                        1f.dp.pixels,
+                        1.dp.pixels,
                     ),
                 ),
                 topAxis = null,
