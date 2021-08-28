@@ -3,7 +3,6 @@ package pl.patrykgoworowski.liftchart_common.data_set.line
 import android.graphics.*
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.Component
-import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
@@ -14,13 +13,12 @@ import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
-import pl.patrykgoworowski.liftchart_common.path.pillShape
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.roundToInt
 
 class LineDataSet(
-    var point: Component? = ShapeComponent(pillShape()),
+    var point: Component? = null,
     var pointSize: Float = 6f.dp,
     var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
     lineWidth: Float = 2.dp,
@@ -31,6 +29,7 @@ class LineDataSet(
         strokeWidth = lineWidth
         style = Paint.Style.STROKE
         color = lineColor
+        strokeCap = Paint.Cap.ROUND
     }
     private val linePath = Path()
 
@@ -42,6 +41,7 @@ class LineDataSet(
 
     private val scaledSpacing: Float
         get() = spacing * drawScale
+
     private val scaledPointSize: Float
         get() = pointSize * drawScale
 
@@ -50,6 +50,7 @@ class LineDataSet(
     public var lineColor: Int by linePaint::color
     public var lineWidth: Float by linePaint::strokeWidth
     public var lineBackgroundShader: DynamicShader? = null
+    public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
 
     public var cubicStrength = 1f
 
@@ -118,12 +119,13 @@ class LineDataSet(
         val drawingStart = bounds.left + scaledSpacing.half - scrollX + scaledPointSize.half
 
         forEachPoint(
-            model,
-            segmentSize,
-            drawingStart,
-            heightMultiplier,
-            minX,
-            maxX
+            model = model,
+            segmentSize = segmentSize,
+            drawingStart = drawingStart,
+            heightMultiplier = heightMultiplier,
+            minX = minX,
+            maxX = maxX,
+            step = model.step,
         ) { entry, x, y ->
             if (linePath.isEmpty) {
                 linePath.moveTo(x, y)
@@ -170,12 +172,13 @@ class LineDataSet(
 
         if (point != null) {
             forEachPoint(
-                model,
-                segmentSize,
-                drawingStart,
-                heightMultiplier,
-                minX,
-                maxX
+                model = model,
+                segmentSize = segmentSize,
+                drawingStart = drawingStart,
+                heightMultiplier = heightMultiplier,
+                minX = minX,
+                maxX = maxX,
+                step = model.step,
             ) { _, x, y ->
                 point.draw(
                     canvas = canvas,
@@ -207,6 +210,7 @@ class LineDataSet(
         heightMultiplier: Float,
         minX: Float,
         maxX: Float,
+        step: Float,
         action: (entry: DataEntry, x: Float, y: Float) -> Unit,
     ) {
         var x: Float
@@ -214,10 +218,10 @@ class LineDataSet(
 
         model.entryCollections.forEach { collection ->
             collection.forEach forEach2@{ entry ->
-                if (entry.x !in minX..maxX) return@forEach2
+                if (entry.x !in (minX - step)..(maxX + step)) return@forEach2
 
                 x = drawingStart +
-                        ((segmentSize + scaledSpacing) * (entry.x - model.minX) / model.step)
+                        ((segmentSize + scaledSpacing) * (entry.x - minX) / model.step)
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }
