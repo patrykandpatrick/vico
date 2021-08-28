@@ -10,7 +10,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.line.LineDataSet
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 
@@ -18,7 +17,7 @@ import pl.patrykgoworowski.liftchart_compose.extension.pixels
 fun lineDataSet(
     point: Component? = null,
     pointSize: Dp = 6.dp,
-    spacing: Dp = DEF_MERGED_BAR_SPACING.dp,
+    spacing: Dp = 16.dp,
     lineWidth: Dp = 2.dp,
     lineColor: Color = Color.LightGray,
     lineBackgroundShader: DynamicShader? = null,
