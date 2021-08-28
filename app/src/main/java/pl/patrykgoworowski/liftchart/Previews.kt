@@ -83,7 +83,7 @@ fun ColumnChartCard() = MainTheme {
             column = rectComponent(
                 colors.primary,
                 thickness = 8f.dp,
-                shape = RoundedCornerShape(Dp(4f)).chartShape(),
+                shape = RoundedCornerShape(4.dp).chartShape(),
                 dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
             )
         )
