@@ -18,6 +18,7 @@ import pl.patrykgoworowski.liftchart.extension.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.componentShader
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
@@ -30,7 +31,6 @@ import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_common.path.pillShape
-import pl.patrykgoworowski.liftchart_compose.component.shape.shader.componentShader
 import pl.patrykgoworowski.liftchart_view.data_set.common.plus
 import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
 

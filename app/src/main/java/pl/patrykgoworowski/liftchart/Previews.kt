@@ -21,6 +21,7 @@ import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.componentShader
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryList
 import pl.patrykgoworowski.liftchart_common.entry.entriesOf
@@ -29,7 +30,6 @@ import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_common.path.rectShape
 import pl.patrykgoworowski.liftchart_compose.component.dimension.setPadding
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
-import pl.patrykgoworowski.liftchart_compose.component.shape.shader.componentShader
 import pl.patrykgoworowski.liftchart_compose.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.liftchart_compose.component.shapeComponent
 import pl.patrykgoworowski.liftchart_compose.component.textComponent

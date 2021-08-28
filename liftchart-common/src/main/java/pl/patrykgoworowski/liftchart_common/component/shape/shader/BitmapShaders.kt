@@ -1,9 +1,7 @@
-package pl.patrykgoworowski.liftchart_compose.component.shape.shader
+package pl.patrykgoworowski.liftchart_common.component.shape.shader
 
 import android.graphics.*
 import pl.patrykgoworowski.liftchart_common.component.Component
-import pl.patrykgoworowski.liftchart_common.component.shape.shader.CacheableDynamicShader
-import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.extension.half
 
 fun bitmapShader(
