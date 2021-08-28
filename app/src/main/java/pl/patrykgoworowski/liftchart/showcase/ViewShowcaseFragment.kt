@@ -16,19 +16,21 @@ import pl.patrykgoworowski.liftchart.extension.color
 import pl.patrykgoworowski.liftchart.extension.flickrPink
 import pl.patrykgoworowski.liftchart.extension.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
-import pl.patrykgoworowski.liftchart_common.component.OverlayingComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.horizontalGradient
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.line.LineDataSet
+import pl.patrykgoworowski.liftchart_common.extension.copyColor
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_common.path.pillShape
+import pl.patrykgoworowski.liftchart_compose.component.shape.shader.componentShader
 import pl.patrykgoworowski.liftchart_view.data_set.common.plus
 import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
 
@@ -82,21 +84,23 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val axes = AxisManager()
 
         val lineDataSet = LineDataSet(
-            point = OverlayingComponent(
-                outer = ShapeComponent(
-                    shape = pillShape(),
-                    color = context.flickrPink,
-                ),
-                inner = ShapeComponent(
-                    shape = pillShape(),
-                    color = Color.WHITE,
-                ),
-                innerPaddingAll = 3.dp
-            ),
             pointSize = 10.dp,
-            lineColor = context.byzantine
+            lineColor = context.flickrPink
         ).apply {
             isHorizontalScrollEnabled = true
+            lineBackgroundShader = verticalGradient(
+                context.flickrPink.copyColor(alpha = 128),
+                Color.TRANSPARENT,
+            )
+            lineBackgroundShader = componentShader(
+                component = ShapeComponent(
+                    shape = pillShape(),
+                    color = context.flickrPink,
+                ).apply {
+                    setMargins(0.5f.dp)
+                },
+                componentSize = 4.dp,
+            )
         }
 
         val dataSetRenderer = lineDataSet + emptyMultiEntriesModel()
