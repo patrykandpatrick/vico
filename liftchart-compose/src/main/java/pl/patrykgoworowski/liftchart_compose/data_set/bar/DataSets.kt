@@ -111,9 +111,7 @@ fun LineChart(
     axisManager: AxisManager = AxisManager(),
     marker: Marker? = null,
 ) {
-    val dataSet = remember {
-        LineDataSet(point = point)
-    }
+    val dataSet = remember { LineDataSet(point = point) }
     val model = entryCollection.collectAsState()
 
     dataSet.apply {

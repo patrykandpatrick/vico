@@ -119,7 +119,7 @@ open class ColumnDataSet(
                 if (entry.x !in minX..maxX) return@forEach
                 height = entry.y * heightMultiplier
                 columnCenterX = drawingStart +
-                        ((segmentSize + scaledSpacing) * (entry.x - model.minX) / step)
+                        (segmentSize + scaledSpacing) * (entry.x - model.minX) / step
 
                 when (mergeMode) {
                     MergeMode.Stack -> {

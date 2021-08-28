@@ -62,10 +62,9 @@ fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
 
 fun HashMap<Float, ArrayList<Marker.EntryModel>>.getClosestMarkerEntryPositionModel(
     touchPoint: PointF,
-): List<Marker.EntryModel>? {
-    return keys.findClosestPositiveValue(touchPoint.x)
+): List<Marker.EntryModel>? =
+    keys.findClosestPositiveValue(touchPoint.x)
         ?.let(::get)
-}
 
 fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
     fold(0f) { sum, element ->
