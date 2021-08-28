@@ -67,7 +67,7 @@ fun ColumnChartCard() = MainTheme {
                             color = colors.primary.copy(0.1f),
                         )
                     ).apply {
-                        setPadding(end = 8f.dp, start = 4f.dp)
+                        setPadding(end = 8.dp, start = 4.dp)
                     },
                     axis = null,
                     tick = null,
