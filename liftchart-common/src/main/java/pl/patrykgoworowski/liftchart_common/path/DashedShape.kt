@@ -5,11 +5,11 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 
-class DashedShape(
-    val shape: Shape,
-    val dashLength: Float,
-    val gapLength: Float,
-    val fitStrategy: FitStrategy = FitStrategy.Resize
+public class DashedShape(
+    public val shape: Shape,
+    public val dashLength: Float,
+    public val gapLength: Float,
+    public val fitStrategy: FitStrategy = FitStrategy.Resize
 ) : Shape {
 
     private var drawDashLength = dashLength
@@ -122,7 +122,7 @@ class DashedShape(
         }
     }
 
-    enum class FitStrategy {
+    public enum class FitStrategy {
         Resize,
         Fixed
     }

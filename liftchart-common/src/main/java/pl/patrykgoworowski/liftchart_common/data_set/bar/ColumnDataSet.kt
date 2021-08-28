@@ -19,10 +19,10 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 open class ColumnDataSet(
-    val columns: List<LineComponent>,
-    var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
-    var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
-    var mergeMode: MergeMode = MergeMode.Grouped
+    public val columns: List<LineComponent>,
+    public var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
+    public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
+    public var mergeMode: MergeMode = MergeMode.Grouped
 ) : DataSet<MultiEntriesModel> {
 
     constructor(

@@ -2,11 +2,11 @@ package pl.patrykgoworowski.liftchart_common.component.dimension
 
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 
-interface Margins {
+public interface Margins {
 
-    val margins: MutableDimensions
+    public val margins: MutableDimensions
 
-    fun setMargins(
+    public fun setMargins(
         start: Float = 0f,
         top: Float = 0f,
         end: Float = 0f,
@@ -15,7 +15,7 @@ interface Margins {
         margins.set(start, top, end, bottom)
     }
 
-    fun setMargins(
+    public fun setMargins(
         all: Float = 0f
     ) {
         margins.set(all)

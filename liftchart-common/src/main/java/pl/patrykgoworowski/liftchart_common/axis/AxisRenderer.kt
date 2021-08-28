@@ -23,13 +23,13 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     val tickLength: Float
     val restrictedBounds: List<RectF>
 
-    val maxAnyAxisLineThickness: Float
+    public val maxAnyAxisLineThickness: Float
         get() = maxOf(axisThickness, tickThickness, guidelineThickness)
 
-    val labelLineHeight: Int
+    public val labelLineHeight: Int
         get() = label?.lineHeight ?: 0
 
-    val labelAllLinesHeight: Int
+    public val labelAllLinesHeight: Int
         get() = label?.allLinesHeight ?: 0
 
     var label: TextComponent?

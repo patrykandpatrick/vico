@@ -6,9 +6,9 @@ import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.path.Shape
 import pl.patrykgoworowski.liftchart_common.path.rectShape
 
-open class LineComponent(
+public open class LineComponent(
     color: Int,
-    var thickness: Float = 2f,
+    public var thickness: Float = 2f,
     shape: Shape = rectShape(),
     dynamicShader: DynamicShader? = null
 ) : ShapeComponent<Shape>(shape, color, dynamicShader) {
@@ -18,7 +18,7 @@ open class LineComponent(
     val scaledThickness: Float
         get() = thickness * thicknessScale
 
-    open fun drawHorizontal(
+    public open fun drawHorizontal(
         canvas: Canvas,
         left: Float,
         right: Float,
@@ -33,7 +33,7 @@ open class LineComponent(
         )
     }
 
-    open fun fitsInHorizontal(
+    public open fun fitsInHorizontal(
         left: Float,
         right: Float,
         centerY: Float,
@@ -46,7 +46,7 @@ open class LineComponent(
         boundingBox = boundingBox
     )
 
-    open fun drawVertical(
+    public open fun drawVertical(
         canvas: Canvas,
         top: Float,
         bottom: Float,
@@ -61,7 +61,7 @@ open class LineComponent(
         )
     }
 
-    open fun fitsInVertical(
+    public open fun fitsInVertical(
         top: Float,
         bottom: Float,
         centerX: Float,
@@ -74,7 +74,7 @@ open class LineComponent(
         boundingBox = boundingBox
     )
 
-    open fun intersectsVertical(
+    public open fun intersectsVertical(
         top: Float,
         bottom: Float,
         centerX: Float,

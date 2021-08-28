@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_common.component.shape.shader
 import android.graphics.RectF
 import android.graphics.Shader
 
-abstract class CacheableDynamicShader : DynamicShader {
+public abstract class CacheableDynamicShader : DynamicShader {
 
     private val cache = HashMap<String, Shader>(1)
 
@@ -17,7 +17,7 @@ abstract class CacheableDynamicShader : DynamicShader {
         }
     }
 
-    abstract fun createShader(bounds: RectF): Shader
+    public abstract fun createShader(bounds: RectF): Shader
 
     private fun createKey(bounds: RectF): String =
         "%s,%s,%s,%s".format(bounds.left, bounds.top, bounds.right, bounds.bottom)

@@ -9,8 +9,8 @@ import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 
 class SingleEntryList(
-    var diffAnimator: DiffAnimator = DefaultDiffAnimator(),
-    var animateChanges: Boolean = true,
+    public var diffAnimator: DiffAnimator = DefaultDiffAnimator(),
+    public var animateChanges: Boolean = true,
 ) : SingleEntryCollection {
 
     private val calculator = SingleEntryModelCalculator()

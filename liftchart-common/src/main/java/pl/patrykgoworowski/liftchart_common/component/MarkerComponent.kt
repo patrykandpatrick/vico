@@ -19,7 +19,7 @@ import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.marker.MarkerLabelFormatter
 import pl.patrykgoworowski.liftchart_common.path.corner.MarkerCorneredShape
 
-open class MarkerComponent(
+public open class MarkerComponent(
     private val label: TextComponent,
     private val indicator: Component,
     private val guideline: LineComponent,
@@ -33,9 +33,9 @@ open class MarkerComponent(
     private val markerHeight: Float
         get() = label.getHeight() + shape.tickSize.orZero
 
-    var indicatorSize: Float = 0f
-    var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
-    var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
+    public var indicatorSize: Float = 0f
+    public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
+    public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
 
     override fun draw(
         canvas: Canvas,

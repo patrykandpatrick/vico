@@ -9,15 +9,15 @@ import pl.patrykgoworowski.liftchart_common.entry.entryOf
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 
 class MultiEntryList(
-    var diffAnimator: DiffAnimator = DefaultDiffAnimator(),
-    var animateChanges: Boolean = true
+    public var diffAnimator: DiffAnimator = DefaultDiffAnimator(),
+    public var animateChanges: Boolean = true
 ) : MultiEntryCollection {
 
     private val calculator = MultiEntriesModelCalculator()
     private val diffProcessor: DiffProcessor<DataEntry> = DefaultDiffProcessor()
     private val listeners: ArrayList<MultiEntriesModelListener> = ArrayList()
 
-    val data: ArrayList<List<DataEntry>> = ArrayList()
+    public val data: ArrayList<List<DataEntry>> = ArrayList()
 
     override var model: MultiEntriesModel = emptyMultiEntriesModel()
 

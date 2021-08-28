@@ -7,7 +7,7 @@ import androidx.compose.ui.graphics.Paint
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.CacheableDynamicShader
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 
-class BrushDynamicShader(
+public class BrushDynamicShader(
     private val shader: (bounds: RectF) -> Brush
 ) : CacheableDynamicShader() {
 
@@ -25,7 +25,7 @@ class BrushDynamicShader(
 
 }
 
-fun brushShader(
+public fun brushShader(
     shader: (bounds: RectF) -> Brush
 ): DynamicShader = object : CacheableDynamicShader() {
 

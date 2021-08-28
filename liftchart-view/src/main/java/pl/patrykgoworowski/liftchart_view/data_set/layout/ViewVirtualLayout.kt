@@ -8,9 +8,9 @@ import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
 import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 import pl.patrykgoworowski.liftchart_view.data_set.common.DataSetWithModel
 
-open class ViewVirtualLayout(isLTR: Boolean) : VirtualLayout(isLTR) {
+public open class ViewVirtualLayout(isLTR: Boolean) : VirtualLayout(isLTR) {
 
-    open fun <Model : EntriesModel> setBounds(
+    public open fun <Model : EntriesModel> setBounds(
         contentBounds: RectF,
         dataSet: DataSetWithModel<Model>,
         dataSetModel: DataSetModel,

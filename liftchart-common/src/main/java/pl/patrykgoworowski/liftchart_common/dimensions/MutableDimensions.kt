@@ -51,7 +51,7 @@ class MutableDimensions(
         return this
     }
 
-    fun clear() {
+    public fun clear() {
         set(0f)
     }
 
