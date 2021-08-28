@@ -56,7 +56,7 @@ fun ColumnChartCard() = MainTheme {
                 startAxis = VerticalAxis.start(
                     label = textComponent(
                         color = colors.primary,
-                        textSize = 10f.sp,
+                        textSize = 10.sp,
                         background = shapeComponent(
                             shape = CutCornerShape(
                                 CornerSize(25),
