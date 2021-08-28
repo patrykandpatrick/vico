@@ -23,7 +23,7 @@ import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
-import pl.patrykgoworowski.liftchart_view.data_set.DataSetRendererWithModel
+import pl.patrykgoworowski.liftchart_view.data_set.common.DataSetWithModel
 import pl.patrykgoworowski.liftchart_view.data_set.layout.ViewVirtualLayout
 import pl.patrykgoworowski.liftchart_view.extension.isLTR
 import pl.patrykgoworowski.liftchart_view.extension.measureDimension
@@ -71,7 +71,7 @@ class DataSetView @JvmOverloads constructor(
 
     public var scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
-    var dataSet: DataSetRendererWithModel<*>? by observable(null) { _, oldValue, newValue ->
+    var dataSet: DataSetWithModel<*>? by observable(null) { _, oldValue, newValue ->
         oldValue?.removeListener(updateRequestListener)
         newValue?.addListener(updateRequestListener)
         updateBounds()

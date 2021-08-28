@@ -8,20 +8,16 @@ public abstract class CacheableDynamicShader : DynamicShader {
     private val cache = HashMap<String, Shader>(1)
 
     override fun provideShader(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        parentBounds: RectF
+        bounds: RectF
     ): Shader {
-        val cacheKey = createKey(parentBounds)
-        return cache[cacheKey] ?: createShader(parentBounds).also { gradient ->
+        val cacheKey = createKey(bounds)
+        return cache[cacheKey] ?: createShader(bounds).also { gradient ->
             cache.clear()
             cache[cacheKey] = gradient
         }
     }
 
-    public abstract fun createShader(parentBounds: RectF): Shader
+    public abstract fun createShader(bounds: RectF): Shader
 
     private fun createKey(bounds: RectF): String =
         "%s,%s,%s,%s".format(bounds.left, bounds.top, bounds.right, bounds.bottom)

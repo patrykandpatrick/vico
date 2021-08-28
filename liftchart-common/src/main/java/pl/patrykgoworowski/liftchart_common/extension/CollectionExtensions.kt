@@ -1,6 +1,8 @@
 package pl.patrykgoworowski.liftchart_common.extension
 
+import android.graphics.PointF
 import pl.patrykgoworowski.liftchart_common.constants.ERR_REPEATING_COLLECTION_EMPTY
+import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.abs
 
 fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =
@@ -57,6 +59,12 @@ fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
     }
     return closestValue
 }
+
+fun HashMap<Float, ArrayList<Marker.EntryModel>>.getClosestMarkerEntryPositionModel(
+    touchPoint: PointF,
+): List<Marker.EntryModel>? =
+    keys.findClosestPositiveValue(touchPoint.x)
+        ?.let(::get)
 
 fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
     fold(0f) { sum, element ->

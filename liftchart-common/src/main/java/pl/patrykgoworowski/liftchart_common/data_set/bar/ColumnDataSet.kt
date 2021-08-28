@@ -9,20 +9,26 @@ import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACI
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
-import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSetRenderer
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
+import kotlin.math.min
 import kotlin.math.roundToInt
 
-open class ColumnDataSetRenderer public constructor(
+open class ColumnDataSet(
     public val columns: List<LineComponent>,
-    public var spacing: Float = DEF_MERGED_BAR_SPACING,
-    public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING,
+    public var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
+    public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
     public var mergeMode: MergeMode = MergeMode.Grouped
-) : DataSetRenderer<MultiEntriesModel> {
+) : DataSet<MultiEntriesModel> {
+
+    constructor(
+        column: LineComponent,
+        spacing: Float = DEF_MERGED_BAR_SPACING.dp,
+    ) : this(columns = listOf(column), spacing = spacing)
 
     private val heightMap = HashMap<Float, Float>()
     override val bounds: RectF = RectF()
@@ -96,7 +102,6 @@ open class ColumnDataSetRenderer public constructor(
 
         var height: Float
         var columnCenterX: Float
-        var entryOffset: Float
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
@@ -113,8 +118,8 @@ open class ColumnDataSetRenderer public constructor(
             entryCollection.forEach { entry ->
                 if (entry.x !in minX..maxX) return@forEach
                 height = entry.y * heightMultiplier
-                entryOffset = (segmentSize + scaledSpacing) * (entry.x - model.minX) / step
-                columnCenterX = drawingStart + entryOffset
+                columnCenterX = drawingStart +
+                        (segmentSize + scaledSpacing) * (entry.x - model.minX) / step
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -166,7 +171,7 @@ open class ColumnDataSetRenderer public constructor(
         canvas.restoreToCount(clipRestoreCount)
 
         if (touchPoint == null || marker == null) return
-        getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
             marker.draw(
                 canvas,
                 bounds,
@@ -177,15 +182,10 @@ open class ColumnDataSetRenderer public constructor(
     }
 
     override fun setToAxisModel(axisModel: MutableDataSetModel, model: MultiEntriesModel) {
-        axisModel.minY = minY ?: axisModel.minY
+        axisModel.minY = minY ?: min(model.minY, 0f)
         axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
-        axisModel.minX = minX ?: axisModel.minX
-        axisModel.maxX = maxX ?: axisModel.maxX
-    }
-
-    private fun getClosestMarkerEntryPositionModel(touchPoint: PointF): List<Marker.EntryModel>? {
-        return markerLocationMap.keys.findClosestPositiveValue(touchPoint.x)
-            ?.let(markerLocationMap::get)
+        axisModel.minX = minX ?: model.minX
+        axisModel.maxX = maxX ?: model.maxX
     }
 
     override fun getSegmentProperties(model: MultiEntriesModel): SegmentProperties {
@@ -207,7 +207,7 @@ open class ColumnDataSetRenderer public constructor(
         }
 
     private fun getDrawingStart(entryCollectionIndex: Int): Float {
-        val baseLeft = bounds.left + (spacing.half * drawScale)
+        val baseLeft = bounds.left + scaledSpacing.half
         return when (mergeMode) {
             MergeMode.Stack -> baseLeft
             MergeMode.Grouped -> baseLeft + (getCumulatedThickness(entryCollectionIndex, true)

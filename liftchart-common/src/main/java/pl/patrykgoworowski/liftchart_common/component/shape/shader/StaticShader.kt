@@ -6,11 +6,7 @@ import android.graphics.Shader
 class StaticShader(private val shader: Shader) : DynamicShader {
 
     override fun provideShader(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        parentBounds: RectF
+        bounds: RectF
     ): Shader = shader
 
 }

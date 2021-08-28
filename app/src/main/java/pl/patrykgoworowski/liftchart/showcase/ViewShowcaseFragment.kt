@@ -1,5 +1,6 @@
 package pl.patrykgoworowski.liftchart.showcase
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -16,13 +17,21 @@ import pl.patrykgoworowski.liftchart.extension.flickrPink
 import pl.patrykgoworowski.liftchart.extension.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.componentShader
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.horizontalGradient
+import pl.patrykgoworowski.liftchart_common.component.shape.shader.verticalGradient
+import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.line.LineDataSet
+import pl.patrykgoworowski.liftchart_common.extension.copyColor
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
-import pl.patrykgoworowski.liftchart_view.data_set.bar.ColumnDataSet
+import pl.patrykgoworowski.liftchart_common.path.pillShape
+import pl.patrykgoworowski.liftchart_view.data_set.common.plus
 import pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
 
 class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
@@ -37,6 +46,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val marker = getMarkerComponent(view.context)
 
         setUpBar(binding.barChart, marker)
+        setUpLineChart(binding.lineChart, marker)
         setUpGroupedBar(binding.groupedColumnChart, marker)
         setUpStackedBar(binding.stackedColumnChart, marker)
     }
@@ -45,7 +55,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val context = dataSetView.context
         val axes = AxisManager()
 
-        val barDataSet = ColumnDataSet(
+        val columnDataSet = ColumnDataSet(
             column = LineComponent(
                 color = context.flickrPink,
                 shape = cutCornerShape(topLeft = 8f.dp),
@@ -56,12 +66,51 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
+        val dataSetRenderer = columnDataSet + emptyMultiEntriesModel()
+
         viewModel.entries.collectAsFlow
-            .onEach { barDataSet.model = it }
+            .onEach { dataSetRenderer.model = it }
             .launchIn(lifecycleScope)
 
         dataSetView.apply {
-            dataSet = barDataSet
+            dataSet = dataSetRenderer
+            axisManager = axes
+            this.marker = marker
+        }
+    }
+
+    private fun setUpLineChart(dataSetView: DataSetView, marker: Marker?) {
+        val context = dataSetView.context
+        val axes = AxisManager()
+
+        val lineDataSet = LineDataSet(
+            pointSize = 10.dp,
+            lineColor = context.flickrPink
+        ).apply {
+            isHorizontalScrollEnabled = true
+            lineBackgroundShader = verticalGradient(
+                context.flickrPink.copyColor(alpha = 128),
+                Color.TRANSPARENT,
+            )
+            lineBackgroundShader = componentShader(
+                component = ShapeComponent(
+                    shape = pillShape(),
+                    color = context.flickrPink,
+                ).apply {
+                    setMargins(0.5f.dp)
+                },
+                componentSize = 4.dp,
+            )
+        }
+
+        val dataSetRenderer = lineDataSet + emptyMultiEntriesModel()
+
+        viewModel.entries.collectAsFlow
+            .onEach { dataSetRenderer.model = it }
+            .launchIn(lifecycleScope)
+
+        dataSetView.apply {
+            dataSet = dataSetRenderer
             axisManager = axes
             this.marker = marker
         }
@@ -71,7 +120,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         val axes = AxisManager()
 
-        val mergedBarDataSet = ColumnDataSet(
+        val columnDataSet = ColumnDataSet(
             columns = listOf(
                 LineComponent(
                     color = requireContext().flickrPink,
@@ -95,12 +144,14 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
+        val dataSetRenderer = columnDataSet + emptyMultiEntriesModel()
+
         viewModel.multiEntries.collectAsFlow
-            .onEach { mergedBarDataSet.model = it }
+            .onEach { dataSetRenderer.model = it }
             .launchIn(lifecycleScope)
 
         dataSetView.apply {
-            dataSet = mergedBarDataSet
+            dataSet = dataSetRenderer
             axisManager = axes
             this.marker = marker
         }
@@ -110,7 +161,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         val axes = AxisManager()
 
-        val mergedBarDataSet = ColumnDataSet(
+        val columnDataSet = ColumnDataSet(
             columns = listOf(
                 LineComponent(
                     color = requireContext().color { R.color.flickr_pink },
@@ -134,12 +185,14 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
+        val dataSetRenderer = columnDataSet + emptyMultiEntriesModel()
+
         viewModel.multiEntries.collectAsFlow
-            .onEach { mergedBarDataSet.model = it }
+            .onEach { dataSetRenderer.model = it }
             .launchIn(lifecycleScope)
 
         dataSetView.apply {
-            dataSet = mergedBarDataSet
+            dataSet = dataSetRenderer
             axisManager = axes
             this.marker = marker
         }

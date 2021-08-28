@@ -24,6 +24,15 @@
             android:layout_height="24dp"/>
 
         <pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
+            android:id="@+id/line_chart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="24dp"/>
+
+        <pl.patrykgoworowski.liftchart_view.view.dataset.DataSetView
             android:id="@+id/grouped_column_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>

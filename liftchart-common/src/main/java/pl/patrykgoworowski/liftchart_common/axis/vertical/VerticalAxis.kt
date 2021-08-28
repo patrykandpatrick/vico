@@ -129,7 +129,7 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
                         (isNotInRestrictedBounds(
                             labelX,
                             labelTop - labelHeight.half,
-                            labelX,
+                            labelX + 1,
                             labelTop + labelHeight.half
                         )) || horizontalLabelPosition == Outside
                     ) {

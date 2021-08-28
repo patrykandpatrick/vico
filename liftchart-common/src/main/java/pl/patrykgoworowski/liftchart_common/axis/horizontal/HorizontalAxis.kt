@@ -118,7 +118,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
-        var valueIndex: Float = model.minX + scrollAdjustment * model.step
+        var valueIndex: Float = dataSetModel.minX + scrollAdjustment * model.step
 
         for (index in 0 until tickCount) {
             tick?.run {

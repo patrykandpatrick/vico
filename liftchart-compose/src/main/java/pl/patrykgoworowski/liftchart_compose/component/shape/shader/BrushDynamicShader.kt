@@ -13,10 +13,10 @@ public class BrushDynamicShader(
 
     private val tempPaint = Paint()
 
-    override fun createShader(parentBounds: RectF): android.graphics.Shader {
-        shader(parentBounds)
+    override fun createShader(bounds: RectF): android.graphics.Shader {
+        shader(bounds)
             .applyTo(
-                size = Size(parentBounds.width(), parentBounds.height()),
+                size = Size(bounds.width(), bounds.height()),
                 p = tempPaint,
                 alpha = 1f
             )
@@ -31,10 +31,10 @@ public fun brushShader(
 
     private val tempPaint = Paint()
 
-    override fun createShader(parentBounds: RectF): android.graphics.Shader {
-        shader(parentBounds)
+    override fun createShader(bounds: RectF): android.graphics.Shader {
+        shader(bounds)
             .applyTo(
-                size = Size(parentBounds.width(), parentBounds.height()),
+                size = Size(bounds.width(), bounds.height()),
                 p = tempPaint,
                 alpha = 1f
             )

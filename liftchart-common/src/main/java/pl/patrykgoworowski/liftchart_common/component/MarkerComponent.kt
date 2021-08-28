@@ -44,7 +44,7 @@ public open class MarkerComponent(
         allEntries: List<DataEntry>
     ) {
         setParentBounds(bounds)
-        applyShader(bounds.left, bounds.top, bounds.right, bounds.bottom)
+        applyShader(bounds)
         drawGuideline(canvas, bounds, markedEntries)
 
         markedEntries.forEachIndexed { _, model ->
