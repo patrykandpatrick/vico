@@ -180,7 +180,7 @@ fun SampleCard(
                 style = MaterialTheme.typography.h6,
             )
             Text(
-                text = "This is a subtitle. It may be long as Lumiq's p...",
+                text = "This is a subtitle. It may be long.",
                 style = MaterialTheme.typography.subtitle1,
             )
 
