@@ -7,7 +7,6 @@ import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
-import pl.patrykgoworowski.liftchart_common.constants.ERR_COLUMN_LIST_EMPTY
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
@@ -19,7 +18,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 open class ColumnDataSet(
-    public val columns: List<LineComponent>,
+    public var columns: List<LineComponent>,
     public var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
     public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
     public var mergeMode: MergeMode = MergeMode.Grouped
@@ -29,6 +28,8 @@ open class ColumnDataSet(
         column: LineComponent,
         spacing: Float = DEF_MERGED_BAR_SPACING.dp,
     ) : this(columns = listOf(column), spacing = spacing)
+
+    constructor() : this(emptyList())
 
     private val heightMap = HashMap<Float, Float>()
     override val bounds: RectF = RectF()
@@ -54,10 +55,6 @@ open class ColumnDataSet(
     private val segmentProperties = MutableSegmentProperties()
 
     private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
-
-    init {
-        if (columns.isEmpty()) throw IllegalStateException(ERR_COLUMN_LIST_EMPTY)
-    }
 
     override fun getMeasuredWidth(model: MultiEntriesModel): Int {
         val length = model.getEntriesLength()
