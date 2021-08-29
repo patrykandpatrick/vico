@@ -4,7 +4,7 @@ import android.graphics.*
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
+import pl.patrykgoworowski.liftchart_common.constants.DEF_LINE_CHART_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
@@ -20,7 +20,7 @@ import kotlin.math.roundToInt
 class LineDataSet(
     var point: Component? = null,
     var pointSize: Float = 6f.dp,
-    var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
+    var spacing: Float = DEF_LINE_CHART_SPACING.dp,
     lineWidth: Float = 2.dp,
     lineColor: Int = Color.LTGRAY,
 ) : DataSet<MultiEntriesModel> {
