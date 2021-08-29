@@ -14,6 +14,8 @@ import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.liftchart_common.MAX_ZOOM
 import pl.patrykgoworowski.liftchart_common.MIN_ZOOM
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
+import pl.patrykgoworowski.liftchart_common.axis.AxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
@@ -59,7 +61,13 @@ class DataSetView @JvmOverloads constructor(
         requestInvalidate = { invalidate() }
     )
 
+    private val axisManager = AxisManager()
     private val rendererViewState = MutableRendererViewState()
+
+    public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
+    public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
+    public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
+    public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
     public var isZoomEnabled = true
 
@@ -77,7 +85,6 @@ class DataSetView @JvmOverloads constructor(
         updateBounds()
     }
 
-    var axisManager = AxisManager()
     var marker: Marker? = null
 
     @SuppressLint("ClickableViewAccessibility")

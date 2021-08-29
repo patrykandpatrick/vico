@@ -1,77 +1,84 @@
 package pl.patrykgoworowski.liftchart_compose.data_set.bar
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import pl.patrykgoworowski.liftchart_common.axis.AxisManager
-import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
-import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryList
-import pl.patrykgoworowski.liftchart_common.entry.entriesOf
+import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
+import pl.patrykgoworowski.liftchart_common.axis.AxisRenderer
+import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
+import pl.patrykgoworowski.liftchart_common.axis.horizontal.topAxis
+import pl.patrykgoworowski.liftchart_common.axis.vertical.endAxis
+import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
+import pl.patrykgoworowski.liftchart_compose.component.rectComponent
+import pl.patrykgoworowski.liftchart_compose.data_set.entry.multiEntryModelOf
 
-private val entryList = MultiEntryList(
-    entriesOf(0 to 1, 1 to 2, 2 to 3, 3 to 4),
-    animateChanges = false,
-)
+private val model = multiEntryModelOf(1, 2, 3, 4)
 
-private val topAxis = HorizontalAxis.top()
-private val startAxis = VerticalAxis.start()
-private val bottomAxis = HorizontalAxis.bottom()
-private val endAxis = VerticalAxis.end()
+private val topAxis = topAxis()
+private val startAxis = startAxis()
+private val bottomAxis = bottomAxis()
+private val endAxis = endAxis()
+
+@Composable
+private fun PreviewColumnChart(
+    modifier: Modifier = Modifier,
+    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
+    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
+    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
+    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
+) {
+    DataSet(
+        modifier = modifier,
+        dataSet = columnDataSet(column = rectComponent(color = Color.Blue)),
+        model = model,
+        startAxis = startAxis,
+        topAxis = topAxis,
+        endAxis = endAxis,
+        bottomAxis = bottomAxis,
+    )
+}
 
 @Preview("Column Chart Left", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
 fun PreviewColumnChartLeft() {
-    ColumnChart(
-        entryCollection = entryList,
-        axisManager = AxisManager(
-            startAxis = startAxis,
-            topAxis = null,
-            endAxis = null,
-            bottomAxis = null
-        )
-    )
+    PreviewColumnChart(startAxis = startAxis)
 }
 
-@Preview("Column Chart Top", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
+@Preview(
+    "Column Chart Top",
+    heightDp = 100,
+    widthDp = 100,
+    showBackground = true,
+    backgroundColor = 0xFFFFFF
+)
 @Composable
 fun PreviewColumnChartTop() {
-    ColumnChart(
-        entryCollection = entryList,
-        axisManager = AxisManager(
-            startAxis = null,
-            topAxis = topAxis,
-            endAxis = null,
-            bottomAxis = null
-        )
-    )
+    PreviewColumnChart(topAxis = topAxis)
 }
 
-@Preview("Column Chart Right", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
+@Preview(
+    "Column Chart Right",
+    heightDp = 100,
+    widthDp = 100,
+    showBackground = true,
+    backgroundColor = 0xFFFFFF
+)
 @Composable
 fun PreviewColumnChartRight() {
-    ColumnChart(
-        entryCollection = entryList,
-        axisManager = AxisManager(
-            startAxis = null,
-            topAxis = null,
-            endAxis = endAxis,
-            bottomAxis = null
-        )
-    )
+    PreviewColumnChart(endAxis = endAxis)
 }
 
-@Preview("Column Chart Bottom", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
+@Preview(
+    "Column Chart Bottom",
+    heightDp = 100,
+    widthDp = 100,
+    showBackground = true,
+    backgroundColor = 0xFFFFFF
+)
 @Composable
 fun PreviewColumnChartBottom() {
-    ColumnChart(
-        entryCollection = entryList,
-        axisManager = AxisManager(
-            startAxis = null,
-            topAxis = null,
-            endAxis = null,
-            bottomAxis = bottomAxis
-        )
-    )
+    PreviewColumnChart(bottomAxis = bottomAxis)
 }
 
 @Preview(
@@ -82,15 +89,7 @@ fun PreviewColumnChartBottom() {
 )
 @Composable
 fun PreviewColumnChartBottomLeft() {
-    ColumnChart(
-        entryCollection = entryList,
-        axisManager = AxisManager(
-            startAxis = startAxis,
-            topAxis = null,
-            endAxis = null,
-            bottomAxis = bottomAxis
-        )
-    )
+    PreviewColumnChart(startAxis = startAxis, bottomAxis = bottomAxis)
 }
 
 @Preview(
@@ -101,28 +100,23 @@ fun PreviewColumnChartBottomLeft() {
 )
 @Composable
 fun PreviewColumnChartTopRight() {
-    ColumnChart(
-        entryCollection = entryList,
-        axisManager = AxisManager(
-            startAxis = null,
-            topAxis = topAxis,
-            endAxis = endAxis,
-            bottomAxis = null
-        )
-    )
+    PreviewColumnChart(topAxis = topAxis, endAxis = endAxis)
 }
 
-@Preview("Column Chart All", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
+@Preview(
+    "Column Chart All",
+    heightDp = 100,
+    widthDp = 100,
+    showBackground = true,
+    backgroundColor = 0xFFFFFF
+)
 @Composable
 fun PreviewColumnChartAll() {
-    ColumnChart(
-        entryCollection = entryList,
-        axisManager = AxisManager(
-            startAxis = startAxis,
-            topAxis = topAxis,
-            endAxis = endAxis,
-            bottomAxis = bottomAxis
-        )
+    PreviewColumnChart(
+        startAxis = startAxis,
+        topAxis = topAxis,
+        endAxis = endAxis,
+        bottomAxis = bottomAxis,
     )
 }
 

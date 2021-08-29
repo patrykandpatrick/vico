@@ -5,6 +5,8 @@ import pl.patrykgoworowski.liftchart_common.*
 import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
+import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
@@ -21,12 +23,13 @@ import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 
-class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
+class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
     label: TextComponent?,
     axis: LineComponent?,
     tick: TickComponent?,
     guideline: LineComponent?,
+    override var valueFormatter: AxisValueFormatter,
 ) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
     private val isLeft = position.isLeft(isLTR)
@@ -245,32 +248,34 @@ class VerticalAxis<Position : AxisPosition.Vertical> private constructor(
         Bottom(VerticalPosition.Top),
     }
 
-    companion object {
-
-        fun start(
-            label: TextComponent? = DEF_LABEL_COMPONENT,
-            axis: LineComponent? = DEF_AXIS_COMPONENT,
-            tick: TickComponent? = DEF_TICK_COMPONENT,
-            guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
-        ): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
-            position = AxisPosition.Vertical.Start,
-            label = label,
-            axis = axis,
-            tick = tick,
-            guideline = guideline,
-        )
-
-        fun end(
-            label: TextComponent? = DEF_LABEL_COMPONENT,
-            axis: LineComponent? = DEF_AXIS_COMPONENT,
-            tick: TickComponent? = DEF_TICK_COMPONENT,
-            guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
-        ): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
-            position = AxisPosition.Vertical.End,
-            label = label,
-            axis = axis,
-            tick = tick,
-            guideline = guideline,
-        )
-    }
 }
+
+fun startAxis(
+    label: TextComponent? = DEF_LABEL_COMPONENT,
+    axis: LineComponent? = DEF_AXIS_COMPONENT,
+    tick: TickComponent? = DEF_TICK_COMPONENT,
+    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
+    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
+    position = AxisPosition.Vertical.Start,
+    label = label,
+    axis = axis,
+    tick = tick,
+    guideline = guideline,
+    valueFormatter = valueFormatter,
+)
+
+fun endAxis(
+    label: TextComponent? = DEF_LABEL_COMPONENT,
+    axis: LineComponent? = DEF_AXIS_COMPONENT,
+    tick: TickComponent? = DEF_TICK_COMPONENT,
+    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
+    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
+    position = AxisPosition.Vertical.End,
+    label = label,
+    axis = axis,
+    tick = tick,
+    guideline = guideline,
+    valueFormatter = valueFormatter,
+)

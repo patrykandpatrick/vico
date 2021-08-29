@@ -2,9 +2,7 @@ package pl.patrykgoworowski.liftchart_common.axis
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.liftchart_common.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
-import pl.patrykgoworowski.liftchart_common.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
@@ -12,12 +10,12 @@ import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.extension.half
 
-public open class AxisManager(
-    public open var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = VerticalAxis.start(),
-    public open var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
-    public open var endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
-    public open var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = HorizontalAxis.bottom(),
-) {
+public open class AxisManager {
+
+    public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null
+    public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null
+    public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null
+    public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null
 
     private val hasLeftAxis: Boolean
         get() = leftAxis != null

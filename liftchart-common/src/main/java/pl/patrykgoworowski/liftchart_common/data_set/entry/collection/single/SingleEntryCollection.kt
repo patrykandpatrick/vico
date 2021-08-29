@@ -5,15 +5,15 @@ import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 
 typealias SingleEntriesModelListener = (SingleEntriesModel) -> Unit
 
-interface SingleEntryCollection : EntryCollection {
+interface SingleEntryCollection : EntryCollection<SingleEntriesModel> {
 
     val data: Collection<DataEntry>
-    val model: SingleEntriesModel
+    override val model: SingleEntriesModel
 
     fun setEntries(entries: List<DataEntry>)
 
-    fun addOnEntriesChangedListener(listener: SingleEntriesModelListener)
-    fun removeOnEntriesChangedListener(listener: SingleEntriesModelListener)
+    override fun addOnEntriesChangedListener(listener: SingleEntriesModelListener)
+    override fun removeOnEntriesChangedListener(listener: SingleEntriesModelListener)
 
     companion object {
         const val NO_VALUE = -1f

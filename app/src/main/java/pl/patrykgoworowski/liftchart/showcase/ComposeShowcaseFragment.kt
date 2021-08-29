@@ -24,12 +24,18 @@ import pl.patrykgoworowski.liftchart.ui.MainTheme
 import pl.patrykgoworowski.liftchart.ui.byzantine
 import pl.patrykgoworowski.liftchart.ui.flickrPink
 import pl.patrykgoworowski.liftchart.ui.trypanPurple
-import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
+import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
+import pl.patrykgoworowski.liftchart_common.path.pillShape
+import pl.patrykgoworowski.liftchart_compose.component.dimension.dimensionsOf
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
+import pl.patrykgoworowski.liftchart_compose.component.shape.shader.componentShader
 import pl.patrykgoworowski.liftchart_compose.component.shape.shader.horizontalGradient
-import pl.patrykgoworowski.liftchart_compose.data_set.bar.ColumnChart
-import pl.patrykgoworowski.liftchart_compose.data_set.bar.LineChart
+import pl.patrykgoworowski.liftchart_compose.component.shapeComponent
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.DataSet
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.columnDataSet
+import pl.patrykgoworowski.liftchart_compose.data_set.bar.lineDataSet
 
 class ComposeShowcaseFragment : Fragment() {
 
@@ -54,81 +60,102 @@ class ComposeShowcaseFragment : Fragment() {
         composeView.setContent {
             MainTheme {
 
-                val axisManager = AxisManager()
-
                 ScrollableColumn {
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    ColumnChart(
-                        entryCollection = viewModel.entries,
+                    DataSet(
                         modifier = chartModifier,
-                        column = rectComponent(
-                            color = flickrPink,
-                            thickness = 16.dp,
-                            shape = CutCornerShape(topStart = 8f.dp),
-                            dynamicShader = horizontalGradient(arrayOf(flickrPink, trypanPurple)),
-                        ).apply {
-                            setMargins(start = 0f)
-                        },
-                        axisManager = axisManager,
-                        marker = markerComponent(),
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    LineChart(
-                        entryCollection = viewModel.entries,
-                        modifier = chartModifier,
-                        pointSize = 10.dp,
-                        lineColor = byzantine,
-                        axisManager = axisManager,
-                        marker = markerComponent(),
-                    )
-
-                    Spacer(modifier = Modifier.height(24.dp))
-
-                    ColumnChart(
-                        modifier = chartModifier,
-                        mergeMode = MergeMode.Grouped,
-                        entryCollection = viewModel.multiEntries,
-                        columns = listOf(
-                            rectComponent(
+                        dataSet = columnDataSet(
+                            column = rectComponent(
                                 color = flickrPink,
-                                shape = CutCornerShape(topStart = 8.dp)
-                            ),
-                            rectComponent(color = byzantine, thickness = 24.dp),
-                            rectComponent(
-                                color = trypanPurple,
-                                shape = CutCornerShape(topEnd = 8.dp)
+                                thickness = 16.dp,
+                                shape = CutCornerShape(topStart = 8f.dp),
+                                dynamicShader = horizontalGradient(
+                                    arrayOf(
+                                        flickrPink,
+                                        trypanPurple
+                                    )
+                                ),
                             ),
                         ),
-                        innerSpacing = 4.dp,
-                        spacing = 24.dp,
-                        axisManager = axisManager,
+                        entryCollection = viewModel.entries,
+                        startAxis = startAxis(),
+                        bottomAxis = bottomAxis(),
                         marker = markerComponent(),
                     )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
-                    ColumnChart(
+                    DataSet(
                         modifier = chartModifier,
-                        mergeMode = MergeMode.Stack,
-                        entryCollection = viewModel.multiEntries,
-                        columns = listOf(
-                            rectComponent(
-                                color = flickrPink,
-                                shape = CutCornerShape(bottomEnd = 8.dp)
-                            ),
-                            rectComponent(color = byzantine),
-                            rectComponent(
-                                color = trypanPurple,
-                                shape = CutCornerShape(topStart = 8.dp)
+                        dataSet = lineDataSet(
+                            pointSize = 10.dp,
+                            lineColor = flickrPink,
+                            lineBackgroundShader = componentShader(
+                                component = shapeComponent(
+                                    shape = pillShape(),
+                                    color = flickrPink,
+                                    margins = dimensionsOf(all = 0.5f.dp)
+                                ),
+                                componentSize = 4.dp,
                             ),
                         ),
-                        innerSpacing = 4.dp,
-                        spacing = 24.dp,
-                        axisManager = axisManager,
+                        entryCollection = viewModel.entries,
+                        marker = markerComponent(),
+                        startAxis = startAxis(),
+                        bottomAxis = bottomAxis(),
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    DataSet(
+                        modifier = chartModifier,
+                        dataSet = columnDataSet(
+                            columns = listOf(
+                                rectComponent(
+                                    color = flickrPink,
+                                    shape = CutCornerShape(topStart = 8.dp)
+                                ),
+                                rectComponent(color = byzantine, thickness = 24.dp),
+                                rectComponent(
+                                    color = trypanPurple,
+                                    shape = CutCornerShape(topEnd = 8.dp)
+                                ),
+                            ),
+                            innerSpacing = 4.dp,
+                            spacing = 24.dp,
+                            mergeMode = MergeMode.Grouped,
+                        ),
+                        entryCollection = viewModel.multiEntries,
+                        startAxis = startAxis(),
+                        bottomAxis = bottomAxis(),
+                        marker = markerComponent(),
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    DataSet(
+                        modifier = chartModifier,
+                        dataSet = columnDataSet(
+                            columns = listOf(
+                                rectComponent(
+                                    color = flickrPink,
+                                    shape = CutCornerShape(bottomEnd = 8.dp)
+                                ),
+                                rectComponent(color = byzantine),
+                                rectComponent(
+                                    color = trypanPurple,
+                                    shape = CutCornerShape(topStart = 8.dp)
+                                ),
+                            ),
+                            innerSpacing = 4.dp,
+                            spacing = 24.dp,
+                            mergeMode = MergeMode.Stack,
+                        ),
+                        entryCollection = viewModel.multiEntries,
+                        startAxis = startAxis(),
+                        bottomAxis = bottomAxis(),
                         marker = markerComponent(),
                     )
                 }

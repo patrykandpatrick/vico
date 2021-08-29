@@ -8,6 +8,8 @@ import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
+import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
+import pl.patrykgoworowski.liftchart_common.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
@@ -21,12 +23,13 @@ import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
 import kotlin.math.ceil
 
-class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
+class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
-    label: TextComponent? = DEF_LABEL_COMPONENT,
-    axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: TickComponent? = DEF_TICK_COMPONENT,
-    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
+    label: TextComponent?,
+    axis: LineComponent?,
+    tick: TickComponent?,
+    guideline: LineComponent?,
+    override var valueFormatter: AxisValueFormatter,
 ) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
@@ -221,32 +224,34 @@ class HorizontalAxis<Position : AxisPosition.Horizontal> private constructor(
     enum class TickType {
         Minor, Major
     }
-
-    companion object {
-        fun top(
-            label: TextComponent? = DEF_LABEL_COMPONENT,
-            axis: LineComponent? = DEF_AXIS_COMPONENT,
-            tick: TickComponent? = DEF_TICK_COMPONENT,
-            guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
-        ): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
-            position = AxisPosition.Horizontal.Top,
-            label = label,
-            axis = axis,
-            tick = tick,
-            guideline = guideline,
-        )
-
-        fun bottom(
-            label: TextComponent? = DEF_LABEL_COMPONENT,
-            axis: LineComponent? = DEF_AXIS_COMPONENT,
-            tick: TickComponent? = DEF_TICK_COMPONENT,
-            guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
-        ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
-            position = AxisPosition.Horizontal.Bottom,
-            label = label,
-            axis = axis,
-            tick = tick,
-            guideline = guideline,
-        )
-    }
 }
+
+fun topAxis(
+    label: TextComponent? = DEF_LABEL_COMPONENT,
+    axis: LineComponent? = DEF_AXIS_COMPONENT,
+    tick: TickComponent? = DEF_TICK_COMPONENT,
+    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
+    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
+    position = AxisPosition.Horizontal.Top,
+    label = label,
+    axis = axis,
+    tick = tick,
+    guideline = guideline,
+    valueFormatter = valueFormatter,
+)
+
+fun bottomAxis(
+    label: TextComponent? = DEF_LABEL_COMPONENT,
+    axis: LineComponent? = DEF_AXIS_COMPONENT,
+    tick: TickComponent? = DEF_TICK_COMPONENT,
+    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
+    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
+    position = AxisPosition.Horizontal.Bottom,
+    label = label,
+    axis = axis,
+    tick = tick,
+    guideline = guideline,
+    valueFormatter = valueFormatter,
+)

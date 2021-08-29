@@ -15,7 +15,8 @@ import pl.patrykgoworowski.liftchart.extension.byzantine
 import pl.patrykgoworowski.liftchart.extension.color
 import pl.patrykgoworowski.liftchart.extension.flickrPink
 import pl.patrykgoworowski.liftchart.extension.trypanPurple
-import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
+import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.componentShader
@@ -26,6 +27,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
 import pl.patrykgoworowski.liftchart_common.data_set.line.LineDataSet
+import pl.patrykgoworowski.liftchart_common.dimensions.dimensionsOf
 import pl.patrykgoworowski.liftchart_common.extension.copyColor
 import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
@@ -53,7 +55,6 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
     private fun setUpBar(dataSetView: DataSetView, marker: Marker?) {
         val context = dataSetView.context
-        val axes = AxisManager()
 
         val columnDataSet = ColumnDataSet(
             column = LineComponent(
@@ -74,14 +75,14 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            axisManager = axes
+            startAxis = startAxis()
+            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }
 
     private fun setUpLineChart(dataSetView: DataSetView, marker: Marker?) {
         val context = dataSetView.context
-        val axes = AxisManager()
 
         val lineDataSet = LineDataSet(
             pointSize = 10.dp,
@@ -96,9 +97,8 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 component = ShapeComponent(
                     shape = pillShape(),
                     color = context.flickrPink,
-                ).apply {
-                    setMargins(0.5f.dp)
-                },
+                    margins = dimensionsOf(all = 0.5f.dp)
+                ),
                 componentSize = 4.dp,
             )
         }
@@ -111,15 +111,13 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            axisManager = axes
+            startAxis = startAxis()
+            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }
 
     private fun setUpGroupedBar(dataSetView: DataSetView, marker: Marker?) {
-
-        val axes = AxisManager()
-
         val columnDataSet = ColumnDataSet(
             columns = listOf(
                 LineComponent(
@@ -152,15 +150,13 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            axisManager = axes
+            startAxis = startAxis()
+            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }
 
     private fun setUpStackedBar(dataSetView: DataSetView, marker: Marker?) {
-
-        val axes = AxisManager()
-
         val columnDataSet = ColumnDataSet(
             columns = listOf(
                 LineComponent(
@@ -193,7 +189,8 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            axisManager = axes
+            startAxis = startAxis()
+            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }

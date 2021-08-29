@@ -6,127 +6,58 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.liftchart_common.MAX_ZOOM
 import pl.patrykgoworowski.liftchart_common.MIN_ZOOM
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
+import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
+import pl.patrykgoworowski.liftchart_common.axis.AxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.liftchart_common.component.Component
-import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
-import pl.patrykgoworowski.liftchart_common.constants.*
-import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
-import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
+import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
+import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
-import pl.patrykgoworowski.liftchart_common.data_set.line.LineDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
 import pl.patrykgoworowski.liftchart_common.marker.Marker
-import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
 import pl.patrykgoworowski.liftchart_common.scroll.ScrollHandler
 import pl.patrykgoworowski.liftchart_compose.data_set.entry.collectAsState
 import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
-import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.gesture.rememberOnZoom
 
-val defaultColumnComponent: LineComponent
-    @Composable
-    get() = LineComponent(
-        color = MaterialTheme.colors.secondary.toArgb(),
-        thickness = DEF_BAR_WIDTH.dp.pixels,
-        shape = cutCornerShape(topLeft = 8f.dp.pixels)
-    )
-
 @Composable
-fun ColumnChart(
-    entryCollection: MultiEntryCollection,
-    modifier: Modifier = Modifier,
-    column: LineComponent = defaultColumnComponent,
-    spacing: Dp = DEF_BAR_SPACING.dp,
-    axisManager: AxisManager = AxisManager(),
+fun <Model : EntriesModel> DataSet(
+    modifier: Modifier,
+    dataSet: DataSet<Model>,
+    entryCollection: EntryCollection<Model>,
+    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
+    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
+    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
+    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
     marker: Marker? = null,
+    isHorizontalScrollEnabled: Boolean = true,
+    isZoomEnabled: Boolean = true,
 ) {
-    val dataSet = remember { ColumnDataSet(columns = listOf(column)) }
-        .apply {
-            this.spacing = spacing.pixels
-        }
     val model = entryCollection.collectAsState()
 
     DataSet(
         modifier = modifier,
         dataSet = dataSet,
         model = model.value,
-        axisManager = axisManager,
+        startAxis = startAxis,
+        topAxis = topAxis,
+        endAxis = endAxis,
+        bottomAxis = bottomAxis,
         marker = marker,
-    )
-}
-
-@Composable
-fun ColumnChart(
-    entryCollection: MultiEntryCollection,
-    modifier: Modifier = Modifier,
-    columns: List<LineComponent> = listOf(defaultColumnComponent),
-    mergeMode: MergeMode = MergeMode.Stack,
-    spacing: Dp = DEF_BAR_SPACING.dp,
-    innerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
-    axisManager: AxisManager = AxisManager(),
-    marker: Marker? = null,
-) {
-    val dataSet = remember { ColumnDataSet(columns, mergeMode = mergeMode) }
-    val model = entryCollection.collectAsState()
-
-    dataSet.spacing = spacing.pixels
-    dataSet.innerSpacing = innerSpacing.pixels
-
-    DataSet(
-        modifier = modifier,
-        dataSet = dataSet,
-        model = model.value,
-        axisManager = axisManager,
-        marker = marker,
-    )
-}
-
-@Composable
-fun LineChart(
-    entryCollection: MultiEntryCollection,
-    modifier: Modifier = Modifier,
-    point: Component? = null,
-    pointSize: Dp = 6.dp,
-    spacing: Dp = DEF_MERGED_BAR_SPACING.dp,
-    lineWidth: Dp = 2.dp,
-    lineColor: Color = Color.LightGray,
-    axisManager: AxisManager = AxisManager(),
-    marker: Marker? = null,
-) {
-    val dataSet = remember { LineDataSet(point = point) }
-    val model = entryCollection.collectAsState()
-
-    dataSet.apply {
-        this.pointSize = pointSize.pixels
-        this.spacing = spacing.pixels
-        this.lineWidth = lineWidth.pixels
-        this.lineColor = lineColor.toArgb()
-    }
-
-    DataSet(
-        modifier = modifier,
-        dataSet = dataSet,
-        model = model.value,
-        axisManager = axisManager,
-        marker = marker,
+        isHorizontalScrollEnabled = isHorizontalScrollEnabled,
+        isZoomEnabled = isZoomEnabled
     )
 }
 
@@ -135,11 +66,15 @@ fun <Model : EntriesModel> DataSet(
     modifier: Modifier,
     dataSet: DataSet<Model>,
     model: Model,
-    axisManager: AxisManager,
-    marker: Marker?,
+    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
+    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
+    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
+    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
+    marker: Marker? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
 ) {
+    val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val dataSetModel = remember { MutableDataSetModel() }
     val rendererViewState = remember { mutableStateOf(MutableRendererViewState()) }
@@ -147,6 +82,13 @@ fun <Model : EntriesModel> DataSet(
     val setRendererViewState = rendererViewState.component2()
     val setTouchPoint = { pointF: PointF? ->
         setRendererViewState(rendererViewState.value.copy(markerTouchPoint = pointF))
+    }
+
+    axisManager.apply {
+        this.startAxis = startAxis
+        this.topAxis = topAxis
+        this.endAxis = endAxis
+        this.bottomAxis = bottomAxis
     }
 
     val setHorizontalScroll = { scrollX: Float ->
