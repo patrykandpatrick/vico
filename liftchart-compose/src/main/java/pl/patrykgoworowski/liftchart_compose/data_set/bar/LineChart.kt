@@ -28,8 +28,9 @@ fun lineDataSet(
     minY: Float? = null,
     maxY: Float? = null,
 ): LineDataSet {
-    val dataSet = remember { LineDataSet(point = point) }
+    val dataSet = remember { LineDataSet() }
     return dataSet.apply {
+        this.point = point
         this.pointSize = pointSize.pixels
         this.spacing = spacing.pixels
         this.lineWidth = lineWidth.pixels
