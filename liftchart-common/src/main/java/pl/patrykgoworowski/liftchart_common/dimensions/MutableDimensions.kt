@@ -13,6 +13,8 @@ class MutableDimensions(
     val vertical: Float
         get() = top + bottom
 
+    fun set(other: Dimensions) = set(other.start, other.top, other.end, other.bottom)
+
     fun set(all: Float) = set(all, all, all, all)
 
     fun set(
@@ -56,3 +58,14 @@ class MutableDimensions(
     }
 
 }
+
+fun dimensionsOf(all: Float) = dimensionsOf(all, all, all, all)
+
+fun dimensionsOf(
+    start: Float = 0f,
+    top: Float = 0f,
+    end: Float = 0f,
+    bottom: Float = 0f,
+) = MutableDimensions(start, top, end, bottom)
+
+fun emptyDimensions() = dimensionsOf()

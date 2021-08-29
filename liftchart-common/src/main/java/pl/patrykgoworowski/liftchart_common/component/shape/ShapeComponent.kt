@@ -3,13 +3,17 @@ package pl.patrykgoworowski.liftchart_common.component.shape
 import android.graphics.*
 import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.liftchart_common.component.Component
+import pl.patrykgoworowski.liftchart_common.component.dimension.setMargins
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
+import pl.patrykgoworowski.liftchart_common.dimensions.emptyDimensions
 import pl.patrykgoworowski.liftchart_common.path.Shape
 
 public open class ShapeComponent<T : Shape>(
     public var shape: T,
     color: Int = Color.BLACK,
-    public var dynamicShader: DynamicShader? = null
+    public var dynamicShader: DynamicShader? = null,
+    margins: Dimensions = emptyDimensions(),
 ) : Component() {
 
     val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -22,6 +26,7 @@ public open class ShapeComponent<T : Shape>(
 
     init {
         paint.color = color
+        setMargins(margins)
     }
 
     public fun setParentBounds(bounds: RectF) {

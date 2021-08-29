@@ -13,6 +13,8 @@ import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.constants.DEF_BAR_WIDTH
+import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
+import pl.patrykgoworowski.liftchart_common.dimensions.emptyDimensions
 import pl.patrykgoworowski.liftchart_common.path.DashedShape
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.path.chartShape
@@ -25,11 +27,13 @@ public fun rectComponent(
     thickness: Dp = DEF_BAR_WIDTH.dp,
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
+    margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thickness = thickness.pixels,
     shape = shape.chartShape(),
     dynamicShader = dynamicShader,
+    margins = margins,
 )
 
 @Composable
@@ -38,11 +42,13 @@ public fun rectComponent(
     thickness: Dp,
     shape: ChartShape,
     dynamicShader: DynamicShader? = null,
+    margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thickness = thickness.pixels,
     shape = shape,
     dynamicShader = dynamicShader,
+    margins = margins,
 )
 
 @Composable
@@ -50,10 +56,12 @@ fun shapeComponent(
     shape: Shape,
     color: Color,
     shader: DynamicShader? = null,
+    margins: Dimensions = emptyDimensions(),
 ): ShapeComponent<ChartShape> = ShapeComponent(
     shape = shape.chartShape(),
     color = color.toArgb(),
     dynamicShader = shader,
+    margins = margins,
 )
 
 @Composable
@@ -61,10 +69,12 @@ fun shapeComponent(
     shape: ChartShape,
     color: Color,
     shader: DynamicShader? = null,
+    margins: Dimensions = emptyDimensions(),
 ): ShapeComponent<ChartShape> = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
     dynamicShader = shader,
+    margins = margins,
 )
 
 @Composable

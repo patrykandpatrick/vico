@@ -1,5 +1,6 @@
 package pl.patrykgoworowski.liftchart_common.component.dimension
 
+import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 
 public interface Margins {
@@ -21,4 +22,8 @@ public interface Margins {
         margins.set(all)
     }
 
+}
+
+public fun Margins.setMargins(margins: Dimensions) {
+    this.margins.set(margins)
 }
