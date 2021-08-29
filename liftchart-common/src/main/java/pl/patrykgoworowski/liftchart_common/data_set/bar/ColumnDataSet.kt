@@ -7,7 +7,7 @@ import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
@@ -22,7 +22,7 @@ open class ColumnDataSet(
     public var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
     public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
     public var mergeMode: MergeMode = MergeMode.Grouped
-) : DataSet<MultiEntriesModel> {
+) : DataSet<EntryModel> {
 
     constructor(
         column: LineComponent,
@@ -56,7 +56,7 @@ open class ColumnDataSet(
 
     private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
 
-    override fun getMeasuredWidth(model: MultiEntriesModel): Int {
+    override fun getMeasuredWidth(model: EntryModel): Int {
         val length = model.getEntriesLength()
         val segmentWidth = getSegmentSize(model.entryCollections.size, false)
         return ((segmentWidth * length) + (spacing * length)).roundToInt()
@@ -74,7 +74,7 @@ open class ColumnDataSet(
 
     override fun draw(
         canvas: Canvas,
-        model: MultiEntriesModel,
+        model: EntryModel,
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
@@ -178,14 +178,14 @@ open class ColumnDataSet(
         }
     }
 
-    override fun setToAxisModel(axisModel: MutableDataSetModel, model: MultiEntriesModel) {
+    override fun setToAxisModel(axisModel: MutableDataSetModel, model: EntryModel) {
         axisModel.minY = minY ?: min(model.minY, 0f)
         axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
     }
 
-    override fun getSegmentProperties(model: MultiEntriesModel): SegmentProperties {
+    override fun getSegmentProperties(model: EntryModel): SegmentProperties {
         calculateDrawSegmentSpecIfNeeded(model)
         return segmentProperties.apply {
             contentWidth = getSegmentSize(entryCollectionSize = model.entryCollections.size)
@@ -224,7 +224,7 @@ open class ColumnDataSet(
         return thickness
     }
 
-    private fun calculateDrawSegmentSpecIfNeeded(model: MultiEntriesModel) {
+    private fun calculateDrawSegmentSpecIfNeeded(model: EntryModel) {
         if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(model)
         if (isHorizontalScrollEnabled) {

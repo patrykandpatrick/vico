@@ -7,7 +7,7 @@ import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
 import pl.patrykgoworowski.liftchart_common.entry.DataEntry
@@ -126,7 +126,7 @@ public open class MarkerComponent(
 
     override fun getVerticalInsets(
         outDimensions: MutableDimensions,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions =
         outDimensions.apply {
@@ -136,7 +136,7 @@ public open class MarkerComponent(
     override fun getHorizontalInsets(
         outDimensions: MutableDimensions,
         availableHeight: Float,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions = outDimensions
 

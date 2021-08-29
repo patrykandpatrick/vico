@@ -23,6 +23,7 @@ import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.componentShader
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.entryModelOf
 import pl.patrykgoworowski.liftchart_common.path.DashedShape
 import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_common.path.rectShape
@@ -34,7 +35,6 @@ import pl.patrykgoworowski.liftchart_compose.component.textComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.DataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.columnDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.lineDataSet
-import pl.patrykgoworowski.liftchart_compose.data_set.entry.multiEntryModelOf
 import pl.patrykgoworowski.liftchart_compose.extension.pixelSize
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 
@@ -80,7 +80,7 @@ fun ColumnChartCard() = MainTheme {
                     1.dp.pixels,
                 ),
             ),
-            model = multiEntryModelOf(1, 2, 3, 2)
+            model = entryModelOf(1, 2, 3, 2)
         )
     }
 }
@@ -109,7 +109,7 @@ fun LineChartCard() = MainTheme {
                 minX = 0f,
                 maxY = 3f,
             ),
-            model = multiEntryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
+            model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
             startAxis = startAxis(
                 label = TextComponent(
                     color = colors.onSurface.toArgb(),

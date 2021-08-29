@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_common.data_set.layout
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.AxisManager
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
@@ -19,7 +19,7 @@ public open class VirtualLayout(
     private val finalInsets: MutableDimensions = floatDimensions()
     private val tempInsets: MutableDimensions = floatDimensions()
 
-    public open fun <Model : EntriesModel> setBounds(
+    public open fun <Model : EntryModel> setBounds(
         contentBounds: RectF,
         dataSet: DataSet<Model>,
         model: Model,

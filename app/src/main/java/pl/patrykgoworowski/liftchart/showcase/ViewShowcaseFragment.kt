@@ -24,8 +24,8 @@ import pl.patrykgoworowski.liftchart_common.component.shape.shader.horizontalGra
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collectAsFlow
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.emptyMultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.collectAsFlow
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.emptyEntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.line.LineDataSet
 import pl.patrykgoworowski.liftchart_common.dimensions.dimensionsOf
 import pl.patrykgoworowski.liftchart_common.extension.copyColor
@@ -67,7 +67,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
-        val dataSetRenderer = columnDataSet + emptyMultiEntriesModel()
+        val dataSetRenderer = columnDataSet + emptyEntryModel()
 
         viewModel.entries.collectAsFlow
             .onEach { dataSetRenderer.model = it }
@@ -103,7 +103,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             )
         }
 
-        val dataSetRenderer = lineDataSet + emptyMultiEntriesModel()
+        val dataSetRenderer = lineDataSet + emptyEntryModel()
 
         viewModel.entries.collectAsFlow
             .onEach { dataSetRenderer.model = it }
@@ -142,7 +142,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
-        val dataSetRenderer = columnDataSet + emptyMultiEntriesModel()
+        val dataSetRenderer = columnDataSet + emptyEntryModel()
 
         viewModel.multiEntries.collectAsFlow
             .onEach { dataSetRenderer.model = it }
@@ -181,7 +181,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
-        val dataSetRenderer = columnDataSet + emptyMultiEntriesModel()
+        val dataSetRenderer = columnDataSet + emptyEntryModel()
 
         viewModel.multiEntries.collectAsFlow
             .onEach { dataSetRenderer.model = it }

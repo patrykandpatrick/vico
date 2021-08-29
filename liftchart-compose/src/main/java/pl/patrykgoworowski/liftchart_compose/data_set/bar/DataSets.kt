@@ -21,8 +21,8 @@ import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.AxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.constants.DEF_CHART_WIDTH
-import pl.patrykgoworowski.liftchart_common.data_set.entry.EntryCollection
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryCollection
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.layout.VirtualLayout
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.MutableRendererViewState
@@ -33,7 +33,7 @@ import pl.patrykgoworowski.liftchart_compose.extension.chartTouchEvent
 import pl.patrykgoworowski.liftchart_compose.gesture.rememberOnZoom
 
 @Composable
-fun <Model : EntriesModel> DataSet(
+fun <Model : EntryModel> DataSet(
     modifier: Modifier,
     dataSet: DataSet<Model>,
     entryCollection: EntryCollection<Model>,
@@ -62,7 +62,7 @@ fun <Model : EntriesModel> DataSet(
 }
 
 @Composable
-fun <Model : EntriesModel> DataSet(
+fun <Model : EntryModel> DataSet(
     modifier: Modifier,
     dataSet: DataSet<Model>,
     model: Model,

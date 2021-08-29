@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_common.axis
 import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
@@ -133,7 +133,7 @@ public open class AxisManager {
 
     fun drawBehindDataSet(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -170,7 +170,7 @@ public open class AxisManager {
 
     fun drawAboveDataSet(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,

@@ -1,7 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.axis.formatter
 
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import java.text.DecimalFormat
 
 // TODO: Determine if this unused class can be deleted.
@@ -16,7 +16,7 @@ class PercentageFormatAxisValueFormatter(
     override fun formatValue(
         value: Float,
         index: Int,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel
     ): String {
         val percentage = value / dataSetModel.maxY

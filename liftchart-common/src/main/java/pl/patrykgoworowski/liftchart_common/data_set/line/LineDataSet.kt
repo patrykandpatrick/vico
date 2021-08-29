@@ -5,7 +5,7 @@ import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.constants.DEF_LINE_CHART_SPACING
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
@@ -23,7 +23,7 @@ class LineDataSet(
     var spacing: Float = DEF_LINE_CHART_SPACING.dp,
     lineWidth: Float = 2.dp,
     lineColor: Int = Color.LTGRAY,
-) : DataSet<MultiEntriesModel> {
+) : DataSet<EntryModel> {
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         strokeWidth = lineWidth
@@ -82,7 +82,7 @@ class LineDataSet(
 
     override fun draw(
         canvas: Canvas,
-        model: MultiEntriesModel,
+        model: EntryModel,
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
@@ -204,7 +204,7 @@ class LineDataSet(
     }
 
     private inline fun forEachPoint(
-        model: MultiEntriesModel,
+        model: EntryModel,
         segmentSize: Float,
         drawingStart: Float,
         heightMultiplier: Float,
@@ -228,7 +228,7 @@ class LineDataSet(
         }
     }
 
-    override fun getMeasuredWidth(model: MultiEntriesModel): Int {
+    override fun getMeasuredWidth(model: EntryModel): Int {
         val length = model.getEntriesLength()
         val segmentWidth = getSegmentSize(false)
         return ((segmentWidth * length) + (spacing * length)).roundToInt()
@@ -237,7 +237,7 @@ class LineDataSet(
     private fun getSegmentSize(scaled: Boolean = true): Float =
         if (scaled) scaledPointSize else pointSize
 
-    override fun getSegmentProperties(model: MultiEntriesModel): SegmentProperties {
+    override fun getSegmentProperties(model: EntryModel): SegmentProperties {
         calculateDrawSegmentSpecIfNeeded(model)
         return segmentProperties.apply {
             contentWidth = getSegmentSize()
@@ -245,14 +245,14 @@ class LineDataSet(
         }
     }
 
-    override fun setToAxisModel(axisModel: MutableDataSetModel, model: MultiEntriesModel) {
+    override fun setToAxisModel(axisModel: MutableDataSetModel, model: EntryModel) {
         axisModel.minY = minY ?: min(model.minY, 0f)
         axisModel.maxY = maxY ?: model.maxY
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
     }
 
-    private fun calculateDrawSegmentSpecIfNeeded(model: MultiEntriesModel) {
+    private fun calculateDrawSegmentSpecIfNeeded(model: EntryModel) {
         if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(model)
         if (isHorizontalScrollEnabled) {

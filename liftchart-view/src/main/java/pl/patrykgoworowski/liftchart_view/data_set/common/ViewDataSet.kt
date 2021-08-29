@@ -2,14 +2,14 @@ package pl.patrykgoworowski.liftchart_view.data_set.common
 
 import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 
-class ViewDataSet <Model: EntriesModel>(
+class ViewDataSet <Model: EntryModel>(
     private val dataSet: DataSet<Model>,
     model: Model,
 ) : DataSetWithModel<Model>, DataSet<Model> by dataSet {

@@ -8,7 +8,7 @@ import pl.patrykgoworowski.liftchart_common.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.DataSetInsetter
@@ -41,7 +41,7 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     fun draw(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -51,7 +51,7 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     fun drawBehindDataSet(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -59,7 +59,7 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     fun drawAboveDataSet(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,

@@ -10,10 +10,10 @@ import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.topAxis
 import pl.patrykgoworowski.liftchart_common.axis.vertical.endAxis
 import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.entryModelOf
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
-import pl.patrykgoworowski.liftchart_compose.data_set.entry.multiEntryModelOf
 
-private val model = multiEntryModelOf(1, 2, 3, 4)
+private val model = entryModelOf(1, 2, 3, 4)
 
 private val topAxis = topAxis()
 private val startAxis = startAxis()

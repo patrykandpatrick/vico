@@ -14,7 +14,7 @@ import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.text.VerticalPosition
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
@@ -39,7 +39,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun drawBehindDataSet(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -93,7 +93,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun drawAboveDataSet(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState
@@ -192,7 +192,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getVerticalInsets(
         outDimensions: MutableDimensions,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions =
         outDimensions.apply {
@@ -207,7 +207,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override fun getHorizontalInsets(
         outDimensions: MutableDimensions,
         availableHeight: Float,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions = outDimensions
 

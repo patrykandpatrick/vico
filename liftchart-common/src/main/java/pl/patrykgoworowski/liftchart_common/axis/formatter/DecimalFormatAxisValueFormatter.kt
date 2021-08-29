@@ -1,7 +1,7 @@
 package pl.patrykgoworowski.liftchart_common.axis.formatter
 
 import pl.patrykgoworowski.liftchart_common.axis.model.DataSetModel
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -19,7 +19,7 @@ class DecimalFormatAxisValueFormatter(
     override fun formatValue(
         value: Float,
         index: Int,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel
     ): String = decimalFormat.format(value)
 

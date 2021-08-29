@@ -7,15 +7,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import pl.patrykgoworowski.liftchart.data.RandomEntriesGenerator
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi.MultiEntryList
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryList
 
 class ShowcaseViewModel : ViewModel() {
 
     private val generator = RandomEntriesGenerator(0..96)
     private val multiGenerator = RandomEntriesGenerator(0..32)
 
-    val entries = MultiEntryList()
-    val multiEntries = MultiEntryList()
+    val entries = EntryList()
+    val multiEntries = EntryList()
 
     init {
         viewModelScope.launch {

@@ -15,7 +15,7 @@ import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.component.text.HorizontalPosition
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.component.text.VerticalPosition
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntriesModel
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
@@ -49,7 +49,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun drawBehindDataSet(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -82,7 +82,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun drawAboveDataSet(
         canvas: Canvas,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState
@@ -177,7 +177,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     private fun getLabels(
-        entryModel: EntriesModel,
+        entryModel: EntryModel,
         dataSetModel: DataSetModel,
         maxLabelCount: Int = this.maxLabelCount,
     ): List<String> {
@@ -192,14 +192,14 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun getVerticalInsets(
         outDimensions: MutableDimensions,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions = outDimensions
 
     override fun getHorizontalInsets(
         outDimensions: MutableDimensions,
         availableHeight: Float,
-        model: EntriesModel,
+        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions {
         val labels = getLabels(model, dataSetModel, getDrawLabelCount(availableHeight.toInt()))

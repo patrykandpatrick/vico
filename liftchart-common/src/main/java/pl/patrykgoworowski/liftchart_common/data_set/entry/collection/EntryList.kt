@@ -1,4 +1,4 @@
-package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.multi
+package pl.patrykgoworowski.liftchart_common.data_set.entry.collection
 
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DefaultDiffAnimator
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DefaultDiffProcessor
@@ -8,18 +8,20 @@ import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.entry.entryOf
 import pl.patrykgoworowski.liftchart_common.extension.setAll
 
-class MultiEntryList(
+typealias EntryListModelListener = (EntryModel) -> Unit
+
+class EntryList(
     public var diffAnimator: DiffAnimator = DefaultDiffAnimator(),
     public var animateChanges: Boolean = true
-) : MultiEntryCollection {
+) : EntryCollection<EntryModel> {
 
-    private val calculator = MultiEntriesModelCalculator()
+    private val calculator = EntryModelCalculator()
     private val diffProcessor: DiffProcessor<DataEntry> = DefaultDiffProcessor()
-    private val listeners: ArrayList<MultiEntriesModelListener> = ArrayList()
+    private val listeners: ArrayList<EntryListModelListener> = ArrayList()
 
     public val data: ArrayList<List<DataEntry>> = ArrayList()
 
-    override var model: MultiEntriesModel = emptyMultiEntriesModel()
+    override var model: EntryModel = emptyEntryModel()
 
     override val minX: Float by calculator::minX
     override val maxX: Float by calculator::maxX
@@ -68,12 +70,12 @@ class MultiEntryList(
         notifyChange()
     }
 
-    override fun addOnEntriesChangedListener(listener: MultiEntriesModelListener) {
+    override fun addOnEntriesChangedListener(listener: EntryListModelListener) {
         listeners += listener
         listener(model)
     }
 
-    override fun removeOnEntriesChangedListener(listener: MultiEntriesModelListener) {
+    override fun removeOnEntriesChangedListener(listener: EntryListModelListener) {
         listeners -= listener
     }
 
@@ -82,7 +84,7 @@ class MultiEntryList(
             entryOf(x, y)
         }
 
-        model = MultiEntriesModel(
+        model = EntryModel(
             data,
             mergedEntries,
             minX,
