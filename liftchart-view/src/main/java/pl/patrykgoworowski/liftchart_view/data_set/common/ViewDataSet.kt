@@ -11,16 +11,15 @@ import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 
 class ViewDataSet<Model : EntryModel>(
     private val dataSet: DataSet<Model>,
-    model: Model,
+    private var model: Model,
 ) : DataSetWithModel<Model>, DataSet<Model> by dataSet {
 
     private val listeners = ArrayList<UpdateRequestListener>()
 
-    var model: Model = model
-        set(value) {
-            field = value
-            listeners.forEach { it() }
-        }
+    public fun setModel(model: Model) {
+        this.model = model
+        listeners.forEach { it() }
+    }
 
     override fun getEntriesModel(): Model = model
 
