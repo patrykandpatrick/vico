@@ -94,20 +94,9 @@ class ComposedDataSet<Model: EntryModel>(
     private inline fun ComposedEntryModel<Model>.forEachModelWithDataSet(
         action: (index: Int, item: Model, dataSet: DataSet<Model>) -> Unit
     ) {
-        assertSizeEqual()
-        composedEntryCollections.forEachIndexed { index, item ->
-            action(index, item, dataSets[index])
+        val minSize = minOf(composedEntryCollections.size, dataSets.size)
+        for (index in 0 until minSize) {
+            action(index, composedEntryCollections[index], dataSets[index])
         }
-    }
-
-    private fun ComposedEntryModel<Model>.assertSizeEqual() {
-        if (composedEntryCollections.size != dataSets.size) {
-            throw NOT_EQUAL_SIZE_THROWABLE
-        }
-    }
-
-    companion object {
-        private val NOT_EQUAL_SIZE_THROWABLE =
-            IllegalStateException("`models` size is not equal to `dataSets` size.")
     }
 }
