@@ -83,6 +83,7 @@ class LineDataSet(
     override fun draw(
         canvas: Canvas,
         model: EntryModel,
+        segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
@@ -103,6 +104,7 @@ class LineDataSet(
         )
 
         calculateDrawSegmentSpecIfNeeded(model)
+        updateMaxScrollAmount(model.getEntriesLength(), segmentProperties.segmentWidth)
 
         var cubicCurvature: Float
         val minYorZero = this.minY ?: 0f
@@ -114,13 +116,14 @@ class LineDataSet(
 
         val heightMultiplier = bounds.height() / (maxY - minYorZero)
 
-        val segmentSize = getSegmentSize()
+        val (segmentSize, spacing) = segmentProperties
 
-        val drawingStart = bounds.left + scaledSpacing.half - scrollX + scaledPointSize.half
+        val drawingStart = bounds.left + spacing.half - scrollX + segmentSize.half
 
         forEachPoint(
             model = model,
             segmentSize = segmentSize,
+            spacing = spacing,
             drawingStart = drawingStart,
             heightMultiplier = heightMultiplier,
             minX = minX,
@@ -134,7 +137,7 @@ class LineDataSet(
                     lineBackgroundPath.lineTo(x, y)
                 }
             } else {
-                cubicCurvature = scaledSpacing * cubicStrength *
+                cubicCurvature = spacing * cubicStrength *
                         min(1f, abs((y - prevY) / bounds.bottom) * 4)
                 linePath.cubicTo(prevX + cubicCurvature, prevY, x - cubicCurvature, y, x, y)
                 if (lineBackgroundShader != null) {
@@ -174,6 +177,7 @@ class LineDataSet(
             forEachPoint(
                 model = model,
                 segmentSize = segmentSize,
+                spacing = spacing,
                 drawingStart = drawingStart,
                 heightMultiplier = heightMultiplier,
                 minX = minX,
@@ -198,7 +202,6 @@ class LineDataSet(
                 canvas,
                 bounds,
                 markerModel,
-                model.entries,
             )
         }
     }
@@ -206,6 +209,7 @@ class LineDataSet(
     private inline fun forEachPoint(
         model: EntryModel,
         segmentSize: Float,
+        spacing: Float,
         drawingStart: Float,
         heightMultiplier: Float,
         minX: Float,
@@ -221,7 +225,7 @@ class LineDataSet(
                 if (entry.x !in (minX - step)..(maxX + step)) return@forEach2
 
                 x = drawingStart +
-                        (segmentSize + scaledSpacing) * (entry.x - minX) / model.step
+                        (segmentSize + spacing) * (entry.x - minX) / model.step
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }
@@ -265,4 +269,13 @@ class LineDataSet(
         isScaleCalculated = true
     }
 
+    private fun updateMaxScrollAmount(
+        entryCollectionSize: Int,
+        segmentWidth: Float,
+    ) {
+        maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
+            a = 0f,
+            b = (segmentWidth * entryCollectionSize) - bounds.width()
+        ) else 0f
+    }
 }

@@ -12,7 +12,6 @@ public interface Marker : DataSetInsetter {
         canvas: Canvas,
         bounds: RectF,
         markedEntries: List<EntryModel>,
-        allEntries: List<DataEntry>,
     )
 
     class EntryModel(
@@ -20,5 +19,4 @@ public interface Marker : DataSetInsetter {
         val entry: DataEntry,
         val color: Int,
     )
-
 }

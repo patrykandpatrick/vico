@@ -8,6 +8,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import pl.patrykgoworowski.liftchart.data.RandomEntriesGenerator
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryList
+import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.composed.plus
 
 class ShowcaseViewModel : ViewModel() {
 
@@ -17,6 +18,8 @@ class ShowcaseViewModel : ViewModel() {
     val entries = EntryList()
     val multiEntries = EntryList()
 
+    val composedEntries = multiEntries + entries
+
     init {
         viewModelScope.launch {
             while (currentCoroutineContext().isActive) {
@@ -25,12 +28,11 @@ class ShowcaseViewModel : ViewModel() {
                     listOf(
                         multiGenerator.generateRandomEntries(),
                         multiGenerator.generateRandomEntries(),
-                        multiGenerator.generateRandomEntries()
+                        multiGenerator.generateRandomEntries(),
                     )
                 )
                 delay(2_000)
             }
         }
     }
-
 }

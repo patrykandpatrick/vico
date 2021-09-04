@@ -9,7 +9,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 
-class ViewDataSet <Model: EntryModel>(
+class ViewDataSet<Model : EntryModel>(
     private val dataSet: DataSet<Model>,
     model: Model,
 ) : DataSetWithModel<Model>, DataSet<Model> by dataSet {
@@ -30,8 +30,13 @@ class ViewDataSet <Model: EntryModel>(
         dataSet.setToAxisModel(axisModel, model)
     }
 
-    override fun draw(canvas: Canvas, rendererViewState: RendererViewState, marker: Marker?) {
-        dataSet.draw(canvas, model, rendererViewState, marker)
+    override fun draw(
+        canvas: Canvas,
+        rendererViewState: RendererViewState,
+        segmentProperties: SegmentProperties,
+        marker: Marker?,
+    ) {
+        dataSet.draw(canvas, model, segmentProperties, rendererViewState, marker)
     }
 
     override fun addListener(listener: UpdateRequestListener) {
@@ -41,5 +46,4 @@ class ViewDataSet <Model: EntryModel>(
     override fun removeListener(listener: UpdateRequestListener) {
         listeners -= listener
     }
-
 }

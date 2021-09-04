@@ -13,6 +13,7 @@ interface DataSetWithModel<Model : EntryModel> : DataSet<Model> {
     fun draw(
         canvas: Canvas,
         rendererViewState: RendererViewState,
+        segmentProperties: SegmentProperties,
         marker: Marker?,
     )
 

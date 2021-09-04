@@ -20,6 +20,7 @@ public interface DataSet<in Model> : BoundsAware {
     public fun draw(
         canvas: Canvas,
         model: Model,
+        segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
         marker: Marker?,
     )

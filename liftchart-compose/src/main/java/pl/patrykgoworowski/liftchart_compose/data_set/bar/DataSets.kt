@@ -143,7 +143,7 @@ fun <Model : EntryModel> DataSet(
             segmentProperties,
             rendererViewState.value
         )
-        dataSet.draw(canvas, model, rendererViewState.value, marker)
+        dataSet.draw(canvas, model, segmentProperties, rendererViewState.value, marker)
         axisManager.drawAboveDataSet(
             canvas,
             model,

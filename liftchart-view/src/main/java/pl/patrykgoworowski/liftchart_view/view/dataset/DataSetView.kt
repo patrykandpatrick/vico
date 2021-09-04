@@ -140,7 +140,7 @@ class DataSetView @JvmOverloads constructor(
             segmentProperties = segmentProperties,
             rendererViewState = rendererViewState,
         )
-        dataSet.draw(canvas, rendererViewState, marker)
+        dataSet.draw(canvas, rendererViewState, segmentProperties, marker)
         axisManager.drawAboveDataSet(
             canvas = canvas,
             model = dataSet.getEntriesModel(),
