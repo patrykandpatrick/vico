@@ -56,9 +56,7 @@ public class ShapeDrawable(
 
     override fun getIntrinsicWidth(): Int = width
 
-    override fun getIntrinsicHeight(): Int {
-        return height
-    }
+    override fun getIntrinsicHeight(): Int = height
 
     companion object {
         const val DEF_COLOR = Color.BLACK
