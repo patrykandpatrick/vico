@@ -76,7 +76,7 @@ class LineDataSet(
         right: Number,
         bottom: Number
     ) {
-        this.bounds.set(left, top, right, bottom)
+        bounds.set(left, top, right, bottom)
         isScaleCalculated = false
     }
 
@@ -105,7 +105,7 @@ class LineDataSet(
         calculateDrawSegmentSpecIfNeeded(model)
 
         var cubicCurvature: Float
-        val minYorZero = this.minY ?: 0f
+        val minYorZero = minY ?: 0f
         val minX = minX ?: model.minX
         val maxX = maxX ?: model.maxX
         val maxY = maxY ?: model.maxY
@@ -231,7 +231,7 @@ class LineDataSet(
     override fun getMeasuredWidth(model: EntryModel): Int {
         val length = model.getEntriesLength()
         val segmentWidth = getSegmentSize(false)
-        return ((segmentWidth * length) + (spacing * length)).roundToInt()
+        return (segmentWidth * length + spacing * length).roundToInt()
     }
 
     private fun getSegmentSize(scaled: Boolean = true): Float =
@@ -257,7 +257,7 @@ class LineDataSet(
         val measuredWidth = getMeasuredWidth(model)
         if (isHorizontalScrollEnabled) {
             drawScale = zoom ?: 1f
-            maxScrollAmount = maxOf(0f, (measuredWidth * drawScale) - bounds.width())
+            maxScrollAmount = maxOf(0f, measuredWidth * drawScale - bounds.width())
         } else {
             maxScrollAmount = 0f
             drawScale = minOf(bounds.width() / measuredWidth, 1f)
