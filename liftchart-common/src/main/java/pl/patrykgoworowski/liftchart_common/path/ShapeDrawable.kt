@@ -19,6 +19,10 @@ public class ShapeDrawable(
         color = DEF_COLOR
     }
 
+    init {
+        setBounds(0, 0, width, height)
+    }
+
     override fun draw(canvas: Canvas) {
         rectF.set(bounds)
         shape.drawShape(canvas, paint, path, rectF)
@@ -52,7 +56,9 @@ public class ShapeDrawable(
 
     override fun getIntrinsicWidth(): Int = width
 
-    override fun getIntrinsicHeight(): Int = height
+    override fun getIntrinsicHeight(): Int {
+        return height
+    }
 
     companion object {
         const val DEF_COLOR = Color.BLACK
