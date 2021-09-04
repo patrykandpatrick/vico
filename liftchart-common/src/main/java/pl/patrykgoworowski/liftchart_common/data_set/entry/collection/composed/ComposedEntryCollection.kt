@@ -42,6 +42,7 @@ class ComposedEntryCollection<Model : EntryModel>(
 
     override fun addOnEntriesChangedListener(listener: (ComposedEntryModel<Model>) -> Unit) {
         listeners += listener
+        listener(model)
     }
 
     override fun removeOnEntriesChangedListener(listener: (ComposedEntryModel<Model>) -> Unit) {
