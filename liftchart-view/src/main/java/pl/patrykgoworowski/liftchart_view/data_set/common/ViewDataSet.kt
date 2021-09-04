@@ -6,6 +6,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
+import pl.patrykgoworowski.liftchart_common.extension.runEach
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 
@@ -18,7 +19,7 @@ class ViewDataSet<Model : EntryModel>(
 
     public fun setModel(model: Model) {
         this.model = model
-        listeners.forEach { it() }
+        listeners.runEach()
     }
 
     override fun getEntriesModel(): Model = model
