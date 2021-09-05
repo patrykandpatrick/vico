@@ -1,31 +1,31 @@
 ext {
 
     def androidx_libs = [
-            appcompat : [group: 'androidx.appcompat', name: 'appcompat', version: androidx_appcompat_version],
-            core : [group: 'androidx.core', name: 'core-ktx', version: androidx_core_version],
-            lifecycle : [group: 'androidx.lifecycle', name: 'lifecycle-runtime-ktx', version: lifecycle_runtime_version],
-            viewmodel : [group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: viewmodel_version],
+            appcompat: [group: 'androidx.appcompat', name: 'appcompat', version: androidx_appcompat_version],
+            core     : [group: 'androidx.core', name: 'core-ktx', version: androidx_core_version],
+            lifecycle: [group: 'androidx.lifecycle', name: 'lifecycle-runtime-ktx', version: lifecycle_runtime_version],
+            viewmodel: [group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: viewmodel_version],
     ]
 
     def jetpack_compose_libs = [
-            ui : [group: 'androidx.compose.ui', name: 'ui', version: compose_version],
-            ui_tooling : [group: 'androidx.compose.ui', name: 'ui-tooling', version: compose_version],
-            material : [group: 'androidx.compose.material', name: 'material', version: compose_version],
+            ui        : [group: 'androidx.compose.ui', name: 'ui', version: compose_version],
+            ui_tooling: [group: 'androidx.compose.ui', name: 'ui-tooling', version: compose_version],
+            material  : [group: 'androidx.compose.material', name: 'material', version: compose_version],
     ]
 
     def kotlin_libs = [
-            coroutines_android : [group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-android', version: coroutines_version],
-            coroutines : [group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: coroutines_version],
-            std_lib : [group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version],
-            test : [group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: kotlin_version],
+            coroutines_android: [group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-android', version: coroutines_version],
+            coroutines        : [group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: coroutines_version],
+            std_lib           : [group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version],
+            test              : [group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: kotlin_version],
     ]
 
     def material_libs = [
-            main : [group: 'com.google.android.material', name: 'material', version: material_version]
+            main: [group: 'com.google.android.material', name: 'material', version: material_version]
     ]
 
     def test_libs = [
-            junit : [group: 'androidx.test.ext', name: 'junit', version: junit_version]
+            junit: [group: 'androidx.test.ext', name: 'junit', version: junit_version]
     ]
 
     app_dependencies = [

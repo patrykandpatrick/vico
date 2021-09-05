@@ -14,7 +14,7 @@ import pl.patrykgoworowski.liftchart_common.extension.updateAll
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import java.util.*
 
-class ComposedDataSet<Model: EntryModel>(
+class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>
 ) : DataSet<ComposedEntryModel<Model>> {
 

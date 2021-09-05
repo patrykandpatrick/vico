@@ -19,7 +19,7 @@ fun componentShader(
     checkeredArrangement: Boolean = true,
     tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     tileYMode: Shader.TileMode = tileXMode,
-) : DynamicShader = object : CacheableDynamicShader() {
+): DynamicShader = object : CacheableDynamicShader() {
     override fun createShader(bounds: RectF): Shader {
         val size = componentSize.toInt() * if (checkeredArrangement) 2 else 1
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)

@@ -1,6 +1,6 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection
 
-interface EntryCollection<Model: EntryModel> {
+interface EntryCollection<Model : EntryModel> {
 
     val model: Model
 
