@@ -4,6 +4,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.composed.ComposedEntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.emptyComposedEntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryCollection
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
+import pl.patrykgoworowski.liftchart_common.extension.runEach
 
 class ComposedEntryCollection<Model : EntryModel>(
     public val entryCollections: List<EntryCollection<Model>>
@@ -16,7 +17,7 @@ class ComposedEntryCollection<Model : EntryModel>(
 
     private val internalListener = { _: Model ->
         recalculateModel()
-        listeners.forEach { listener -> listener(model) }
+        listeners.runEach(model)
     }
 
     init {
