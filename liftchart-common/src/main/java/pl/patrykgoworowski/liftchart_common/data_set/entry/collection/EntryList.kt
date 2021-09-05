@@ -1,5 +1,6 @@
 package pl.patrykgoworowski.liftchart_common.data_set.entry.collection
 
+import pl.patrykgoworowski.liftchart_common.data_set.emptyEntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DefaultDiffAnimator
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DefaultDiffProcessor
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff.DiffAnimator
@@ -22,14 +23,15 @@ class EntryList(
     public val data: ArrayList<List<DataEntry>> = ArrayList()
 
     override var model: EntryModel = emptyEntryModel()
+        private set
 
-    override val minX: Float by calculator::minX
-    override val maxX: Float by calculator::maxX
-    override val minY: Float by calculator::minY
-    override val maxY: Float by calculator::maxY
-    override val step: Float by calculator::step
-    override val stackedMaxY: Float by calculator::stackedMaxY
-    override val stackedMinY: Float by calculator::stackedMinY
+    val minX: Float by calculator::minX
+    val maxX: Float by calculator::maxX
+    val minY: Float by calculator::minY
+    val maxY: Float by calculator::maxY
+    val step: Float by calculator::step
+    val stackedMaxY: Float by calculator::stackedMaxY
+    val stackedMinY: Float by calculator::stackedMinY
 
     constructor(
         entryCollections: List<List<DataEntry>>,
@@ -45,7 +47,7 @@ class EntryList(
         setEntries(entryCollections.toList())
     }
 
-    override fun setEntries(entries: List<List<DataEntry>>) {
+    public fun setEntries(entries: List<List<DataEntry>>) {
         if (animateChanges) {
             diffProcessor.setEntries(
                 old = diffProcessor.progressDiff(diffAnimator.currentProgress),
@@ -59,7 +61,7 @@ class EntryList(
         }
     }
 
-    override fun setEntries(vararg entries: List<DataEntry>) {
+    public fun setEntries(vararg entries: List<DataEntry>) {
         setEntries(entries.toList())
     }
 
@@ -86,12 +88,10 @@ class EntryList(
 
         model = EntryModel(
             data,
-            mergedEntries,
             minX,
             maxX,
             minY,
             maxY,
-            stackedMinY,
             stackedMaxY,
             step
         )

@@ -38,10 +38,6 @@ public abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
         label?.isLTR = value
     }
 
-    override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
-        bounds.set(left, top, right, bottom)
-    }
-
     override fun setDataSetBounds(left: Number, top: Number, right: Number, bottom: Number) {
         dataSetBounds.set(left, top, right, bottom)
     }
@@ -58,5 +54,4 @@ public abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
     ): Boolean = restrictedBounds.none {
         it.contains(left, top, right, bottom) || it.intersects(left, top, right, bottom)
     }
-
 }

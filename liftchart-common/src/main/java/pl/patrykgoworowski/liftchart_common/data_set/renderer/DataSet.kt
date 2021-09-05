@@ -8,6 +8,9 @@ import pl.patrykgoworowski.liftchart_common.marker.Marker
 
 public interface DataSet<in Model> : BoundsAware {
 
+    public val maxScrollAmount: Float
+    public val markerLocationMap: Map<Float, MutableList<Marker.EntryModel>>
+
     public var minY: Float?
     public var maxY: Float?
     public var minX: Float?
@@ -15,11 +18,11 @@ public interface DataSet<in Model> : BoundsAware {
 
     public var isHorizontalScrollEnabled: Boolean
     public var zoom: Float?
-    public val maxScrollAmount: Float
 
     public fun draw(
         canvas: Canvas,
         model: Model,
+        segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
         marker: Marker?,
     )

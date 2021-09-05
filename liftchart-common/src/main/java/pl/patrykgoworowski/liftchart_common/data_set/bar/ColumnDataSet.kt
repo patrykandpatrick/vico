@@ -14,6 +14,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentPrope
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
+import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -33,6 +34,7 @@ open class ColumnDataSet(
 
     private val heightMap = HashMap<Float, Float>()
     override val bounds: RectF = RectF()
+    override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
 
     override var minY: Float? = null
     override var maxY: Float? = null
@@ -54,8 +56,6 @@ open class ColumnDataSet(
 
     private val segmentProperties = MutableSegmentProperties()
 
-    private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
-
     override fun getMeasuredWidth(model: EntryModel): Int {
         val length = model.getEntriesLength()
         val segmentWidth = getSegmentSize(model.entryCollections.size, false)
@@ -75,6 +75,7 @@ open class ColumnDataSet(
     override fun draw(
         canvas: Canvas,
         model: EntryModel,
+        segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
@@ -86,6 +87,7 @@ open class ColumnDataSet(
         canvas.clipRect(bounds)
 
         calculateDrawSegmentSpecIfNeeded(model)
+        updateMaxScrollAmount(model.getEntriesLength(), segmentProperties.segmentWidth)
 
         val minYorZero = minY ?: 0f
         val minX = minX ?: model.minX
@@ -104,19 +106,25 @@ open class ColumnDataSet(
         var columnBottom: Float
         val bottomCompensation = if (minYorZero < 0f) (minYorZero * heightMultiplier) else 0f
 
-        val segmentSize = getSegmentSize(model.entryCollections.size)
+        val defaultSegmentSize = getSegmentSize(model.entryCollections.size, scaled = true)
+
+        val (segmentSize, spacing) = segmentProperties
 
         model.entryCollections.forEachIndexed { index, entryCollection ->
 
             column = columns.getRepeating(index)
             column.setParentBounds(bounds)
-            drawingStart = getDrawingStart(index) - scrollX
+            drawingStart = getDrawingStart(
+                entryCollectionIndex = index,
+                segmentCompensation = (segmentSize - defaultSegmentSize) / 2,
+                spacing = spacing
+            ) - scrollX
 
             entryCollection.forEach { entry ->
                 if (entry.x !in minX..maxX) return@forEach
                 height = entry.y * heightMultiplier
                 columnCenterX = drawingStart +
-                        (segmentSize + scaledSpacing) * (entry.x - model.minX) / step
+                        (segmentSize + spacing) * (entry.x - model.minX) / step
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -139,12 +147,12 @@ open class ColumnDataSet(
                     return@forEach
                 }
 
-                if (touchPoint != null && marker != null) {
-                    markerLocationMap.updateList(columnCenterX, entryCollection.size) {
+                if (touchPoint != null) {
+                    markerLocationMap.updateList(ceil(columnCenterX), entryCollection.size) {
                         add(
                             Marker.EntryModel(
                                 PointF(
-                                    columnCenterX,
+                                    ceil(columnCenterX),
                                     columnTop.between(bounds.top, bounds.bottom)
                                 ),
                                 entry,
@@ -173,7 +181,6 @@ open class ColumnDataSet(
                 canvas,
                 bounds,
                 markerModel,
-                model.entries,
             )
         }
     }
@@ -203,8 +210,12 @@ open class ColumnDataSet(
             }
         }
 
-    private fun getDrawingStart(entryCollectionIndex: Int): Float {
-        val baseLeft = bounds.left + scaledSpacing.half
+    private fun getDrawingStart(
+        entryCollectionIndex: Int,
+        segmentCompensation: Float,
+        spacing: Float,
+    ): Float {
+        val baseLeft = bounds.left + spacing.half + segmentCompensation
         return when (mergeMode) {
             MergeMode.Stack -> baseLeft
             MergeMode.Grouped -> baseLeft + (getCumulatedThickness(entryCollectionIndex, true)
@@ -240,4 +251,13 @@ open class ColumnDataSet(
         isScaleCalculated = true
     }
 
+    private fun updateMaxScrollAmount(
+        entryCollectionSize: Int,
+        segmentWidth: Float,
+    ) {
+        maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
+            a = 0f,
+            b = (segmentWidth * entryCollectionSize) - bounds.width()
+        ) else 0f
+    }
 }

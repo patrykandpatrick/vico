@@ -19,6 +19,11 @@
             app:tabIndicatorFullWidth="false"
             app:tabTextAppearance="@style/TextAppearance.AppCompat.Medium" />
 
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"/>
+
     </FrameLayout>
 
     <androidx.fragment.app.FragmentContainerView

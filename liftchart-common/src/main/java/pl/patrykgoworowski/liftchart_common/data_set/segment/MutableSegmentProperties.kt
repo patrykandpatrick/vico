@@ -8,8 +8,12 @@ data class MutableSegmentProperties(
     override val segmentWidth: Float
         get() = contentWidth + marginWidth
 
+    public fun clear() {
+        contentWidth = 0f
+        marginWidth = 0f
+    }
+
     override fun toString(): String =
         "MutableSegmentProperties(segmentWidth=$segmentWidth, contentWidth=$contentWidth," +
                 "marginWidth=$marginWidth)"
-
 }

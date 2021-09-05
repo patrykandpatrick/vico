@@ -15,6 +15,9 @@ val Context.byzantine: Int
 val Context.trypanPurple: Int
     get() = ContextCompat.getColor(this, R.color.trypan_purple)
 
+val Context.purple: Int
+    get() = ContextCompat.getColor(this, R.color.purple)
+
 inline fun Context.color(resIdBlock: () -> Int): Int =
     ContextCompat.getColor(this, resIdBlock())
 

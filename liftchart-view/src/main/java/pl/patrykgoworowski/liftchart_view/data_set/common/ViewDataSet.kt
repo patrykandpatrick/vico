@@ -6,21 +6,21 @@ import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
+import pl.patrykgoworowski.liftchart_common.extension.runEach
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_view.common.UpdateRequestListener
 
-class ViewDataSet <Model: EntryModel>(
+class ViewDataSet<Model : EntryModel>(
     private val dataSet: DataSet<Model>,
-    model: Model,
+    private var model: Model,
 ) : DataSetWithModel<Model>, DataSet<Model> by dataSet {
 
     private val listeners = ArrayList<UpdateRequestListener>()
 
-    var model: Model = model
-        set(value) {
-            field = value
-            listeners.forEach { it() }
-        }
+    public fun setModel(model: Model) {
+        this.model = model
+        listeners.runEach()
+    }
 
     override fun getEntriesModel(): Model = model
 
@@ -30,8 +30,13 @@ class ViewDataSet <Model: EntryModel>(
         dataSet.setToAxisModel(axisModel, model)
     }
 
-    override fun draw(canvas: Canvas, rendererViewState: RendererViewState, marker: Marker?) {
-        dataSet.draw(canvas, model, rendererViewState, marker)
+    override fun draw(
+        canvas: Canvas,
+        rendererViewState: RendererViewState,
+        segmentProperties: SegmentProperties,
+        marker: Marker?,
+    ) {
+        dataSet.draw(canvas, model, segmentProperties, rendererViewState, marker)
     }
 
     override fun addListener(listener: UpdateRequestListener) {
@@ -41,5 +46,4 @@ class ViewDataSet <Model: EntryModel>(
     override fun removeListener(listener: UpdateRequestListener) {
         listeners -= listener
     }
-
 }

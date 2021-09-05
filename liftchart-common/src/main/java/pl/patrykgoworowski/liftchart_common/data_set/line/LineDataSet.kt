@@ -14,6 +14,7 @@ import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -32,12 +33,12 @@ class LineDataSet(
         strokeCap = Paint.Cap.ROUND
     }
     private val linePath = Path()
+    override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
 
     private val lineBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val lineBackgroundPath = Path()
 
     private val segmentProperties = MutableSegmentProperties()
-    private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
 
     private val scaledSpacing: Float
         get() = spacing * drawScale
@@ -83,6 +84,7 @@ class LineDataSet(
     override fun draw(
         canvas: Canvas,
         model: EntryModel,
+        segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
@@ -103,6 +105,7 @@ class LineDataSet(
         )
 
         calculateDrawSegmentSpecIfNeeded(model)
+        updateMaxScrollAmount(model.getEntriesLength(), segmentProperties.segmentWidth)
 
         var cubicCurvature: Float
         val minYorZero = minY ?: 0f
@@ -114,13 +117,14 @@ class LineDataSet(
 
         val heightMultiplier = bounds.height() / (maxY - minYorZero)
 
-        val segmentSize = getSegmentSize()
+        val (segmentSize, spacing) = segmentProperties
 
-        val drawingStart = bounds.left + scaledSpacing.half - scrollX + scaledPointSize.half
+        val drawingStart = bounds.left + spacing.half - scrollX + segmentSize.half
 
         forEachPoint(
             model = model,
             segmentSize = segmentSize,
+            spacing = spacing,
             drawingStart = drawingStart,
             heightMultiplier = heightMultiplier,
             minX = minX,
@@ -134,7 +138,7 @@ class LineDataSet(
                     lineBackgroundPath.lineTo(x, y)
                 }
             } else {
-                cubicCurvature = scaledSpacing * cubicStrength *
+                cubicCurvature = spacing * cubicStrength *
                         min(1f, abs((y - prevY) / bounds.bottom) * 4)
                 linePath.cubicTo(prevX + cubicCurvature, prevY, x - cubicCurvature, y, x, y)
                 if (lineBackgroundShader != null) {
@@ -147,11 +151,11 @@ class LineDataSet(
             prevX = x
             prevY = y
 
-            if (touchPoint != null && marker != null) {
-                markerLocationMap.updateList(x) {
+            if (touchPoint != null) {
+                markerLocationMap.updateList(ceil(x)) {
                     add(
                         Marker.EntryModel(
-                            PointF(x, y.between(bounds.top, bounds.bottom)),
+                            PointF(ceil(x), y.between(bounds.top, bounds.bottom)),
                             entry,
                             linePaint.color,
                         )
@@ -174,6 +178,7 @@ class LineDataSet(
             forEachPoint(
                 model = model,
                 segmentSize = segmentSize,
+                spacing = spacing,
                 drawingStart = drawingStart,
                 heightMultiplier = heightMultiplier,
                 minX = minX,
@@ -198,7 +203,6 @@ class LineDataSet(
                 canvas,
                 bounds,
                 markerModel,
-                model.entries,
             )
         }
     }
@@ -206,6 +210,7 @@ class LineDataSet(
     private inline fun forEachPoint(
         model: EntryModel,
         segmentSize: Float,
+        spacing: Float,
         drawingStart: Float,
         heightMultiplier: Float,
         minX: Float,
@@ -221,7 +226,7 @@ class LineDataSet(
                 if (entry.x !in (minX - step)..(maxX + step)) return@forEach2
 
                 x = drawingStart +
-                        (segmentSize + scaledSpacing) * (entry.x - minX) / model.step
+                        (segmentSize + spacing) * (entry.x - minX) / model.step
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }
@@ -265,4 +270,13 @@ class LineDataSet(
         isScaleCalculated = true
     }
 
+    private fun updateMaxScrollAmount(
+        entryCollectionSize: Int,
+        segmentWidth: Float,
+    ) {
+        maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
+            a = 0f,
+            b = (segmentWidth * entryCollectionSize) - bounds.width()
+        ) else 0f
+    }
 }

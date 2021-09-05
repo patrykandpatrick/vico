@@ -10,7 +10,6 @@ import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.MutableDimensions
-import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.extension.averageOf
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.orZero
@@ -41,7 +40,6 @@ public open class MarkerComponent(
         canvas: Canvas,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
-        allEntries: List<DataEntry>
     ) {
         setParentBounds(bounds)
         applyShader(bounds)
@@ -58,16 +56,15 @@ public open class MarkerComponent(
             )
 
         }
-        drawLabel(canvas, bounds, markedEntries, allEntries)
+        drawLabel(canvas, bounds, markedEntries)
     }
 
     private fun drawLabel(
         canvas: Canvas,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
-        allEntries: List<DataEntry>,
     ) {
-        val text = labelFormatter.getLabel(markedEntries, allEntries)
+        val text = labelFormatter.getLabel(markedEntries)
         val entryX = markedEntries.averageOf { it.location.x }
         val x = overrideXPositionToFit(entryX, bounds, text)
 
@@ -139,5 +136,4 @@ public open class MarkerComponent(
         model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions = outDimensions
-
 }

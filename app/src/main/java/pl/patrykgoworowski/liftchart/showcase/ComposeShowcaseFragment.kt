@@ -20,13 +20,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import pl.patrykgoworowski.liftchart.component.compose.ScrollableColumn
 import pl.patrykgoworowski.liftchart.component.compose.markerComponent
-import pl.patrykgoworowski.liftchart.ui.MainTheme
-import pl.patrykgoworowski.liftchart.ui.byzantine
-import pl.patrykgoworowski.liftchart.ui.flickrPink
-import pl.patrykgoworowski.liftchart.ui.trypanPurple
+import pl.patrykgoworowski.liftchart.ui.*
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
+import pl.patrykgoworowski.liftchart_common.data_set.composed.ComposedDataSet
 import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_compose.component.dimension.dimensionsOf
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
@@ -80,6 +78,45 @@ class ComposeShowcaseFragment : Fragment() {
                             ),
                         ),
                         entryCollection = viewModel.entries,
+                        startAxis = startAxis(),
+                        bottomAxis = bottomAxis(),
+                        marker = markerComponent(),
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    val composedDataSet = ComposedDataSet(
+                        listOf(
+                            columnDataSet(
+                                columns = listOf(
+                                    rectComponent(
+                                        color = trypanPurple,
+                                        thickness = 16.dp,
+                                        shape = CutCornerShape(topStart = 8.dp),
+                                    ),
+                                    rectComponent(
+                                        color = byzantine,
+                                        thickness = 12.dp,
+                                        shape = pillShape(),
+                                    ),
+                                    rectComponent(
+                                        color = purple,
+                                        thickness = 16.dp,
+                                        shape = CutCornerShape(topEnd = 8.dp),
+                                    ),
+                                ),
+                            ), lineDataSet(
+                                pointSize = 62.dp,
+                                lineColor = flickrPink,
+                                spacing = 8.dp
+                            )
+                        )
+                    )
+
+                    DataSet(
+                        modifier = chartModifier,
+                        dataSet = composedDataSet,
+                        entryCollection = viewModel.composedEntries,
                         startAxis = startAxis(),
                         bottomAxis = bottomAxis(),
                         marker = markerComponent(),
@@ -162,7 +199,6 @@ class ComposeShowcaseFragment : Fragment() {
             }
         }
     }
-
 }
 
 @Composable

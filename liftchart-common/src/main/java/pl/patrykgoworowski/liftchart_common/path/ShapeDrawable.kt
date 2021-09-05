@@ -19,6 +19,10 @@ public class ShapeDrawable(
         color = DEF_COLOR
     }
 
+    init {
+        setBounds(0, 0, width, height)
+    }
+
     override fun draw(canvas: Canvas) {
         rectF.set(bounds)
         shape.drawShape(canvas, paint, path, rectF)

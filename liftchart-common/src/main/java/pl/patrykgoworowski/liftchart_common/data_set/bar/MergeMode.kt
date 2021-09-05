@@ -7,7 +7,6 @@ enum class MergeMode {
 
     fun getMaxY(model: EntryModel): Float = when (this) {
         Grouped -> model.maxY
-        Stack -> model.stackedMaxY
+        Stack -> model.composedMaxY
     }
-
 }

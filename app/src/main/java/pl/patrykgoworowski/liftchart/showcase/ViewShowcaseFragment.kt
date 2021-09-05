@@ -11,10 +11,7 @@ import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.liftchart.R
 import pl.patrykgoworowski.liftchart.component.view.getMarkerComponent
 import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
-import pl.patrykgoworowski.liftchart.extension.byzantine
-import pl.patrykgoworowski.liftchart.extension.color
-import pl.patrykgoworowski.liftchart.extension.flickrPink
-import pl.patrykgoworowski.liftchart.extension.trypanPurple
+import pl.patrykgoworowski.liftchart.extension.*
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
@@ -24,8 +21,10 @@ import pl.patrykgoworowski.liftchart_common.component.shape.shader.horizontalGra
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.liftchart_common.data_set.bar.ColumnDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
+import pl.patrykgoworowski.liftchart_common.data_set.composed.ComposedDataSet
+import pl.patrykgoworowski.liftchart_common.data_set.emptyComposedEntryModel
+import pl.patrykgoworowski.liftchart_common.data_set.emptyEntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.collectAsFlow
-import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.emptyEntryModel
 import pl.patrykgoworowski.liftchart_common.data_set.line.LineDataSet
 import pl.patrykgoworowski.liftchart_common.dimensions.dimensionsOf
 import pl.patrykgoworowski.liftchart_common.extension.copyColor
@@ -49,6 +48,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         setUpBar(binding.barChart, marker)
         setUpLineChart(binding.lineChart, marker)
+        setUpComposedChart(binding.composedChart, marker)
         setUpGroupedBar(binding.groupedColumnChart, marker)
         setUpStackedBar(binding.stackedColumnChart, marker)
     }
@@ -70,7 +70,54 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val dataSetRenderer = columnDataSet + emptyEntryModel()
 
         viewModel.entries.collectAsFlow
-            .onEach { dataSetRenderer.model = it }
+            .onEach(dataSetRenderer::setModel)
+            .launchIn(lifecycleScope)
+
+        dataSetView.apply {
+            dataSet = dataSetRenderer
+            startAxis = startAxis()
+            bottomAxis = bottomAxis()
+            this.marker = marker
+        }
+    }
+
+    private fun setUpComposedChart(dataSetView: DataSetView, marker: Marker?) {
+        val context = dataSetView.context
+
+        val composedDataSet = ComposedDataSet(
+            listOf(
+                ColumnDataSet(
+                    columns = listOf(
+                        LineComponent(
+                            color = context.trypanPurple,
+                            thickness = 16.dp,
+                            shape = cutCornerShape(topLeft = 8.dp),
+                        ),
+                        LineComponent(
+                            color = context.byzantine,
+                            thickness = 12.dp,
+                            shape = pillShape(),
+                        ),
+                        LineComponent(
+                            color = context.purple,
+                            thickness = 16.dp,
+                            shape = cutCornerShape(topRight = 8.dp),
+                        ),
+                    ),
+                ), LineDataSet(
+                    pointSize = 62.dp,
+                    lineColor = context.flickrPink,
+                    spacing = 8.dp
+                )
+            )
+        ).apply {
+            isHorizontalScrollEnabled = true
+        }
+
+        val dataSetRenderer = composedDataSet + emptyComposedEntryModel()
+
+        viewModel.composedEntries.collectAsFlow
+            .onEach(dataSetRenderer::setModel)
             .launchIn(lifecycleScope)
 
         dataSetView.apply {
@@ -106,7 +153,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val dataSetRenderer = lineDataSet + emptyEntryModel()
 
         viewModel.entries.collectAsFlow
-            .onEach { dataSetRenderer.model = it }
+            .onEach(dataSetRenderer::setModel)
             .launchIn(lifecycleScope)
 
         dataSetView.apply {
@@ -145,7 +192,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val dataSetRenderer = columnDataSet + emptyEntryModel()
 
         viewModel.multiEntries.collectAsFlow
-            .onEach { dataSetRenderer.model = it }
+            .onEach(dataSetRenderer::setModel)
             .launchIn(lifecycleScope)
 
         dataSetView.apply {
@@ -184,7 +231,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val dataSetRenderer = columnDataSet + emptyEntryModel()
 
         viewModel.multiEntries.collectAsFlow
-            .onEach { dataSetRenderer.model = it }
+            .onEach(dataSetRenderer::setModel)
             .launchIn(lifecycleScope)
 
         dataSetView.apply {
@@ -194,5 +241,4 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             this.marker = marker
         }
     }
-
 }
