@@ -16,11 +16,10 @@ public open class ShapeComponent<T : Shape>(
     margins: Dimensions = emptyDimensions(),
 ) : Component() {
 
-    val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    public val parentBounds = RectF()
+    public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     protected val drawBounds: RectF = RectF()
     protected val path: Path = Path()
-
-    public val parentBounds = RectF()
 
     public var color by paint::color
 
@@ -103,5 +102,4 @@ public open class ShapeComponent<T : Shape>(
         paint.setShadowLayer(radius, dx, dy, color)
         return this
     }
-
 }
