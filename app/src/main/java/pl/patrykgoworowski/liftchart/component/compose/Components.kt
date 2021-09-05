@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.extension.copyColor
 import pl.patrykgoworowski.liftchart_common.marker.Marker
+import pl.patrykgoworowski.liftchart_common.path.PillShape
 import pl.patrykgoworowski.liftchart_common.path.corner.MarkerCorneredShape
-import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_compose.component.*
 import pl.patrykgoworowski.liftchart_compose.component.dimension.setPadding
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
@@ -34,9 +34,9 @@ fun markerComponent(): Marker {
         setPadding(8f.dp, 4f.dp)
     }
 
-    val indicatorInner = ShapeComponent(pillShape(), colors.surface.toArgb())
-    val indicatorCenter = ShapeComponent(pillShape(), Color.White.toArgb())
-    val indicatorOuter = ShapeComponent(pillShape(), Color.White.toArgb())
+    val indicatorInner = ShapeComponent(PillShape, colors.surface.toArgb())
+    val indicatorCenter = ShapeComponent(PillShape, Color.White.toArgb())
+    val indicatorOuter = ShapeComponent(PillShape, Color.White.toArgb())
 
     val indicator = overlayingComponent(
         outer = indicatorOuter,
@@ -52,7 +52,7 @@ fun markerComponent(): Marker {
         color = colors.onSurface.copy(alpha = 0.18f),
         thickness = 2f.dp,
         shape = dashedShape(
-            shape = pillShape(),
+            shape = PillShape,
             dashLength = 8f.dp,
             gapLength = 4f.dp
         )
@@ -65,7 +65,7 @@ fun markerComponent(): Marker {
         indicator = indicator,
         guideline = guideline,
         shape = MarkerCorneredShape(
-            corneredShape = pillShape(),
+            corneredShape = PillShape,
             tickSize = 6.dp.pixels
         ),
         markerBackgroundColor = colors.surface,

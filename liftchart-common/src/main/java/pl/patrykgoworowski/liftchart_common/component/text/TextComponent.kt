@@ -17,8 +17,8 @@ import pl.patrykgoworowski.liftchart_common.component.shape.ShapeComponent
 import pl.patrykgoworowski.liftchart_common.extension.half
 import pl.patrykgoworowski.liftchart_common.extension.lineHeight
 import pl.patrykgoworowski.liftchart_common.extension.sp
+import pl.patrykgoworowski.liftchart_common.path.PillShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
-import pl.patrykgoworowski.liftchart_common.path.pillShape
 import pl.patrykgoworowski.liftchart_common.text.staticLayout
 import pl.patrykgoworowski.liftchart_common.text.widestLineWidth
 import kotlin.math.roundToInt
@@ -31,7 +31,7 @@ public open class TextComponent(
     textSize: Float = 12f.sp,
     public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
-    public open var background: ShapeComponent<Shape>? = ShapeComponent(pillShape(), LTGRAY),
+    public open var background: ShapeComponent<Shape>? = ShapeComponent(PillShape, LTGRAY),
 ) : Padding by DefaultPadding(), Margins by DefaultMargins() {
 
     public val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)

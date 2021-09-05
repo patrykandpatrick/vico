@@ -5,13 +5,13 @@ import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.dimensions.Dimensions
 import pl.patrykgoworowski.liftchart_common.dimensions.emptyDimensions
+import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
-import pl.patrykgoworowski.liftchart_common.path.rectShape
 
 public open class LineComponent(
     color: Int,
     public var thickness: Float = 2f,
-    shape: Shape = rectShape(),
+    shape: Shape = RectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ) : ShapeComponent<Shape>(shape, color, dynamicShader, margins) {

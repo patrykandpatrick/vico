@@ -9,9 +9,9 @@ import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
+import pl.patrykgoworowski.liftchart_common.path.CutCornerShape
+import pl.patrykgoworowski.liftchart_common.path.RoundedCornersShape
 import pl.patrykgoworowski.liftchart_common.path.Shape
-import pl.patrykgoworowski.liftchart_common.path.cutCornerShape
-import pl.patrykgoworowski.liftchart_common.path.roundedCornersShape
 import pl.patrykgoworowski.liftchart_compose.extension.density
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
@@ -66,7 +66,7 @@ fun Path.addRoundRect(bounds: RectF, rect: RoundRect, radii: FloatArray) {
 @Composable
 fun roundedCornerShape(
     all: Dp = Dp(0f),
-): Shape = roundedCornersShape(all.value * density)
+): Shape = RoundedCornersShape(all.value * density)
 
 @Composable
 fun roundedCornerShape(
@@ -74,7 +74,7 @@ fun roundedCornerShape(
     topRight: Dp = Dp(0f),
     bottomRight: Dp = Dp(0f),
     bottomLeft: Dp = Dp(0f),
-): Shape = roundedCornersShape(
+): Shape = RoundedCornersShape(
     topLeft.value * density,
     topRight.value * density,
     bottomRight.value * density,
@@ -84,7 +84,7 @@ fun roundedCornerShape(
 @Composable
 fun cutCornerShape(
     all: Dp = Dp(0f),
-): Shape = cutCornerShape(all.value * density)
+): Shape = CutCornerShape(all.value * density)
 
 @Composable
 fun cutCornerShape(
@@ -92,7 +92,7 @@ fun cutCornerShape(
     topRight: Dp = Dp(0f),
     bottomRight: Dp = Dp(0f),
     bottomLeft: Dp = Dp(0f),
-): Shape = cutCornerShape(
+): Shape = CutCornerShape(
     topLeft.value * density,
     topRight.value * density,
     bottomRight.value * density,

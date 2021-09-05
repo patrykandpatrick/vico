@@ -25,7 +25,7 @@ import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.composed.ComposedDataSet
-import pl.patrykgoworowski.liftchart_common.path.pillShape
+import pl.patrykgoworowski.liftchart_common.path.PillShape
 import pl.patrykgoworowski.liftchart_compose.component.dimension.dimensionsOf
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.component.shape.shader.componentShader
@@ -97,7 +97,7 @@ class ComposeShowcaseFragment : Fragment() {
                                     rectComponent(
                                         color = byzantine,
                                         thickness = 12.dp,
-                                        shape = pillShape(),
+                                        shape = PillShape,
                                     ),
                                     rectComponent(
                                         color = purple,
@@ -131,7 +131,7 @@ class ComposeShowcaseFragment : Fragment() {
                             lineColor = flickrPink,
                             lineBackgroundShader = componentShader(
                                 component = shapeComponent(
-                                    shape = pillShape(),
+                                    shape = PillShape,
                                     color = flickrPink,
                                     margins = dimensionsOf(all = 0.5f.dp)
                                 ),

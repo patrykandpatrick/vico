@@ -12,7 +12,7 @@ import pl.patrykgoworowski.liftchart_common.path.corner.CorneredShape
 import pl.patrykgoworowski.liftchart_common.path.corner.CutCornerTreatment
 import pl.patrykgoworowski.liftchart_common.path.corner.RoundedCornerTreatment
 
-fun rectShape(): Shape = object : Shape {
+val RectShape: Shape = object : Shape {
 
     override fun drawShape(
         canvas: Canvas,
@@ -27,26 +27,11 @@ fun rectShape(): Shape = object : Shape {
         path.close()
         canvas.drawPath(path, paint)
     }
-
 }
 
-fun roundedCornersShape(all: Float): Shape = roundedCornersShape(all, all, all, all)
+fun RoundedCornersShape(all: Float): Shape = RoundedCornersShape(all, all, all, all)
 
-fun roundedCornersShape(
-    topLeft: Float = 0f,
-    topRight: Float = 0f,
-    bottomRight: Float = 0f,
-    bottomLeft: Float = 0f,
-): CorneredShape = CorneredShape(
-    Corner.Absolute(topLeft, RoundedCornerTreatment),
-    Corner.Absolute(topRight, RoundedCornerTreatment),
-    Corner.Absolute(bottomRight, RoundedCornerTreatment),
-    Corner.Absolute(bottomLeft, RoundedCornerTreatment),
-)
-
-fun pillShape() = roundedCornersShape(50, 50, 50, 50)
-
-fun roundedCornersShape(
+fun RoundedCornersShape(
     topLeftPercent: Int = 0,
     topRightPercent: Int = 0,
     bottomRightPercent: Int = 0,
@@ -58,9 +43,35 @@ fun roundedCornersShape(
     Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
 )
 
-fun cutCornerShape(all: Float): Shape = cutCornerShape(all, all, all, all)
+fun RoundedCornersShape(
+    topLeft: Float = 0f,
+    topRight: Float = 0f,
+    bottomRight: Float = 0f,
+    bottomLeft: Float = 0f,
+): CorneredShape = CorneredShape(
+    Corner.Absolute(topLeft, RoundedCornerTreatment),
+    Corner.Absolute(topRight, RoundedCornerTreatment),
+    Corner.Absolute(bottomRight, RoundedCornerTreatment),
+    Corner.Absolute(bottomLeft, RoundedCornerTreatment),
+)
 
-fun cutCornerShape(
+val PillShape = RoundedCornersShape(50, 50, 50, 50)
+
+fun CutCornerShape(all: Float): Shape = CutCornerShape(all, all, all, all)
+
+fun CutCornerShape(
+    topLeftPercent: Int = 0,
+    topRightPercent: Int = 0,
+    bottomRightPercent: Int = 0,
+    bottomLeftPercent: Int = 0,
+): CorneredShape = CorneredShape(
+    Corner.Relative(topLeftPercent, CutCornerTreatment),
+    Corner.Relative(topRightPercent, CutCornerTreatment),
+    Corner.Relative(bottomRightPercent, CutCornerTreatment),
+    Corner.Relative(bottomLeftPercent, CutCornerTreatment),
+)
+
+fun CutCornerShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,
@@ -72,10 +83,10 @@ fun cutCornerShape(
     Corner.Absolute(bottomLeft, CutCornerTreatment),
 )
 
-fun drawableShape(
+fun DrawableShape(
     drawable: Drawable,
     keepAspectRatio: Boolean = false,
-    otherCreator: Shape? = rectShape()
+    otherCreator: Shape? = RectShape
 ): Shape = object : Shape {
 
     private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
@@ -104,5 +115,4 @@ fun drawableShape(
             )
         }
     }
-
 }

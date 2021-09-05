@@ -14,11 +14,6 @@ public open class CorneredShape(
     public val bottomLeft: Corner,
 ) : Shape {
 
-    private var tL = 0f
-    private var tR = 0f
-    private var bR = 0f
-    private var bL = 0f
-
     private fun getCornerScale(width: Float, height: Float): Float {
         val availableSize = minOf(width, height)
         val tL = topLeft.getCornerSize(availableSize)
@@ -54,10 +49,10 @@ public open class CorneredShape(
         val size = minOf(width, height).absoluteValue
         val scale = getCornerScale(width, height).coerceAtMost(1f)
 
-        tL = topLeft.getCornerSize(size) * scale
-        tR = topRight.getCornerSize(size) * scale
-        bR = bottomRight.getCornerSize(size) * scale
-        bL = bottomLeft.getCornerSize(size) * scale
+        val tL = topLeft.getCornerSize(size) * scale
+        val tR = topRight.getCornerSize(size) * scale
+        val bR = bottomRight.getCornerSize(size) * scale
+        val bL = bottomLeft.getCornerSize(size) * scale
 
         path.moveTo(bounds.left, bounds.top + tL)
         topLeft.cornerTreatment.createCorner(
@@ -100,5 +95,4 @@ public open class CorneredShape(
         )
         path.close()
     }
-
 }

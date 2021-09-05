@@ -15,8 +15,8 @@ import pl.patrykgoworowski.liftchart_common.extension.dp
 import pl.patrykgoworowski.liftchart_common.extension.sp
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.DashedShape
+import pl.patrykgoworowski.liftchart_common.path.PillShape
 import pl.patrykgoworowski.liftchart_common.path.corner.MarkerCorneredShape
-import pl.patrykgoworowski.liftchart_common.path.pillShape
 
 fun getMarkerComponent(context: Context): Marker {
 
@@ -31,9 +31,9 @@ fun getMarkerComponent(context: Context): Marker {
     }
 
     val colorSurface = context.getThemeColor(R.attr.colorSurface)
-    val indicatorInner = ShapeComponent(pillShape(), colorSurface)
-    val indicatorCenter = ShapeComponent(pillShape(), Color.WHITE)
-    val indicatorOuter = ShapeComponent(pillShape(), Color.WHITE)
+    val indicatorInner = ShapeComponent(PillShape, colorSurface)
+    val indicatorCenter = ShapeComponent(PillShape, Color.WHITE)
+    val indicatorOuter = ShapeComponent(PillShape, Color.WHITE)
 
     val indicator = OverlayingComponent(
         outer = indicatorOuter,
@@ -49,7 +49,7 @@ fun getMarkerComponent(context: Context): Marker {
         color = context.getThemeColor(R.attr.colorOnSurface).copyColor(alpha = 48),
         thickness = 2f.dp,
         shape = DashedShape(
-            shape = pillShape(),
+            shape = PillShape,
             dashLength = 8f.dp,
             gapLength = 4f.dp
         )
@@ -60,7 +60,7 @@ fun getMarkerComponent(context: Context): Marker {
         indicator = indicator,
         guideline = guideline,
         shape = MarkerCorneredShape(
-            corneredShape = pillShape(),
+            corneredShape = PillShape,
             tickSize = 6.dp
         ),
         markerBackgroundColor = colorSurface,

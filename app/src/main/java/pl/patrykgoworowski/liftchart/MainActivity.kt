@@ -9,13 +9,13 @@ import pl.patrykgoworowski.liftchart.extension.enableEdgeToEdge
 import pl.patrykgoworowski.liftchart.extension.statusBarInsets
 import pl.patrykgoworowski.liftchart.ui.addOnTabSelectedListener
 import pl.patrykgoworowski.liftchart_common.extension.dp
-import pl.patrykgoworowski.liftchart_common.path.roundedCornersShape
+import pl.patrykgoworowski.liftchart_common.path.RoundedCornersShape
 import pl.patrykgoworowski.liftchart_common.path.toDrawable
 
 class MainActivity : AppCompatActivity() {
 
     private val tabIndicator: Drawable by lazy {
-        roundedCornersShape(topLeftPercent = 100, topRightPercent = 100)
+        RoundedCornersShape(topLeftPercent = 100, topRightPercent = 100)
             .toDrawable(intrinsicHeight = 3.dp.toInt())
     }
 

@@ -25,8 +25,8 @@ import pl.patrykgoworowski.liftchart_common.component.shape.shader.componentShad
 import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.entryModelOf
 import pl.patrykgoworowski.liftchart_common.path.DashedShape
-import pl.patrykgoworowski.liftchart_common.path.pillShape
-import pl.patrykgoworowski.liftchart_common.path.rectShape
+import pl.patrykgoworowski.liftchart_common.path.PillShape
+import pl.patrykgoworowski.liftchart_common.path.RectShape
 import pl.patrykgoworowski.liftchart_compose.component.dimension.setPadding
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
 import pl.patrykgoworowski.liftchart_compose.component.shape.shader.verticalGradient
@@ -99,7 +99,7 @@ fun LineChartCard() = MainTheme {
                 lineColor = colors.primary,
                 lineBackgroundShader = componentShader(
                     component = shapeComponent(
-                        shape = pillShape(),
+                        shape = PillShape,
                         color = colors.primary,
                     ).apply {
                         setMargins(0.5.dp.pixels)
@@ -115,7 +115,7 @@ fun LineChartCard() = MainTheme {
                     color = colors.onSurface.toArgb(),
                     textSize = 10.sp.pixelSize(),
                     background = ShapeComponent(
-                        shape = rectShape(),
+                        shape = RectShape,
                         color = Color.LightGray.toArgb(),
                     )
                 ).apply {
@@ -125,7 +125,7 @@ fun LineChartCard() = MainTheme {
                 tick = null,
                 guideline = LineComponent(
                     shape = DashedShape(
-                        shape = pillShape(),
+                        shape = PillShape,
                         dashLength = 2.dp.pixels,
                         gapLength = 4.dp.pixels,
                     ),
