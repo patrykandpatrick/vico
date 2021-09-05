@@ -14,6 +14,7 @@ import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.abs
+import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -151,10 +152,10 @@ class LineDataSet(
             prevY = y
 
             if (touchPoint != null) {
-                markerLocationMap.updateList(x) {
+                markerLocationMap.updateList(ceil(x)) {
                     add(
                         Marker.EntryModel(
-                            PointF(x, y.between(bounds.top, bounds.bottom)),
+                            PointF(ceil(x), y.between(bounds.top, bounds.bottom)),
                             entry,
                             linePaint.color,
                         )

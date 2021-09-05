@@ -14,6 +14,7 @@ import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentPrope
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.extension.*
 import pl.patrykgoworowski.liftchart_common.marker.Marker
+import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
 
@@ -147,11 +148,11 @@ open class ColumnDataSet(
                 }
 
                 if (touchPoint != null) {
-                    markerLocationMap.updateList(columnCenterX, entryCollection.size) {
+                    markerLocationMap.updateList(ceil(columnCenterX), entryCollection.size) {
                         add(
                             Marker.EntryModel(
                                 PointF(
-                                    columnCenterX,
+                                    ceil(columnCenterX),
                                     columnTop.between(bounds.top, bounds.bottom)
                                 ),
                                 entry,
