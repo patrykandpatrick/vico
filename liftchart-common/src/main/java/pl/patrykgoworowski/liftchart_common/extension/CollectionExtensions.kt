@@ -3,6 +3,7 @@ package pl.patrykgoworowski.liftchart_common.extension
 import android.graphics.PointF
 import pl.patrykgoworowski.liftchart_common.constants.ERR_REPEATING_COLLECTION_EMPTY
 import pl.patrykgoworowski.liftchart_common.marker.Marker
+import java.util.*
 import kotlin.math.abs
 
 fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =
@@ -60,11 +61,17 @@ fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
     return closestValue
 }
 
-fun HashMap<Float, ArrayList<Marker.EntryModel>>.getClosestMarkerEntryPositionModel(
+fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryPositionModel(
     touchPoint: PointF,
 ): List<Marker.EntryModel>? =
     keys.findClosestPositiveValue(touchPoint.x)
         ?.let(::get)
+
+public fun <K, V> TreeMap<K, MutableList<V>>.updateAll(other: Map<K, List<V>>) {
+    other.forEach { (key, value) ->
+        put(key, get(key)?.apply { addAll(value) } ?: mutableListOf(value))
+    }
+}
 
 fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
     fold(0f) { sum, element ->
@@ -79,10 +86,13 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
     return sum
 }
 
-internal inline fun <K, V> HashMap<K, ArrayList<V>>.updateList(
+internal inline fun <K, V> HashMap<K, MutableList<V>>.updateList(
     key: K,
     initialCapacity: Int = 0,
-    block: ArrayList<V>.() -> Unit,
+    block: MutableList<V>.() -> Unit,
 ) {
     block(getOrPut(key) { ArrayList(initialCapacity) })
 }
+
+public fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
+    ArrayList<T>(sourceCollection.size).apply { addAll(sourceCollection) }

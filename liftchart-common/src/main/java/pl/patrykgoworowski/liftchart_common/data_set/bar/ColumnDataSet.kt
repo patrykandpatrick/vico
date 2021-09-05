@@ -33,6 +33,7 @@ open class ColumnDataSet(
 
     private val heightMap = HashMap<Float, Float>()
     override val bounds: RectF = RectF()
+    override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
 
     override var minY: Float? = null
     override var maxY: Float? = null
@@ -53,8 +54,6 @@ open class ColumnDataSet(
     private var scaledInnerSpacing = innerSpacing
 
     private val segmentProperties = MutableSegmentProperties()
-
-    private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
 
     override fun getMeasuredWidth(model: EntryModel): Int {
         val length = model.getEntriesLength()
@@ -147,7 +146,7 @@ open class ColumnDataSet(
                     return@forEach
                 }
 
-                if (touchPoint != null && marker != null) {
+                if (touchPoint != null) {
                     markerLocationMap.updateList(columnCenterX, entryCollection.size) {
                         add(
                             Marker.EntryModel(

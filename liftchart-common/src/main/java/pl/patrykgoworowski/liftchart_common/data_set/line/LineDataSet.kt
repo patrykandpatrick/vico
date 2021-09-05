@@ -32,12 +32,12 @@ class LineDataSet(
         strokeCap = Paint.Cap.ROUND
     }
     private val linePath = Path()
+    override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
 
     private val lineBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val lineBackgroundPath = Path()
 
     private val segmentProperties = MutableSegmentProperties()
-    private val markerLocationMap = HashMap<Float, ArrayList<Marker.EntryModel>>()
 
     private val scaledSpacing: Float
         get() = spacing * drawScale
@@ -150,7 +150,7 @@ class LineDataSet(
             prevX = x
             prevY = y
 
-            if (touchPoint != null && marker != null) {
+            if (touchPoint != null) {
                 markerLocationMap.updateList(x) {
                     add(
                         Marker.EntryModel(

@@ -8,8 +8,11 @@ import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
+import pl.patrykgoworowski.liftchart_common.extension.getClosestMarkerEntryPositionModel
 import pl.patrykgoworowski.liftchart_common.extension.set
+import pl.patrykgoworowski.liftchart_common.extension.updateAll
 import pl.patrykgoworowski.liftchart_common.marker.Marker
+import java.util.*
 
 class ComposedDataSet<Model: EntryModel>(
     dataSets: List<DataSet<Model>>
@@ -21,6 +24,7 @@ class ComposedDataSet<Model: EntryModel>(
     private val segmentProperties = MutableSegmentProperties()
 
     override val bounds: RectF = RectF()
+    override val markerLocationMap = TreeMap<Float, MutableList<Marker.EntryModel>>()
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
         this.bounds.set(left, top, right, bottom)
@@ -52,8 +56,16 @@ class ComposedDataSet<Model: EntryModel>(
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
+        val (touchPoint) = rendererViewState
+        markerLocationMap.clear()
         model.forEachModelWithDataSet { _, item, dataSet ->
-            dataSet.draw(canvas, item, segmentProperties, rendererViewState, marker)
+            dataSet.draw(canvas, item, segmentProperties, rendererViewState, null)
+            markerLocationMap.updateAll(dataSet.markerLocationMap)
+        }
+        if (touchPoint != null && marker != null) {
+            markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+                marker.draw(canvas, bounds, markerModel)
+            }
         }
     }
 
