@@ -16,7 +16,8 @@ object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
         prefix = if (markedEntries.size > 1)
             PATTERN.format(markedEntries.sumOf { it.entry.y }) + " ("
         else "",
-        postfix = if (markedEntries.size > 1) ")" else ""
+        postfix = if (markedEntries.size > 1) ")" else "",
+        separator = "; "
     ) { model ->
         appendCompat(
             PATTERN.format(model.entry.y),
