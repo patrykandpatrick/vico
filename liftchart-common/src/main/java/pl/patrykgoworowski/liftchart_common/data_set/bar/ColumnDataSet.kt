@@ -59,7 +59,7 @@ open class ColumnDataSet(
     override fun getMeasuredWidth(model: EntryModel): Int {
         val length = model.getEntriesLength()
         val segmentWidth = getSegmentSize(model.entryCollections.size, false)
-        return ((segmentWidth * length) + (spacing * length)).roundToInt()
+        return (segmentWidth * length + spacing * length).roundToInt()
     }
 
     override fun setBounds(
@@ -68,7 +68,7 @@ open class ColumnDataSet(
         right: Number,
         bottom: Number
     ) {
-        this.bounds.set(left, top, right, bottom)
+        bounds.set(left, top, right, bottom)
         isScaleCalculated = false
     }
 
@@ -87,7 +87,7 @@ open class ColumnDataSet(
 
         calculateDrawSegmentSpecIfNeeded(model)
 
-        val minYorZero = this.minY ?: 0f
+        val minYorZero = minY ?: 0f
         val minX = minX ?: model.minX
         val maxX = maxX ?: model.maxX
 
@@ -229,7 +229,7 @@ open class ColumnDataSet(
         val measuredWidth = getMeasuredWidth(model)
         if (isHorizontalScrollEnabled) {
             drawScale = zoom ?: 1f
-            maxScrollAmount = maxOf(0f, (measuredWidth * drawScale) - bounds.width())
+            maxScrollAmount = maxOf(0f, measuredWidth * drawScale - bounds.width())
         } else {
             maxScrollAmount = 0f
             drawScale = minOf(bounds.width() / measuredWidth, 1f)
