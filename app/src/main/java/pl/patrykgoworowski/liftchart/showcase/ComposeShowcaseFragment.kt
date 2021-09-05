@@ -92,7 +92,7 @@ class ComposeShowcaseFragment : Fragment() {
                                     rectComponent(
                                         color = trypanPurple,
                                         thickness = 16.dp,
-                                        shape = CutCornerShape(topStart = 8f.dp),
+                                        shape = CutCornerShape(topStart = 8.dp),
                                     ),
                                     rectComponent(
                                         color = byzantine,
@@ -102,7 +102,7 @@ class ComposeShowcaseFragment : Fragment() {
                                     rectComponent(
                                         color = purple,
                                         thickness = 16.dp,
-                                        shape = CutCornerShape(topEnd = 8f.dp),
+                                        shape = CutCornerShape(topEnd = 8.dp),
                                     ),
                                 ),
                             ), lineDataSet(

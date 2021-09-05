@@ -91,7 +91,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                         LineComponent(
                             color = context.trypanPurple,
                             thickness = 16.dp,
-                            shape = cutCornerShape(topLeft = 8f.dp),
+                            shape = cutCornerShape(topLeft = 8.dp),
                         ),
                         LineComponent(
                             color = context.byzantine,
@@ -101,7 +101,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                         LineComponent(
                             color = context.purple,
                             thickness = 16.dp,
-                            shape = cutCornerShape(topRight = 8f.dp),
+                            shape = cutCornerShape(topRight = 8.dp),
                         ),
                     ),
                 ), LineDataSet(
