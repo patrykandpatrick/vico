@@ -62,7 +62,7 @@ public abstract class BaseDataSet<in Model : EntryModel>() : DataSet<Model>, Bou
     ) {
         val valueRange = (maxY ?: model.maxY) - (minY ?: model.minY)
         thresholdLines.forEach { line ->
-            val centerY = bounds.bottom - ((line.thresholdValue / valueRange) * bounds.height())
+            val centerY = bounds.bottom - (line.thresholdValue / valueRange * bounds.height())
             val textY =
                 centerY + line.lineComponent.thickness.half * when (line.labelVerticalPosition) {
                     ThresholdLine.LabelVerticalPosition.Top -> -1
