@@ -36,11 +36,19 @@ public abstract class BaseDataSet<in Model : EntryModel>() : DataSet<Model>, Bou
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
-        drawDataSet(canvas, model, segmentProperties, rendererViewState, marker)
+        drawDataSet(canvas, model, segmentProperties, rendererViewState)
         drawThresholdLines(canvas, model)
+        drawMarker(canvas, model, segmentProperties, rendererViewState, marker)
     }
 
     abstract fun drawDataSet(
+        canvas: Canvas,
+        model: Model,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
+    )
+
+    abstract fun drawMarker(
         canvas: Canvas,
         model: Model,
         segmentProperties: SegmentProperties,

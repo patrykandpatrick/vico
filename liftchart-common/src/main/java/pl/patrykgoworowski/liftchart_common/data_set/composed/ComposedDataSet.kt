@@ -48,15 +48,23 @@ class ComposedDataSet<Model: EntryModel>(
         canvas: Canvas,
         model: ComposedEntryModel<Model>,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?
+        rendererViewState: RendererViewState
     ) {
-        val (touchPoint) = rendererViewState
         markerLocationMap.clear()
         model.forEachModelWithDataSet { _, item, dataSet ->
             dataSet.draw(canvas, item, segmentProperties, rendererViewState, null)
             markerLocationMap.updateAll(dataSet.markerLocationMap)
         }
+    }
+
+    override fun drawMarker(
+        canvas: Canvas,
+        model: ComposedEntryModel<Model>,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
+        marker: Marker?
+    ) {
+        val touchPoint = rendererViewState.markerTouchPoint
         if (touchPoint != null && marker != null) {
             markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
                 marker.draw(canvas, bounds, markerModel)

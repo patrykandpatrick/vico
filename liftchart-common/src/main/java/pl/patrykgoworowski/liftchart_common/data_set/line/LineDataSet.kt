@@ -77,8 +77,7 @@ public open class LineDataSet(
         canvas: Canvas,
         model: EntryModel,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?
+        rendererViewState: RendererViewState
     ) {
         markerLocationMap.clear()
         if (model.entryCollections.isEmpty()) return
@@ -188,15 +187,6 @@ public open class LineDataSet(
         }
 
         canvas.restoreToCount(clipRestoreCount)
-
-        if (touchPoint == null || marker == null) return
-        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
-            marker.draw(
-                canvas,
-                bounds,
-                markerModel,
-            )
-        }
     }
 
     private inline fun forEachPoint(
@@ -222,6 +212,24 @@ public open class LineDataSet(
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }
+        }
+    }
+
+    override fun drawMarker(
+        canvas: Canvas,
+        model: EntryModel,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
+        marker: Marker?
+    ) {
+        val touchPoint = rendererViewState.markerTouchPoint
+        if (touchPoint == null || marker == null) return
+        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+            marker.draw(
+                canvas,
+                bounds,
+                markerModel,
+            )
         }
     }
 

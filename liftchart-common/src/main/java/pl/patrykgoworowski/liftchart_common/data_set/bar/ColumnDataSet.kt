@@ -68,8 +68,7 @@ public open class ColumnDataSet(
         canvas: Canvas,
         model: EntryModel,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?
+        rendererViewState: RendererViewState
     ) {
         markerLocationMap.clear()
         if (model.entryCollections.isEmpty()) return
@@ -166,7 +165,16 @@ public open class ColumnDataSet(
         heightMap.clear()
 
         canvas.restoreToCount(clipRestoreCount)
+    }
 
+    override fun drawMarker(
+        canvas: Canvas,
+        model: EntryModel,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
+        marker: Marker?
+    ) {
+        val touchPoint = rendererViewState.markerTouchPoint
         if (touchPoint == null || marker == null) return
         markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
             marker.draw(
