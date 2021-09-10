@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import pl.patrykgoworowski.liftchart_common.BoundsAware
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
+import pl.patrykgoworowski.liftchart_common.data_set.threshold.ThresholdLine
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 
 public interface DataSet<in Model> : BoundsAware {
@@ -26,6 +27,9 @@ public interface DataSet<in Model> : BoundsAware {
         rendererViewState: RendererViewState,
         marker: Marker?,
     )
+
+    public fun addThresholdLine(thresholdLine: ThresholdLine): Boolean
+    public fun removeThresholdLine(thresholdLine: ThresholdLine): Boolean
 
     public fun getMeasuredWidth(model: Model): Int
     public fun getSegmentProperties(model: Model): SegmentProperties

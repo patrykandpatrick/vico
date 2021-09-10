@@ -13,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,8 +24,10 @@ import pl.patrykgoworowski.liftchart.component.compose.markerComponent
 import pl.patrykgoworowski.liftchart.ui.*
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
+import pl.patrykgoworowski.liftchart_common.component.text.TextComponent
 import pl.patrykgoworowski.liftchart_common.data_set.bar.MergeMode
 import pl.patrykgoworowski.liftchart_common.data_set.composed.ComposedDataSet
+import pl.patrykgoworowski.liftchart_common.data_set.threshold.ThresholdLine
 import pl.patrykgoworowski.liftchart_common.path.PillShape
 import pl.patrykgoworowski.liftchart_compose.component.dimension.dimensionsOf
 import pl.patrykgoworowski.liftchart_compose.component.rectComponent
@@ -34,6 +37,7 @@ import pl.patrykgoworowski.liftchart_compose.component.shapeComponent
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.DataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.columnDataSet
 import pl.patrykgoworowski.liftchart_compose.data_set.bar.lineDataSet
+import pl.patrykgoworowski.liftchart_compose.extension.pixels
 
 class ComposeShowcaseFragment : Fragment() {
 
