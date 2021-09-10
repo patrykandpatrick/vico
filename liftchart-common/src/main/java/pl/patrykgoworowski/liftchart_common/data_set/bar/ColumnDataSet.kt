@@ -2,13 +2,12 @@ package pl.patrykgoworowski.liftchart_common.data_set.bar
 
 import android.graphics.Canvas
 import android.graphics.PointF
-import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.liftchart_common.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
-import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.BaseDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
@@ -18,12 +17,12 @@ import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-open class ColumnDataSet(
+public open class ColumnDataSet(
     public var columns: List<LineComponent>,
     public var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
     public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
     public var mergeMode: MergeMode = MergeMode.Grouped
-) : DataSet<EntryModel> {
+) : BaseDataSet<EntryModel>() {
 
     constructor(
         column: LineComponent,
@@ -33,15 +32,8 @@ open class ColumnDataSet(
     constructor() : this(emptyList())
 
     private val heightMap = HashMap<Float, Float>()
-    override val bounds: RectF = RectF()
     override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
 
-    override var minY: Float? = null
-    override var maxY: Float? = null
-    override var minX: Float? = null
-    override var maxX: Float? = null
-
-    override var isHorizontalScrollEnabled: Boolean = false
     override var maxScrollAmount: Float = 0f
     override var zoom: Float? = null
         set(value) {
@@ -72,12 +64,11 @@ open class ColumnDataSet(
         isScaleCalculated = false
     }
 
-    override fun draw(
+    override fun drawDataSet(
         canvas: Canvas,
         model: EntryModel,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?
+        rendererViewState: RendererViewState
     ) {
         markerLocationMap.clear()
         if (model.entryCollections.isEmpty()) return
@@ -174,7 +165,16 @@ open class ColumnDataSet(
         heightMap.clear()
 
         canvas.restoreToCount(clipRestoreCount)
+    }
 
+    override fun drawMarker(
+        canvas: Canvas,
+        model: EntryModel,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
+        marker: Marker?
+    ) {
+        val touchPoint = rendererViewState.markerTouchPoint
         if (touchPoint == null || marker == null) return
         markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
             marker.draw(

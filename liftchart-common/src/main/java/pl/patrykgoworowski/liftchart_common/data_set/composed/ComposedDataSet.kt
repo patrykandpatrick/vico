@@ -1,9 +1,9 @@
 package pl.patrykgoworowski.liftchart_common.data_set.composed
 
 import android.graphics.Canvas
-import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.BaseDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
@@ -16,14 +16,13 @@ import java.util.*
 
 class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>
-) : DataSet<ComposedEntryModel<Model>> {
+) : BaseDataSet<ComposedEntryModel<Model>>() {
 
     public val dataSets = ArrayList(dataSets)
 
     private val tempAxisModel = MutableDataSetModel()
     private val segmentProperties = MutableSegmentProperties()
 
-    override val bounds: RectF = RectF()
     override val markerLocationMap = TreeMap<Float, MutableList<Marker.EntryModel>>()
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
@@ -31,10 +30,6 @@ class ComposedDataSet<Model : EntryModel>(
         dataSets.forEach { dataSet -> dataSet.setBounds(left, top, right, bottom) }
     }
 
-    override var minY: Float? = null
-    override var maxY: Float? = null
-    override var minX: Float? = null
-    override var maxX: Float? = null
     override var isHorizontalScrollEnabled: Boolean = false
         set(value) {
             field = value
@@ -49,19 +44,27 @@ class ComposedDataSet<Model : EntryModel>(
     override val maxScrollAmount: Float
         get() = dataSets.maxOf { it.maxScrollAmount }
 
-    override fun draw(
+    override fun drawDataSet(
+        canvas: Canvas,
+        model: ComposedEntryModel<Model>,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState
+    ) {
+        markerLocationMap.clear()
+        model.forEachModelWithDataSet { _, item, dataSet ->
+            dataSet.draw(canvas, item, segmentProperties, rendererViewState, null)
+            markerLocationMap.updateAll(dataSet.markerLocationMap)
+        }
+    }
+
+    override fun drawMarker(
         canvas: Canvas,
         model: ComposedEntryModel<Model>,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
-        val (touchPoint) = rendererViewState
-        markerLocationMap.clear()
-        model.forEachModelWithDataSet { _, item, dataSet ->
-            dataSet.draw(canvas, item, segmentProperties, rendererViewState, null)
-            markerLocationMap.updateAll(dataSet.markerLocationMap)
-        }
+        val touchPoint = rendererViewState.markerTouchPoint
         if (touchPoint != null && marker != null) {
             markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
                 marker.draw(canvas, bounds, markerModel)

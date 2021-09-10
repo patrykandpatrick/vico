@@ -6,7 +6,7 @@ import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.liftchart_common.constants.DEF_LINE_CHART_SPACING
 import pl.patrykgoworowski.liftchart_common.data_set.entry.collection.EntryModel
-import pl.patrykgoworowski.liftchart_common.data_set.renderer.DataSet
+import pl.patrykgoworowski.liftchart_common.data_set.renderer.BaseDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
@@ -18,13 +18,13 @@ import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-class LineDataSet(
+public open class LineDataSet(
     var point: Component? = null,
     var pointSize: Float = 6f.dp,
     var spacing: Float = DEF_LINE_CHART_SPACING.dp,
     lineWidth: Float = 2.dp,
     lineColor: Int = Color.LTGRAY,
-) : DataSet<EntryModel> {
+) : BaseDataSet<EntryModel>() {
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         strokeWidth = lineWidth
@@ -46,8 +46,6 @@ class LineDataSet(
     private val scaledPointSize: Float
         get() = pointSize * drawScale
 
-    override val bounds: RectF = RectF()
-
     public var lineColor: Int by linePaint::color
     public var lineWidth: Float by linePaint::strokeWidth
     public var lineBackgroundShader: DynamicShader? = null
@@ -55,15 +53,9 @@ class LineDataSet(
 
     public var cubicStrength = 1f
 
-    override var minY: Float? = null
-    override var maxY: Float? = null
-    override var minX: Float? = null
-    override var maxX: Float? = null
-
     private var drawScale: Float = 1f
     private var isScaleCalculated = false
 
-    override var isHorizontalScrollEnabled: Boolean = false
     override var maxScrollAmount: Float = 0f
     override var zoom: Float? = null
         set(value) {
@@ -81,12 +73,11 @@ class LineDataSet(
         isScaleCalculated = false
     }
 
-    override fun draw(
+    override fun drawDataSet(
         canvas: Canvas,
         model: EntryModel,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?
+        rendererViewState: RendererViewState
     ) {
         markerLocationMap.clear()
         if (model.entryCollections.isEmpty()) return
@@ -196,15 +187,6 @@ class LineDataSet(
         }
 
         canvas.restoreToCount(clipRestoreCount)
-
-        if (touchPoint == null || marker == null) return
-        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
-            marker.draw(
-                canvas,
-                bounds,
-                markerModel,
-            )
-        }
     }
 
     private inline fun forEachPoint(
@@ -230,6 +212,24 @@ class LineDataSet(
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }
+        }
+    }
+
+    override fun drawMarker(
+        canvas: Canvas,
+        model: EntryModel,
+        segmentProperties: SegmentProperties,
+        rendererViewState: RendererViewState,
+        marker: Marker?
+    ) {
+        val touchPoint = rendererViewState.markerTouchPoint
+        if (touchPoint == null || marker == null) return
+        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+            marker.draw(
+                canvas,
+                bounds,
+                markerModel,
+            )
         }
     }
 
