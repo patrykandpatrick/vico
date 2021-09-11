@@ -29,10 +29,7 @@ import pl.patrykgoworowski.vico.core.path.corner.CutCornerTreatment
 import pl.patrykgoworowski.vico.core.path.corner.RoundedCornerTreatment
 
 object Shapes {
-
-    private const val FIFTY_PERCENT = 50
-
-    val pillShape = roundedCornersShape(FIFTY_PERCENT, FIFTY_PERCENT, FIFTY_PERCENT, FIFTY_PERCENT)
+    val pillShape = roundedCornersShape(allPercent = 50)
 
     val rectShape: Shape = object : Shape {
         override fun drawShape(
@@ -51,6 +48,9 @@ object Shapes {
     }
 
     fun roundedCornersShape(all: Float): Shape = roundedCornersShape(all, all, all, all)
+
+    fun roundedCornersShape(allPercent: Int) =
+        roundedCornersShape(allPercent, allPercent, allPercent, allPercent)
 
     fun roundedCornersShape(
         topLeftPercent: Int = 0,
