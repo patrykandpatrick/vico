@@ -47,8 +47,8 @@ import pl.patrykgoworowski.vico.view.extension.isLTR
 import pl.patrykgoworowski.vico.view.extension.measureDimension
 import pl.patrykgoworowski.vico.view.extension.specSize
 import pl.patrykgoworowski.vico.view.extension.verticalPadding
-import pl.patrykgoworowski.vico.view.motion_event.ChartScaleGestureListener
-import pl.patrykgoworowski.vico.view.motion_event.MotionEventHandler
+import pl.patrykgoworowski.vico.view.gestures.ChartScaleGestureListener
+import pl.patrykgoworowski.vico.view.gestures.MotionEventHandler
 import kotlin.properties.Delegates.observable
 
 class DataSetView @JvmOverloads constructor(

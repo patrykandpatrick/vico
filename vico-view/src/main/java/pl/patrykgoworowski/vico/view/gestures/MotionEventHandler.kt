@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.view.motion_event
+package pl.patrykgoworowski.vico.view.gestures
 
 import android.annotation.SuppressLint
 import android.graphics.PointF
@@ -35,8 +35,8 @@ public open class MotionEventHandler(
     private val requestInvalidate: () -> Unit,
 ) {
 
-    private val velocityUnits = (400 * density).toInt()
-    private val dragThreshold = 8f * density
+    private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
+    private val dragThreshold = DRAG_THRESHOLD_PIXELS * density
     private var initialX = -dragThreshold
     private var lastX = 0f
     private var currentX = 0f
@@ -104,5 +104,10 @@ public open class MotionEventHandler(
             tracker?.recycle()
             tracker = null
         }
+    }
+
+    companion object {
+        private const val VELOCITY_PIXELS = 400
+        private const val DRAG_THRESHOLD_PIXELS = 8
     }
 }

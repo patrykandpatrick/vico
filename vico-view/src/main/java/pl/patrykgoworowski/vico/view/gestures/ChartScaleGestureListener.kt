@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.view.motion_event
+package pl.patrykgoworowski.vico.view.gestures
 
 import android.graphics.RectF
 import android.view.ScaleGestureDetector
@@ -32,5 +32,5 @@ class ChartScaleGestureListener(
     override fun onScaleBegin(detector: ScaleGestureDetector): Boolean =
         getChartBounds()?.contains(detector.focusX, detector.focusY) == true
 
-    override fun onScaleEnd(detector: ScaleGestureDetector) {}
+    override fun onScaleEnd(detector: ScaleGestureDetector) = Unit
 }
