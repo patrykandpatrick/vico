@@ -57,15 +57,14 @@ import pl.patrykgoworowski.vico.core.path.DashedShape
 import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.path.Shapes.rectShape
 
-private val chartModifier = Modifier
-    .height(100.dp)
+private val chartModifier = Modifier.height(100.dp)
 
 @Preview("Sample Card With Column Chart", widthDp = 200)
 @Composable
 fun ColumnChartCard() = MainTheme {
-    SampleCard {
-        val colors = MaterialTheme.colors
+    val colors = MaterialTheme.colors
 
+    SampleCard {
         DataSet(
             modifier = chartModifier,
             dataSet = columnDataSet(
@@ -107,69 +106,53 @@ fun ColumnChartCard() = MainTheme {
 @Preview("Sample Card With Line Chart", widthDp = 200)
 @Composable
 fun LineChartCard() = MainTheme {
-    SampleCard {
-        val colors = MaterialTheme.colors
+    val colors = MaterialTheme.colors
 
+    SampleCard {
         DataSet(
-            modifier = Modifier
-                .height(100.dp),
+            modifier = Modifier.height(100.dp),
             dataSet = lineDataSet(
                 point = null,
                 lineColor = colors.primary,
                 lineBackgroundShader = componentShader(
-                    component = shapeComponent(
-                        shape = pillShape,
-                        color = colors.primary,
-                    ).apply {
+                    componentSize = 4.dp.pixels,
+                    component = shapeComponent(shape = pillShape, color = colors.primary).apply {
                         setMargins(0.5.dp.pixels)
                     },
-                    componentSize = 4.dp.pixels,
                 ),
                 minX = 0f,
                 maxY = 3f,
             ),
             model = @Suppress("MagicNumber") entryModelOf(
-                -1 to 0,
-                0 to 0,
-                1 to 1,
-                2 to 2,
-                3 to 0,
-                4 to 2,
-                5 to 1
+                -1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1
             ),
             startAxis = startAxis(
                 label = TextComponent(
                     color = colors.onSurface.toArgb(),
                     textSize = 10.sp.pixelSize(),
-                    background = ShapeComponent(
-                        shape = rectShape,
-                        color = Color.LightGray.toArgb(),
-                    )
+                    background = ShapeComponent(shape = rectShape, color = Color.LightGray.toArgb())
                 ).apply {
                     setPadding(horizontal = 4.dp, vertical = 2.dp)
                 },
                 axis = null,
                 tick = null,
                 guideline = LineComponent(
+                    color = Color.LightGray.toArgb(),
+                    thickness = 1.dp.pixels,
                     shape = DashedShape(
                         shape = pillShape,
                         dashLength = 2.dp.pixels,
                         gapLength = 4.dp.pixels,
                     ),
-                    color = Color.LightGray.toArgb(),
-                    thickness = 1.dp.pixels,
                 ),
             ).apply {
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
             },
             bottomAxis = bottomAxis(
                 label = null,
-                axis = rectComponent(
-                    color = Color.LightGray,
-                    thickness = 1.dp
-                ),
                 tick = null,
-                guideline = null
+                guideline = null,
+                axis = rectComponent(color = Color.LightGray, thickness = 1.dp),
             ),
         )
     }
@@ -184,13 +167,9 @@ fun SampleCard(
         shape = RoundedCornerShape(8.dp),
         elevation = 4.dp
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp)
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             chart()
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = "Title",
                 style = MaterialTheme.typography.h6,

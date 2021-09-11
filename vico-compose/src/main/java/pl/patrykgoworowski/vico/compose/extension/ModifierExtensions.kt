@@ -57,3 +57,6 @@ fun Modifier.chartTouchEvent(
 
 private val Offset.pointF: PointF
     get() = PointF(x, y)
+
+inline fun Modifier.addIf(condition: Boolean, crossinline factory: Modifier.() -> Modifier) =
+    if (condition) factory() else this

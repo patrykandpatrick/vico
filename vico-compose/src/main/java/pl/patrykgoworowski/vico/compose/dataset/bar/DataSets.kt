@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.dataset.entry.collectAsState
+import pl.patrykgoworowski.vico.compose.extension.addIf
 import pl.patrykgoworowski.vico.compose.extension.chartTouchEvent
 import pl.patrykgoworowski.vico.compose.gesture.rememberOnZoom
 import pl.patrykgoworowski.vico.core.MAX_ZOOM
@@ -134,15 +135,13 @@ fun <Model : EntryModel> DataSet(
         modifier = modifier
             .height(DEF_CHART_WIDTH.dp)
             .fillMaxWidth()
-            .then(
-                if (marker != null) {
-                    Modifier.chartTouchEvent(
-                        setTouchPoint = setTouchPoint,
-                        scrollableState = if (isHorizontalScrollEnabled) scrollableState else null,
-                        onZoom = if (isZoomEnabled) onZoom else null,
-                    )
-                } else Modifier
-            )
+            .addIf(marker != null) {
+                chartTouchEvent(
+                    setTouchPoint = setTouchPoint,
+                    scrollableState = if (isHorizontalScrollEnabled) scrollableState else null,
+                    onZoom = if (isZoomEnabled) onZoom else null,
+                )
+            }
     ) {
         bounds.set(0f, 0f, size.width, size.height)
         dataSet.setToAxisModel(dataSetModel, model)
