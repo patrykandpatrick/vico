@@ -13,9 +13,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/liftchart-common" />
-            <option value="$PROJECT_DIR$/liftchart-compose" />
-            <option value="$PROJECT_DIR$/liftchart-view" />
+            <option value="$PROJECT_DIR$/vico-compose" />
+            <option value="$PROJECT_DIR$/vico-core" />
+            <option value="$PROJECT_DIR$/vico-view" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <string name="app_name">LiftChart</string>
+    <string name="app_name">Vico Chart</string>
     <string name="showcase_view_title">Classic View</string>
     <string name="showcase_compose_title">Jetpack Compose</string>
 </resources>
