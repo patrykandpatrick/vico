@@ -1,3 +1,5 @@
+@file:Suppress("Unused")
+
 /*
  * Copyright (c) 2021. Patryk Goworowski
  *
@@ -16,7 +18,11 @@
 
 package pl.patrykgoworowski.vico.compose.path
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
@@ -31,13 +37,15 @@ import pl.patrykgoworowski.vico.core.path.RoundedCornersShape
 import pl.patrykgoworowski.vico.core.path.Shape
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
+private const val RADII_ARRAY_SIZE = 8
+
 @Composable
 fun ComposeShape.chartShape(): Shape = object : Shape {
 
     val layoutDirection = LocalLayoutDirection.current
     val density = LocalDensity.current
 
-    private val radii by lazy { FloatArray(8) }
+    private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
     private val matrix: Matrix by lazy { Matrix() }
 
     override fun drawShape(canvas: Canvas, paint: Paint, path: Path, bounds: RectF) {
@@ -67,6 +75,7 @@ fun ComposeShape.chartShape(): Shape = object : Shape {
     }
 }
 
+@Suppress("MagicNumber")
 fun Path.addRoundRect(bounds: RectF, rect: RoundRect, radii: FloatArray) {
     radii[0] = rect.topLeftCornerRadius.x
     radii[1] = rect.topLeftCornerRadius.y
