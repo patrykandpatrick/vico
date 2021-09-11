@@ -54,8 +54,8 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.componentShader
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 import pl.patrykgoworowski.vico.core.path.DashedShape
-import pl.patrykgoworowski.vico.core.path.PillShape
-import pl.patrykgoworowski.vico.core.path.RectShape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.path.Shapes.rectShape
 
 private val chartModifier = Modifier
     .height(100.dp)
@@ -118,7 +118,7 @@ fun LineChartCard() = MainTheme {
                 lineColor = colors.primary,
                 lineBackgroundShader = componentShader(
                     component = shapeComponent(
-                        shape = PillShape,
+                        shape = pillShape,
                         color = colors.primary,
                     ).apply {
                         setMargins(0.5.dp.pixels)
@@ -142,7 +142,7 @@ fun LineChartCard() = MainTheme {
                     color = colors.onSurface.toArgb(),
                     textSize = 10.sp.pixelSize(),
                     background = ShapeComponent(
-                        shape = RectShape,
+                        shape = rectShape,
                         color = Color.LightGray.toArgb(),
                     )
                 ).apply {
@@ -152,7 +152,7 @@ fun LineChartCard() = MainTheme {
                 tick = null,
                 guideline = LineComponent(
                     shape = DashedShape(
-                        shape = PillShape,
+                        shape = pillShape,
                         dashLength = 2.dp.pixels,
                         gapLength = 4.dp.pixels,
                     ),

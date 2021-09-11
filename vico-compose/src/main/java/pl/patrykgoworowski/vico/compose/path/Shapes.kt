@@ -32,9 +32,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.vico.compose.extension.density
-import pl.patrykgoworowski.vico.core.path.CutCornerShape
-import pl.patrykgoworowski.vico.core.path.RoundedCornersShape
 import pl.patrykgoworowski.vico.core.path.Shape
+import pl.patrykgoworowski.vico.core.path.Shapes.cutCornerShape
+import pl.patrykgoworowski.vico.core.path.Shapes.roundedCornersShape
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private const val RADII_ARRAY_SIZE = 8
@@ -91,7 +91,7 @@ fun Path.addRoundRect(bounds: RectF, rect: RoundRect, radii: FloatArray) {
 @Composable
 fun roundedCornerShape(
     all: Dp = Dp(0f),
-): Shape = RoundedCornersShape(all.value * density)
+): Shape = roundedCornersShape(all.value * density)
 
 @Composable
 fun roundedCornerShape(
@@ -99,7 +99,7 @@ fun roundedCornerShape(
     topRight: Dp = Dp(0f),
     bottomRight: Dp = Dp(0f),
     bottomLeft: Dp = Dp(0f),
-): Shape = RoundedCornersShape(
+): Shape = roundedCornersShape(
     topLeft.value * density,
     topRight.value * density,
     bottomRight.value * density,
@@ -109,7 +109,7 @@ fun roundedCornerShape(
 @Composable
 fun cutCornerShape(
     all: Dp = Dp(0f),
-): Shape = CutCornerShape(all.value * density)
+): Shape = cutCornerShape(all.value * density)
 
 @Composable
 fun cutCornerShape(
@@ -117,7 +117,7 @@ fun cutCornerShape(
     topRight: Dp = Dp(0f),
     bottomRight: Dp = Dp(0f),
     bottomLeft: Dp = Dp(0f),
-): Shape = CutCornerShape(
+): Shape = cutCornerShape(
     topLeft.value * density,
     topRight.value * density,
     bottomRight.value * density,

@@ -21,13 +21,13 @@ import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.path.RectShape
 import pl.patrykgoworowski.vico.core.path.Shape
+import pl.patrykgoworowski.vico.core.path.Shapes.rectShape
 
 public open class LineComponent(
     color: Int,
     public var thickness: Float = 2f,
-    shape: Shape = RectShape,
+    shape: Shape = rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ) : ShapeComponent<Shape>(shape, color, dynamicShader, margins) {

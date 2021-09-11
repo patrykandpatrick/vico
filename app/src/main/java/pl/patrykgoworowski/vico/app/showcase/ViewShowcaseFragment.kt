@@ -49,8 +49,8 @@ import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.path.CutCornerShape
-import pl.patrykgoworowski.vico.core.path.PillShape
+import pl.patrykgoworowski.vico.core.path.Shapes.cutCornerShape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 import pl.patrykgoworowski.vico.databinding.FragmentViewBinding
 import pl.patrykgoworowski.vico.view.dataset.DataSetView
 import pl.patrykgoworowski.vico.view.dataset.common.plus
@@ -79,7 +79,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         val columnDataSet = ColumnDataSet(
             column = LineComponent(
                 color = context.flickrPink,
-                shape = CutCornerShape(topLeft = 8f.dp),
+                shape = cutCornerShape(topLeft = 8f.dp),
                 thickness = 16f.dp,
                 dynamicShader = horizontalGradient(context.flickrPink, context.trypanPurple),
             ),
@@ -111,17 +111,17 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                         LineComponent(
                             color = context.trypanPurple,
                             thickness = 16.dp,
-                            shape = CutCornerShape(topLeft = 8.dp),
+                            shape = cutCornerShape(topLeft = 8.dp),
                         ),
                         LineComponent(
                             color = context.byzantine,
                             thickness = 12.dp,
-                            shape = PillShape,
+                            shape = pillShape,
                         ),
                         LineComponent(
                             color = context.purple,
                             thickness = 16.dp,
-                            shape = CutCornerShape(topRight = 8.dp),
+                            shape = cutCornerShape(topRight = 8.dp),
                         ),
                     ),
                 ), LineDataSet(
@@ -162,7 +162,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             )
             lineBackgroundShader = componentShader(
                 component = ShapeComponent(
-                    shape = PillShape,
+                    shape = pillShape,
                     color = context.flickrPink,
                     margins = dimensionsOf(all = 0.5f.dp)
                 ),
@@ -190,7 +190,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 LineComponent(
                     color = requireContext().flickrPink,
                     thickness = 16f.dp,
-                    shape = CutCornerShape(topLeft = 8f.dp)
+                    shape = cutCornerShape(topLeft = 8f.dp)
                 ),
                 LineComponent(
                     color = requireContext().byzantine,
@@ -199,7 +199,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 LineComponent(
                     color = requireContext().trypanPurple,
                     thickness = 16f.dp,
-                    shape = CutCornerShape(topRight = 8f.dp)
+                    shape = cutCornerShape(topRight = 8f.dp)
                 ),
             ),
             mergeMode = MergeMode.Grouped,
@@ -229,7 +229,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 LineComponent(
                     color = requireContext().color { R.color.flickr_pink },
                     thickness = 16f.dp,
-                    shape = CutCornerShape(bottomRight = 8f.dp)
+                    shape = cutCornerShape(bottomRight = 8f.dp)
                 ),
                 LineComponent(
                     color = requireContext().color { R.color.byzantine },
@@ -238,7 +238,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
                 LineComponent(
                     color = requireContext().color { R.color.trypan_purple },
                     thickness = 16f.dp,
-                    shape = CutCornerShape(topLeft = 8f.dp)
+                    shape = cutCornerShape(topLeft = 8f.dp)
                 ),
             ),
             mergeMode = MergeMode.Stack,

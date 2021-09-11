@@ -34,7 +34,7 @@ import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.composed.plus
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
-import pl.patrykgoworowski.vico.core.path.PillShape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 
 @Composable
 fun ComposedChart(
@@ -71,7 +71,7 @@ fun firstRectComponent() = rectComponent(
 fun secondRectComponent() = rectComponent(
     color = byzantine,
     thickness = 12.dp,
-    shape = PillShape,
+    shape = pillShape,
 )
 
 @Composable

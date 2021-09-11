@@ -33,8 +33,8 @@ import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
 import pl.patrykgoworowski.vico.core.extension.sp
-import pl.patrykgoworowski.vico.core.path.PillShape
 import pl.patrykgoworowski.vico.core.path.Shape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
 import kotlin.math.roundToInt
@@ -47,7 +47,7 @@ public open class TextComponent(
     textSize: Float = 12f.sp,
     public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
-    public open var background: ShapeComponent<Shape>? = ShapeComponent(PillShape, LTGRAY),
+    public open var background: ShapeComponent<Shape>? = ShapeComponent(pillShape, LTGRAY),
 ) : Padding by DefaultPadding(), Margins by DefaultMargins() {
 
     public val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)

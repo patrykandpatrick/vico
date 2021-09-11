@@ -18,13 +18,13 @@ package pl.patrykgoworowski.vico.core.axis.component
 
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.vico.core.path.RectShape
 import pl.patrykgoworowski.vico.core.path.Shape
+import pl.patrykgoworowski.vico.core.path.Shapes.rectShape
 
 open class TickComponent(
     color: Int,
     thickness: Float,
     var length: Float = 2 * thickness,
-    shape: Shape = RectShape,
+    shape: Shape = rectShape,
     dynamicShader: DynamicShader? = null
 ) : LineComponent(color, thickness, shape, dynamicShader)

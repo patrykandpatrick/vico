@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
-import pl.patrykgoworowski.vico.core.path.PillShape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 
 @Composable
 fun LineChart(
@@ -43,7 +43,7 @@ fun LineChart(
             lineColor = flickrPink,
             lineBackgroundShader = componentShader(
                 component = shapeComponent(
-                    shape = PillShape,
+                    shape = pillShape,
                     color = flickrPink,
                     margins = dimensionsOf(all = 0.5f.dp)
                 ),
