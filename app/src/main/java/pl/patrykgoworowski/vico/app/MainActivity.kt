@@ -64,8 +64,6 @@ class MainActivity : AppCompatActivity() {
                     navigator.navigateTo(screen)
                 }
             }
-
         }
     }
-
 }

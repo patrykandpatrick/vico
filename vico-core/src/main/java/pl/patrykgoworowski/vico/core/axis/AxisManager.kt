@@ -76,10 +76,11 @@ public open class AxisManager {
             axis.setBounds(
                 left = if (isLTR) contentBounds.left else contentBounds.right - axesDimensions.end,
                 top = contentBounds.top + axesDimensions.top,
-                right = if (isLTR)
+                right = if (isLTR) {
                     contentBounds.left + axesDimensions.start + axis.axisThickness.half
-                else
-                    contentBounds.right,
+                } else {
+                    contentBounds.right
+                },
                 bottom = contentBounds.bottom - axesDimensions.bottom
             )
             axis.dataSetBounds.set(
@@ -105,15 +106,17 @@ public open class AxisManager {
         }
         endAxis?.let { axis ->
             axis.setBounds(
-                left = if (isLTR)
+                left = if (isLTR) {
                     contentBounds.right - (axesDimensions.end + axis.axisThickness.half)
-                else
-                    contentBounds.left,
+                } else {
+                    contentBounds.left
+                },
                 top = contentBounds.top + axesDimensions.top,
-                right = if (isLTR)
+                right = if (isLTR) {
                     contentBounds.right
-                else
-                    contentBounds.left + axesDimensions.end,
+                } else {
+                    contentBounds.left + axesDimensions.end
+                },
                 bottom = contentBounds.bottom - axesDimensions.bottom
             )
             axis.dataSetBounds.set(
@@ -208,5 +211,4 @@ public open class AxisManager {
         )
         endAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
     }
-
 }

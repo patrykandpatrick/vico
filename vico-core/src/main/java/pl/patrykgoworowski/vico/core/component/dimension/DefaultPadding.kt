@@ -21,5 +21,4 @@ import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 public open class DefaultPadding : Padding {
 
     override val padding: MutableDimensions = MutableDimensions(0f, 0f, 0f, 0f)
-
 }

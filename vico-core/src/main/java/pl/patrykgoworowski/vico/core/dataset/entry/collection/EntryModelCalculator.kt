@@ -88,5 +88,4 @@ open class EntryModelCalculator {
     companion object {
         const val NO_VALUE = -1f
     }
-
 }

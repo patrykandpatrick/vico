@@ -14,23 +14,50 @@
  * limitations under the License.
  */
 
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
+import io.gitlab.arturbosch.detekt.Detekt
 
+buildscript {
     apply from: 'versions.gradle'
     apply from: 'dependencies.gradle'
 
     repositories {
         google()
         mavenCentral()
+        gradlePluginPortal()
     }
+
     dependencies {
         classpath 'com.android.tools.build:gradle:7.1.0-alpha11'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
     }
+}
+
+plugins {
+    id 'io.gitlab.arturbosch.detekt' version '1.18.1'
+}
+
+dependencies {
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.18.1"
+}
+
+detekt {
+    allRules = true
+    buildUponDefaultConfig = true
+    source = files("app", "vico-core", "vico-compose", "vico-view")
+
+    reports {
+        html {
+            enabled = true
+            destination = file("build/reports/detekt/detekt.html")
+        }
+    }
+}
+
+tasks.register('detektFix', Detekt) {
+    autoCorrect = true
+    allRules = true
+    buildUponDefaultConfig = true
+    source = files("app", "vico-core", "vico-compose", "vico-view")
 }
 
 allprojects {
@@ -38,6 +65,10 @@ allprojects {
         google()
         mavenCentral()
     }
+}
+
+tasks.withType(Detekt).configureEach {
+    jvmTarget = "1.8"
 }
 
 task clean(type: Delete) {

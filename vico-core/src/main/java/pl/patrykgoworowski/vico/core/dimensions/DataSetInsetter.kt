@@ -33,5 +33,4 @@ interface DataSetInsetter {
         model: EntryModel,
         dataSetModel: DataSetModel,
     ): Dimensions
-
 }

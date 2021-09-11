@@ -31,7 +31,6 @@ sealed class Corner(
     ) : Corner(size, cornerTreatment) {
 
         override fun getCornerSize(availableCornerSize: Float): Float = absoluteSize
-
     }
 
     public class Relative(
@@ -45,7 +44,5 @@ sealed class Corner(
 
         override fun getCornerSize(availableCornerSize: Float): Float =
             availableCornerSize / 100 * percentage
-
     }
-
 }

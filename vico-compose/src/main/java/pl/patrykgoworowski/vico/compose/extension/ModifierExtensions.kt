@@ -53,4 +53,3 @@ fun Modifier.chartTouchEvent(
 
 private val Offset.pointF: PointF
     get() = PointF(x, y)
-

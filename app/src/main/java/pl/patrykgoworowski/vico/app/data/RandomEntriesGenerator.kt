@@ -28,11 +28,10 @@ class RandomEntriesGenerator(
         val result = ArrayList<FloatEntry>()
         val yLength = yRange.last - yRange.first
         // val xCount = (Math.random() * (xRange.last - xRange.first)).toInt()
-        //for (x in 0..xCount) {
+        // for (x in 0..xCount) {
         for (x in xRange) {
             result += entryOf(x.toFloat(), (Math.random() * yLength).toFloat())
         }
         return result
     }
-
 }

@@ -24,7 +24,6 @@ class StaticShader(private val shader: Shader) : DynamicShader {
     override fun provideShader(
         bounds: RectF
     ): Shader = shader
-
 }
 
 val Shader.dynamic: DynamicShader

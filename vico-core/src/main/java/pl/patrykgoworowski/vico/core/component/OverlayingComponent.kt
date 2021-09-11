@@ -51,5 +51,4 @@ class OverlayingComponent(
         outer.draw(canvas, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
         inner.draw(canvas, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
     }
-
 }

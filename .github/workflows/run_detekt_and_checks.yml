@@ -1,13 +1,11 @@
-name: Lint and build debug APK
-
+name: Run detekt & checks
 on:
   workflow_dispatch:
   pull_request:
     branches:
       - master
-
 jobs:
-  lint:
+  run_detekt:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
@@ -27,15 +25,21 @@ jobs:
           java-version: 11
       - name: Grant execution permission to Gradle Wrapper
         run: chmod +x gradlew
-      - name: Lint
-        run: ./gradlew lint
-      - name: Upload lint results
+      - name: Run detekt
+        id: run_detekt
+        run: ./gradlew detekt
+        continue-on-error: true
+      - name: Upload detekt report
         uses: actions/upload-artifact@v2
         with:
-          name: Lint results
-          path: app/build/reports/**.html
-  build-debug-apk:
+          name: detekt report
+          path: build/reports/detekt/**.html
+      - name: Force failure if needed
+        if: steps.run_detekt.outcome != 'success'
+        run: exit 1
+  run_checks:
     runs-on: ubuntu-latest
+    continue-on-error: true
     steps:
       - name: Check out repository
         uses: actions/checkout@v2.3.4
@@ -53,10 +57,10 @@ jobs:
           java-version: 11
       - name: Grant execution permission to Gradle Wrapper
         run: chmod +x gradlew
-      - name: Build debug APK
-        run: ./gradlew assembleDebug
-      - name: Upload debug APK
+      - name: Run checks
+        run: ./gradlew check
+      - name: Upload lint report
         uses: actions/upload-artifact@v2
         with:
-          name: Debug APK
-          path: app/build/outputs/apk/debug/**.apk
+          name: Lint report
+          path: app/build/reports/**.html

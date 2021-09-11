@@ -59,7 +59,7 @@ class ComposeShowcaseFragment : Fragment() {
 
     private val chartModifier
         get() = Modifier
-            //.fillMaxWidth()
+            // .fillMaxWidth()
             .wrapContentWidth()
 
     override fun onCreateView(

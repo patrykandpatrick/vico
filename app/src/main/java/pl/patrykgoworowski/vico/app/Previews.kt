@@ -189,7 +189,6 @@ fun SampleCard(
                 text = "This is a subtitle. It may be long.",
                 style = MaterialTheme.typography.subtitle1,
             )
-
         }
     }
 }

@@ -72,7 +72,6 @@ class MutableDimensions(
     public fun clear() {
         set(0f)
     }
-
 }
 
 fun dimensionsOf(all: Float) = dimensionsOf(all, all, all, all)

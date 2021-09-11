@@ -263,7 +263,6 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
     }
-
 }
 
 fun startAxis(
