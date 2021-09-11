@@ -20,8 +20,8 @@ import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import pl.patrykgoworowski.vico.R
-import pl.patrykgoworowski.vico.app.showcase.ComposeShowcaseFragment
 import pl.patrykgoworowski.vico.app.showcase.ViewShowcaseFragment
+import pl.patrykgoworowski.vico.app.showcase.compose.ComposeShowcaseFragment
 
 class Navigator(
     private val activity: FragmentActivity,

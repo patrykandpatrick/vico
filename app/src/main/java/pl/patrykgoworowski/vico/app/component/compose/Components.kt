@@ -17,7 +17,9 @@
 package pl.patrykgoworowski.vico.app.component.compose
 
 import android.text.TextUtils
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
@@ -27,8 +29,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.compose.component.*
+import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
+import pl.patrykgoworowski.vico.compose.component.markerComponent
+import pl.patrykgoworowski.vico.compose.component.overlayingComponent
+import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.textComponent
 import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.compose.extension.setShadow
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
@@ -99,12 +105,14 @@ fun markerComponent(): Marker {
 @Composable
 fun ScrollableColumn(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(24.dp),
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Column(
         modifier = modifier
-            .verticalScroll(scrollState, true)
+            .verticalScroll(scrollState, true),
+        verticalArrangement = verticalArrangement,
     ) {
         content()
     }

@@ -34,6 +34,8 @@ class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>
 ) : BaseDataSet<ComposedEntryModel<Model>>() {
 
+    constructor(vararg dataSets: DataSet<Model>): this(dataSets.toList())
+
     public val dataSets = ArrayList(dataSets)
 
     private val tempAxisModel = MutableDataSetModel()
