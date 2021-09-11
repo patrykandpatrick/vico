@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.dataset.diff
 import android.animation.TimeInterpolator
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DiffAnimator
 
-public class TestDiffAnimator : DiffAnimator {
+public abstract class TestDiffAnimator : DiffAnimator {
 
     private var onProgress: ((progress: Float) -> Unit)? = null
     override var currentProgress: Float = 0f
@@ -36,5 +36,5 @@ public class TestDiffAnimator : DiffAnimator {
         onProgress?.invoke(progress)
     }
 
-    override fun cancel() {}
+    abstract override fun cancel()
 }

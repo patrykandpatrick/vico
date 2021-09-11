@@ -25,7 +25,7 @@ import pl.patrykgoworowski.vico.core.dataset.threshold.ThresholdLine
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.marker.Marker
 
-public abstract class BaseDataSet<in Model : EntryModel>() : DataSet<Model>, BoundsAware {
+public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, BoundsAware {
 
     protected val thresholdLines = ArrayList<ThresholdLine>()
 
