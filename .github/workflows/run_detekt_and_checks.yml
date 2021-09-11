@@ -35,7 +35,7 @@ jobs:
           name: detekt report
           path: build/reports/detekt/**.html
       - name: Force failure if needed
-        if: steps.run_detekt.outcome != "success"
+        if: steps.run_detekt.outcome != 'success'
         run: exit 1
   run_checks:
     runs-on: ubuntu-latest
