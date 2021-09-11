@@ -71,5 +71,4 @@ public open class MarkerCorneredShape(
         path.close()
         drawShape(canvas, paint, path, bounds)
     }
-
 }

@@ -37,5 +37,4 @@ class ScrollHandler(
 
     public fun handleScroll(targetScroll: Float): Float =
         handleScrollDelta((currentScroll - targetScroll))
-
 }

@@ -116,5 +116,4 @@ public open class LineComponent(
             maxOf(bottom - margins.bottom, centerY)
         )
     }
-
 }

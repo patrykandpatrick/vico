@@ -29,7 +29,7 @@ class DefaultDIffProcessorTest {
     @Before
     fun setEntries() {
         processor.setEntries(
-            old = listOf(entriesOf(0f to 2f,           2f to 2f, 3f to 5f)),
+            old = listOf(entriesOf(0f to 2f, 2f to 2f, 3f to 5f)),
             new = listOf(entriesOf(0f to 2f, 1f to 1f, 2f to 1f, 3f to 10f))
         )
     }
@@ -57,5 +57,4 @@ class DefaultDIffProcessorTest {
             expected, processor.progressDiff(1f)
         )
     }
-
 }

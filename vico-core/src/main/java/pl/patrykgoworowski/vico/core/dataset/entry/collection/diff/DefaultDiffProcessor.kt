@@ -81,7 +81,5 @@ public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
             val newY = newY ?: 0f
             return oldY + ((newY - oldY) * progress)
         }
-
     }
-
 }

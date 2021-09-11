@@ -77,5 +77,4 @@ public open class VirtualLayout(
         end = max(end, other.end)
         bottom = max(bottom, other.bottom)
     }
-
 }

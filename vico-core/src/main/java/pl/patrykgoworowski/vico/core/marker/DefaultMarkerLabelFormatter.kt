@@ -29,9 +29,9 @@ object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
     override fun getLabel(
         markedEntries: List<Marker.EntryModel>
     ): CharSequence = markedEntries.transformToSpannable(
-        prefix = if (markedEntries.size > 1)
+        prefix = if (markedEntries.size > 1) {
             PATTERN.format(markedEntries.sumOf { it.entry.y }) + " ("
-        else "",
+        } else "",
         postfix = if (markedEntries.size > 1) ")" else "",
         separator = "; "
     ) { model ->

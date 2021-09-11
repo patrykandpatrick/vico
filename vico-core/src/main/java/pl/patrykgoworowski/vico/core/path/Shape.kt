@@ -29,5 +29,4 @@ interface Shape {
         path: Path,
         bounds: RectF
     )
-
 }

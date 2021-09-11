@@ -77,7 +77,6 @@ public class ShapeDrawable(
     companion object {
         const val DEF_COLOR = Color.BLACK
     }
-
 }
 
 fun Shape.toDrawable(

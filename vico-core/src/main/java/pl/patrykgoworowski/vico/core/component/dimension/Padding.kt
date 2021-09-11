@@ -43,5 +43,4 @@ public interface Padding {
     ) {
         padding.set(all)
     }
-
 }

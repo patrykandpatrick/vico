@@ -94,7 +94,6 @@ fun markerComponent(): Marker {
         indicatorSize = 36.dp.pixels
         setShadow(4f.dp, dy = 2f.dp)
     }
-
 }
 
 @Composable

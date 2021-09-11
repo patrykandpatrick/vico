@@ -64,7 +64,7 @@ public open class ShapeComponent<T : Shape>(
         right: Float,
         bottom: Float
     ) {
-        if (left == right || top == bottom) return //Skip drawing shape that will be invisible.
+        if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         updateDrawBounds(left, top, right, bottom)
         path.reset()
         applyShader(parentBounds)

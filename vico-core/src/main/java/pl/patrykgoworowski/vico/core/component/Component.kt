@@ -37,5 +37,4 @@ public abstract class Component() : Margins by DefaultMargins() {
     ) {
         draw(canvas, bounds.left, bounds.top, bounds.right, bounds.bottom)
     }
-
 }

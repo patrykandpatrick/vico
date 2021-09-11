@@ -178,5 +178,4 @@ public open class TextComponent(
     companion object {
         const val TEXT_MEASUREMENT_CHAR = "1"
     }
-
 }

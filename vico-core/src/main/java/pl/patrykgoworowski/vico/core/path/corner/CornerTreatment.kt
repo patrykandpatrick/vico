@@ -28,5 +28,4 @@ public interface CornerTreatment {
         cornerLocation: CornerLocation,
         path: Path,
     )
-
 }

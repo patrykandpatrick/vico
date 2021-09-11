@@ -70,7 +70,6 @@ public open class MarkerComponent(
                 model.location.x + indicatorSize.half,
                 model.location.y + indicatorSize.half,
             )
-
         }
         drawLabel(canvas, bounds, markedEntries)
     }

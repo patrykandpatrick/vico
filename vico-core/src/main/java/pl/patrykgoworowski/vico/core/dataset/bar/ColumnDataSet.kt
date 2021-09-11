@@ -234,8 +234,8 @@ public open class ColumnDataSet(
         val baseLeft = bounds.left + spacing.half + segmentCompensation
         return when (mergeMode) {
             MergeMode.Stack -> baseLeft
-            MergeMode.Grouped -> baseLeft + (getCumulatedThickness(entryCollectionIndex, true)
-                    + (scaledInnerSpacing * entryCollectionIndex))
+            MergeMode.Grouped -> baseLeft + (getCumulatedThickness(entryCollectionIndex, true) +
+                    (scaledInnerSpacing * entryCollectionIndex))
         }
     }
 

@@ -142,5 +142,4 @@ public class DashedShape(
         Resize,
         Fixed
     }
-
 }
