@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.view.view.dataset
+package pl.patrykgoworowski.vico.view.dataset
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -53,8 +53,9 @@ import kotlin.properties.Delegates.observable
 
 class DataSetView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
-) : View(context, attrs) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : View(context, attrs, defStyleAttr) {
 
     private val contentBounds = RectF()
     private val dataSetModel = MutableDataSetModel()
@@ -80,20 +81,19 @@ class DataSetView @JvmOverloads constructor(
     private val axisManager = AxisManager()
     private val rendererViewState = MutableRendererViewState()
 
+    private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
+        ChartScaleGestureListener(
+            getChartBounds = { dataSet?.bounds },
+            onZoom = this::handleZoom,
+        )
+    private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
+
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
     public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
     public var isZoomEnabled = true
-
-    public var scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
-        ChartScaleGestureListener(
-            getChartBounds = { dataSet?.bounds },
-            onZoom = this::handleZoom
-        )
-
-    public var scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
     var dataSet: DataSetWithModel<*>? by observable(null) { _, oldValue, newValue ->
         oldValue?.removeListener(updateRequestListener)
@@ -116,7 +116,7 @@ class DataSetView @JvmOverloads constructor(
         }
     }
 
-    public fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
+    private fun handleZoom(focusX: Float, zoomChange: Float) {
         val dataSet = dataSet ?: return
         val newZoom = (dataSet.zoom ?: 1f) * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return

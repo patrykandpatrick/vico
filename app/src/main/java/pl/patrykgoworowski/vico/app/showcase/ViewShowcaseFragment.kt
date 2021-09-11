@@ -26,7 +26,11 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.component.view.getMarkerComponent
-import pl.patrykgoworowski.vico.app.extension.*
+import pl.patrykgoworowski.vico.app.extension.byzantine
+import pl.patrykgoworowski.vico.app.extension.color
+import pl.patrykgoworowski.vico.app.extension.flickrPink
+import pl.patrykgoworowski.vico.app.extension.purple
+import pl.patrykgoworowski.vico.app.extension.trypanPurple
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
@@ -48,8 +52,8 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.path.CutCornerShape
 import pl.patrykgoworowski.vico.core.path.PillShape
 import pl.patrykgoworowski.vico.databinding.FragmentViewBinding
+import pl.patrykgoworowski.vico.view.dataset.DataSetView
 import pl.patrykgoworowski.vico.view.dataset.common.plus
-import pl.patrykgoworowski.vico.view.view.dataset.DataSetView
 
 class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
