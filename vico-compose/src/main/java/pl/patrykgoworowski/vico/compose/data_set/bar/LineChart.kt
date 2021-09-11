@@ -66,5 +66,5 @@ private val StrokeCap.paintCap: Paint.Cap
         StrokeCap.Butt -> Paint.Cap.BUTT
         StrokeCap.Round -> Paint.Cap.ROUND
         StrokeCap.Square -> Paint.Cap.SQUARE
-        else -> throw IllegalArgumentException()
+        else -> throw IllegalArgumentException("Not `StrokeCap.Butt`, `StrokeCap.Round`, or `StrokeCap.Square`.")
     }
