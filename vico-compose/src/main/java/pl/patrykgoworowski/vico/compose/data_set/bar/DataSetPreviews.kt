@@ -28,6 +28,7 @@ import pl.patrykgoworowski.vico.core.axis.vertical.endAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 
+@Suppress("MagicNumber")
 private val model = entryModelOf(1, 2, 3, 4)
 
 private val topAxis = topAxis()

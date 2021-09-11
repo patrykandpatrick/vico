@@ -16,7 +16,11 @@
 
 package pl.patrykgoworowski.vico.app
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.app.ui.MainTheme
@@ -79,12 +82,12 @@ fun ColumnChartCard() = MainTheme {
                     textSize = 10.sp,
                     background = shapeComponent(
                         shape = CutCornerShape(
-                            CornerSize(25),
-                            CornerSize(50),
-                            CornerSize(50),
-                            CornerSize(25)
+                            CornerSize(percent = 25),
+                            CornerSize(percent = 50),
+                            CornerSize(percent = 50),
+                            CornerSize(percent = 25)
                         ),
-                        color = colors.primary.copy(0.1f),
+                        color = colors.primary.copy(alpha = 0.1f),
                     )
                 ).apply {
                     setPadding(end = 8.dp, start = 4.dp)
@@ -92,7 +95,7 @@ fun ColumnChartCard() = MainTheme {
                 axis = null,
                 tick = null,
                 guideline = LineComponent(
-                    colors.primary.copy(0.1f).toArgb(),
+                    colors.primary.copy(alpha = 0.1f).toArgb(),
                     1.dp.pixels,
                 ),
             ),
@@ -125,7 +128,15 @@ fun LineChartCard() = MainTheme {
                 minX = 0f,
                 maxY = 3f,
             ),
-            model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
+            model = @Suppress("MagicNumber") entryModelOf(
+                -1 to 0,
+                0 to 0,
+                1 to 1,
+                2 to 2,
+                3 to 0,
+                4 to 2,
+                5 to 1
+            ),
             startAxis = startAxis(
                 label = TextComponent(
                     color = colors.onSurface.toArgb(),
@@ -169,17 +180,16 @@ fun SampleCard(
     chart: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .padding(Dp(8f)),
-        shape = RoundedCornerShape(Dp(8f)),
-        elevation = Dp(4f)
+        modifier = Modifier.padding(8.dp),
+        shape = RoundedCornerShape(8.dp),
+        elevation = 4.dp
     ) {
         Column(
-            modifier = Modifier.padding(Dp(16f))
+            modifier = Modifier.padding(16.dp)
         ) {
             chart()
 
-            Spacer(modifier = Modifier.height(Dp(8f)))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Title",
