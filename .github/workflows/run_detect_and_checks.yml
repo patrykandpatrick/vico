@@ -26,7 +26,17 @@ jobs:
       - name: Grant execution permission to Gradle Wrapper
         run: chmod +x gradlew
       - name: Run detekt
+        id: run_detekt
         run: ./gradlew detekt
+        continue-on-error: true
+      - name: Upload detekt report
+        uses: actions/upload-artifact@v2
+        with:
+          name: detekt report
+          path: build/reports/detekt/**.html
+      - name: Force failure if needed
+        if: steps.run_detekt.outcome != "success"
+        run: exit 1
   run_checks:
     runs-on: ubuntu-latest
     continue-on-error: true
