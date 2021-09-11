@@ -53,6 +53,13 @@ detekt {
     }
 }
 
+tasks.register('detektFix', Detekt) {
+    autoCorrect = true
+    allRules = true
+    buildUponDefaultConfig = true
+    source = files("app", "vico-core", "vico-compose", "vico-view")
+}
+
 allprojects {
     repositories {
         google()
