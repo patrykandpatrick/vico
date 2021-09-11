@@ -1,7 +1,12 @@
 package pl.patrykgoworowski.liftchart_common.axis.vertical
 
 import android.graphics.Canvas
-import pl.patrykgoworowski.liftchart_common.*
+import pl.patrykgoworowski.liftchart_common.DEF_AXIS_COMPONENT
+import pl.patrykgoworowski.liftchart_common.DEF_GUIDELINE_COMPONENT
+import pl.patrykgoworowski.liftchart_common.DEF_LABEL_COMPONENT
+import pl.patrykgoworowski.liftchart_common.DEF_LABEL_COUNT
+import pl.patrykgoworowski.liftchart_common.DEF_LABEL_SPACING
+import pl.patrykgoworowski.liftchart_common.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.liftchart_common.axis.AxisPosition
 import pl.patrykgoworowski.liftchart_common.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.liftchart_common.axis.component.TickComponent
@@ -36,7 +41,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
 
     private val isLabelOutsideOnLeftOrInsideOnRight: Boolean
         get() = (horizontalLabelPosition == Outside && isLeft) ||
-                (horizontalLabelPosition == Inside && !isLeft)
+            (horizontalLabelPosition == Inside && !isLeft)
 
     private val textHorizontalPosition: HorizontalPosition
         get() = if (isLabelOutsideOnLeftOrInsideOnRight) HorizontalPosition.End else HorizontalPosition.Start
@@ -129,12 +134,14 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
                 labels.getOrNull(index)?.let { labelText ->
                     if (
                         (horizontalLabelPosition == Inside) &&
-                        (isNotInRestrictedBounds(
-                            labelX,
-                            labelTop - labelHeight.half,
-                            labelX + 1,
-                            labelTop + labelHeight.half
-                        )) || horizontalLabelPosition == Outside
+                        (
+                            isNotInRestrictedBounds(
+                                labelX,
+                                labelTop - labelHeight.half,
+                                labelX + 1,
+                                labelTop + labelHeight.half
+                            )
+                            ) || horizontalLabelPosition == Outside
                     ) {
                         label.background?.setParentBounds(bounds)
                         label.drawText(
@@ -247,7 +254,6 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
     }
-
 }
 
 fun startAxis(

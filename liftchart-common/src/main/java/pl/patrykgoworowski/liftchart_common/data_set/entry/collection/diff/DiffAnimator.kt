@@ -13,5 +13,4 @@ public interface DiffAnimator {
     public fun start(onProgress: (progress: Float) -> Unit)
 
     public fun cancel()
-
 }

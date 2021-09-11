@@ -9,5 +9,4 @@ interface RendererViewState {
 
     operator fun component1(): PointF? = markerTouchPoint
     operator fun component2(): Float = horizontalScroll
-
 }

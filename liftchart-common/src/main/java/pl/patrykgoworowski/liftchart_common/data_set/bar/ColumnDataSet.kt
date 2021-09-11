@@ -11,7 +11,13 @@ import pl.patrykgoworowski.liftchart_common.data_set.renderer.BaseDataSet
 import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
-import pl.patrykgoworowski.liftchart_common.extension.*
+import pl.patrykgoworowski.liftchart_common.extension.between
+import pl.patrykgoworowski.liftchart_common.extension.dp
+import pl.patrykgoworowski.liftchart_common.extension.getClosestMarkerEntryPositionModel
+import pl.patrykgoworowski.liftchart_common.extension.getRepeating
+import pl.patrykgoworowski.liftchart_common.extension.half
+import pl.patrykgoworowski.liftchart_common.extension.set
+import pl.patrykgoworowski.liftchart_common.extension.updateList
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.ceil
 import kotlin.math.min
@@ -115,7 +121,7 @@ public open class ColumnDataSet(
                 if (entry.x !in minX..maxX) return@forEach
                 height = entry.y * heightMultiplier
                 columnCenterX = drawingStart +
-                        (segmentSize + spacing) * (entry.x - model.minX) / step
+                    (segmentSize + spacing) * (entry.x - model.minX) / step
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -206,7 +212,7 @@ public open class ColumnDataSet(
             MergeMode.Grouped -> {
                 val innerSpacing = if (scaled) scaledInnerSpacing else innerSpacing
                 getCumulatedThickness(entryCollectionSize, scaled) +
-                        (innerSpacing * (entryCollectionSize - 1))
+                    (innerSpacing * (entryCollectionSize - 1))
             }
         }
 
@@ -218,8 +224,10 @@ public open class ColumnDataSet(
         val baseLeft = bounds.left + spacing.half + segmentCompensation
         return when (mergeMode) {
             MergeMode.Stack -> baseLeft
-            MergeMode.Grouped -> baseLeft + (getCumulatedThickness(entryCollectionIndex, true)
-                    + (scaledInnerSpacing * entryCollectionIndex))
+            MergeMode.Grouped -> baseLeft + (
+                getCumulatedThickness(entryCollectionIndex, true) +
+                    (scaledInnerSpacing * entryCollectionIndex)
+                )
         }
     }
 

@@ -21,7 +21,6 @@ public interface Margins {
     ) {
         margins.set(all)
     }
-
 }
 
 public fun Margins.setMargins(margins: Dimensions) {

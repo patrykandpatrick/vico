@@ -1,6 +1,10 @@
 package pl.patrykgoworowski.liftchart_common.component.shape
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import pl.patrykgoworowski.liftchart_common.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.dimension.setMargins
@@ -48,7 +52,7 @@ public open class ShapeComponent<T : Shape>(
         right: Float,
         bottom: Float
     ) {
-        if (left == right || top == bottom) return //Skip drawing shape that will be invisible.
+        if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         updateDrawBounds(left, top, right, bottom)
         path.reset()
         applyShader(parentBounds)

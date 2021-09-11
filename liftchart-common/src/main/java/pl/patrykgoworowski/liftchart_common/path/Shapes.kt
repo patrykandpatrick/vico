@@ -90,7 +90,7 @@ fun DrawableShape(
 ): Shape = object : Shape {
 
     private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
-            drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
+        drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
 
     override fun drawShape(
         canvas: Canvas,

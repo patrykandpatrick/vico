@@ -50,11 +50,15 @@ public open class AxisManager {
         axesDimensions: Dimensions,
     ) {
 
-        val horizontalAxisLeftDrawBound = dataSetBounds.left + (leftAxis?.axisThickness?.half
-            ?: -axesDimensions.getLeft(isLTR))
+        val horizontalAxisLeftDrawBound = dataSetBounds.left + (
+            leftAxis?.axisThickness?.half
+                ?: -axesDimensions.getLeft(isLTR)
+            )
 
-        val horizontalAxisRightDrawBound = dataSetBounds.right - (rightAxis?.axisThickness?.half
-            ?: -axesDimensions.getRight(isLTR))
+        val horizontalAxisRightDrawBound = dataSetBounds.right - (
+            rightAxis?.axisThickness?.half
+                ?: -axesDimensions.getRight(isLTR)
+            )
 
         startAxis?.let { axis ->
             axis.setBounds(
@@ -192,5 +196,4 @@ public open class AxisManager {
         )
         endAxis?.drawAboveDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
     }
-
 }

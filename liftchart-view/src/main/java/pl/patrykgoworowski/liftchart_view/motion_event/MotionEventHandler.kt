@@ -88,7 +88,5 @@ public open class MotionEventHandler(
             tracker?.recycle()
             tracker = null
         }
-
     }
-
 }

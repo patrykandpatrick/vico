@@ -212,10 +212,11 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ): Dimensions = outDimensions
 
     override fun getDesiredHeight() =
-        ((if (position.isBottom) axisThickness else 0f)
-                + tickLength
-                + label?.getHeight().orZero
-                ).toInt()
+        (
+            (if (position.isBottom) axisThickness else 0f) +
+                tickLength +
+                label?.getHeight().orZero
+            ).toInt()
 
     override fun getDesiredWidth(
         labels: List<String>

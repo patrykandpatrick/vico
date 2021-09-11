@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_common.data_set.entry.collection.diff
 import pl.patrykgoworowski.liftchart_common.entry.DataEntry
 import pl.patrykgoworowski.liftchart_common.entry.entryOf
 import pl.patrykgoworowski.liftchart_common.extension.setAll
-import java.util.*
+import java.util.TreeMap
 
 public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
 
@@ -65,7 +65,5 @@ public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
             val newY = newY ?: 0f
             return oldY + ((newY - oldY) * progress)
         }
-
     }
-
 }

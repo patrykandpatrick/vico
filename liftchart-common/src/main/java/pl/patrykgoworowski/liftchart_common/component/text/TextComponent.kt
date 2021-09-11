@@ -24,7 +24,7 @@ import pl.patrykgoworowski.liftchart_common.text.widestLineWidth
 import kotlin.math.roundToInt
 
 typealias OnPreDrawListener =
-            (canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float) -> Unit
+    (canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float) -> Unit
 
 public open class TextComponent(
     color: Int = DKGRAY,
@@ -147,8 +147,8 @@ public open class TextComponent(
         includePadding: Boolean = true,
         includeMargin: Boolean = true,
     ): Float = getLayout(text, width).height +
-            (if (includePadding) padding.vertical else 0f) +
-            (if (includeMargin) margins.vertical else 0f)
+        (if (includePadding) padding.vertical else 0f) +
+        (if (includeMargin) margins.vertical else 0f)
 
     public fun clearLayoutCache() {
         layoutCache.clear()
@@ -162,5 +162,4 @@ public open class TextComponent(
     companion object {
         const val TEXT_MEASUREMENT_CHAR = "1"
     }
-
 }

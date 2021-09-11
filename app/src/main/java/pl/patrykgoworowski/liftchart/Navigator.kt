@@ -27,5 +27,4 @@ class Navigator(
         Screen.ComposeShowcase -> ComposeShowcaseFragment()
         Screen.ViewShowcase -> ViewShowcaseFragment()
     }
-
 }

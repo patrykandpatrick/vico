@@ -22,7 +22,6 @@ public class BrushDynamicShader(
             )
         return requireNotNull(tempPaint.shader)
     }
-
 }
 
 public fun brushShader(
@@ -40,5 +39,4 @@ public fun brushShader(
             )
         return requireNotNull(tempPaint.shader)
     }
-
 }

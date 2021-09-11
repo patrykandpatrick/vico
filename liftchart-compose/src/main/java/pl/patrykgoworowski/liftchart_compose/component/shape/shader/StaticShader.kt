@@ -22,7 +22,6 @@ class StaticShader(private val brush: Brush) : DynamicShader {
         )
         requireNotNull(tempPaint.shader)
     }.also { shader = it }
-
 }
 
 val Brush.dynamic: DynamicShader

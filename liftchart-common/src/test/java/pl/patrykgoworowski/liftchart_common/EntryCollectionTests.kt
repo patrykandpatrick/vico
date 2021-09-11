@@ -52,5 +52,4 @@ class EntryCollectionTests {
         diffAnimator.updateProgress(0.5f)
         assertEntriesAreEqual(entriesOf(0f to 1f, 1f to 1f))
     }
-
 }

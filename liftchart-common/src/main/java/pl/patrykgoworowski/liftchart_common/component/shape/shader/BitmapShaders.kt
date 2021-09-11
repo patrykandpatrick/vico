@@ -1,6 +1,10 @@
 package pl.patrykgoworowski.liftchart_common.component.shape.shader
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Canvas
+import android.graphics.RectF
+import android.graphics.Shader
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.extension.half
 

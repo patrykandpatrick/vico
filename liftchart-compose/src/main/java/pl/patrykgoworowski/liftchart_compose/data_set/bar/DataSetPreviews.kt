@@ -119,4 +119,3 @@ fun PreviewColumnChartAll() {
         bottomAxis = bottomAxis,
     )
 }
-

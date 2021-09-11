@@ -1,6 +1,10 @@
 package pl.patrykgoworowski.liftchart_compose.path
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Matrix
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size

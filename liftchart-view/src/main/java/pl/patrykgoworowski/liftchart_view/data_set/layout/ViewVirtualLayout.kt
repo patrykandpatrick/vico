@@ -22,5 +22,4 @@ public open class ViewVirtualLayout(isLTR: Boolean) : VirtualLayout(isLTR) {
             *dataSetInsetter
         )
     }
-
 }

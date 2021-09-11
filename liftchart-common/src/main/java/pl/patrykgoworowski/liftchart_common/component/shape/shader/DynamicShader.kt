@@ -8,5 +8,4 @@ fun interface DynamicShader {
     fun provideShader(
         bounds: RectF,
     ): Shader
-
 }

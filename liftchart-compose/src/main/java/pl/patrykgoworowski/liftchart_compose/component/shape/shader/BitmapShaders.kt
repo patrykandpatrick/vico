@@ -1,6 +1,5 @@
 package pl.patrykgoworowski.liftchart_compose.component.shape.shader
 
-
 import android.graphics.Shader
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp

@@ -1,7 +1,11 @@
 package pl.patrykgoworowski.liftchart_compose.extension
 
 import android.graphics.PointF
-import androidx.compose.foundation.gestures.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
@@ -22,19 +26,20 @@ fun Modifier.chartTouchEvent(
     )
 }
     .then(onZoom?.let(Modifier::zoomable) ?: Modifier)
-    .then(scrollableState?.let { state ->
-        scrollable(
-            state = state,
-            orientation = Orientation.Horizontal,
-        )
-    } ?: pointerInput(Unit, Unit) {
-        detectDragGestures(
-            onDragEnd = { setTouchPoint(null) },
-            onDragCancel = { setTouchPoint(null) },
-            onDrag = { change, _ -> setTouchPoint(change.position.pointF) }
-        )
-    })
+    .then(
+        scrollableState?.let { state ->
+            scrollable(
+                state = state,
+                orientation = Orientation.Horizontal,
+            )
+        } ?: pointerInput(Unit, Unit) {
+            detectDragGestures(
+                onDragEnd = { setTouchPoint(null) },
+                onDragCancel = { setTouchPoint(null) },
+                onDrag = { change, _ -> setTouchPoint(change.position.pointF) }
+            )
+        }
+    )
 
 private val Offset.pointF: PointF
     get() = PointF(x, y)
-

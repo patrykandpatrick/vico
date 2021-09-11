@@ -1,6 +1,10 @@
 package pl.patrykgoworowski.liftchart_common.data_set.line
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PointF
 import pl.patrykgoworowski.liftchart_common.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.liftchart_common.component.Component
 import pl.patrykgoworowski.liftchart_common.component.shape.shader.DynamicShader
@@ -11,7 +15,12 @@ import pl.patrykgoworowski.liftchart_common.data_set.renderer.RendererViewState
 import pl.patrykgoworowski.liftchart_common.data_set.segment.MutableSegmentProperties
 import pl.patrykgoworowski.liftchart_common.data_set.segment.SegmentProperties
 import pl.patrykgoworowski.liftchart_common.entry.DataEntry
-import pl.patrykgoworowski.liftchart_common.extension.*
+import pl.patrykgoworowski.liftchart_common.extension.between
+import pl.patrykgoworowski.liftchart_common.extension.dp
+import pl.patrykgoworowski.liftchart_common.extension.getClosestMarkerEntryPositionModel
+import pl.patrykgoworowski.liftchart_common.extension.half
+import pl.patrykgoworowski.liftchart_common.extension.set
+import pl.patrykgoworowski.liftchart_common.extension.updateList
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -130,7 +139,7 @@ public open class LineDataSet(
                 }
             } else {
                 cubicCurvature = spacing * cubicStrength *
-                        min(1f, abs((y - prevY) / bounds.bottom) * 4)
+                    min(1f, abs((y - prevY) / bounds.bottom) * 4)
                 linePath.cubicTo(prevX + cubicCurvature, prevY, x - cubicCurvature, y, x, y)
                 if (lineBackgroundShader != null) {
                     lineBackgroundPath.cubicTo(
@@ -208,7 +217,7 @@ public open class LineDataSet(
                 if (entry.x !in (minX - step)..(maxX + step)) return@forEach2
 
                 x = drawingStart +
-                        (segmentSize + spacing) * (entry.x - minX) / model.step
+                    (segmentSize + spacing) * (entry.x - minX) / model.step
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }

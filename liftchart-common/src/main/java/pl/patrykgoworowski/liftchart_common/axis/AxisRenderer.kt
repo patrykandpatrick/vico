@@ -87,5 +87,4 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     fun setRestrictedBounds(vararg bounds: RectF?)
 
     fun getDesiredHeight(): Int
-
 }

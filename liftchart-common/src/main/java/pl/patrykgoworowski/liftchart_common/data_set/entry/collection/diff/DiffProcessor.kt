@@ -9,5 +9,4 @@ public interface DiffProcessor<Entry : DataEntry> {
     public fun setEntries(new: List<List<Entry>>)
 
     public fun progressDiff(progress: Float): List<List<Entry>>
-
 }

@@ -26,7 +26,6 @@ object SharpCornerTreatment : CornerTreatment {
             path.lineTo(x2, y1)
         }
     }
-
 }
 
 object CutCornerTreatment : CornerTreatment {
@@ -42,7 +41,6 @@ object CutCornerTreatment : CornerTreatment {
         path.lineTo(x1, y1)
         path.lineTo(x2, y2)
     }
-
 }
 
 object RoundedCornerTreatment : CornerTreatment {
@@ -78,5 +76,4 @@ object RoundedCornerTreatment : CornerTreatment {
         }
         path.arcTo(tempRect, startAngle, 90f)
     }
-
 }

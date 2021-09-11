@@ -10,5 +10,4 @@ interface Dimensions {
     fun getLeft(isLTR: Boolean) = if (isLTR) start else end
 
     fun getRight(isLTR: Boolean) = if (isLTR) end else start
-
 }

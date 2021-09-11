@@ -16,8 +16,12 @@ import pl.patrykgoworowski.liftchart_common.extension.copyColor
 import pl.patrykgoworowski.liftchart_common.marker.Marker
 import pl.patrykgoworowski.liftchart_common.path.PillShape
 import pl.patrykgoworowski.liftchart_common.path.corner.MarkerCorneredShape
-import pl.patrykgoworowski.liftchart_compose.component.*
+import pl.patrykgoworowski.liftchart_compose.component.dashedShape
 import pl.patrykgoworowski.liftchart_compose.component.dimension.setPadding
+import pl.patrykgoworowski.liftchart_compose.component.markerComponent
+import pl.patrykgoworowski.liftchart_compose.component.overlayingComponent
+import pl.patrykgoworowski.liftchart_compose.component.rectComponent
+import pl.patrykgoworowski.liftchart_compose.component.textComponent
 import pl.patrykgoworowski.liftchart_compose.extension.pixels
 import pl.patrykgoworowski.liftchart_compose.extension.setShadow
 
@@ -78,7 +82,6 @@ fun markerComponent(): Marker {
         indicatorSize = 36.dp.pixels
         setShadow(4f.dp, dy = 2f.dp)
     }
-
 }
 
 @Composable

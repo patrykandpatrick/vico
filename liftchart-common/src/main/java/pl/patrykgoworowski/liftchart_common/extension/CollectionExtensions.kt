@@ -3,7 +3,7 @@ package pl.patrykgoworowski.liftchart_common.extension
 import android.graphics.PointF
 import pl.patrykgoworowski.liftchart_common.constants.ERR_REPEATING_COLLECTION_EMPTY
 import pl.patrykgoworowski.liftchart_common.marker.Marker
-import java.util.*
+import java.util.TreeMap
 import kotlin.math.abs
 
 fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =

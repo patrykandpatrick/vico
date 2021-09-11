@@ -12,7 +12,7 @@ import pl.patrykgoworowski.liftchart_common.extension.getClosestMarkerEntryPosit
 import pl.patrykgoworowski.liftchart_common.extension.set
 import pl.patrykgoworowski.liftchart_common.extension.updateAll
 import pl.patrykgoworowski.liftchart_common.marker.Marker
-import java.util.*
+import java.util.TreeMap
 
 class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>

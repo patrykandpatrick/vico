@@ -11,7 +11,11 @@ import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.liftchart.R
 import pl.patrykgoworowski.liftchart.component.view.getMarkerComponent
 import pl.patrykgoworowski.liftchart.databinding.FragmentViewBinding
-import pl.patrykgoworowski.liftchart.extension.*
+import pl.patrykgoworowski.liftchart.extension.byzantine
+import pl.patrykgoworowski.liftchart.extension.color
+import pl.patrykgoworowski.liftchart.extension.flickrPink
+import pl.patrykgoworowski.liftchart.extension.purple
+import pl.patrykgoworowski.liftchart.extension.trypanPurple
 import pl.patrykgoworowski.liftchart_common.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.liftchart_common.axis.vertical.startAxis
 import pl.patrykgoworowski.liftchart_common.component.shape.LineComponent
