@@ -17,7 +17,12 @@
 package pl.patrykgoworowski.vico.core.axis.vertical
 
 import android.graphics.Canvas
-import pl.patrykgoworowski.vico.core.*
+import pl.patrykgoworowski.vico.core.DEF_AXIS_COMPONENT
+import pl.patrykgoworowski.vico.core.DEF_GUIDELINE_COMPONENT
+import pl.patrykgoworowski.vico.core.DEF_LABEL_COMPONENT
+import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
+import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
+import pl.patrykgoworowski.vico.core.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.BaseLabeledAxisRenderer
 import pl.patrykgoworowski.vico.core.axis.component.TickComponent

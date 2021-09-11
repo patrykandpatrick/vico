@@ -16,7 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.component.shape.shader
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Canvas
+import android.graphics.RectF
+import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.extension.half
 

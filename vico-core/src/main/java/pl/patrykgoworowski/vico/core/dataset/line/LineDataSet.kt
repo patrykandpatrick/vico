@@ -16,7 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.dataset.line
 
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
@@ -27,7 +31,12 @@ import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.entry.DataEntry
-import pl.patrykgoworowski.vico.core.extension.*
+import pl.patrykgoworowski.vico.core.extension.between
+import pl.patrykgoworowski.vico.core.extension.dp
+import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryPositionModel
+import pl.patrykgoworowski.vico.core.extension.half
+import pl.patrykgoworowski.vico.core.extension.set
+import pl.patrykgoworowski.vico.core.extension.updateList
 import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.abs
 import kotlin.math.ceil
