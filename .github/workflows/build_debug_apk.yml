@@ -5,7 +5,7 @@ on:
     branches:
       - master
 jobs:
-  build-debug-apk:
+  build_debug_apk:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
