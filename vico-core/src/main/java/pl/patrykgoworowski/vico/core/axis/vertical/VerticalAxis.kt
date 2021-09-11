@@ -115,17 +115,11 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         val labelTextHeight = label?.getHeight(includePadding = false, includeMargin = false) ?: 0f
         val axisStep = bounds.height() / drawLabelCount
 
-        val tickLeftX = if (isLabelOutsideOnLeftOrInsideOnRight) {
-            bounds.right - (axisThickness + tickLength)
-        } else {
-            bounds.left
-        }
+        val tickLeftX =
+            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right - (axisThickness + tickLength) else bounds.left
 
-        val tickRightX = if (isLabelOutsideOnLeftOrInsideOnRight) {
-            bounds.right
-        } else {
-            bounds.left + axisThickness + tickLength
-        }
+        val tickRightX =
+            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right else bounds.left + axisThickness + tickLength
 
         val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
 
@@ -135,15 +129,13 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         for (index in 0..drawLabelCount) {
             tickCenterY = bounds.bottom - (axisStep * index) + (axisThickness / 2)
 
-            tick?.run {
-                setParentBounds(bounds)
-                drawHorizontal(
-                    canvas = canvas,
-                    left = tickLeftX,
-                    right = tickRightX,
-                    tickCenterY
-                )
-            }
+            tick?.setParentBounds(bounds)
+            tick?.drawHorizontal(
+                canvas = canvas,
+                left = tickLeftX,
+                right = tickRightX,
+                tickCenterY
+            )
 
             label?.let { label ->
                 val labelTop = label.getTextTopPosition(textPosition, tickCenterY, labelTextHeight)
@@ -175,11 +167,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
             canvas = canvas,
             top = bounds.top,
             bottom = bounds.bottom + axisThickness,
-            centerX = if (isLeft) {
-                bounds.right - axisThickness.half
-            } else {
-                bounds.left + axisThickness.half
-            }
+            centerX = if (isLeft) bounds.right - axisThickness.half else bounds.left + axisThickness.half
         )
         label?.clearLayoutCache()
     }

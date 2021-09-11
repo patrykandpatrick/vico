@@ -140,28 +140,24 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         var valueIndex: Float = dataSetModel.minX + scrollAdjustment * model.step
 
         for (index in 0 until tickCount) {
-            tick?.run {
-                setParentBounds(bounds)
-                drawVertical(
-                    canvas = canvas,
-                    top = tickMarkTop,
-                    bottom = tickMarkBottom,
-                    centerX = tickDrawCenter
-                )
-            }
+            tick?.setParentBounds(bounds)
+            tick?.drawVertical(
+                canvas = canvas,
+                top = tickMarkTop,
+                bottom = tickMarkBottom,
+                centerX = tickDrawCenter
+            )
 
             if (index < entryLength) {
-                label?.run {
-                    background?.setParentBounds(bounds)
-                    drawText(
-                        canvas,
-                        valueFormatter.formatValue(valueIndex, index, model, dataSetModel),
-                        textDrawCenter,
-                        textY,
-                        verticalPosition = position.textVerticalPosition,
-                        width = tickDrawStep.toInt(),
-                    )
-                }
+                label?.background?.setParentBounds(bounds)
+                label?.drawText(
+                    canvas,
+                    valueFormatter.formatValue(valueIndex, index, model, dataSetModel),
+                    textDrawCenter,
+                    textY,
+                    verticalPosition = position.textVerticalPosition,
+                    width = tickDrawStep.toInt(),
+                )
 
                 valueIndex += model.step
             }
@@ -175,11 +171,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 canvas = canvas,
                 left = dataSetBounds.left,
                 right = dataSetBounds.right,
-                centerY = if (position is AxisPosition.Horizontal.Bottom) {
-                    bounds.top + axis?.thickness?.half.orZero
-                } else {
-                    bounds.bottom + axis?.thickness?.half.orZero
-                }
+                centerY = (if (position is AxisPosition.Horizontal.Bottom) bounds.top else bounds.bottom) +
+                        axis?.thickness?.half.orZero
             )
         }
 
