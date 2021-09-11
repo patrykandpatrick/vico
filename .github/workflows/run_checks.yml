@@ -27,6 +27,8 @@ jobs:
         run: chmod +x gradlew
       - name: Run checks
         run: ./gradlew check
+      - name: Run detekt
+        run: ./gradlew detekt
       - name: Upload lint report
         uses: actions/upload-artifact@v2
         with:
