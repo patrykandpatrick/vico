@@ -28,7 +28,6 @@ import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.path.RoundedCornersShape
 import pl.patrykgoworowski.vico.core.path.toDrawable
 import pl.patrykgoworowski.vico.databinding.ActivityMainBinding
-import java.lang.IllegalArgumentException
 
 class MainActivity : AppCompatActivity() {
 

@@ -19,7 +19,6 @@ package pl.patrykgoworowski.vico.core.axis.formatter
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 
-// TODO: Determine if this unused class can be deleted.
 object DefaultAxisFormatter : AxisValueFormatter {
     override fun formatValue(
         value: Float,

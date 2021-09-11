@@ -20,7 +20,6 @@ import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import java.text.DecimalFormat
 
-// TODO: Determine if this unused class can be deleted.
 class PercentageFormatAxisValueFormatter(
     pattern: String
 ) : AxisValueFormatter {
