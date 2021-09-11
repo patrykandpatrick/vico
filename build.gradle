@@ -43,7 +43,7 @@ dependencies {
 detekt {
     allRules = true
     buildUponDefaultConfig = true
-    source = files("app", "liftchart-common", "liftchart-compose", "liftchart-view")
+    source = files("app", "vico-core", "vico-compose", "vico-view")
 
     reports {
         html {
