@@ -31,7 +31,7 @@ public open class VirtualLayout(
     var isLTR: Boolean
 ) {
 
-    private val tempInsetters = ArrayList<DataSetInsetter>(5)
+    private val tempInsetters = ArrayList<DataSetInsetter>(initialCapacity = 5)
     private val finalInsets: MutableDimensions = floatDimensions()
     private val tempInsets: MutableDimensions = floatDimensions()
 

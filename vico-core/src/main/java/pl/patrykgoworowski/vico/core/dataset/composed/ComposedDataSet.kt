@@ -28,13 +28,13 @@ import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryPositionMode
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.updateAll
 import pl.patrykgoworowski.vico.core.marker.Marker
-import java.util.*
+import java.util.TreeMap
 
 class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>
 ) : BaseDataSet<ComposedEntryModel<Model>>() {
 
-    constructor(vararg dataSets: DataSet<Model>): this(dataSets.toList())
+    constructor(vararg dataSets: DataSet<Model>) : this(dataSets.toList())
 
     public val dataSets = ArrayList(dataSets)
 

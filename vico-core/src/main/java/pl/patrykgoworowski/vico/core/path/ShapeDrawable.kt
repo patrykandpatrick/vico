@@ -17,7 +17,13 @@
 package pl.patrykgoworowski.vico.core.path
 
 import android.content.res.ColorStateList
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.ColorFilter
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PixelFormat
+import android.graphics.RectF
 import android.graphics.drawable.Drawable
 
 public class ShapeDrawable(
