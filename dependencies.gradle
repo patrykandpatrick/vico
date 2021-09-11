@@ -45,8 +45,8 @@ ext {
     ]
 
     app_dependencies = [
-            [configuration: "implementation", dependency: project(':liftchart-view')],
-            [configuration: "implementation", dependency: project(':liftchart-compose')],
+            [configuration: "implementation", dependency: project(':vico-view')],
+            [configuration: "implementation", dependency: project(':vico-compose')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: androidx_libs.lifecycle],
@@ -61,15 +61,15 @@ ext {
             [configuration: "testImplementation", dependency: test_libs.junit],
     ]
 
-    liftchart_common_dependencies = [
+    vico_common_dependencies = [
             [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "testImplementation", dependency: test_libs.junit],
     ]
 
-    liftchart_view_dependencies = [
-            [configuration: "api", dependency: project(':liftchart-common')],
+    vico_view_dependencies = [
+            [configuration: "api", dependency: project(':vico-core')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
@@ -80,8 +80,8 @@ ext {
             [configuration: "testImplementation", dependency: test_libs.junit],
     ]
 
-    liftchart_compose_dependencies = [
-            [configuration: "api", dependency: project(':liftchart-common')],
+    vico_compose_dependencies = [
+            [configuration: "api", dependency: project(':vico-core')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],

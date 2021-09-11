@@ -25,8 +25,8 @@ android {
     defaultConfig {
         minSdkVersion min_sdk_version_compose
         targetSdkVersion target_sdk_version
-        versionCode liftchart_version_code
-        versionName liftchart_version_name
+        versionCode lib_version_code
+        versionName lib_version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
