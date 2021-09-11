@@ -19,7 +19,9 @@ package pl.patrykgoworowski.vico.core.extension
 import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.constants.ERR_REPEATING_COLLECTION_EMPTY
 import pl.patrykgoworowski.vico.core.marker.Marker
-import java.util.*
+import java.util.TreeMap
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 import kotlin.math.abs
 
 fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =

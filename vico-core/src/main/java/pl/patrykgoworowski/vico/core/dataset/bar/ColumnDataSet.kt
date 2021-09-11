@@ -27,7 +27,13 @@ import pl.patrykgoworowski.vico.core.dataset.renderer.BaseDataSet
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.extension.*
+import pl.patrykgoworowski.vico.core.extension.between
+import pl.patrykgoworowski.vico.core.extension.dp
+import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryPositionModel
+import pl.patrykgoworowski.vico.core.extension.getRepeating
+import pl.patrykgoworowski.vico.core.extension.half
+import pl.patrykgoworowski.vico.core.extension.set
+import pl.patrykgoworowski.vico.core.extension.updateList
 import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.ceil
 import kotlin.math.min

@@ -38,14 +38,14 @@ val DEF_TICK_COMPONENT: TickComponent
 val DEF_GUIDELINE_COMPONENT: LineComponent
     get() = LineComponent(Color.LTGRAY, 1f.dp)
 
-val DEF_LABEL_LINE_COUNT = 1
-val DEF_LABEL_COUNT = 99
+const val DEF_LABEL_LINE_COUNT = 1
+const val DEF_LABEL_COUNT = 99
 val DEF_LABEL_SIZE = 12f.sp
 val DEF_LABEL_SPACING = 16f.dp
 
 val DEF_MARKER_TICK_SIZE = 6f.dp
 
-val MAX_ZOOM = 10f
-val MIN_ZOOM = 0.1f
+const val MAX_ZOOM = 10f
+const val MIN_ZOOM = 0.1f
 
 public val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()

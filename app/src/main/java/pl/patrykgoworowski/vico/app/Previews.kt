@@ -99,7 +99,7 @@ fun ColumnChartCard() = MainTheme {
                     1.dp.pixels,
                 ),
             ),
-            model = entryModelOf(1, 2, 3, 2)
+            model = @Suppress("MagicNumber") entryModelOf(1, 2, 3, 2)
         )
     }
 }

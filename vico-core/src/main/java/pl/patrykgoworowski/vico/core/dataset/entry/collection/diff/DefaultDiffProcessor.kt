@@ -19,8 +19,8 @@ package pl.patrykgoworowski.vico.core.dataset.entry.collection.diff
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.extension.setAll
-import java.util.*
 import kotlin.collections.ArrayList
+import java.util.TreeMap
 
 public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
 
