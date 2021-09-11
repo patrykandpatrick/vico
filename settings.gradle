@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-rootProject.name = "LiftChart"
+rootProject.name = "VicoChart"
 include ':app'
-include ':liftchart-view'
-include ':liftchart-compose'
-include ':liftchart-common'
+include ':vico-view'
+include ':vico-compose'
+include ':vico-core'
