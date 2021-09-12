@@ -126,13 +126,13 @@ public class DashedShape(
         var index = 0
         var drawnLength = 0f
         while (length - drawnLength > 0) {
-            if (index % 2 == 0) {
+            drawnLength += if (index % 2 == 0) {
                 setBounds(tempBounds, drawStart + drawnLength)
                 path.reset()
                 shape.drawShape(canvas, paint, path, tempBounds)
-                drawnLength += drawDashLength
+                drawDashLength
             } else {
-                drawnLength += drawGapLength
+                drawGapLength
             }
             index++
         }
