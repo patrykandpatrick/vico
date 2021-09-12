@@ -173,14 +173,15 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     private fun getDrawLabelCount(availableHeight: Int): Int {
-        val labelComponent = label ?: return maxLabelCount
-        val height = labelComponent.getHeight()
-        var result = 0f
-        var addition: Float
-        for (i in 0 until maxLabelCount) {
-            addition = if (i > 0) height + labelSpacing else height
-            if (result + addition > availableHeight) return i
-            result += addition
+        label?.let { label ->
+            val height = label.getHeight()
+            var result = 0f
+            var addition: Float
+            for (i in 0 until maxLabelCount) {
+                addition = if (i > 0) height + labelSpacing else height
+                if (result + addition > availableHeight) return i
+                result += addition
+            }
         }
         return maxLabelCount
     }
