@@ -4,5 +4,6 @@
     <enableDetekt>true</enableDetekt>
     <enableFormatting>true</enableFormatting>
     <treatAsError>true</treatAsError>
+    <configPaths>$PROJECT_DIR$\.idea\detekt-config.yml</configPaths>
   </component>
 </project>
