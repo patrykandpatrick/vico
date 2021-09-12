@@ -22,7 +22,6 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DefaultDiffPr
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DiffAnimator
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DiffProcessor
 import pl.patrykgoworowski.vico.core.entry.DataEntry
-import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.extension.setAll
 
 typealias EntryListModelListener = (EntryModel) -> Unit
@@ -98,10 +97,6 @@ class EntryList(
     }
 
     private fun notifyChange() {
-        val mergedEntries = calculator.stackedMap.map { (x, y) ->
-            entryOf(x, y)
-        }
-
         model = EntryModel(
             data,
             minX,
