@@ -20,6 +20,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 
 public class DashedShape(
     public val shape: Shape,
@@ -113,6 +114,7 @@ public class DashedShape(
         }
     }
 
+    @LongParameterListDrawFunction
     private inline fun drawDashes(
         canvas: Canvas,
         paint: Paint,

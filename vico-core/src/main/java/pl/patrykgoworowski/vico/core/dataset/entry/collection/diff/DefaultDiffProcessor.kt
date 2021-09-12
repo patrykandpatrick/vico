@@ -21,7 +21,7 @@ import pl.patrykgoworowski.vico.core.entry.component1
 import pl.patrykgoworowski.vico.core.entry.component2
 import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.extension.setAll
-import java.util.*
+import java.util.TreeMap
 
 public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
 

@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.dataset.entry.collection.composed
 
 import pl.patrykgoworowski.vico.core.dataset.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.dataset.emptyComposedEntryModel
+import pl.patrykgoworowski.vico.core.dataset.composed.composedEntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryCollection
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.extension.runEach
@@ -26,7 +26,7 @@ class ComposedEntryCollection<Model : EntryModel>(
     public val entryCollections: List<EntryCollection<Model>>
 ) : EntryCollection<ComposedEntryModel<Model>> {
 
-    override var model: ComposedEntryModel<Model> = emptyComposedEntryModel()
+    override var model: ComposedEntryModel<Model> = composedEntryModel()
         private set
 
     private val listeners = ArrayList<(ComposedEntryModel<Model>) -> Unit>()
@@ -45,7 +45,7 @@ class ComposedEntryCollection<Model : EntryModel>(
     private fun recalculateModel() {
         val models = entryCollections.map { it.model }
 
-        model = ComposedEntryModel(
+        model = composedEntryModel(
             composedEntryCollections = models,
             entryCollections = models.map { it.entryCollections }.flatten(),
             minX = models.minOf { it.minX },

@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dimensions
+package pl.patrykgoworowski.vico.core.annotation
 
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+/**
+ * Annotates a draw function with long parameter list.
+ * The function may require a lot of parameters to avoid extra object allocation, thus
+ * having a performance penalty. Draw functions must be as performant as possible.
+ * It also disables detekt’s `LongParameterList` check.
+ */
 
-interface DataSetInsetter {
-
-    fun getVerticalInsets(
-        outDimensions: MutableDimensions,
-        dataSetModel: DataSetModel,
-    ): Dimensions
-
-    fun getHorizontalInsets(
-        outDimensions: MutableDimensions,
-        availableHeight: Float,
-        dataSetModel: DataSetModel,
-    ): Dimensions
-}
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION)
+annotation class LongParameterListDrawFunction

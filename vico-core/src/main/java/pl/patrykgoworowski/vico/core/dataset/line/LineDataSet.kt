@@ -25,6 +25,7 @@ import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.constants.DEF_LINE_CHART_SPACING
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.dataset.forEachIn
 import pl.patrykgoworowski.vico.core.dataset.put
 import pl.patrykgoworowski.vico.core.dataset.renderer.BaseDataSet
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
@@ -184,9 +185,7 @@ public open class LineDataSet(
         val heightMultiplier = bounds.height() / (drawMaxY - this@LineDataSet.minY.orZero)
 
         entryCollections.forEach { collection ->
-            collection.forEach forEach2@{ entry ->
-                if (entry.x !in (drawMinX - step)..(drawMaxX + step)) return@forEach2
-
+            collection.forEachIn((drawMinX - step)..(drawMaxX + step)) { entry ->
                 x = drawingStart + (segment.contentWidth + segment.marginWidth) *
                         (entry.x - drawMinX) / step
                 y = bounds.bottom - entry.y * heightMultiplier
@@ -214,6 +213,7 @@ public open class LineDataSet(
         axisModel.maxY = maxY ?: model.maxY
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
+        axisModel.entryModel = model
     }
 
     private fun calculateDrawSegmentSpecIfNeeded(model: EntryModel) {

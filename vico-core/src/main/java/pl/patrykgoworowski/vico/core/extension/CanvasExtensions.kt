@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dimensions
+package pl.patrykgoworowski.vico.core.extension
 
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import android.graphics.Canvas
+import android.graphics.RectF
 
-interface DataSetInsetter {
+inline fun Canvas.inClip(
+    rect: RectF,
+    block: () -> Unit,
+) {
+    inClip(rect.left, rect.top, rect.right, rect.bottom, block)
+}
 
-    fun getVerticalInsets(
-        outDimensions: MutableDimensions,
-        dataSetModel: DataSetModel,
-    ): Dimensions
-
-    fun getHorizontalInsets(
-        outDimensions: MutableDimensions,
-        availableHeight: Float,
-        dataSetModel: DataSetModel,
-    ): Dimensions
+inline fun Canvas.inClip(
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+    block: () -> Unit,
+) {
+    val clipRestoreCount = save()
+    clipRect(left, top, right, bottom)
+    block()
+    restoreToCount(clipRestoreCount)
 }

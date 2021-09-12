@@ -16,13 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.dataset.entry.collection
 
-import pl.patrykgoworowski.vico.core.dataset.emptyEntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DefaultDiffAnimator
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DefaultDiffProcessor
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DiffAnimator
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DiffProcessor
 import pl.patrykgoworowski.vico.core.entry.DataEntry
-import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.extension.setAll
 
 typealias EntryListModelListener = (EntryModel) -> Unit
@@ -38,7 +36,7 @@ class EntryList(
 
     public val data: ArrayList<List<DataEntry>> = ArrayList()
 
-    override var model: EntryModel = emptyEntryModel()
+    override var model: EntryModel = entryModel()
         private set
 
     val minX: Float by calculator::minX
@@ -98,11 +96,7 @@ class EntryList(
     }
 
     private fun notifyChange() {
-        val mergedEntries = calculator.stackedMap.map { (x, y) ->
-            entryOf(x, y)
-        }
-
-        model = EntryModel(
+        model = entryModel(
             data,
             minX,
             maxX,

@@ -24,7 +24,6 @@ import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dimensions.DataSetInsetter
@@ -55,19 +54,8 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     var isLTR: Boolean
     var valueFormatter: AxisValueFormatter
 
-    fun draw(
-        canvas: Canvas,
-        model: EntryModel,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-    ) {
-        drawBehindDataSet(canvas, model, dataSetModel, segmentProperties, rendererViewState)
-    }
-
     fun drawBehindDataSet(
         canvas: Canvas,
-        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -75,7 +63,6 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     fun drawAboveDataSet(
         canvas: Canvas,
-        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,

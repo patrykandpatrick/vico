@@ -17,13 +17,11 @@
 package pl.patrykgoworowski.vico.core.axis.formatter
 
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 
 fun interface AxisValueFormatter {
     fun formatValue(
         value: Float,
         index: Int,
-        model: EntryModel,
         dataSetModel: DataSetModel,
     ): String
 }

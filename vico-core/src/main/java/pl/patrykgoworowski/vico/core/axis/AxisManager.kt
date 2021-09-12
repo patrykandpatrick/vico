@@ -20,7 +20,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.collections.cacheInList
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dimensions.DataSetInsetter
@@ -204,7 +203,6 @@ public open class AxisManager {
 
     fun drawBehindDataSet(
         canvas: Canvas,
-        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -212,7 +210,6 @@ public open class AxisManager {
         axisCache.forEach { axis ->
             axis.drawBehindDataSet(
                 canvas,
-                model,
                 dataSetModel,
                 segmentProperties,
                 rendererViewState
@@ -222,7 +219,6 @@ public open class AxisManager {
 
     fun drawAboveDataSet(
         canvas: Canvas,
-        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -230,7 +226,6 @@ public open class AxisManager {
         axisCache.forEach { axis ->
             axis.drawAboveDataSet(
                 canvas,
-                model,
                 dataSetModel,
                 segmentProperties,
                 rendererViewState

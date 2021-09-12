@@ -14,20 +14,10 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dimensions
+package pl.patrykgoworowski.vico.compose.extension
 
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import androidx.compose.runtime.MutableState
 
-interface DataSetInsetter {
-
-    fun getVerticalInsets(
-        outDimensions: MutableDimensions,
-        dataSetModel: DataSetModel,
-    ): Dimensions
-
-    fun getHorizontalInsets(
-        outDimensions: MutableDimensions,
-        availableHeight: Float,
-        dataSetModel: DataSetModel,
-    ): Dimensions
+fun <T> MutableState<T>.set(value: T) {
+    component2().invoke(value)
 }
