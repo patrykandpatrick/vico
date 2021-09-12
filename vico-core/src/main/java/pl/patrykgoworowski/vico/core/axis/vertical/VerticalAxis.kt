@@ -139,7 +139,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
 
             label?.let { label ->
                 val labelTop = label.getTextTopPosition(textPosition, tickCenterY, labelTextHeight)
-                labels.getOrNull(index)?.let { labelText ->
+                val labelText = labels.getOrNull(index) ?: return@let
                     if (
                         (horizontalLabelPosition == Inside) &&
                         (isNotInRestrictedBounds(
@@ -159,7 +159,6 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
                             verticalPosition = verticalLabelPosition.textPosition,
                         )
                     }
-                }
             }
         }
         axis?.setParentBounds(bounds)
