@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2021. Patryk Goworowski
- *
+ *  
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dataset.entry.collection
+package pl.patrykgoworowski.vico.core.dataset.line
 
-import pl.patrykgoworowski.vico.core.entry.DataEntry
-import kotlin.math.abs
+import android.graphics.Canvas
+import pl.patrykgoworowski.vico.core.component.Component
 
-open class EntryModel(
-    open val entryCollections: List<List<DataEntry>>,
-    open val minX: Float,
-    open val maxX: Float,
-    open val minY: Float,
-    open val maxY: Float,
-    open val composedMaxY: Float,
-    open val step: Float,
+internal fun Component.drawPoint(
+    canvas: Canvas,
+    x: Float,
+    y: Float,
+    halfPointSize: Float,
 ) {
-
-    fun getEntriesLength(): Int =
-        (((abs(maxX) - abs(minX)) / step) + 1).toInt()
+    draw(
+        canvas = canvas,
+        left = x - halfPointSize,
+        top = y - halfPointSize,
+        right = x + halfPointSize,
+        bottom = y + halfPointSize,
+    )
 }

@@ -24,11 +24,10 @@ import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryPositionModel
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.updateAll
 import pl.patrykgoworowski.vico.core.marker.Marker
-import java.util.TreeMap
+import java.util.*
 
 class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>
@@ -66,27 +65,12 @@ class ComposedDataSet<Model : EntryModel>(
         canvas: Canvas,
         model: ComposedEntryModel<Model>,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState
+        viewState: RendererViewState
     ) {
         markerLocationMap.clear()
         model.forEachModelWithDataSet { _, item, dataSet ->
-            dataSet.draw(canvas, item, segmentProperties, rendererViewState, null)
+            dataSet.draw(canvas, item, segmentProperties, viewState, null)
             markerLocationMap.updateAll(dataSet.markerLocationMap)
-        }
-    }
-
-    override fun drawMarker(
-        canvas: Canvas,
-        model: ComposedEntryModel<Model>,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?
-    ) {
-        val touchPoint = rendererViewState.markerTouchPoint
-        if (touchPoint != null && marker != null) {
-            markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
-                marker.draw(canvas, bounds, markerModel)
-            }
         }
     }
 

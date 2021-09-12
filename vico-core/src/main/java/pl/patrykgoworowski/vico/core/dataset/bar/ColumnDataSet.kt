@@ -17,23 +17,21 @@
 package pl.patrykgoworowski.vico.core.dataset.bar
 
 import android.graphics.Canvas
-import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.dataset.put
 import pl.patrykgoworowski.vico.core.dataset.renderer.BaseDataSet
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.extension.between
 import pl.patrykgoworowski.vico.core.extension.dp
-import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryPositionModel
 import pl.patrykgoworowski.vico.core.extension.getRepeating
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.set
-import pl.patrykgoworowski.vico.core.extension.updateList
 import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.ceil
 import kotlin.math.min
@@ -90,11 +88,10 @@ public open class ColumnDataSet(
         canvas: Canvas,
         model: EntryModel,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState
+        viewState: RendererViewState
     ) {
         markerLocationMap.clear()
-        if (model.entryCollections.isEmpty()) return
-        val (touchPoint, scrollX) = rendererViewState
+        val (touchPoint, scrollX) = viewState
 
         val clipRestoreCount = canvas.save()
         canvas.clipRect(bounds)
@@ -161,18 +158,12 @@ public open class ColumnDataSet(
                 }
 
                 if (touchPoint != null) {
-                    markerLocationMap.updateList(ceil(columnCenterX), entryCollection.size) {
-                        add(
-                            Marker.EntryModel(
-                                PointF(
-                                    ceil(columnCenterX),
-                                    columnTop.between(bounds.top, bounds.bottom)
-                                ),
-                                entry,
-                                column.color,
-                            )
-                        )
-                    }
+                    markerLocationMap.put(
+                        x = ceil(columnCenterX),
+                        y = columnTop.between(bounds.top, bounds.bottom),
+                        entry = entry,
+                        color = column.color
+                    )
                 }
 
                 column.drawVertical(
@@ -187,24 +178,6 @@ public open class ColumnDataSet(
         heightMap.clear()
 
         canvas.restoreToCount(clipRestoreCount)
-    }
-
-    override fun drawMarker(
-        canvas: Canvas,
-        model: EntryModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?
-    ) {
-        val touchPoint = rendererViewState.markerTouchPoint
-        if (touchPoint == null || marker == null) return
-        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
-            marker.draw(
-                canvas,
-                bounds,
-                markerModel,
-            )
-        }
     }
 
     override fun setToAxisModel(axisModel: MutableDataSetModel, model: EntryModel) {

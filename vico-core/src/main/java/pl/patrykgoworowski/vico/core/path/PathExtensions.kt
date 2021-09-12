@@ -14,21 +14,16 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dataset.entry.collection
+package pl.patrykgoworowski.vico.core.path
 
-import pl.patrykgoworowski.vico.core.entry.DataEntry
-import kotlin.math.abs
+import android.graphics.Path
 
-open class EntryModel(
-    open val entryCollections: List<List<DataEntry>>,
-    open val minX: Float,
-    open val maxX: Float,
-    open val minY: Float,
-    open val maxY: Float,
-    open val composedMaxY: Float,
-    open val step: Float,
+fun Path.horizontalCubicTo(
+    prevX: Float,
+    prevY: Float,
+    x: Float,
+    y: Float,
+    curvature: Float,
 ) {
-
-    fun getEntriesLength(): Int =
-        (((abs(maxX) - abs(minX)) / step) + 1).toInt()
+    cubicTo(prevX + curvature, prevY, x - curvature, y, x, y)
 }
