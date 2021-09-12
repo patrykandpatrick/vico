@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.data
+package pl.patrykgoworowski.vico.app.util
 
 import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
@@ -23,12 +23,9 @@ class RandomEntriesGenerator(
     private val xRange: IntRange = 0..X_RANGE_TOP,
     private val yRange: IntRange = 0..Y_RANGE_TOP
 ) {
-
     fun generateRandomEntries(): List<FloatEntry> {
         val result = ArrayList<FloatEntry>()
         val yLength = yRange.last - yRange.first
-        // val xCount = (Math.random() * (xRange.last - xRange.first)).toInt()
-        // for (x in 0..xCount) {
         for (x in xRange) {
             result += entryOf(x.toFloat(), (Math.random() * yLength).toFloat())
         }

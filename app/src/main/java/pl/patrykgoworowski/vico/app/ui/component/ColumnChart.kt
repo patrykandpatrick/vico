@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.showcase.compose
+package pl.patrykgoworowski.vico.app.ui.component
 
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable

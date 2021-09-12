@@ -14,45 +14,50 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.showcase.compose
+package pl.patrykgoworowski.vico.app.ui.component
 
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.app.component.compose.markerComponent
+import pl.patrykgoworowski.vico.app.ui.byzantine
 import pl.patrykgoworowski.vico.app.ui.flickrPink
-import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
-import pl.patrykgoworowski.vico.compose.component.shape.shader.componentShader
-import pl.patrykgoworowski.vico.compose.component.shapeComponent
+import pl.patrykgoworowski.vico.app.ui.trypanPurple
+import pl.patrykgoworowski.vico.compose.component.rectComponent
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
+import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
+import pl.patrykgoworowski.vico.core.dataset.bar.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 
 @Composable
-fun LineChart(
+fun GroupedColumnChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {
     DataSet(
         modifier = modifier,
-        dataSet = lineDataSet(
-            pointSize = 10.dp,
-            lineColor = flickrPink,
-            lineBackgroundShader = componentShader(
-                component = shapeComponent(
-                    shape = pillShape,
+        dataSet = columnDataSet(
+            columns = listOf(
+                rectComponent(
                     color = flickrPink,
-                    margins = dimensionsOf(all = 0.5f.dp)
+                    shape = CutCornerShape(topStart = 8.dp)
                 ),
-                componentSize = 4.dp,
+                rectComponent(color = byzantine, thickness = 24.dp),
+                rectComponent(
+                    color = trypanPurple,
+                    shape = CutCornerShape(topEnd = 8.dp)
+                ),
             ),
+            innerSpacing = 4.dp,
+            spacing = 24.dp,
+            mergeMode = MergeMode.Grouped,
         ),
         entryCollection = entryList,
-        marker = markerComponent(),
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
+        marker = markerComponent(),
     )
 }

@@ -20,7 +20,7 @@ import android.content.Context
 import android.graphics.Color
 import android.text.TextUtils
 import pl.patrykgoworowski.vico.R
-import pl.patrykgoworowski.vico.app.extension.getThemeColor
+import pl.patrykgoworowski.vico.app.util.getThemeColor
 import pl.patrykgoworowski.vico.core.component.MarkerComponent
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent

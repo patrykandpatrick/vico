@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.showcase.compose
+package pl.patrykgoworowski.vico.app.ui.component
 
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
@@ -23,60 +23,41 @@ import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.app.component.compose.markerComponent
 import pl.patrykgoworowski.vico.app.ui.byzantine
 import pl.patrykgoworowski.vico.app.ui.flickrPink
-import pl.patrykgoworowski.vico.app.ui.purple
 import pl.patrykgoworowski.vico.app.ui.trypanPurple
 import pl.patrykgoworowski.vico.compose.component.rectComponent
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.core.dataset.composed.plus
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.dataset.bar.MergeMode
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 
 @Composable
-fun ComposedChart(
+fun StackedColumnChart(
     modifier: Modifier = Modifier,
-    model: ComposedEntryCollection<EntryModel>,
+    entryList: EntryList,
 ) {
     DataSet(
         modifier = modifier,
         dataSet = columnDataSet(
             columns = listOf(
-                firstRectComponent(),
-                secondRectComponent(),
-                thirdRectComponent()
+                rectComponent(
+                    color = flickrPink,
+                    shape = CutCornerShape(bottomEnd = 8.dp)
+                ),
+                rectComponent(color = byzantine),
+                rectComponent(
+                    color = trypanPurple,
+                    shape = CutCornerShape(topStart = 8.dp)
+                ),
             ),
-        ) + lineDataSet(
-            lineColor = flickrPink,
-            spacing = 8.dp,
+            innerSpacing = 4.dp,
+            spacing = 24.dp,
+            mergeMode = MergeMode.Stack,
         ),
-        entryCollection = model,
+        entryCollection = entryList,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         marker = markerComponent(),
     )
 }
-
-@Composable
-fun firstRectComponent() = rectComponent(
-    color = trypanPurple,
-    thickness = 16.dp,
-    shape = CutCornerShape(topStart = 8.dp),
-)
-
-@Composable
-fun secondRectComponent() = rectComponent(
-    color = byzantine,
-    thickness = 12.dp,
-    shape = pillShape,
-)
-
-@Composable
-fun thirdRectComponent() = rectComponent(
-    color = purple,
-    thickness = 16.dp,
-    shape = CutCornerShape(topEnd = 8.dp),
-)

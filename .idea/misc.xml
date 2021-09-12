@@ -5,10 +5,12 @@
       <map>
         <entry key="..\:/Users/patry/AndroidStudioProjects/LiftChart/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/patry/AndroidStudioProjects/LiftChart/app/src/main/res/layout/fragment_view.xml" value="0.5077239958805355" />
+        <entry key="..\:/Users/renta/Documents/GitHub/AndroidCharts/app/src/main/res/layout/activity_main.xml" value="0.17831813576494426" />
+        <entry key="..\:/Users/renta/Documents/GitHub/AndroidCharts/app/src/main/res/layout/fragment_view.xml" value="0.17831813576494426" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

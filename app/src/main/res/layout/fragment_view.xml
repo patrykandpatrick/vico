@@ -15,62 +15,52 @@
   ~ limitations under the License.
   -->
 
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".app.MainActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+        android:id="@+id/column_chart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="24dp" />
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="16dp" />
 
-        <pl.patrykgoworowski.vico.view.dataset.DataSetView
-            android:id="@+id/bar_chart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+        android:id="@+id/composed_chart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="24dp" />
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="16dp" />
 
-        <pl.patrykgoworowski.vico.view.dataset.DataSetView
-            android:id="@+id/composed_chart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+        android:id="@+id/line_chart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="24dp" />
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="16dp" />
 
-        <pl.patrykgoworowski.vico.view.dataset.DataSetView
-            android:id="@+id/line_chart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+        android:id="@+id/grouped_column_chart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="24dp" />
+    <Space
+        android:layout_width="wrap_content"
+        android:layout_height="16dp" />
 
-        <pl.patrykgoworowski.vico.view.dataset.DataSetView
-            android:id="@+id/grouped_column_chart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+        android:id="@+id/stacked_column_chart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="24dp" />
-
-        <pl.patrykgoworowski.vico.view.dataset.DataSetView
-            android:id="@+id/stacked_column_chart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-</androidx.core.widget.NestedScrollView>
+</LinearLayout>
