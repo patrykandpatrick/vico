@@ -68,90 +68,76 @@ public open class AxisManager {
         val horizontalAxisRightDrawBound = dataSetBounds.right -
                 (rightAxis?.axisThickness?.half ?: -axesDimensions.getRight(isLTR))
 
-        startAxis?.let { axis ->
-            setStartAxisBounds(
-                axis = axis,
-                contentBounds = contentBounds,
-                dataSetBounds = dataSetBounds,
-                axesDimensions = axesDimensions,
-                horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
-                horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
-            )
-        }
-        topAxis?.let { axis ->
-            setTopAxisBounds(
-                axis = axis,
-                contentBounds = contentBounds,
-                dataSetBounds = dataSetBounds,
-                axesDimensions = axesDimensions,
-                horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
-                horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
-            )
-        }
-        endAxis?.let { axis ->
-            setEndAxisBounds(
-                axis = axis,
-                contentBounds = contentBounds,
-                dataSetBounds = dataSetBounds,
-                axesDimensions = axesDimensions,
-                horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
-                horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
-            )
-        }
-        bottomAxis?.let { axis ->
-            setBottomAxisBounds(
-                axis = axis,
-                contentBounds = contentBounds,
-                dataSetBounds = dataSetBounds,
-                axesDimensions = axesDimensions,
-                horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
-                horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
-            )
-        }
+        startAxis?.setStartAxisBounds(
+            contentBounds = contentBounds,
+            dataSetBounds = dataSetBounds,
+            axesDimensions = axesDimensions,
+            horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
+            horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
+        )
+        topAxis?.setTopAxisBounds(
+            contentBounds = contentBounds,
+            dataSetBounds = dataSetBounds,
+            axesDimensions = axesDimensions,
+            horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
+            horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
+        )
+        endAxis?.setEndAxisBounds(
+            contentBounds = contentBounds,
+            dataSetBounds = dataSetBounds,
+            axesDimensions = axesDimensions,
+            horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
+            horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
+        )
+        bottomAxis?.setBottomAxisBounds(
+            contentBounds = contentBounds,
+            dataSetBounds = dataSetBounds,
+            axesDimensions = axesDimensions,
+            horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
+            horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
+        )
         setRestrictedBounds()
     }
 
-    private fun setStartAxisBounds(
-        axis: AxisRenderer<AxisPosition.Vertical.Start>,
+    private fun AxisRenderer<AxisPosition.Vertical.Start>.setStartAxisBounds(
         contentBounds: RectF,
         dataSetBounds: RectF,
         axesDimensions: Dimensions,
         horizontalAxisLeftDrawBound: Float,
         horizontalAxisRightDrawBound: Float,
     ) {
-        axis.setBounds(
+        setBounds(
             left = if (isLTR) contentBounds.left else contentBounds.right - axesDimensions.end,
             top = contentBounds.top + axesDimensions.top,
             right = if (isLTR) {
-                contentBounds.left + axesDimensions.start + axis.axisThickness.half
+                contentBounds.left + axesDimensions.start + axisThickness.half
             } else {
                 contentBounds.right
             },
             bottom = contentBounds.bottom - axesDimensions.bottom
         )
-        axis.dataSetBounds.set(
+        this.dataSetBounds.set(
             horizontalAxisLeftDrawBound,
-            dataSetBounds.top + axis.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
+            dataSetBounds.top + maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
             horizontalAxisRightDrawBound,
-            dataSetBounds.bottom + if (hasBottomAxis) 0f else axis.maxAnyAxisLineThickness
+            dataSetBounds.bottom + if (hasBottomAxis) 0f else maxAnyAxisLineThickness
         )
     }
 
-    private fun setTopAxisBounds(
-        axis: AxisRenderer<AxisPosition.Horizontal.Top>,
+    private fun AxisRenderer<AxisPosition.Horizontal.Top>.setTopAxisBounds(
         contentBounds: RectF,
         dataSetBounds: RectF,
         axesDimensions: Dimensions,
         horizontalAxisLeftDrawBound: Float,
         horizontalAxisRightDrawBound: Float,
     ) {
-        axis.setBounds(
+        setBounds(
             left = contentBounds.left + axesDimensions.start,
             top = contentBounds.top,
             right = contentBounds.right - axesDimensions.end,
             bottom = contentBounds.top + axesDimensions.top
         )
-        axis.dataSetBounds.set(
+        this.dataSetBounds.set(
             horizontalAxisLeftDrawBound,
             dataSetBounds.top,
             horizontalAxisRightDrawBound,
@@ -159,17 +145,16 @@ public open class AxisManager {
         )
     }
 
-    private fun setEndAxisBounds(
-        axis: AxisRenderer<AxisPosition.Vertical.End>,
+    private fun AxisRenderer<AxisPosition.Vertical.End>.setEndAxisBounds(
         contentBounds: RectF,
         dataSetBounds: RectF,
         axesDimensions: Dimensions,
         horizontalAxisLeftDrawBound: Float,
         horizontalAxisRightDrawBound: Float,
     ) {
-        axis.setBounds(
+        setBounds(
             left = if (isLTR) {
-                contentBounds.right - (axesDimensions.end + axis.axisThickness.half)
+                contentBounds.right - (axesDimensions.end + axisThickness.half)
             } else {
                 contentBounds.left
             },
@@ -181,31 +166,30 @@ public open class AxisManager {
             },
             bottom = contentBounds.bottom - axesDimensions.bottom
         )
-        axis.dataSetBounds.set(
+        this.dataSetBounds.set(
             horizontalAxisLeftDrawBound,
-            dataSetBounds.top + axis.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
+            dataSetBounds.top + maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
             horizontalAxisRightDrawBound,
-            dataSetBounds.bottom + if (hasBottomAxis) 0f else axis.maxAnyAxisLineThickness
+            dataSetBounds.bottom + if (hasBottomAxis) 0f else maxAnyAxisLineThickness
         )
     }
 
-    private fun setBottomAxisBounds(
-        axis: AxisRenderer<AxisPosition.Horizontal.Bottom>,
+    private fun AxisRenderer<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
         contentBounds: RectF,
         dataSetBounds: RectF,
         axesDimensions: Dimensions,
         horizontalAxisLeftDrawBound: Float,
         horizontalAxisRightDrawBound: Float,
     ) {
-        axis.setBounds(
+        setBounds(
             left = contentBounds.left + axesDimensions.start,
             top = contentBounds.bottom - axesDimensions.bottom,
             right = contentBounds.right - axesDimensions.end,
             bottom = contentBounds.bottom
         )
-        axis.dataSetBounds.set(
+        this.dataSetBounds.set(
             horizontalAxisLeftDrawBound,
-            dataSetBounds.top + if (hasTopAxis) axis.axisThickness else 0f,
+            dataSetBounds.top + if (hasTopAxis) axisThickness else 0f,
             horizontalAxisRightDrawBound,
             dataSetBounds.bottom
         )
