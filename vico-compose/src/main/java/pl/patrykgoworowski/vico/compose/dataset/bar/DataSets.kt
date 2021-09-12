@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.dataset.entry.collectAsState
 import pl.patrykgoworowski.vico.compose.extension.addIf
 import pl.patrykgoworowski.vico.compose.extension.chartTouchEvent
+import pl.patrykgoworowski.vico.compose.extension.set
 import pl.patrykgoworowski.vico.compose.gesture.OnZoom
 import pl.patrykgoworowski.vico.core.MAX_ZOOM
 import pl.patrykgoworowski.vico.core.MIN_ZOOM
@@ -95,10 +96,10 @@ fun <Model : EntryModel> DataSet(
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val dataSetModel = remember { MutableDataSetModel() }
-    val (viewState, setViewState) = remember { mutableStateOf(MutableRendererViewState()) }
+    val viewState = remember { mutableStateOf(MutableRendererViewState()) }
     val zoom = remember { mutableStateOf(1f) }
     val setTouchPoint = { pointF: PointF? ->
-        setViewState(viewState.copy(markerTouchPoint = pointF))
+        viewState.set(viewState.value.copy(markerTouchPoint = pointF))
     }
 
     axisManager.apply {
@@ -109,8 +110,8 @@ fun <Model : EntryModel> DataSet(
     }
 
     val setHorizontalScroll = { scrollX: Float ->
-        setViewState(
-            viewState.copy(
+        viewState.set(
+            viewState.value.copy(
                 markerTouchPoint = null,
                 horizontalScroll = scrollX,
             )
@@ -142,9 +143,9 @@ fun <Model : EntryModel> DataSet(
         virtualLayout.setBounds(bounds, dataSet, dataSetModel, axisManager, marker)
         val canvas = drawContext.canvas.nativeCanvas
         val segmentProperties = dataSet.getSegmentProperties(model)
-        axisManager.drawBehindDataSet(canvas, dataSetModel, segmentProperties, viewState)
-        dataSet.draw(canvas, model, segmentProperties, viewState, marker)
-        axisManager.drawAboveDataSet(canvas, dataSetModel, segmentProperties, viewState)
+        axisManager.drawBehindDataSet(canvas, dataSetModel, segmentProperties, viewState.value)
+        dataSet.draw(canvas, model, segmentProperties, viewState.value, marker)
+        axisManager.drawAboveDataSet(canvas, dataSetModel, segmentProperties, viewState.value)
         scrollHandler.maxScrollDistance = dataSet.maxScrollAmount
     }
 }
