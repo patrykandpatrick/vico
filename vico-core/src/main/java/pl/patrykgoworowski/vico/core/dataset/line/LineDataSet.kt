@@ -214,6 +214,7 @@ public open class LineDataSet(
         axisModel.maxY = maxY ?: model.maxY
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
+        axisModel.entryModel = model
     }
 
     private fun calculateDrawSegmentSpecIfNeeded(model: EntryModel) {

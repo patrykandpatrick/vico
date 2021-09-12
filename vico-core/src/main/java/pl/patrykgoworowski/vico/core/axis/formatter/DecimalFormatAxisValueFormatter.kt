@@ -17,7 +17,6 @@
 package pl.patrykgoworowski.vico.core.axis.formatter
 
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -35,7 +34,6 @@ class DecimalFormatAxisValueFormatter(
     override fun formatValue(
         value: Float,
         index: Int,
-        model: EntryModel,
         dataSetModel: DataSetModel
     ): String = decimalFormat.format(value)
 

@@ -16,17 +16,24 @@
 
 package pl.patrykgoworowski.vico.core.axis.model
 
+import pl.patrykgoworowski.vico.core.dataset.emptyEntryModel
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+
 public class MutableDataSetModel(
     override var minX: Float = 0f,
     override var maxX: Float = 0f,
     override var minY: Float = 0f,
     override var maxY: Float = 0f,
+    override var entryModel: EntryModel = emptyEntryModel(),
 ) : DataSetModel {
+
+    private val emptyModel = emptyEntryModel()
 
     public fun clear() {
         minX = 0f
         maxX = 0f
         minY = 0f
         maxY = 0f
+        entryModel = emptyModel
     }
 }

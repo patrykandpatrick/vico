@@ -185,6 +185,7 @@ public open class ColumnDataSet(
         axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
+        axisModel.entryModel = model
     }
 
     override fun getSegmentProperties(model: EntryModel): SegmentProperties {

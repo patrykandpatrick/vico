@@ -104,6 +104,7 @@ class ComposedDataSet<Model : EntryModel>(
                 maxX = if (index == 0) tempAxisModel.maxX else maxOf(maxX, tempAxisModel.maxX)
                 minY = if (index == 0) tempAxisModel.minY else minOf(minY, tempAxisModel.minY)
                 maxY = if (index == 0) tempAxisModel.maxY else maxOf(maxY, tempAxisModel.maxY)
+                axisModel.entryModel = model
             }
         }
     }

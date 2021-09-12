@@ -17,20 +17,17 @@
 package pl.patrykgoworowski.vico.core.dimensions
 
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 
 interface DataSetInsetter {
 
     fun getVerticalInsets(
         outDimensions: MutableDimensions,
-        model: EntryModel,
         dataSetModel: DataSetModel,
     ): Dimensions
 
     fun getHorizontalInsets(
         outDimensions: MutableDimensions,
         availableHeight: Float,
-        model: EntryModel,
         dataSetModel: DataSetModel,
     ): Dimensions
 }

@@ -34,6 +34,7 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
+import pl.patrykgoworowski.vico.core.dataset.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.dataset.renderer.MutableRendererViewState
 import pl.patrykgoworowski.vico.core.extension.dpInt
 import pl.patrykgoworowski.vico.core.extension.orZero
@@ -42,7 +43,6 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
 import pl.patrykgoworowski.vico.view.dataset.common.DataSetWithModel
-import pl.patrykgoworowski.vico.view.dataset.layout.ViewVirtualLayout
 import pl.patrykgoworowski.vico.view.extension.isLTR
 import pl.patrykgoworowski.vico.view.extension.measureDimension
 import pl.patrykgoworowski.vico.view.extension.specSize
@@ -69,7 +69,7 @@ class DataSetView @JvmOverloads constructor(
     }
 
     private val scroller = OverScroller(context)
-    private val virtualLayout = ViewVirtualLayout(isLTR)
+    private val virtualLayout = VirtualLayout(isLTR)
     private val motionEventHandler = MotionEventHandler(
         scroller = scroller,
         scrollHandler = scrollHandler,
@@ -151,7 +151,6 @@ class DataSetView @JvmOverloads constructor(
 
         axisManager.drawBehindDataSet(
             canvas = canvas,
-            model = dataSet.getEntriesModel(),
             dataSetModel = dataSetModel,
             segmentProperties = segmentProperties,
             rendererViewState = rendererViewState,
@@ -159,7 +158,6 @@ class DataSetView @JvmOverloads constructor(
         dataSet.draw(canvas, rendererViewState, segmentProperties, marker)
         axisManager.drawAboveDataSet(
             canvas = canvas,
-            model = dataSet.getEntriesModel(),
             dataSetModel = dataSetModel,
             segmentProperties = segmentProperties,
             rendererViewState = rendererViewState,

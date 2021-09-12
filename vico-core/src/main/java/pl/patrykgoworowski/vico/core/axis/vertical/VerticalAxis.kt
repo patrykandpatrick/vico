@@ -36,7 +36,6 @@ import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
@@ -70,7 +69,6 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun drawBehindDataSet(
         canvas: Canvas,
-        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -103,14 +101,13 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun drawAboveDataSet(
         canvas: Canvas,
-        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState
     ) {
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
 
-        val labels = getLabels(model, dataSetModel, drawLabelCount)
+        val labels = getLabels(dataSetModel, drawLabelCount)
         val labelHeight = label?.getHeight(includeMargin = false) ?: 0f
         val labelTextHeight = label?.getHeight(includePadding = false, includeMargin = false) ?: 0f
         val axisStep = bounds.height() / drawLabelCount
@@ -186,7 +183,6 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     private fun getLabels(
-        entryModel: EntryModel,
         dataSetModel: DataSetModel,
         maxLabelCount: Int = this.maxLabelCount,
     ): List<String> {
@@ -194,24 +190,22 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         val step = (dataSetModel.maxY - dataSetModel.minY) / maxLabelCount
         for (index in maxLabelCount downTo 0) {
             val value = dataSetModel.maxY - (step * index)
-            labels += valueFormatter.formatValue(value, index, entryModel, dataSetModel)
+            labels += valueFormatter.formatValue(value, index, dataSetModel)
         }
         return labels
     }
 
     override fun getVerticalInsets(
         outDimensions: MutableDimensions,
-        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions = outDimensions
 
     override fun getHorizontalInsets(
         outDimensions: MutableDimensions,
         availableHeight: Float,
-        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions {
-        val labels = getLabels(model, dataSetModel, getDrawLabelCount(availableHeight.toInt()))
+        val labels = getLabels(dataSetModel, getDrawLabelCount(availableHeight.toInt()))
         if (labels.isEmpty()) return outDimensions.set(0f)
 
         fun getHalfLabelHeight(text: String): Float =
