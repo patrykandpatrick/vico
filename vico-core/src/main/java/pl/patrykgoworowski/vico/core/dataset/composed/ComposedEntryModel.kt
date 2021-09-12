@@ -19,15 +19,15 @@ package pl.patrykgoworowski.vico.core.dataset.composed
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 
-class ComposedEntryModel<Model : EntryModel>(
+data class ComposedEntryModel<Model : EntryModel>(
     val composedEntryCollections: List<Model>,
-    entryCollections: List<List<DataEntry>>,
-    minX: Float,
-    maxX: Float,
-    minY: Float,
-    maxY: Float,
-    composedMaxY: Float,
-    step: Float,
+    override val entryCollections: List<List<DataEntry>>,
+    override val minX: Float,
+    override val maxX: Float,
+    override val minY: Float,
+    override val maxY: Float,
+    override val composedMaxY: Float,
+    override val step: Float,
 ) : EntryModel(
     entryCollections = entryCollections,
     minX = minX,

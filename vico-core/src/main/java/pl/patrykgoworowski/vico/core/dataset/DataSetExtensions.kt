@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dataset.entry.collection
+package pl.patrykgoworowski.vico.core.dataset
 
+import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.entry.DataEntry
-import kotlin.math.abs
+import pl.patrykgoworowski.vico.core.extension.updateList
+import pl.patrykgoworowski.vico.core.marker.Marker
 
-open class EntryModel(
-    open val entryCollections: List<List<DataEntry>>,
-    open val minX: Float,
-    open val maxX: Float,
-    open val minY: Float,
-    open val maxY: Float,
-    open val composedMaxY: Float,
-    open val step: Float,
+fun HashMap<Float, MutableList<Marker.EntryModel>>.put(
+    x: Float,
+    y: Float,
+    entry: DataEntry,
+    color: Int,
 ) {
-
-    fun getEntriesLength(): Int =
-        (((abs(maxX) - abs(minX)) / step) + 1).toInt()
+    updateList(x) {
+        add(Marker.EntryModel(PointF(x, y), entry, color))
+    }
 }
