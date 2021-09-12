@@ -16,7 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.entry
 
-interface DataEntry {
-    val x: Float
-    val y: Float
+public interface DataEntry {
+    public val x: Float
+    public val y: Float
 }
+
+public operator fun DataEntry.component1(): Float = x
+public operator fun DataEntry.component2(): Float = y
