@@ -20,6 +20,7 @@ private const val ALPHA_BIT_SHIFT = 24
 private const val RED_BIT_SHIFT = 16
 private const val GREEN_BIT_SHIFT = 8
 private const val BLUE_BIT_SHIFT = 0
+private const val COLOR_MASK = 0xff
 
 fun Int.copyColor(
     alpha: Int = this.extractColorChannel(ALPHA_BIT_SHIFT),
@@ -32,4 +33,4 @@ fun Int.copyColor(
         (blue shl BLUE_BIT_SHIFT)
 
 private fun Int.extractColorChannel(bitShift: Int): Int =
-    this shr bitShift and 0xff
+    this shr bitShift and COLOR_MASK
