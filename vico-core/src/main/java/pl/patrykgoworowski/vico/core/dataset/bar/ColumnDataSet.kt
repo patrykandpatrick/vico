@@ -17,17 +17,24 @@
 package pl.patrykgoworowski.vico.core.dataset.bar
 
 import android.graphics.Canvas
-import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.dataset.forEachIn
+import pl.patrykgoworowski.vico.core.dataset.put
 import pl.patrykgoworowski.vico.core.dataset.renderer.BaseDataSet
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.extension.*
+import pl.patrykgoworowski.vico.core.extension.between
+import pl.patrykgoworowski.vico.core.extension.dp
+import pl.patrykgoworowski.vico.core.extension.getRepeating
+import pl.patrykgoworowski.vico.core.extension.half
+import pl.patrykgoworowski.vico.core.extension.inClip
+import pl.patrykgoworowski.vico.core.extension.orZero
+import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.ceil
 import kotlin.math.min
@@ -84,25 +91,14 @@ public open class ColumnDataSet(
         canvas: Canvas,
         model: EntryModel,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState
-    ) {
+        viewState: RendererViewState,
+    ) = canvas.inClip(bounds) {
+
         markerLocationMap.clear()
-        if (model.entryCollections.isEmpty()) return
-        val (touchPoint, scrollX) = rendererViewState
-
-        val clipRestoreCount = canvas.save()
-        canvas.clipRect(bounds)
-
         calculateDrawSegmentSpecIfNeeded(model)
         updateMaxScrollAmount(model.getEntriesLength(), segmentProperties.segmentWidth)
 
-        val minYorZero = minY ?: 0f
-        val minX = minX ?: model.minX
-        val maxX = maxX ?: model.maxX
-
-        val heightMultiplier = bounds.height() / ((maxY ?: mergeMode.getMaxY(model)) - minYorZero)
-        val bottom = bounds.bottom
-        val step = model.step
+        val heightMultiplier = bounds.height() / ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero)
 
         var drawingStart: Float
 
@@ -111,7 +107,7 @@ public open class ColumnDataSet(
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
-        val bottomCompensation = if (minYorZero < 0f) (minYorZero * heightMultiplier) else 0f
+        val bottomCompensation = if (minY.orZero < 0f) (minY.orZero * heightMultiplier) else 0f
 
         val defaultSegmentSize = getSegmentSize(model.entryCollections.size, scaled = true)
 
@@ -125,80 +121,45 @@ public open class ColumnDataSet(
                 entryCollectionIndex = index,
                 segmentCompensation = (segmentSize - defaultSegmentSize) / 2,
                 spacing = spacing
-            ) - scrollX
+            ) - viewState.horizontalScroll
 
-            entryCollection.forEach { entry ->
-                if (entry.x !in minX..maxX) return@forEach
+            entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
                 height = entry.y * heightMultiplier
                 columnCenterX = drawingStart +
-                        (segmentSize + spacing) * (entry.x - model.minX) / step
+                        (segmentSize + spacing) * (entry.x - model.minX) / model.step
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
                         val cumulatedHeight = heightMap.getOrElse(entry.x) { 0f }
-                        columnBottom = (bottom + bottomCompensation - cumulatedHeight)
+                        columnBottom = (bounds.bottom + bottomCompensation - cumulatedHeight)
                             .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += segmentSize.half
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                     MergeMode.Grouped -> {
-                        columnBottom = (bottom + bottomCompensation)
+                        columnBottom = (bounds.bottom + bottomCompensation)
                             .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += column.scaledThickness.half
                     }
                 }
 
-                if (!column.intersectsVertical(columnTop, columnBottom, columnCenterX, bounds)) {
-                    return@forEach
-                }
-
-                if (touchPoint != null) {
-                    markerLocationMap.updateList(ceil(columnCenterX), entryCollection.size) {
-                        add(
-                            Marker.EntryModel(
-                                PointF(
-                                    ceil(columnCenterX),
-                                    columnTop.between(bounds.top, bounds.bottom)
-                                ),
-                                entry,
-                                column.color,
-                            )
+                if (column.intersectsVertical(columnTop, columnBottom, columnCenterX, bounds)) {
+                    if (viewState.markerTouchPoint != null) {
+                        markerLocationMap.put(
+                            x = ceil(columnCenterX),
+                            y = columnTop.between(bounds.top, bounds.bottom),
+                            entry = entry,
+                            color = column.color
                         )
                     }
-                }
 
-                column.drawVertical(
-                    canvas = canvas,
-                    top = columnTop,
-                    bottom = columnBottom,
-                    centerX = columnCenterX
-                )
+                    column.drawVertical(canvas, columnTop, columnBottom, columnCenterX)
+                }
             }
         }
-
         heightMap.clear()
-
-        canvas.restoreToCount(clipRestoreCount)
-    }
-
-    override fun drawMarker(
-        canvas: Canvas,
-        model: EntryModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?
-    ) {
-        val touchPoint = rendererViewState.markerTouchPoint
-        if (touchPoint == null || marker == null) return
-        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
-            marker.draw(
-                canvas,
-                bounds,
-                markerModel,
-            )
-        }
     }
 
     override fun setToAxisModel(axisModel: MutableDataSetModel, model: EntryModel) {
@@ -206,6 +167,7 @@ public open class ColumnDataSet(
         axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
+        axisModel.entryModel = model
     }
 
     override fun getSegmentProperties(model: EntryModel): SegmentProperties {

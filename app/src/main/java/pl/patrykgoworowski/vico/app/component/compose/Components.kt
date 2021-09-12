@@ -17,7 +17,9 @@
 package pl.patrykgoworowski.vico.app.component.compose
 
 import android.text.TextUtils
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
@@ -27,14 +29,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.compose.component.*
+import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
+import pl.patrykgoworowski.vico.compose.component.markerComponent
+import pl.patrykgoworowski.vico.compose.component.overlayingComponent
+import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.textComponent
 import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.compose.extension.setShadow
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.path.PillShape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.path.corner.MarkerCorneredShape
 
 @Composable
@@ -50,9 +56,9 @@ fun markerComponent(): Marker {
         setPadding(8f.dp, 4f.dp)
     }
 
-    val indicatorInner = ShapeComponent(PillShape, colors.surface.toArgb())
-    val indicatorCenter = ShapeComponent(PillShape, Color.White.toArgb())
-    val indicatorOuter = ShapeComponent(PillShape, Color.White.toArgb())
+    val indicatorInner = ShapeComponent(pillShape, colors.surface.toArgb())
+    val indicatorCenter = ShapeComponent(pillShape, Color.White.toArgb())
+    val indicatorOuter = ShapeComponent(pillShape, Color.White.toArgb())
 
     val indicator = overlayingComponent(
         outer = indicatorOuter,
@@ -68,7 +74,7 @@ fun markerComponent(): Marker {
         color = colors.onSurface.copy(alpha = 0.18f),
         thickness = 2f.dp,
         shape = dashedShape(
-            shape = PillShape,
+            shape = pillShape,
             dashLength = 8f.dp,
             gapLength = 4f.dp
         )
@@ -81,7 +87,7 @@ fun markerComponent(): Marker {
         indicator = indicator,
         guideline = guideline,
         shape = MarkerCorneredShape(
-            corneredShape = PillShape,
+            corneredShape = pillShape,
             tickSize = 6.dp.pixels
         ),
         markerBackgroundColor = colors.surface,
@@ -99,12 +105,14 @@ fun markerComponent(): Marker {
 @Composable
 fun ScrollableColumn(
     modifier: Modifier = Modifier,
-    content: @Composable () -> Unit,
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(24.dp),
+    content: @Composable ColumnScope.() -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Column(
         modifier = modifier
-            .verticalScroll(scrollState, true)
+            .verticalScroll(scrollState, true),
+        verticalArrangement = verticalArrangement,
     ) {
         content()
     }

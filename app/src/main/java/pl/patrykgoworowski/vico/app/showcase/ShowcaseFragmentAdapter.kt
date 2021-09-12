@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.app.showcase
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
+import pl.patrykgoworowski.vico.app.showcase.compose.ComposeShowcaseFragment
 
 class ShowcaseFragmentAdapter(activity: FragmentActivity) : FragmentStateAdapter(activity) {
 

@@ -16,7 +16,11 @@
 
 package pl.patrykgoworowski.vico.app
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +32,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.app.ui.MainTheme
@@ -51,18 +54,17 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.componentShader
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 import pl.patrykgoworowski.vico.core.path.DashedShape
-import pl.patrykgoworowski.vico.core.path.PillShape
-import pl.patrykgoworowski.vico.core.path.RectShape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.path.Shapes.rectShape
 
-private val chartModifier = Modifier
-    .height(100.dp)
+private val chartModifier = Modifier.height(100.dp)
 
 @Preview("Sample Card With Column Chart", widthDp = 200)
 @Composable
 fun ColumnChartCard() = MainTheme {
-    SampleCard {
-        val colors = MaterialTheme.colors
+    val colors = MaterialTheme.colors
 
+    SampleCard {
         DataSet(
             modifier = chartModifier,
             dataSet = columnDataSet(
@@ -79,12 +81,12 @@ fun ColumnChartCard() = MainTheme {
                     textSize = 10.sp,
                     background = shapeComponent(
                         shape = CutCornerShape(
-                            CornerSize(25),
-                            CornerSize(50),
-                            CornerSize(50),
-                            CornerSize(25)
+                            CornerSize(percent = 25),
+                            CornerSize(percent = 50),
+                            CornerSize(percent = 50),
+                            CornerSize(percent = 25)
                         ),
-                        color = colors.primary.copy(0.1f),
+                        color = colors.primary.copy(alpha = 0.1f),
                     )
                 ).apply {
                     setPadding(end = 8.dp, start = 4.dp)
@@ -92,11 +94,11 @@ fun ColumnChartCard() = MainTheme {
                 axis = null,
                 tick = null,
                 guideline = LineComponent(
-                    colors.primary.copy(0.1f).toArgb(),
+                    colors.primary.copy(alpha = 0.1f).toArgb(),
                     1.dp.pixels,
                 ),
             ),
-            model = entryModelOf(1, 2, 3, 2)
+            model = @Suppress("MagicNumber") entryModelOf(1, 2, 3, 2)
         )
     }
 }
@@ -104,61 +106,53 @@ fun ColumnChartCard() = MainTheme {
 @Preview("Sample Card With Line Chart", widthDp = 200)
 @Composable
 fun LineChartCard() = MainTheme {
-    SampleCard {
-        val colors = MaterialTheme.colors
+    val colors = MaterialTheme.colors
 
+    SampleCard {
         DataSet(
-            modifier = Modifier
-                .height(100.dp),
+            modifier = Modifier.height(100.dp),
             dataSet = lineDataSet(
                 point = null,
                 lineColor = colors.primary,
                 lineBackgroundShader = componentShader(
-                    component = shapeComponent(
-                        shape = PillShape,
-                        color = colors.primary,
-                    ).apply {
+                    componentSize = 4.dp.pixels,
+                    component = shapeComponent(shape = pillShape, color = colors.primary).apply {
                         setMargins(0.5.dp.pixels)
                     },
-                    componentSize = 4.dp.pixels,
                 ),
                 minX = 0f,
                 maxY = 3f,
             ),
-            model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
+            model = @Suppress("MagicNumber") entryModelOf(
+                -1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1
+            ),
             startAxis = startAxis(
                 label = TextComponent(
                     color = colors.onSurface.toArgb(),
                     textSize = 10.sp.pixelSize(),
-                    background = ShapeComponent(
-                        shape = RectShape,
-                        color = Color.LightGray.toArgb(),
-                    )
+                    background = ShapeComponent(shape = rectShape, color = Color.LightGray.toArgb())
                 ).apply {
                     setPadding(horizontal = 4.dp, vertical = 2.dp)
                 },
                 axis = null,
                 tick = null,
                 guideline = LineComponent(
+                    color = Color.LightGray.toArgb(),
+                    thickness = 1.dp.pixels,
                     shape = DashedShape(
-                        shape = PillShape,
+                        shape = pillShape,
                         dashLength = 2.dp.pixels,
                         gapLength = 4.dp.pixels,
                     ),
-                    color = Color.LightGray.toArgb(),
-                    thickness = 1.dp.pixels,
                 ),
             ).apply {
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
             },
             bottomAxis = bottomAxis(
                 label = null,
-                axis = rectComponent(
-                    color = Color.LightGray,
-                    thickness = 1.dp
-                ),
                 tick = null,
-                guideline = null
+                guideline = null,
+                axis = rectComponent(color = Color.LightGray, thickness = 1.dp),
             ),
         )
     }
@@ -169,18 +163,13 @@ fun SampleCard(
     chart: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .padding(Dp(8f)),
-        shape = RoundedCornerShape(Dp(8f)),
-        elevation = Dp(4f)
+        modifier = Modifier.padding(8.dp),
+        shape = RoundedCornerShape(8.dp),
+        elevation = 4.dp
     ) {
-        Column(
-            modifier = Modifier.padding(Dp(16f))
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             chart()
-
-            Spacer(modifier = Modifier.height(Dp(8f)))
-
+            Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Title",
                 style = MaterialTheme.typography.h6,

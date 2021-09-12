@@ -18,6 +18,7 @@ package pl.patrykgoworowski.vico.core.path.corner
 
 import android.graphics.Path
 import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.extension.piRad
 
 object SharpCornerTreatment : CornerTreatment {
 
@@ -74,11 +75,11 @@ object RoundedCornerTreatment : CornerTreatment {
         val startAngle: Float
         when (cornerLocation) {
             CornerLocation.TopLeft -> {
-                startAngle = 180f
+                startAngle = 1f.piRad
                 tempRect.set(x1, y2, (x2 * 2) - x1, (y1 * 2) - y2)
             }
             CornerLocation.TopRight -> {
-                startAngle = 270f
+                startAngle = 1.5f.piRad
                 tempRect.set((x1 * 2) - x2, y1, x2, (y2 * 2) - y1)
             }
             CornerLocation.BottomRight -> {
@@ -86,10 +87,10 @@ object RoundedCornerTreatment : CornerTreatment {
                 tempRect.set((x2 * 2) - x1, (y1 * 2) - y2, x1, y2)
             }
             CornerLocation.BottomLeft -> {
-                startAngle = 90f
+                startAngle = 0.5f.piRad
                 tempRect.set(x2, (y2 * 2) - y1, (x1 * 2) - x2, y1)
             }
         }
-        path.arcTo(tempRect, startAngle, 90f)
+        path.arcTo(tempRect, startAngle, 0.5f.piRad)
     }
 }

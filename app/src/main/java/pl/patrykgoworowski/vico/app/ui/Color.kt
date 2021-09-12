@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.app.ui
 
 import androidx.compose.ui.graphics.Color
 
-val flickrPink = Color(0xFFF72585)
-val byzantine = Color(0xFFB5179E)
-val purple = Color(0xFF7209B7)
-val trypanPurple = Color(0xFF480CA8)
+val flickrPink = Color(color = 0xFFF72585)
+val byzantine = Color(color = 0xFFB5179E)
+val purple = Color(color = 0xFF7209B7)
+val trypanPurple = Color(color = 0xFF480CA8)

@@ -16,17 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
-import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.constants.ERR_REPEATING_COLLECTION_EMPTY
-import pl.patrykgoworowski.vico.core.marker.Marker
-import java.util.*
 import kotlin.math.abs
 
 fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =
     getOrNull(index) ?: getDefault().also { add(it) }
-
-fun <T> ArrayList<T>.getRepeatingOrDefault(index: Int, getDefault: () -> T) =
-    getOrNull(index) ?: getOrNull(index % size.coerceAtLeast(1)) ?: getDefault().also { add(it) }
 
 fun <T> List<T>.getRepeating(index: Int): T {
     if (isEmpty()) throw IllegalStateException(ERR_REPEATING_COLLECTION_EMPTY)
@@ -77,18 +71,6 @@ fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
     return closestValue
 }
 
-fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryPositionModel(
-    touchPoint: PointF,
-): List<Marker.EntryModel>? =
-    keys.findClosestPositiveValue(touchPoint.x)
-        ?.let(::get)
-
-public fun <K, V> TreeMap<K, MutableList<V>>.updateAll(other: Map<K, List<V>>) {
-    other.forEach { (key, value) ->
-        put(key, get(key)?.apply { addAll(value) } ?: mutableListOf(value))
-    }
-}
-
 fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
     fold(0f) { sum, element ->
         sum + selector(element)
@@ -100,14 +82,6 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
         sum += selector(element)
     }
     return sum
-}
-
-internal inline fun <K, V> HashMap<K, MutableList<V>>.updateList(
-    key: K,
-    initialCapacity: Int = 0,
-    block: MutableList<V>.() -> Unit,
-) {
-    block(getOrPut(key) { ArrayList(initialCapacity) })
 }
 
 public fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =

@@ -28,107 +28,111 @@ import pl.patrykgoworowski.vico.core.path.corner.CorneredShape
 import pl.patrykgoworowski.vico.core.path.corner.CutCornerTreatment
 import pl.patrykgoworowski.vico.core.path.corner.RoundedCornerTreatment
 
-val RectShape: Shape = object : Shape {
+object Shapes {
+    val pillShape = roundedCornersShape(allPercent = 50)
 
-    override fun drawShape(
-        canvas: Canvas,
-        paint: Paint,
-        path: Path,
-        bounds: RectF
-    ) {
-        path.moveTo(bounds.left, bounds.top)
-        path.lineTo(bounds.right, bounds.top)
-        path.lineTo(bounds.right, bounds.bottom)
-        path.lineTo(bounds.left, bounds.bottom)
-        path.close()
-        canvas.drawPath(path, paint)
+    val rectShape: Shape = object : Shape {
+        override fun drawShape(
+            canvas: Canvas,
+            paint: Paint,
+            path: Path,
+            bounds: RectF
+        ) {
+            path.moveTo(bounds.left, bounds.top)
+            path.lineTo(bounds.right, bounds.top)
+            path.lineTo(bounds.right, bounds.bottom)
+            path.lineTo(bounds.left, bounds.bottom)
+            path.close()
+            canvas.drawPath(path, paint)
+        }
     }
-}
 
-fun RoundedCornersShape(all: Float): Shape = RoundedCornersShape(all, all, all, all)
+    fun roundedCornersShape(all: Float): Shape = roundedCornersShape(all, all, all, all)
 
-fun RoundedCornersShape(
-    topLeftPercent: Int = 0,
-    topRightPercent: Int = 0,
-    bottomRightPercent: Int = 0,
-    bottomLeftPercent: Int = 0,
-): CorneredShape = CorneredShape(
-    Corner.Relative(topLeftPercent, RoundedCornerTreatment),
-    Corner.Relative(topRightPercent, RoundedCornerTreatment),
-    Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
-    Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
-)
+    fun roundedCornersShape(allPercent: Int) =
+        roundedCornersShape(allPercent, allPercent, allPercent, allPercent)
 
-fun RoundedCornersShape(
-    topLeft: Float = 0f,
-    topRight: Float = 0f,
-    bottomRight: Float = 0f,
-    bottomLeft: Float = 0f,
-): CorneredShape = CorneredShape(
-    Corner.Absolute(topLeft, RoundedCornerTreatment),
-    Corner.Absolute(topRight, RoundedCornerTreatment),
-    Corner.Absolute(bottomRight, RoundedCornerTreatment),
-    Corner.Absolute(bottomLeft, RoundedCornerTreatment),
-)
+    fun roundedCornersShape(
+        topLeftPercent: Int = 0,
+        topRightPercent: Int = 0,
+        bottomRightPercent: Int = 0,
+        bottomLeftPercent: Int = 0,
+    ): CorneredShape = CorneredShape(
+        Corner.Relative(topLeftPercent, RoundedCornerTreatment),
+        Corner.Relative(topRightPercent, RoundedCornerTreatment),
+        Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
+        Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
+    )
 
-val PillShape = RoundedCornersShape(50, 50, 50, 50)
+    fun roundedCornersShape(
+        topLeft: Float = 0f,
+        topRight: Float = 0f,
+        bottomRight: Float = 0f,
+        bottomLeft: Float = 0f,
+    ): CorneredShape = CorneredShape(
+        Corner.Absolute(topLeft, RoundedCornerTreatment),
+        Corner.Absolute(topRight, RoundedCornerTreatment),
+        Corner.Absolute(bottomRight, RoundedCornerTreatment),
+        Corner.Absolute(bottomLeft, RoundedCornerTreatment),
+    )
 
-fun CutCornerShape(all: Float): Shape = CutCornerShape(all, all, all, all)
+    fun cutCornerShape(all: Float): Shape = cutCornerShape(all, all, all, all)
 
-fun CutCornerShape(
-    topLeftPercent: Int = 0,
-    topRightPercent: Int = 0,
-    bottomRightPercent: Int = 0,
-    bottomLeftPercent: Int = 0,
-): CorneredShape = CorneredShape(
-    Corner.Relative(topLeftPercent, CutCornerTreatment),
-    Corner.Relative(topRightPercent, CutCornerTreatment),
-    Corner.Relative(bottomRightPercent, CutCornerTreatment),
-    Corner.Relative(bottomLeftPercent, CutCornerTreatment),
-)
+    fun cutCornerShape(
+        topLeftPercent: Int = 0,
+        topRightPercent: Int = 0,
+        bottomRightPercent: Int = 0,
+        bottomLeftPercent: Int = 0,
+    ): CorneredShape = CorneredShape(
+        Corner.Relative(topLeftPercent, CutCornerTreatment),
+        Corner.Relative(topRightPercent, CutCornerTreatment),
+        Corner.Relative(bottomRightPercent, CutCornerTreatment),
+        Corner.Relative(bottomLeftPercent, CutCornerTreatment),
+    )
 
-fun CutCornerShape(
-    topLeft: Float = 0f,
-    topRight: Float = 0f,
-    bottomRight: Float = 0f,
-    bottomLeft: Float = 0f
-): CorneredShape = CorneredShape(
-    Corner.Absolute(topLeft, CutCornerTreatment),
-    Corner.Absolute(topRight, CutCornerTreatment),
-    Corner.Absolute(bottomRight, CutCornerTreatment),
-    Corner.Absolute(bottomLeft, CutCornerTreatment),
-)
+    fun cutCornerShape(
+        topLeft: Float = 0f,
+        topRight: Float = 0f,
+        bottomRight: Float = 0f,
+        bottomLeft: Float = 0f
+    ): CorneredShape = CorneredShape(
+        Corner.Absolute(topLeft, CutCornerTreatment),
+        Corner.Absolute(topRight, CutCornerTreatment),
+        Corner.Absolute(bottomRight, CutCornerTreatment),
+        Corner.Absolute(bottomLeft, CutCornerTreatment),
+    )
 
-fun DrawableShape(
-    drawable: Drawable,
-    keepAspectRatio: Boolean = false,
-    otherCreator: Shape? = RectShape
-): Shape = object : Shape {
+    fun drawableShape(
+        drawable: Drawable,
+        keepAspectRatio: Boolean = false,
+        otherCreator: Shape? = rectShape
+    ): Shape = object : Shape {
 
-    private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
-            drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
+        private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
+                drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
 
-    override fun drawShape(
-        canvas: Canvas,
-        paint: Paint,
-        path: Path,
-        bounds: RectF
-    ) {
-        if (bounds.height() == 0f) return
-        val drawableHeight = if (keepAspectRatio) bounds.width() * ratio else bounds.height()
-        val top = minOf(bounds.top, bounds.bottom - drawableHeight)
-        drawable.setBounds(bounds.left, top, bounds.right, top + drawableHeight)
-        drawable.draw(canvas)
-        otherCreator ?: return
+        override fun drawShape(
+            canvas: Canvas,
+            paint: Paint,
+            path: Path,
+            bounds: RectF
+        ) {
+            if (bounds.height() == 0f) return
+            val drawableHeight = if (keepAspectRatio) bounds.width() * ratio else bounds.height()
+            val top = minOf(bounds.top, bounds.bottom - drawableHeight)
+            drawable.setBounds(bounds.left, top, bounds.right, top + drawableHeight)
+            drawable.draw(canvas)
+            otherCreator ?: return
 
-        bounds.updateBounds(top = drawable.bounds.bottom.toFloat())
-        if (bounds.height() > 0) {
-            otherCreator.drawShape(
-                canvas,
-                paint,
-                path,
-                bounds
-            )
+            bounds.updateBounds(top = drawable.bounds.bottom.toFloat())
+            if (bounds.height() > 0) {
+                otherCreator.drawShape(
+                    canvas,
+                    paint,
+                    path,
+                    bounds
+                )
+            }
         }
     }
 }

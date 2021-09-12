@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.view.view.dataset
+package pl.patrykgoworowski.vico.view.dataset
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -34,6 +34,7 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
+import pl.patrykgoworowski.vico.core.dataset.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.dataset.renderer.MutableRendererViewState
 import pl.patrykgoworowski.vico.core.extension.dpInt
 import pl.patrykgoworowski.vico.core.extension.orZero
@@ -42,19 +43,19 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
 import pl.patrykgoworowski.vico.view.dataset.common.DataSetWithModel
-import pl.patrykgoworowski.vico.view.dataset.layout.ViewVirtualLayout
 import pl.patrykgoworowski.vico.view.extension.isLTR
 import pl.patrykgoworowski.vico.view.extension.measureDimension
 import pl.patrykgoworowski.vico.view.extension.specSize
 import pl.patrykgoworowski.vico.view.extension.verticalPadding
-import pl.patrykgoworowski.vico.view.motion_event.ChartScaleGestureListener
-import pl.patrykgoworowski.vico.view.motion_event.MotionEventHandler
+import pl.patrykgoworowski.vico.view.gestures.ChartScaleGestureListener
+import pl.patrykgoworowski.vico.view.gestures.MotionEventHandler
 import kotlin.properties.Delegates.observable
 
 class DataSetView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
-) : View(context, attrs) {
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : View(context, attrs, defStyleAttr) {
 
     private val contentBounds = RectF()
     private val dataSetModel = MutableDataSetModel()
@@ -68,7 +69,7 @@ class DataSetView @JvmOverloads constructor(
     }
 
     private val scroller = OverScroller(context)
-    private val virtualLayout = ViewVirtualLayout(isLTR)
+    private val virtualLayout = VirtualLayout(isLTR)
     private val motionEventHandler = MotionEventHandler(
         scroller = scroller,
         scrollHandler = scrollHandler,
@@ -80,20 +81,19 @@ class DataSetView @JvmOverloads constructor(
     private val axisManager = AxisManager()
     private val rendererViewState = MutableRendererViewState()
 
+    private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
+        ChartScaleGestureListener(
+            getChartBounds = { dataSet?.bounds },
+            onZoom = this::handleZoom,
+        )
+    private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
+
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
     public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
     public var isZoomEnabled = true
-
-    public var scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
-        ChartScaleGestureListener(
-            getChartBounds = { dataSet?.bounds },
-            onZoom = this::handleZoom
-        )
-
-    public var scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
     var dataSet: DataSetWithModel<*>? by observable(null) { _, oldValue, newValue ->
         oldValue?.removeListener(updateRequestListener)
@@ -116,7 +116,7 @@ class DataSetView @JvmOverloads constructor(
         }
     }
 
-    public fun handleZoom(focusX: Float, focusY: Float, zoomChange: Float) {
+    private fun handleZoom(focusX: Float, zoomChange: Float) {
         val dataSet = dataSet ?: return
         val newZoom = (dataSet.zoom ?: 1f) * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
@@ -151,7 +151,6 @@ class DataSetView @JvmOverloads constructor(
 
         axisManager.drawBehindDataSet(
             canvas = canvas,
-            model = dataSet.getEntriesModel(),
             dataSetModel = dataSetModel,
             segmentProperties = segmentProperties,
             rendererViewState = rendererViewState,
@@ -159,7 +158,6 @@ class DataSetView @JvmOverloads constructor(
         dataSet.draw(canvas, rendererViewState, segmentProperties, marker)
         axisManager.drawAboveDataSet(
             canvas = canvas,
-            model = dataSet.getEntriesModel(),
             dataSetModel = dataSetModel,
             segmentProperties = segmentProperties,
             rendererViewState = rendererViewState,

@@ -28,8 +28,8 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.plus
 
 class ShowcaseViewModel : ViewModel() {
 
-    private val generator = RandomEntriesGenerator(0..96)
-    private val multiGenerator = RandomEntriesGenerator(0..32)
+    private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
+    private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)
 
     val entries = EntryList()
     val multiEntries = EntryList()
@@ -47,8 +47,14 @@ class ShowcaseViewModel : ViewModel() {
                         multiGenerator.generateRandomEntries(),
                     )
                 )
-                delay(2_000)
+                delay(UPDATE_FREQUENCY)
             }
         }
+    }
+
+    companion object {
+        private const val GENERATOR_X_RANGE_TOP = 96
+        private const val MULTI_GENERATOR_X_RANGE_TOP = 32
+        private const val UPDATE_FREQUENCY = 2000L
     }
 }

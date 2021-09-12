@@ -31,7 +31,7 @@ import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.extension.sp
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.path.DashedShape
-import pl.patrykgoworowski.vico.core.path.PillShape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.path.corner.MarkerCorneredShape
 
 fun getMarkerComponent(context: Context): Marker {
@@ -47,9 +47,9 @@ fun getMarkerComponent(context: Context): Marker {
     }
 
     val colorSurface = context.getThemeColor(R.attr.colorSurface)
-    val indicatorInner = ShapeComponent(PillShape, colorSurface)
-    val indicatorCenter = ShapeComponent(PillShape, Color.WHITE)
-    val indicatorOuter = ShapeComponent(PillShape, Color.WHITE)
+    val indicatorInner = ShapeComponent(pillShape, colorSurface)
+    val indicatorCenter = ShapeComponent(pillShape, Color.WHITE)
+    val indicatorOuter = ShapeComponent(pillShape, Color.WHITE)
 
     val indicator = OverlayingComponent(
         outer = indicatorOuter,
@@ -65,7 +65,7 @@ fun getMarkerComponent(context: Context): Marker {
         color = context.getThemeColor(R.attr.colorOnSurface).copyColor(alpha = 48),
         thickness = 2f.dp,
         shape = DashedShape(
-            shape = PillShape,
+            shape = pillShape,
             dashLength = 8f.dp,
             gapLength = 4f.dp
         )
@@ -76,7 +76,7 @@ fun getMarkerComponent(context: Context): Marker {
         indicator = indicator,
         guideline = guideline,
         shape = MarkerCorneredShape(
-            corneredShape = PillShape,
+            corneredShape = pillShape,
             tickSize = 6.dp
         ),
         markerBackgroundColor = colorSurface,

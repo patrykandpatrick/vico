@@ -31,6 +31,7 @@ public open class VirtualLayout(
     var isLTR: Boolean
 ) {
 
+    @Suppress("MagicNumber")
     private val tempInsetters = ArrayList<DataSetInsetter>(5)
     private val finalInsets: MutableDimensions = floatDimensions()
     private val tempInsets: MutableDimensions = floatDimensions()
@@ -38,7 +39,6 @@ public open class VirtualLayout(
     public open fun <Model : EntryModel> setBounds(
         contentBounds: RectF,
         dataSet: DataSet<Model>,
-        model: Model,
         dataSetModel: DataSetModel,
         axisManager: AxisManager,
         vararg dataSetInsetter: DataSetInsetter?,
@@ -51,14 +51,14 @@ public open class VirtualLayout(
         dataSetInsetter.forEach { it?.let(tempInsetters::add) }
 
         tempInsetters.forEach { insetter ->
-            insetter.getVerticalInsets(tempInsets, model, dataSetModel)
+            insetter.getVerticalInsets(tempInsets, dataSetModel)
             finalInsets.setAllGreater(tempInsets)
         }
 
         val availableHeight = contentBounds.height() - finalInsets.vertical
 
         tempInsetters.forEach { insetter ->
-            insetter.getHorizontalInsets(tempInsets, availableHeight, model, dataSetModel)
+            insetter.getHorizontalInsets(tempInsets, availableHeight, dataSetModel)
             finalInsets.setAllGreater(tempInsets)
         }
 

@@ -30,7 +30,6 @@ import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
@@ -55,7 +54,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun drawBehindDataSet(
         canvas: Canvas,
-        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
@@ -109,7 +107,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun drawAboveDataSet(
         canvas: Canvas,
-        model: EntryModel,
         dataSetModel: DataSetModel,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState
@@ -118,6 +115,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val scrollX = rendererViewState.horizontalScroll
         val clipRestoreCount = canvas.save()
+        val step = dataSetModel.entryModel.step
 
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
@@ -137,33 +135,29 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
-        var valueIndex: Float = dataSetModel.minX + scrollAdjustment * model.step
+        var valueIndex: Float = dataSetModel.minX + scrollAdjustment * step
 
         for (index in 0 until tickCount) {
-            tick?.run {
-                setParentBounds(bounds)
-                drawVertical(
-                    canvas = canvas,
-                    top = tickMarkTop,
-                    bottom = tickMarkBottom,
-                    centerX = tickDrawCenter
-                )
-            }
+            tick?.setParentBounds(bounds)
+            tick?.drawVertical(
+                canvas = canvas,
+                top = tickMarkTop,
+                bottom = tickMarkBottom,
+                centerX = tickDrawCenter
+            )
 
             if (index < entryLength) {
-                label?.run {
-                    background?.setParentBounds(bounds)
-                    drawText(
-                        canvas,
-                        valueFormatter.formatValue(valueIndex, index, model, dataSetModel),
-                        textDrawCenter,
-                        textY,
-                        verticalPosition = position.textVerticalPosition,
-                        width = tickDrawStep.toInt(),
-                    )
-                }
+                label?.background?.setParentBounds(bounds)
+                label?.drawText(
+                    canvas,
+                    valueFormatter.formatValue(valueIndex, index, dataSetModel),
+                    textDrawCenter,
+                    textY,
+                    verticalPosition = position.textVerticalPosition,
+                    width = tickDrawStep.toInt(),
+                )
 
-                valueIndex += model.step
+                valueIndex += step
             }
             tickDrawCenter += tickDrawStep
             textDrawCenter += tickDrawStep
@@ -175,11 +169,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 canvas = canvas,
                 left = dataSetBounds.left,
                 right = dataSetBounds.right,
-                centerY = if (position is AxisPosition.Horizontal.Bottom) {
-                    bounds.top + axis?.thickness?.half.orZero
-                } else {
-                    bounds.bottom + axis?.thickness?.half.orZero
-                }
+                centerY = (if (position is AxisPosition.Horizontal.Bottom) bounds.top else bounds.bottom) +
+                        axis?.thickness?.half.orZero
             )
         }
 
@@ -208,7 +199,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getVerticalInsets(
         outDimensions: MutableDimensions,
-        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions =
         outDimensions.apply {
@@ -223,7 +213,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override fun getHorizontalInsets(
         outDimensions: MutableDimensions,
         availableHeight: Float,
-        model: EntryModel,
         dataSetModel: DataSetModel
     ): Dimensions = outDimensions
 

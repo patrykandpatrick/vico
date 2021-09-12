@@ -20,6 +20,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 
 public class DashedShape(
     public val shape: Shape,
@@ -113,6 +114,7 @@ public class DashedShape(
         }
     }
 
+    @LongParameterListDrawFunction
     private inline fun drawDashes(
         canvas: Canvas,
         paint: Paint,
@@ -126,13 +128,13 @@ public class DashedShape(
         var index = 0
         var drawnLength = 0f
         while (length - drawnLength > 0) {
-            if (index % 2 == 0) {
+            drawnLength += if (index % 2 == 0) {
                 setBounds(tempBounds, drawStart + drawnLength)
                 path.reset()
                 shape.drawShape(canvas, paint, path, tempBounds)
-                drawnLength += drawDashLength
+                drawDashLength
             } else {
-                drawnLength += drawGapLength
+                drawGapLength
             }
             index++
         }

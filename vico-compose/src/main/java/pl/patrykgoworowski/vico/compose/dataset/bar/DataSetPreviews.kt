@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.horizontal.topAxis
@@ -28,6 +29,7 @@ import pl.patrykgoworowski.vico.core.axis.vertical.endAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 
+@Suppress("MagicNumber")
 private val model = entryModelOf(1, 2, 3, 4)
 
 private val topAxis = topAxis()
@@ -38,10 +40,10 @@ private val endAxis = endAxis()
 @Composable
 private fun PreviewColumnChart(
     modifier: Modifier = Modifier,
-    startAxis: AxisRenderer<pl.patrykgoworowski.vico.core.axis.AxisPosition.Vertical.Start>? = null,
-    topAxis: AxisRenderer<pl.patrykgoworowski.vico.core.axis.AxisPosition.Horizontal.Top>? = null,
-    endAxis: AxisRenderer<pl.patrykgoworowski.vico.core.axis.AxisPosition.Vertical.End>? = null,
-    bottomAxis: AxisRenderer<pl.patrykgoworowski.vico.core.axis.AxisPosition.Horizontal.Bottom>? = null,
+    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
+    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
+    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
+    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
 ) {
     DataSet(
         modifier = modifier,

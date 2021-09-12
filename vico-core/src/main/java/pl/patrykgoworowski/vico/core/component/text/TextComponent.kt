@@ -32,9 +32,10 @@ import pl.patrykgoworowski.vico.core.component.dimension.Padding
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
+import pl.patrykgoworowski.vico.core.extension.piRad
 import pl.patrykgoworowski.vico.core.extension.sp
-import pl.patrykgoworowski.vico.core.path.PillShape
 import pl.patrykgoworowski.vico.core.path.Shape
+import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
 import kotlin.math.roundToInt
@@ -47,7 +48,7 @@ public open class TextComponent(
     textSize: Float = 12f.sp,
     public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
-    public open var background: ShapeComponent<Shape>? = ShapeComponent(PillShape, LTGRAY),
+    public open var background: ShapeComponent<Shape>? = ShapeComponent(pillShape, LTGRAY),
 ) : Padding by DefaultPadding(), Margins by DefaultMargins() {
 
     public val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
@@ -110,7 +111,7 @@ public open class TextComponent(
 
         canvas.save()
         if (rotationDegrees != 0f) {
-            canvas.rotate(45f, textStartPosition, textTopPosition)
+            canvas.rotate(0.25f.piRad, textStartPosition, textTopPosition)
         }
         canvas.translate(textStartPosition, centeredY)
 
@@ -171,11 +172,12 @@ public open class TextComponent(
     }
 
     private fun getLayout(text: CharSequence, width: Int = Int.MAX_VALUE): StaticLayout =
-        layoutCache.getOrPut(text.hashCode() + 31 * width) {
+        layoutCache.getOrPut(text.hashCode() + HASHING_MULTIPLIER * width) {
             staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
         }
 
     companion object {
         const val TEXT_MEASUREMENT_CHAR = "1"
+        const val HASHING_MULTIPLIER = 31
     }
 }

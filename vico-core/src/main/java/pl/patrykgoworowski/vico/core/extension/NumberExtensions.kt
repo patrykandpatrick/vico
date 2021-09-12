@@ -18,6 +18,8 @@ package pl.patrykgoworowski.vico.core.extension
 
 import kotlin.math.roundToInt
 
+const val PI_RAD = 180f
+
 inline val Int.half: Int
     get() = this / 2
 
@@ -38,6 +40,9 @@ inline val Int?.orZero: Int
 
 inline val Float.round: Float
     get() = roundToInt().toFloat()
+
+inline val Float.piRad: Float
+    get() = this * PI_RAD
 
 fun Float.between(min: Float, max: Float): Float =
     minOf(maxOf(this, min), max)

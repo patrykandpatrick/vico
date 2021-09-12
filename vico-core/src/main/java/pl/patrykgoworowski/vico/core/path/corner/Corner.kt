@@ -39,10 +39,14 @@ sealed class Corner(
     ) : Corner(0f, cornerTreatment) {
 
         init {
-            if (percentage !in 0..100) throw IllegalPercentageException(percentage)
+            if (percentage !in 0..MAX_PERCENTAGE) throw IllegalPercentageException(percentage)
         }
 
         override fun getCornerSize(availableCornerSize: Float): Float =
-            availableCornerSize / 100 * percentage
+            availableCornerSize / MAX_PERCENTAGE * percentage
+    }
+
+    companion object {
+        private const val MAX_PERCENTAGE = 100
     }
 }

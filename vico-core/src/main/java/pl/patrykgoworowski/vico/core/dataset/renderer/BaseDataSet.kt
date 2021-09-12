@@ -22,12 +22,22 @@ import pl.patrykgoworowski.vico.core.BoundsAware
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.threshold.ThresholdLine
+import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryPositionModel
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.marker.Marker
 
-public abstract class BaseDataSet<in Model : EntryModel>() : DataSet<Model>, BoundsAware {
+public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, BoundsAware {
 
-    protected val thresholdLines = ArrayList<ThresholdLine>()
+    private val thresholdLines = ArrayList<ThresholdLine>()
+
+    protected val Model.drawMinY: Float
+        get() = this@BaseDataSet.minY ?: minY
+    protected val Model.drawMaxY: Float
+        get() = this@BaseDataSet.maxY ?: maxY
+    protected val Model.drawMinX: Float
+        get() = this@BaseDataSet.minX ?: minX
+    protected val Model.drawMaxX: Float
+        get() = this@BaseDataSet.maxX ?: maxX
 
     override val bounds: RectF = RectF()
 
@@ -52,7 +62,9 @@ public abstract class BaseDataSet<in Model : EntryModel>() : DataSet<Model>, Bou
         rendererViewState: RendererViewState,
         marker: Marker?
     ) {
-        drawDataSet(canvas, model, segmentProperties, rendererViewState)
+        if (model.entryCollections.isNotEmpty()) {
+            drawDataSet(canvas, model, segmentProperties, rendererViewState)
+        }
         drawThresholdLines(canvas, model)
         drawMarker(canvas, model, segmentProperties, rendererViewState, marker)
     }
@@ -61,16 +73,26 @@ public abstract class BaseDataSet<in Model : EntryModel>() : DataSet<Model>, Bou
         canvas: Canvas,
         model: Model,
         segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
+        viewState: RendererViewState,
     )
 
-    abstract fun drawMarker(
+    open fun drawMarker(
         canvas: Canvas,
         model: Model,
         segmentProperties: SegmentProperties,
         rendererViewState: RendererViewState,
         marker: Marker?
-    )
+    ) {
+        val touchPoint = rendererViewState.markerTouchPoint
+        if (touchPoint == null || marker == null) return
+        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+            marker.draw(
+                canvas,
+                bounds,
+                markerModel,
+            )
+        }
+    }
 
     private fun drawThresholdLines(
         canvas: Canvas,

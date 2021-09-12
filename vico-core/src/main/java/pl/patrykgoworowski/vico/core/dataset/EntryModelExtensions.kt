@@ -16,28 +16,13 @@
 
 package pl.patrykgoworowski.vico.core.dataset
 
-import pl.patrykgoworowski.vico.core.dataset.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.entry.DataEntry
 
-fun emptyEntryModel(): EntryModel =
-    EntryModel(
-        emptyList(),
-        1f,
-        1f,
-        1f,
-        1f,
-        1f,
-        1f
-    )
-
-fun <Model : EntryModel> emptyComposedEntryModel(): ComposedEntryModel<Model> =
-    ComposedEntryModel(
-        emptyList(),
-        emptyList(),
-        1f,
-        1f,
-        1f,
-        1f,
-        1f,
-        1f,
-    )
+inline fun List<DataEntry>.forEachIn(
+    range: ClosedFloatingPointRange<Float>,
+    action: (DataEntry) -> Unit,
+) {
+    for (entry in this) {
+        if (entry.x in range) action(entry)
+    }
+}

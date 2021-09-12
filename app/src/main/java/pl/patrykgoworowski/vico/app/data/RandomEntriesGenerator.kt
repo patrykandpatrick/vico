@@ -20,8 +20,8 @@ import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
 
 class RandomEntriesGenerator(
-    private val xRange: IntRange = 0..10,
-    private val yRange: IntRange = 0..20
+    private val xRange: IntRange = 0..X_RANGE_TOP,
+    private val yRange: IntRange = 0..Y_RANGE_TOP
 ) {
 
     fun generateRandomEntries(): List<FloatEntry> {
@@ -33,5 +33,10 @@ class RandomEntriesGenerator(
             result += entryOf(x.toFloat(), (Math.random() * yLength).toFloat())
         }
         return result
+    }
+
+    companion object {
+        private const val X_RANGE_TOP = 10
+        private const val Y_RANGE_TOP = 20
     }
 }

@@ -25,14 +25,14 @@ import pl.patrykgoworowski.vico.app.extension.enableEdgeToEdge
 import pl.patrykgoworowski.vico.app.extension.statusBarInsets
 import pl.patrykgoworowski.vico.app.ui.addOnTabSelectedListener
 import pl.patrykgoworowski.vico.core.extension.dp
-import pl.patrykgoworowski.vico.core.path.RoundedCornersShape
+import pl.patrykgoworowski.vico.core.path.Shapes.roundedCornersShape
 import pl.patrykgoworowski.vico.core.path.toDrawable
 import pl.patrykgoworowski.vico.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
     private val tabIndicator: Drawable by lazy {
-        RoundedCornersShape(topLeftPercent = 100, topRightPercent = 100)
+        roundedCornersShape(topLeftPercent = 100, topRightPercent = 100)
             .toDrawable(intrinsicHeight = 3.dp.toInt())
     }
 
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
                     val screen = when (tab.position) {
                         0 -> Navigator.Screen.ComposeShowcase
                         1 -> Navigator.Screen.ViewShowcase
-                        else -> throw IllegalArgumentException()
+                        else -> throw IndexOutOfBoundsException("Tab index out of bounds.")
                     }
                     navigator.navigateTo(screen)
                 }

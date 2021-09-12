@@ -17,9 +17,11 @@
 package pl.patrykgoworowski.vico.core.dataset.entry.collection.diff
 
 import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.component1
+import pl.patrykgoworowski.vico.core.entry.component2
 import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.extension.setAll
-import java.util.*
+import java.util.TreeMap
 
 public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
 
@@ -67,9 +69,6 @@ public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
             progressMaps.add(map)
         }
     }
-
-    private operator fun DataEntry.component1(): Float = x
-    private operator fun DataEntry.component2(): Float = y
 
     private data class ProgressModel(
         val oldY: Float? = null,

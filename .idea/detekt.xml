@@ -2,5 +2,9 @@
 <project version="4">
   <component name="DetektProjectConfiguration">
     <enableDetekt>true</enableDetekt>
+    <enableFormatting>true</enableFormatting>
+    <buildUponDefaultConfig>true</buildUponDefaultConfig>
+    <treatAsError>true</treatAsError>
+    <configPaths>$PROJECT_DIR$/../VicoChart\.idea\detekt-config.yml</configPaths>
   </component>
 </project>

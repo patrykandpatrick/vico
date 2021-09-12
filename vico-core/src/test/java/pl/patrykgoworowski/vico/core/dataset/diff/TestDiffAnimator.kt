@@ -36,5 +36,5 @@ public class TestDiffAnimator : DiffAnimator {
         onProgress?.invoke(progress)
     }
 
-    override fun cancel() {}
+    override fun cancel() = Unit
 }

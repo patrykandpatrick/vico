@@ -39,15 +39,15 @@ fun Padding.setPadding(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
 ) {
-    val _horizontal = horizontal.pixels
-    val _vertical = vertical.pixels
-    padding.set(_horizontal, _vertical, _horizontal, _vertical)
+    val horizontalPx = horizontal.pixels
+    val verticalPx = vertical.pixels
+    padding.set(horizontalPx, verticalPx, horizontalPx, verticalPx)
 }
 
 @Composable
 fun Padding.setPadding(
     all: Dp = 0.dp,
 ) {
-    val _all = all.pixels
-    padding.set(_all, _all, _all, _all)
+    val allPx = all.pixels
+    padding.set(allPx, allPx, allPx, allPx)
 }
