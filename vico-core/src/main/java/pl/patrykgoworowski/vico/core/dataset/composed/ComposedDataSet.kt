@@ -27,7 +27,7 @@ import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.updateAll
 import pl.patrykgoworowski.vico.core.marker.Marker
-import java.util.*
+import java.util.TreeMap
 
 class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>
