@@ -19,8 +19,7 @@ package pl.patrykgoworowski.vico.core.dataset.entry.collection.diff
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.extension.setAll
-import kotlin.collections.ArrayList
-import java.util.TreeMap
+import java.util.*
 
 public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
 
@@ -69,7 +68,9 @@ public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
         }
     }
 
+    @Suppress("UnusedPrivateMember")
     private operator fun DataEntry.component1(): Float = x
+    @Suppress("UnusedPrivateMember")
     private operator fun DataEntry.component2(): Float = y
 
     private data class ProgressModel(
