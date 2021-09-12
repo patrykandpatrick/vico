@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.dataset.entry.collection
 
-import pl.patrykgoworowski.vico.core.dataset.emptyEntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DefaultDiffAnimator
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DefaultDiffProcessor
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DiffAnimator
@@ -37,7 +36,7 @@ class EntryList(
 
     public val data: ArrayList<List<DataEntry>> = ArrayList()
 
-    override var model: EntryModel = emptyEntryModel()
+    override var model: EntryModel = entryModel()
         private set
 
     val minX: Float by calculator::minX
@@ -97,7 +96,7 @@ class EntryList(
     }
 
     private fun notifyChange() {
-        model = EntryModel(
+        model = entryModel(
             data,
             minX,
             maxX,

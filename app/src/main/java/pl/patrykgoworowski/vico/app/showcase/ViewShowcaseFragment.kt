@@ -41,9 +41,9 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.vico.core.dataset.bar.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.bar.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.composed.ComposedDataSet
-import pl.patrykgoworowski.vico.core.dataset.emptyComposedEntryModel
-import pl.patrykgoworowski.vico.core.dataset.emptyEntryModel
+import pl.patrykgoworowski.vico.core.dataset.composed.composedEntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.collectAsFlow
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModel
 import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
 import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.core.extension.copyColor
@@ -87,7 +87,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
-        val dataSetRenderer = columnDataSet + emptyEntryModel()
+        val dataSetRenderer = columnDataSet + entryModel()
 
         viewModel.entries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
@@ -134,7 +134,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
-        val dataSetRenderer = composedDataSet + emptyComposedEntryModel()
+        val dataSetRenderer = composedDataSet + composedEntryModel()
 
         viewModel.composedEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
@@ -170,7 +170,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             )
         }
 
-        val dataSetRenderer = lineDataSet + emptyEntryModel()
+        val dataSetRenderer = lineDataSet + entryModel()
 
         viewModel.entries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
@@ -209,7 +209,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
-        val dataSetRenderer = columnDataSet + emptyEntryModel()
+        val dataSetRenderer = columnDataSet + entryModel()
 
         viewModel.multiEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
@@ -248,7 +248,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
             isHorizontalScrollEnabled = true
         }
 
-        val dataSetRenderer = columnDataSet + emptyEntryModel()
+        val dataSetRenderer = columnDataSet + entryModel()
 
         viewModel.multiEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
