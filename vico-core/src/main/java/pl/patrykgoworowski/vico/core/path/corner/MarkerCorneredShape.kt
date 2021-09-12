@@ -21,6 +21,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.DEF_MARKER_TICK_SIZE
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.extension.between
 
 public open class MarkerCorneredShape(
@@ -49,6 +50,7 @@ public open class MarkerCorneredShape(
         tickSize = tickSize,
     )
 
+    @LongParameterListDrawFunction
     public fun drawMarker(
         canvas: Canvas,
         paint: Paint,

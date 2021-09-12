@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.path.corner
+package pl.patrykgoworowski.vico.core.annotation
 
-import android.graphics.Path
-import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
+/**
+ * Annotates a draw function with long parameter list.
+ * The function may require a lot of parameters to avoid extra object allocation, thus
+ * having a performance penalty. Draw functions must be as performant as possible.
+ * It also disables detekt’s `LongParameterList` check.
+ */
 
-public interface CornerTreatment {
-
-    @LongParameterListDrawFunction
-    public fun createCorner(
-        x1: Float,
-        y1: Float,
-        x2: Float,
-        y2: Float,
-        cornerLocation: CornerLocation,
-        path: Path,
-    )
-}
+@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION)
+annotation class LongParameterListDrawFunction

@@ -5,4 +5,7 @@ complexity:
     constructorThreshold: 7
     ignoreDefaultParameters: true
     ignoreDataClasses: true
-    ignoreAnnotated: [ 'androidx.compose.runtime.Composable' ]
+    ignoreAnnotated: [
+        'androidx.compose.runtime.Composable',
+        'pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction',
+    ]
