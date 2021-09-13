@@ -39,7 +39,7 @@ import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 import pl.patrykgoworowski.vico.app.ui.MainTheme
 
-enum class Page(
+private enum class Page(
     @StringRes val labelRes: Int,
     val content: @Composable (ShowcaseViewModel) -> Unit,
 ) {
