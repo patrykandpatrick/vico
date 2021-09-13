@@ -16,65 +16,87 @@
 
 package pl.patrykgoworowski.vico.app.ui.component
 
-import androidx.compose.animation.Crossfade
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
+import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.pagerTabIndicatorOffset
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.launch
 import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 import pl.patrykgoworowski.vico.app.ui.MainTheme
 
+enum class Page(
+    @StringRes val labelRes: Int,
+    val content: @Composable (ShowcaseViewModel) -> Unit,
+) {
+    ComposeShowcasePage(
+        labelRes = R.string.showcase_compose_title,
+        content = { ComposeShowcase(viewModel = it) },
+    ),
+    ViewShowcasePage(
+        labelRes = R.string.showcase_view_title,
+        content = { ViewShowcase(showcaseViewModel = it) },
+    ),
+}
+
 @Composable
+@OptIn(ExperimentalPagerApi::class)
 fun Showcase(showcaseViewModel: ShowcaseViewModel) {
-    var selectedTabIndex by remember { mutableStateOf(value = 0) }
+    val pages = Page.values().toList()
+    val pagerState = rememberPagerState(pageCount = pages.size)
+    val coroutineScope = rememberCoroutineScope()
 
     MainTheme {
         Column {
             TabRow(
-                selectedTabIndex = selectedTabIndex,
+                selectedTabIndex = pagerState.currentPage,
                 backgroundColor = MaterialTheme.colors.surface,
                 contentColor = MaterialTheme.colors.primary,
                 divider = {},
-                modifier = Modifier.shadow(elevation = 2.dp)
+                modifier = Modifier.shadow(elevation = 2.dp),
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+                    )
+                }
             ) {
-                for (i in 0..1) {
+                pages.mapIndexed { index, page ->
                     Tab(
                         unselectedContentColor = MaterialTheme.colors.onSurface.copy(alpha = ContentAlpha.medium),
-                        selected = selectedTabIndex == i,
-                        onClick = { selectedTabIndex = i },
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.animateScrollToPage(page = index)
+                            }
+                        },
                         text = {
                             Text(
                                 style = MaterialTheme.typography.body1,
-                                text = stringResource(
-                                    id = if (i == 0) {
-                                        R.string.showcase_compose_title
-                                    } else {
-                                        R.string.showcase_view_title
-                                    }
-                                )
+                                text = stringResource(id = page.labelRes)
                             )
                         }
                     )
                 }
             }
-            Crossfade(targetState = selectedTabIndex) {
-                if (it == 0) {
-                    ComposeShowcase(viewModel = showcaseViewModel)
-                } else {
-                    ViewShowcase(showcaseViewModel = showcaseViewModel)
-                }
+            HorizontalPager(
+                state = pagerState,
+                dragEnabled = false
+            ) { index ->
+                pages[index].content(showcaseViewModel)
             }
         }
     }
