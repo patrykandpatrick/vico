@@ -31,9 +31,7 @@ import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 fun ComposeShowcase(
     viewModel: ShowcaseViewModel,
 ) {
-    val scrollState = rememberScrollState()
-
-    Box(modifier = Modifier.verticalScroll(state = scrollState)) {
+    Box(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.padding(all = 16.dp)
