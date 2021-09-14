@@ -18,6 +18,7 @@ package pl.patrykgoworowski.vico.app.ui.component
 
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Tab
@@ -27,6 +28,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,7 +39,7 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
-import pl.patrykgoworowski.vico.app.ui.MainTheme
+import pl.patrykgoworowski.vico.app.ui.theme.MainTheme
 
 private enum class Page(
     @StringRes val labelRes: Int,
@@ -70,7 +72,14 @@ fun Showcase(showcaseViewModel: ShowcaseViewModel) {
                 modifier = Modifier.shadow(elevation = 2.dp),
                 indicator = { tabPositions ->
                     TabRowDefaults.Indicator(
-                        Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+                        Modifier
+                            .pagerTabIndicatorOffset(pagerState, tabPositions)
+                            .clip(
+                                shape = RoundedCornerShape(
+                                    topStartPercent = 100,
+                                    topEndPercent = 100
+                                )
+                            )
                     )
                 }
             ) {

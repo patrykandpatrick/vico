@@ -27,7 +27,7 @@ ext {
             ui         : [group: 'androidx.compose.ui', name: 'ui', version: compose_version],
             ui_tooling : [group: 'androidx.compose.ui', name: 'ui-tooling', version: compose_version],
             material   : [group: 'androidx.compose.material', name: 'material', version: compose_version],
-            activity   : [group: 'androidx.activity', name: 'activity-compose', version: '1.3.1'],
+            activity   : [group: 'androidx.activity', name: 'activity-compose', version: activity_version],
             viewbinding: [group: 'androidx.compose.ui', name: 'ui-viewbinding', version: compose_version]
     ]
 

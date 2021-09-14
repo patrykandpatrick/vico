@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.app.ui.MainTheme
+import pl.patrykgoworowski.vico.app.ui.theme.MainTheme
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
 import pl.patrykgoworowski.vico.compose.component.rectComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.verticalGradient

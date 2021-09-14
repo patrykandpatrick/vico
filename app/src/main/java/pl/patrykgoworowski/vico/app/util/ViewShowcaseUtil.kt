@@ -18,12 +18,17 @@ package pl.patrykgoworowski.vico.app.util
 
 import android.content.Context
 import android.graphics.Color
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
+import pl.patrykgoworowski.vico.app.extension.byzantine
+import pl.patrykgoworowski.vico.app.extension.color
+import pl.patrykgoworowski.vico.app.extension.flickrPink
+import pl.patrykgoworowski.vico.app.extension.purple
+import pl.patrykgoworowski.vico.app.extension.trypanPurple
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
@@ -50,7 +55,8 @@ import pl.patrykgoworowski.vico.view.dataset.common.plus
 @ExperimentalCoroutinesApi
 class ViewShowcaseUtil(
     private val viewModel: ShowcaseViewModel,
-    private val context: Context
+    private val context: Context,
+    private val coroutineScope: CoroutineScope
 ) {
 
     fun setUpColumnChart(dataSetView: DataSetView, marker: Marker?) {
@@ -70,7 +76,7 @@ class ViewShowcaseUtil(
 
         viewModel.entries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(viewModel.viewModelScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer
@@ -116,7 +122,7 @@ class ViewShowcaseUtil(
 
         viewModel.composedEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(viewModel.viewModelScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer
@@ -151,7 +157,7 @@ class ViewShowcaseUtil(
 
         viewModel.entries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(viewModel.viewModelScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer
@@ -191,7 +197,7 @@ class ViewShowcaseUtil(
 
         viewModel.multiEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(viewModel.viewModelScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer
@@ -231,7 +237,7 @@ class ViewShowcaseUtil(
 
         viewModel.multiEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(viewModel.viewModelScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer

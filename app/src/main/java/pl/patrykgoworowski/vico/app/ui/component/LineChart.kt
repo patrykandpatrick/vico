@@ -19,8 +19,7 @@ package pl.patrykgoworowski.vico.app.ui.component
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.app.component.compose.markerComponent
-import pl.patrykgoworowski.vico.app.ui.flickrPink
+import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
 import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.shape.shader.componentShader
 import pl.patrykgoworowski.vico.compose.component.shapeComponent

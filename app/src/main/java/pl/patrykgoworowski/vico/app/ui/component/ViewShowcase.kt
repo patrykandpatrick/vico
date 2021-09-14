@@ -21,14 +21,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
-import pl.patrykgoworowski.vico.app.component.view.getMarkerComponent
 import pl.patrykgoworowski.vico.app.util.ViewShowcaseUtil
+import pl.patrykgoworowski.vico.app.util.getMarkerComponent
 import pl.patrykgoworowski.vico.databinding.FragmentViewBinding
 
 @Composable
@@ -37,11 +38,16 @@ fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
     val context = LocalContext.current
     val marker = getMarkerComponent(context = context)
     val scrollState = rememberScrollState()
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.verticalScroll(state = scrollState)) {
         Box(modifier = Modifier.padding(16.dp)) {
             AndroidViewBinding(FragmentViewBinding::inflate) {
-                ViewShowcaseUtil(showcaseViewModel, context).run {
+                ViewShowcaseUtil(
+                    showcaseViewModel,
+                    context,
+                    coroutineScope
+                ).run {
                     setUpColumnChart(columnChart, marker)
                     setUpLineChart(lineChart, marker)
                     setUpComposedChart(composedChart, marker)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.util
+package pl.patrykgoworowski.vico.app.extension
 
 import android.content.Context
 import androidx.annotation.AttrRes

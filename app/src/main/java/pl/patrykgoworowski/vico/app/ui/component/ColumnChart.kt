@@ -20,9 +20,8 @@ import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.app.component.compose.markerComponent
-import pl.patrykgoworowski.vico.app.ui.flickrPink
-import pl.patrykgoworowski.vico.app.ui.trypanPurple
+import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
+import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
 import pl.patrykgoworowski.vico.compose.component.rectComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet

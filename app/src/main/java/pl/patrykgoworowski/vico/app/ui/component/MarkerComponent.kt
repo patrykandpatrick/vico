@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.component.compose
+package pl.patrykgoworowski.vico.app.ui.component
 
 import android.text.TextUtils
 import androidx.compose.material.MaterialTheme
