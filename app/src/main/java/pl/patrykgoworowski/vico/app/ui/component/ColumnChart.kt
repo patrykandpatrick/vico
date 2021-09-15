@@ -14,45 +14,40 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.showcase.compose
+package pl.patrykgoworowski.vico.app.ui.component
 
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.app.component.compose.markerComponent
-import pl.patrykgoworowski.vico.app.ui.flickrPink
-import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
-import pl.patrykgoworowski.vico.compose.component.shape.shader.componentShader
-import pl.patrykgoworowski.vico.compose.component.shapeComponent
+import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
+import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
+import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
+import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
 
 @Composable
-fun LineChart(
+fun ColumnChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {
     DataSet(
         modifier = modifier,
-        dataSet = lineDataSet(
-            pointSize = 10.dp,
-            lineColor = flickrPink,
-            lineBackgroundShader = componentShader(
-                component = shapeComponent(
-                    shape = pillShape,
-                    color = flickrPink,
-                    margins = dimensionsOf(all = 0.5f.dp)
-                ),
-                componentSize = 4.dp,
+        dataSet = columnDataSet(
+            column = rectComponent(
+                color = flickrPink,
+                thickness = 16.dp,
+                shape = CutCornerShape(topStart = 8.dp),
+                dynamicShader = horizontalGradient(arrayOf(flickrPink, trypanPurple)),
             ),
         ),
         entryCollection = entryList,
-        marker = markerComponent(),
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
+        marker = markerComponent(),
     )
 }

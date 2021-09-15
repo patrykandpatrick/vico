@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.component.view
+package pl.patrykgoworowski.vico.app.util
 
 import android.content.Context
 import android.graphics.Color

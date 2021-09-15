@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.showcase
+package pl.patrykgoworowski.vico.app.util
 
+import android.content.Context
 import android.graphics.Color
-import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.vico.R
-import pl.patrykgoworowski.vico.app.component.view.getMarkerComponent
+import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 import pl.patrykgoworowski.vico.app.extension.byzantine
 import pl.patrykgoworowski.vico.app.extension.color
 import pl.patrykgoworowski.vico.app.extension.flickrPink
@@ -51,30 +49,17 @@ import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.path.Shapes.cutCornerShape
 import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
-import pl.patrykgoworowski.vico.databinding.FragmentViewBinding
 import pl.patrykgoworowski.vico.view.dataset.DataSetView
 import pl.patrykgoworowski.vico.view.dataset.common.plus
 
-class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
+@ExperimentalCoroutinesApi
+class ViewShowcaseUtil(
+    private val viewModel: ShowcaseViewModel,
+    private val context: Context,
+    private val coroutineScope: CoroutineScope
+) {
 
-    private val viewModel: ShowcaseViewModel by lazy {
-        ViewModelProvider(requireActivity()).get(ShowcaseViewModel::class.java)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val binding = FragmentViewBinding.bind(view)
-
-        val marker = getMarkerComponent(view.context)
-
-        setUpBar(binding.barChart, marker)
-        setUpLineChart(binding.lineChart, marker)
-        setUpComposedChart(binding.composedChart, marker)
-        setUpGroupedBar(binding.groupedColumnChart, marker)
-        setUpStackedBar(binding.stackedColumnChart, marker)
-    }
-
-    private fun setUpBar(dataSetView: DataSetView, marker: Marker?) {
-        val context = dataSetView.context
+    fun setUpColumnChart(dataSetView: DataSetView, marker: Marker?) {
 
         val columnDataSet = ColumnDataSet(
             column = LineComponent(
@@ -91,7 +76,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         viewModel.entries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(lifecycleScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer
@@ -101,8 +86,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         }
     }
 
-    private fun setUpComposedChart(dataSetView: DataSetView, marker: Marker?) {
-        val context = dataSetView.context
+    fun setUpComposedChart(dataSetView: DataSetView, marker: Marker?) {
 
         val composedDataSet = ComposedDataSet(
             listOf(
@@ -138,7 +122,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         viewModel.composedEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(lifecycleScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer
@@ -148,8 +132,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         }
     }
 
-    private fun setUpLineChart(dataSetView: DataSetView, marker: Marker?) {
-        val context = dataSetView.context
+    fun setUpLineChart(dataSetView: DataSetView, marker: Marker?) {
 
         val lineDataSet = LineDataSet(
             pointSize = 10.dp,
@@ -174,7 +157,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         viewModel.entries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(lifecycleScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer
@@ -184,20 +167,21 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         }
     }
 
-    private fun setUpGroupedBar(dataSetView: DataSetView, marker: Marker?) {
+    fun setUpGroupedColumnChart(dataSetView: DataSetView, marker: Marker?) {
+
         val columnDataSet = ColumnDataSet(
             columns = listOf(
                 LineComponent(
-                    color = requireContext().flickrPink,
+                    color = context.flickrPink,
                     thickness = 16f.dp,
                     shape = cutCornerShape(topLeft = 8f.dp)
                 ),
                 LineComponent(
-                    color = requireContext().byzantine,
+                    color = context.byzantine,
                     thickness = 24f.dp,
                 ),
                 LineComponent(
-                    color = requireContext().trypanPurple,
+                    color = context.trypanPurple,
                     thickness = 16f.dp,
                     shape = cutCornerShape(topRight = 8f.dp)
                 ),
@@ -213,7 +197,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         viewModel.multiEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(lifecycleScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer
@@ -223,20 +207,21 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
         }
     }
 
-    private fun setUpStackedBar(dataSetView: DataSetView, marker: Marker?) {
+    fun setUpStackedColumnChart(dataSetView: DataSetView, marker: Marker?) {
+
         val columnDataSet = ColumnDataSet(
             columns = listOf(
                 LineComponent(
-                    color = requireContext().color { R.color.flickr_pink },
+                    color = context.color { R.color.flickr_pink },
                     thickness = 16f.dp,
                     shape = cutCornerShape(bottomRight = 8f.dp)
                 ),
                 LineComponent(
-                    color = requireContext().color { R.color.byzantine },
+                    color = context.color { R.color.byzantine },
                     thickness = 16f.dp,
                 ),
                 LineComponent(
-                    color = requireContext().color { R.color.trypan_purple },
+                    color = context.color { R.color.trypan_purple },
                     thickness = 16f.dp,
                     shape = cutCornerShape(topLeft = 8f.dp)
                 ),
@@ -252,7 +237,7 @@ class ViewShowcaseFragment : Fragment(R.layout.fragment_view) {
 
         viewModel.multiEntries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
-            .launchIn(lifecycleScope)
+            .launchIn(coroutineScope)
 
         dataSetView.apply {
             dataSet = dataSetRenderer

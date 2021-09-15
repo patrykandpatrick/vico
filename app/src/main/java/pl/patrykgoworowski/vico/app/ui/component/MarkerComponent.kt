@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.component.compose
+package pl.patrykgoworowski.vico.app.ui.component
 
 import android.text.TextUtils
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
@@ -99,21 +93,5 @@ fun markerComponent(): Marker {
         }
         indicatorSize = 36.dp.pixels
         setShadow(4f.dp, dy = 2f.dp)
-    }
-}
-
-@Composable
-fun ScrollableColumn(
-    modifier: Modifier = Modifier,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(24.dp),
-    content: @Composable ColumnScope.() -> Unit,
-) {
-    val scrollState = rememberScrollState()
-    Column(
-        modifier = modifier
-            .verticalScroll(scrollState, true),
-        verticalArrangement = verticalArrangement,
-    ) {
-        content()
     }
 }

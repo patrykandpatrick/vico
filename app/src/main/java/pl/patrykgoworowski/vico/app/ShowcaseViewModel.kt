@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.showcase
+package pl.patrykgoworowski.vico.app
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -22,7 +22,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import pl.patrykgoworowski.vico.app.data.RandomEntriesGenerator
+import pl.patrykgoworowski.vico.app.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.plus
 

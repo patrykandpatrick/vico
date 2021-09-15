@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.ui
+package pl.patrykgoworowski.vico.app.ui.theme
 
-import com.google.android.material.tabs.TabLayout
+import androidx.compose.ui.graphics.Color
 
-inline fun TabLayout.addOnTabSelectedListener(
-    crossinline onTabSelected: (TabLayout.Tab) -> Unit,
-) {
-    addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-        override fun onTabSelected(tab: TabLayout.Tab) {
-            onTabSelected(tab)
-        }
-
-        override fun onTabUnselected(tab: TabLayout.Tab?) = Unit
-
-        override fun onTabReselected(tab: TabLayout.Tab?) = Unit
-    })
-}
+val flickrPink = Color(color = 0xFFF72585)
+val byzantine = Color(color = 0xFFB5179E)
+val purple = Color(color = 0xFF7209B7)
+val trypanPurple = Color(color = 0xFF480CA8)

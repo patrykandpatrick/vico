@@ -14,37 +14,45 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.showcase.compose
+package pl.patrykgoworowski.vico.app.ui.component
 
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.app.component.compose.markerComponent
-import pl.patrykgoworowski.vico.app.ui.flickrPink
-import pl.patrykgoworowski.vico.app.ui.trypanPurple
+import pl.patrykgoworowski.vico.app.ui.theme.byzantine
+import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
+import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
 import pl.patrykgoworowski.vico.compose.component.rectComponent
-import pl.patrykgoworowski.vico.compose.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
+import pl.patrykgoworowski.vico.core.dataset.bar.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 
 @Composable
-fun ColumnChart(
+fun StackedColumnChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {
     DataSet(
         modifier = modifier,
         dataSet = columnDataSet(
-            column = rectComponent(
-                color = flickrPink,
-                thickness = 16.dp,
-                shape = CutCornerShape(topStart = 8.dp),
-                dynamicShader = horizontalGradient(arrayOf(flickrPink, trypanPurple)),
+            columns = listOf(
+                rectComponent(
+                    color = flickrPink,
+                    shape = CutCornerShape(bottomEnd = 8.dp)
+                ),
+                rectComponent(color = byzantine),
+                rectComponent(
+                    color = trypanPurple,
+                    shape = CutCornerShape(topStart = 8.dp)
+                ),
             ),
+            innerSpacing = 4.dp,
+            spacing = 24.dp,
+            mergeMode = MergeMode.Stack,
         ),
         entryCollection = entryList,
         startAxis = startAxis(),

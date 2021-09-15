@@ -24,9 +24,16 @@ ext {
     ]
 
     def jetpack_compose_libs = [
-            ui        : [group: 'androidx.compose.ui', name: 'ui', version: compose_version],
-            ui_tooling: [group: 'androidx.compose.ui', name: 'ui-tooling', version: compose_version],
-            material  : [group: 'androidx.compose.material', name: 'material', version: compose_version],
+            ui         : [group: 'androidx.compose.ui', name: 'ui', version: compose_version],
+            ui_tooling : [group: 'androidx.compose.ui', name: 'ui-tooling', version: compose_version],
+            material   : [group: 'androidx.compose.material', name: 'material', version: compose_version],
+            activity   : [group: 'androidx.activity', name: 'activity-compose', version: activity_version],
+            viewbinding: [group: 'androidx.compose.ui', name: 'ui-viewbinding', version: compose_version]
+    ]
+
+    def accompanist_libs = [
+            pager           : [group: 'com.google.accompanist', name: 'accompanist-pager', version: accompanist_version],
+            pager_indicators: [group: 'com.google.accompanist', name: 'accompanist-pager-indicators', version: accompanist_version]
     ]
 
     def kotlin_libs = [
@@ -59,6 +66,10 @@ ext {
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "implementation", dependency: material_libs.main],
             [configuration: "testImplementation", dependency: test_libs.junit],
+            [configuration: "implementation", dependency: jetpack_compose_libs.activity],
+            [configuration: "implementation", dependency: jetpack_compose_libs.viewbinding],
+            [configuration: "implementation", dependency: accompanist_libs.pager],
+            [configuration: "implementation", dependency: accompanist_libs.pager_indicators]
     ]
 
     vico_common_dependencies = [
