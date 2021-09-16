@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dataset.bar
+package pl.patrykgoworowski.vico.core.dataset.column
 
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 

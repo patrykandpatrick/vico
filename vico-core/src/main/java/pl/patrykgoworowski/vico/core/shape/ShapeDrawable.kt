@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.path
+package pl.patrykgoworowski.vico.core.shape
 
 import android.content.res.ColorStateList
 import android.graphics.Canvas

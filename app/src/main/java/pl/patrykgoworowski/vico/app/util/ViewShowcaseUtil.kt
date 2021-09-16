@@ -36,8 +36,8 @@ import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.componentShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.vico.core.component.shape.shader.verticalGradient
-import pl.patrykgoworowski.vico.core.dataset.bar.ColumnDataSet
-import pl.patrykgoworowski.vico.core.dataset.bar.MergeMode
+import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
+import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.composed.ComposedDataSet
 import pl.patrykgoworowski.vico.core.dataset.composed.composedEntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.collectAsFlow
@@ -47,8 +47,8 @@ import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.path.Shapes.cutCornerShape
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.cutCornerShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.view.dataset.DataSetView
 import pl.patrykgoworowski.vico.view.dataset.common.plus
 

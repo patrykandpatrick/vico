@@ -32,9 +32,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.vico.compose.extension.density
-import pl.patrykgoworowski.vico.core.path.Shape
-import pl.patrykgoworowski.vico.core.path.Shapes.cutCornerShape
-import pl.patrykgoworowski.vico.core.path.Shapes.roundedCornersShape
+import pl.patrykgoworowski.vico.core.shape.Shape
+import pl.patrykgoworowski.vico.core.shape.Shapes.cutCornerShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.roundedCornersShape
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private const val RADII_ARRAY_SIZE = 8

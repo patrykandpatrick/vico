@@ -30,9 +30,9 @@ import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.extension.sp
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.path.DashedShape
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
-import pl.patrykgoworowski.vico.core.path.corner.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.shape.DashedShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.shape.corner.MarkerCorneredShape
 
 fun getMarkerComponent(context: Context): Marker {
 

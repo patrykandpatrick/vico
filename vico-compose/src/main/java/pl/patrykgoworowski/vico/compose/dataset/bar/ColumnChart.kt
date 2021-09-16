@@ -24,8 +24,8 @@ import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
-import pl.patrykgoworowski.vico.core.dataset.bar.ColumnDataSet
-import pl.patrykgoworowski.vico.core.dataset.bar.MergeMode
+import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
+import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 
 @Composable
 fun columnDataSet(

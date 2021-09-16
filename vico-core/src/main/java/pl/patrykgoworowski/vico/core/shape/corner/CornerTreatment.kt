@@ -14,29 +14,20 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core
+package pl.patrykgoworowski.vico.core.shape.corner
 
-import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.extension.set
+import android.graphics.Path
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 
-interface BoundsAware {
+public interface CornerTreatment {
 
-    val bounds: RectF
-
-    fun setBounds(
-        left: Number,
-        top: Number,
-        right: Number,
-        bottom: Number
-    ) {
-        bounds.set(left, top, right, bottom)
-    }
-
-    fun setBounds(bounds: RectF) =
-        setBounds(
-            bounds.left,
-            bounds.top,
-            bounds.right,
-            bounds.bottom
-        )
+    @LongParameterListDrawFunction
+    public fun createCorner(
+        x1: Float,
+        y1: Float,
+        x2: Float,
+        y2: Float,
+        cornerLocation: CornerLocation,
+        path: Path,
+    )
 }

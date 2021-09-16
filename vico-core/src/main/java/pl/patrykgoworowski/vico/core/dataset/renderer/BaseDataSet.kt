@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.dataset.renderer
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.BoundsAware
+import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.threshold.ThresholdLine

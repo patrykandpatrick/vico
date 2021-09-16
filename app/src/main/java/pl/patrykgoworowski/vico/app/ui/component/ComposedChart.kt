@@ -33,7 +33,7 @@ import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.composed.plus
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
 
 @Composable
 fun ComposedChart(

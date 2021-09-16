@@ -28,7 +28,7 @@ import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.core.dataset.bar.MergeMode
+import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 
 @Composable

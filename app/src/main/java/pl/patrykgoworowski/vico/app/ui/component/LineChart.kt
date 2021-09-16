@@ -28,7 +28,7 @@ import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
 
 @Composable
 fun LineChart(

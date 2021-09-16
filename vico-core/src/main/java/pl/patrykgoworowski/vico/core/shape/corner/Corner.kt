@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.path.corner
+package pl.patrykgoworowski.vico.core.shape.corner
 
-import pl.patrykgoworowski.vico.core.IllegalPercentageException
+import pl.patrykgoworowski.vico.core.throwable.IllegalPercentageException
 
 sealed class Corner(
     public val absoluteSize: Float,

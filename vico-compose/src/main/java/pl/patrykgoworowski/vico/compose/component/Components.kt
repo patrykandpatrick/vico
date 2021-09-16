@@ -33,9 +33,9 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.path.DashedShape
+import pl.patrykgoworowski.vico.core.shape.DashedShape
 
-typealias ChartShape = pl.patrykgoworowski.vico.core.path.Shape
+typealias ChartShape = pl.patrykgoworowski.vico.core.shape.Shape
 
 @Composable
 public fun rectComponent(

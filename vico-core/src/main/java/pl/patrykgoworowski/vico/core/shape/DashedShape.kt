@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.path
+package pl.patrykgoworowski.vico.core.shape
 
 import android.graphics.Canvas
 import android.graphics.Paint

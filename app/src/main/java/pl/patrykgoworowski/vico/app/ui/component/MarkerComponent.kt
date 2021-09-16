@@ -34,8 +34,8 @@ import pl.patrykgoworowski.vico.compose.extension.setShadow
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
-import pl.patrykgoworowski.vico.core.path.corner.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.shape.corner.MarkerCorneredShape
 
 @Composable
 fun markerComponent(): Marker {

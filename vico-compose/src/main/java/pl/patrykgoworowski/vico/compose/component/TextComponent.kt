@@ -26,7 +26,7 @@ import pl.patrykgoworowski.vico.compose.extension.pixelSize
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.path.Shape
+import pl.patrykgoworowski.vico.core.shape.Shape
 
 @Composable
 fun textComponent(

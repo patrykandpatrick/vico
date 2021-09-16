@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.axis
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.BoundsAware
+import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel

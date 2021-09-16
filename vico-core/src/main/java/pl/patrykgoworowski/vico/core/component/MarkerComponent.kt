@@ -23,7 +23,6 @@ import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.extension.averageOf
@@ -32,7 +31,7 @@ import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.marker.MarkerLabelFormatter
-import pl.patrykgoworowski.vico.core.path.corner.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.shape.corner.MarkerCorneredShape
 
 public open class MarkerComponent(
     private val label: TextComponent,

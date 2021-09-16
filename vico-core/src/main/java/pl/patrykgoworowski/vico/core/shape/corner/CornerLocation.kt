@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core
+package pl.patrykgoworowski.vico.core.shape.corner
 
-class IllegalPercentageException(percentage: Int) : IllegalArgumentException(
-    "Expected a percentage (0-100), got $percentage."
-)
+enum class CornerLocation {
+    TopLeft,
+    TopRight,
+    BottomRight,
+    BottomLeft,
+}

@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.MarkerComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.path.corner.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.shape.corner.MarkerCorneredShape
 
 @Composable
 fun markerComponent(

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.path
+package pl.patrykgoworowski.vico.core.shape
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -23,10 +23,10 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import pl.patrykgoworowski.vico.core.extension.setBounds
 import pl.patrykgoworowski.vico.core.extension.updateBounds
-import pl.patrykgoworowski.vico.core.path.corner.Corner
-import pl.patrykgoworowski.vico.core.path.corner.CorneredShape
-import pl.patrykgoworowski.vico.core.path.corner.CutCornerTreatment
-import pl.patrykgoworowski.vico.core.path.corner.RoundedCornerTreatment
+import pl.patrykgoworowski.vico.core.shape.corner.Corner
+import pl.patrykgoworowski.vico.core.shape.corner.CorneredShape
+import pl.patrykgoworowski.vico.core.shape.corner.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.shape.corner.RoundedCornerTreatment
 
 object Shapes {
     val pillShape = roundedCornersShape(allPercent = 50)

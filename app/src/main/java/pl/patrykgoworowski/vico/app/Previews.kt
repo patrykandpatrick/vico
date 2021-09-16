@@ -53,9 +53,9 @@ import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.componentShader
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
-import pl.patrykgoworowski.vico.core.path.DashedShape
-import pl.patrykgoworowski.vico.core.path.Shapes.pillShape
-import pl.patrykgoworowski.vico.core.path.Shapes.rectShape
+import pl.patrykgoworowski.vico.core.shape.DashedShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.shape.Shapes.rectShape
 
 private val chartModifier = Modifier.height(100.dp)
 
