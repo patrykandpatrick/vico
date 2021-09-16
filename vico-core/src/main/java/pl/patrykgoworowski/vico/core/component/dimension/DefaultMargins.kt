@@ -17,8 +17,8 @@
 package pl.patrykgoworowski.vico.core.component.dimension
 
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
+import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
 public open class DefaultMargins : Margins {
-
-    override val margins: MutableDimensions = MutableDimensions(0f, 0f, 0f, 0f)
+    override val margins: MutableDimensions = emptyDimensions()
 }
