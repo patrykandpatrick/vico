@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.component.text
 
 import android.graphics.Canvas
-import android.graphics.Color.DKGRAY
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.StaticLayout
@@ -42,7 +42,7 @@ typealias OnPreDrawListener =
             (canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float) -> Unit
 
 public open class TextComponent(
-    color: Int = DKGRAY,
+    color: Int = Color.BLACK,
     textSize: Float = 12f.sp,
     public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
