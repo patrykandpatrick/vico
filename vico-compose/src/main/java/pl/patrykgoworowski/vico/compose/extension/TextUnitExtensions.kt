@@ -23,11 +23,11 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SIZE
 
-fun TextUnit.pixelSize(density: Density) =
+fun TextUnit.pixelSize(density: Density): Float =
     when (type) {
         TextUnitType.Sp -> with(density) { toPx() }
         TextUnitType.Em -> value
-        else -> DEF_LABEL_SIZE
+        else -> DEF_LABEL_SIZE.toFloat()
     }
 
 @Composable
