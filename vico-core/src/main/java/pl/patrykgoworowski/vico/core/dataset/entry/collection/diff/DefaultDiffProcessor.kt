@@ -78,7 +78,7 @@ public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
         fun progressDiff(progress: Float): Float {
             val oldY = oldY ?: 0f
             val newY = newY ?: 0f
-            return oldY + ((newY - oldY) * progress)
+            return oldY + (newY - oldY) * progress
         }
     }
 }

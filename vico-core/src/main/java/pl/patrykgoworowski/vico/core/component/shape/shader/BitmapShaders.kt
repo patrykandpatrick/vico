@@ -48,11 +48,13 @@ fun componentShader(
         if (checkeredArrangement) {
             val halfSize = componentSize.half
             canvas.clipRect(0f, 0f, size.toFloat(), size.toFloat())
-            component.draw(canvas, -halfSize, -halfSize, componentSize)
-            component.draw(canvas, -halfSize, size - halfSize, componentSize)
-            component.draw(canvas, size - halfSize, -halfSize, componentSize)
-            component.draw(canvas, size - halfSize, size - halfSize, componentSize)
-            component.draw(canvas, halfSize, halfSize, componentSize)
+            with(component) {
+                draw(canvas, -halfSize, -halfSize, componentSize)
+                draw(canvas, -halfSize, size - halfSize, componentSize)
+                draw(canvas, size - halfSize, -halfSize, componentSize)
+                draw(canvas, size - halfSize, size - halfSize, componentSize)
+                draw(canvas, halfSize, halfSize, componentSize)
+            }
         } else {
             component.draw(canvas, 0f, 0f, componentSize, componentSize)
         }

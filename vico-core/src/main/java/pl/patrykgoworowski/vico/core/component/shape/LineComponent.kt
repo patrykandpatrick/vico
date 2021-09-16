@@ -46,9 +46,9 @@ public open class LineComponent(
         draw(
             canvas = canvas,
             left = left,
-            top = centerY - (scaledThickness / 2),
+            top = centerY - scaledThickness / 2,
             right = right,
-            bottom = centerY + (scaledThickness / 2)
+            bottom = centerY + scaledThickness / 2
         )
     }
 
@@ -59,9 +59,9 @@ public open class LineComponent(
         boundingBox: RectF
     ): Boolean = fitsIn(
         left = left,
-        top = centerY - (scaledThickness / 2),
+        top = centerY - scaledThickness / 2,
         right = right,
-        bottom = centerY + (scaledThickness / 2),
+        bottom = centerY + scaledThickness / 2,
         boundingBox = boundingBox
     )
 
@@ -73,9 +73,9 @@ public open class LineComponent(
     ) {
         draw(
             canvas = canvas,
-            left = centerX - (scaledThickness / 2),
+            left = centerX - scaledThickness / 2,
             top = top,
-            right = centerX + (scaledThickness / 2),
+            right = centerX + scaledThickness / 2,
             bottom = bottom
         )
     }
@@ -86,9 +86,9 @@ public open class LineComponent(
         centerX: Float,
         boundingBox: RectF
     ): Boolean = fitsIn(
-        left = centerX - (scaledThickness / 2),
+        left = centerX - scaledThickness / 2,
         top = top,
-        right = centerX + (scaledThickness / 2),
+        right = centerX + scaledThickness / 2,
         bottom = bottom,
         boundingBox = boundingBox
     )
@@ -99,16 +99,16 @@ public open class LineComponent(
         centerX: Float,
         boundingBox: RectF
     ): Boolean = intersects(
-        left = centerX - (scaledThickness / 2),
+        left = centerX - scaledThickness / 2,
         top = top,
-        right = centerX + (scaledThickness / 2),
+        right = centerX + scaledThickness / 2,
         bottom = bottom,
         boundingBox = boundingBox
     )
 
     override fun updateDrawBounds(left: Float, top: Float, right: Float, bottom: Float) {
-        val centerX = left + ((right - left) / 2)
-        val centerY = top + ((bottom - top) / 2)
+        val centerX = left + (right - left) / 2
+        val centerY = top + (bottom - top) / 2
         drawBounds.set(
             minOf(left + margins.start, centerX),
             minOf(top + margins.top, centerY),
