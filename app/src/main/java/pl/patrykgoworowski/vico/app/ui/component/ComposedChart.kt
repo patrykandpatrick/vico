@@ -42,13 +42,8 @@ fun ComposedChart(
 ) {
     DataSet(
         modifier = modifier,
-        dataSet = columnDataSet(
-            columns = listOf(
-                firstRectComponent(),
-                secondRectComponent(),
-                thirdRectComponent()
-            ),
-        ) + lineDataSet(
+        dataSet =
+        columnDataSet() + lineDataSet(
             lineColor = flickrPink,
             spacing = 8.dp,
         ),

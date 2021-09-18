@@ -69,8 +69,8 @@ fun axisLabelComponent(
 fun axisLineComponent(
     color: Color = currentChartStyle.axis.axisLineColor,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
+    shape: ChartShape = currentChartStyle.axis.axisLineShape(),
     dynamicShader: DynamicShader? = null,
-    shape: ChartShape = currentChartStyle.axis.axisLineShape,
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),
@@ -84,8 +84,8 @@ fun axisLineComponent(
 fun axisLineComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    brush: Brush? = null,
     shape: Shape = RectangleShape,
+    brush: Brush? = null,
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),
@@ -101,7 +101,7 @@ fun axisTickComponent(
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
     length: Dp = currentChartStyle.axis.axisTickLength,
     dynamicShader: DynamicShader? = null,
-    shape: ChartShape = currentChartStyle.axis.axisTickShape,
+    shape: ChartShape = currentChartStyle.axis.axisTickShape(),
 ) = TickComponent(
     color = color.toArgb(),
     thickness = thickness.pixels,
@@ -130,7 +130,7 @@ fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
     thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
     dynamicShader: DynamicShader? = null,
-    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
+    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape(),
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),

@@ -16,16 +16,10 @@
 
 package pl.patrykgoworowski.vico.app.ui.component
 
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
-import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.component.rectComponent
-import pl.patrykgoworowski.vico.compose.component.shape.shader.horizontalGradient
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
@@ -37,14 +31,7 @@ fun ColumnChart(
 ) {
     DataSet(
         modifier = modifier,
-        dataSet = columnDataSet(
-            column = rectComponent(
-                color = flickrPink,
-                thickness = 16.dp,
-                shape = CutCornerShape(topStart = 8.dp),
-                dynamicShader = horizontalGradient(arrayOf(flickrPink, trypanPurple)),
-            ),
-        ),
+        dataSet = columnDataSet(),
         entryCollection = entryList,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),

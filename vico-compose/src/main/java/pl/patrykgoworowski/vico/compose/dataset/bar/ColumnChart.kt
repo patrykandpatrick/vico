@@ -19,19 +19,17 @@ package pl.patrykgoworowski.vico.compose.dataset.bar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.extension.pixels
+import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
-import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
-import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 
 @Composable
 fun columnDataSet(
-    columns: List<LineComponent>,
-    spacing: Dp = DEF_MERGED_BAR_SPACING.dp,
-    innerSpacing: Dp = DEF_MERGED_BAR_INNER_SPACING.dp,
+    columns: List<LineComponent> = currentChartStyle.columnChart.getColumns(),
+    spacing: Dp = currentChartStyle.columnChart.outsideSpacing,
+    innerSpacing: Dp = currentChartStyle.columnChart.innerSpacing,
     mergeMode: MergeMode = MergeMode.Grouped,
     minX: Float? = null,
     maxX: Float? = null,
@@ -50,20 +48,3 @@ fun columnDataSet(
         this.maxY = maxY
     }
 }
-
-@Composable
-fun columnDataSet(
-    column: LineComponent,
-    spacing: Dp = DEF_MERGED_BAR_SPACING.dp,
-    minX: Float? = null,
-    maxX: Float? = null,
-    minY: Float? = null,
-    maxY: Float? = null,
-): ColumnDataSet = columnDataSet(
-    columns = listOf(column),
-    spacing = spacing,
-    minX = minX,
-    maxX = maxX,
-    minY = minY,
-    maxY = maxY,
-)
