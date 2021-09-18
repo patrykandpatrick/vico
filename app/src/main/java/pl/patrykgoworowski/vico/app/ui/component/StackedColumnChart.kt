@@ -25,9 +25,9 @@ import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
 import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.component.rectComponent
-import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
+import pl.patrykgoworowski.vico.compose.component.columnComponent
+import pl.patrykgoworowski.vico.compose.dataset.DataSet
+import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
 import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 
@@ -40,12 +40,12 @@ fun StackedColumnChart(
         modifier = modifier,
         dataSet = columnDataSet(
             columns = listOf(
-                rectComponent(
+                columnComponent(
                     color = flickrPink,
                     shape = CutCornerShape(bottomEnd = 8.dp)
                 ),
-                rectComponent(color = byzantine),
-                rectComponent(
+                columnComponent(color = byzantine),
+                columnComponent(
                     color = trypanPurple,
                     shape = CutCornerShape(topStart = 8.dp)
                 ),

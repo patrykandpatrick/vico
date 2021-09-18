@@ -17,26 +17,22 @@
 package pl.patrykgoworowski.vico.compose.component.shape
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
-import pl.patrykgoworowski.vico.compose.component.shape.shader.StaticShader
 import pl.patrykgoworowski.vico.compose.extension.pixels
-import pl.patrykgoworowski.vico.compose.path.chartShape
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-
-typealias ChartShape = pl.patrykgoworowski.vico.core.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
 
 @Composable
 fun lineComponent(
     color: Color,
     thickness: Dp,
-    shape: ChartShape,
+    shape: Shape = Shapes.rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
@@ -51,13 +47,13 @@ fun lineComponent(
 fun lineComponent(
     color: Color,
     thickness: Dp,
-    shape: Shape,
-    brush: Brush? = null,
+    shape: androidx.compose.ui.graphics.Shape,
+    dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),
     thickness = thickness.pixels,
-    dynamicShader = brush?.let(::StaticShader),
+    dynamicShader = dynamicShader,
     shape = shape.chartShape(),
     margins = margins,
 )

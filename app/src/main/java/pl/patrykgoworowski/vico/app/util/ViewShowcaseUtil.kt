@@ -33,9 +33,8 @@ import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
-import pl.patrykgoworowski.vico.core.component.shape.shader.componentShader
-import pl.patrykgoworowski.vico.core.component.shape.shader.horizontalGradient
-import pl.patrykgoworowski.vico.core.component.shape.shader.verticalGradient
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.composed.ComposedDataSet
@@ -47,8 +46,12 @@ import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.shape.Shapes.cutCornerShape
-import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.cutCornerShape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
+import pl.patrykgoworowski.vico.view.component.shape.cutCornerShape
+import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
+import pl.patrykgoworowski.vico.view.component.shape.shader.horizontalGradient
+import pl.patrykgoworowski.vico.view.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.vico.view.dataset.DataSetView
 import pl.patrykgoworowski.vico.view.dataset.common.plus
 
@@ -64,9 +67,10 @@ class ViewShowcaseUtil(
         val columnDataSet = ColumnDataSet(
             column = LineComponent(
                 color = context.flickrPink,
-                shape = cutCornerShape(topLeft = 8f.dp),
+                shape = Shapes.cutCornerShape(topLeft = 8f.dp),
                 thickness = 16f.dp,
-                dynamicShader = horizontalGradient(context.flickrPink, context.trypanPurple),
+                dynamicShader = DynamicShaders
+                    .horizontalGradient(context.flickrPink, context.trypanPurple),
             ),
         ).apply {
             isHorizontalScrollEnabled = true
@@ -95,7 +99,7 @@ class ViewShowcaseUtil(
                         LineComponent(
                             color = context.trypanPurple,
                             thickness = 16.dp,
-                            shape = cutCornerShape(topLeft = 8.dp),
+                            shape = Shapes.cutCornerShape(topLeft = 8.dp),
                         ),
                         LineComponent(
                             color = context.byzantine,
@@ -105,13 +109,14 @@ class ViewShowcaseUtil(
                         LineComponent(
                             color = context.purple,
                             thickness = 16.dp,
-                            shape = cutCornerShape(topRight = 8.dp),
+                            shape = Shapes.cutCornerShape(topRight = 8.dp),
                         ),
                     ),
                 ), LineDataSet(
                     pointSize = 62.dp,
                     lineColor = context.flickrPink,
-                    spacing = 8.dp
+                    lineWidth = 2.dp,
+                    spacing = 8.dp,
                 )
             )
         ).apply {
@@ -139,11 +144,9 @@ class ViewShowcaseUtil(
             lineColor = context.flickrPink
         ).apply {
             isHorizontalScrollEnabled = true
-            lineBackgroundShader = verticalGradient(
-                context.flickrPink.copyColor(alpha = 128),
-                Color.TRANSPARENT,
-            )
-            lineBackgroundShader = componentShader(
+            lineBackgroundShader = DynamicShaders
+                .verticalGradient(context.flickrPink.copyColor(alpha = 128), Color.TRANSPARENT,)
+            lineBackgroundShader = DynamicShaders.fromComponent(
                 component = ShapeComponent(
                     shape = pillShape,
                     color = context.flickrPink,
@@ -174,7 +177,7 @@ class ViewShowcaseUtil(
                 LineComponent(
                     color = context.flickrPink,
                     thickness = 16f.dp,
-                    shape = cutCornerShape(topLeft = 8f.dp)
+                    shape = Shapes.cutCornerShape(topLeft = 8f.dp)
                 ),
                 LineComponent(
                     color = context.byzantine,
@@ -183,7 +186,7 @@ class ViewShowcaseUtil(
                 LineComponent(
                     color = context.trypanPurple,
                     thickness = 16f.dp,
-                    shape = cutCornerShape(topRight = 8f.dp)
+                    shape = Shapes.cutCornerShape(topRight = 8f.dp)
                 ),
             ),
             mergeMode = MergeMode.Grouped,
@@ -214,7 +217,7 @@ class ViewShowcaseUtil(
                 LineComponent(
                     color = context.color { R.color.flickr_pink },
                     thickness = 16f.dp,
-                    shape = cutCornerShape(bottomRight = 8f.dp)
+                    shape = Shapes.cutCornerShape(bottomRight = 8f.dp)
                 ),
                 LineComponent(
                     color = context.color { R.color.byzantine },
@@ -223,7 +226,7 @@ class ViewShowcaseUtil(
                 LineComponent(
                     color = context.color { R.color.trypan_purple },
                     thickness = 16f.dp,
-                    shape = cutCornerShape(topLeft = 8f.dp)
+                    shape = Shapes.cutCornerShape(topLeft = 8f.dp)
                 ),
             ),
             mergeMode = MergeMode.Stack,

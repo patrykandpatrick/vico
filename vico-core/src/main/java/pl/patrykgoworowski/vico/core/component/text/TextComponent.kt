@@ -34,7 +34,7 @@ import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
 import pl.patrykgoworowski.vico.core.extension.piRad
 import pl.patrykgoworowski.vico.core.extension.sp
-import pl.patrykgoworowski.vico.core.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
 import kotlin.math.roundToInt

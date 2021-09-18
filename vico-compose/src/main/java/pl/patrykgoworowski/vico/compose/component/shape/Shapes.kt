@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.path
+package pl.patrykgoworowski.vico.compose.component.shape
 
 import android.graphics.Canvas
 import android.graphics.Matrix
@@ -31,10 +31,14 @@ import androidx.compose.ui.graphics.asAndroidPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
-import pl.patrykgoworowski.vico.compose.extension.density
-import pl.patrykgoworowski.vico.core.shape.Shape
-import pl.patrykgoworowski.vico.core.shape.Shapes.cutCornerShape
-import pl.patrykgoworowski.vico.core.shape.Shapes.roundedCornersShape
+import androidx.compose.ui.unit.dp
+import pl.patrykgoworowski.vico.compose.extension.pixels
+import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
+import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
+import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private const val RADII_ARRAY_SIZE = 8
@@ -89,37 +93,47 @@ fun Path.addRoundRect(bounds: RectF, rect: RoundRect, radii: FloatArray) {
 }
 
 @Composable
-fun roundedCornerShape(
-    all: Dp = Dp(0f),
-): Shape = roundedCornersShape(all.value * density)
-
-@Composable
-fun roundedCornerShape(
-    topLeft: Dp = Dp(0f),
-    topRight: Dp = Dp(0f),
-    bottomRight: Dp = Dp(0f),
-    bottomLeft: Dp = Dp(0f),
-): Shape = roundedCornersShape(
-    topLeft.value * density,
-    topRight.value * density,
-    bottomRight.value * density,
-    bottomLeft.value * density
+fun Shapes.roundedCornerShape(
+    all: Dp = 0.dp,
+) = CorneredShape(
+    Corner.Absolute(all.pixels, RoundedCornerTreatment),
+    Corner.Absolute(all.pixels, RoundedCornerTreatment),
+    Corner.Absolute(all.pixels, RoundedCornerTreatment),
+    Corner.Absolute(all.pixels, RoundedCornerTreatment),
 )
 
 @Composable
-fun cutCornerShape(
-    all: Dp = Dp(0f),
-): Shape = cutCornerShape(all.value * density)
+fun Shapes.roundedCornerShape(
+    topLeft: Dp = 0.dp,
+    topRight: Dp = 0.dp,
+    bottomRight: Dp = 0.dp,
+    bottomLeft: Dp = 0.dp,
+) = CorneredShape(
+    Corner.Absolute(topLeft.pixels, RoundedCornerTreatment),
+    Corner.Absolute(topRight.pixels, RoundedCornerTreatment),
+    Corner.Absolute(bottomRight.pixels, RoundedCornerTreatment),
+    Corner.Absolute(bottomLeft.pixels, RoundedCornerTreatment),
+)
 
 @Composable
-fun cutCornerShape(
-    topLeft: Dp = Dp(0f),
-    topRight: Dp = Dp(0f),
-    bottomRight: Dp = Dp(0f),
-    bottomLeft: Dp = Dp(0f),
-): Shape = cutCornerShape(
-    topLeft.value * density,
-    topRight.value * density,
-    bottomRight.value * density,
-    bottomLeft.value * density
+fun Shapes.cutCornerShape(
+    all: Dp = 0.dp,
+) = CorneredShape(
+    Corner.Absolute(all.pixels, CutCornerTreatment),
+    Corner.Absolute(all.pixels, CutCornerTreatment),
+    Corner.Absolute(all.pixels, CutCornerTreatment),
+    Corner.Absolute(all.pixels, CutCornerTreatment),
+)
+
+@Composable
+fun Shapes.cutCornerShape(
+    topLeft: Dp = 0.dp,
+    topRight: Dp = 0.dp,
+    bottomRight: Dp = 0.dp,
+    bottomLeft: Dp = 0.dp,
+) = CorneredShape(
+    Corner.Absolute(topLeft.pixels, CutCornerTreatment),
+    Corner.Absolute(topRight.pixels, CutCornerTreatment),
+    Corner.Absolute(bottomRight.pixels, CutCornerTreatment),
+    Corner.Absolute(bottomLeft.pixels, CutCornerTreatment),
 )

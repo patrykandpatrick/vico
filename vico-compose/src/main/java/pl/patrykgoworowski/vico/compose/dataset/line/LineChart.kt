@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.dataset.bar
+package pl.patrykgoworowski.vico.compose.dataset.line
 
 import android.graphics.Paint
 import androidx.compose.runtime.Composable
@@ -23,8 +23,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.extension.pixels
+import pl.patrykgoworowski.vico.compose.style.currentChartStyle
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
@@ -32,13 +33,13 @@ import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
 @Composable
 fun lineDataSet(
     point: Component? = null,
-    pointSize: Dp = 6.dp,
-    spacing: Dp = 16.dp,
-    lineWidth: Dp = 2.dp,
-    lineColor: Color = Color.LightGray,
-    lineBackgroundShader: DynamicShader? = null,
+    pointSize: Dp = currentChartStyle.lineChart.pointSize,
+    spacing: Dp = currentChartStyle.lineChart.spacing,
+    lineWidth: Dp = currentChartStyle.lineChart.lineWidth,
+    lineColor: Color = currentChartStyle.lineChart.lineColor,
+    lineBackgroundShader: DynamicShader? = currentChartStyle.lineChart.lineBackgroundShader,
     lineStrokeCap: StrokeCap = StrokeCap.Round,
-    cubicStrength: Float = 1f,
+    cubicStrength: Float = Dimens.CUBIC_STRENGTH,
     minX: Float? = null,
     maxX: Float? = null,
     minY: Float? = null,

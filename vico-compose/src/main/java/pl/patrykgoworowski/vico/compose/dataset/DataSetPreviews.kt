@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.dataset.bar
+package pl.patrykgoworowski.vico.compose.dataset
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.columnComponent
+import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
@@ -47,7 +48,7 @@ private fun PreviewColumnChart(
 ) {
     DataSet(
         modifier = modifier,
-        dataSet = columnDataSet(listOf(rectComponent(color = Color.Blue))),
+        dataSet = columnDataSet(listOf(columnComponent(color = Color.Blue))),
         model = model,
         startAxis = startAxis,
         topAxis = topAxis,

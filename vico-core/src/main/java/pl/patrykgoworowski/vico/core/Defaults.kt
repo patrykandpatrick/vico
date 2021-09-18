@@ -62,12 +62,19 @@ object Dimens {
     const val AXIS_TICK_LENGTH = 4
 
     const val COLUMN_WIDTH = 8
-    const val COLUMN_OUTSIDE_SPACING = 12
     const val COLUMN_INSIDE_SPACING = 8
+    const val COLUMN_OUTSIDE_SPACING = 12
     const val COLUMN_ROUNDNESS_PERCENT = 40
+
+    const val CUBIC_STRENGTH = 1f
 
     const val DASH_LENGTH = 4
     const val DASH_GAP = 2
+
+    const val LINE_WIDTH = 2
+
+    const val POINT_SIZE = 6
+    const val POINT_SPACING = 16
 }
 
 @Suppress("MagicNumber")
@@ -79,7 +86,8 @@ interface Colors {
     val column1Color: Long
     val column2Color: Long
     val column3Color: Long
-    val column4Color: Long
+
+    val lineColor: Long
 
     object Light : Colors {
         override val axisLabelColor: Long = 0xDE000000
@@ -89,17 +97,19 @@ interface Colors {
         override val column1Color: Long = 0xFF787878
         override val column2Color: Long = 0xFF5A5A5A
         override val column3Color: Long = 0xFF383838
-        override val column4Color: Long = 0xFF1A1A1A
+
+        override val lineColor: Long = 0xFF1A1A1A
     }
 
     object Dark : Colors {
         override val axisLabelColor: Long = 0xFFFFFFFF
-        override val axisGuidelineColor: Long = 0xFF323232
+        override val axisGuidelineColor: Long = 0xFF424242
         override val axisLineColor: Long = 0xFF424242
 
         override val column1Color: Long = 0xFFCACACA
         override val column2Color: Long = 0xFFA8A8A8
         override val column3Color: Long = 0xFF888888
-        override val column4Color: Long = 0xFF5A5A5A
+
+        override val lineColor: Long = 0xFFEFEFEF
     }
 }

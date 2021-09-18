@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.dataset.bar
+package pl.patrykgoworowski.vico.compose.dataset
 
 import android.graphics.PointF
 import android.graphics.RectF

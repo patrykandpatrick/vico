@@ -18,21 +18,26 @@ package pl.patrykgoworowski.vico.compose.component.shape.shader
 
 import android.graphics.Shader
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.core.component.Component
+import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 
 @Composable
-fun componentShader(
+fun DynamicShaders.fromComponent(
     component: Component,
     componentSize: Dp,
     checkeredArrangement: Boolean = true,
     tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     tileYMode: Shader.TileMode = tileXMode,
-) = pl.patrykgoworowski.vico.core.component.shape.shader.componentShader(
+) = ComponentShader(
     component = component,
     componentSize = componentSize.pixels,
     checkeredArrangement = checkeredArrangement,
     tileXMode = tileXMode,
     tileYMode = tileYMode,
 )
+
+fun DynamicShaders.fromBrush(brush: Brush) = StaticShader(brush)

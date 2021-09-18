@@ -14,4 +14,20 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.extension
+package pl.patrykgoworowski.vico.core.component.shape.corner
+
+import android.graphics.Path
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
+
+public interface CornerTreatment {
+
+    @LongParameterListDrawFunction
+    public fun createCorner(
+        x1: Float,
+        y1: Float,
+        x2: Float,
+        y2: Float,
+        cornerLocation: CornerLocation,
+        path: Path,
+    )
+}

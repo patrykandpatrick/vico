@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.shape.corner
+package pl.patrykgoworowski.vico.core.component.shape.corner
 
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shape
 import kotlin.math.absoluteValue
 
 public open class CorneredShape(

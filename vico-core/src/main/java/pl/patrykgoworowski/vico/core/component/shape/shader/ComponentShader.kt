@@ -24,22 +24,14 @@ import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.extension.half
 
-fun bitmapShader(
-    bitmap: Bitmap,
-    tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-    tileYMode: Shader.TileMode = tileXMode,
-): DynamicShader = object : CacheableDynamicShader() {
-    override fun createShader(bounds: RectF): Shader =
-        BitmapShader(bitmap, tileXMode, tileYMode)
-}
+class ComponentShader(
+    private val component: Component,
+    private val componentSize: Float,
+    private val checkeredArrangement: Boolean = true,
+    private val tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
+    private val tileYMode: Shader.TileMode = tileXMode,
+) : CacheableDynamicShader() {
 
-fun componentShader(
-    component: Component,
-    componentSize: Float,
-    checkeredArrangement: Boolean = true,
-    tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-    tileYMode: Shader.TileMode = tileXMode,
-): DynamicShader = object : CacheableDynamicShader() {
     override fun createShader(bounds: RectF): Shader {
         val size = componentSize.toInt() * if (checkeredArrangement) 2 else 1
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
@@ -60,13 +52,13 @@ fun componentShader(
         }
         return BitmapShader(bitmap, tileXMode, tileYMode)
     }
-}
 
-private fun Component.draw(
-    canvas: Canvas,
-    x: Float,
-    y: Float,
-    size: Float
-) {
-    draw(canvas, x, y, x + size, y + size)
+    private fun Component.draw(
+        canvas: Canvas,
+        x: Float,
+        y: Float,
+        size: Float
+    ) {
+        draw(canvas, x, y, x + size, y + size)
+    }
 }

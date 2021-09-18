@@ -40,5 +40,4 @@ class StaticShader(private val brush: Brush) : DynamicShader {
     }.also { shader = it }
 }
 
-val Brush.dynamic: DynamicShader
-    get() = StaticShader(this)
+fun Brush.toDynamicShader(): DynamicShader = StaticShader(this)

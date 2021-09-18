@@ -27,15 +27,15 @@ import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
 import pl.patrykgoworowski.vico.compose.component.shape.markerComponent
 import pl.patrykgoworowski.vico.compose.component.overlayingComponent
-import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.columnComponent
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.compose.extension.setShadow
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
-import pl.patrykgoworowski.vico.core.shape.corner.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
 
 @Composable
 fun markerComponent(): Marker {
@@ -64,7 +64,7 @@ fun markerComponent(): Marker {
         innerPaddingAll = 10.dp,
     )
 
-    val guideline = rectComponent(
+    val guideline = columnComponent(
         color = colors.onSurface.copy(alpha = 0.18f),
         thickness = 2f.dp,
         shape = dashedShape(

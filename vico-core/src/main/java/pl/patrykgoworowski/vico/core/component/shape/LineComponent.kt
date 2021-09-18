@@ -21,8 +21,7 @@ import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.shape.Shape
-import pl.patrykgoworowski.vico.core.shape.Shapes.rectShape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 
 public open class LineComponent(
     color: Int,

@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -28,18 +29,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
+import pl.patrykgoworowski.vico.compose.component.shape.shader.fromBrush
 import pl.patrykgoworowski.vico.core.Colors
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
-import pl.patrykgoworowski.vico.core.shape.Shape
-import pl.patrykgoworowski.vico.core.shape.Shapes
+import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 
 data class ChartStyle(
     val axis: Axis,
     val columnChart: ColumnChart,
+    val lineChart: LineChart,
 ) {
     data class Axis(
         val axisLabelBackground: ShapeComponent<Shape>? = null,
@@ -71,6 +77,15 @@ data class ChartStyle(
         val getColumns: @Composable () -> List<LineComponent>,
         val outsideSpacing: Dp = Dimens.COLUMN_OUTSIDE_SPACING.dp,
         val innerSpacing: Dp = Dimens.COLUMN_INSIDE_SPACING.dp,
+    )
+
+    data class LineChart(
+        val getPoint: @Composable () -> Component? = { null },
+        val pointSize: Dp,
+        val spacing: Dp,
+        val lineWidth: Dp,
+        val lineColor: Color,
+        val lineBackgroundShader: DynamicShader,
     )
 }
 
@@ -112,15 +127,22 @@ object LocalChartStyle {
                             allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
                         )
                     ),
-                    lineComponent(
-                        color = Color(colors.column4Color),
-                        thickness = Dimens.COLUMN_WIDTH.dp,
-                        shape = Shapes.roundedCornersShape(
-                            allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
-                        )
-                    )
                 )
             }
+        ),
+        lineChart = ChartStyle.LineChart(
+            pointSize = Dimens.POINT_SIZE.dp,
+            spacing = Dimens.POINT_SPACING.dp,
+            lineWidth = Dimens.LINE_WIDTH.dp,
+            lineColor = Color(colors.lineColor),
+            lineBackgroundShader = DynamicShaders.fromBrush(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        Color(colors.lineColor).copy(alpha = .5f),
+                        Color(colors.lineColor).copy(alpha = 0f),
+                    ),
+                )
+            )
         )
     )
 

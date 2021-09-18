@@ -24,23 +24,23 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.extension.pixels
-import pl.patrykgoworowski.vico.compose.path.chartShape
+import pl.patrykgoworowski.vico.compose.component.shape.chartShape
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.vico.core.constants.DEF_BAR_WIDTH
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.shape.DashedShape
+import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 
-typealias ChartShape = pl.patrykgoworowski.vico.core.shape.Shape
+typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
 @Composable
-public fun rectComponent(
+public fun columnComponent(
     color: Color,
-    thickness: Dp = DEF_BAR_WIDTH.dp,
+    thickness: Dp = Dimens.COLUMN_WIDTH.dp,
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
@@ -53,7 +53,7 @@ public fun rectComponent(
 )
 
 @Composable
-public fun rectComponent(
+public fun columnComponent(
     color: Color,
     thickness: Dp,
     shape: ChartShape,
