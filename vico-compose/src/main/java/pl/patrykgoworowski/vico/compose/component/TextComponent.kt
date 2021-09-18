@@ -23,18 +23,18 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.TextUnit
 import pl.patrykgoworowski.vico.compose.extension.pixelSize
-import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
+import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.shape.Shape
 
 @Composable
 fun textComponent(
-    color: Color,
-    textSize: TextUnit,
-    background: ShapeComponent<Shape>?,
+    color: Color = currentChartStyle.axis.axisLabelColor,
+    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
+    background: ShapeComponent<Shape>? = currentChartStyle.axis.axisLabelBackground,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = DEF_LABEL_LINE_COUNT,
+    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
 ): TextComponent = TextComponent(
     color = color.toArgb(),
     textSize = textSize.pixelSize(LocalDensity.current),

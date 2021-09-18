@@ -20,13 +20,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
+import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
+import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.shape.shader.componentShader
 import pl.patrykgoworowski.vico.compose.component.shapeComponent
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
-import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
-import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
 

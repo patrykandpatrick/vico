@@ -25,10 +25,11 @@ import android.text.TextPaint
 import android.text.TextUtils
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
 import pl.patrykgoworowski.vico.core.component.dimension.DefaultMargins
-import pl.patrykgoworowski.vico.core.component.dimension.DefaultPadding
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
+import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
+import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
 import pl.patrykgoworowski.vico.core.extension.piRad
@@ -47,7 +48,8 @@ public open class TextComponent(
     public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
     public open var background: ShapeComponent<Shape>? = null,
-) : Padding by DefaultPadding(), Margins by DefaultMargins() {
+    override val padding: MutableDimensions = emptyDimensions(),
+) : Padding, Margins by DefaultMargins() {
 
     public val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
@@ -69,6 +71,7 @@ public open class TextComponent(
     init {
         textPaint.color = color
         textPaint.textSize = textSize
+        textPaint.typeface = Typeface.MONOSPACE
     }
 
     public fun drawText(
