@@ -28,7 +28,8 @@ ext {
             ui_tooling : [group: 'androidx.compose.ui', name: 'ui-tooling', version: compose_version],
             material   : [group: 'androidx.compose.material', name: 'material', version: compose_version],
             activity   : [group: 'androidx.activity', name: 'activity-compose', version: activity_version],
-            viewbinding: [group: 'androidx.compose.ui', name: 'ui-viewbinding', version: compose_version]
+            viewbinding: [group: 'androidx.compose.ui', name: 'ui-viewbinding', version: compose_version],
+            foundation : [group: 'androidx.compose.foundation', name: 'foundation', version: compose_version]
     ]
 
     def accompanist_libs = [
@@ -97,6 +98,7 @@ ext {
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
+            [configuration: "implementation", dependency: jetpack_compose_libs.foundation],
             [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
