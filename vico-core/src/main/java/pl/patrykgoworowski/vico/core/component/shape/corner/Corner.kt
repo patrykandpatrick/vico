@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.shape.corner
+package pl.patrykgoworowski.vico.core.component.shape.corner
 
 import pl.patrykgoworowski.vico.core.throwable.IllegalPercentageException
 

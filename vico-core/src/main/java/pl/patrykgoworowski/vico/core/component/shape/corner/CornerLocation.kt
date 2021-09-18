@@ -14,16 +14,11 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.shape
+package pl.patrykgoworowski.vico.core.component.shape.corner
 
-import android.graphics.Path
-
-fun Path.horizontalCubicTo(
-    prevX: Float,
-    prevY: Float,
-    x: Float,
-    y: Float,
-    curvature: Float,
-) {
-    cubicTo(prevX + curvature, prevY, x - curvature, y, x, y)
+enum class CornerLocation {
+    TopLeft,
+    TopRight,
+    BottomRight,
+    BottomLeft,
 }

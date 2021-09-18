@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.dataset.bar
+package pl.patrykgoworowski.vico.compose.dataset.column
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

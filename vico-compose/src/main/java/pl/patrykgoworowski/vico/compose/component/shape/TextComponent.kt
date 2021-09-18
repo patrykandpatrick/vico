@@ -26,7 +26,7 @@ import pl.patrykgoworowski.vico.compose.extension.pixelSize
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shape
 
 @Composable
 fun textComponent(

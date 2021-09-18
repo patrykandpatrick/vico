@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.TextUnit
 import pl.patrykgoworowski.vico.compose.component.shape.shader.StaticShader
 import pl.patrykgoworowski.vico.compose.extension.pixelSize
 import pl.patrykgoworowski.vico.compose.extension.pixels
-import pl.patrykgoworowski.vico.compose.path.chartShape
+import pl.patrykgoworowski.vico.compose.component.shape.chartShape
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
@@ -40,7 +40,7 @@ import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
-typealias ChartShape = pl.patrykgoworowski.vico.core.shape.Shape
+typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
 @Composable
 fun axisLabelComponent(

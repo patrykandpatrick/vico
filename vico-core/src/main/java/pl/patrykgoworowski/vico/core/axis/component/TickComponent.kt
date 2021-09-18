@@ -18,8 +18,8 @@ package pl.patrykgoworowski.vico.core.axis.component
 
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.vico.core.shape.Shape
-import pl.patrykgoworowski.vico.core.shape.Shapes.rectShape
+import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 
 open class TickComponent(
     color: Int,

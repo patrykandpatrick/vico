@@ -38,7 +38,7 @@ import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.shape.horizontalCubicTo
+import pl.patrykgoworowski.vico.core.component.shape.extension.horizontalCubicTo
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min

@@ -31,7 +31,7 @@ import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.marker.MarkerLabelFormatter
-import pl.patrykgoworowski.vico.core.shape.corner.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
 
 public open class MarkerComponent(
     private val label: TextComponent,

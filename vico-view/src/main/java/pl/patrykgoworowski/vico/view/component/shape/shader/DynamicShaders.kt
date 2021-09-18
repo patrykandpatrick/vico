@@ -14,17 +14,36 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.component.shape.shader
+package pl.patrykgoworowski.vico.view.component.shape.shader
 
 import android.graphics.LinearGradient
 import android.graphics.RectF
 import android.graphics.Shader
+import pl.patrykgoworowski.vico.core.component.Component
+import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShader
+import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 
-fun horizontalGradient(
+fun DynamicShaders.fromComponent(
+    component: Component,
+    componentSize: Float,
+    checkeredArrangement: Boolean = true,
+    tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
+    tileYMode: Shader.TileMode = tileXMode,
+) = ComponentShader(
+    component = component,
+    componentSize = componentSize,
+    checkeredArrangement = checkeredArrangement,
+    tileXMode = tileXMode,
+    tileYMode = tileYMode,
+)
+
+public fun DynamicShaders.horizontalGradient(
     vararg colors: Int,
 ) = horizontalGradient(colors)
 
-fun horizontalGradient(
+public fun DynamicShaders.horizontalGradient(
     colors: IntArray,
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
@@ -41,11 +60,11 @@ fun horizontalGradient(
         )
 }
 
-fun verticalGradient(
+public fun DynamicShaders.verticalGradient(
     vararg colors: Int,
 ) = verticalGradient(colors)
 
-fun verticalGradient(
+public fun DynamicShaders.verticalGradient(
     colors: IntArray,
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {

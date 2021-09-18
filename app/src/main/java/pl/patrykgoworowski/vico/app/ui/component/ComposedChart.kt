@@ -16,24 +16,16 @@
 
 package pl.patrykgoworowski.vico.app.ui.component
 
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.app.ui.theme.byzantine
-import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
-import pl.patrykgoworowski.vico.app.ui.theme.purple
-import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.component.rectComponent
-import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
+import pl.patrykgoworowski.vico.compose.dataset.DataSet
+import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
+import pl.patrykgoworowski.vico.compose.dataset.line.lineDataSet
 import pl.patrykgoworowski.vico.core.dataset.composed.plus
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
-import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
 
 @Composable
 fun ComposedChart(
@@ -42,35 +34,10 @@ fun ComposedChart(
 ) {
     DataSet(
         modifier = modifier,
-        dataSet =
-        columnDataSet() + lineDataSet(
-            lineColor = flickrPink,
-            spacing = 8.dp,
-        ),
+        dataSet = columnDataSet() + lineDataSet(),
         entryCollection = model,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         marker = markerComponent(),
     )
 }
-
-@Composable
-fun firstRectComponent() = rectComponent(
-    color = trypanPurple,
-    thickness = 16.dp,
-    shape = CutCornerShape(topStart = 8.dp),
-)
-
-@Composable
-fun secondRectComponent() = rectComponent(
-    color = byzantine,
-    thickness = 12.dp,
-    shape = pillShape,
-)
-
-@Composable
-fun thirdRectComponent() = rectComponent(
-    color = purple,
-    thickness = 16.dp,
-    shape = CutCornerShape(topEnd = 8.dp),
-)

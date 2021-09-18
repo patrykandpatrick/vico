@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.shape.corner
+package pl.patrykgoworowski.vico.core.component.shape
 
-enum class CornerLocation {
-    TopLeft,
-    TopRight,
-    BottomRight,
-    BottomLeft,
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
+
+interface Shape {
+
+    fun drawShape(
+        canvas: Canvas,
+        paint: Paint,
+        path: Path,
+        bounds: RectF
+    )
 }

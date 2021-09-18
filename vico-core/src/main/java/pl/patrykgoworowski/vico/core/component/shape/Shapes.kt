@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.shape
+package pl.patrykgoworowski.vico.core.component.shape
 
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -23,10 +23,10 @@ import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import pl.patrykgoworowski.vico.core.extension.setBounds
 import pl.patrykgoworowski.vico.core.extension.updateBounds
-import pl.patrykgoworowski.vico.core.shape.corner.Corner
-import pl.patrykgoworowski.vico.core.shape.corner.CorneredShape
-import pl.patrykgoworowski.vico.core.shape.corner.CutCornerTreatment
-import pl.patrykgoworowski.vico.core.shape.corner.RoundedCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
+import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
 
 object Shapes {
     val pillShape = roundedCornersShape(allPercent = 50)
@@ -47,8 +47,6 @@ object Shapes {
         }
     }
 
-    fun roundedCornersShape(all: Float): Shape = roundedCornersShape(all, all, all, all)
-
     fun roundedCornersShape(allPercent: Int) =
         roundedCornersShape(allPercent, allPercent, allPercent, allPercent)
 
@@ -64,19 +62,8 @@ object Shapes {
         Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
     )
 
-    fun roundedCornersShape(
-        topLeft: Float = 0f,
-        topRight: Float = 0f,
-        bottomRight: Float = 0f,
-        bottomLeft: Float = 0f,
-    ): CorneredShape = CorneredShape(
-        Corner.Absolute(topLeft, RoundedCornerTreatment),
-        Corner.Absolute(topRight, RoundedCornerTreatment),
-        Corner.Absolute(bottomRight, RoundedCornerTreatment),
-        Corner.Absolute(bottomLeft, RoundedCornerTreatment),
-    )
-
-    fun cutCornerShape(all: Float): Shape = cutCornerShape(all, all, all, all)
+    fun cutCornerShape(allPercent: Int) =
+        cutCornerShape(allPercent, allPercent, allPercent, allPercent)
 
     fun cutCornerShape(
         topLeftPercent: Int = 0,
@@ -88,18 +75,6 @@ object Shapes {
         Corner.Relative(topRightPercent, CutCornerTreatment),
         Corner.Relative(bottomRightPercent, CutCornerTreatment),
         Corner.Relative(bottomLeftPercent, CutCornerTreatment),
-    )
-
-    fun cutCornerShape(
-        topLeft: Float = 0f,
-        topRight: Float = 0f,
-        bottomRight: Float = 0f,
-        bottomLeft: Float = 0f
-    ): CorneredShape = CorneredShape(
-        Corner.Absolute(topLeft, CutCornerTreatment),
-        Corner.Absolute(topRight, CutCornerTreatment),
-        Corner.Absolute(bottomRight, CutCornerTreatment),
-        Corner.Absolute(bottomLeft, CutCornerTreatment),
     )
 
     fun drawableShape(

@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.shape
+package pl.patrykgoworowski.vico.core.component.shape.shader
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
 import android.graphics.RectF
+import android.graphics.Shader
 
-interface Shape {
+object DynamicShaders {
 
-    fun drawShape(
-        canvas: Canvas,
-        paint: Paint,
-        path: Path,
-        bounds: RectF
-    )
+    public fun fromBitmap(
+        bitmap: Bitmap,
+        tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
+        tileYMode: Shader.TileMode = tileXMode,
+    ): DynamicShader = object : CacheableDynamicShader() {
+        override fun createShader(bounds: RectF): Shader =
+            BitmapShader(bitmap, tileXMode, tileYMode)
+    }
 }

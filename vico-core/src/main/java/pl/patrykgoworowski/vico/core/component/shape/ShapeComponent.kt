@@ -27,7 +27,6 @@ import pl.patrykgoworowski.vico.core.component.dimension.setMargins
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.shape.Shape
 
 public open class ShapeComponent<T : Shape>(
     public var shape: T,

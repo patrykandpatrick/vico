@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
+import pl.patrykgoworowski.vico.compose.dataset.DataSet
+import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
 import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 

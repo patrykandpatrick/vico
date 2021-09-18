@@ -36,13 +36,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.app.ui.theme.MainTheme
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
-import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.verticalGradient
-import pl.patrykgoworowski.vico.compose.component.shapeComponent
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
-import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
-import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
+import pl.patrykgoworowski.vico.compose.component.shapeComponent
+import pl.patrykgoworowski.vico.compose.dataset.DataSet
+import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
+import pl.patrykgoworowski.vico.compose.dataset.line.lineDataSet
 import pl.patrykgoworowski.vico.compose.extension.pixelSize
 import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
@@ -50,12 +50,13 @@ import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
-import pl.patrykgoworowski.vico.core.component.shape.shader.componentShader
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
-import pl.patrykgoworowski.vico.core.shape.DashedShape
-import pl.patrykgoworowski.vico.core.shape.Shapes.pillShape
-import pl.patrykgoworowski.vico.core.shape.Shapes.rectShape
+import pl.patrykgoworowski.vico.core.component.shape.DashedShape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
+import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
 
 private val chartModifier = Modifier.height(100.dp)
 
@@ -69,9 +70,9 @@ fun ColumnChartCard() = MainTheme {
             modifier = chartModifier,
             dataSet = columnDataSet(
                 columns = listOf(
-                    rectComponent(
+                    lineComponent(
                         colors.primary,
-                        thickness = 8f.dp,
+                        thickness = 8.dp,
                         shape = RoundedCornerShape(4.dp),
                         dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
                     )
@@ -116,7 +117,7 @@ fun LineChartCard() = MainTheme {
             dataSet = lineDataSet(
                 point = null,
                 lineColor = colors.primary,
-                lineBackgroundShader = componentShader(
+                lineBackgroundShader = DynamicShaders.fromComponent(
                     componentSize = 4.dp.pixels,
                     component = shapeComponent(shape = pillShape, color = colors.primary).apply {
                         setMargins(0.5.dp.pixels)
@@ -154,7 +155,7 @@ fun LineChartCard() = MainTheme {
                 label = null,
                 tick = null,
                 guideline = null,
-                axis = rectComponent(color = Color.LightGray, thickness = 1.dp),
+                axis = lineComponent(color = Color.LightGray, thickness = 1.dp),
             ),
         )
     }
