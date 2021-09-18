@@ -16,6 +16,7 @@
 
 package pl.patrykgoworowski.vico.compose.style
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
@@ -25,58 +26,103 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.compose.foundation.isSystemInDarkTheme
+import pl.patrykgoworowski.vico.compose.component.dashedShape
+import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
+import pl.patrykgoworowski.vico.core.Colors
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.shape.Shape
 import pl.patrykgoworowski.vico.core.shape.Shapes
 
 data class ChartStyle(
     val axis: Axis,
+    val columnChart: ColumnChart,
 ) {
     data class Axis(
         val axisLabelBackground: ShapeComponent<Shape>? = null,
         val axisLabelColor: Color,
-        val axisLabelTextSize: TextUnit = 12.sp,
-        val axisLabelLineCount: Int = 1,
-        val axisLabelVerticalPadding: Dp = 2.dp,
-        val axisLabelHorizontalPadding: Dp = 4.dp,
+        val axisLabelTextSize: TextUnit = Dimens.AXIS_LABEL_SIZE.sp,
+        val axisLabelLineCount: Int = Dimens.AXIS_LABEL_MAX_LINES,
+        val axisLabelVerticalPadding: Dp = Dimens.AXIS_LABEL_VERTICAL_PADDING.dp,
+        val axisLabelHorizontalPadding: Dp = Dimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
         val axisGuidelineColor: Color,
-        val axisGuidelineWidth: Dp = 1.dp,
-        val axisGuidelineShape: Shape = Shapes.rectShape,
+        val axisGuidelineWidth: Dp = Dimens.AXIS_GUIDELINE_WIDTH.dp,
+        val axisGuidelineShape: @Composable () -> Shape = {
+            dashedShape(
+                shape = Shapes.rectShape,
+                dashLength = Dimens.DASH_LENGTH.dp,
+                gapLength = Dimens.DASH_GAP.dp,
+            )
+        },
         val axisLineColor: Color,
-        val axisLineWidth: Dp = 2.dp,
-        val axisLineShape: Shape = Shapes.rectShape,
+        val axisLineWidth: Dp = Dimens.AXIS_LINE_WIDTH.dp,
+        val axisLineShape: @Composable () -> Shape = { Shapes.rectShape },
         val axisTickColor: Color = axisLineColor,
         val axisTickWidth: Dp = axisLineWidth,
-        val axisTickShape: Shape = Shapes.rectShape,
-        val axisTickLength: Dp = 4.dp,
+        val axisTickShape: @Composable () -> Shape = { Shapes.rectShape },
+        val axisTickLength: Dp = Dimens.AXIS_TICK_LENGTH.dp,
         val axisValueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter()
+    )
+
+    data class ColumnChart(
+        val getColumns: @Composable () -> List<LineComponent>,
+        val outsideSpacing: Dp = Dimens.COLUMN_OUTSIDE_SPACING.dp,
+        val innerSpacing: Dp = Dimens.COLUMN_INSIDE_SPACING.dp,
     )
 }
 
 object LocalChartStyle {
 
-    private val LocalLightStyle: ProvidableCompositionLocal<ChartStyle> = compositionLocalOf {
-        ChartStyle(
-            axis = ChartStyle.Axis(
-                axisLabelColor = Color.Black,
-                axisGuidelineColor = Color(0xFFAAAAAA),
-                axisLineColor = Color(0xFF8A8A8A),
-            )
-        )
-    }
+    private val LocalLightStyle: ProvidableCompositionLocal<ChartStyle> =
+        compositionLocalOf { getChartStyle(Colors.Light) }
 
-    private val LocalDarkStyle: ProvidableCompositionLocal<ChartStyle> = compositionLocalOf {
-        ChartStyle(
-            axis = ChartStyle.Axis(
-                axisLabelColor = Color.White,
-                axisGuidelineColor = Color(0xFF323232),
-                axisLineColor = Color(0xFF424242),
-            )
+    private val LocalDarkStyle: ProvidableCompositionLocal<ChartStyle> =
+        compositionLocalOf { getChartStyle(Colors.Dark) }
+
+    private fun getChartStyle(colors: Colors): ChartStyle = ChartStyle(
+        axis = ChartStyle.Axis(
+            axisLabelColor = Color(colors.axisLabelColor),
+            axisGuidelineColor = Color(colors.axisGuidelineColor),
+            axisLineColor = Color(colors.axisLineColor),
+        ),
+        columnChart = ChartStyle.ColumnChart(
+            getColumns = {
+                listOf(
+                    lineComponent(
+                        color = Color(colors.column1Color),
+                        thickness = Dimens.COLUMN_WIDTH.dp,
+                        shape = Shapes.roundedCornersShape(
+                            allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
+                        )
+                    ),
+                    lineComponent(
+                        color = Color(colors.column2Color),
+                        thickness = Dimens.COLUMN_WIDTH.dp,
+                        shape = Shapes.roundedCornersShape(
+                            allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
+                        )
+                    ),
+                    lineComponent(
+                        color = Color(colors.column3Color),
+                        thickness = Dimens.COLUMN_WIDTH.dp,
+                        shape = Shapes.roundedCornersShape(
+                            allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
+                        )
+                    ),
+                    lineComponent(
+                        color = Color(colors.column4Color),
+                        thickness = Dimens.COLUMN_WIDTH.dp,
+                        shape = Shapes.roundedCornersShape(
+                            allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
+                        )
+                    )
+                )
+            }
         )
-    }
+    )
 
     private val LocalProvidedStyle: ProvidableCompositionLocal<ChartStyle?> =
         compositionLocalOf { null }

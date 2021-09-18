@@ -47,7 +47,7 @@ private fun PreviewColumnChart(
 ) {
     DataSet(
         modifier = modifier,
-        dataSet = columnDataSet(column = rectComponent(color = Color.Blue)),
+        dataSet = columnDataSet(listOf(rectComponent(color = Color.Blue))),
         model = model,
         startAxis = startAxis,
         topAxis = topAxis,

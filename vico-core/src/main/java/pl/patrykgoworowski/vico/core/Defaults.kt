@@ -50,3 +50,56 @@ const val MAX_ZOOM = 10f
 const val MIN_ZOOM = 0.1f
 
 public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
+
+object Dimens {
+    const val AXIS_LABEL_HORIZONTAL_PADDING = 4
+    const val AXIS_LABEL_MAX_LINES = 1
+    const val AXIS_LABEL_VERTICAL_PADDING = 2
+    const val AXIS_LABEL_SIZE = 12
+
+    const val AXIS_GUIDELINE_WIDTH = 1
+    const val AXIS_LINE_WIDTH = 2
+    const val AXIS_TICK_LENGTH = 4
+
+    const val COLUMN_WIDTH = 8
+    const val COLUMN_OUTSIDE_SPACING = 12
+    const val COLUMN_INSIDE_SPACING = 8
+    const val COLUMN_ROUNDNESS_PERCENT = 40
+
+    const val DASH_LENGTH = 4
+    const val DASH_GAP = 2
+}
+
+@Suppress("MagicNumber")
+interface Colors {
+    val axisLabelColor: Long
+    val axisGuidelineColor: Long
+    val axisLineColor: Long
+
+    val column1Color: Long
+    val column2Color: Long
+    val column3Color: Long
+    val column4Color: Long
+
+    object Light : Colors {
+        override val axisLabelColor: Long = 0xDE000000
+        override val axisGuidelineColor: Long = 0xFFAAAAAA
+        override val axisLineColor: Long = 0xFF8A8A8A
+
+        override val column1Color: Long = 0xFF787878
+        override val column2Color: Long = 0xFF5A5A5A
+        override val column3Color: Long = 0xFF383838
+        override val column4Color: Long = 0xFF1A1A1A
+    }
+
+    object Dark : Colors {
+        override val axisLabelColor: Long = 0xFFFFFFFF
+        override val axisGuidelineColor: Long = 0xFF323232
+        override val axisLineColor: Long = 0xFF424242
+
+        override val column1Color: Long = 0xFFCACACA
+        override val column2Color: Long = 0xFFA8A8A8
+        override val column3Color: Long = 0xFF888888
+        override val column4Color: Long = 0xFF5A5A5A
+    }
+}

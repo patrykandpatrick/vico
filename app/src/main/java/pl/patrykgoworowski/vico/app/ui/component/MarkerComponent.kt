@@ -25,10 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
-import pl.patrykgoworowski.vico.compose.component.markerComponent
+import pl.patrykgoworowski.vico.compose.component.shape.markerComponent
 import pl.patrykgoworowski.vico.compose.component.overlayingComponent
 import pl.patrykgoworowski.vico.compose.component.rectComponent
-import pl.patrykgoworowski.vico.compose.component.textComponent
+import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.compose.extension.setShadow
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent

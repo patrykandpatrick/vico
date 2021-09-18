@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.component
+package pl.patrykgoworowski.vico.compose.component.shape
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

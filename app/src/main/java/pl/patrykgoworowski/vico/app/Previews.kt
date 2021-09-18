@@ -39,7 +39,7 @@ import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
 import pl.patrykgoworowski.vico.compose.component.rectComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.vico.compose.component.shapeComponent
-import pl.patrykgoworowski.vico.compose.component.textComponent
+import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
@@ -68,11 +68,13 @@ fun ColumnChartCard() = MainTheme {
         DataSet(
             modifier = chartModifier,
             dataSet = columnDataSet(
-                column = rectComponent(
-                    colors.primary,
-                    thickness = 8f.dp,
-                    shape = RoundedCornerShape(4.dp),
-                    dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
+                columns = listOf(
+                    rectComponent(
+                        colors.primary,
+                        thickness = 8f.dp,
+                        shape = RoundedCornerShape(4.dp),
+                        dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
+                    )
                 )
             ),
             startAxis = startAxis(

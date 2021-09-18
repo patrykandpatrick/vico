@@ -16,16 +16,11 @@
 
 package pl.patrykgoworowski.vico.app.ui.component
 
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.app.ui.theme.byzantine
-import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
-import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.component.rectComponent
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
 import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
@@ -39,17 +34,6 @@ fun GroupedColumnChart(
     DataSet(
         modifier = modifier,
         dataSet = columnDataSet(
-            columns = listOf(
-                rectComponent(
-                    color = flickrPink,
-                    shape = CutCornerShape(topStart = 8.dp)
-                ),
-                rectComponent(color = byzantine, thickness = 24.dp),
-                rectComponent(
-                    color = trypanPurple,
-                    shape = CutCornerShape(topEnd = 8.dp)
-                ),
-            ),
             innerSpacing = 4.dp,
             spacing = 24.dp,
             mergeMode = MergeMode.Grouped,
