@@ -24,12 +24,12 @@ import pl.patrykgoworowski.vico.app.ui.theme.byzantine
 import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
 import pl.patrykgoworowski.vico.app.ui.theme.purple
 import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
+import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
+import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.compose.component.rectComponent
 import pl.patrykgoworowski.vico.compose.dataset.bar.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.columnDataSet
 import pl.patrykgoworowski.vico.compose.dataset.bar.lineDataSet
-import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
-import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.dataset.composed.plus
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
