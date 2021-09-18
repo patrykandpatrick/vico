@@ -97,7 +97,6 @@ ext {
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
-            [configuration: "implementation", dependency: jetpack_compose_libs.material],
             [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
