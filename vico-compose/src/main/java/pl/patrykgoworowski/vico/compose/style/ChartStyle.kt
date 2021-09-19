@@ -85,7 +85,7 @@ data class ChartStyle(
         val spacing: Dp,
         val lineWidth: Dp,
         val lineColor: Color,
-        val lineBackgroundShader: DynamicShader,
+        val lineBackgroundShader: DynamicShader? = null,
     )
 }
 
