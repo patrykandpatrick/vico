@@ -46,6 +46,7 @@ data class ChartStyle(
     val axis: Axis,
     val columnChart: ColumnChart,
     val lineChart: LineChart,
+    val marker: Marker,
 ) {
     data class Axis(
         val axisLabelBackground: ShapeComponent<Shape>? = null,
@@ -84,6 +85,12 @@ data class ChartStyle(
         val lineWidth: Dp,
         val lineColor: Color,
         val lineBackgroundShader: DynamicShader? = null,
+    )
+
+    data class Marker(
+        val indicatorSize: Dp = Dimens.MARKER_INDICATOR_SIZE.dp,
+        val horizontalPadding: Dp = Dimens.MARKER_HORIZONTAL_PADDING.dp,
+        val verticalPadding: Dp = Dimens.MARKER_VERTICAL_PADDING.dp,
     )
 }
 
@@ -139,7 +146,8 @@ object LocalChartStyle {
                     ),
                 )
             )
-        )
+        ),
+        marker = ChartStyle.Marker()
     )
 
     private val LocalProvidedStyle: ProvidableCompositionLocal<ChartStyle?> =
