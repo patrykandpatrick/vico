@@ -16,16 +16,15 @@
 
 package pl.patrykgoworowski.vico.core.axis.vertical
 
-import android.graphics.Canvas
 import pl.patrykgoworowski.vico.core.DEF_AXIS_COMPONENT
 import pl.patrykgoworowski.vico.core.DEF_GUIDELINE_COMPONENT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_COMPONENT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
 import pl.patrykgoworowski.vico.core.DEF_TICK_COMPONENT
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.BaseLabeledAxisRenderer
-import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
@@ -36,23 +35,23 @@ import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
-import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.dimensions.Dimensions
-import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.dataset.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
 class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
     label: TextComponent?,
     axis: LineComponent?,
-    tick: TickComponent?,
+    tick: LineComponent?,
     guideline: LineComponent?,
+    override var tickLengthDp: Float,
     override var valueFormatter: AxisValueFormatter,
 ) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
-    private val isLeft = position.isLeft(isLTR)
+    private val isLeft = position.isLeft(isLtr)
 
     private val isLabelOutsideOnLeftOrInsideOnRight: Boolean
         get() = (horizontalLabelPosition == Outside && isLeft) ||
@@ -68,30 +67,28 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
     public var verticalLabelPosition = Center
 
     override fun drawBehindDataSet(
-        canvas: Canvas,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-    ) {
-        val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
+        context: ChartDrawContext,
+    ) = with(context) {
+        val drawLabelCount = getDrawLabelCount(context, bounds.height().toInt())
 
         val axisStep = bounds.height() / drawLabelCount
 
         var centerY: Float
 
         for (index in 0..drawLabelCount) {
-            centerY = bounds.bottom - (axisStep * index) + (axisThickness / 2)
+            centerY = bounds.bottom - (axisStep * index) + guidelineThickness.half
 
             guideline?.setParentBounds(bounds)
             guideline?.takeIf {
                 it.fitsInHorizontal(
-                    dataSetBounds.left,
-                    dataSetBounds.right,
-                    centerY,
-                    dataSetBounds
+                    context = context,
+                    left = dataSetBounds.left,
+                    right = dataSetBounds.right,
+                    centerY = centerY,
+                    boundingBox = dataSetBounds
                 )
             }?.drawHorizontal(
-                canvas = canvas,
+                context = context,
                 left = dataSetBounds.left,
                 right = dataSetBounds.right,
                 centerY = centerY
@@ -99,78 +96,81 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    override fun drawAboveDataSet(
-        canvas: Canvas,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState
-    ) {
-        val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
+    override fun drawAboveDataSet(context: ChartDrawContext) = with(context) {
+        val labelCount = getDrawLabelCount(this, bounds.height().toInt())
 
-        val labels = getLabels(dataSetModel, drawLabelCount)
-        val labelHeight = label?.getHeight(includeMargin = false) ?: 0f
-        val labelTextHeight = label?.getHeight(includePadding = false, includeMargin = false) ?: 0f
-        val axisStep = bounds.height() / drawLabelCount
+        val labels = getLabels(context.dataSetModel, labelCount)
+        val labelHeight = label?.getHeight(includeMargin = false, context = this).orZero
+        val labelTextHeight = label?.getHeight(
+            includePadding = false,
+            includeMargin = false,
+            context = this,
+        ).orZero
 
         val tickLeftX =
-            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right - (axisThickness + tickLength) else bounds.left
+            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right - (axisThickness + tickLength)
+            else bounds.left
 
         val tickRightX =
-            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right else bounds.left + axisThickness + tickLength
+            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right
+            else bounds.left + axisThickness + tickLength
 
         val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
 
         var tickCenterY: Float
         val textPosition = verticalLabelPosition.textPosition
 
-        for (index in 0..drawLabelCount) {
-            tickCenterY = bounds.bottom - (axisStep * index) + (axisThickness / 2)
+        for (index in 0..labelCount) {
+            tickCenterY = bounds.bottom - ((bounds.height() / labelCount) * index) + tickThickness.half
 
             tick?.setParentBounds(bounds)
             tick?.drawHorizontal(
-                canvas = canvas,
+                context = context,
                 left = tickLeftX,
                 right = tickRightX,
                 tickCenterY
             )
 
             label?.let { label ->
-                val labelTop = label.getTextTopPosition(textPosition, tickCenterY, labelTextHeight)
+                val labelTop = label
+                    .getTextTopPosition(this, textPosition, tickCenterY, labelTextHeight)
                 val labelText = labels.getOrNull(index) ?: return@let
-                    if (
-                        (horizontalLabelPosition == Inside) &&
-                        (isNotInRestrictedBounds(
-                            labelX,
-                            labelTop - labelHeight.half,
-                            labelX + 1,
-                            labelTop + labelHeight.half
-                        )) || horizontalLabelPosition == Outside
-                    ) {
-                        label.background?.setParentBounds(bounds)
-                        label.drawText(
-                            canvas,
-                            labelText,
-                            labelX,
-                            tickCenterY,
-                            horizontalPosition = textHorizontalPosition,
-                            verticalPosition = verticalLabelPosition.textPosition,
-                        )
-                    }
+                if (
+                    (horizontalLabelPosition == Inside) &&
+                    (isNotInRestrictedBounds(
+                        left = labelX,
+                        top = labelTop - labelHeight.half,
+                        right = labelX + 1,
+                        bottom = labelTop + labelHeight.half
+                    )) || horizontalLabelPosition == Outside
+                ) {
+                    label.background?.setParentBounds(bounds)
+                    label.drawText(
+                        context = context,
+                        text = labelText,
+                        textX = labelX,
+                        textY = tickCenterY,
+                        horizontalPosition = textHorizontalPosition,
+                        verticalPosition = verticalLabelPosition.textPosition,
+                    )
+                }
             }
         }
         axis?.setParentBounds(bounds)
         axis?.drawVertical(
-            canvas = canvas,
+            context = context,
             top = bounds.top,
             bottom = bounds.bottom + axisThickness,
-            centerX = if (isLeft) bounds.right - axisThickness.half else bounds.left + axisThickness.half
+            centerX =
+            if (isLeft) bounds.right - axisThickness.half
+            else bounds.left + axisThickness.half
         )
-        label?.clearLayoutCache()
+        label?.clearLayoutCache() ?: Unit
     }
 
-    private fun getDrawLabelCount(availableHeight: Int): Int {
+    private fun getDrawLabelCount(context: MeasureContext, availableHeight: Int): Int {
         label?.let { label ->
-            val height = label.getHeight()
+            val height = label.getHeight(context = context)
             var result = 0f
             var addition: Float
             for (i in 0 until maxLabelCount) {
@@ -195,46 +195,49 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         return labels
     }
 
-    override fun getVerticalInsets(
-        outDimensions: MutableDimensions,
-        dataSetModel: DataSetModel
-    ): Dimensions = outDimensions
-
     override fun getHorizontalInsets(
-        outDimensions: MutableDimensions,
+        context: MeasureContext,
         availableHeight: Float,
-        dataSetModel: DataSetModel
-    ): Dimensions {
-        val labels = getLabels(dataSetModel, getDrawLabelCount(availableHeight.toInt()))
-        if (labels.isEmpty()) return outDimensions.set(0f)
+        dataSetModel: DataSetModel,
+        outInsets: Insets
+    ) = with(context) {
+        val labels = getLabels(
+            dataSetModel = dataSetModel,
+            maxLabelCount = getDrawLabelCount(this, availableHeight.toInt()),
+        )
+        if (labels.isEmpty()) {
+            outInsets.set(0f)
+            return@with
+        }
 
         fun getHalfLabelHeight(text: String): Float =
-            label?.getHeight(text)?.half.orZero
+            label?.getHeight(context = context, text = text)?.half.orZero
 
-        return outDimensions.set(
-            start = if (position.isStart) getDesiredWidth(labels) else 0f,
+        outInsets.set(
+            start = if (position.isStart) getDesiredWidth(context, labels) else 0f,
             top = getHalfLabelHeight(labels.first()) - axisThickness,
-            end = if (position.isEnd) getDesiredWidth(labels) else 0f,
+            end = if (position.isEnd) getDesiredWidth(context, labels) else 0f,
             bottom = getHalfLabelHeight(labels.last())
         )
     }
 
-    override fun getDesiredHeight(): Int = 0
+    override fun getDesiredHeight(context: MeasureContext): Int = 0
 
     /**
      * Calculates a width of this [VerticalAxis] by calculating:
      * — Widest label width from passed [labels],
      * — [axisThickness],
-     * — [tickLength].
+     * — [tickLengthDp].
      * @return Width of this [VerticalAxis] that should be enough to fit its contents
      * in [drawBehindDataSet] and [drawAboveDataSet] functions.
      */
     override fun getDesiredWidth(
+        context: MeasureContext,
         labels: List<String>,
-    ): Float {
+    ): Float = with(context) {
         val maxLabelAndTickWidth = when (horizontalLabelPosition) {
             Outside -> label?.let { label ->
-                labels.maxOf(label::getWidth)
+                labels.maxOf { label.getWidth(this, it) }
             }.orZero + tickLength
             Inside -> 0f
         }
@@ -255,7 +258,8 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
 fun startAxis(
     label: TextComponent? = DEF_LABEL_COMPONENT,
     axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: TickComponent? = DEF_TICK_COMPONENT,
+    tick: LineComponent? = DEF_TICK_COMPONENT,
+    tickLengthDp: Float = Dimens.AXIS_TICK_LENGTH,
     guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
 ): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
@@ -265,12 +269,14 @@ fun startAxis(
     tick = tick,
     guideline = guideline,
     valueFormatter = valueFormatter,
+    tickLengthDp = tickLengthDp,
 )
 
 fun endAxis(
     label: TextComponent? = DEF_LABEL_COMPONENT,
     axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: TickComponent? = DEF_TICK_COMPONENT,
+    tick: LineComponent? = DEF_TICK_COMPONENT,
+    tickLengthDp: Float = Dimens.AXIS_TICK_LENGTH,
     guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
 ): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
@@ -278,6 +284,7 @@ fun endAxis(
     label = label,
     axis = axis,
     tick = tick,
+    tickLengthDp = tickLengthDp,
     guideline = guideline,
     valueFormatter = valueFormatter,
 )

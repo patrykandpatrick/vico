@@ -43,19 +43,15 @@ import pl.patrykgoworowski.vico.compose.component.shapeComponent
 import pl.patrykgoworowski.vico.compose.dataset.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
 import pl.patrykgoworowski.vico.compose.dataset.line.lineDataSet
-import pl.patrykgoworowski.vico.compose.extension.pixelSize
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.core.component.shape.LineComponent
-import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
-import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
-import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 import pl.patrykgoworowski.vico.core.component.shape.DashedShape
+import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
 
 private val chartModifier = Modifier.height(100.dp)
@@ -98,7 +94,7 @@ fun ColumnChartCard() = MainTheme {
                 tick = null,
                 guideline = LineComponent(
                     colors.primary.copy(alpha = 0.1f).toArgb(),
-                    1.dp.pixels,
+                    1.dp.value,
                 ),
             ),
             model = @Suppress("MagicNumber") entryModelOf(1, 2, 3, 2)
@@ -118,9 +114,9 @@ fun LineChartCard() = MainTheme {
                 point = null,
                 lineColor = colors.primary,
                 lineBackgroundShader = DynamicShaders.fromComponent(
-                    componentSize = 4.dp.pixels,
+                    componentSize = 4.dp.value,
                     component = shapeComponent(shape = pillShape, color = colors.primary).apply {
-                        setMargins(0.5.dp.pixels)
+                        setMargins(0.5.dp.value)
                     },
                 ),
                 minX = 0f,
@@ -130,10 +126,10 @@ fun LineChartCard() = MainTheme {
                 -1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1
             ),
             startAxis = startAxis(
-                label = TextComponent(
-                    color = colors.onSurface.toArgb(),
-                    textSize = 10.sp.pixelSize(),
-                    background = ShapeComponent(shape = rectShape, color = Color.LightGray.toArgb())
+                label = textComponent(
+                    color = colors.onSurface,
+                    textSize = 10.sp,
+                    background = shapeComponent(shape = rectShape, color = Color.LightGray)
                 ).apply {
                     setPadding(horizontal = 4.dp, vertical = 2.dp)
                 },
@@ -141,11 +137,11 @@ fun LineChartCard() = MainTheme {
                 tick = null,
                 guideline = LineComponent(
                     color = Color.LightGray.toArgb(),
-                    thickness = 1.dp.pixels,
+                    thicknessDp = 1.dp.value,
                     shape = DashedShape(
                         shape = pillShape,
-                        dashLength = 2.dp.pixels,
-                        gapLength = 4.dp.pixels,
+                        dashLengthDp = 2.dp.value,
+                        gapLengthDp = 4.dp.value,
                     ),
                 ),
             ).apply {

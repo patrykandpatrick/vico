@@ -18,7 +18,6 @@
 
 package pl.patrykgoworowski.vico.compose.extension
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
@@ -27,15 +26,14 @@ import pl.patrykgoworowski.vico.compose.component.ChartShape
 import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 
-@Composable
 fun <T : ChartShape> ShapeComponent<T>.setShadow(
     radius: Dp,
     dx: Dp = 0.dp,
     dy: Dp = 0.dp,
     color: Color = Color(DEF_SHADOW_COLOR),
 ) = setShadow(
-    radius = radius.pixels,
-    dx = dx.pixels,
-    dy = dy.pixels,
+    radius = radius.value,
+    dx = dx.value,
+    dy = dy.value,
     color = color.toArgb(),
 )

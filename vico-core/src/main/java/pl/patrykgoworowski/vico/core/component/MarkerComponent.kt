@@ -16,22 +16,21 @@
 
 package pl.patrykgoworowski.vico.core.component
 
-import android.graphics.Canvas
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
+import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.dimensions.Dimensions
-import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
+import pl.patrykgoworowski.vico.core.dataset.insets.Insets
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.extension.averageOf
 import pl.patrykgoworowski.vico.core.extension.half
-import pl.patrykgoworowski.vico.core.extension.orZero
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.marker.MarkerLabelFormatter
-import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
 
 public open class MarkerComponent(
     private val label: TextComponent,
@@ -44,71 +43,76 @@ public open class MarkerComponent(
 
     private val markerTempBounds = RectF()
 
-    private val markerHeight: Float
-        get() = label.getHeight() + shape.tickSize.orZero
+    private val MeasureContext.markerHeight: Float
+        get() = label.getHeight(this) + shape.tickSize.pixels
 
     public var indicatorSize: Float = 0f
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
 
     override fun draw(
-        canvas: Canvas,
+        context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
-    ) {
+    ) = with(context) {
         setParentBounds(bounds)
-        applyShader(bounds)
-        drawGuideline(canvas, bounds, markedEntries)
+        applyShader(context, bounds)
+        drawGuideline(context, bounds, markedEntries)
+        val halfIndicatorSize = indicatorSize.half.pixels
 
         markedEntries.forEachIndexed { _, model ->
             onApplyEntryColor?.invoke(model.color)
             indicator.draw(
-                canvas,
-                model.location.x - indicatorSize.half,
-                model.location.y - indicatorSize.half,
-                model.location.x + indicatorSize.half,
-                model.location.y + indicatorSize.half,
+                context,
+                model.location.x - halfIndicatorSize,
+                model.location.y - halfIndicatorSize,
+                model.location.x + halfIndicatorSize,
+                model.location.y + halfIndicatorSize,
             )
         }
-        drawLabel(canvas, bounds, markedEntries)
+        drawLabel(context, bounds, markedEntries)
     }
 
     private fun drawLabel(
-        canvas: Canvas,
+        context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
-    ) {
+    ) = with(context) {
         val text = labelFormatter.getLabel(markedEntries)
         val entryX = markedEntries.averageOf { it.location.x }
-        val x = overrideXPositionToFit(entryX, bounds, text)
+        val x = overrideXPositionToFit(context, entryX, bounds, text)
 
         label.drawText(
-            canvas = canvas,
+            context = context,
             text = text,
             textX = x,
-            textY = bounds.top + label.allLinesHeight.half + label.padding.top - markerHeight,
-        ) { textCanvas, left, top, right, bottom ->
+            textY = bounds.top +
+                    label.allLinesHeight.half +
+                    label.padding.topDp.pixels -
+                    context.markerHeight,
+        ) { textContext, left, top, right, bottom ->
             markerTempBounds.set(left, top, right, bottom)
-            drawMarkerBackground(textCanvas, markerTempBounds, bounds, entryX)
+            drawMarkerBackground(textContext, markerTempBounds, bounds, entryX)
         }
     }
 
     private fun drawMarkerBackground(
-        canvas: Canvas,
+        context: DrawContext,
         bounds: RectF,
         contentBounds: RectF,
         entryX: Float,
     ) {
         path.reset()
-        shape.drawMarker(canvas, paint, path, bounds, contentBounds, entryX)
+        shape.drawMarker(context, paint, path, bounds, contentBounds, entryX)
     }
 
     private fun overrideXPositionToFit(
+        context: MeasureContext,
         xPosition: Float,
         bounds: RectF,
         text: CharSequence,
     ): Float {
-        val halfOfTextWidth = label.getWidth(text).half
+        val halfOfTextWidth = label.getWidth(context, text).half
         return when {
             xPosition - halfOfTextWidth < bounds.left -> bounds.left + halfOfTextWidth
             xPosition + halfOfTextWidth > bounds.right -> bounds.right - halfOfTextWidth
@@ -117,7 +121,7 @@ public open class MarkerComponent(
     }
 
     private fun drawGuideline(
-        canvas: Canvas,
+        context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
     ) {
@@ -127,7 +131,7 @@ public open class MarkerComponent(
             .toSet()
             .forEach { x ->
                 guideline.drawVertical(
-                    canvas,
+                    context,
                     bounds.top,
                     bounds.bottom,
                     x,
@@ -136,16 +140,10 @@ public open class MarkerComponent(
     }
 
     override fun getVerticalInsets(
-        outDimensions: MutableDimensions,
-        dataSetModel: DataSetModel
-    ): Dimensions =
-        outDimensions.apply {
-            top = markerHeight
-        }
-
-    override fun getHorizontalInsets(
-        outDimensions: MutableDimensions,
-        availableHeight: Float,
-        dataSetModel: DataSetModel
-    ): Dimensions = outDimensions
+        context: MeasureContext,
+        dataSetModel: DataSetModel,
+        outInsets: Insets
+    ) = with(context) {
+        outInsets.top = markerHeight
+    }
 }

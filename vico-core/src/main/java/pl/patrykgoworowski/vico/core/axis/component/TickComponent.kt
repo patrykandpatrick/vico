@@ -23,8 +23,7 @@ import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 
 open class TickComponent(
     color: Int,
-    thickness: Float,
-    var length: Float = 2 * thickness,
+    thicknessDp: Float,
     shape: Shape = rectShape,
     dynamicShader: DynamicShader? = null
-) : LineComponent(color, thickness, shape, dynamicShader)
+) : LineComponent(color, thicknessDp, shape, dynamicShader)

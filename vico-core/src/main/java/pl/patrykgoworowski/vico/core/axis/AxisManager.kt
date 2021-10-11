@@ -16,14 +16,12 @@
 
 package pl.patrykgoworowski.vico.core.axis
 
-import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.collections.cacheInList
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
-import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.dimensions.DataSetInsetter
-import pl.patrykgoworowski.vico.core.dimensions.Dimensions
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
+import pl.patrykgoworowski.vico.core.dataset.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
 
 public open class AxisManager {
@@ -34,15 +32,13 @@ public open class AxisManager {
     private val hasBottomAxis: Boolean
         get() = bottomAxis != null
 
-    private val leftAxis: AxisRenderer<*>?
-        get() = if (isLTR) startAxis else endAxis
+    public val MeasureContext.leftAxis: AxisRenderer<*>?
+        get() = if (isLtr) startAxis else endAxis
 
-    private val rightAxis: AxisRenderer<*>?
-        get() = if (isLTR) endAxis else startAxis
+    public val MeasureContext.rightAxis: AxisRenderer<*>?
+        get() = if (isLtr) endAxis else startAxis
 
     internal val axisCache = ArrayList<AxisRenderer<*>>(MAX_AXIS_COUNT)
-
-    internal open var isLTR: Boolean = true
 
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by cacheInList()
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by cacheInList()
@@ -56,140 +52,143 @@ public open class AxisManager {
         bottomAxis?.let(destination::add)
     }
 
+    public fun setAxes(
+        startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = this.startAxis,
+        topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = this.topAxis,
+        endAxis: AxisRenderer<AxisPosition.Vertical.End>? = this.endAxis,
+        bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = this.bottomAxis,
+    ) {
+        this.startAxis = startAxis
+        this.topAxis = topAxis
+        this.endAxis = endAxis
+        this.bottomAxis = bottomAxis
+    }
+
     fun setAxesBounds(
+        measureContext: MeasureContext,
         contentBounds: RectF,
         dataSetBounds: RectF,
-        axesDimensions: Dimensions,
+        insets: Insets,
     ) {
-        val horizontalAxisLeftDrawBound = dataSetBounds.left +
-                (leftAxis?.axisThickness?.half ?: -axesDimensions.getLeft(isLTR))
-
-        val horizontalAxisRightDrawBound = dataSetBounds.right -
-                (rightAxis?.axisThickness?.half ?: -axesDimensions.getRight(isLTR))
-
         startAxis?.setStartAxisBounds(
+            context = measureContext,
             contentBounds = contentBounds,
             dataSetBounds = dataSetBounds,
-            axesDimensions = axesDimensions,
-            horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
-            horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
+            insets = insets,
         )
         topAxis?.setTopAxisBounds(
+            context = measureContext,
             contentBounds = contentBounds,
             dataSetBounds = dataSetBounds,
-            axesDimensions = axesDimensions,
-            horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
-            horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
+            insets = insets,
         )
         endAxis?.setEndAxisBounds(
+            context = measureContext,
             contentBounds = contentBounds,
             dataSetBounds = dataSetBounds,
-            axesDimensions = axesDimensions,
-            horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
-            horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
+            insets = insets,
         )
         bottomAxis?.setBottomAxisBounds(
+            context = measureContext,
             contentBounds = contentBounds,
             dataSetBounds = dataSetBounds,
-            axesDimensions = axesDimensions,
-            horizontalAxisLeftDrawBound = horizontalAxisLeftDrawBound,
-            horizontalAxisRightDrawBound = horizontalAxisRightDrawBound,
+            insets = insets,
         )
         setRestrictedBounds()
     }
 
     private fun AxisRenderer<AxisPosition.Vertical.Start>.setStartAxisBounds(
+        context: MeasureContext,
         contentBounds: RectF,
         dataSetBounds: RectF,
-        axesDimensions: Dimensions,
-        horizontalAxisLeftDrawBound: Float,
-        horizontalAxisRightDrawBound: Float,
-    ) {
+        insets: Insets,
+    ) = with(context) {
         setBounds(
-            left = if (isLTR) contentBounds.left else contentBounds.right - axesDimensions.end,
-            top = contentBounds.top + axesDimensions.top,
-            right = if (isLTR) {
-                contentBounds.left + axesDimensions.start + axisThickness.half
+            left = if (isLtr) {
+                contentBounds.left
+            } else {
+                contentBounds.right - insets.end
+            },
+            top = contentBounds.top + insets.top,
+            right = if (isLtr) {
+                contentBounds.left + insets.start + axisThickness.half
             } else {
                 contentBounds.right
             },
-            bottom = contentBounds.bottom - axesDimensions.bottom
+            bottom = contentBounds.bottom - insets.bottom
         )
-        this.dataSetBounds.set(
-            horizontalAxisLeftDrawBound,
-            dataSetBounds.top + maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
-            horizontalAxisRightDrawBound,
-            dataSetBounds.bottom + if (hasBottomAxis) 0f else maxAnyAxisLineThickness
+        this@setStartAxisBounds.dataSetBounds.set(
+            getHorizontalAxisLeftDrawBound(context, dataSetBounds, insets),
+            dataSetBounds.top + context.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
+            getHorizontalAxisRightDrawBound(context, dataSetBounds, insets),
+            dataSetBounds.bottom + if (hasBottomAxis) 0f else context.maxAnyAxisLineThickness
         )
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Top>.setTopAxisBounds(
+        context: MeasureContext,
         contentBounds: RectF,
         dataSetBounds: RectF,
-        axesDimensions: Dimensions,
-        horizontalAxisLeftDrawBound: Float,
-        horizontalAxisRightDrawBound: Float,
+        insets: Insets,
     ) {
         setBounds(
-            left = contentBounds.left + axesDimensions.start,
+            left = contentBounds.left + insets.start,
             top = contentBounds.top,
-            right = contentBounds.right - axesDimensions.end,
-            bottom = contentBounds.top + axesDimensions.top
+            right = contentBounds.right - insets.end,
+            bottom = contentBounds.top + insets.top
         )
         this.dataSetBounds.set(
-            horizontalAxisLeftDrawBound,
+            getHorizontalAxisLeftDrawBound(context, dataSetBounds, insets),
             dataSetBounds.top,
-            horizontalAxisRightDrawBound,
+            getHorizontalAxisRightDrawBound(context, dataSetBounds, insets),
             dataSetBounds.bottom
         )
     }
 
     private fun AxisRenderer<AxisPosition.Vertical.End>.setEndAxisBounds(
+        context: MeasureContext,
         contentBounds: RectF,
         dataSetBounds: RectF,
-        axesDimensions: Dimensions,
-        horizontalAxisLeftDrawBound: Float,
-        horizontalAxisRightDrawBound: Float,
-    ) {
+        insets: Insets,
+    ) = with(context) {
         setBounds(
-            left = if (isLTR) {
-                contentBounds.right - (axesDimensions.end + axisThickness.half)
+            left = if (isLtr) {
+                contentBounds.right - (insets.end + axisThickness.half)
             } else {
                 contentBounds.left
             },
-            top = contentBounds.top + axesDimensions.top,
-            right = if (isLTR) {
+            top = contentBounds.top + insets.top,
+            right = if (isLtr) {
                 contentBounds.right
             } else {
-                contentBounds.left + axesDimensions.end
+                contentBounds.left + insets.end
             },
-            bottom = contentBounds.bottom - axesDimensions.bottom
+            bottom = contentBounds.bottom - insets.bottom
         )
-        this.dataSetBounds.set(
-            horizontalAxisLeftDrawBound,
-            dataSetBounds.top + maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
-            horizontalAxisRightDrawBound,
-            dataSetBounds.bottom + if (hasBottomAxis) 0f else maxAnyAxisLineThickness
+        this@setEndAxisBounds.dataSetBounds.set(
+            getHorizontalAxisLeftDrawBound(context, dataSetBounds, insets),
+            dataSetBounds.top + context.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
+            getHorizontalAxisRightDrawBound(context, dataSetBounds, insets),
+            dataSetBounds.bottom + if (hasBottomAxis) 0f else context.maxAnyAxisLineThickness
         )
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
+        context: MeasureContext,
         contentBounds: RectF,
         dataSetBounds: RectF,
-        axesDimensions: Dimensions,
-        horizontalAxisLeftDrawBound: Float,
-        horizontalAxisRightDrawBound: Float,
-    ) {
+        insets: Insets,
+    ) = with(context) {
         setBounds(
-            left = contentBounds.left + axesDimensions.start,
-            top = contentBounds.bottom - axesDimensions.bottom,
-            right = contentBounds.right - axesDimensions.end,
+            left = contentBounds.left + insets.start,
+            top = contentBounds.bottom - insets.bottom,
+            right = contentBounds.right - insets.end,
             bottom = contentBounds.bottom
         )
-        this.dataSetBounds.set(
-            horizontalAxisLeftDrawBound,
+        this@setBottomAxisBounds.dataSetBounds.set(
+            getHorizontalAxisLeftDrawBound(context, dataSetBounds, insets),
             dataSetBounds.top + if (hasTopAxis) axisThickness else 0f,
-            horizontalAxisRightDrawBound,
+            getHorizontalAxisRightDrawBound(context, dataSetBounds, insets),
             dataSetBounds.bottom
         )
     }
@@ -201,39 +200,35 @@ public open class AxisManager {
         bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
     }
 
-    fun drawBehindDataSet(
-        canvas: Canvas,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-    ) {
+    fun drawBehindDataSet(context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawBehindDataSet(
-                canvas,
-                dataSetModel,
-                segmentProperties,
-                rendererViewState
-            )
+            axis.drawBehindDataSet(context)
         }
     }
 
-    fun drawAboveDataSet(
-        canvas: Canvas,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-    ) {
+    fun drawAboveDataSet(context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawAboveDataSet(
-                canvas,
-                dataSetModel,
-                segmentProperties,
-                rendererViewState
-            )
+            axis.drawAboveDataSet(context)
         }
     }
 
     companion object {
         private const val MAX_AXIS_COUNT = 4
+
+        private fun AxisManager.getHorizontalAxisLeftDrawBound(
+            context: MeasureContext,
+            dataSetBounds: RectF,
+            insets: Insets,
+        ) = with(context) {
+            dataSetBounds.left + (leftAxis?.run { axisThickness.half } ?: -insets.getLeft(isLtr))
+        }
+
+        private fun AxisManager.getHorizontalAxisRightDrawBound(
+            context: MeasureContext,
+            dataSetBounds: RectF,
+            insets: Insets,
+        ) = with(context) {
+            dataSetBounds.right - (rightAxis?.run { axisThickness.half } ?: -insets.getRight(isLtr))
+        }
     }
 }

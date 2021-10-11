@@ -21,7 +21,6 @@ package pl.patrykgoworowski.vico.compose.component.dimension
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
 
 @Composable
@@ -31,7 +30,7 @@ fun Padding.setPadding(
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
 ) {
-    padding.set(start.pixels, top.pixels, end.pixels, bottom.pixels)
+    padding.set(start.value, top.value, end.value, bottom.value)
 }
 
 @Composable
@@ -39,15 +38,12 @@ fun Padding.setPadding(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
 ) {
-    val horizontalPx = horizontal.pixels
-    val verticalPx = vertical.pixels
-    padding.set(horizontalPx, verticalPx, horizontalPx, verticalPx)
+    padding.set(horizontal.value, vertical.value, horizontal.value, vertical.value)
 }
 
 @Composable
 fun Padding.setPadding(
     all: Dp = 0.dp,
 ) {
-    val allPx = all.pixels
-    padding.set(allPx, allPx, allPx, allPx)
+    padding.set(all.value, all.value, all.value, all.value)
 }

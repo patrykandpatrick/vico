@@ -20,7 +20,6 @@ import android.text.TextUtils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.TextUnit
 import pl.patrykgoworowski.vico.compose.extension.pixelSize
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
@@ -37,7 +36,7 @@ fun textComponent(
     lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
 ): TextComponent = TextComponent(
     color = color.toArgb(),
-    textSize = textSize.pixelSize(LocalDensity.current),
+    textSizeSp = textSize.pixelSize(),
     ellipsize = ellipsize,
     lineCount = lineCount,
     background = background,

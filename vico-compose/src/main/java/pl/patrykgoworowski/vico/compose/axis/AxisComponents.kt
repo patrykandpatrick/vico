@@ -23,15 +23,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import pl.patrykgoworowski.vico.compose.component.shape.chartShape
 import pl.patrykgoworowski.vico.compose.component.shape.shader.StaticShader
 import pl.patrykgoworowski.vico.compose.extension.pixelSize
-import pl.patrykgoworowski.vico.compose.extension.pixels
-import pl.patrykgoworowski.vico.compose.component.shape.chartShape
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
-import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
@@ -53,15 +50,15 @@ fun axisLabelComponent(
     horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
 ): TextComponent = TextComponent(
     color = color.toArgb(),
-    textSize = textSize.pixelSize(LocalDensity.current),
+    textSizeSp = textSize.pixelSize(),
     ellipsize = ellipsize,
     lineCount = lineCount,
     background = background,
     padding = MutableDimensions(
-        start = horizontalPadding.pixels,
-        top = verticalPadding.pixels,
-        end = horizontalPadding.pixels,
-        bottom = verticalPadding.pixels,
+        startDp = horizontalPadding.value,
+        topDp = verticalPadding.value,
+        endDp = horizontalPadding.value,
+        bottomDp = verticalPadding.value,
     )
 )
 
@@ -69,12 +66,12 @@ fun axisLabelComponent(
 fun axisLineComponent(
     color: Color = currentChartStyle.axis.axisLineColor,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    shape: ChartShape = currentChartStyle.axis.axisLineShape(),
+    shape: ChartShape = currentChartStyle.axis.axisLineShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
     shape = shape,
     margins = margins,
@@ -89,7 +86,7 @@ fun axisLineComponent(
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     dynamicShader = brush?.let(::StaticShader),
     shape = shape.chartShape(),
     margins = margins,
@@ -99,30 +96,26 @@ fun axisLineComponent(
 fun axisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    length: Dp = currentChartStyle.axis.axisTickLength,
     dynamicShader: DynamicShader? = null,
-    shape: ChartShape = currentChartStyle.axis.axisTickShape(),
-) = TickComponent(
+    shape: ChartShape = currentChartStyle.axis.axisTickShape,
+) = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
     shape = shape,
-    length = length.pixels,
 )
 
 @Composable
 fun axisTickComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    length: Dp = currentChartStyle.axis.axisTickLength,
     brush: Brush? = null,
     shape: Shape = RectangleShape,
-) = TickComponent(
+) = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     dynamicShader = brush?.let(::StaticShader),
     shape = shape.chartShape(),
-    length = length.pixels,
 )
 
 @Composable
@@ -130,11 +123,11 @@ fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
     thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
     dynamicShader: DynamicShader? = null,
-    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape(),
+    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
     shape = shape,
     margins = margins,

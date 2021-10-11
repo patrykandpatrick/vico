@@ -24,6 +24,7 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShad
 import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 fun DynamicShaders.fromComponent(
     component: Component,
@@ -48,7 +49,7 @@ public fun DynamicShaders.horizontalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(bounds: RectF): Shader =
+    override fun createShader(context: DrawContext, bounds: RectF): Shader =
         LinearGradient(
             bounds.left,
             bounds.top,
@@ -69,7 +70,7 @@ public fun DynamicShaders.verticalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(bounds: RectF): Shader =
+    override fun createShader(context: DrawContext, bounds: RectF): Shader =
         LinearGradient(
             bounds.left,
             bounds.top,

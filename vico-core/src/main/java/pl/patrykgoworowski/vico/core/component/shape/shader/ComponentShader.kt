@@ -22,6 +22,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.component.Component
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.extension.half
 
 class ComponentShader(
@@ -32,33 +33,33 @@ class ComponentShader(
     private val tileYMode: Shader.TileMode = tileXMode,
 ) : CacheableDynamicShader() {
 
-    override fun createShader(bounds: RectF): Shader {
-        val size = componentSize.toInt() * if (checkeredArrangement) 2 else 1
+    override fun createShader(context: DrawContext, bounds: RectF): Shader = with(context) {
+        val size = componentSize.pixels.toInt() * if (checkeredArrangement) 2 else 1
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
 
         val canvas = Canvas(bitmap)
         if (checkeredArrangement) {
-            val halfSize = componentSize.half
+            val halfSize = componentSize.pixels.half
             canvas.clipRect(0f, 0f, size.toFloat(), size.toFloat())
             with(component) {
-                draw(canvas, -halfSize, -halfSize, componentSize)
-                draw(canvas, -halfSize, size - halfSize, componentSize)
-                draw(canvas, size - halfSize, -halfSize, componentSize)
-                draw(canvas, size - halfSize, size - halfSize, componentSize)
-                draw(canvas, halfSize, halfSize, componentSize)
+                draw(context, -halfSize, -halfSize, componentSize)
+                draw(context, -halfSize, size - halfSize, componentSize)
+                draw(context, size - halfSize, -halfSize, componentSize)
+                draw(context, size - halfSize, size - halfSize, componentSize)
+                draw(context, halfSize, halfSize, componentSize)
             }
         } else {
-            component.draw(canvas, 0f, 0f, componentSize, componentSize)
+            component.draw(context, 0f, 0f, componentSize, componentSize)
         }
         return BitmapShader(bitmap, tileXMode, tileYMode)
     }
 
     private fun Component.draw(
-        canvas: Canvas,
+        context: DrawContext,
         x: Float,
         y: Float,
         size: Float
     ) {
-        draw(canvas, x, y, x + size, y + size)
+        draw(context, x, y, x + size, y + size)
     }
 }

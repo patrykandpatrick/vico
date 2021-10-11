@@ -21,14 +21,13 @@ import android.graphics.Color
 import android.text.TextUtils
 import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.extension.getThemeColor
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.MarkerComponent
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.extension.copyColor
-import pl.patrykgoworowski.vico.core.extension.dp
-import pl.patrykgoworowski.vico.core.extension.sp
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
@@ -38,12 +37,12 @@ fun getMarkerComponent(context: Context): Marker {
 
     val label = TextComponent(
         color = context.getThemeColor(R.attr.colorOnSurface),
-        textSize = 12f.sp,
+        textSizeSp = 12f,
         ellipsize = TextUtils.TruncateAt.END,
         lineCount = 1,
         background = null
     ).apply {
-        setPadding(8f.dp, 4f.dp)
+        setPadding(8f, 4f)
     }
 
     val colorSurface = context.getThemeColor(R.attr.colorSurface)
@@ -56,18 +55,18 @@ fun getMarkerComponent(context: Context): Marker {
         inner = OverlayingComponent(
             outer = indicatorCenter,
             inner = indicatorInner,
-            innerPaddingAll = 5.dp
+            innerPaddingAllDp = 5f,
         ),
-        innerPaddingAll = 10.dp,
+        innerPaddingAllDp = 10f,
     )
 
     val guideline = LineComponent(
         color = context.getThemeColor(R.attr.colorOnSurface).copyColor(alpha = 48),
-        thickness = 2f.dp,
+        thicknessDp = 2f,
         shape = DashedShape(
             shape = pillShape,
-            dashLength = 8f.dp,
-            gapLength = 4f.dp
+            dashLengthDp = 8f,
+            gapLengthDp = 4f,
         )
     )
 
@@ -77,16 +76,16 @@ fun getMarkerComponent(context: Context): Marker {
         guideline = guideline,
         shape = MarkerCorneredShape(
             corneredShape = pillShape,
-            tickSize = 6.dp
+            tickSize = 6f,
         ),
         markerBackgroundColor = colorSurface,
     ).apply {
         onApplyEntryColor = { color ->
             indicatorCenter.color = color
-            indicatorCenter.setShadow(12.dp, color = color)
+            indicatorCenter.setShadow(12f, color = color)
             indicatorOuter.color = color.copyColor(alpha = 32)
         }
-        indicatorSize = 36.dp
-        setShadow(4f.dp, dy = 2f.dp)
+        indicatorSize = Dimens.MARKER_INDICATOR_SIZE
+        setShadow(4f, dy = 2f)
     }
 }

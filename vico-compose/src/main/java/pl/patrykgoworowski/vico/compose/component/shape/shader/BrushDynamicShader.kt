@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
 import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 public class BrushDynamicShader(
     private val shader: (bounds: RectF) -> Brush
@@ -29,7 +30,7 @@ public class BrushDynamicShader(
 
     private val tempPaint = Paint()
 
-    override fun createShader(bounds: RectF): android.graphics.Shader {
+    override fun createShader(context: DrawContext, bounds: RectF): android.graphics.Shader {
         shader(bounds)
             .applyTo(
                 size = Size(bounds.width(), bounds.height()),
@@ -46,7 +47,7 @@ public fun brushShader(
 
     private val tempPaint = Paint()
 
-    override fun createShader(bounds: RectF): android.graphics.Shader {
+    override fun createShader(context: DrawContext, bounds: RectF): android.graphics.Shader {
         shader(bounds)
             .applyTo(
                 size = Size(bounds.width(), bounds.height()),

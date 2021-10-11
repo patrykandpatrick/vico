@@ -17,34 +17,31 @@
 package pl.patrykgoworowski.vico.core
 
 import android.graphics.Color
-import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.extension.copyColor
-import pl.patrykgoworowski.vico.core.extension.dp
-import pl.patrykgoworowski.vico.core.extension.sp
 
 val DEF_LABEL_COMPONENT: TextComponent
     get() = TextComponent()
         .apply {
-            setPadding(start = 4.dp, top = 2.dp, end = 4.dp, bottom = 2.dp)
+            setPadding(start = 4f, top = 2f, end = 4f, bottom = 2f)
         }
 
 val DEF_AXIS_COMPONENT: LineComponent
-    get() = LineComponent(Color.BLACK.copyColor(alpha = 128), 2.dp)
+    get() = LineComponent(Color.BLACK.copyColor(alpha = 128), 2f)
 
-val DEF_TICK_COMPONENT: TickComponent
-    get() = TickComponent(Color.BLACK.copyColor(alpha = 128), 2.dp)
+val DEF_TICK_COMPONENT: LineComponent
+    get() = LineComponent(Color.BLACK.copyColor(alpha = 128), 2f)
 
 val DEF_GUIDELINE_COMPONENT: LineComponent
-    get() = LineComponent(Color.BLACK.copyColor(alpha = 64), 1.dp)
+    get() = LineComponent(Color.BLACK.copyColor(alpha = 64), 1f)
 
 const val DEF_LABEL_LINE_COUNT = 1
 const val DEF_LABEL_COUNT = 99
-val DEF_LABEL_SIZE = 12.sp
-val DEF_LABEL_SPACING = 16.dp
+const val DEF_LABEL_SIZE = 12f
+const val DEF_LABEL_SPACING = 16f
 
-val DEF_MARKER_TICK_SIZE = 6.dp
+const val DEF_MARKER_TICK_SIZE = 6f
 
 const val MAX_ZOOM = 10f
 const val MIN_ZOOM = 0.1f
@@ -58,12 +55,12 @@ object Dimens {
     const val AXIS_LABEL_SIZE = 12
 
     const val AXIS_GUIDELINE_WIDTH = 1
-    const val AXIS_LINE_WIDTH = 2
-    const val AXIS_TICK_LENGTH = 4
+    const val AXIS_LINE_WIDTH = 1
+    const val AXIS_TICK_LENGTH = 4f
 
     const val COLUMN_WIDTH = 8
     const val COLUMN_INSIDE_SPACING = 8
-    const val COLUMN_OUTSIDE_SPACING = 12
+    const val COLUMN_OUTSIDE_SPACING = 32
     const val COLUMN_ROUNDNESS_PERCENT = 40
 
     const val CUBIC_STRENGTH = 1f
@@ -73,7 +70,9 @@ object Dimens {
 
     const val LINE_WIDTH = 2
 
-    const val POINT_SIZE = 6
+    const val MARKER_INDICATOR_SIZE = 36f
+
+    const val POINT_SIZE = 16
     const val POINT_SPACING = 16
 }
 

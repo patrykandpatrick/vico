@@ -47,7 +47,7 @@ fun markerComponent(): Marker {
         lineCount = 1,
         background = null
     ).apply {
-        setPadding(8f.dp, 4f.dp)
+        setPadding(8f, 4f)
     }
 
     val indicatorInner = ShapeComponent(pillShape, colors.surface.toArgb())
@@ -82,7 +82,7 @@ fun markerComponent(): Marker {
         guideline = guideline,
         shape = MarkerCorneredShape(
             corneredShape = pillShape,
-            tickSize = 6.dp.pixels
+            tickSize = 6.dp.value
         ),
         markerBackgroundColor = colors.surface,
     ).apply {
@@ -91,7 +91,7 @@ fun markerComponent(): Marker {
             indicatorCenter.setShadow(indicatorShadowSize, color = color)
             indicatorOuter.color = color.copyColor(alpha = 32)
         }
-        indicatorSize = 36.dp.pixels
-        setShadow(4f.dp, dy = 2f.dp)
+        indicatorSize = 36.dp.value
+        setShadow(4.dp.pixels, dy = 2.dp.pixels)
     }
 }

@@ -28,6 +28,7 @@ fun <S, T : AxisRenderer<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> 
         override fun getValue(thisRef: AxisManager, property: KProperty<*>): T? = field
 
         override fun setValue(thisRef: AxisManager, property: KProperty<*>, value: T?) {
+            if (field == value) return
             field?.let(thisRef.axisCache::remove)
             field = value
             value?.let(thisRef.axisCache::add)

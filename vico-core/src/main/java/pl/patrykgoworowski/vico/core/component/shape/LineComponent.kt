@@ -16,103 +16,105 @@
 
 package pl.patrykgoworowski.vico.core.component.shape
 
-import android.graphics.Canvas
 import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
+import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
 public open class LineComponent(
     color: Int,
-    public var thickness: Float = 2f,
+    public var thicknessDp: Float = 2f,
     shape: Shape = rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ) : ShapeComponent<Shape>(shape, color, dynamicShader, margins) {
 
-    var thicknessScale: Float = 1f
-
-    val scaledThickness: Float
-        get() = thickness * thicknessScale
+    private val MeasureContext.thickness: Float
+        get() = thicknessDp.pixels
 
     public open fun drawHorizontal(
-        canvas: Canvas,
+        context: DrawContext,
         left: Float,
         right: Float,
         centerY: Float,
-    ) {
+        thicknessScale: Float = 1f
+    ) = with(context) {
         draw(
-            canvas = canvas,
+            context,
             left = left,
-            top = centerY - scaledThickness / 2,
+            top = centerY - thickness * thicknessScale / 2,
             right = right,
-            bottom = centerY + scaledThickness / 2
+            bottom = centerY + thickness * thicknessScale / 2
         )
     }
 
     public open fun fitsInHorizontal(
+        context: DrawContext,
         left: Float,
         right: Float,
         centerY: Float,
-        boundingBox: RectF
-    ): Boolean = fitsIn(
-        left = left,
-        top = centerY - scaledThickness / 2,
-        right = right,
-        bottom = centerY + scaledThickness / 2,
-        boundingBox = boundingBox
-    )
+        boundingBox: RectF,
+        thicknessScale: Float = 1f,
+    ): Boolean = with(context) {
+        fitsIn(
+            left = left,
+            top = centerY - thickness * thicknessScale / 2,
+            right = right,
+            bottom = centerY + thickness * thicknessScale / 2,
+            boundingBox = boundingBox
+        )
+    }
 
     public open fun drawVertical(
-        canvas: Canvas,
+        context: DrawContext,
         top: Float,
         bottom: Float,
         centerX: Float,
-    ) {
+        thicknessScale: Float = 1f,
+    ) = with(context) {
         draw(
-            canvas = canvas,
-            left = centerX - scaledThickness / 2,
+            context,
+            left = centerX - thickness * thicknessScale / 2,
             top = top,
-            right = centerX + scaledThickness / 2,
+            right = centerX + thickness * thicknessScale / 2,
             bottom = bottom
         )
     }
 
     public open fun fitsInVertical(
+        context: DrawContext,
         top: Float,
         bottom: Float,
         centerX: Float,
-        boundingBox: RectF
-    ): Boolean = fitsIn(
-        left = centerX - scaledThickness / 2,
-        top = top,
-        right = centerX + scaledThickness / 2,
-        bottom = bottom,
-        boundingBox = boundingBox
-    )
+        boundingBox: RectF,
+        thicknessScale: Float = 1f,
+    ): Boolean = with(context) {
+        fitsIn(
+            left = centerX - thickness * thicknessScale / 2,
+            top = top,
+            right = centerX + thickness * thicknessScale / 2,
+            bottom = bottom,
+            boundingBox = boundingBox
+        )
+    }
 
     public open fun intersectsVertical(
+        context: DrawContext,
         top: Float,
         bottom: Float,
         centerX: Float,
-        boundingBox: RectF
-    ): Boolean = intersects(
-        left = centerX - scaledThickness / 2,
-        top = top,
-        right = centerX + scaledThickness / 2,
-        bottom = bottom,
-        boundingBox = boundingBox
-    )
-
-    override fun updateDrawBounds(left: Float, top: Float, right: Float, bottom: Float) {
-        val centerX = left + (right - left) / 2
-        val centerY = top + (bottom - top) / 2
-        drawBounds.set(
-            minOf(left + margins.start, centerX),
-            minOf(top + margins.top, centerY),
-            maxOf(right - margins.end, centerX),
-            maxOf(bottom - margins.bottom, centerY)
+        boundingBox: RectF,
+        thicknessScale: Float = 1f,
+    ): Boolean = with(context) {
+        intersects(
+            left = centerX - thickness * thicknessScale / 2,
+            top = top,
+            right = centerX + thickness * thicknessScale / 2,
+            bottom = bottom,
+            boundingBox = boundingBox
         )
     }
 }

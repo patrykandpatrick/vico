@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.compose.dataset
 import android.graphics.PointF
 import android.graphics.RectF
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.ScrollableState
+import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
@@ -28,14 +28,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.dataset.entry.collectAsState
 import pl.patrykgoworowski.vico.compose.extension.addIf
 import pl.patrykgoworowski.vico.compose.extension.chartTouchEvent
-import pl.patrykgoworowski.vico.compose.extension.set
 import pl.patrykgoworowski.vico.compose.gesture.OnZoom
+import pl.patrykgoworowski.vico.compose.layout.getMeasureContext
 import pl.patrykgoworowski.vico.core.MAX_ZOOM
 import pl.patrykgoworowski.vico.core.MIN_ZOOM
 import pl.patrykgoworowski.vico.core.axis.AxisManager
@@ -43,11 +42,12 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
+import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryCollection
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
-import pl.patrykgoworowski.vico.core.dataset.renderer.MutableRendererViewState
+import pl.patrykgoworowski.vico.core.extension.set
+import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 
@@ -93,36 +93,22 @@ fun <Model : EntryModel> DataSet(
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
 ) {
+    val measureContext = getMeasureContext()
     val axisManager = remember { AxisManager() }
-    val bounds = remember { RectF() }
     val dataSetModel = remember { MutableDataSetModel() }
-    val viewState = remember { mutableStateOf(MutableRendererViewState()) }
+    val bounds = remember { RectF() }
+    val (markerTouchPoint, setTouchPoint) = remember { mutableStateOf<PointF?>(null) }
+    val horizontalScroll = remember { mutableStateOf(0f) }
     val zoom = remember { mutableStateOf(1f) }
-    val setTouchPoint = { pointF: PointF? ->
-        viewState.set(viewState.value.copy(markerTouchPoint = pointF))
-    }
 
-    axisManager.apply {
-        this.startAxis = startAxis
-        this.topAxis = topAxis
-        this.endAxis = endAxis
-        this.bottomAxis = bottomAxis
-    }
+    axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
 
-    val setHorizontalScroll = { scrollX: Float ->
-        viewState.set(
-            viewState.value.copy(
-                markerTouchPoint = null,
-                horizontalScroll = scrollX,
-            )
-        )
-    }
+    val setHorizontalScroll = rememberSetHorizontalScroll(horizontalScroll, setTouchPoint)
 
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
-    val scrollableState = remember { ScrollableState(scrollHandler::handleScrollDelta) }
-    val onZoom = remember { getOnZoom(zoom, scrollHandler, dataSet.bounds.left) }
-    val virtualLayout = remember { VirtualLayout(true) }
-    virtualLayout.isLTR = LocalLayoutDirection.current == LayoutDirection.Ltr
+    val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
+    val onZoom = rememberZoomState(zoom, scrollHandler, dataSet.bounds)
+    val virtualLayout = remember { VirtualLayout() }
 
     Canvas(
         modifier = modifier
@@ -134,31 +120,60 @@ fun <Model : EntryModel> DataSet(
                     scrollableState = if (isHorizontalScrollEnabled) scrollableState else null,
                     onZoom = if (isZoomEnabled) onZoom else null,
                 )
+            }.onSizeChanged { size ->
+                bounds.set(0, 0, size.width, size.height)
+                virtualLayout.setBounds(
+                    context = measureContext,
+                    contentBounds = bounds,
+                    dataSet = dataSet,
+                    dataSetModel = dataSetModel,
+                    axisManager = axisManager,
+                    marker
+                )
             }
     ) {
-        bounds.set(0f, 0f, size.width, size.height)
         dataSet.setToAxisModel(dataSetModel, model)
         dataSet.isHorizontalScrollEnabled = isHorizontalScrollEnabled || isZoomEnabled
         dataSet.zoom = zoom.value
-        virtualLayout.setBounds(bounds, dataSet, dataSetModel, axisManager, marker)
-        val canvas = drawContext.canvas.nativeCanvas
-        val segmentProperties = dataSet.getSegmentProperties(model)
-        axisManager.drawBehindDataSet(canvas, dataSetModel, segmentProperties, viewState.value)
-        dataSet.draw(canvas, model, segmentProperties, viewState.value, marker)
-        axisManager.drawAboveDataSet(canvas, dataSetModel, segmentProperties, viewState.value)
+
+        val chartDrawContext = chartDrawContext(
+            canvas = drawContext.canvas.nativeCanvas,
+            measureContext = measureContext,
+            horizontalScroll = horizontalScroll.value,
+            markerTouchPoint = markerTouchPoint,
+            segmentProperties = dataSet.getSegmentProperties(measureContext, model),
+            dataSetModel = dataSetModel,
+        )
+        axisManager.drawBehindDataSet(chartDrawContext)
+        dataSet.draw(chartDrawContext, model, marker)
+        axisManager.drawAboveDataSet(chartDrawContext)
         scrollHandler.maxScrollDistance = dataSet.maxScrollAmount
     }
 }
 
-fun getOnZoom(
+@Composable
+fun rememberSetHorizontalScroll(
+    scroll: MutableState<Float>,
+    setTouchPoint: (PointF?) -> Unit,
+) = remember {
+    { newScroll: Float ->
+        scroll.value = newScroll
+        setTouchPoint(null)
+    }
+}
+
+@Composable
+fun rememberZoomState(
     zoom: MutableState<Float>,
     scrollHandler: ScrollHandler,
-    dataSetStart: Float
-): OnZoom = onZoom@{ centroid, zoomChange ->
-    val newZoom = zoom.value * zoomChange
-    if (newZoom !in MIN_ZOOM..MAX_ZOOM) return@onZoom
-    val centerX = scrollHandler.currentScroll + centroid.x - dataSetStart
-    val zoomedCenterX = centerX * zoomChange
-    zoom.value = newZoom
-    scrollHandler.currentScroll += zoomedCenterX - centerX
+    dataSetBounds: RectF
+): OnZoom = remember {
+    onZoom@{ centroid, zoomChange ->
+        val newZoom = zoom.value * zoomChange
+        if (newZoom !in MIN_ZOOM..MAX_ZOOM) return@onZoom
+        val centerX = scrollHandler.currentScroll + centroid.x - dataSetBounds.left
+        val zoomedCenterX = centerX * zoomChange
+        zoom.value = newZoom
+        scrollHandler.currentScroll += zoomedCenterX - centerX
+    }
 }

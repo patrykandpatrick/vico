@@ -22,38 +22,37 @@ import android.graphics.Paint
 import android.graphics.Path
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.component.Component
+import pl.patrykgoworowski.vico.core.component.shape.extension.horizontalCubicTo
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.constants.DEF_LINE_CHART_SPACING
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.forEachIn
 import pl.patrykgoworowski.vico.core.dataset.put
 import pl.patrykgoworowski.vico.core.dataset.renderer.BaseDataSet
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 import pl.patrykgoworowski.vico.core.extension.between
-import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.extension.set
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.component.shape.extension.horizontalCubicTo
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
 import kotlin.math.roundToInt
 
 public open class LineDataSet(
-    var point: Component? = null,
-    var pointSize: Float = 6f.dp,
-    var spacing: Float = DEF_LINE_CHART_SPACING.dp,
-    lineWidth: Float = 2.dp,
+    public var point: Component? = null,
+    public var pointSizeDp: Float = 6f,
+    public var spacingDp: Float = DEF_LINE_CHART_SPACING,
+    public var lineWidthDp: Float = 2f,
     lineColor: Int = Color.LTGRAY,
 ) : BaseDataSet<EntryModel>() {
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        strokeWidth = lineWidth
         style = Paint.Style.STROKE
         color = lineColor
         strokeCap = Paint.Cap.ROUND
@@ -73,16 +72,6 @@ public open class LineDataSet(
 
     public var cubicStrength = 1f
 
-    private var drawScale: Float = 1f
-    private var isScaleCalculated = false
-
-    override var maxScrollAmount: Float = 0f
-    override var zoom: Float? = null
-        set(value) {
-            field = value
-            isScaleCalculated = false
-        }
-
     override fun setBounds(
         left: Number,
         top: Number,
@@ -94,27 +83,26 @@ public open class LineDataSet(
     }
 
     override fun drawDataSet(
-        canvas: Canvas,
+        context: ChartDrawContext,
         model: EntryModel,
-        segmentProperties: SegmentProperties,
-        viewState: RendererViewState
-    ) {
+    ) = with(context) {
         resetTempData()
         val lineBackgroundShader = lineBackgroundShader
+        linePaint.strokeWidth = lineWidthDp.pixels
 
-        val clipRestoreCount = canvas.save()
+        val clipRestoreCount = context.canvas.save()
         canvas.setUpClipBounds()
 
-        calculateDrawSegmentSpecIfNeeded(model)
-        updateMaxScrollAmount(model.getEntriesLength(), segmentProperties.segmentWidth)
+        val (cellWidth, spacing, segmentWidth) = segmentProperties
+
+        context.calculateDrawSegmentSpecIfNeeded(model)
+        updateMaxScrollAmount(model.getEntriesLength(), segmentWidth)
 
         var cubicCurvature: Float
         var prevX = bounds.left
         var prevY = bounds.bottom
 
-        val (segmentSize, spacing) = segmentProperties
-
-        val drawingStart = bounds.left + spacing.half - viewState.horizontalScroll + segmentSize.half
+        val drawingStart = bounds.left + spacing.half - horizontalScroll + cellWidth.half
 
         model.forEachPoint(segmentProperties, drawingStart) { entry, x, y ->
             if (linePath.isEmpty) {
@@ -134,7 +122,7 @@ public open class LineDataSet(
             prevX = x
             prevY = y
 
-            if (viewState.markerTouchPoint != null) {
+            if (markerTouchPoint != null) {
                 markerLocationMap.put(
                     x = ceil(x),
                     y = y.between(bounds.top, bounds.bottom),
@@ -145,7 +133,7 @@ public open class LineDataSet(
         }
 
         if (lineBackgroundShader != null) {
-            lineBackgroundPaint.shader = lineBackgroundShader.provideShader(bounds)
+            lineBackgroundPaint.shader = lineBackgroundShader.provideShader(context, bounds)
             lineBackgroundPath.lineTo(prevX, bounds.bottom)
             lineBackgroundPath.close()
             canvas.drawPath(lineBackgroundPath, lineBackgroundPaint)
@@ -154,7 +142,7 @@ public open class LineDataSet(
 
         point?.let { point ->
             model.forEachPoint(segmentProperties, drawingStart) { _, x, y ->
-                point.drawPoint(canvas, x, y, pointSize.half)
+                point.drawPoint(context, x, y, pointSizeDp.pixels.half)
             }
         }
         canvas.restoreToCount(clipRestoreCount)
@@ -163,9 +151,9 @@ public open class LineDataSet(
     private fun Canvas.setUpClipBounds() {
         clipRect(
             bounds.left,
-            bounds.top - pointSize.half,
+            bounds.top - pointSizeDp.half,
             bounds.right,
-            bounds.bottom + pointSize.half
+            bounds.bottom + pointSizeDp.half
         )
     }
 
@@ -186,7 +174,7 @@ public open class LineDataSet(
 
         entryCollections.forEach { collection ->
             collection.forEachIn((drawMinX - step)..(drawMaxX + step)) { entry ->
-                x = drawingStart + (segment.contentWidth + segment.marginWidth) *
+                x = drawingStart + (segment.cellWidth + segment.marginWidth) *
                         (entry.x - drawMinX) / step
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
@@ -194,17 +182,19 @@ public open class LineDataSet(
         }
     }
 
-    override fun getMeasuredWidth(model: EntryModel): Int {
+    override fun getMeasuredWidth(context: MeasureContext, model: EntryModel): Int = with(context) {
         val length = model.getEntriesLength()
-        val segmentWidth = pointSize
-        return (segmentWidth * length + spacing * length).roundToInt()
+        (pointSizeDp.pixels * length + spacingDp.pixels * length).roundToInt()
     }
 
-    override fun getSegmentProperties(model: EntryModel): SegmentProperties {
-        calculateDrawSegmentSpecIfNeeded(model)
-        return segmentProperties.apply {
-            contentWidth = pointSize * drawScale
-            marginWidth = spacing * drawScale
+    override fun getSegmentProperties(
+        context: MeasureContext,
+        model: EntryModel,
+    ): SegmentProperties = with(context) {
+        context.calculateDrawSegmentSpecIfNeeded(model)
+        segmentProperties.apply {
+            cellWidth = pointSizeDp.pixels * drawScale
+            marginWidth = spacingDp.pixels * drawScale
         }
     }
 
@@ -214,19 +204,6 @@ public open class LineDataSet(
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
         axisModel.entryModel = model
-    }
-
-    private fun calculateDrawSegmentSpecIfNeeded(model: EntryModel) {
-        if (isScaleCalculated) return
-        val measuredWidth = getMeasuredWidth(model)
-        if (isHorizontalScrollEnabled) {
-            drawScale = zoom ?: 1f
-            maxScrollAmount = maxOf(0f, measuredWidth * drawScale - bounds.width())
-        } else {
-            maxScrollAmount = 0f
-            drawScale = minOf(bounds.width() / measuredWidth, 1f)
-        }
-        isScaleCalculated = true
     }
 
     private fun updateMaxScrollAmount(

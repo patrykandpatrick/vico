@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.extension
+package pl.patrykgoworowski.vico.view.extension
 
 import android.content.res.Resources
 
@@ -29,9 +29,6 @@ inline val Float.sp: Float
 
 inline val Int.sp: Int
     get() = (this * Resources.getSystem().displayMetrics.scaledDensity).toInt()
-
-inline val Float.pxToDp: Float
-    get() = this / Resources.getSystem().displayMetrics.density
 
 inline val Float.dpInt: Int
     get() = dp.toInt()

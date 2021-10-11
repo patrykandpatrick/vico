@@ -16,28 +16,25 @@
 
 package pl.patrykgoworowski.vico.compose.component
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.compose.component.shape.chartShape
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
+import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 
 typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
-@Composable
 public fun columnComponent(
     color: Color,
     thickness: Dp = Dimens.COLUMN_WIDTH.dp,
@@ -46,13 +43,12 @@ public fun columnComponent(
     margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     shape = shape.chartShape(),
     dynamicShader = dynamicShader,
     margins = margins,
 )
 
-@Composable
 public fun columnComponent(
     color: Color,
     thickness: Dp,
@@ -61,13 +57,12 @@ public fun columnComponent(
     margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     shape = shape,
     dynamicShader = dynamicShader,
     margins = margins,
 )
 
-@Composable
 fun shapeComponent(
     shape: Shape,
     color: Color,
@@ -80,7 +75,6 @@ fun shapeComponent(
     margins = margins,
 )
 
-@Composable
 fun shapeComponent(
     shape: ChartShape,
     color: Color,
@@ -93,7 +87,6 @@ fun shapeComponent(
     margins = margins,
 )
 
-@Composable
 fun overlayingComponent(
     outer: Component,
     inner: Component,
@@ -101,27 +94,25 @@ fun overlayingComponent(
 ) = OverlayingComponent(
     outer = outer,
     inner = inner,
-    innerPaddingAll = innerPaddingAll.pixels,
+    innerPaddingAllDp = innerPaddingAll.value,
 )
 
-@Composable
 fun overlayingComponent(
     outer: Component,
     inner: Component,
-    innerPaddingStart: Dp,
-    innerPaddingTop: Dp,
-    innerPaddingBottom: Dp,
-    innerPaddingEnd: Dp,
+    innerPaddingStart: Dp = 0.dp,
+    innerPaddingTop: Dp = 0.dp,
+    innerPaddingBottom: Dp = 0.dp,
+    innerPaddingEnd: Dp = 0.dp,
 ) = OverlayingComponent(
     outer = outer,
     inner = inner,
-    innerPaddingStart = innerPaddingStart.pixels,
-    innerPaddingTop = innerPaddingTop.pixels,
-    innerPaddingBottom = innerPaddingBottom.pixels,
-    innerPaddingEnd = innerPaddingEnd.pixels,
+    insidePaddingStartDp = innerPaddingStart.value,
+    insidePaddingTopDp = innerPaddingTop.value,
+    insidePaddingBottomDp = innerPaddingBottom.value,
+    insidePaddingEndDp = innerPaddingEnd.value,
 )
 
-@Composable
 fun dashedShape(
     shape: Shape,
     dashLength: Dp,
@@ -129,12 +120,11 @@ fun dashedShape(
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize
 ) = DashedShape(
     shape = shape.chartShape(),
-    dashLength = dashLength.pixels,
-    gapLength = gapLength.pixels,
+    dashLengthDp = dashLength.value,
+    gapLengthDp = gapLength.value,
     fitStrategy = fitStrategy,
 )
 
-@Composable
 fun dashedShape(
     shape: ChartShape,
     dashLength: Dp,
@@ -142,7 +132,7 @@ fun dashedShape(
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize
 ) = DashedShape(
     shape = shape,
-    dashLength = dashLength.pixels,
-    gapLength = gapLength.pixels,
+    dashLengthDp = dashLength.value,
+    gapLengthDp = gapLength.value,
     fitStrategy = fitStrategy,
 )

@@ -24,13 +24,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 fun horizontalGradient(
     colors: Array<Color>,
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(bounds: RectF): Shader =
+    override fun createShader(context: DrawContext, bounds: RectF): Shader =
         LinearGradient(
             bounds.left,
             bounds.top,
@@ -48,7 +49,7 @@ fun verticalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(bounds: RectF): Shader =
+    override fun createShader(context: DrawContext, bounds: RectF): Shader =
         LinearGradient(
             bounds.left,
             bounds.top,

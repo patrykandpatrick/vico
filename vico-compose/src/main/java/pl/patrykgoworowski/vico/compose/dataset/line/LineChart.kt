@@ -23,7 +23,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.Component
@@ -48,9 +47,9 @@ fun lineDataSet(
     val dataSet = remember { LineDataSet() }
     return dataSet.apply {
         this.point = point
-        this.pointSize = pointSize.pixels
-        this.spacing = spacing.pixels
-        this.lineWidth = lineWidth.pixels
+        this.pointSizeDp = pointSize.value
+        this.spacingDp = spacing.value
+        this.lineWidth = lineWidth.value
         this.lineColor = lineColor.toArgb()
         this.lineBackgroundShader = lineBackgroundShader
         this.lineStrokeCap = lineStrokeCap.paintCap

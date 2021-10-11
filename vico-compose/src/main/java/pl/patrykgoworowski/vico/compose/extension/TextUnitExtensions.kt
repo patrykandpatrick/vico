@@ -16,19 +16,13 @@
 
 package pl.patrykgoworowski.vico.compose.extension
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SIZE
 
-fun TextUnit.pixelSize(density: Density): Float =
+fun TextUnit.pixelSize(): Float =
     when (type) {
-        TextUnitType.Sp -> with(density) { toPx() }
+        TextUnitType.Sp -> value
         TextUnitType.Em -> value
         else -> DEF_LABEL_SIZE.toFloat()
     }
-
-@Composable
-fun TextUnit.pixelSize() = pixelSize(LocalDensity.current)

@@ -20,6 +20,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapShader
 import android.graphics.RectF
 import android.graphics.Shader
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 object DynamicShaders {
 
@@ -28,7 +29,7 @@ object DynamicShaders {
         tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
         tileYMode: Shader.TileMode = tileXMode,
     ): DynamicShader = object : CacheableDynamicShader() {
-        override fun createShader(bounds: RectF): Shader =
+        override fun createShader(context: DrawContext, bounds: RectF): Shader =
             BitmapShader(bitmap, tileXMode, tileYMode)
     }
 }

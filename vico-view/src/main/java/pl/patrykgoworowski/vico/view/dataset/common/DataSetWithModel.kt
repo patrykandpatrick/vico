@@ -16,26 +16,24 @@
 
 package pl.patrykgoworowski.vico.view.dataset.common
 
-import android.graphics.Canvas
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
 
 interface DataSetWithModel<Model : EntryModel> : DataSet<Model> {
     fun draw(
-        canvas: Canvas,
-        rendererViewState: RendererViewState,
-        segmentProperties: SegmentProperties,
+        context: ChartDrawContext,
         marker: Marker?,
     )
 
     fun addListener(listener: UpdateRequestListener)
     fun removeListener(listener: UpdateRequestListener)
     fun getEntriesModel(): Model
-    fun getSegmentProperties(): SegmentProperties
+    fun getSegmentProperties(context: MeasureContext): SegmentProperties
     fun setToAxisModel(axisModel: MutableDataSetModel)
 }

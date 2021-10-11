@@ -19,7 +19,6 @@ package pl.patrykgoworowski.vico.compose.component.dimension
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 
 @Composable
@@ -31,4 +30,4 @@ fun dimensionsOf(
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
-) = MutableDimensions(start.pixels, top.pixels, end.pixels, bottom.pixels)
+) = MutableDimensions(start.value, top.value, end.value, bottom.value)

@@ -19,30 +19,30 @@ package pl.patrykgoworowski.vico.core.component.shape.corner
 import pl.patrykgoworowski.vico.core.throwable.IllegalPercentageException
 
 sealed class Corner(
-    public val absoluteSize: Float,
     public val cornerTreatment: CornerTreatment,
 ) {
 
-    public abstract fun getCornerSize(availableCornerSize: Float): Float
+    public abstract fun getCornerSize(availableCornerSize: Float, density: Float): Float
 
     public class Absolute(
-        size: Float,
+        public val sizeDp: Float,
         cornerTreatment: CornerTreatment,
-    ) : Corner(size, cornerTreatment) {
+    ) : Corner(cornerTreatment) {
 
-        override fun getCornerSize(availableCornerSize: Float): Float = absoluteSize
+        override fun getCornerSize(availableCornerSize: Float, density: Float): Float =
+            sizeDp * density
     }
 
     public class Relative(
         public val percentage: Int,
         cornerTreatment: CornerTreatment,
-    ) : Corner(0f, cornerTreatment) {
+    ) : Corner(cornerTreatment) {
 
         init {
             if (percentage !in 0..MAX_PERCENTAGE) throw IllegalPercentageException(percentage)
         }
 
-        override fun getCornerSize(availableCornerSize: Float): Float =
+        override fun getCornerSize(availableCornerSize: Float, density: Float): Float =
             availableCornerSize / MAX_PERCENTAGE * percentage
     }
 

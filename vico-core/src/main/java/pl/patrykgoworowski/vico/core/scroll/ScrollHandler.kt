@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.scroll
 
 class ScrollHandler(
-    private val setScrollAmount: (Float) -> Unit,
+    private val setScrollAmount: (Float) -> Unit = {},
     public var maxScrollDistance: Float = 0f,
 ) {
 
@@ -27,7 +27,7 @@ class ScrollHandler(
             setScrollAmount(value)
         }
 
-    public fun getClampedScroll(scroll: Float): Float =
+    private fun getClampedScroll(scroll: Float): Float =
         maxOf(0f, minOf(scroll, maxScrollDistance))
 
     public fun handleScrollDelta(delta: Float): Float {

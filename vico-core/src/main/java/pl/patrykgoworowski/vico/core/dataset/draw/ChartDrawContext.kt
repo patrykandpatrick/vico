@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dimensions
+package pl.patrykgoworowski.vico.core.dataset.draw
 
+import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-interface DataSetInsetter {
-
-    fun getVerticalInsets(
-        outDimensions: MutableDimensions,
-        dataSetModel: DataSetModel,
-    ): Dimensions
-
-    fun getHorizontalInsets(
-        outDimensions: MutableDimensions,
-        availableHeight: Float,
-        dataSetModel: DataSetModel,
-    ): Dimensions
+public interface ChartDrawContext : DrawContext {
+    public val dataSetModel: DataSetModel
+    public val segmentProperties: SegmentProperties
+    public val markerTouchPoint: PointF?
+    public val horizontalScroll: Float
 }

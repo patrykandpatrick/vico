@@ -17,52 +17,52 @@
 package pl.patrykgoworowski.vico.core.dimensions
 
 class MutableDimensions(
-    override var start: Float,
-    override var top: Float,
-    override var end: Float,
-    override var bottom: Float,
+    override var startDp: Float,
+    override var topDp: Float,
+    override var endDp: Float,
+    override var bottomDp: Float,
 ) : Dimensions {
 
-    val horizontal: Float
-        get() = start + end
+    val horizontalDp: Float
+        get() = startDp + endDp
 
-    val vertical: Float
-        get() = top + bottom
+    val verticalDp: Float
+        get() = topDp + bottomDp
 
-    fun set(other: Dimensions) = set(other.start, other.top, other.end, other.bottom)
+    fun set(other: Dimensions) = set(other.startDp, other.topDp, other.endDp, other.bottomDp)
 
     fun set(all: Float) = set(all, all, all, all)
 
     fun set(
-        start: Float = 0f,
-        top: Float = 0f,
-        end: Float = 0f,
-        bottom: Float = 0f,
+        startDp: Float = 0f,
+        topDp: Float = 0f,
+        endDp: Float = 0f,
+        bottomDp: Float = 0f,
     ): Dimensions = apply {
-        this.start = start
-        this.top = top
-        this.end = end
-        this.bottom = bottom
+        this.startDp = startDp
+        this.topDp = topDp
+        this.endDp = endDp
+        this.bottomDp = bottomDp
     }
 
-    fun setLeft(isLTR: Boolean, value: Float) = apply {
-        if (isLTR) start = value
-        else end = value
+    fun setLeft(isLtr: Boolean, valueDp: Float) = apply {
+        if (isLtr) startDp = valueDp
+        else endDp = valueDp
     }
 
-    fun setRight(isLTR: Boolean, value: Float) = apply {
-        if (isLTR) end = value
-        else start = value
+    fun setRight(isLtr: Boolean, valueDp: Float) = apply {
+        if (isLtr) endDp = valueDp
+        else startDp = valueDp
     }
 
-    fun setHorizontal(value: Float) = apply {
-        start = if (value == 0f) value else value / 2
-        end = if (value == 0f) value else value / 2
+    fun setHorizontal(valueDp: Float) = apply {
+        startDp = if (valueDp == 0f) valueDp else valueDp / 2
+        endDp = if (valueDp == 0f) valueDp else valueDp / 2
     }
 
-    fun setVertical(value: Float) = apply {
-        top = if (value == 0f) value else value / 2
-        bottom = if (value == 0f) value else value / 2
+    fun setVertical(valueDp: Float) = apply {
+        topDp = if (valueDp == 0f) valueDp else valueDp / 2
+        bottomDp = if (valueDp == 0f) valueDp else valueDp / 2
     }
 
     public fun clear() {
@@ -70,13 +70,13 @@ class MutableDimensions(
     }
 }
 
-fun dimensionsOf(all: Float) = dimensionsOf(all, all, all, all)
+fun dimensionsOf(allDp: Float) = dimensionsOf(allDp, allDp, allDp, allDp)
 
 fun dimensionsOf(
-    start: Float = 0f,
-    top: Float = 0f,
-    end: Float = 0f,
-    bottom: Float = 0f,
-) = MutableDimensions(start, top, end, bottom)
+    startDp: Float = 0f,
+    topDp: Float = 0f,
+    endDp: Float = 0f,
+    bottomDp: Float = 0f,
+) = MutableDimensions(startDp, topDp, endDp, bottomDp)
 
 fun emptyDimensions() = dimensionsOf()

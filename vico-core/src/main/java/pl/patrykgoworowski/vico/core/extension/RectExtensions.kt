@@ -58,20 +58,20 @@ fun RectF.clear() {
 }
 
 fun RectF.set(
-    isLTR: Boolean,
+    isLtr: Boolean,
     left: Number = this.left,
     top: Number = this.top,
     right: Number = this.right,
     bottom: Number = this.bottom,
 ) {
     set(
-        if (isLTR) left.toFloat() else right.toFloat(),
+        if (isLtr) left.toFloat() else right.toFloat(),
         top.toFloat(),
-        if (isLTR) right.toFloat() else left.toFloat(),
+        if (isLtr) right.toFloat() else left.toFloat(),
         bottom.toFloat()
     )
 }
 
-fun RectF.start(isLTR: Boolean): Float = if (isLTR) left else right
+fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right
 
-fun RectF.end(isLTR: Boolean): Float = if (isLTR) right else left
+fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left

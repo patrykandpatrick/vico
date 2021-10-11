@@ -16,34 +16,33 @@
 
 package pl.patrykgoworowski.vico.core.axis.horizontal
 
-import android.graphics.Canvas
 import pl.patrykgoworowski.vico.core.DEF_AXIS_COMPONENT
 import pl.patrykgoworowski.vico.core.DEF_GUIDELINE_COMPONENT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_COMPONENT
 import pl.patrykgoworowski.vico.core.DEF_TICK_COMPONENT
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.BaseLabeledAxisRenderer
-import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
-import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.dimensions.Dimensions
-import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.dataset.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import kotlin.math.ceil
 
 class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
     label: TextComponent?,
     axis: LineComponent?,
-    tick: TickComponent?,
+    tick: LineComponent?,
     guideline: LineComponent?,
+    override var tickLengthDp: Float,
     override var valueFormatter: AxisValueFormatter,
 ) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
 
@@ -52,13 +51,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     var tickType: TickType = TickType.Minor
 
-    override fun drawBehindDataSet(
-        canvas: Canvas,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-    ) {
-        val scrollX = rendererViewState.horizontalScroll
+    override fun drawBehindDataSet(context: ChartDrawContext) = with(context) {
+        val scrollX = context.horizontalScroll
         val clipRestoreCount = canvas.save()
 
         canvas.clipRect(
@@ -85,13 +79,14 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 setParentBounds(bounds)
                 takeIf {
                     it.fitsInVertical(
-                        guidelineTop,
-                        guidelineBottom,
-                        tickDrawCenter,
-                        dataSetBounds
+                        context = context,
+                        top = guidelineTop,
+                        bottom = guidelineBottom,
+                        centerX = tickDrawCenter,
+                        boundingBox = dataSetBounds
                     )
                 }?.drawVertical(
-                    canvas = canvas,
+                    context = context,
                     top = guidelineTop,
                     bottom = guidelineBottom,
                     centerX = tickDrawCenter
@@ -105,15 +100,10 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
-    override fun drawAboveDataSet(
-        canvas: Canvas,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState
-    ) {
+    override fun drawAboveDataSet(context: ChartDrawContext) = with(context) {
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-        val scrollX = rendererViewState.horizontalScroll
+        val scrollX = horizontalScroll
         val clipRestoreCount = canvas.save()
         val step = dataSetModel.entryModel.step
 
@@ -140,7 +130,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         for (index in 0 until tickCount) {
             tick?.setParentBounds(bounds)
             tick?.drawVertical(
-                canvas = canvas,
+                context = context,
                 top = tickMarkTop,
                 bottom = tickMarkBottom,
                 centerX = tickDrawCenter
@@ -149,10 +139,10 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
             if (index < entryLength) {
                 label?.background?.setParentBounds(bounds)
                 label?.drawText(
-                    canvas,
-                    valueFormatter.formatValue(valueIndex, index, dataSetModel),
-                    textDrawCenter,
-                    textY,
+                    context = context,
+                    text = valueFormatter.formatValue(valueIndex, index, context.dataSetModel),
+                    textX = textDrawCenter,
+                    textY = textY,
                     verticalPosition = position.textVerticalPosition,
                     width = tickDrawStep.toInt(),
                 )
@@ -166,11 +156,11 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         axis?.run {
             setParentBounds(bounds)
             drawHorizontal(
-                canvas = canvas,
+                context = context,
                 left = dataSetBounds.left,
                 right = dataSetBounds.right,
-                centerY = (if (position is AxisPosition.Horizontal.Bottom) bounds.top else bounds.bottom) +
-                        axis?.thickness?.half.orZero
+                centerY = ((if (position is AxisPosition.Horizontal.Bottom) bounds.top
+                else bounds.bottom) + axisThickness.half)
             )
         }
 
@@ -198,33 +188,27 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun getVerticalInsets(
-        outDimensions: MutableDimensions,
-        dataSetModel: DataSetModel
-    ): Dimensions =
-        outDimensions.apply {
+        context: MeasureContext,
+        dataSetModel: DataSetModel,
+        outInsets: Insets
+    ) = with(context) {
+        with(outInsets) {
             setHorizontal(
-                if (tickType == TickType.Minor) tick?.thickness?.half.orZero
+                if (tickType == TickType.Minor) tickThickness.half
                 else 0f
             )
-            top = if (position.isTop) getDesiredHeight().toFloat() else 0f
-            bottom = if (position.isBottom) getDesiredHeight().toFloat() else 0f
+            top = if (position.isTop) getDesiredHeight(context).toFloat() else 0f
+            bottom = if (position.isBottom) getDesiredHeight(context).toFloat() else 0f
         }
+    }
 
-    override fun getHorizontalInsets(
-        outDimensions: MutableDimensions,
-        availableHeight: Float,
-        dataSetModel: DataSetModel
-    ): Dimensions = outDimensions
-
-    override fun getDesiredHeight() =
+    override fun getDesiredHeight(context: MeasureContext) = with(context) {
         ((if (position.isBottom) axisThickness else 0f) +
                 tickLength +
-                label?.getHeight().orZero
-                ).toInt()
+                label?.getHeight(context = this).orZero).toInt()
+    }
 
-    override fun getDesiredWidth(
-        labels: List<String>
-    ): Float = 0f
+    override fun getDesiredWidth(context: MeasureContext, labels: List<String>): Float = 0f
 
     enum class TickType {
         Minor, Major
@@ -234,7 +218,8 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 fun topAxis(
     label: TextComponent? = DEF_LABEL_COMPONENT,
     axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: TickComponent? = DEF_TICK_COMPONENT,
+    tick: LineComponent? = DEF_TICK_COMPONENT,
+    tickLengthDp: Float = Dimens.AXIS_TICK_LENGTH,
     guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
@@ -244,12 +229,14 @@ fun topAxis(
     tick = tick,
     guideline = guideline,
     valueFormatter = valueFormatter,
+    tickLengthDp = tickLengthDp,
 )
 
 fun bottomAxis(
     label: TextComponent? = DEF_LABEL_COMPONENT,
     axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: TickComponent? = DEF_TICK_COMPONENT,
+    tick: LineComponent? = DEF_TICK_COMPONENT,
+    tickLengthDp: Float = Dimens.AXIS_TICK_LENGTH,
     guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
@@ -259,4 +246,5 @@ fun bottomAxis(
     tick = tick,
     guideline = guideline,
     valueFormatter = valueFormatter,
+    tickLengthDp = tickLengthDp,
 )
