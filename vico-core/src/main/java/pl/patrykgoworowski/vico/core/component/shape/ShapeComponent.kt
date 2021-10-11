@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.component.shape
 
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
@@ -25,8 +24,10 @@ import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.setMargins
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 public open class ShapeComponent<T : Shape>(
     public var shape: T,
@@ -37,7 +38,6 @@ public open class ShapeComponent<T : Shape>(
 
     public val parentBounds = RectF()
     public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    protected val drawBounds: RectF = RectF()
     protected val path: Path = Path()
 
     public var color by paint::color
@@ -61,39 +61,42 @@ public open class ShapeComponent<T : Shape>(
     }
 
     override fun draw(
-        canvas: Canvas,
+        context: DrawContext,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float
-    ) {
+    ) = with(context) {
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
-        updateDrawBounds(left, top, right, bottom)
-        path.reset()
-        applyShader(parentBounds)
-        shape.drawShape(canvas, paint, path, drawBounds)
+        path.rewind()
+        applyShader(context, parentBounds)
+        val centerX = left + (right - left) / 2
+        val centerY = top + (bottom - top) / 2
+        shape.drawShape(
+            context = context,
+            paint = paint,
+            path = path,
+            left = minOf(left + margins.startDp.pixels, centerX),
+            top = minOf(top + margins.topDp.pixels, centerY),
+            right = maxOf(right - margins.endDp.pixels, centerX),
+            bottom = maxOf(bottom - margins.bottomDp.pixels, centerY)
+        )
+        DebugHelper.drawDebugBounds(
+            context = context,
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom
+        )
     }
 
     protected fun applyShader(
+        context: DrawContext,
         bounds: RectF,
     ) {
         dynamicShader
-            ?.provideShader(bounds)
+            ?.provideShader(context, bounds)
             ?.let { shader -> paint.shader = shader }
-    }
-
-    public open fun updateDrawBounds(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float
-    ) {
-        drawBounds.set(
-            left + margins.start,
-            top + margins.top,
-            right - margins.end,
-            bottom - margins.bottom,
-        )
     }
 
     public open fun fitsIn(

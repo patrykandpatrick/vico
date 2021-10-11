@@ -17,18 +17,17 @@
 package pl.patrykgoworowski.vico.core.axis
 
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.setAll
-import kotlin.properties.Delegates
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
 public abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
     override var label: TextComponent?,
     override var axis: LineComponent?,
-    override var tick: TickComponent?,
+    override var tick: LineComponent?,
     override var guideline: LineComponent?,
 ) : AxisRenderer<Position> {
 
@@ -38,21 +37,19 @@ public abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
     override val restrictedBounds: MutableList<RectF> = mutableListOf()
     override val dataSetBounds: RectF = RectF()
 
-    override val axisThickness: Float
-        get() = axis?.thickness.orZero
+    override val MeasureContext.axisThickness: Float
+        get() = axis?.thicknessDp.orZero.pixels
 
-    override val tickLength: Float
-        get() = tick?.length.orZero
+    override val MeasureContext.tickThickness: Float
+        get() = tick?.thicknessDp.orZero.pixels
 
-    override val tickThickness: Float
-        get() = tick?.thickness.orZero
+    override val MeasureContext.guidelineThickness: Float
+        get() = guideline?.thicknessDp.orZero.pixels
 
-    override val guidelineThickness: Float
-        get() = guideline?.thickness.orZero
+    override val MeasureContext.tickLength: Float
+        get() = tickLengthDp.pixels
 
-    override var isLTR: Boolean by Delegates.observable(true) { _, _, value ->
-        label?.isLTR = value
-    }
+    override var isLtr: Boolean = true
 
     override fun setDataSetBounds(left: Number, top: Number, right: Number, bottom: Number) {
         dataSetBounds.set(left, top, right, bottom)

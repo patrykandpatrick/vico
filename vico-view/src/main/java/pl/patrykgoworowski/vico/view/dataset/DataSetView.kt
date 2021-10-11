@@ -34,21 +34,23 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
-import pl.patrykgoworowski.vico.core.dataset.layout.VirtualLayout
-import pl.patrykgoworowski.vico.core.dataset.renderer.MutableRendererViewState
-import pl.patrykgoworowski.vico.core.extension.dpInt
-import pl.patrykgoworowski.vico.core.extension.orZero
+import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.extension.set
+import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
 import pl.patrykgoworowski.vico.view.dataset.common.DataSetWithModel
-import pl.patrykgoworowski.vico.view.extension.isLTR
+import pl.patrykgoworowski.vico.view.extension.density
+import pl.patrykgoworowski.vico.view.extension.dpInt
+import pl.patrykgoworowski.vico.view.extension.fontScale
+import pl.patrykgoworowski.vico.view.extension.isLtr
 import pl.patrykgoworowski.vico.view.extension.measureDimension
 import pl.patrykgoworowski.vico.view.extension.specSize
 import pl.patrykgoworowski.vico.view.extension.verticalPadding
 import pl.patrykgoworowski.vico.view.gestures.ChartScaleGestureListener
 import pl.patrykgoworowski.vico.view.gestures.MotionEventHandler
+import pl.patrykgoworowski.vico.view.layout.MutableMeasureContext
 import kotlin.properties.Delegates.observable
 
 class DataSetView @JvmOverloads constructor(
@@ -59,7 +61,7 @@ class DataSetView @JvmOverloads constructor(
 
     private val contentBounds = RectF()
     private val dataSetModel = MutableDataSetModel()
-    private val scrollHandler = ScrollHandler(::handleHorizontalScroll)
+    private val scrollHandler = ScrollHandler()
 
     private val updateRequestListener: UpdateRequestListener = {
         if (ViewCompat.isAttachedToWindow(this@DataSetView)) {
@@ -69,17 +71,21 @@ class DataSetView @JvmOverloads constructor(
     }
 
     private val scroller = OverScroller(context)
-    private val virtualLayout = VirtualLayout(isLTR)
+    private val virtualLayout = VirtualLayout()
     private val motionEventHandler = MotionEventHandler(
         scroller = scroller,
         scrollHandler = scrollHandler,
         density = resources.displayMetrics.density,
         onTouchPoint = ::handleTouchEvent,
-        requestInvalidate = { invalidate() }
+        requestInvalidate = ::invalidate
     )
 
     private val axisManager = AxisManager()
-    private val rendererViewState = MutableRendererViewState()
+    private val measureContext = MutableMeasureContext(
+        density = context.density,
+        fontScale = context.fontScale,
+        isLtr = context.isLtr
+    )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
         ChartScaleGestureListener(
@@ -87,6 +93,8 @@ class DataSetView @JvmOverloads constructor(
             onZoom = this::handleZoom,
         )
     private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
+
+    private var markerTouchPoint: PointF? = null
 
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
@@ -120,7 +128,7 @@ class DataSetView @JvmOverloads constructor(
         val dataSet = dataSet ?: return
         val newZoom = (dataSet.zoom ?: 1f) * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
-        val centerX = scrollHandler.currentScroll + focusX - dataSet.bounds.left.orZero
+        val centerX = scrollHandler.currentScroll + focusX - dataSet.bounds.left
         val zoomedCenterX = centerX * zoomChange
         dataSet.zoom = newZoom
         scrollHandler.currentScroll += zoomedCenterX - centerX
@@ -128,40 +136,28 @@ class DataSetView @JvmOverloads constructor(
     }
 
     private fun handleTouchEvent(pointF: PointF?) {
-        rendererViewState.markerTouchPoint = pointF
-    }
-
-    private fun handleHorizontalScroll(scroll: Float) {
-        rendererViewState.apply {
-            horizontalScroll = scroll
-            markerTouchPoint = null
-        }
+        markerTouchPoint = pointF
     }
 
     override fun onDraw(canvas: Canvas) {
         val dataSet = dataSet ?: return
         dataSet.setToAxisModel(dataSetModel)
         motionEventHandler.isHorizontalScrollEnabled = dataSet.isHorizontalScrollEnabled
-        val segmentProperties = dataSet.getSegmentProperties()
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
-            handleHorizontalScroll(scrollHandler.currentScroll)
             ViewCompat.postInvalidateOnAnimation(this@DataSetView)
         }
-
-        axisManager.drawBehindDataSet(
+        val drawContext = chartDrawContext(
             canvas = canvas,
+            measureContext = measureContext,
+            horizontalScroll = scrollHandler.currentScroll,
+            markerTouchPoint = markerTouchPoint,
+            segmentProperties = dataSet.getSegmentProperties(measureContext),
             dataSetModel = dataSetModel,
-            segmentProperties = segmentProperties,
-            rendererViewState = rendererViewState,
         )
-        dataSet.draw(canvas, rendererViewState, segmentProperties, marker)
-        axisManager.drawAboveDataSet(
-            canvas = canvas,
-            dataSetModel = dataSetModel,
-            segmentProperties = segmentProperties,
-            rendererViewState = rendererViewState,
-        )
+        axisManager.drawBehindDataSet(drawContext)
+        dataSet.draw(drawContext, marker)
+        axisManager.drawAboveDataSet(drawContext)
         scrollHandler.maxScrollDistance = dataSet.maxScrollAmount
     }
 
@@ -190,11 +186,17 @@ class DataSetView @JvmOverloads constructor(
     private fun updateBounds() {
         val dataSet = dataSet ?: return
         dataSet.setToAxisModel(dataSetModel)
-        virtualLayout.setBounds(contentBounds, dataSet, dataSetModel, axisManager, marker)
+        virtualLayout.setBounds(
+            context = measureContext,
+            contentBounds = contentBounds,
+            dataSet = dataSet,
+            dataSetModel = dataSetModel,
+            axisManager = axisManager,
+            marker
+        )
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {
-        val isLTR = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
-        virtualLayout.isLTR = isLTR
+        measureContext.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
     }
 }

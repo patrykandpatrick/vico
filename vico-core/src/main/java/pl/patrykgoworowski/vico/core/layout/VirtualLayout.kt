@@ -14,67 +14,68 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.dataset.layout
+package pl.patrykgoworowski.vico.core.layout
 
 import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
-import pl.patrykgoworowski.vico.core.dimensions.DataSetInsetter
-import pl.patrykgoworowski.vico.core.dimensions.Dimensions
-import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
-import pl.patrykgoworowski.vico.core.dimensions.floatDimensions
+import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
+import pl.patrykgoworowski.vico.core.dataset.insets.Insets
 import kotlin.math.max
 
-public open class VirtualLayout(
-    var isLTR: Boolean
-) {
+public open class VirtualLayout {
 
-    @Suppress("MagicNumber")
-    private val tempInsetters = ArrayList<DataSetInsetter>(5)
-    private val finalInsets: MutableDimensions = floatDimensions()
-    private val tempInsets: MutableDimensions = floatDimensions()
+    private val tempInsetters = ArrayList<DataSetInsetter>(TEMP_INSETTERS_INITIAL_SIZE)
+    private val finalInsets: Insets = Insets()
+    private val tempInsets: Insets = Insets()
 
+    @LongParameterListDrawFunction
     public open fun <Model : EntryModel> setBounds(
+        context: MeasureContext,
         contentBounds: RectF,
         dataSet: DataSet<Model>,
         dataSetModel: DataSetModel,
         axisManager: AxisManager,
         vararg dataSetInsetter: DataSetInsetter?,
-    ) {
+    ) = with(context) {
         tempInsetters.clear()
         finalInsets.clear()
         tempInsets.clear()
-        axisManager.isLTR = isLTR
         axisManager.addInsetters(tempInsetters)
-        dataSetInsetter.forEach { it?.let(tempInsetters::add) }
+        dataSetInsetter.filterNotNull().forEach(tempInsetters::add)
 
         tempInsetters.forEach { insetter ->
-            insetter.getVerticalInsets(tempInsets, dataSetModel)
+            insetter.getVerticalInsets(context, dataSetModel, tempInsets)
             finalInsets.setAllGreater(tempInsets)
         }
 
         val availableHeight = contentBounds.height() - finalInsets.vertical
 
         tempInsetters.forEach { insetter ->
-            insetter.getHorizontalInsets(tempInsets, availableHeight, dataSetModel)
+            insetter.getHorizontalInsets(context, availableHeight, dataSetModel, tempInsets)
             finalInsets.setAllGreater(tempInsets)
         }
 
         dataSet.setBounds(
-            left = contentBounds.left + finalInsets.getLeft(isLTR),
+            left = contentBounds.left + finalInsets.getLeft(isLtr),
             top = contentBounds.top + finalInsets.top,
-            right = contentBounds.right - finalInsets.getRight(isLTR),
+            right = contentBounds.right - finalInsets.getRight(isLtr),
             bottom = contentBounds.bottom - finalInsets.bottom
         )
-        axisManager.setAxesBounds(contentBounds, dataSet.bounds, finalInsets)
+        axisManager.setAxesBounds(context, contentBounds, dataSet.bounds, finalInsets)
     }
 
-    private fun MutableDimensions.setAllGreater(other: Dimensions) {
+    private fun Insets.setAllGreater(other: Insets) {
         start = max(start, other.start)
         top = max(top, other.top)
         end = max(end, other.end)
         bottom = max(bottom, other.bottom)
+    }
+
+    companion object {
+        private const val TEMP_INSETTERS_INITIAL_SIZE = 5
     }
 }

@@ -28,10 +28,10 @@ fun composeShader(
     first: DynamicShader,
     second: DynamicShader,
     mode: BlendMode,
-): DynamicShader = DynamicShader { bounds ->
+): DynamicShader = DynamicShader { context, bounds ->
     ComposeShader(
-        first.provideShader(bounds),
-        second.provideShader(bounds),
+        first.provideShader(context, bounds),
+        second.provideShader(context, bounds),
         mode
     )
 }
@@ -40,10 +40,10 @@ fun composeShader(
     first: DynamicShader,
     second: DynamicShader,
     mode: PorterDuff.Mode,
-): DynamicShader = DynamicShader { bounds ->
+): DynamicShader = DynamicShader { context, bounds ->
     ComposeShader(
-        first.provideShader(bounds),
-        second.provideShader(bounds),
+        first.provideShader(context, bounds),
+        second.provideShader(context, bounds),
         mode
     )
 }

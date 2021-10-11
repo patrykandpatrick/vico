@@ -16,17 +16,21 @@
 
 package pl.patrykgoworowski.vico.core.component.shape
 
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 interface Shape {
 
+    @LongParameterListDrawFunction
     fun drawShape(
-        canvas: Canvas,
+        context: DrawContext,
         paint: Paint,
         path: Path,
-        bounds: RectF
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
     )
 }

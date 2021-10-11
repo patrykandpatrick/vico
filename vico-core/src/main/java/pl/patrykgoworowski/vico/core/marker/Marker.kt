@@ -16,16 +16,16 @@
 
 package pl.patrykgoworowski.vico.core.marker
 
-import android.graphics.Canvas
 import android.graphics.PointF
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.dimensions.DataSetInsetter
+import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 
 public interface Marker : DataSetInsetter {
 
     public fun draw(
-        canvas: Canvas,
+        context: DrawContext,
         bounds: RectF,
         markedEntries: List<EntryModel>,
     )

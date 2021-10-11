@@ -56,31 +56,29 @@ data class ChartStyle(
         val axisLabelHorizontalPadding: Dp = Dimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = Dimens.AXIS_GUIDELINE_WIDTH.dp,
-        val axisGuidelineShape: @Composable () -> Shape = {
-            dashedShape(
-                shape = Shapes.rectShape,
-                dashLength = Dimens.DASH_LENGTH.dp,
-                gapLength = Dimens.DASH_GAP.dp,
-            )
-        },
+        val axisGuidelineShape: Shape = dashedShape(
+            shape = Shapes.rectShape,
+            dashLength = Dimens.DASH_LENGTH.dp,
+            gapLength = Dimens.DASH_GAP.dp,
+        ),
         val axisLineColor: Color,
         val axisLineWidth: Dp = Dimens.AXIS_LINE_WIDTH.dp,
-        val axisLineShape: @Composable () -> Shape = { Shapes.rectShape },
+        val axisLineShape: Shape = Shapes.rectShape,
         val axisTickColor: Color = axisLineColor,
         val axisTickWidth: Dp = axisLineWidth,
-        val axisTickShape: @Composable () -> Shape = { Shapes.rectShape },
+        val axisTickShape: Shape = Shapes.rectShape,
         val axisTickLength: Dp = Dimens.AXIS_TICK_LENGTH.dp,
         val axisValueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter()
     )
 
     data class ColumnChart(
-        val getColumns: @Composable () -> List<LineComponent>,
+        val columns: List<LineComponent>,
         val outsideSpacing: Dp = Dimens.COLUMN_OUTSIDE_SPACING.dp,
         val innerSpacing: Dp = Dimens.COLUMN_INSIDE_SPACING.dp,
     )
 
     data class LineChart(
-        val getPoint: @Composable () -> Component? = { null },
+        val getPoint: Component? = null,
         val pointSize: Dp,
         val spacing: Dp,
         val lineWidth: Dp,
@@ -104,31 +102,29 @@ object LocalChartStyle {
             axisLineColor = Color(colors.axisLineColor),
         ),
         columnChart = ChartStyle.ColumnChart(
-            getColumns = {
-                listOf(
-                    lineComponent(
-                        color = Color(colors.column1Color),
-                        thickness = Dimens.COLUMN_WIDTH.dp,
-                        shape = Shapes.roundedCornersShape(
-                            allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
-                        )
-                    ),
-                    lineComponent(
-                        color = Color(colors.column2Color),
-                        thickness = Dimens.COLUMN_WIDTH.dp,
-                        shape = Shapes.roundedCornersShape(
-                            allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
-                        )
-                    ),
-                    lineComponent(
-                        color = Color(colors.column3Color),
-                        thickness = Dimens.COLUMN_WIDTH.dp,
-                        shape = Shapes.roundedCornersShape(
-                            allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
-                        )
-                    ),
-                )
-            }
+            columns = listOf(
+                lineComponent(
+                    color = Color(colors.column1Color),
+                    thickness = Dimens.COLUMN_WIDTH.dp,
+                    shape = Shapes.roundedCornersShape(
+                        allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
+                    )
+                ),
+                lineComponent(
+                    color = Color(colors.column2Color),
+                    thickness = Dimens.COLUMN_WIDTH.dp,
+                    shape = Shapes.roundedCornersShape(
+                        allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
+                    )
+                ),
+                lineComponent(
+                    color = Color(colors.column3Color),
+                    thickness = Dimens.COLUMN_WIDTH.dp,
+                    shape = Shapes.roundedCornersShape(
+                        allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
+                    )
+                ),
+            )
         ),
         lineChart = ChartStyle.LineChart(
             pointSize = Dimens.POINT_SIZE.dp,

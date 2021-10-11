@@ -16,127 +16,132 @@
 
 package pl.patrykgoworowski.vico.core.component.shape
 
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 public class DashedShape(
     public val shape: Shape,
-    public val dashLength: Float,
-    public val gapLength: Float,
+    public val dashLengthDp: Float,
+    public val gapLengthDp: Float,
     public val fitStrategy: FitStrategy = FitStrategy.Resize
 ) : Shape {
 
-    private var drawDashLength = dashLength
-    private var drawGapLength = gapLength
-    private val tempBounds = RectF()
+    private var drawDashLength = dashLengthDp
+    private var drawGapLength = gapLengthDp
 
     override fun drawShape(
-        canvas: Canvas,
+        context: DrawContext,
         paint: Paint,
         path: Path,
-        bounds: RectF,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
     ) {
-        if (bounds.width() > bounds.height()) {
-            drawHorizontalDashes(canvas, paint, path, bounds)
+        if (right - left > bottom - top) {
+            drawHorizontalDashes(context, paint, path, left, top, right, bottom)
         } else {
-            drawVerticalDashes(canvas, paint, path, bounds)
-        }
-    }
-
-    private fun drawHorizontalDashes(
-        canvas: Canvas,
-        paint: Paint,
-        path: Path,
-        bounds: RectF,
-    ) {
-        drawDashes(
-            canvas = canvas,
-            paint = paint,
-            path = path,
-            length = bounds.width(),
-            drawStart = bounds.left,
-        ) { shapeBounds, currentDrawStart ->
-            shapeBounds.set(
-                currentDrawStart,
-                bounds.top,
-                currentDrawStart + drawDashLength,
-                bounds.bottom
-            )
-        }
-    }
-
-    private fun drawVerticalDashes(
-        canvas: Canvas,
-        paint: Paint,
-        path: Path,
-        bounds: RectF,
-    ) {
-        drawDashes(
-            canvas = canvas,
-            paint = paint,
-            path = path,
-            length = bounds.height(),
-            drawStart = bounds.top,
-        ) { shapeBounds, currentDrawStart ->
-            shapeBounds.set(
-                bounds.left,
-                currentDrawStart,
-                bounds.right,
-                currentDrawStart + drawDashLength
-            )
-        }
-    }
-
-    private fun calculateDrawLengths(length: Float) = when (fitStrategy) {
-        FitStrategy.Resize -> {
-            when {
-                length < dashLength + gapLength -> {
-                    drawDashLength = length
-                    drawGapLength = 0f
-                }
-                else -> {
-                    var fitWidth = dashLength
-                    while (length > fitWidth) {
-                        fitWidth += gapLength + dashLength
-                    }
-                    val ratio = length / fitWidth
-                    drawDashLength = dashLength * ratio
-                    drawGapLength = gapLength * ratio
-                }
-            }
-        }
-        FitStrategy.Fixed -> {
-            drawDashLength = dashLength
-            drawGapLength = gapLength
+            drawVerticalDashes(context, paint, path, left, top, right, bottom)
         }
     }
 
     @LongParameterListDrawFunction
-    private inline fun drawDashes(
-        canvas: Canvas,
+    private fun drawHorizontalDashes(
+        context: DrawContext,
         paint: Paint,
         path: Path,
-        length: Float,
-        drawStart: Float,
-        setBounds: (shapeBounds: RectF, currentDrawStart: Float) -> Unit,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
     ) {
-        calculateDrawLengths(length)
+        calculateDrawLengths(context, right - left)
 
         var index = 0
         var drawnLength = 0f
-        while (length - drawnLength > 0) {
+        while (right - left - drawnLength > 0) {
             drawnLength += if (index % 2 == 0) {
-                setBounds(tempBounds, drawStart + drawnLength)
                 path.reset()
-                shape.drawShape(canvas, paint, path, tempBounds)
+                shape.drawShape(
+                    context = context,
+                    paint = paint,
+                    path = path,
+                    left = left + drawnLength,
+                    top = top,
+                    right = left + drawnLength + drawDashLength,
+                    bottom = bottom,
+                )
                 drawDashLength
             } else {
                 drawGapLength
             }
             index++
+        }
+    }
+
+    @LongParameterListDrawFunction
+    private fun drawVerticalDashes(
+        context: DrawContext,
+        paint: Paint,
+        path: Path,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ) {
+        calculateDrawLengths(context, bottom - top)
+
+        var index = 0
+        var drawnLength = 0f
+        while (bottom - top - drawnLength > 0) {
+            drawnLength += if (index % 2 == 0) {
+                path.reset()
+                shape.drawShape(
+                    context = context,
+                    paint = paint,
+                    path = path,
+                    left = left,
+                    top = top + drawnLength,
+                    right = right,
+                    bottom = top + drawnLength + drawDashLength,
+                )
+                drawDashLength
+            } else {
+                drawGapLength
+            }
+            index++
+        }
+    }
+
+    private fun calculateDrawLengths(context: DrawContext, length: Float) = with(context) {
+        calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length)
+    }
+
+    private fun calculateDrawLengths(
+        dashLength: Float,
+        gapLength: Float,
+        length: Float,
+    ) = when (fitStrategy) {
+        FitStrategy.Resize -> when {
+            length < dashLength + gapLength -> {
+                drawDashLength = length
+                drawGapLength = 0f
+            }
+            else -> {
+                var fitWidth = dashLength
+                while (length > fitWidth) {
+                    fitWidth += gapLength + dashLength
+                }
+                val ratio = length / fitWidth
+                drawDashLength = dashLength * ratio
+                drawGapLength = gapLength * ratio
+            }
+        }
+        FitStrategy.Fixed -> {
+            drawDashLength = dashLength
+            drawGapLength = gapLength
         }
     }
 

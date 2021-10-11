@@ -16,11 +16,12 @@
 
 package pl.patrykgoworowski.vico.core.dataset.renderer
 
-import android.graphics.Canvas
-import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.threshold.ThresholdLine
+import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 public interface DataSet<in Model> : BoundsAware {
@@ -37,17 +38,15 @@ public interface DataSet<in Model> : BoundsAware {
     public var zoom: Float?
 
     public fun draw(
-        canvas: Canvas,
+        context: ChartDrawContext,
         model: Model,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
-        marker: Marker?,
+        marker: Marker?
     )
 
     public fun addThresholdLine(thresholdLine: ThresholdLine): Boolean
     public fun removeThresholdLine(thresholdLine: ThresholdLine): Boolean
 
-    public fun getMeasuredWidth(model: Model): Int
-    public fun getSegmentProperties(model: Model): SegmentProperties
+    public fun getMeasuredWidth(context: MeasureContext, model: Model): Int
+    public fun getSegmentProperties(context: MeasureContext, model: Model): SegmentProperties
     public fun setToAxisModel(axisModel: MutableDataSetModel, model: Model)
 }

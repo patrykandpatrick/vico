@@ -17,15 +17,12 @@
 package pl.patrykgoworowski.vico.compose.component.shape.shader
 
 import android.graphics.Shader
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.Dp
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 
-@Composable
 fun DynamicShaders.fromComponent(
     component: Component,
     componentSize: Dp,
@@ -34,7 +31,7 @@ fun DynamicShaders.fromComponent(
     tileYMode: Shader.TileMode = tileXMode,
 ) = ComponentShader(
     component = component,
-    componentSize = componentSize.pixels,
+    componentSize = componentSize.value,
     checkeredArrangement = checkeredArrangement,
     tileXMode = tileXMode,
     tileYMode = tileYMode,

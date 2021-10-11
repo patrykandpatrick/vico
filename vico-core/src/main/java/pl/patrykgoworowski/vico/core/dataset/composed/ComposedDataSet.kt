@@ -16,16 +16,16 @@
 
 package pl.patrykgoworowski.vico.core.dataset.composed
 
-import android.graphics.Canvas
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.BaseDataSet
 import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.updateAll
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import java.util.TreeMap
 
@@ -58,36 +58,38 @@ class ComposedDataSet<Model : EntryModel>(
             dataSets.forEach { dataSet -> dataSet.zoom = value }
         }
 
-    override val maxScrollAmount: Float
+    override var maxScrollAmount: Float
+        set(value) {}
         get() = dataSets.maxOf { it.maxScrollAmount }
 
     override fun drawDataSet(
-        canvas: Canvas,
+        context: ChartDrawContext,
         model: ComposedEntryModel<Model>,
-        segmentProperties: SegmentProperties,
-        viewState: RendererViewState
     ) {
         markerLocationMap.clear()
         model.forEachModelWithDataSet { _, item, dataSet ->
-            dataSet.draw(canvas, item, segmentProperties, viewState, null)
+            dataSet.draw(context, item, null)
             markerLocationMap.updateAll(dataSet.markerLocationMap)
         }
     }
 
-    override fun getMeasuredWidth(model: ComposedEntryModel<Model>): Int {
+    override fun getMeasuredWidth(context: MeasureContext, model: ComposedEntryModel<Model>): Int {
         var result = 0
         model.forEachModelWithDataSet { _, item, dataSet ->
-            result = maxOf(dataSet.getMeasuredWidth(item), result)
+            result = maxOf(dataSet.getMeasuredWidth(context, item), result)
         }
         return result
     }
 
-    override fun getSegmentProperties(model: ComposedEntryModel<Model>): SegmentProperties {
+    override fun getSegmentProperties(
+        context: MeasureContext,
+        model: ComposedEntryModel<Model>
+    ): SegmentProperties {
         segmentProperties.clear()
         model.forEachModelWithDataSet { _, item, dataSet ->
-            val dataSetProps = dataSet.getSegmentProperties(item)
+            val dataSetProps = dataSet.getSegmentProperties(context, item)
             segmentProperties.apply {
-                contentWidth = maxOf(contentWidth, dataSetProps.contentWidth)
+                cellWidth = maxOf(cellWidth, dataSetProps.cellWidth)
                 marginWidth = maxOf(marginWidth, dataSetProps.marginWidth)
             }
         }

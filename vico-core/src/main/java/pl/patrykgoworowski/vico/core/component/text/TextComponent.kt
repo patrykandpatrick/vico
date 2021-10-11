@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.component.text
 
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
@@ -27,24 +26,28 @@ import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
 import pl.patrykgoworowski.vico.core.component.dimension.DefaultMargins
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
+import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
+import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
+import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.draw.withCanvas
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
 import pl.patrykgoworowski.vico.core.extension.piRad
-import pl.patrykgoworowski.vico.core.extension.sp
-import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
+import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
 typealias OnPreDrawListener =
-            (canvas: Canvas, left: Float, top: Float, right: Float, bottom: Float) -> Unit
+            (context: DrawContext, left: Float, top: Float, right: Float, bottom: Float) -> Unit
 
 public open class TextComponent(
     color: Int = Color.BLACK,
-    textSize: Float = 12f.sp,
+    public var textSizeSp: Float = 12f,
     public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
     public open var background: ShapeComponent<Shape>? = null,
@@ -59,9 +62,7 @@ public open class TextComponent(
     public val allLinesHeight: Int
         get() = lineHeight * lineCount
 
-    public var isLTR: Boolean = true
     public var color: Int by textPaint::color
-    public var textSize: Float by textPaint::textSize
     public var typeface: Typeface by textPaint::typeface
     public var rotationDegrees: Float = 0f
     private var layout: StaticLayout = staticLayout("", textPaint, 0)
@@ -70,12 +71,11 @@ public open class TextComponent(
 
     init {
         textPaint.color = color
-        textPaint.textSize = textSize
         textPaint.typeface = Typeface.MONOSPACE
     }
 
     public fun drawText(
-        canvas: Canvas,
+        context: DrawContext,
         text: CharSequence,
         textX: Float,
         textY: Float,
@@ -83,102 +83,135 @@ public open class TextComponent(
         verticalPosition: VerticalPosition = VerticalPosition.Center,
         width: Int = Int.MAX_VALUE,
         onPreDraw: OnPreDrawListener? = null,
-    ) {
+    ) = with(context) {
 
         if (text.isBlank()) return
-        layout = getLayout(text, width)
+        layout = getLayout(text, fontScale, width)
         val layoutWidth = layout.widestLineWidth
         val layoutHeight = layout.height
 
-        val textStartPosition = horizontalPosition.getTextStartPosition(textX, layoutWidth)
-        val textTopPosition = verticalPosition.getTextTopPosition(textY, layoutHeight.toFloat())
+        val textStartPosition = horizontalPosition
+            .getTextStartPosition(context, textX, layoutWidth)
+        val textTopPosition = verticalPosition
+            .getTextTopPosition(context, textY, layoutHeight.toFloat())
 
-        val bgLeft = textStartPosition - padding.getLeft(isLTR)
-        val bgTop = textTopPosition - ((layoutHeight / 2) + padding.top)
-        val bgRight = textStartPosition + layoutWidth + padding.getRight(isLTR)
-        val bgBottom = textTopPosition + ((layoutHeight / 2) + padding.bottom)
+        val bgLeft = textStartPosition - padding.getLeftDp(isLtr).pixels
+        val bgTop = textTopPosition - ((layoutHeight / 2) + padding.topDp.pixels)
+        val bgRight = textStartPosition + layoutWidth + padding.getRightDp(isLtr).pixels
+        val bgBottom = textTopPosition + ((layoutHeight / 2) + padding.bottomDp.pixels)
 
-        onPreDraw?.invoke(canvas, bgLeft, bgTop, bgRight, bgBottom)
+        onPreDraw?.invoke(context, bgLeft, bgTop, bgRight, bgBottom)
 
         background?.draw(
-            canvas = canvas,
+            context,
             left = bgLeft,
             top = bgTop,
             right = bgRight,
             bottom = bgBottom,
         )
 
-        val centeredY = textTopPosition - layoutHeight.half
-
-        canvas.save()
-        if (rotationDegrees != 0f) {
-            canvas.rotate(0.25f.piRad, textStartPosition, textTopPosition)
+        context.withCanvas {
+            val centeredY = textTopPosition - layoutHeight.half
+            save()
+            if (rotationDegrees != 0f) {
+                rotate(0.25f.piRad, textStartPosition, textTopPosition)
+            }
+            translate(textStartPosition, centeredY)
+            layout.draw(this)
+            restore()
         }
-        canvas.translate(textStartPosition, centeredY)
 
-        layout.draw(canvas)
-
-        canvas.restore()
+        DebugHelper.drawDebugBounds(
+            context = context,
+            left = bgLeft,
+            top = bgTop,
+            right = bgRight,
+            bottom = bgBottom,
+        )
     }
 
-    private fun HorizontalPosition.getTextStartPosition(baseXPosition: Float, width: Float) =
-        when (this) {
+    private fun HorizontalPosition.getTextStartPosition(
+        context: MeasureContext,
+        baseXPosition: Float,
+        width: Float,
+    ) = with(context) {
+        when (this@getTextStartPosition) {
             HorizontalPosition.Start ->
-                if (isLTR) getTextLeftPosition(baseXPosition)
+                if (isLtr) getTextLeftPosition(baseXPosition)
                 else getTextRightPosition(baseXPosition, width)
             HorizontalPosition.Center ->
                 baseXPosition - width.half
             HorizontalPosition.End ->
-                if (isLTR) getTextRightPosition(baseXPosition, width)
+                if (isLtr) getTextRightPosition(baseXPosition, width)
                 else getTextLeftPosition(baseXPosition)
         }
+    }
 
-    private fun getTextLeftPosition(baseXPosition: Float): Float =
-        baseXPosition + padding.getLeft(isLTR) + margins.getLeft(isLTR)
+    private fun MeasureContext.getTextLeftPosition(baseXPosition: Float): Float =
+        baseXPosition + padding.getLeftDp(isLtr).pixels + margins.getLeftDp(isLtr).pixels
 
-    private fun getTextRightPosition(baseXPosition: Float, width: Float): Float =
-        baseXPosition - (padding.getRight(isLTR) + margins.getRight(isLTR) + width)
+    private fun MeasureContext.getTextRightPosition(baseXPosition: Float, width: Float): Float =
+        baseXPosition - (padding.getRightDp(isLtr).pixels + margins.getRightDp(isLtr).pixels + width)
 
     @JvmName("getTextTopPositionExt")
     private fun VerticalPosition.getTextTopPosition(
+        context: MeasureContext,
         textY: Float,
         layoutHeight: Float,
-    ) = when (this) {
-        VerticalPosition.Top -> textY + layoutHeight.half + padding.top + margins.top
-        VerticalPosition.Center -> textY
-        VerticalPosition.Bottom -> textY - (layoutHeight.half + padding.bottom + margins.bottom)
+    ) = with(context) {
+        when (this@getTextTopPosition) {
+            VerticalPosition.Top ->
+                textY + layoutHeight.half + padding.topDp.pixels + margins.topDp.pixels
+            VerticalPosition.Center ->
+                textY
+            VerticalPosition.Bottom ->
+                textY - (layoutHeight.half + padding.bottomDp.pixels + margins.bottomDp.pixels)
+        }
     }
 
     public fun getTextTopPosition(
+        context: MeasureContext,
         verticalPosition: VerticalPosition,
         textY: Float,
         layoutHeight: Float,
-    ) = verticalPosition.getTextTopPosition(textY, layoutHeight)
+    ) = verticalPosition.getTextTopPosition(context, textY, layoutHeight)
 
-    public fun getWidth(text: CharSequence): Float {
-        return getLayout(text).widestLineWidth + padding.horizontal + margins.horizontal
+    public fun getWidth(
+        context: MeasureContext,
+        text: CharSequence,
+    ): Float = with(context) {
+        getLayout(text, fontScale).widestLineWidth +
+                padding.horizontalDp.pixels +
+                margins.horizontalDp.pixels
     }
 
     public fun getHeight(
+        context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
         includePadding: Boolean = true,
         includeMargin: Boolean = true,
-    ): Float = getLayout(text, width).height +
-            (if (includePadding) padding.vertical else 0f) +
-            (if (includeMargin) margins.vertical else 0f)
+    ): Float = with(context) {
+        getLayout(text, fontScale, width).height +
+                (if (includePadding) padding.verticalDp.pixels else 0f) +
+                (if (includeMargin) margins.verticalDp.pixels else 0f)
+    }
 
     public fun clearLayoutCache() {
         layoutCache.clear()
     }
 
-    private fun getLayout(text: CharSequence, width: Int = Int.MAX_VALUE): StaticLayout =
-        layoutCache.getOrPut(text.hashCode() + HASHING_MULTIPLIER * width) {
+    private fun getLayout(
+        text: CharSequence,
+        fontScale: Float,
+        width: Int = Int.MAX_VALUE,
+    ): StaticLayout =
+        layoutCache.getOrPut(arrayOf(text, fontScale, width).contentHashCode()) {
+            textPaint.textSize = textSizeSp * fontScale
             staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
         }
 
     companion object {
         const val TEXT_MEASUREMENT_CHAR = "1"
-        const val HASHING_MULTIPLIER = 31
     }
 }

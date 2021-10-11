@@ -16,19 +16,16 @@
 
 package pl.patrykgoworowski.vico.compose.component.shape
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
+import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.component.shape.Shape
-import pl.patrykgoworowski.vico.core.component.shape.Shapes
 
-@Composable
 fun lineComponent(
     color: Color,
     thickness: Dp,
@@ -37,13 +34,12 @@ fun lineComponent(
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
     shape = shape,
     margins = margins,
 )
 
-@Composable
 fun lineComponent(
     color: Color,
     thickness: Dp,
@@ -52,7 +48,7 @@ fun lineComponent(
     margins: Dimensions = emptyDimensions(),
 ) = LineComponent(
     color = color.toArgb(),
-    thickness = thickness.pixels,
+    thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
     shape = shape.chartShape(),
     margins = margins,

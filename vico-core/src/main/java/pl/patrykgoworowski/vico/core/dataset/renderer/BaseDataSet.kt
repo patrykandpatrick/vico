@@ -16,14 +16,14 @@
 
 package pl.patrykgoworowski.vico.core.dataset.renderer
 
-import android.graphics.Canvas
 import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.threshold.ThresholdLine
 import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryPositionModel
 import pl.patrykgoworowski.vico.core.extension.half
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, BoundsAware {
@@ -39,6 +39,9 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
     protected val Model.drawMaxX: Float
         get() = this@BaseDataSet.maxX ?: maxX
 
+    protected var drawScale: Float = 1f
+    protected var isScaleCalculated = false
+
     override val bounds: RectF = RectF()
 
     override var minY: Float? = null
@@ -47,7 +50,13 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
     override var maxX: Float? = null
 
     override var isHorizontalScrollEnabled: Boolean = false
+    override var maxScrollAmount: Float = 0f
+
     override var zoom: Float? = null
+        set(value) {
+            field = value
+            isScaleCalculated = false
+        }
 
     override fun addThresholdLine(thresholdLine: ThresholdLine): Boolean =
         thresholdLines.add(thresholdLine)
@@ -56,64 +65,58 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
         thresholdLines.remove(thresholdLine)
 
     override fun draw(
-        canvas: Canvas,
+        context: ChartDrawContext,
         model: Model,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
         marker: Marker?
     ) {
         if (model.entryCollections.isNotEmpty()) {
-            drawDataSet(canvas, model, segmentProperties, rendererViewState)
+            drawDataSet(context, model)
         }
-        drawThresholdLines(canvas, model)
-        drawMarker(canvas, model, segmentProperties, rendererViewState, marker)
+        drawThresholdLines(context, model)
+        drawMarker(context, model, marker)
     }
 
     abstract fun drawDataSet(
-        canvas: Canvas,
+        context: ChartDrawContext,
         model: Model,
-        segmentProperties: SegmentProperties,
-        viewState: RendererViewState,
     )
 
     open fun drawMarker(
-        canvas: Canvas,
+        context: ChartDrawContext,
         model: Model,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
         marker: Marker?
     ) {
-        val touchPoint = rendererViewState.markerTouchPoint
+        val touchPoint = context.markerTouchPoint
         if (touchPoint == null || marker == null) return
         markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
             marker.draw(
-                canvas,
-                bounds,
-                markerModel,
+                context = context,
+                bounds = bounds,
+                markedEntries = markerModel,
             )
         }
     }
 
     private fun drawThresholdLines(
-        canvas: Canvas,
+        context: ChartDrawContext,
         model: Model,
     ) {
         val valueRange = (maxY ?: model.maxY) - (minY ?: model.minY)
         thresholdLines.forEach { line ->
             val centerY = bounds.bottom - (line.thresholdValue / valueRange * bounds.height())
             val textY =
-                centerY + line.lineComponent.thickness.half * when (line.labelVerticalPosition) {
+                centerY + line.lineComponent.thicknessDp.half * when (line.labelVerticalPosition) {
                     ThresholdLine.LabelVerticalPosition.Top -> -1
                     ThresholdLine.LabelVerticalPosition.Bottom -> 1
                 }
             line.lineComponent.drawHorizontal(
-                canvas = canvas,
+                context = context,
                 left = bounds.left,
                 right = bounds.right,
                 centerY = centerY
             )
             line.textComponent.drawText(
-                canvas = canvas,
+                context = context,
                 text = line.thresholdValue.toString(),
                 textX = when (line.labelHorizontalPosition) {
                     ThresholdLine.LabelHorizontalPosition.Start -> bounds.left
@@ -121,15 +124,17 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
                 },
                 textY = textY,
                 horizontalPosition = line.labelHorizontalPosition.position,
-                verticalPosition = line.getSuggestedLabelVerticalPosition(textY).position,
+                verticalPosition = line
+                    .getSuggestedLabelVerticalPosition(context, textY).position,
             )
         }
     }
 
     private fun ThresholdLine.getSuggestedLabelVerticalPosition(
+        context: MeasureContext,
         textY: Float,
     ): ThresholdLine.LabelVerticalPosition {
-        val labelHeight = textComponent.getHeight()
+        val labelHeight = textComponent.getHeight(context = context)
         return when (labelVerticalPosition) {
             ThresholdLine.LabelVerticalPosition.Top -> {
                 if (textY - labelHeight < bounds.top) ThresholdLine.LabelVerticalPosition.Bottom
@@ -140,5 +145,18 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
                 else labelVerticalPosition
             }
         }
+    }
+
+    protected fun MeasureContext.calculateDrawSegmentSpecIfNeeded(model: Model) {
+        if (isScaleCalculated) return
+        val measuredWidth = getMeasuredWidth(this, model)
+        if (isHorizontalScrollEnabled) {
+            drawScale = zoom ?: 1f
+            maxScrollAmount = maxOf(0f, measuredWidth * drawScale - bounds.width())
+        } else {
+            maxScrollAmount = 0f
+            drawScale = minOf(bounds.width() / measuredWidth, 1f)
+        }
+        isScaleCalculated = true
     }
 }

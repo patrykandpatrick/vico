@@ -16,17 +16,17 @@
 
 package pl.patrykgoworowski.vico.core.dataset.line
 
-import android.graphics.Canvas
 import pl.patrykgoworowski.vico.core.component.Component
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 internal fun Component.drawPoint(
-    canvas: Canvas,
+    context: DrawContext,
     x: Float,
     y: Float,
     halfPointSize: Float,
 ) {
     draw(
-        canvas = canvas,
+        context = context,
         left = x - halfPointSize,
         top = y - halfPointSize,
         right = x + halfPointSize,

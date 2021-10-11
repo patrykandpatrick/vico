@@ -16,16 +16,11 @@
 
 package pl.patrykgoworowski.vico.app.ui.component
 
-import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.app.ui.theme.byzantine
-import pl.patrykgoworowski.vico.app.ui.theme.flickrPink
-import pl.patrykgoworowski.vico.app.ui.theme.trypanPurple
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.component.columnComponent
 import pl.patrykgoworowski.vico.compose.dataset.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
 import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
@@ -39,17 +34,6 @@ fun StackedColumnChart(
     DataSet(
         modifier = modifier,
         dataSet = columnDataSet(
-            columns = listOf(
-                columnComponent(
-                    color = flickrPink,
-                    shape = CutCornerShape(bottomEnd = 8.dp)
-                ),
-                columnComponent(color = byzantine),
-                columnComponent(
-                    color = trypanPurple,
-                    shape = CutCornerShape(topStart = 8.dp)
-                ),
-            ),
             innerSpacing = 4.dp,
             spacing = 24.dp,
             mergeMode = MergeMode.Stack,

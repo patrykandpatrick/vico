@@ -16,25 +16,17 @@
 
 package pl.patrykgoworowski.vico.core.component
 
-import android.graphics.Canvas
-import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.component.dimension.DefaultMargins
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 public abstract class Component : Margins by DefaultMargins() {
 
     abstract fun draw(
-        canvas: Canvas,
+        context: DrawContext,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float
     )
-
-    open fun draw(
-        canvas: Canvas,
-        bounds: RectF
-    ) {
-        draw(canvas, bounds.left, bounds.top, bounds.right, bounds.bottom)
-    }
 }

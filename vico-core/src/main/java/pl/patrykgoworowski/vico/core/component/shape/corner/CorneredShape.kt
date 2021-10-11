@@ -16,11 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.component.shape.corner
 
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 import kotlin.math.absoluteValue
 
 public open class CorneredShape(
@@ -30,12 +30,12 @@ public open class CorneredShape(
     public val bottomLeft: Corner,
 ) : Shape {
 
-    private fun getCornerScale(width: Float, height: Float): Float {
+    private fun getCornerScale(width: Float, height: Float, density: Float): Float {
         val availableSize = minOf(width, height)
-        val tL = topLeft.getCornerSize(availableSize)
-        val tR = topRight.getCornerSize(availableSize)
-        val bR = bottomRight.getCornerSize(availableSize)
-        val bL = bottomLeft.getCornerSize(availableSize)
+        val tL = topLeft.getCornerSize(availableSize, density)
+        val tR = topRight.getCornerSize(availableSize, density)
+        val bR = bottomRight.getCornerSize(availableSize, density)
+        val bL = bottomLeft.getCornerSize(availableSize, density)
         return minOf(
             width / (tL + tR),
             width / (bL + bR),
@@ -45,67 +45,75 @@ public open class CorneredShape(
     }
 
     override fun drawShape(
-        canvas: Canvas,
+        context: DrawContext,
         paint: Paint,
         path: Path,
-        bounds: RectF
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
     ) {
-        createPath(path, bounds)
-        canvas.drawPath(path, paint)
+        createPath(context, path, left, top, right, bottom)
+        context.canvas.drawPath(path, paint)
     }
 
+    @LongParameterListDrawFunction
     protected open fun createPath(
+        context: DrawContext,
         path: Path,
-        bounds: RectF,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
     ) {
-        val width = bounds.width()
-        val height = bounds.height()
+        val width = right - left
+        val height = bottom - top
         if (width == 0f || height == 0f) return
 
         val size = minOf(width, height).absoluteValue
-        val scale = getCornerScale(width, height).coerceAtMost(1f)
+        val scale = getCornerScale(width, height, context.density).coerceAtMost(1f)
 
-        val tL = topLeft.getCornerSize(size) * scale
-        val tR = topRight.getCornerSize(size) * scale
-        val bR = bottomRight.getCornerSize(size) * scale
-        val bL = bottomLeft.getCornerSize(size) * scale
+        val tL = topLeft.getCornerSize(size, context.density) * scale
+        val tR = topRight.getCornerSize(size, context.density) * scale
+        val bR = bottomRight.getCornerSize(size, context.density) * scale
+        val bL = bottomLeft.getCornerSize(size, context.density) * scale
 
-        path.moveTo(bounds.left, bounds.top + tL)
+        path.moveTo(left, top + tL)
         topLeft.cornerTreatment.createCorner(
-            x1 = bounds.left,
-            y1 = bounds.top + tL,
-            x2 = bounds.left + tL,
-            y2 = bounds.top,
+            x1 = left,
+            y1 = top + tL,
+            x2 = left + tL,
+            y2 = top,
             cornerLocation = CornerLocation.TopLeft,
             path
         )
 
-        path.lineTo(bounds.right - tR, bounds.top)
+        path.lineTo(right - tR, top)
         topRight.cornerTreatment.createCorner(
-            x1 = bounds.right - tR,
-            y1 = bounds.top,
-            x2 = bounds.right,
-            y2 = bounds.top + tR,
+            x1 = right - tR,
+            y1 = top,
+            x2 = right,
+            y2 = top + tR,
             cornerLocation = CornerLocation.TopRight,
             path
         )
 
-        path.lineTo(bounds.right, bounds.bottom - bR)
+        path.lineTo(right, bottom - bR)
         bottomRight.cornerTreatment.createCorner(
-            x1 = bounds.right,
-            y1 = bounds.bottom - bR,
-            x2 = bounds.right - bR,
-            y2 = bounds.bottom,
+            x1 = right,
+            y1 = bottom - bR,
+            x2 = right - bR,
+            y2 = bottom,
             cornerLocation = CornerLocation.BottomRight,
             path
         )
 
-        path.lineTo(bounds.left + bL, bounds.bottom)
+        path.lineTo(left + bL, bottom)
         bottomLeft.cornerTreatment.createCorner(
-            x1 = bounds.left + bL,
-            y1 = bounds.bottom,
-            x2 = bounds.left,
-            y2 = bounds.bottom - bL,
+            x1 = left + bL,
+            y1 = bottom,
+            x2 = left,
+            y2 = bottom - bL,
             cornerLocation = CornerLocation.BottomLeft,
             path
         )

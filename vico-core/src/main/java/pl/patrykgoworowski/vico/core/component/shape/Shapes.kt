@@ -16,34 +16,35 @@
 
 package pl.patrykgoworowski.vico.core.component.shape
 
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.RectF
 import android.graphics.drawable.Drawable
-import pl.patrykgoworowski.vico.core.extension.setBounds
-import pl.patrykgoworowski.vico.core.extension.updateBounds
 import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
 import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
 import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
+import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.extension.setBounds
 
 object Shapes {
     val pillShape = roundedCornersShape(allPercent = 50)
 
     val rectShape: Shape = object : Shape {
         override fun drawShape(
-            canvas: Canvas,
+            context: DrawContext,
             paint: Paint,
             path: Path,
-            bounds: RectF
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
         ) {
-            path.moveTo(bounds.left, bounds.top)
-            path.lineTo(bounds.right, bounds.top)
-            path.lineTo(bounds.right, bounds.bottom)
-            path.lineTo(bounds.left, bounds.bottom)
+            path.moveTo(left, top)
+            path.lineTo(right, top)
+            path.lineTo(right, bottom)
+            path.lineTo(left, bottom)
             path.close()
-            canvas.drawPath(path, paint)
+            context.canvas.drawPath(path, paint)
         }
     }
 
@@ -87,25 +88,31 @@ object Shapes {
                 drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
 
         override fun drawShape(
-            canvas: Canvas,
+            context: DrawContext,
             paint: Paint,
             path: Path,
-            bounds: RectF
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
         ) {
-            if (bounds.height() == 0f) return
-            val drawableHeight = if (keepAspectRatio) bounds.width() * ratio else bounds.height()
-            val top = minOf(bounds.top, bounds.bottom - drawableHeight)
-            drawable.setBounds(bounds.left, top, bounds.right, top + drawableHeight)
-            drawable.draw(canvas)
+            if (bottom - top == 0f) return
+            val drawableHeight = if (keepAspectRatio) (right - left) * ratio else bottom - top
+            val top = minOf(top, bottom - drawableHeight)
+            drawable.setBounds(left, top, right, top + drawableHeight)
+            drawable.draw(context.canvas)
             otherCreator ?: return
 
-            bounds.updateBounds(top = drawable.bounds.bottom.toFloat())
-            if (bounds.height() > 0) {
+            val drawableBottom = drawable.bounds.bottom.toFloat()
+            if (bottom - drawableBottom > 0) {
                 otherCreator.drawShape(
-                    canvas,
-                    paint,
-                    path,
-                    bounds
+                    context = context,
+                    paint = paint,
+                    path = path,
+                    left = left,
+                    top = drawableBottom,
+                    right = right,
+                    bottom = bottom,
                 )
             }
         }

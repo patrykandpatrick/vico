@@ -16,25 +16,24 @@
 
 package pl.patrykgoworowski.vico.core.dataset.column
 
-import android.graphics.Canvas
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.forEachIn
 import pl.patrykgoworowski.vico.core.dataset.put
 import pl.patrykgoworowski.vico.core.dataset.renderer.BaseDataSet
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.extension.between
-import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.extension.getRepeating
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.inClip
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.extension.set
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.ceil
 import kotlin.math.min
@@ -42,39 +41,27 @@ import kotlin.math.roundToInt
 
 public open class ColumnDataSet(
     public var columns: List<LineComponent>,
-    public var spacing: Float = DEF_MERGED_BAR_SPACING.dp,
-    public var innerSpacing: Float = DEF_MERGED_BAR_INNER_SPACING.dp,
+    public var spacingDp: Float = DEF_MERGED_BAR_SPACING,
+    public var innerSpacingDp: Float = DEF_MERGED_BAR_INNER_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped
 ) : BaseDataSet<EntryModel>() {
 
     constructor(
         column: LineComponent,
-        spacing: Float = DEF_MERGED_BAR_SPACING.dp,
-    ) : this(columns = listOf(column), spacing = spacing)
+        spacingDp: Float = DEF_MERGED_BAR_SPACING,
+    ) : this(columns = listOf(column), spacingDp = spacingDp)
 
     constructor() : this(emptyList())
 
     private val heightMap = HashMap<Float, Float>()
-    override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
-
-    override var maxScrollAmount: Float = 0f
-    override var zoom: Float? = null
-        set(value) {
-            field = value
-            isScaleCalculated = false
-        }
-
-    private var drawScale: Float = 1f
-    private var isScaleCalculated = false
-    private var scaledSpacing = spacing
-    private var scaledInnerSpacing = innerSpacing
-
     private val segmentProperties = MutableSegmentProperties()
 
-    override fun getMeasuredWidth(model: EntryModel): Int {
+    override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
+
+    override fun getMeasuredWidth(context: MeasureContext, model: EntryModel): Int = with(context) {
         val length = model.getEntriesLength()
-        val segmentWidth = getSegmentSize(model.entryCollections.size, false)
-        return (segmentWidth * length + spacing * length).roundToInt()
+        val segmentWidth = getCellWidth(model.entryCollections.size, false)
+        return (segmentWidth * length + spacingDp.pixels * length).roundToInt()
     }
 
     override fun setBounds(
@@ -88,20 +75,33 @@ public open class ColumnDataSet(
     }
 
     override fun drawDataSet(
-        canvas: Canvas,
+        context: ChartDrawContext,
         model: EntryModel,
-        segmentProperties: SegmentProperties,
-        viewState: RendererViewState,
-    ) = canvas.inClip(bounds) {
+    ) = with(context) {
+        canvas.inClip(bounds) {
+            markerLocationMap.clear()
+            calculateDrawSegmentSpecIfNeeded(model)
+            maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
+                a = 0f,
+                b = (segmentProperties.segmentWidth * model.getEntriesLength()) - bounds.width(),
+            ) else 0f
+            drawDataSetInternal(
+                model = model,
+                cellWidth = segmentProperties.cellWidth,
+                spacing = segmentProperties.marginWidth,
+            )
+            heightMap.clear()
+        }
+    }
 
-        markerLocationMap.clear()
-        calculateDrawSegmentSpecIfNeeded(model)
-        updateMaxScrollAmount(model.getEntriesLength(), segmentProperties.segmentWidth)
-
+    private fun ChartDrawContext.drawDataSetInternal(
+        model: EntryModel,
+        cellWidth: Float,
+        spacing: Float,
+    ) {
         val heightMultiplier = bounds.height() / ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero)
 
         var drawingStart: Float
-
         var height: Float
         var columnCenterX: Float
         var column: LineComponent
@@ -109,9 +109,7 @@ public open class ColumnDataSet(
         var columnBottom: Float
         val bottomCompensation = if (minY.orZero < 0f) (minY.orZero * heightMultiplier) else 0f
 
-        val defaultSegmentSize = getSegmentSize(model.entryCollections.size, scaled = true)
-
-        val (segmentSize, spacing) = segmentProperties
+        val defCellWidth = getCellWidth(model.entryCollections.size)
 
         model.entryCollections.forEachIndexed { index, entryCollection ->
 
@@ -119,14 +117,15 @@ public open class ColumnDataSet(
             column.setParentBounds(bounds)
             drawingStart = getDrawingStart(
                 entryCollectionIndex = index,
-                segmentCompensation = (segmentSize - defaultSegmentSize) / 2,
-                spacing = spacing
-            ) - viewState.horizontalScroll
+                segmentCompensation = (cellWidth - defCellWidth) / 2,
+                spacing = spacing,
+                columnWidth = column.thicknessDp.pixels * drawScale,
+            ) - horizontalScroll
 
             entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
                 height = entry.y * heightMultiplier
                 columnCenterX = drawingStart +
-                        (segmentSize + spacing) * (entry.x - model.minX) / model.step
+                        (cellWidth + spacing) * (entry.x - model.minX) / model.step
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -134,32 +133,37 @@ public open class ColumnDataSet(
                         columnBottom = (bounds.bottom + bottomCompensation - cumulatedHeight)
                             .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        columnCenterX += segmentSize.half
+                        columnCenterX += cellWidth.half
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                     MergeMode.Grouped -> {
                         columnBottom = (bounds.bottom + bottomCompensation)
                             .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        columnCenterX += column.scaledThickness.half
+                        columnCenterX += column.thicknessDp.pixels * drawScale
                     }
                 }
 
-                if (column.intersectsVertical(columnTop, columnBottom, columnCenterX, bounds)) {
-                    if (viewState.markerTouchPoint != null) {
-                        markerLocationMap.put(
-                            x = ceil(columnCenterX),
-                            y = columnTop.between(bounds.top, bounds.bottom),
-                            entry = entry,
-                            color = column.color
-                        )
-                    }
+                if (column.intersectsVertical(
+                        context = this,
+                        top = columnTop,
+                        bottom = columnBottom,
+                        centerX = columnCenterX,
+                        boundingBox = bounds,
+                        thicknessScale = drawScale
+                    )
+                ) {
+                    markerLocationMap.takeIf { markerTouchPoint != null }?.put(
+                        x = ceil(columnCenterX),
+                        y = columnTop.between(bounds.top, bounds.bottom),
+                        entry = entry,
+                        color = column.color
+                    )
 
-                    column.drawVertical(canvas, columnTop, columnBottom, columnCenterX)
+                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, drawScale)
                 }
             }
         }
-        heightMap.clear()
     }
 
     override fun setToAxisModel(axisModel: MutableDataSetModel, model: EntryModel) {
@@ -170,72 +174,54 @@ public open class ColumnDataSet(
         axisModel.entryModel = model
     }
 
-    override fun getSegmentProperties(model: EntryModel): SegmentProperties {
+    override fun getSegmentProperties(
+        context: MeasureContext,
+        model: EntryModel
+    ): SegmentProperties = with(context) {
         calculateDrawSegmentSpecIfNeeded(model)
-        return segmentProperties.apply {
-            contentWidth = getSegmentSize(entryCollectionSize = model.entryCollections.size)
-            marginWidth = scaledSpacing
+        segmentProperties.apply {
+            cellWidth = context.getCellWidth(model.entryCollections.size)
+            marginWidth = spacingDp.pixels * drawScale
         }
     }
 
-    private fun getSegmentSize(entryCollectionSize: Int, scaled: Boolean = true): Float =
-        when (mergeMode) {
-            MergeMode.Stack -> columns.maxOf { if (scaled) it.scaledThickness else it.thickness }
-            MergeMode.Grouped -> {
-                val innerSpacing = if (scaled) scaledInnerSpacing else innerSpacing
-                getCumulatedThickness(entryCollectionSize, scaled) +
-                        (innerSpacing * (entryCollectionSize - 1))
-            }
-        }
+    private fun MeasureContext.getCellWidth(
+        entryCollectionSize: Int,
+        scaled: Boolean = true,
+    ): Float = when (mergeMode) {
+        MergeMode.Stack ->
+            columns.maxOf { it.thicknessDp.pixels }.applyScale(scaled)
+        MergeMode.Grouped ->
+            getCumulatedThickness(entryCollectionSize, density, scaled) +
+                    (innerSpacingDp.pixels.applyScale(scaled) * (entryCollectionSize - 1))
+    }
 
-    private fun getDrawingStart(
+    private fun MeasureContext.getDrawingStart(
         entryCollectionIndex: Int,
         segmentCompensation: Float,
+        columnWidth: Float,
         spacing: Float,
     ): Float {
-        val baseLeft = bounds.left + spacing.half + segmentCompensation
+        val baseLeft = bounds.left + spacing.half + segmentCompensation - columnWidth.half
         return when (mergeMode) {
             MergeMode.Stack -> baseLeft
-            MergeMode.Grouped -> baseLeft + (getCumulatedThickness(entryCollectionIndex, true) +
-                    (scaledInnerSpacing * entryCollectionIndex))
+            MergeMode.Grouped -> baseLeft +
+                    (getCumulatedThickness(entryCollectionIndex, density, true) +
+                            (innerSpacingDp.pixels * drawScale * entryCollectionIndex))
         }
     }
 
     private fun getCumulatedThickness(
         count: Int,
+        density: Float,
         scaled: Boolean,
     ): Float {
         var thickness = 0f
         for (i in 0 until count) {
-            thickness += if (scaled) columns.getRepeating(i).scaledThickness
-            else columns.getRepeating(i).thickness
+            thickness += columns.getRepeating(i).thicknessDp * density.applyScale(scaled)
         }
         return thickness
     }
 
-    private fun calculateDrawSegmentSpecIfNeeded(model: EntryModel) {
-        if (isScaleCalculated) return
-        val measuredWidth = getMeasuredWidth(model)
-        if (isHorizontalScrollEnabled) {
-            drawScale = zoom ?: 1f
-            maxScrollAmount = maxOf(0f, measuredWidth * drawScale - bounds.width())
-        } else {
-            maxScrollAmount = 0f
-            drawScale = minOf(bounds.width() / measuredWidth, 1f)
-        }
-        columns.forEach { column -> column.thicknessScale = drawScale }
-        scaledSpacing = spacing * drawScale
-        scaledInnerSpacing = innerSpacing * drawScale
-        isScaleCalculated = true
-    }
-
-    private fun updateMaxScrollAmount(
-        entryCollectionSize: Int,
-        segmentWidth: Float,
-    ) {
-        maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
-            a = 0f,
-            b = (segmentWidth * entryCollectionSize) - bounds.width()
-        ) else 0f
-    }
+    private fun Float.applyScale(applyScale: Boolean) = if (applyScale) this * drawScale else this
 }

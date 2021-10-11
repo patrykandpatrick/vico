@@ -16,13 +16,13 @@
 
 package pl.patrykgoworowski.vico.view.dataset.common
 
-import android.graphics.Canvas
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.extension.runEach
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
 
@@ -40,19 +40,18 @@ class ViewDataSet<Model : EntryModel>(
 
     override fun getEntriesModel(): Model = model
 
-    override fun getSegmentProperties(): SegmentProperties = dataSet.getSegmentProperties(model)
+    override fun getSegmentProperties(context: MeasureContext): SegmentProperties =
+        dataSet.getSegmentProperties(context, model)
 
     override fun setToAxisModel(axisModel: MutableDataSetModel) {
         dataSet.setToAxisModel(axisModel, model)
     }
 
     override fun draw(
-        canvas: Canvas,
-        rendererViewState: RendererViewState,
-        segmentProperties: SegmentProperties,
+        context: ChartDrawContext,
         marker: Marker?,
     ) {
-        dataSet.draw(canvas, model, segmentProperties, rendererViewState, marker)
+        dataSet.draw(context, model, marker)
     }
 
     override fun addListener(listener: UpdateRequestListener) {

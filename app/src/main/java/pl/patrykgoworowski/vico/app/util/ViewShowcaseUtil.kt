@@ -44,9 +44,7 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModel
 import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
 import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.core.extension.copyColor
-import pl.patrykgoworowski.vico.core.extension.dp
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.component.shape.Shapes.cutCornerShape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.view.component.shape.cutCornerShape
 import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
@@ -67,8 +65,8 @@ class ViewShowcaseUtil(
         val columnDataSet = ColumnDataSet(
             column = LineComponent(
                 color = context.flickrPink,
-                shape = Shapes.cutCornerShape(topLeft = 8f.dp),
-                thickness = 16f.dp,
+                shape = Shapes.cutCornerShape(topLeft = 8f),
+                thicknessDp = 16f,
                 dynamicShader = DynamicShaders
                     .horizontalGradient(context.flickrPink, context.trypanPurple),
             ),
@@ -98,25 +96,25 @@ class ViewShowcaseUtil(
                     columns = listOf(
                         LineComponent(
                             color = context.trypanPurple,
-                            thickness = 16.dp,
-                            shape = Shapes.cutCornerShape(topLeft = 8.dp),
+                            thicknessDp = 16f,
+                            shape = Shapes.cutCornerShape(topLeft = 8f),
                         ),
                         LineComponent(
                             color = context.byzantine,
-                            thickness = 12.dp,
+                            thicknessDp = 12f,
                             shape = pillShape,
                         ),
                         LineComponent(
                             color = context.purple,
-                            thickness = 16.dp,
-                            shape = Shapes.cutCornerShape(topRight = 8.dp),
+                            thicknessDp = 16f,
+                            shape = Shapes.cutCornerShape(topRight = 8f),
                         ),
                     ),
                 ), LineDataSet(
-                    pointSize = 62.dp,
+                    pointSizeDp = 62f,
                     lineColor = context.flickrPink,
-                    lineWidth = 2.dp,
-                    spacing = 8.dp,
+                    lineWidthDp = 2f,
+                    spacingDp = 8f,
                 )
             )
         ).apply {
@@ -140,7 +138,7 @@ class ViewShowcaseUtil(
     fun setUpLineChart(dataSetView: DataSetView, marker: Marker?) {
 
         val lineDataSet = LineDataSet(
-            pointSize = 10.dp,
+            pointSizeDp = 10f,
             lineColor = context.flickrPink
         ).apply {
             isHorizontalScrollEnabled = true
@@ -150,9 +148,9 @@ class ViewShowcaseUtil(
                 component = ShapeComponent(
                     shape = pillShape,
                     color = context.flickrPink,
-                    margins = dimensionsOf(all = 0.5f.dp)
+                    margins = dimensionsOf(allDp = .5f)
                 ),
-                componentSize = 4.dp,
+                componentSize = 4f,
             )
         }
 
@@ -176,22 +174,22 @@ class ViewShowcaseUtil(
             columns = listOf(
                 LineComponent(
                     color = context.flickrPink,
-                    thickness = 16f.dp,
-                    shape = Shapes.cutCornerShape(topLeft = 8f.dp)
+                    thicknessDp = 16f,
+                    shape = Shapes.cutCornerShape(topLeft = 8f)
                 ),
                 LineComponent(
                     color = context.byzantine,
-                    thickness = 24f.dp,
+                    thicknessDp = 24f,
                 ),
                 LineComponent(
                     color = context.trypanPurple,
-                    thickness = 16f.dp,
-                    shape = Shapes.cutCornerShape(topRight = 8f.dp)
+                    thicknessDp = 16f,
+                    shape = Shapes.cutCornerShape(topRight = 8f)
                 ),
             ),
             mergeMode = MergeMode.Grouped,
-            spacing = 24.dp,
-            innerSpacing = 4.dp,
+            spacingDp = 24f,
+            innerSpacingDp = 4f,
         ).apply {
             isHorizontalScrollEnabled = true
         }
@@ -216,22 +214,22 @@ class ViewShowcaseUtil(
             columns = listOf(
                 LineComponent(
                     color = context.color { R.color.flickr_pink },
-                    thickness = 16f.dp,
-                    shape = Shapes.cutCornerShape(bottomRight = 8f.dp)
+                    thicknessDp = 16f,
+                    shape = Shapes.cutCornerShape(bottomRight = 8f)
                 ),
                 LineComponent(
                     color = context.color { R.color.byzantine },
-                    thickness = 16f.dp,
+                    thicknessDp = 16f,
                 ),
                 LineComponent(
                     color = context.color { R.color.trypan_purple },
-                    thickness = 16f.dp,
-                    shape = Shapes.cutCornerShape(topLeft = 8f.dp)
+                    thicknessDp = 16f,
+                    shape = Shapes.cutCornerShape(topLeft = 8f)
                 ),
             ),
             mergeMode = MergeMode.Stack,
-            spacing = 24.dp,
-            innerSpacing = 4.dp,
+            spacingDp = 24f,
+            innerSpacingDp = 4f,
         ).apply {
             isHorizontalScrollEnabled = true
         }

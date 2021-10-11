@@ -57,7 +57,7 @@ internal var View.verticalPadding: Int
         updatePadding(top = value / 2, bottom = value / 2)
     }
 
-internal val View.isLTR: Boolean
+internal val View.isLtr: Boolean
     get() = ViewCompat.getLayoutDirection(this) == ViewCompat.LAYOUT_DIRECTION_LTR
 
 internal fun OverScroller.fling(

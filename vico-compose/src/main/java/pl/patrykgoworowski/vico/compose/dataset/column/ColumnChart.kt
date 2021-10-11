@@ -19,7 +19,6 @@ package pl.patrykgoworowski.vico.compose.dataset.column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
@@ -27,7 +26,7 @@ import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 
 @Composable
 fun columnDataSet(
-    columns: List<LineComponent> = currentChartStyle.columnChart.getColumns(),
+    columns: List<LineComponent> = currentChartStyle.columnChart.columns,
     spacing: Dp = currentChartStyle.columnChart.outsideSpacing,
     innerSpacing: Dp = currentChartStyle.columnChart.innerSpacing,
     mergeMode: MergeMode = MergeMode.Grouped,
@@ -39,8 +38,8 @@ fun columnDataSet(
     val dataSet = remember { ColumnDataSet() }
     return dataSet.apply {
         this.columns = columns
-        this.spacing = spacing.pixels
-        this.innerSpacing = innerSpacing.pixels
+        this.spacingDp = spacing.value
+        this.innerSpacingDp = innerSpacing.value
         this.mergeMode = mergeMode
         this.minX = minX
         this.maxX = maxX

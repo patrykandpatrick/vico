@@ -22,12 +22,14 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 class StaticShader(private val brush: Brush) : DynamicShader {
 
     private var shader: Shader? = null
 
     override fun provideShader(
+        context: DrawContext,
         bounds: RectF
     ): Shader = shader ?: kotlin.run {
         val tempPaint = Paint()

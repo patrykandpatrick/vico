@@ -17,12 +17,13 @@
 package pl.patrykgoworowski.vico.compose.axis.horizontal
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.vico.compose.axis.axisGuidelineComponent
 import pl.patrykgoworowski.vico.compose.axis.axisLabelComponent
 import pl.patrykgoworowski.vico.compose.axis.axisLineComponent
 import pl.patrykgoworowski.vico.compose.axis.axisTickComponent
+import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
@@ -33,7 +34,8 @@ import pl.patrykgoworowski.vico.core.component.text.TextComponent
 fun topAxis(
     label: TextComponent? = axisLabelComponent(),
     axis: LineComponent? = axisLineComponent(),
-    tick: TickComponent? = axisTickComponent(),
+    tick: LineComponent? = axisTickComponent(),
+    tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
@@ -43,13 +45,15 @@ fun topAxis(
     tick = tick,
     guideline = guideline,
     valueFormatter = valueFormatter,
+    tickLengthDp = tickLength.value,
 )
 
 @Composable
 fun bottomAxis(
     label: TextComponent? = axisLabelComponent(),
     axis: LineComponent? = axisLineComponent(),
-    tick: TickComponent? = axisTickComponent(),
+    tick: LineComponent? = axisTickComponent(),
+    tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
@@ -59,4 +63,5 @@ fun bottomAxis(
     tick = tick,
     guideline = guideline,
     valueFormatter = valueFormatter,
+    tickLengthDp = tickLength.value,
 )

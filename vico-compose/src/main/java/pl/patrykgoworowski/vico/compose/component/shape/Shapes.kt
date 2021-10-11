@@ -18,69 +18,85 @@
 
 package pl.patrykgoworowski.vico.compose.component.shape
 
-import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.RectF
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.asAndroidPath
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.compose.extension.pixels
+import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
 import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
 import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private const val RADII_ARRAY_SIZE = 8
 
-@Composable
 fun ComposeShape.chartShape(): Shape = object : Shape {
-
-    val layoutDirection = LocalLayoutDirection.current
-    val density = LocalDensity.current
-
     private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
     private val matrix: Matrix by lazy { Matrix() }
 
-    override fun drawShape(canvas: Canvas, paint: Paint, path: Path, bounds: RectF) {
+    override fun drawShape(
+        context: DrawContext,
+        paint: Paint,
+        path: Path,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ) {
         val outline = createOutline(
             size = Size(
-                width = bounds.width(),
-                height = bounds.height()
+                width = right - left,
+                height = bottom - top,
             ),
-            layoutDirection = layoutDirection,
-            density = density,
+            layoutDirection = if (context.isLtr) LayoutDirection.Ltr else LayoutDirection.Rtl,
+            density = Density(context.density, context.fontScale),
         )
         when (outline) {
             is Outline.Rectangle -> path.addRect(
-                bounds.left,
-                bounds.top,
-                bounds.right,
-                bounds.bottom,
+                left,
+                top,
+                right,
+                bottom,
                 Path.Direction.CCW
             )
-            is Outline.Rounded -> path.addRoundRect(bounds, outline.roundRect, radii)
+            is Outline.Rounded -> path.addRoundRect(
+                left = left,
+                top = top,
+                right = right,
+                bottom = bottom,
+                rect = outline.roundRect,
+                radii = radii
+            )
             is Outline.Generic -> {
-                matrix.setTranslate(bounds.left, bounds.top)
+                matrix.setTranslate(left, top)
                 path.addPath(outline.path.asAndroidPath(), matrix)
             }
         }
-        canvas.drawPath(path, paint)
+        context.canvas.drawPath(path, paint)
     }
 }
 
 @Suppress("MagicNumber")
-fun Path.addRoundRect(bounds: RectF, rect: RoundRect, radii: FloatArray) {
+@LongParameterListDrawFunction
+fun Path.addRoundRect(
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+    rect: RoundRect,
+    radii: FloatArray
+) {
     radii[0] = rect.topLeftCornerRadius.x
     radii[1] = rect.topLeftCornerRadius.y
     radii[2] = rect.topRightCornerRadius.x
@@ -89,51 +105,47 @@ fun Path.addRoundRect(bounds: RectF, rect: RoundRect, radii: FloatArray) {
     radii[5] = rect.bottomRightCornerRadius.y
     radii[6] = rect.bottomLeftCornerRadius.x
     radii[7] = rect.bottomLeftCornerRadius.y
-    addRoundRect(bounds.left, bounds.top, bounds.right, bounds.bottom, radii, Path.Direction.CCW)
+    addRoundRect(left, top, right, bottom, radii, Path.Direction.CCW)
 }
 
-@Composable
 fun Shapes.roundedCornerShape(
     all: Dp = 0.dp,
 ) = CorneredShape(
-    Corner.Absolute(all.pixels, RoundedCornerTreatment),
-    Corner.Absolute(all.pixels, RoundedCornerTreatment),
-    Corner.Absolute(all.pixels, RoundedCornerTreatment),
-    Corner.Absolute(all.pixels, RoundedCornerTreatment),
+    Corner.Absolute(all.value, RoundedCornerTreatment),
+    Corner.Absolute(all.value, RoundedCornerTreatment),
+    Corner.Absolute(all.value, RoundedCornerTreatment),
+    Corner.Absolute(all.value, RoundedCornerTreatment),
 )
 
-@Composable
 fun Shapes.roundedCornerShape(
     topLeft: Dp = 0.dp,
     topRight: Dp = 0.dp,
     bottomRight: Dp = 0.dp,
     bottomLeft: Dp = 0.dp,
 ) = CorneredShape(
-    Corner.Absolute(topLeft.pixels, RoundedCornerTreatment),
-    Corner.Absolute(topRight.pixels, RoundedCornerTreatment),
-    Corner.Absolute(bottomRight.pixels, RoundedCornerTreatment),
-    Corner.Absolute(bottomLeft.pixels, RoundedCornerTreatment),
+    Corner.Absolute(topLeft.value, RoundedCornerTreatment),
+    Corner.Absolute(topRight.value, RoundedCornerTreatment),
+    Corner.Absolute(bottomRight.value, RoundedCornerTreatment),
+    Corner.Absolute(bottomLeft.value, RoundedCornerTreatment),
 )
 
-@Composable
 fun Shapes.cutCornerShape(
     all: Dp = 0.dp,
 ) = CorneredShape(
-    Corner.Absolute(all.pixels, CutCornerTreatment),
-    Corner.Absolute(all.pixels, CutCornerTreatment),
-    Corner.Absolute(all.pixels, CutCornerTreatment),
-    Corner.Absolute(all.pixels, CutCornerTreatment),
+    Corner.Absolute(all.value, CutCornerTreatment),
+    Corner.Absolute(all.value, CutCornerTreatment),
+    Corner.Absolute(all.value, CutCornerTreatment),
+    Corner.Absolute(all.value, CutCornerTreatment),
 )
 
-@Composable
 fun Shapes.cutCornerShape(
     topLeft: Dp = 0.dp,
     topRight: Dp = 0.dp,
     bottomRight: Dp = 0.dp,
     bottomLeft: Dp = 0.dp,
 ) = CorneredShape(
-    Corner.Absolute(topLeft.pixels, CutCornerTreatment),
-    Corner.Absolute(topRight.pixels, CutCornerTreatment),
-    Corner.Absolute(bottomRight.pixels, CutCornerTreatment),
-    Corner.Absolute(bottomLeft.pixels, CutCornerTreatment),
+    Corner.Absolute(topLeft.value, CutCornerTreatment),
+    Corner.Absolute(topRight.value, CutCornerTreatment),
+    Corner.Absolute(bottomRight.value, CutCornerTreatment),
+    Corner.Absolute(bottomLeft.value, CutCornerTreatment),
 )

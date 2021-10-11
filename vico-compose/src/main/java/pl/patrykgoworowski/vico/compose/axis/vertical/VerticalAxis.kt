@@ -17,12 +17,13 @@
 package pl.patrykgoworowski.vico.compose.axis.vertical
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.vico.compose.axis.axisGuidelineComponent
 import pl.patrykgoworowski.vico.compose.axis.axisLabelComponent
 import pl.patrykgoworowski.vico.compose.axis.axisLineComponent
 import pl.patrykgoworowski.vico.compose.axis.axisTickComponent
+import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
@@ -33,7 +34,8 @@ import pl.patrykgoworowski.vico.core.component.text.TextComponent
 fun startAxis(
     label: TextComponent? = axisLabelComponent(),
     axis: LineComponent? = axisLineComponent(),
-    tick: TickComponent? = axisTickComponent(),
+    tick: LineComponent? = axisTickComponent(),
+    tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
 ): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
@@ -43,13 +45,15 @@ fun startAxis(
     tick = tick,
     guideline = guideline,
     valueFormatter = valueFormatter,
+    tickLengthDp = tickLength.value,
 )
 
 @Composable
 fun endAxis(
     label: TextComponent? = axisLabelComponent(),
     axis: LineComponent? = axisLineComponent(),
-    tick: TickComponent? = axisTickComponent(),
+    tick: LineComponent? = axisTickComponent(),
+    tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
 ): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
@@ -59,4 +63,5 @@ fun endAxis(
     tick = tick,
     guideline = guideline,
     valueFormatter = valueFormatter,
+    tickLengthDp = tickLength.value,
 )

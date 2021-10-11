@@ -16,12 +16,12 @@
 
 package pl.patrykgoworowski.vico.core.component.shape.corner
 
-import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.DEF_MARKER_TICK_SIZE
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.extension.between
 
 public open class MarkerCorneredShape(
@@ -52,25 +52,36 @@ public open class MarkerCorneredShape(
 
     @LongParameterListDrawFunction
     public fun drawMarker(
-        canvas: Canvas,
+        context: DrawContext,
         paint: Paint,
         path: Path,
         bounds: RectF,
         contentBounds: RectF,
         tickX: Float,
     ) {
-        createPath(path = path, bounds = bounds)
+        createPath(context = context, path = path, left = bounds.left, top = bounds.top,
+        right = bounds.right, bottom = bounds.bottom)
+        val tickSize = context.toPixels(tickSize)
         val availableCornerSize = minOf(bounds.width(), bounds.height())
 
-        val minLeft = contentBounds.left + bottomLeft.getCornerSize(availableCornerSize)
-        val maxLeft =
-            contentBounds.right - (bottomRight.getCornerSize(availableCornerSize) + (tickSize * 2))
+        val minLeft = contentBounds.left +
+                bottomLeft.getCornerSize(availableCornerSize, context.density)
+        val maxLeft = contentBounds.right -
+                (bottomRight.getCornerSize(availableCornerSize, context.density) + (tickSize * 2))
 
         val tickTopLeft = (tickX - tickSize).between(minLeft, maxLeft)
         path.moveTo(tickTopLeft, bounds.bottom)
         path.lineTo(tickX, bounds.bottom + tickSize)
         path.lineTo(tickTopLeft + (tickSize * 2), bounds.bottom)
         path.close()
-        drawShape(canvas, paint, path, bounds)
+        drawShape(
+            context = context,
+            paint = paint,
+            path = path,
+            left = bounds.left,
+            top = bounds.top,
+            right = bounds.right,
+            bottom = bounds.bottom
+        )
     }
 }

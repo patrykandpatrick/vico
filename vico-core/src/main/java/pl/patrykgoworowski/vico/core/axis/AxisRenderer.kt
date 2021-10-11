@@ -16,29 +16,27 @@
 
 package pl.patrykgoworowski.vico.core.axis
 
-import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
-import pl.patrykgoworowski.vico.core.axis.component.TickComponent
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.dataset.renderer.RendererViewState
-import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.dimensions.DataSetInsetter
+import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
+import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
+import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
 interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     val position: Position
     val dataSetBounds: RectF
-    val axisThickness: Float
-    val tickThickness: Float
-    val guidelineThickness: Float
-    val tickLength: Float
+    val MeasureContext.axisThickness: Float
+    val MeasureContext.tickThickness: Float
+    val MeasureContext.guidelineThickness: Float
+    val tickLengthDp: Float
+    val MeasureContext.tickLength: Float
     val restrictedBounds: List<RectF>
 
-    public val maxAnyAxisLineThickness: Float
+    public val MeasureContext.maxAnyAxisLineThickness: Float
         get() = maxOf(axisThickness, tickThickness, guidelineThickness)
 
     public val labelLineHeight: Int
@@ -49,23 +47,17 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
     var label: TextComponent?
     var axis: LineComponent?
-    var tick: TickComponent?
+    var tick: LineComponent?
     var guideline: LineComponent?
-    var isLTR: Boolean
+    var isLtr: Boolean
     var valueFormatter: AxisValueFormatter
 
     fun drawBehindDataSet(
-        canvas: Canvas,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
+        context: ChartDrawContext,
     )
 
     fun drawAboveDataSet(
-        canvas: Canvas,
-        dataSetModel: DataSetModel,
-        segmentProperties: SegmentProperties,
-        rendererViewState: RendererViewState,
+        context: ChartDrawContext,
     )
 
     fun setDataSetBounds(
@@ -84,10 +76,11 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
         )
 
     fun getDesiredWidth(
+        context: MeasureContext,
         labels: List<String>,
     ): Float
 
     fun setRestrictedBounds(vararg bounds: RectF?)
 
-    fun getDesiredHeight(): Int
+    fun getDesiredHeight(context: MeasureContext): Int
 }
