@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.compose.component.overlayingComponent
 import pl.patrykgoworowski.vico.compose.component.columnComponent
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.extension.pixels
-import pl.patrykgoworowski.vico.compose.extension.setShadow
+import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
@@ -47,7 +47,9 @@ fun markerComponent(): Marker {
         lineCount = 1,
         background = null
     ).apply {
-        setPadding(8f, 4f)
+        setPadding(
+            horizontal = currentChartStyle.marker.horizontalPadding,
+            vertical = currentChartStyle.marker.verticalPadding)
     }
 
     val indicatorInner = ShapeComponent(pillShape, colors.surface.toArgb())
@@ -91,7 +93,7 @@ fun markerComponent(): Marker {
             indicatorCenter.setShadow(indicatorShadowSize, color = color)
             indicatorOuter.color = color.copyColor(alpha = 32)
         }
-        indicatorSize = 36.dp.value
+        indicatorSize = currentChartStyle.marker.indicatorSize.value
         setShadow(4.dp.pixels, dy = 2.dp.pixels)
     }
 }

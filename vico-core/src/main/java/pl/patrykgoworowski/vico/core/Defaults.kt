@@ -71,6 +71,8 @@ object Dimens {
     const val LINE_WIDTH = 2
 
     const val MARKER_INDICATOR_SIZE = 36f
+    const val MARKER_HORIZONTAL_PADDING = 8f
+    const val MARKER_VERTICAL_PADDING = 4f
 
     const val POINT_SIZE = 16
     const val POINT_SPACING = 16
