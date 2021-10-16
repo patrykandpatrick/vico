@@ -81,9 +81,22 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
                 centerY = centerY
             )
         }
+        axis?.apply {
+            setParentBounds(bounds)
+            drawVertical(
+                context = context,
+                top = bounds.top,
+                bottom = bounds.bottom + axisThickness,
+                centerX =
+                if (isLeft) bounds.right - axisThickness.half
+                else bounds.left + axisThickness.half
+            )
+        }
+        Unit
     }
 
     override fun drawAboveDataSet(context: ChartDrawContext) = with(context) {
+        val label = label
         val labelCount = getDrawLabelCount(this, bounds.height().toInt())
 
         val labels = getLabels(context.dataSetModel, labelCount)
@@ -107,7 +120,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         var tickCenterY: Float
         val textPosition = verticalLabelPosition.textPosition
 
-        for (index in 0..labelCount) {
+        (0..labelCount).forEach { index ->
             tickCenterY =
                 bounds.bottom - ((bounds.height() / labelCount) * index) + tickThickness.half
 
@@ -119,40 +132,29 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
                 tickCenterY
             )
 
-            label?.let { label ->
-                val labelTop = label
-                    .getTextTopPosition(this, textPosition, tickCenterY, labelTextHeight)
-                val labelText = labels.getOrNull(index) ?: return@let
-                if (
-                    (horizontalLabelPosition == Inside) &&
-                    (isNotInRestrictedBounds(
-                        left = labelX,
-                        top = labelTop - labelHeight.half,
-                        right = labelX + 1,
-                        bottom = labelTop + labelHeight.half
-                    )) || horizontalLabelPosition == Outside
-                ) {
-                    label.background?.setParentBounds(bounds)
-                    label.drawText(
-                        context = context,
-                        text = labelText,
-                        textX = labelX,
-                        textY = tickCenterY,
-                        horizontalPosition = textHorizontalPosition,
-                        verticalPosition = verticalLabelPosition.textPosition,
-                    )
-                }
+            label ?: return@forEach
+            val labelTop = label
+                .getTextTopPosition(this, textPosition, tickCenterY, labelTextHeight)
+            val labelText = labels.getOrNull(index) ?: return@forEach
+            if (horizontalLabelPosition == Outside ||
+                isNotInRestrictedBounds(
+                    left = labelX,
+                    top = labelTop - labelHeight.half,
+                    right = labelX + 1,
+                    bottom = labelTop + labelHeight.half
+                )
+            ) {
+                label.background?.setParentBounds(bounds)
+                label.drawText(
+                    context = context,
+                    text = labelText,
+                    textX = labelX,
+                    textY = tickCenterY,
+                    horizontalPosition = textHorizontalPosition,
+                    verticalPosition = verticalLabelPosition.textPosition,
+                )
             }
         }
-        axis?.setParentBounds(bounds)
-        axis?.drawVertical(
-            context = context,
-            top = bounds.top,
-            bottom = bounds.bottom + axisThickness,
-            centerX =
-            if (isLeft) bounds.right - axisThickness.half
-            else bounds.left + axisThickness.half
-        )
         label?.clearLayoutCache() ?: Unit
     }
 
