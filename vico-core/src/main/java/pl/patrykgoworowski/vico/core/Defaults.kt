@@ -54,8 +54,8 @@ object Dimens {
     const val AXIS_LABEL_VERTICAL_PADDING = 2
     const val AXIS_LABEL_SIZE = 12
 
-    const val AXIS_GUIDELINE_WIDTH = 1
-    const val AXIS_LINE_WIDTH = 1
+    const val AXIS_GUIDELINE_WIDTH = 1f
+    const val AXIS_LINE_WIDTH = 1f
     const val AXIS_TICK_LENGTH = 4f
 
     const val COLUMN_WIDTH = 8
@@ -105,7 +105,7 @@ interface Colors {
     object Dark : Colors {
         override val axisLabelColor: Long = 0xFFFFFFFF
         override val axisGuidelineColor: Long = 0xFF424242
-        override val axisLineColor: Long = 0xFF424242
+        override val axisLineColor: Long = 0xFF555555
 
         override val column1Color: Long = 0xFFCACACA
         override val column2Color: Long = 0xFFA8A8A8

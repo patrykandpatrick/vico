@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021. Patryk Goworowski
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +15,8 @@
   -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:vico="http://schemas.android.com/apk/pl.patrykgoworowski.vico"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,7 +26,10 @@
     <pl.patrykgoworowski.vico.view.dataset.DataSetView
         android:id="@+id/column_chart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:axisStyle="@style/AxisStyle"
+        vico:showBottomAxis="true"
+        vico:showStartAxis="false" />
 
     <Space
         android:layout_width="wrap_content"
