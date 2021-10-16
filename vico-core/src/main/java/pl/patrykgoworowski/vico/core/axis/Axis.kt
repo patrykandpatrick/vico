@@ -17,6 +17,14 @@
 package pl.patrykgoworowski.vico.core.axis
 
 import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.DEF_AXIS_COMPONENT
+import pl.patrykgoworowski.vico.core.DEF_GUIDELINE_COMPONENT
+import pl.patrykgoworowski.vico.core.DEF_LABEL_COMPONENT
+import pl.patrykgoworowski.vico.core.DEF_TICK_COMPONENT
+import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
+import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.vico.core.axis.formatter.DefaultAxisFormatter
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.extension.orZero
@@ -24,12 +32,7 @@ import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.setAll
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
-public abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
-    override var label: TextComponent?,
-    override var axis: LineComponent?,
-    override var tick: LineComponent?,
-    override var guideline: LineComponent?,
-) : AxisRenderer<Position> {
+public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     protected val labels = ArrayList<String>()
 
@@ -51,6 +54,14 @@ public abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
 
     override var isLtr: Boolean = true
 
+    override var label: TextComponent? = null
+    override var axis: LineComponent? = null
+    override var tick: LineComponent? = null
+    override var guideline: LineComponent? = null
+    override var tickLengthDp: Float = 0f
+
+    override var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
+
     override fun setDataSetBounds(left: Number, top: Number, right: Number, bottom: Number) {
         dataSetBounds.set(left, top, right, bottom)
     }
@@ -67,4 +78,37 @@ public abstract class BaseLabeledAxisRenderer<Position : AxisPosition>(
     ): Boolean = restrictedBounds.none {
         it.contains(left, top, right, bottom) || it.intersects(left, top, right, bottom)
     }
+
+    public open class Builder(builder: Builder? = null) {
+        public var label: TextComponent? =
+            if (builder != null) builder.label else DEF_LABEL_COMPONENT
+
+        public var axis: LineComponent? =
+            if (builder != null) builder.axis else DEF_AXIS_COMPONENT
+
+        public var tick: LineComponent? =
+            if (builder != null) builder.tick else DEF_TICK_COMPONENT
+
+        public var tickLengthDp: Float =
+            builder?.tickLengthDp ?: Dimens.AXIS_TICK_LENGTH
+
+        public var guideline: LineComponent? =
+            if (builder != null) builder.guideline else DEF_GUIDELINE_COMPONENT
+
+        public var valueFormatter: AxisValueFormatter =
+            builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
+    }
+}
+
+public fun axisBuilder(block: Axis.Builder.() -> Unit = {}): Axis.Builder =
+    Axis.Builder().apply(block)
+
+public fun <T : AxisPosition, A : Axis<T>> Axis.Builder.setTo(axis: A): A {
+    axis.axis = this.axis
+    axis.tick = tick
+    axis.guideline = guideline
+    axis.label = label
+    axis.tickLengthDp = tickLengthDp
+    axis.valueFormatter = valueFormatter
+    return axis
 }

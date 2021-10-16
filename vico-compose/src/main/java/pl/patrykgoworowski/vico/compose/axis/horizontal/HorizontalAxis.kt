@@ -27,6 +27,7 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
+import pl.patrykgoworowski.vico.core.axis.horizontal.createHorizontalAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 
@@ -38,15 +39,14 @@ fun topAxis(
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
-): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
-    position = AxisPosition.Horizontal.Top,
-    label = label,
-    axis = axis,
-    tick = tick,
-    guideline = guideline,
-    valueFormatter = valueFormatter,
-    tickLengthDp = tickLength.value,
-)
+): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
+    this.label = label
+    this.axis = axis
+    this.tick = tick
+    this.guideline = guideline
+    this.valueFormatter = valueFormatter
+    this.tickLengthDp = tickLength.value
+}
 
 @Composable
 fun bottomAxis(
@@ -56,12 +56,11 @@ fun bottomAxis(
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
-): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
-    position = AxisPosition.Horizontal.Bottom,
-    label = label,
-    axis = axis,
-    tick = tick,
-    guideline = guideline,
-    valueFormatter = valueFormatter,
-    tickLengthDp = tickLength.value,
-)
+): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
+    this.label = label
+    this.axis = axis
+    this.tick = tick
+    this.guideline = guideline
+    this.valueFormatter = valueFormatter
+    this.tickLengthDp = tickLength.value
+}

@@ -16,40 +16,27 @@
 
 package pl.patrykgoworowski.vico.core.axis.horizontal
 
-import pl.patrykgoworowski.vico.core.DEF_AXIS_COMPONENT
-import pl.patrykgoworowski.vico.core.DEF_GUIDELINE_COMPONENT
-import pl.patrykgoworowski.vico.core.DEF_LABEL_COMPONENT
-import pl.patrykgoworowski.vico.core.DEF_TICK_COMPONENT
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.BaseLabeledAxisRenderer
-import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
-import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
-import pl.patrykgoworowski.vico.core.component.shape.LineComponent
-import pl.patrykgoworowski.vico.core.component.text.TextComponent
+import pl.patrykgoworowski.vico.core.axis.setTo
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 import kotlin.math.ceil
 
 class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
-    label: TextComponent?,
-    axis: LineComponent?,
-    tick: LineComponent?,
-    guideline: LineComponent?,
-    override var tickLengthDp: Float,
-    override var valueFormatter: AxisValueFormatter,
-) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
+) : Axis<Position>() {
 
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Top else VerticalPosition.Bottom
 
-    var tickType: TickType = TickType.Minor
+    public var tickType: TickType = TickType.Minor
 
     override fun drawBehindDataSet(context: ChartDrawContext) = with(context) {
         val scrollX = context.horizontalScroll
@@ -213,38 +200,24 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
     enum class TickType {
         Minor, Major
     }
+
+    public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
+        public var tickType: TickType = TickType.Minor
+
+        @Suppress("UNCHECKED_CAST")
+        public inline fun <reified T : AxisPosition.Horizontal> build(): HorizontalAxis<T> {
+            val position = when (T::class.java) {
+                AxisPosition.Horizontal.Top::class.java -> AxisPosition.Horizontal.Top
+                AxisPosition.Horizontal.Bottom::class.java -> AxisPosition.Horizontal.Bottom
+                else -> throw UnknownAxisPositionException(T::class.java)
+            }
+            return setTo(HorizontalAxis(position = position)).also { axis ->
+                axis.tickType = tickType
+            } as HorizontalAxis<T>
+        }
+    }
 }
 
-fun topAxis(
-    label: TextComponent? = DEF_LABEL_COMPONENT,
-    axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: LineComponent? = DEF_TICK_COMPONENT,
-    tickLengthDp: Float = Dimens.AXIS_TICK_LENGTH,
-    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
-    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
-): HorizontalAxis<AxisPosition.Horizontal.Top> = HorizontalAxis(
-    position = AxisPosition.Horizontal.Top,
-    label = label,
-    axis = axis,
-    tick = tick,
-    guideline = guideline,
-    valueFormatter = valueFormatter,
-    tickLengthDp = tickLengthDp,
-)
-
-fun bottomAxis(
-    label: TextComponent? = DEF_LABEL_COMPONENT,
-    axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: LineComponent? = DEF_TICK_COMPONENT,
-    tickLengthDp: Float = Dimens.AXIS_TICK_LENGTH,
-    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
-    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
-): HorizontalAxis<AxisPosition.Horizontal.Bottom> = HorizontalAxis(
-    position = AxisPosition.Horizontal.Bottom,
-    label = label,
-    axis = axis,
-    tick = tick,
-    guideline = guideline,
-    valueFormatter = valueFormatter,
-    tickLengthDp = tickLengthDp,
-)
+public inline fun <reified T : AxisPosition.Horizontal> createHorizontalAxis(
+    block: HorizontalAxis.Builder.() -> Unit = {},
+): HorizontalAxis<T> = HorizontalAxis.Builder().apply(block).build()

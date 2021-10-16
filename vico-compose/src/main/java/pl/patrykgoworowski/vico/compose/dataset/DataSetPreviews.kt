@@ -24,19 +24,17 @@ import pl.patrykgoworowski.vico.compose.component.columnComponent
 import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
-import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
-import pl.patrykgoworowski.vico.core.axis.horizontal.topAxis
-import pl.patrykgoworowski.vico.core.axis.vertical.endAxis
-import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
+import pl.patrykgoworowski.vico.core.axis.horizontal.createHorizontalAxis
+import pl.patrykgoworowski.vico.core.axis.vertical.createVerticalAxis
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 
 @Suppress("MagicNumber")
 private val model = entryModelOf(1, 2, 3, 4)
 
-private val topAxis = topAxis()
-private val startAxis = startAxis()
-private val bottomAxis = bottomAxis()
-private val endAxis = endAxis()
+private val topAxis = createHorizontalAxis<AxisPosition.Horizontal.Top>()
+private val startAxis = createVerticalAxis<AxisPosition.Vertical.Start>()
+private val bottomAxis = createHorizontalAxis<AxisPosition.Horizontal.Bottom>()
+private val endAxis = createVerticalAxis<AxisPosition.Vertical.End>()
 
 @Composable
 private fun PreviewColumnChart(

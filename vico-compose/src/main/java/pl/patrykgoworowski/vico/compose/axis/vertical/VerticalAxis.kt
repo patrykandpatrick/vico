@@ -27,6 +27,7 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
+import pl.patrykgoworowski.vico.core.axis.vertical.createVerticalAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 
@@ -38,15 +39,14 @@ fun startAxis(
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
-): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
-    position = AxisPosition.Vertical.Start,
-    label = label,
-    axis = axis,
-    tick = tick,
-    guideline = guideline,
-    valueFormatter = valueFormatter,
-    tickLengthDp = tickLength.value,
-)
+): VerticalAxis<AxisPosition.Vertical.Start> = createVerticalAxis {
+    this.label = label
+    this.axis = axis
+    this.tick = tick
+    this.guideline = guideline
+    this.valueFormatter = valueFormatter
+    tickLengthDp = tickLength.value
+}
 
 @Composable
 fun endAxis(
@@ -56,12 +56,11 @@ fun endAxis(
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
-): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
-    position = AxisPosition.Vertical.End,
-    label = label,
-    axis = axis,
-    tick = tick,
-    guideline = guideline,
-    valueFormatter = valueFormatter,
-    tickLengthDp = tickLength.value,
-)
+): VerticalAxis<AxisPosition.Vertical.End> = createVerticalAxis {
+    this.label = label
+    this.axis = axis
+    this.tick = tick
+    this.guideline = guideline
+    this.valueFormatter = valueFormatter
+    this.tickLengthDp = tickLength.value
+}
