@@ -18,18 +18,36 @@ package pl.patrykgoworowski.vico.view.theme
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
 
-fun TypedArray.getColor(
-    @StyleableRes resId: Int,
+public fun TypedArray.getColor(
+    @StyleableRes index: Int,
     @ColorInt defaultColor: Int,
-): Int = getColor(resId, defaultColor)
+): Int = getColor(index, defaultColor)
 
-fun TypedArray.getDpDimension(
+public fun TypedArray.getDpDimension(
     context: Context,
-    @StyleableRes resId: Int,
+    @StyleableRes index: Int,
     defaultValue: Float
 ): Float =
-    (getDimension(resId, -1f) / context.resources.displayMetrics.density)
+    (getDimension(index, -1f) / context.resources.displayMetrics.density)
         .takeIf { it >= 0f } ?: defaultValue
+
+public fun TypedArray.getNestedTypedArray(
+    context: Context,
+    @StyleableRes resourceId: Int,
+    @StyleableRes styleableResourceId: IntArray,
+): TypedArray =
+    getResourceId(resourceId, 0)
+        .let { resId -> context.obtainStyledAttributes(resId, styleableResourceId) }
+
+public fun TypedArray.getFraction(@StyleableRes index: Int, defaultValue: Float = -1f): Float =
+    getFraction(index, 1, 1, defaultValue)
+
+public fun TypedArray.isFraction(@StyleableRes index: Int): Boolean =
+    getType(index) == TypedValue.TYPE_FRACTION
+
+public fun TypedArray.isNull(@StyleableRes index: Int): Boolean =
+    getType(index) == TypedValue.TYPE_NULL

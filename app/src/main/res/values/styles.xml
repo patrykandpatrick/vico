@@ -24,7 +24,17 @@
     <style name="AxisLineStyle">
         <item name="color">#3838FF</item>
         <item name="thickness">4dp</item>
-        <item name="topLeftCornerTreatment">cut</item>
+        <item name="shapeStyle">@style/ShapeStyle</item>
+    </style>
+
+    <style name="ShapeStyle">
+        <item name="topStartCornerTreatment">rounded</item>
+        <item name="topStartCornerSize">100%</item>
+        <item name="topEndCornerSize">25%</item>
+        <item name="cornerSize">50%</item>
+        <item name="cornerTreatment">cut</item>
+        <item name="dashLength">8dp</item>
+        <item name="dashGapLength">2dp</item>
     </style>
 
 </resources>
