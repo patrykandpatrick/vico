@@ -31,16 +31,9 @@
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">@bool/is_day</item>
         <!-- Customize your theme here. -->
-        <item name="actionBarTheme">@style/ActionBarTheme</item>
-        <item name="actionBarStyle">@style/ActionBarStyle</item>
-    </style>
-
-    <style name="ActionBarTheme">
-        <item name="android:background">?attr/colorSurface</item>
-    </style>
-
-    <style name="ActionBarStyle" parent="@style/Widget.MaterialComponents.Light.ActionBar.Solid">
-        <item name="elevation">0dp</item>
+        <item name="showStartAxis">true</item>
+        <item name="axis_line_color">#FF9FCDAA</item>
+        <item name="showBottomAxis">true</item>
     </style>
 
 </resources>

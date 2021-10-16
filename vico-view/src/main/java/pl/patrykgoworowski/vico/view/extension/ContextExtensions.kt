@@ -17,7 +17,11 @@
 package pl.patrykgoworowski.vico.view.extension
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.os.Build
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 
 internal val Context.density: Float
@@ -30,3 +34,23 @@ internal val Context.isLtr: Boolean
     get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
         resources.configuration.layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
     } else true
+
+fun Context.getColorCompat(@ColorRes colorRes: Int) =
+    ContextCompat.getColor(this, colorRes)
+
+fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null): Int {
+    val tempArray = IntArray(1)
+    tempArray[0] = attr
+    val a = obtainStyledAttributes(null, tempArray)
+    return try {
+        a.getColor(0, defValueRes?.let { ContextCompat.getColor(this, it) } ?: 0)
+    } finally {
+        a.recycle()
+    }
+}
+
+fun Context.getThemeAttribute(@AttrRes attr: Int): TypedArray {
+    val tempArray = IntArray(1)
+    tempArray[0] = attr
+    return obtainStyledAttributes(null, tempArray)
+}

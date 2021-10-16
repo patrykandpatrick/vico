@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.view.dataset
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -33,14 +34,19 @@ import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
+import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
+import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
+import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
 import pl.patrykgoworowski.vico.view.dataset.common.DataSetWithModel
+import pl.patrykgoworowski.vico.view.dataset.common.plus
 import pl.patrykgoworowski.vico.view.extension.density
 import pl.patrykgoworowski.vico.view.extension.dpInt
 import pl.patrykgoworowski.vico.view.extension.fontScale
@@ -62,6 +68,7 @@ class DataSetView @JvmOverloads constructor(
     private val contentBounds = RectF()
     private val dataSetModel = MutableDataSetModel()
     private val scrollHandler = ScrollHandler()
+    private val themeHandler = ThemeHandler(context, attrs)
 
     private val updateRequestListener: UpdateRequestListener = {
         if (ViewCompat.isAttachedToWindow(this@DataSetView)) {
@@ -110,6 +117,17 @@ class DataSetView @JvmOverloads constructor(
     }
 
     var marker: Marker? = null
+
+    init {
+        startAxis = themeHandler.startAxis
+        topAxis = themeHandler.topAxis
+        endAxis = themeHandler.endAxis
+        bottomAxis = themeHandler.bottomAxis
+        if (isInEditMode) {
+            // TODO make it settable with attributes
+            dataSet = ColumnDataSet(column = LineComponent(Color.BLACK)) + entryModelOf(1f, 2f, 3f, 4f)
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {

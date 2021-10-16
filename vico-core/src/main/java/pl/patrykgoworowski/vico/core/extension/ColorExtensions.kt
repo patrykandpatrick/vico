@@ -32,5 +32,9 @@ fun Int.copyColor(
         (green shl GREEN_BIT_SHIFT) or
         (blue shl BLUE_BIT_SHIFT)
 
+@Suppress("MagicNumber", "ImplicitDefaultLocale")
+val Int.colorHex: String
+    get() = String.format("#%06X", (0xFFFFFF and this))
+
 private fun Int.extractColorChannel(bitShift: Int): Int =
     this shr bitShift and COLOR_MASK
