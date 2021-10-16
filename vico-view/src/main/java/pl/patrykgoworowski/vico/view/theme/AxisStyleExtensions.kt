@@ -18,7 +18,6 @@ package pl.patrykgoworowski.vico.view.theme
 
 import android.content.Context
 import android.content.res.TypedArray
-import androidx.annotation.StyleableRes
 import androidx.core.content.res.use
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
@@ -27,18 +26,21 @@ import pl.patrykgoworowski.vico.view.extension.getColorCompat
 
 fun TypedArray.getLineComponent(
     context: Context,
-    @StyleableRes colorStyleableRes: Int,
-    @StyleableRes thicknessStyleableRes: Int,
 ): LineComponent = use { array ->
     LineComponent(
         color = array.getColor(
-            resId = colorStyleableRes,
+            index = R.styleable.AxisLine_color,
             defaultColor = context.getColorCompat(R.color.axis_line_color),
         ),
         thicknessDp = array.getDpDimension(
             context = context,
-            resId = thicknessStyleableRes,
+            index = R.styleable.AxisLine_thickness,
             defaultValue = Dimens.AXIS_LINE_WIDTH,
         ),
+        shape = getNestedTypedArray(
+            context = context,
+            resourceId = R.styleable.AxisLine_shapeStyle,
+            styleableResourceId = R.styleable.Shape,
+        ).getShape(context)
     )
 }

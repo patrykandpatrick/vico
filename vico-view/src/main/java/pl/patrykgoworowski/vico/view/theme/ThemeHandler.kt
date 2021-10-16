@@ -65,9 +65,7 @@ internal class ThemeHandler(
     private fun TypedArray.getNestedTypedArray(
         @StyleableRes resourceId: Int,
         @StyleableRes styleableResourceId: IntArray,
-    ): TypedArray =
-        getResourceId(resourceId, 0)
-            .let { resId -> context.obtainStyledAttributes(resId, styleableResourceId) }
+    ): TypedArray = getNestedTypedArray(context, resourceId, styleableResourceId)
 
     private fun TypedArray.getAxis(): Axis.Builder {
 
@@ -78,11 +76,7 @@ internal class ThemeHandler(
             getNestedTypedArray(
                 resourceId = resourceId,
                 styleableResourceId = styleableResourceId,
-            ).getLineComponent(
-                context = context,
-                colorStyleableRes = R.styleable.AxisLine_color,
-                thicknessStyleableRes = R.styleable.AxisLine_thickness,
-            )
+            ).getLineComponent(context = context)
 
         return getNestedTypedArray(R.styleable.DataSetView_axisStyle, R.styleable.Axis)
             .use { axisStyle ->

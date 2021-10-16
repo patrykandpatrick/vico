@@ -51,22 +51,32 @@
 
     <declare-styleable name="Shape">
 
-        <attr name="topLeftCornerTreatment" format="enum">
+        <attr name="cornerSize" format="dimension|fraction"/>
+        <attr name="cornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
 
-        <attr name="topRightCornerTreatment" format="enum">
+        <attr name="topStartCornerSize" format="dimension|fraction"/>
+        <attr name="topStartCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
 
-        <attr name="bottomLeftCornerTreatment" format="enum">
+        <attr name="topEndCornerSize" format="dimension|fraction"/>
+        <attr name="topEndCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
 
-        <attr name="bottomRightCornerTreatment" format="enum">
+        <attr name="bottomStartCornerSize" format="dimension|fraction"/>
+        <attr name="bottomStartCornerTreatment" format="enum">
+            <enum name="rounded" value="0" />
+            <enum name="cut" value="1" />
+        </attr>
+
+        <attr name="bottomEndCornerSize" format="dimension|fraction"/>
+        <attr name="bottomEndCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
