@@ -16,40 +16,27 @@
 
 package pl.patrykgoworowski.vico.core.axis.vertical
 
-import pl.patrykgoworowski.vico.core.DEF_AXIS_COMPONENT
-import pl.patrykgoworowski.vico.core.DEF_GUIDELINE_COMPONENT
-import pl.patrykgoworowski.vico.core.DEF_LABEL_COMPONENT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
-import pl.patrykgoworowski.vico.core.DEF_TICK_COMPONENT
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.BaseLabeledAxisRenderer
-import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
-import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import pl.patrykgoworowski.vico.core.axis.setTo
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
-import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
-import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
 class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
-    label: TextComponent?,
-    axis: LineComponent?,
-    tick: LineComponent?,
-    guideline: LineComponent?,
-    override var tickLengthDp: Float,
-    override var valueFormatter: AxisValueFormatter,
-) : BaseLabeledAxisRenderer<Position>(label, axis, tick, guideline) {
+) : Axis<Position>() {
 
     private val isLeft = position.isLeft(isLtr)
 
@@ -121,7 +108,8 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         val textPosition = verticalLabelPosition.textPosition
 
         for (index in 0..labelCount) {
-            tickCenterY = bounds.bottom - ((bounds.height() / labelCount) * index) + tickThickness.half
+            tickCenterY =
+                bounds.bottom - ((bounds.height() / labelCount) * index) + tickThickness.half
 
             tick?.setParentBounds(bounds)
             tick?.drawHorizontal(
@@ -253,38 +241,30 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
     }
+
+    public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
+        public var maxLabelCount: Int = DEF_LABEL_COUNT
+        public var labelSpacing: Float = DEF_LABEL_SPACING
+        public var horizontalLabelPosition = Outside
+        public var verticalLabelPosition = Center
+
+        @Suppress("UNCHECKED_CAST")
+        public inline fun <reified T : AxisPosition.Vertical> build(): VerticalAxis<T> {
+            val position = when (T::class.java) {
+                AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
+                AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
+                else -> throw UnknownAxisPositionException(T::class.java)
+            }
+            return setTo(VerticalAxis(position = position)).also { axis ->
+                axis.maxLabelCount = maxLabelCount
+                axis.labelSpacing = labelSpacing
+                axis.horizontalLabelPosition = horizontalLabelPosition
+                axis.verticalLabelPosition = verticalLabelPosition
+            } as VerticalAxis<T>
+        }
+    }
 }
 
-fun startAxis(
-    label: TextComponent? = DEF_LABEL_COMPONENT,
-    axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: LineComponent? = DEF_TICK_COMPONENT,
-    tickLengthDp: Float = Dimens.AXIS_TICK_LENGTH,
-    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
-    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
-): VerticalAxis<AxisPosition.Vertical.Start> = VerticalAxis(
-    position = AxisPosition.Vertical.Start,
-    label = label,
-    axis = axis,
-    tick = tick,
-    guideline = guideline,
-    valueFormatter = valueFormatter,
-    tickLengthDp = tickLengthDp,
-)
-
-fun endAxis(
-    label: TextComponent? = DEF_LABEL_COMPONENT,
-    axis: LineComponent? = DEF_AXIS_COMPONENT,
-    tick: LineComponent? = DEF_TICK_COMPONENT,
-    tickLengthDp: Float = Dimens.AXIS_TICK_LENGTH,
-    guideline: LineComponent? = DEF_GUIDELINE_COMPONENT,
-    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
-): VerticalAxis<AxisPosition.Vertical.End> = VerticalAxis(
-    position = AxisPosition.Vertical.End,
-    label = label,
-    axis = axis,
-    tick = tick,
-    tickLengthDp = tickLengthDp,
-    guideline = guideline,
-    valueFormatter = valueFormatter,
-)
+public inline fun <reified T : AxisPosition.Vertical> createVerticalAxis(
+    block: VerticalAxis.Builder.() -> Unit = {},
+): VerticalAxis<T> = VerticalAxis.Builder().apply(block).build()

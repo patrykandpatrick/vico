@@ -43,9 +43,9 @@ import pl.patrykgoworowski.vico.compose.component.shapeComponent
 import pl.patrykgoworowski.vico.compose.dataset.DataSet
 import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
 import pl.patrykgoworowski.vico.compose.dataset.line.lineDataSet
-import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
+import pl.patrykgoworowski.vico.core.axis.horizontal.createHorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
-import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
+import pl.patrykgoworowski.vico.core.axis.vertical.createVerticalAxis
 import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
@@ -74,7 +74,7 @@ fun ColumnChartCard() = MainTheme {
                     )
                 )
             ),
-            startAxis = startAxis(
+            startAxis = createVerticalAxis {
                 label = textComponent(
                     color = colors.primary,
                     textSize = 10.sp,
@@ -89,14 +89,14 @@ fun ColumnChartCard() = MainTheme {
                     )
                 ).apply {
                     setPadding(end = 8.dp, start = 4.dp)
-                },
-                axis = null,
-                tick = null,
+                }
+                axis = null
+                tick = null
                 guideline = LineComponent(
                     colors.primary.copy(alpha = 0.1f).toArgb(),
                     1.dp.value,
-                ),
-            ),
+                )
+            },
             model = @Suppress("MagicNumber") entryModelOf(1, 2, 3, 2)
         )
     }
@@ -125,16 +125,16 @@ fun LineChartCard() = MainTheme {
             model = @Suppress("MagicNumber") entryModelOf(
                 -1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1
             ),
-            startAxis = startAxis(
+            startAxis = createVerticalAxis {
                 label = textComponent(
                     color = colors.onSurface,
                     textSize = 10.sp,
                     background = shapeComponent(shape = rectShape, color = Color.LightGray)
                 ).apply {
                     setPadding(horizontal = 4.dp, vertical = 2.dp)
-                },
-                axis = null,
-                tick = null,
+                }
+                axis = null
+                tick = null
                 guideline = LineComponent(
                     color = Color.LightGray.toArgb(),
                     thicknessDp = 1.dp.value,
@@ -142,17 +142,16 @@ fun LineChartCard() = MainTheme {
                         shape = pillShape,
                         dashLengthDp = 2.dp.value,
                         gapLengthDp = 4.dp.value,
-                    ),
-                ),
-            ).apply {
+                    )
+                )
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
             },
-            bottomAxis = bottomAxis(
-                label = null,
-                tick = null,
-                guideline = null,
-                axis = lineComponent(color = Color.LightGray, thickness = 1.dp),
-            ),
+            bottomAxis = createHorizontalAxis {
+                label = null
+                tick = null
+                guideline = null
+                axis = lineComponent(color = Color.LightGray, thickness = 1.dp)
+            },
         )
     }
 }

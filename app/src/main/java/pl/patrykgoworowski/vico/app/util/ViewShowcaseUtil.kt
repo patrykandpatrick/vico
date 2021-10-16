@@ -29,11 +29,10 @@ import pl.patrykgoworowski.vico.app.extension.color
 import pl.patrykgoworowski.vico.app.extension.flickrPink
 import pl.patrykgoworowski.vico.app.extension.purple
 import pl.patrykgoworowski.vico.app.extension.trypanPurple
-import pl.patrykgoworowski.vico.core.axis.horizontal.bottomAxis
-import pl.patrykgoworowski.vico.core.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
+import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
@@ -45,7 +44,6 @@ import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
 import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.view.component.shape.cutCornerShape
 import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
 import pl.patrykgoworowski.vico.view.component.shape.shader.horizontalGradient
@@ -82,8 +80,6 @@ class ViewShowcaseUtil(
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            startAxis = startAxis()
-            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }
@@ -129,8 +125,6 @@ class ViewShowcaseUtil(
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            startAxis = startAxis()
-            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }
@@ -162,8 +156,6 @@ class ViewShowcaseUtil(
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            startAxis = startAxis()
-            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }
@@ -202,8 +194,6 @@ class ViewShowcaseUtil(
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            startAxis = startAxis()
-            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }
@@ -242,8 +232,6 @@ class ViewShowcaseUtil(
 
         dataSetView.apply {
             dataSet = dataSetRenderer
-            startAxis = startAxis()
-            bottomAxis = bottomAxis()
             this.marker = marker
         }
     }
