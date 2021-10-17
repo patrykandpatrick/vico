@@ -83,15 +83,15 @@ internal class ThemeHandler(
                 axisBuilder {
                     axis = axisStyle.getLineComponent(
                         resourceId = R.styleable.Axis_axisLineStyle,
-                        styleableResourceId = R.styleable.AxisLine
+                        styleableResourceId = R.styleable.LineComponentStyle
                     )
                     tick = axisStyle.getLineComponent(
-                        resourceId = R.styleable.Axis_axisGuidelineStyle,
-                        styleableResourceId = R.styleable.AxisLine
+                        resourceId = R.styleable.Axis_axisTickStyle,
+                        styleableResourceId = R.styleable.LineComponentStyle
                     )
                     guideline = axisStyle.getLineComponent(
-                        resourceId = R.styleable.Axis_axisTickStyle,
-                        styleableResourceId = R.styleable.AxisLine
+                        resourceId = R.styleable.Axis_axisGuidelineStyle,
+                        styleableResourceId = R.styleable.LineComponentStyle
                     )
                 }
             }
