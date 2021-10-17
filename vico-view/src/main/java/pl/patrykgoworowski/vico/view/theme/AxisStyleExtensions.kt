@@ -29,17 +29,17 @@ fun TypedArray.getLineComponent(
 ): LineComponent = use { array ->
     LineComponent(
         color = array.getColor(
-            index = R.styleable.AxisLine_color,
+            index = R.styleable.LineComponentStyle_color,
             defaultColor = context.getColorCompat(R.color.axis_line_color),
         ),
         thicknessDp = array.getDpDimension(
             context = context,
-            index = R.styleable.AxisLine_thickness,
+            index = R.styleable.LineComponentStyle_thickness,
             defaultValue = Dimens.AXIS_LINE_WIDTH,
         ),
         shape = getNestedTypedArray(
             context = context,
-            resourceId = R.styleable.AxisLine_shapeStyle,
+            resourceId = R.styleable.LineComponentStyle_shapeStyle,
             styleableResourceId = R.styleable.Shape,
         ).getShape(context)
     )

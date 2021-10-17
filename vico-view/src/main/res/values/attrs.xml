@@ -43,14 +43,13 @@
         <attr name="axis_tick_thickness" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="AxisLine">
+    <declare-styleable name="LineComponentStyle">
         <attr name="color"/>
         <attr name="thickness"/>
         <attr name="shapeStyle"/>
     </declare-styleable>
 
     <declare-styleable name="Shape">
-
         <attr name="cornerSize" format="dimension|fraction"/>
         <attr name="cornerTreatment" format="enum">
             <enum name="rounded" value="0" />
@@ -84,5 +83,4 @@
         <attr name="dashLength" format="dimension"/>
         <attr name="dashGapLength" format="dimension"/>
     </declare-styleable>
-
 </resources>
