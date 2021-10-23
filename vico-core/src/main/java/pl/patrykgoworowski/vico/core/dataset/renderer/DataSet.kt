@@ -34,7 +34,6 @@ public interface DataSet<in Model> : BoundsAware {
     public var minX: Float?
     public var maxX: Float?
 
-    public var isHorizontalScrollEnabled: Boolean
     public var zoom: Float?
 
     public fun draw(

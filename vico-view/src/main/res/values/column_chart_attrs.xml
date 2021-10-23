@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021. Patryk Goworowski
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,18 +15,13 @@
   -->
 
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="flickr_pink">#f72585</color>
-    <color name="flickr_pink_300">#8AF72585</color>
-    <color name="flickr_pink_100">#4AF72585</color>
-    <color name="byzantine">#b5179e</color>
-    <color name="purple">#7209b7</color>
-    <color name="trypan_purple">#480ca8</color>
+    <attr name="columnChartStyle" format="reference" />
 
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <declare-styleable name="ColumnChartStyle">
+        <attr name="column1Style" format="reference" />
+        <attr name="column2Style" format="reference" />
+        <attr name="column3Style" format="reference" />
+        <attr name="columnOuterSpacing" format="dimension" />
+        <attr name="columnInnerSpacing" format="dimension" />
+    </declare-styleable>
 </resources>

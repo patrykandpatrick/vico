@@ -83,7 +83,7 @@ private fun TypedArray.getCorner(
     @StyleableRes treatmentIndex: Int,
     handleNullSizeIndex: Boolean = true
 ): Corner = when {
-    isNull(sizeIndex) && handleNullSizeIndex -> {
+    !hasValue(sizeIndex) && handleNullSizeIndex -> {
         getCorner(
             context = context,
             sizeIndex = R.styleable.Shape_cornerSize,
@@ -114,7 +114,6 @@ private fun TypedArray.getCorner(
         )
     }
 }
-
 
 private fun TypedArray.getCornerTreatment(
     @StyleableRes index: Int,

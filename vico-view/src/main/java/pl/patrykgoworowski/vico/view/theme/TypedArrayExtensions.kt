@@ -18,13 +18,21 @@ package pl.patrykgoworowski.vico.view.theme
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Color
 import android.util.TypedValue
 import androidx.annotation.ColorInt
 import androidx.annotation.StyleableRes
+import pl.patrykgoworowski.vico.view.extension.density
+
+private val typeCompatTypedValue = TypedValue()
+private val lock = Any()
+
+public inline fun <R> TypedArray.use(block: (TypedArray) -> R): R =
+    block(this).also { recycle() }
 
 public fun TypedArray.getColor(
     @StyleableRes index: Int,
-    @ColorInt defaultColor: Int,
+    @ColorInt defaultColor: Int = Color.TRANSPARENT,
 ): Int = getColor(index, defaultColor)
 
 public fun TypedArray.getDpDimension(
@@ -32,7 +40,7 @@ public fun TypedArray.getDpDimension(
     @StyleableRes index: Int,
     defaultValue: Float
 ): Float =
-    (getDimension(index, -1f) / context.resources.displayMetrics.density)
+    (getDimension(index, -1f) / context.density)
         .takeIf { it >= 0f } ?: defaultValue
 
 public fun TypedArray.getNestedTypedArray(
@@ -47,7 +55,9 @@ public fun TypedArray.getFraction(@StyleableRes index: Int, defaultValue: Float 
     getFraction(index, 1, 1, defaultValue)
 
 public fun TypedArray.isFraction(@StyleableRes index: Int): Boolean =
-    getType(index) == TypedValue.TYPE_FRACTION
+    getTypeCompat(index) == TypedValue.TYPE_FRACTION
 
-public fun TypedArray.isNull(@StyleableRes index: Int): Boolean =
-    getType(index) == TypedValue.TYPE_NULL
+public fun TypedArray.getTypeCompat(@StyleableRes index: Int): Int = synchronized(lock) {
+    getValue(index, typeCompatTypedValue)
+    typeCompatTypedValue.type
+}

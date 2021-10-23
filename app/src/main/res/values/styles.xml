@@ -22,8 +22,8 @@
     </style>
 
     <style name="AxisLineStyle">
-        <item name="color">#3838FF</item>
-        <item name="thickness">4dp</item>
+        <item name="color">#AAAACC</item>
+        <item name="thickness">2dp</item>
         <item name="shapeStyle">@style/ShapeStyle</item>
     </style>
 
@@ -35,6 +35,52 @@
         <item name="cornerTreatment">cut</item>
         <item name="dashLength">8dp</item>
         <item name="dashGapLength">2dp</item>
+    </style>
+
+    <style name="ColumnChartStyle">
+        <item name="column1Style">@style/ColumnStyle</item>
+    </style>
+
+    <style name="ColumnStyle">
+        <item name="color">#666688</item>
+        <item name="thickness">8dp</item>
+        <item name="shapeStyle">@style/ColumnShapeStyle</item>
+    </style>
+
+    <style name="ColumnShapeStyle">
+        <item name="topStartCornerTreatment">cut</item>
+        <item name="topStartCornerSize">50%</item>
+    </style>
+
+    <style name="LineChartStyle">
+        <item name="color">?colorPrimary</item>
+        <item name="gradientTopColor">@color/flickr_pink_300</item>
+        <item name="pointStyle">@style/PointOuterStyle</item>
+        <item name="pointSize">24dp</item>
+        <item name="cubicStrength">100%</item>
+    </style>
+
+    <style name="PointOuterStyle">
+        <item name="color">@color/flickr_pink_100</item>
+        <item name="overlayingComponentPadding">6dp</item>
+        <item name="overlayingComponentStyle">@style/PointInnerStyle</item>
+        <item name="shapeStyle">@style/CircleShape</item>
+    </style>
+
+    <style name="PointInnerStyle">
+        <item name="color">?colorSurface</item>
+        <item name="shapeStyle">@style/DiamondShape</item>
+        <item name="overlayingComponentPadding">4dp</item>
+    </style>
+
+    <style name="CircleShape">
+        <item name="cornerSize">100%</item>
+        <item name="cornerTreatment">rounded</item>
+    </style>
+
+    <style name="DiamondShape">
+        <item name="cornerSize">40%</item>
+        <item name="cornerTreatment">cut</item>
     </style>
 
 </resources>

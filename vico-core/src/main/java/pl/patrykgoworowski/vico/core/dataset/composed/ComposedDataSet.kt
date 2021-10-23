@@ -47,11 +47,6 @@ class ComposedDataSet<Model : EntryModel>(
         dataSets.forEach { dataSet -> dataSet.setBounds(left, top, right, bottom) }
     }
 
-    override var isHorizontalScrollEnabled: Boolean = false
-        set(value) {
-            field = value
-            dataSets.forEach { dataSet -> dataSet.isHorizontalScrollEnabled = value }
-        }
     override var zoom: Float? = null
         set(value) {
             field = value

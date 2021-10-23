@@ -21,5 +21,6 @@ import pl.patrykgoworowski.vico.core.layout.MeasureContext
 internal data class MutableMeasureContext(
     override var density: Float,
     override var fontScale: Float,
-    override var isLtr: Boolean
+    override var isLtr: Boolean,
+    override var isHorizontalScrollEnabled: Boolean,
 ) : MeasureContext

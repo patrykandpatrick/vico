@@ -136,7 +136,7 @@ object LocalChartStyle {
         lineChart = ChartStyle.LineChart(
             pointSize = Dimens.POINT_SIZE.dp,
             spacing = Dimens.POINT_SPACING.dp,
-            lineWidth = Dimens.LINE_WIDTH.dp,
+            lineWidth = Dimens.LINE_THICKNESS.dp,
             lineColor = Color(colors.lineColor),
             lineBackgroundShader = DynamicShaders.fromBrush(
                 brush = Brush.verticalGradient(

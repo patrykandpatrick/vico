@@ -16,7 +16,6 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:vico="http://schemas.android.com/apk/pl.patrykgoworowski.vico"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -28,8 +27,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:axisStyle="@style/AxisStyle"
-        vico:showBottomAxis="true"
-        vico:showStartAxis="false" />
+        app:chartType="column|line"
+        app:columnChartStyle="@style/ColumnChartStyle"
+        app:lineChartStyle="@style/LineChartStyle"
+        app:chartHorizontalScrollingEnabled="true"
+        app:showBottomAxis="true"
+        app:showEndAxis="true"
+        app:showStartAxis="true" />
 
     <Space
         android:layout_width="wrap_content"
@@ -38,7 +42,10 @@
     <pl.patrykgoworowski.vico.view.dataset.DataSetView
         android:id="@+id/composed_chart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:columnChartStyle="@style/ColumnChartStyle"
+        app:chartHorizontalScrollingEnabled="true"
+        app:chartType="column" />
 
     <Space
         android:layout_width="wrap_content"
@@ -47,7 +54,10 @@
     <pl.patrykgoworowski.vico.view.dataset.DataSetView
         android:id="@+id/line_chart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:lineChartStyle="@style/LineChartStyle"
+        app:chartHorizontalScrollingEnabled="true"
+        app:chartType="line" />
 
     <Space
         android:layout_width="wrap_content"
@@ -55,6 +65,7 @@
 
     <pl.patrykgoworowski.vico.view.dataset.DataSetView
         android:id="@+id/grouped_column_chart"
+        app:chartHorizontalScrollingEnabled="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -64,6 +75,7 @@
 
     <pl.patrykgoworowski.vico.view.dataset.DataSetView
         android:id="@+id/stacked_column_chart"
+        app:chartHorizontalScrollingEnabled="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
