@@ -30,7 +30,6 @@
         app:chartType="column|line"
         app:columnChartStyle="@style/ColumnChartStyle"
         app:lineChartStyle="@style/LineChartStyle"
-        app:chartHorizontalScrollingEnabled="true"
         app:showBottomAxis="true"
         app:showEndAxis="true"
         app:showStartAxis="true" />
@@ -44,7 +43,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:columnChartStyle="@style/ColumnChartStyle"
-        app:chartHorizontalScrollingEnabled="true"
         app:chartType="column" />
 
     <Space
@@ -56,7 +54,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:lineChartStyle="@style/LineChartStyle"
-        app:chartHorizontalScrollingEnabled="true"
         app:chartType="line" />
 
     <Space
@@ -65,7 +62,6 @@
 
     <pl.patrykgoworowski.vico.view.dataset.DataSetView
         android:id="@+id/grouped_column_chart"
-        app:chartHorizontalScrollingEnabled="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
@@ -75,7 +71,6 @@
 
     <pl.patrykgoworowski.vico.view.dataset.DataSetView
         android:id="@+id/stacked_column_chart"
-        app:chartHorizontalScrollingEnabled="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

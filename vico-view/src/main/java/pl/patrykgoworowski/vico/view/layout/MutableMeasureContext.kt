@@ -23,4 +23,5 @@ internal data class MutableMeasureContext(
     override var fontScale: Float,
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean,
+    override var zoom: Float,
 ) : MeasureContext

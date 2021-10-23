@@ -40,7 +40,6 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
         get() = this@BaseDataSet.maxX ?: maxX
 
     protected var drawScale: Float = 1f
-    protected var isScaleCalculated = false
 
     override val bounds: RectF = RectF()
 
@@ -50,12 +49,6 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
     override var maxX: Float? = null
 
     override var maxScrollAmount: Float = 0f
-
-    override var zoom: Float? = null
-        set(value) {
-            field = value
-            isScaleCalculated = false
-        }
 
     override fun addThresholdLine(thresholdLine: ThresholdLine): Boolean =
         thresholdLines.add(thresholdLine)
@@ -147,15 +140,13 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
     }
 
     protected fun MeasureContext.calculateDrawSegmentSpecIfNeeded(model: Model) {
-        if (isScaleCalculated) return
         val measuredWidth = getMeasuredWidth(this, model)
         if (isHorizontalScrollEnabled) {
-            drawScale = zoom ?: 1f
+            drawScale = zoom
             maxScrollAmount = maxOf(0f, measuredWidth * drawScale - bounds.width())
         } else {
             maxScrollAmount = 0f
             drawScale = minOf(bounds.width() / measuredWidth, 1f)
         }
-        isScaleCalculated = true
     }
 }

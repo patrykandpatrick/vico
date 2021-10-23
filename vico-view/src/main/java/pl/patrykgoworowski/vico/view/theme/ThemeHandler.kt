@@ -56,6 +56,10 @@ internal class ThemeHandler(
         private set
 
     public var isHorizontalScrollEnabled: Boolean = false
+        private set
+
+    public var isChartZoomEnabled: Boolean = false
+        private set
 
     public var dataSet: DataSetWithModel<*>? = null
         private set
@@ -76,6 +80,8 @@ internal class ThemeHandler(
             }
             isHorizontalScrollEnabled = typedArray
                 .getBoolean(R.styleable.DataSetView_chartHorizontalScrollingEnabled, false)
+            isChartZoomEnabled = typedArray
+                .getBoolean(R.styleable.DataSetView_chartZoomEnabled, false)
             dataSet = typedArray.getDataSetModel(isInEditMode)
         }
     }

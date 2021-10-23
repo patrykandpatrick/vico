@@ -34,6 +34,8 @@
         <item name="showStartAxis">true</item>
         <item name="axis_line_color">#FF9FCDAA</item>
         <item name="showBottomAxis">true</item>
+        <item name="chartHorizontalScrollingEnabled">true</item>
+        <item name="chartZoomEnabled">true</item>
     </style>
 
 </resources>
