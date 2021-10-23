@@ -26,11 +26,21 @@ import pl.patrykgoworowski.vico.core.axis.axisBuilder
 import pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
+import pl.patrykgoworowski.vico.core.constants.Flags
+import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
+import pl.patrykgoworowski.vico.core.dataset.composed.ComposedDataSet
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
+import pl.patrykgoworowski.vico.core.extension.hasFlag
+import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.R
+import pl.patrykgoworowski.vico.view.dataset.common.DataSetWithModel
+import pl.patrykgoworowski.vico.view.dataset.common.plus
 
 internal class ThemeHandler(
     val context: Context,
     attrs: AttributeSet?,
+    isInEditMode: Boolean,
 ) {
 
     public var startAxis: VerticalAxis<AxisPosition.Vertical.Start>? = null
@@ -43,6 +53,11 @@ internal class ThemeHandler(
         private set
 
     public var bottomAxis: HorizontalAxis<AxisPosition.Horizontal.Bottom>? = null
+        private set
+
+    public var isHorizontalScrollEnabled: Boolean = false
+
+    public var dataSet: DataSetWithModel<*>? = null
         private set
 
     init {
@@ -59,13 +74,11 @@ internal class ThemeHandler(
             if (typedArray.getBoolean(R.styleable.DataSetView_showBottomAxis, false)) {
                 bottomAxis = HorizontalAxis.Builder(typedArray.getAxis()).build()
             }
+            isHorizontalScrollEnabled = typedArray
+                .getBoolean(R.styleable.DataSetView_chartHorizontalScrollingEnabled, false)
+            dataSet = typedArray.getDataSetModel(isInEditMode)
         }
     }
-
-    private fun TypedArray.getNestedTypedArray(
-        @StyleableRes resourceId: Int,
-        @StyleableRes styleableResourceId: IntArray,
-    ): TypedArray = getNestedTypedArray(context, resourceId, styleableResourceId)
 
     private fun TypedArray.getAxis(): Axis.Builder {
 
@@ -74,26 +87,72 @@ internal class ThemeHandler(
             @StyleableRes styleableResourceId: IntArray,
         ): LineComponent =
             getNestedTypedArray(
+                context = context,
                 resourceId = resourceId,
                 styleableResourceId = styleableResourceId,
             ).getLineComponent(context = context)
 
-        return getNestedTypedArray(R.styleable.DataSetView_axisStyle, R.styleable.Axis)
-            .use { axisStyle ->
-                axisBuilder {
-                    axis = axisStyle.getLineComponent(
-                        resourceId = R.styleable.Axis_axisLineStyle,
-                        styleableResourceId = R.styleable.LineComponentStyle
-                    )
-                    tick = axisStyle.getLineComponent(
-                        resourceId = R.styleable.Axis_axisTickStyle,
-                        styleableResourceId = R.styleable.LineComponentStyle
-                    )
-                    guideline = axisStyle.getLineComponent(
-                        resourceId = R.styleable.Axis_axisGuidelineStyle,
-                        styleableResourceId = R.styleable.LineComponentStyle
-                    )
-                }
+        return getNestedTypedArray(
+            context = context,
+            resourceId = R.styleable.DataSetView_axisStyle,
+            styleableResourceId = R.styleable.Axis,
+        ).use { axisStyle ->
+            axisBuilder {
+                axis = axisStyle.getLineComponent(
+                    resourceId = R.styleable.Axis_axisLineStyle,
+                    styleableResourceId = R.styleable.LineComponentStyle
+                )
+                tick = axisStyle.getLineComponent(
+                    resourceId = R.styleable.Axis_axisTickStyle,
+                    styleableResourceId = R.styleable.LineComponentStyle
+                )
+                guideline = axisStyle.getLineComponent(
+                    resourceId = R.styleable.Axis_axisGuidelineStyle,
+                    styleableResourceId = R.styleable.LineComponentStyle
+                )
             }
+        }
+    }
+
+    private fun TypedArray.getDataSetModel(isInEditMode: Boolean): DataSetWithModel<*>? {
+        val chartFlags = getInt(R.styleable.DataSetView_chartType, 0)
+
+        val columnDataSet: ColumnDataSet? = if (chartFlags.hasFlag(Flags.COLUMN_CHART)) {
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.DataSetView_columnChartStyle,
+                styleableResourceId = R.styleable.ColumnChartStyle,
+            ).getColumnChart(context)
+        } else {
+            null
+        }
+        val lineDataSet = if (chartFlags.hasFlag(Flags.LINE_CHART)) {
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.DataSetView_lineChartStyle,
+                styleableResourceId = R.styleable.LineChartStyle,
+            ).getLineChart(context)
+        } else {
+            null
+        }
+
+        return when {
+            columnDataSet != null && lineDataSet != null ->
+                ComposedDataSet(columnDataSet, lineDataSet) + ComposedEntryCollection(
+                    EntryList(
+                        RandomEntriesGenerator().generateRandomEntries(),
+                        animateChanges = false
+                    ),
+                    EntryList(
+                        RandomEntriesGenerator().generateRandomEntries(),
+                        animateChanges = false
+                    ),
+                ).model
+            columnDataSet != null ->
+                columnDataSet + RandomEntriesGenerator().randomEntryModel()
+            lineDataSet != null ->
+                lineDataSet + RandomEntriesGenerator().randomEntryModel()
+            else -> null
+        }
     }
 }

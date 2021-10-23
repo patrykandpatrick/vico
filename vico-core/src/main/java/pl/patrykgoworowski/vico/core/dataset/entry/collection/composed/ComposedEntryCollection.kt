@@ -36,6 +36,10 @@ class ComposedEntryCollection<Model : EntryModel>(
         listeners.runEach(model)
     }
 
+    public constructor(
+        vararg entryCollections: EntryCollection<Model>,
+    ) : this(entryCollections.toList())
+
     init {
         entryCollections.forEach { entryCollection ->
             entryCollection.addOnEntriesChangedListener(internalListener)

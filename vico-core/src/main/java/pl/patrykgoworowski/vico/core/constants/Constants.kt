@@ -27,3 +27,8 @@ const val DEF_COLOR = Color.MAGENTA
 const val DEF_CHART_WIDTH = 200f
 
 const val ERR_REPEATING_COLLECTION_EMPTY = "Cannot get repeated item from empty collection."
+
+object Flags {
+    const val COLUMN_CHART = 1
+    const val LINE_CHART = 2
+}

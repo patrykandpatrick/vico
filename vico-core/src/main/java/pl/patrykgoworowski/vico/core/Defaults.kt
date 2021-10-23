@@ -68,14 +68,14 @@ object Dimens {
     const val DASH_LENGTH = 4
     const val DASH_GAP = 2
 
-    const val LINE_WIDTH = 2
+    const val LINE_THICKNESS = 2f
 
     const val MARKER_INDICATOR_SIZE = 36f
     const val MARKER_HORIZONTAL_PADDING = 8f
     const val MARKER_VERTICAL_PADDING = 4f
 
-    const val POINT_SIZE = 16
-    const val POINT_SPACING = 16
+    const val POINT_SIZE = 16f
+    const val POINT_SPACING = 16f
 }
 
 @Suppress("MagicNumber")

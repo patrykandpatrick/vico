@@ -32,4 +32,5 @@ public fun drawContext(
     override val density: Float = density
     override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr
+    override val isHorizontalScrollEnabled: Boolean = false
 }

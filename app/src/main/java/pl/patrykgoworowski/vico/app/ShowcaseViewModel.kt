@@ -22,7 +22,7 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import pl.patrykgoworowski.vico.app.util.RandomEntriesGenerator
+import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.plus
 

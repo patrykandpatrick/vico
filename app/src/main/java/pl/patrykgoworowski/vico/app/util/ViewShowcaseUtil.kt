@@ -68,18 +68,16 @@ class ViewShowcaseUtil(
                 dynamicShader = DynamicShaders
                     .horizontalGradient(context.flickrPink, context.trypanPurple),
             ),
-        ).apply {
-            isHorizontalScrollEnabled = true
-        }
+        )
 
-        val dataSetRenderer = columnDataSet + entryModel()
+        val dataSetRenderer = (dataSetView.dataSet as? ColumnDataSet ?: columnDataSet) + entryModel()
 
         viewModel.entries.collectAsFlow
             .onEach(dataSetRenderer::setModel)
             .launchIn(coroutineScope)
 
         dataSetView.apply {
-            dataSet = dataSetRenderer
+            // dataSet = dataSetRenderer
             this.marker = marker
         }
     }
@@ -109,13 +107,11 @@ class ViewShowcaseUtil(
                 ), LineDataSet(
                     pointSizeDp = 62f,
                     lineColor = context.flickrPink,
-                    lineWidthDp = 2f,
+                    lineThicknessDp = 2f,
                     spacingDp = 8f,
                 )
             )
-        ).apply {
-            isHorizontalScrollEnabled = true
-        }
+        )
 
         val dataSetRenderer = composedDataSet + composedEntryModel()
 
@@ -135,7 +131,6 @@ class ViewShowcaseUtil(
             pointSizeDp = 10f,
             lineColor = context.flickrPink
         ).apply {
-            isHorizontalScrollEnabled = true
             lineBackgroundShader = DynamicShaders
                 .verticalGradient(context.flickrPink.copyColor(alpha = 128), Color.TRANSPARENT,)
             lineBackgroundShader = DynamicShaders.fromComponent(
@@ -182,9 +177,7 @@ class ViewShowcaseUtil(
             mergeMode = MergeMode.Grouped,
             spacingDp = 24f,
             innerSpacingDp = 4f,
-        ).apply {
-            isHorizontalScrollEnabled = true
-        }
+        )
 
         val dataSetRenderer = columnDataSet + entryModel()
 
@@ -220,9 +213,7 @@ class ViewShowcaseUtil(
             mergeMode = MergeMode.Stack,
             spacingDp = 24f,
             innerSpacingDp = 4f,
-        ).apply {
-            isHorizontalScrollEnabled = true
-        }
+        )
 
         val dataSetRenderer = columnDataSet + entryModel()
 

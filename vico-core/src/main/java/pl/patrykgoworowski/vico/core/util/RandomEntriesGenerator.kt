@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.app.util
+package pl.patrykgoworowski.vico.core.util
 
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
 
@@ -31,6 +33,9 @@ class RandomEntriesGenerator(
         }
         return result
     }
+
+    fun randomEntryModel(): EntryModel =
+        EntryList(generateRandomEntries(), animateChanges = false).model
 
     companion object {
         private const val X_RANGE_TOP = 10

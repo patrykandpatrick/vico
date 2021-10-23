@@ -48,7 +48,7 @@ public open class LineDataSet(
     public var point: Component? = null,
     public var pointSizeDp: Float = 6f,
     public var spacingDp: Float = DEF_LINE_CHART_SPACING,
-    public var lineWidthDp: Float = 2f,
+    public var lineThicknessDp: Float = 2f,
     lineColor: Int = Color.LTGRAY,
 ) : BaseDataSet<EntryModel>() {
 
@@ -88,14 +88,14 @@ public open class LineDataSet(
     ) = with(context) {
         resetTempData()
         val lineBackgroundShader = lineBackgroundShader
-        linePaint.strokeWidth = lineWidthDp.pixels
+        linePaint.strokeWidth = lineThicknessDp.pixels
 
         val clipRestoreCount = context.canvas.save()
         canvas.setUpClipBounds()
 
         val (cellWidth, spacing, segmentWidth) = segmentProperties
 
-        context.calculateDrawSegmentSpecIfNeeded(model)
+        calculateDrawSegmentSpecIfNeeded(model)
         updateMaxScrollAmount(model.getEntriesLength(), segmentWidth)
 
         var cubicCurvature: Float
@@ -206,7 +206,7 @@ public open class LineDataSet(
         axisModel.entryModel = model
     }
 
-    private fun updateMaxScrollAmount(
+    private fun MeasureContext.updateMaxScrollAmount(
         entryCollectionSize: Int,
         segmentWidth: Float,
     ) {

@@ -46,3 +46,5 @@ inline val Float.piRad: Float
 
 fun Float.between(min: Float, max: Float): Float =
     minOf(maxOf(this, min), max)
+
+fun Int.hasFlag(flag: Int): Boolean = (this and flag) == flag

@@ -18,9 +18,11 @@ package pl.patrykgoworowski.vico.view.theme
 
 import android.content.Context
 import android.content.res.TypedArray
-import androidx.core.content.res.use
 import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.component.Component
+import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
+import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.extension.getColorCompat
 
@@ -43,4 +45,46 @@ fun TypedArray.getLineComponent(
             styleableResourceId = R.styleable.Shape,
         ).getShape(context)
     )
+}
+
+fun TypedArray.getComponent(
+    context: Context,
+): Component? = use { array ->
+
+    if (!hasValue(R.styleable.ComponentStyle_color)) {
+        return@use null
+    }
+
+    val overlayingComponent = if (hasValue(R.styleable.ComponentStyle_overlayingComponentStyle)) {
+        getNestedTypedArray(
+            context = context,
+            resourceId = R.styleable.ComponentStyle_overlayingComponentStyle,
+            styleableResourceId = R.styleable.ComponentStyle,
+        ).getComponent(context)
+    } else {
+        null
+    }
+
+    val baseComponent = ShapeComponent(
+        color = array.getColor(index = R.styleable.ComponentStyle_color),
+        shape = getNestedTypedArray(
+            context = context,
+            resourceId = R.styleable.ComponentStyle_shapeStyle,
+            styleableResourceId = R.styleable.Shape,
+        ).getShape(context)
+    )
+
+    if (overlayingComponent != null) {
+        OverlayingComponent(
+            outer = baseComponent,
+            inner = overlayingComponent,
+            innerPaddingAllDp = getDpDimension(
+                context = context,
+                index = R.styleable.ComponentStyle_overlayingComponentPadding,
+                defaultValue = 0f,
+            )
+        )
+    } else {
+        baseComponent
+    }
 }

@@ -40,4 +40,5 @@ fun chartDrawContext(
     override val density: Float = measureContext.density
     override val fontScale: Float = measureContext.fontScale
     override val isLtr: Boolean = measureContext.isLtr
+    override val isHorizontalScrollEnabled: Boolean = measureContext.isHorizontalScrollEnabled
 }

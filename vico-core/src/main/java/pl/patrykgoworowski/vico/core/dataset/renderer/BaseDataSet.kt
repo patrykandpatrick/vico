@@ -49,7 +49,6 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
     override var minX: Float? = null
     override var maxX: Float? = null
 
-    override var isHorizontalScrollEnabled: Boolean = false
     override var maxScrollAmount: Float = 0f
 
     override var zoom: Float? = null

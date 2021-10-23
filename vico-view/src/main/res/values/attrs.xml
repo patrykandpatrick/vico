@@ -23,16 +23,23 @@
 
     <declare-styleable name="DataSetView">
         <attr name="axisStyle" />
+        <attr name="columnChartStyle" />
+        <attr name="lineChartStyle" />
         <attr name="showStartAxis" format="boolean" />
         <attr name="showTopAxis" format="boolean" />
         <attr name="showEndAxis" format="boolean" />
         <attr name="showBottomAxis" format="boolean" />
+        <attr name="chartHorizontalScrollingEnabled" format="boolean" />
+        <attr name="chartType" format="integer">
+            <flag name="column" value="1" />
+            <flag name="line" value="2" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="Axis">
-        <attr name="axisLineStyle"/>
-        <attr name="axisGuidelineStyle"/>
-        <attr name="axisTickStyle"/>
+        <attr name="axisLineStyle" />
+        <attr name="axisGuidelineStyle" />
+        <attr name="axisTickStyle" />
         <attr name="axis_label_background" format="color|reference" />
         <attr name="axis_label_color" format="color" />
         <attr name="axis_guideline_color" format="color" />
@@ -44,43 +51,43 @@
     </declare-styleable>
 
     <declare-styleable name="LineComponentStyle">
-        <attr name="color"/>
-        <attr name="thickness"/>
-        <attr name="shapeStyle"/>
+        <attr name="color" />
+        <attr name="thickness" />
+        <attr name="shapeStyle" />
     </declare-styleable>
 
     <declare-styleable name="Shape">
-        <attr name="cornerSize" format="dimension|fraction"/>
+        <attr name="cornerSize" format="dimension|fraction" />
         <attr name="cornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
 
-        <attr name="topStartCornerSize" format="dimension|fraction"/>
+        <attr name="topStartCornerSize" format="dimension|fraction" />
         <attr name="topStartCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
 
-        <attr name="topEndCornerSize" format="dimension|fraction"/>
+        <attr name="topEndCornerSize" format="dimension|fraction" />
         <attr name="topEndCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
 
-        <attr name="bottomStartCornerSize" format="dimension|fraction"/>
+        <attr name="bottomStartCornerSize" format="dimension|fraction" />
         <attr name="bottomStartCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
 
-        <attr name="bottomEndCornerSize" format="dimension|fraction"/>
+        <attr name="bottomEndCornerSize" format="dimension|fraction" />
         <attr name="bottomEndCornerTreatment" format="enum">
             <enum name="rounded" value="0" />
             <enum name="cut" value="1" />
         </attr>
 
-        <attr name="dashLength" format="dimension"/>
-        <attr name="dashGapLength" format="dimension"/>
+        <attr name="dashLength" format="dimension" />
+        <attr name="dashGapLength" format="dimension" />
     </declare-styleable>
 </resources>

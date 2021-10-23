@@ -19,7 +19,6 @@ package pl.patrykgoworowski.vico.view.dataset
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
@@ -34,19 +33,14 @@ import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
-import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
-import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
 import pl.patrykgoworowski.vico.view.dataset.common.DataSetWithModel
-import pl.patrykgoworowski.vico.view.dataset.common.plus
 import pl.patrykgoworowski.vico.view.extension.density
 import pl.patrykgoworowski.vico.view.extension.dpInt
 import pl.patrykgoworowski.vico.view.extension.fontScale
@@ -57,6 +51,7 @@ import pl.patrykgoworowski.vico.view.extension.verticalPadding
 import pl.patrykgoworowski.vico.view.gestures.ChartScaleGestureListener
 import pl.patrykgoworowski.vico.view.gestures.MotionEventHandler
 import pl.patrykgoworowski.vico.view.layout.MutableMeasureContext
+import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 import kotlin.properties.Delegates.observable
 
 class DataSetView @JvmOverloads constructor(
@@ -68,7 +63,7 @@ class DataSetView @JvmOverloads constructor(
     private val contentBounds = RectF()
     private val dataSetModel = MutableDataSetModel()
     private val scrollHandler = ScrollHandler()
-    private val themeHandler = ThemeHandler(context, attrs)
+    private val themeHandler = ThemeHandler(context, attrs, isInEditMode)
 
     private val updateRequestListener: UpdateRequestListener = {
         if (ViewCompat.isAttachedToWindow(this@DataSetView)) {
@@ -91,7 +86,8 @@ class DataSetView @JvmOverloads constructor(
     private val measureContext = MutableMeasureContext(
         density = context.density,
         fontScale = context.fontScale,
-        isLtr = context.isLtr
+        isLtr = context.isLtr,
+        isHorizontalScrollEnabled = false,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -108,6 +104,12 @@ class DataSetView @JvmOverloads constructor(
     public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
+    public var isHorizontalScrollEnabled: Boolean = false
+        set(value) {
+            field = value
+            measureContext.isHorizontalScrollEnabled = value
+        }
+
     public var isZoomEnabled = true
 
     var dataSet: DataSetWithModel<*>? by observable(null) { _, oldValue, newValue ->
@@ -123,10 +125,8 @@ class DataSetView @JvmOverloads constructor(
         topAxis = themeHandler.topAxis
         endAxis = themeHandler.endAxis
         bottomAxis = themeHandler.bottomAxis
-        if (isInEditMode) {
-            // TODO make it settable with attributes
-            dataSet = ColumnDataSet(column = LineComponent(Color.BLACK)) + entryModelOf(1f, 2f, 3f, 4f)
-        }
+        dataSet = themeHandler.dataSet
+        isHorizontalScrollEnabled = themeHandler.isHorizontalScrollEnabled
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -134,7 +134,7 @@ class DataSetView @JvmOverloads constructor(
         val scaleHandled = if (isZoomEnabled) scaleGestureDetector.onTouchEvent(event) else false
         val touchHandled = motionEventHandler.handleTouchPoint(event)
         return if (scaleHandled || touchHandled) {
-            parent.requestDisallowInterceptTouchEvent(dataSet?.isHorizontalScrollEnabled == true)
+            parent.requestDisallowInterceptTouchEvent(isHorizontalScrollEnabled)
             true
         } else {
             parent.requestDisallowInterceptTouchEvent(false)
@@ -160,7 +160,7 @@ class DataSetView @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas) {
         val dataSet = dataSet ?: return
         dataSet.setToAxisModel(dataSetModel)
-        motionEventHandler.isHorizontalScrollEnabled = dataSet.isHorizontalScrollEnabled
+        motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
             ViewCompat.postInvalidateOnAnimation(this@DataSetView)
