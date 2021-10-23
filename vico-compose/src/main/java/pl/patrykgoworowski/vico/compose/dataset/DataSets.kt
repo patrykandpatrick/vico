@@ -93,13 +93,16 @@ fun <Model : EntryModel> DataSet(
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
 ) {
-    val measureContext = getMeasureContext(isHorizontalScrollEnabled = isHorizontalScrollEnabled)
     val axisManager = remember { AxisManager() }
     val dataSetModel = remember { MutableDataSetModel() }
     val bounds = remember { RectF() }
     val (markerTouchPoint, setTouchPoint) = remember { mutableStateOf<PointF?>(null) }
     val horizontalScroll = remember { mutableStateOf(0f) }
     val zoom = remember { mutableStateOf(1f) }
+    val measureContext = getMeasureContext(
+        isHorizontalScrollEnabled = isHorizontalScrollEnabled,
+        zoom = zoom.value
+    )
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
 
@@ -133,7 +136,6 @@ fun <Model : EntryModel> DataSet(
             }
     ) {
         dataSet.setToAxisModel(dataSetModel, model)
-        dataSet.zoom = zoom.value
 
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,

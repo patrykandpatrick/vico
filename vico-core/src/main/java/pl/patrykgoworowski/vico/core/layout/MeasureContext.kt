@@ -21,6 +21,7 @@ interface MeasureContext {
     public val fontScale: Float
     public val isLtr: Boolean
     public val isHorizontalScrollEnabled: Boolean
+    public val zoom: Float
 
     val Float.pixels: Float
         get() = this * density

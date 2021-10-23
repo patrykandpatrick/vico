@@ -41,4 +41,5 @@ fun chartDrawContext(
     override val fontScale: Float = measureContext.fontScale
     override val isLtr: Boolean = measureContext.isLtr
     override val isHorizontalScrollEnabled: Boolean = measureContext.isHorizontalScrollEnabled
+    override val zoom: Float = measureContext.zoom
 }

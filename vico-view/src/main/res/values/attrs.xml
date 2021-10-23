@@ -30,6 +30,7 @@
         <attr name="showEndAxis" format="boolean" />
         <attr name="showBottomAxis" format="boolean" />
         <attr name="chartHorizontalScrollingEnabled" format="boolean" />
+        <attr name="chartZoomEnabled" format="boolean" />
         <attr name="chartType" format="integer">
             <flag name="column" value="1" />
             <flag name="line" value="2" />

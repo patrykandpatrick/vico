@@ -72,16 +72,6 @@ public open class LineDataSet(
 
     public var cubicStrength = 1f
 
-    override fun setBounds(
-        left: Number,
-        top: Number,
-        right: Number,
-        bottom: Number
-    ) {
-        bounds.set(left, top, right, bottom)
-        isScaleCalculated = false
-    }
-
     override fun drawDataSet(
         context: ChartDrawContext,
         model: EntryModel,

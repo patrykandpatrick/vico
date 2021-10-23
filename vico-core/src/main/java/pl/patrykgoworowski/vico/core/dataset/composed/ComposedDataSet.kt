@@ -47,12 +47,6 @@ class ComposedDataSet<Model : EntryModel>(
         dataSets.forEach { dataSet -> dataSet.setBounds(left, top, right, bottom) }
     }
 
-    override var zoom: Float? = null
-        set(value) {
-            field = value
-            dataSets.forEach { dataSet -> dataSet.zoom = value }
-        }
-
     override var maxScrollAmount: Float
         set(value) {}
         get() = dataSets.maxOf { it.maxScrollAmount }

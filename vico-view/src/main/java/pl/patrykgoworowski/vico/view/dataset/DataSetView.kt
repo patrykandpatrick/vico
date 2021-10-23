@@ -88,6 +88,7 @@ class DataSetView @JvmOverloads constructor(
         fontScale = context.fontScale,
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
+        zoom = 1f,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -127,6 +128,7 @@ class DataSetView @JvmOverloads constructor(
         bottomAxis = themeHandler.bottomAxis
         dataSet = themeHandler.dataSet
         isHorizontalScrollEnabled = themeHandler.isHorizontalScrollEnabled
+        isZoomEnabled = themeHandler.isChartZoomEnabled
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -144,11 +146,11 @@ class DataSetView @JvmOverloads constructor(
 
     private fun handleZoom(focusX: Float, zoomChange: Float) {
         val dataSet = dataSet ?: return
-        val newZoom = (dataSet.zoom ?: 1f) * zoomChange
+        val newZoom = measureContext.zoom * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
         val centerX = scrollHandler.currentScroll + focusX - dataSet.bounds.left
         val zoomedCenterX = centerX * zoomChange
-        dataSet.zoom = newZoom
+        measureContext.zoom = newZoom
         scrollHandler.currentScroll += zoomedCenterX - centerX
         invalidate()
     }
