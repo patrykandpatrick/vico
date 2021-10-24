@@ -16,14 +16,14 @@
 
 package pl.patrykgoworowski.vico.core.dataset.draw
 
-import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.model.Point
 
 public interface ChartDrawContext : DrawContext {
     public val dataSetModel: DataSetModel
     public val segmentProperties: SegmentProperties
-    public val markerTouchPoint: PointF?
+    public val markerTouchPoint: Point?
     public val horizontalScroll: Float
 }

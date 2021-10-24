@@ -16,11 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.marker
 
-import android.graphics.PointF
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.model.Point
 
 public interface Marker : DataSetInsetter {
 
@@ -31,7 +31,7 @@ public interface Marker : DataSetInsetter {
     )
 
     class EntryModel(
-        val location: PointF,
+        val location: Point,
         val entry: DataEntry,
         val color: Int,
     )

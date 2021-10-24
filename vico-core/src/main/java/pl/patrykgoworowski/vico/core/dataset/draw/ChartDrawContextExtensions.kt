@@ -17,25 +17,25 @@
 package pl.patrykgoworowski.vico.core.dataset.draw
 
 import android.graphics.Canvas
-import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.model.Point
 
 @LongParameterListDrawFunction
 fun chartDrawContext(
     canvas: Canvas,
     measureContext: MeasureContext,
     horizontalScroll: Float,
-    markerTouchPoint: PointF?,
+    markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
     dataSetModel: DataSetModel,
 ) = object : ChartDrawContext {
     override val canvas: Canvas = canvas
     override val dataSetModel: DataSetModel = dataSetModel
     override val segmentProperties: SegmentProperties = segmentProperties
-    override val markerTouchPoint: PointF? = markerTouchPoint
+    override val markerTouchPoint: Point? = markerTouchPoint
     override val horizontalScroll: Float = horizontalScroll
     override val density: Float = measureContext.density
     override val fontScale: Float = measureContext.fontScale

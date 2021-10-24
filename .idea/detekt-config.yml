@@ -9,3 +9,6 @@ complexity:
         'androidx.compose.runtime.Composable',
         'pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction',
     ]
+naming:
+    FunctionNaming:
+      active: false

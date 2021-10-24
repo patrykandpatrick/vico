@@ -50,8 +50,6 @@
     <style name="ColumnShapeStyle">
         <item name="topStartCornerTreatment">cut</item>
         <item name="topStartCornerSize">50%</item>
-        <item name="topEndCornerTreatment">cut</item>
-        <item name="topEndCornerSize">50%</item>
     </style>
 
     <style name="LineChartStyle">
