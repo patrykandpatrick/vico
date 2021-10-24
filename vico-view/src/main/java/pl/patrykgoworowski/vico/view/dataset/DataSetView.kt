@@ -19,7 +19,6 @@ package pl.patrykgoworowski.vico.view.dataset
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.PointF
 import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
@@ -38,6 +37,7 @@ import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
+import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
 import pl.patrykgoworowski.vico.view.dataset.common.DataSetWithModel
@@ -98,7 +98,7 @@ class DataSetView @JvmOverloads constructor(
         )
     private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
-    private var markerTouchPoint: PointF? = null
+    private var markerTouchPoint: Point? = null
 
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
@@ -155,8 +155,8 @@ class DataSetView @JvmOverloads constructor(
         invalidate()
     }
 
-    private fun handleTouchEvent(pointF: PointF?) {
-        markerTouchPoint = pointF
+    private fun handleTouchEvent(point: Point?) {
+        markerTouchPoint = point
     }
 
     override fun onDraw(canvas: Canvas) {

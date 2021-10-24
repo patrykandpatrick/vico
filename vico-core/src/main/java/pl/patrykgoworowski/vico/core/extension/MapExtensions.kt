@@ -16,14 +16,14 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
-import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.marker.Marker
+import pl.patrykgoworowski.vico.core.model.Point
 import java.util.TreeMap
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryPositionModel(
-    touchPoint: PointF,
+    touchPoint: Point,
 ): List<Marker.EntryModel>? =
     keys.findClosestPositiveValue(touchPoint.x)
         ?.let(::get)

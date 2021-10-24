@@ -16,8 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
-import android.graphics.PointF
-import android.view.MotionEvent
 
-val MotionEvent.pointF: PointF
-    get() = PointF(x, y)
+import android.view.MotionEvent
+import pl.patrykgoworowski.vico.core.model.Point
+
+val MotionEvent.point: Point
+    get() = Point(x, y)

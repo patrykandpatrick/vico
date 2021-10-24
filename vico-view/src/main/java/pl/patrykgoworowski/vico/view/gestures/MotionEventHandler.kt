@@ -17,11 +17,11 @@
 package pl.patrykgoworowski.vico.view.gestures
 
 import android.annotation.SuppressLint
-import android.graphics.PointF
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
-import pl.patrykgoworowski.vico.core.extension.pointF
+import pl.patrykgoworowski.vico.core.extension.point
+import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 import pl.patrykgoworowski.vico.view.extension.fling
 import kotlin.math.abs
@@ -31,7 +31,7 @@ public open class MotionEventHandler(
     private val scrollHandler: ScrollHandler,
     density: Float,
     var isHorizontalScrollEnabled: Boolean = false,
-    private val onTouchPoint: (PointF?) -> Unit,
+    private val onTouchPoint: (Point?) -> Unit,
     private val requestInvalidate: () -> Unit,
 ) {
 
@@ -52,7 +52,7 @@ public open class MotionEventHandler(
             MotionEvent.ACTION_DOWN -> {
                 scroller.abortAnimation()
                 initialX = motionEvent.x
-                onTouchPoint(motionEvent.pointF)
+                onTouchPoint(motionEvent.point)
                 lastX = initialX
                 currentX = initialX
                 velocityTracker.get().addMovement(motionEvent)
@@ -65,13 +65,13 @@ public open class MotionEventHandler(
                     if (abs(currentX - initialX) > dragThreshold && !ignoreEvent) {
                         velocityTracker.get().addMovement(motionEvent)
                         scrollHandler.handleScrollDelta(currentX - lastX)
-                        onTouchPoint(null)
+                        onTouchPoint(motionEvent.point)
                         requestInvalidate()
                         initialX = -dragThreshold
                     }
                     lastX = motionEvent.x
                 } else {
-                    onTouchPoint(motionEvent.pointF)
+                    onTouchPoint(motionEvent.point)
                     requestInvalidate()
                 }
                 true

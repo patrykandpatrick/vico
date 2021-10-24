@@ -16,14 +16,18 @@
 
 package pl.patrykgoworowski.vico.compose.dataset
 
-import android.graphics.PointF
 import android.graphics.RectF
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.interaction.Interaction
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -49,6 +53,7 @@ import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
+import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 
 @Composable
@@ -96,17 +101,23 @@ fun <Model : EntryModel> DataSet(
     val axisManager = remember { AxisManager() }
     val dataSetModel = remember { MutableDataSetModel() }
     val bounds = remember { RectF() }
-    val (markerTouchPoint, setTouchPoint) = remember { mutableStateOf<PointF?>(null) }
+    val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val horizontalScroll = remember { mutableStateOf(0f) }
     val zoom = remember { mutableStateOf(1f) }
     val measureContext = getMeasureContext(
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
         zoom = zoom.value
     )
+    val interactionSource = remember { MutableInteractionSource() }
+    val interaction = interactionSource.interactions.collectAsState(initial = null)
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
 
-    val setHorizontalScroll = rememberSetHorizontalScroll(horizontalScroll, setTouchPoint)
+    val setHorizontalScroll = rememberSetHorizontalScroll(
+        scroll = horizontalScroll,
+        touchPoint = markerTouchPoint,
+        interaction = interaction
+    )
 
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
@@ -119,11 +130,13 @@ fun <Model : EntryModel> DataSet(
             .fillMaxWidth()
             .addIf(marker != null) {
                 chartTouchEvent(
-                    setTouchPoint = setTouchPoint,
+                    setTouchPoint = markerTouchPoint.component2(),
                     scrollableState = if (isHorizontalScrollEnabled) scrollableState else null,
                     onZoom = if (isZoomEnabled) onZoom else null,
+                    interactionSource = interactionSource,
                 )
-            }.onSizeChanged { size ->
+            }
+            .onSizeChanged { size ->
                 bounds.set(0, 0, size.width, size.height)
                 virtualLayout.setBounds(
                     context = measureContext,
@@ -141,7 +154,7 @@ fun <Model : EntryModel> DataSet(
             canvas = drawContext.canvas.nativeCanvas,
             measureContext = measureContext,
             horizontalScroll = horizontalScroll.value,
-            markerTouchPoint = markerTouchPoint,
+            markerTouchPoint = markerTouchPoint.value,
             segmentProperties = dataSet.getSegmentProperties(measureContext, model),
             dataSetModel = dataSetModel,
         )
@@ -155,11 +168,21 @@ fun <Model : EntryModel> DataSet(
 @Composable
 fun rememberSetHorizontalScroll(
     scroll: MutableState<Float>,
-    setTouchPoint: (PointF?) -> Unit,
+    touchPoint: MutableState<Point?>,
+    interaction: State<Interaction?>,
 ) = remember {
-    { newScroll: Float ->
+    var canClearTouchPoint = false
+    return@remember { newScroll: Float ->
+        touchPoint.value?.let { point ->
+            if (interaction.value is DragInteraction.Stop && canClearTouchPoint) {
+                touchPoint.value = null
+                canClearTouchPoint = false
+            } else {
+                touchPoint.value = point.copy(x = point.x + scroll.value - newScroll)
+                canClearTouchPoint = true
+            }
+        }
         scroll.value = newScroll
-        setTouchPoint(null)
     }
 }
 

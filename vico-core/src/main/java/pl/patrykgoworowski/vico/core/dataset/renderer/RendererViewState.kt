@@ -16,13 +16,13 @@
 
 package pl.patrykgoworowski.vico.core.dataset.renderer
 
-import android.graphics.PointF
+import pl.patrykgoworowski.vico.core.model.Point
 
 interface RendererViewState {
 
-    val markerTouchPoint: PointF?
+    val markerTouchPoint: Point?
     val horizontalScroll: Float
 
-    operator fun component1(): PointF? = markerTouchPoint
+    operator fun component1(): Point? = markerTouchPoint
     operator fun component2(): Float = horizontalScroll
 }

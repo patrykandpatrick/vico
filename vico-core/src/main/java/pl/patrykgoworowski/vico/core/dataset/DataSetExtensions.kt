@@ -16,10 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.dataset
 
-import android.graphics.PointF
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 import pl.patrykgoworowski.vico.core.extension.updateList
 import pl.patrykgoworowski.vico.core.marker.Marker
+import pl.patrykgoworowski.vico.core.model.Point
 
 fun HashMap<Float, MutableList<Marker.EntryModel>>.put(
     x: Float,
@@ -28,6 +28,6 @@ fun HashMap<Float, MutableList<Marker.EntryModel>>.put(
     color: Int,
 ) {
     updateList(x) {
-        add(Marker.EntryModel(PointF(x, y), entry, color))
+        add(Marker.EntryModel(Point(x, y), entry, color))
     }
 }
