@@ -27,10 +27,12 @@ public fun drawContext(
     density: Float,
     fontScale: Float,
     isLtr: Boolean,
+    zoom: Float = 1f,
 ) = object : DrawContext {
     override val canvas: Canvas = canvas
     override val density: Float = density
     override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
+    override val zoom: Float = zoom
 }
