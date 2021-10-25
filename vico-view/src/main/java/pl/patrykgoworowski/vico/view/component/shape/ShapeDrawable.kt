@@ -24,7 +24,6 @@ import android.graphics.ColorFilter
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.PixelFormat
-import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.util.LayoutDirection
@@ -58,7 +57,6 @@ public class ShapeDrawable(
     )
 
     private val path: Path = Path()
-    private val rectF: RectF = RectF()
 
     private var tintList: ColorStateList? = null
 
@@ -71,7 +69,6 @@ public class ShapeDrawable(
     }
 
     override fun draw(canvas: Canvas) {
-        rectF.set(bounds)
         shape.drawShape(
             drawContext(
                 canvas = canvas,
