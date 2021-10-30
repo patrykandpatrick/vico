@@ -48,3 +48,5 @@ fun Float.between(min: Float, max: Float): Float =
     minOf(maxOf(this, min), max)
 
 fun Int.hasFlag(flag: Int): Boolean = (this and flag) == flag
+
+public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull { it >= 0f }

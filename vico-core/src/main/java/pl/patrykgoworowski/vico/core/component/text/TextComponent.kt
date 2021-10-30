@@ -23,11 +23,10 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
+import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.DefaultMargins
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
-import pl.patrykgoworowski.vico.core.component.shape.Shape
-import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
@@ -48,9 +47,9 @@ typealias OnPreDrawListener =
 public open class TextComponent(
     color: Int = Color.BLACK,
     public var textSizeSp: Float = 12f,
-    public val ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    public val ellipsize: TextUtils.TruncateAt? = TextUtils.TruncateAt.END,
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
-    public open var background: ShapeComponent<Shape>? = null,
+    public open var background: Component? = null,
     override val padding: MutableDimensions = emptyDimensions(),
 ) : Padding, Margins by DefaultMargins() {
 

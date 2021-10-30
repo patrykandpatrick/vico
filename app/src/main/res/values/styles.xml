@@ -19,6 +19,7 @@
         <item name="axisLineStyle">@style/AxisLineStyle</item>
         <item name="axisGuidelineStyle">@style/AxisLineStyle</item>
         <item name="axisTickStyle">@style/AxisLineStyle</item>
+        <item name="axisLabelStyle">@style/AxisLabelStyle</item>
     </style>
 
     <style name="AxisLineStyle">
@@ -74,13 +75,26 @@
     </style>
 
     <style name="CircleShape">
-        <item name="cornerSize">100%</item>
+        <item name="cornerSize">100sp</item>
         <item name="cornerTreatment">rounded</item>
     </style>
 
     <style name="DiamondShape">
         <item name="cornerSize">40%</item>
         <item name="cornerTreatment">cut</item>
+    </style>
+
+    <style name="AxisLabelStyle">
+        <item name="labelColor">?colorOnPrimary</item>
+        <item name="backgroundStyle">@style/AxisLabelBackgroundStyle</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+    </style>
+
+    <style name="AxisLabelBackgroundStyle">
+        <item name="color">?colorPrimaryVariant</item>
+        <item name="shapeStyle">@style/CircleShape</item>
     </style>
 
 </resources>

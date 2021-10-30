@@ -26,6 +26,8 @@ const val DEF_MERGED_BAR_INNER_SPACING = 4f
 const val DEF_COLOR = Color.MAGENTA
 const val DEF_CHART_WIDTH = 200f
 
+const val FONT_WEIGHT_NORMAL = 500
+
 const val ERR_REPEATING_COLLECTION_EMPTY = "Cannot get repeated item from empty collection."
 
 object Flags {

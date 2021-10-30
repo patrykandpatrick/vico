@@ -124,7 +124,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
             )
 
             if (index < entryLength) {
-                label?.background?.setParentBounds(bounds)
+                // TODO label?.background?.setParentBounds(bounds)
                 label?.drawText(
                     context = context,
                     text = valueFormatter.formatValue(valueIndex, index, context.dataSetModel),

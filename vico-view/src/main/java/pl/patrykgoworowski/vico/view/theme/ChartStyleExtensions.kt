@@ -27,7 +27,7 @@ import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.component.shape.shader.verticalGradient
-import pl.patrykgoworowski.vico.view.extension.getColorCompat
+import pl.patrykgoworowski.vico.view.extension.colors
 
 fun TypedArray.getColumnChart(
     context: Context,
@@ -49,12 +49,12 @@ fun TypedArray.getColumnChart(
             styleableResourceId = R.styleable.LineComponentStyle,
         ).getLineComponent(context = context),
     ),
-    spacingDp = getDpDimension(
+    spacingDp = getRawDimension(
         context = context,
         index = R.styleable.ColumnChartStyle_columnOuterSpacing,
         defaultValue = DEF_MERGED_BAR_SPACING
     ),
-    innerSpacingDp = getDpDimension(
+    innerSpacingDp = getRawDimension(
         context = context,
         index = R.styleable.ColumnChartStyle_columnInnerSpacing,
         defaultValue = DEF_MERGED_BAR_INNER_SPACING
@@ -66,24 +66,24 @@ fun TypedArray.getLineChart(
 ): LineDataSet = LineDataSet(
     lineColor = getColor(
         index = R.styleable.LineChartStyle_color,
-        defaultColor = context.getColorCompat(R.color.line_color),
+        defaultColor = context.colors.lineColor.toInt(),
     ),
     point = getNestedTypedArray(
         context = context,
         resourceId = R.styleable.LineChartStyle_pointStyle,
         styleableResourceId = R.styleable.ComponentStyle,
     ).getComponent(context),
-    pointSizeDp = getDpDimension(
+    pointSizeDp = getRawDimension(
         context = context,
         index = R.styleable.LineChartStyle_pointSize,
         defaultValue = Dimens.POINT_SIZE,
     ),
-    spacingDp = getDpDimension(
+    spacingDp = getRawDimension(
         context = context,
         index = R.styleable.LineChartStyle_spacing,
         defaultValue = Dimens.POINT_SPACING,
     ),
-    lineThicknessDp = getDpDimension(
+    lineThicknessDp = getRawDimension(
         context = context,
         index = R.styleable.LineChartStyle_lineThickness,
         defaultValue = Dimens.LINE_THICKNESS,
