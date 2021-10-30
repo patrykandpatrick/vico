@@ -20,6 +20,7 @@
     <attr name="axisGuidelineStyle" format="reference" />
     <attr name="axisTickStyle" format="reference" />
     <attr name="shapeStyle" format="reference" />
+    <attr name="axisLabelStyle" format="reference" />
 
     <declare-styleable name="DataSetView">
         <attr name="axisStyle" />
@@ -41,14 +42,9 @@
         <attr name="axisLineStyle" />
         <attr name="axisGuidelineStyle" />
         <attr name="axisTickStyle" />
-        <attr name="axis_label_background" format="color|reference" />
-        <attr name="axis_label_color" format="color" />
-        <attr name="axis_guideline_color" format="color" />
-        <attr name="axis_guideline_thickness" format="dimension" />
-        <attr name="axis_line_color" format="color" />
-        <attr name="axis_line_thickness" format="dimension" />
-        <attr name="axis_tick_color" format="color" />
-        <attr name="axis_tick_thickness" format="dimension" />
+        <attr name="axisTickLength" format="dimension" />
+        <attr name="axisLabelBackground" format="color|reference" />
+        <attr name="axisLabelStyle" />
     </declare-styleable>
 
     <declare-styleable name="LineComponentStyle">

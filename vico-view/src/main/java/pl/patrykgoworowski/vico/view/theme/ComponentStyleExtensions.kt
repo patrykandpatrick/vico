@@ -24,7 +24,7 @@ import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.view.R
-import pl.patrykgoworowski.vico.view.extension.getColorCompat
+import pl.patrykgoworowski.vico.view.extension.colors
 
 fun TypedArray.getLineComponent(
     context: Context,
@@ -32,9 +32,9 @@ fun TypedArray.getLineComponent(
     LineComponent(
         color = array.getColor(
             index = R.styleable.LineComponentStyle_color,
-            defaultColor = context.getColorCompat(R.color.axis_line_color),
+            defaultColor = context.colors.axisLineColor.toInt(),
         ),
-        thicknessDp = array.getDpDimension(
+        thicknessDp = array.getRawDimension(
             context = context,
             index = R.styleable.LineComponentStyle_thickness,
             defaultValue = Dimens.AXIS_LINE_WIDTH,
@@ -78,7 +78,7 @@ fun TypedArray.getComponent(
         OverlayingComponent(
             outer = baseComponent,
             inner = overlayingComponent,
-            innerPaddingAllDp = getDpDimension(
+            innerPaddingAllDp = getRawDimension(
                 context = context,
                 index = R.styleable.ComponentStyle_overlayingComponentPadding,
                 defaultValue = 0f,
@@ -88,3 +88,7 @@ fun TypedArray.getComponent(
         baseComponent
     }
 }
+
+//fun TypedArray.getTextAppearance(
+//
+//)

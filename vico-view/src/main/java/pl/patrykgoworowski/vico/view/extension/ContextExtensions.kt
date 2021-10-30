@@ -17,12 +17,15 @@
 package pl.patrykgoworowski.vico.view.extension
 
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.os.Build
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
+import pl.patrykgoworowski.vico.core.Colors
 
 internal val Context.density: Float
     get() = resources.displayMetrics.density
@@ -34,6 +37,17 @@ internal val Context.isLtr: Boolean
     get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
         resources.configuration.layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
     } else true
+
+val Context.isDarkMode: Boolean
+    get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
+            Configuration.UI_MODE_NIGHT_YES
+
+internal val Context.colors: Colors
+    get() = if (isDarkMode) {
+        Colors.Dark
+    } else {
+        Colors.Light
+    }
 
 fun Context.getColorCompat(@ColorRes colorRes: Int) =
     ContextCompat.getColor(this, colorRes)

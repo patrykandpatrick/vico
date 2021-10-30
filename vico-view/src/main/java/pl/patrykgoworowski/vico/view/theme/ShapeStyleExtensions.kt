@@ -55,12 +55,12 @@ fun TypedArray.getShape(
         ),
     )
 
-    val dashLength = getDpDimension(
+    val dashLength = getRawDimension(
         context = context,
         index = R.styleable.Shape_dashLength,
         defaultValue = 0f
     )
-    val dashGapLength = getDpDimension(
+    val dashGapLength = getRawDimension(
         context = context,
         index = R.styleable.Shape_dashGapLength,
         defaultValue = 0f
@@ -103,7 +103,7 @@ private fun TypedArray.getCorner(
         )
     }
     else -> {
-        val sizeDp = getDpDimension(context, sizeIndex, defaultValue = 0f)
+        val sizeDp = getRawDimension(context, sizeIndex, defaultValue = 0f)
         Corner.Absolute(
             sizeDp = sizeDp,
             cornerTreatment = if (sizeDp == 0f) {

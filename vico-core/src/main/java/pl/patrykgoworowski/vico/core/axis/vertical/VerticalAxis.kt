@@ -144,7 +144,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
                     bottom = labelTop + labelHeight.half
                 )
             ) {
-                label.background?.setParentBounds(bounds)
+                // TODO label.background?.setParentBounds(bounds)
                 label.drawText(
                     context = context,
                     text = labelText,

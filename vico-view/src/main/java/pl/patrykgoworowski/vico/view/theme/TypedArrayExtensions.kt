@@ -25,6 +25,7 @@ import androidx.annotation.StyleableRes
 import pl.patrykgoworowski.vico.view.extension.density
 
 private val typeCompatTypedValue = TypedValue()
+private val rawValueTypedValue = TypedValue()
 private val lock = Any()
 
 public inline fun <R> TypedArray.use(block: (TypedArray) -> R): R =
@@ -35,13 +36,18 @@ public fun TypedArray.getColor(
     @ColorInt defaultColor: Int = Color.TRANSPARENT,
 ): Int = getColor(index, defaultColor)
 
-public fun TypedArray.getDpDimension(
+public fun TypedArray.getRawDimension(
     context: Context,
     @StyleableRes index: Int,
     defaultValue: Float
-): Float =
-    (getDimension(index, -1f) / context.density)
-        .takeIf { it >= 0f } ?: defaultValue
+): Float = synchronized(lock) {
+    if (getValue(index, rawValueTypedValue)) {
+        rawValueTypedValue.getDimension(context.resources.displayMetrics) / context.density
+        TypedValue.complexToFloat(rawValueTypedValue.data)
+    } else {
+        defaultValue
+    }
+}
 
 public fun TypedArray.getNestedTypedArray(
     context: Context,
