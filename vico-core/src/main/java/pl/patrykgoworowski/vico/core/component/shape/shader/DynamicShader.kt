@@ -25,5 +25,19 @@ fun interface DynamicShader {
     fun provideShader(
         context: DrawContext,
         bounds: RectF,
+    ): Shader = provideShader(
+        context = context,
+        left = bounds.left,
+        top = bounds.top,
+        right = bounds.right,
+        bottom = bounds.bottom
+    )
+
+    fun provideShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
     ): Shader
 }

@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.component.shape.shader
 
-import android.graphics.RectF
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
@@ -26,17 +25,30 @@ public abstract class CacheableDynamicShader : DynamicShader {
 
     override fun provideShader(
         context: DrawContext,
-        bounds: RectF
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
     ): Shader {
-        val cacheKey = createKey(bounds)
-        return cache[cacheKey] ?: createShader(context, bounds).also { gradient ->
+        val cacheKey = createKey(left, top, right, bottom)
+        return cache[cacheKey] ?: createShader(context, left, top, right, bottom).also { gradient ->
             cache.clear()
             cache[cacheKey] = gradient
         }
     }
 
-    public abstract fun createShader(context: DrawContext, bounds: RectF): Shader
+    public abstract fun createShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): Shader
 
-    private fun createKey(bounds: RectF): String =
-        "%s,%s,%s,%s".format(bounds.left, bounds.top, bounds.right, bounds.bottom)
+    protected open fun createKey(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): String = "%s,%s,%s,%s".format(left, top, right, bottom)
 }

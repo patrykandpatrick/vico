@@ -30,11 +30,17 @@ class StaticShader(private val brush: Brush) : DynamicShader {
 
     override fun provideShader(
         context: DrawContext,
-        bounds: RectF
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
     ): Shader = shader ?: kotlin.run {
         val tempPaint = Paint()
         brush.applyTo(
-            size = Size(bounds.width(), bounds.height()),
+            size = Size(
+                maxOf(right - left, left - right),
+                maxOf(bottom - top, top - bottom)
+            ),
             p = tempPaint,
             alpha = 1f,
         )

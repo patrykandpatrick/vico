@@ -17,7 +17,6 @@
 package pl.patrykgoworowski.vico.view.component.shape.shader
 
 import android.graphics.LinearGradient
-import android.graphics.RectF
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShader
@@ -49,16 +48,25 @@ public fun DynamicShaders.horizontalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(context: DrawContext, bounds: RectF): Shader =
+    override fun createShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): Shader =
         LinearGradient(
-            bounds.left,
-            bounds.top,
-            bounds.right,
-            bounds.top,
+            left,
+            top,
+            right,
+            top,
             colors,
             positions,
             Shader.TileMode.CLAMP,
         )
+
+    override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
+        "%s,%s".format(left, right)
 }
 
 public fun DynamicShaders.verticalGradient(
@@ -70,14 +78,23 @@ public fun DynamicShaders.verticalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(context: DrawContext, bounds: RectF): Shader =
+    override fun createShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): Shader =
         LinearGradient(
-            bounds.left,
-            bounds.top,
-            bounds.left,
-            bounds.bottom,
+            left,
+            top,
+            left,
+            bottom,
             colors,
             positions,
             Shader.TileMode.CLAMP,
         )
+
+    override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
+        "%s,%s".format(top, bottom)
 }

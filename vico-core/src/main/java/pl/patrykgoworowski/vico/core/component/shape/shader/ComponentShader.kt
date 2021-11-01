@@ -19,7 +19,6 @@ package pl.patrykgoworowski.vico.core.component.shape.shader
 import android.graphics.Bitmap
 import android.graphics.BitmapShader
 import android.graphics.Canvas
-import android.graphics.RectF
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.draw.DrawContext
@@ -33,7 +32,13 @@ class ComponentShader(
     private val tileYMode: Shader.TileMode = tileXMode,
 ) : CacheableDynamicShader() {
 
-    override fun createShader(context: DrawContext, bounds: RectF): Shader = with(context) {
+    override fun createShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): Shader = with(context) {
         val size = componentSize.pixels.toInt() * if (checkeredArrangement) 2 else 1
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
 
