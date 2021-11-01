@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.compose.component.shape.shader
 
-import android.graphics.RectF
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
@@ -24,33 +23,30 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShad
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-public class BrushDynamicShader(
-    private val shader: (bounds: RectF) -> Brush
-) : CacheableDynamicShader() {
-
-    private val tempPaint = Paint()
-
-    override fun createShader(context: DrawContext, bounds: RectF): android.graphics.Shader {
-        shader(bounds)
-            .applyTo(
-                size = Size(bounds.width(), bounds.height()),
-                p = tempPaint,
-                alpha = 1f
-            )
-        return requireNotNull(tempPaint.shader)
-    }
-}
-
 public fun brushShader(
-    shader: (bounds: RectF) -> Brush
+    shader: (
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ) -> Brush
 ): DynamicShader = object : CacheableDynamicShader() {
 
     private val tempPaint = Paint()
 
-    override fun createShader(context: DrawContext, bounds: RectF): android.graphics.Shader {
-        shader(bounds)
+    override fun createShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): android.graphics.Shader {
+        shader(left, top, right, bottom)
             .applyTo(
-                size = Size(bounds.width(), bounds.height()),
+                size = Size(
+                    maxOf(right - left, left - right),
+                    maxOf(bottom - top, top - bottom)
+                ),
                 p = tempPaint,
                 alpha = 1f
             )

@@ -27,6 +27,7 @@ import pl.patrykgoworowski.vico.core.dataset.put
 import pl.patrykgoworowski.vico.core.dataset.renderer.BaseDataSet
 import pl.patrykgoworowski.vico.core.dataset.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.dataset.segment.SegmentProperties
+import pl.patrykgoworowski.vico.core.entry.DataEntry
 import pl.patrykgoworowski.vico.core.extension.between
 import pl.patrykgoworowski.vico.core.extension.getRepeating
 import pl.patrykgoworowski.vico.core.extension.half
@@ -88,7 +89,8 @@ public open class ColumnDataSet(
         cellWidth: Float,
         spacing: Float,
     ) {
-        val heightMultiplier = bounds.height() / ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero)
+        val yRange = ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero).takeIf { it != 0f } ?: return
+        val heightMultiplier = bounds.height() / yRange
 
         var drawingStart: Float
         var height: Float
@@ -142,17 +144,28 @@ public open class ColumnDataSet(
                         thicknessScale = drawScale
                     )
                 ) {
-                    markerLocationMap.takeIf { markerTouchPoint != null }?.put(
-                        x = ceil(columnCenterX),
-                        y = columnTop.between(bounds.top, bounds.bottom),
-                        entry = entry,
-                        color = column.color
-                    )
+                    if (markerTouchPoint != null) {
+                        updateMarkerLocationMap(entry, columnTop, columnCenterX, column)
+                    }
 
                     column.drawVertical(this, columnTop, columnBottom, columnCenterX, drawScale)
                 }
             }
         }
+    }
+
+    private fun updateMarkerLocationMap(
+        entry: DataEntry,
+        columnTop: Float,
+        columnCenterX: Float,
+        column: LineComponent,
+    ) {
+        markerLocationMap.put(
+            x = ceil(columnCenterX),
+            y = columnTop.between(bounds.top, bounds.bottom),
+            entry = entry,
+            color = column.color
+        )
     }
 
     override fun setToAxisModel(axisModel: MutableDataSetModel, model: EntryModel) {

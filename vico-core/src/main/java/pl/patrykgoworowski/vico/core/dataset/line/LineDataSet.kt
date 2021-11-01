@@ -122,7 +122,8 @@ public open class LineDataSet(
         }
 
         if (lineBackgroundShader != null) {
-            lineBackgroundPaint.shader = lineBackgroundShader.provideShader(context, bounds)
+            lineBackgroundPaint.shader = lineBackgroundShader
+                .provideShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
             lineBackgroundPath.lineTo(prevX, bounds.bottom)
             lineBackgroundPath.close()
             canvas.drawPath(lineBackgroundPath, lineBackgroundPaint)

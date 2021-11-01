@@ -56,7 +56,7 @@ public open class MarkerComponent(
         markedEntries: List<Marker.EntryModel>,
     ) = with(context) {
         setParentBounds(bounds)
-        applyShader(context, bounds)
+        applyShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
         drawGuideline(context, bounds, markedEntries)
         val halfIndicatorSize = indicatorSize.half.pixels
 

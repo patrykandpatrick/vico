@@ -41,6 +41,7 @@ public open class ShapeComponent<T : Shape>(
     protected val path: Path = Path()
 
     public var color by paint::color
+    public var applyShaderToParentBounds: Boolean = false
 
     init {
         paint.color = color
@@ -69,7 +70,17 @@ public open class ShapeComponent<T : Shape>(
     ) = with(context) {
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         path.rewind()
-        applyShader(context, parentBounds)
+        if (applyShaderToParentBounds) {
+            applyShader(
+                context = context,
+                left = parentBounds.left,
+                top = parentBounds.top,
+                right = parentBounds.right,
+                bottom = parentBounds.bottom
+            )
+        } else {
+            applyShader(context, left, top, right, bottom)
+        }
         val centerX = left + (right - left) / 2
         val centerY = top + (bottom - top) / 2
         shape.drawShape(
@@ -92,10 +103,13 @@ public open class ShapeComponent<T : Shape>(
 
     protected fun applyShader(
         context: DrawContext,
-        bounds: RectF,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float
     ) {
         dynamicShader
-            ?.provideShader(context, bounds)
+            ?.provideShader(context, left, top, right, bottom)
             ?.let { shader -> paint.shader = shader }
     }
 
