@@ -39,13 +39,26 @@ class EntryList(
     override var model: EntryModel = entryModel()
         private set
 
-    val minX: Float by calculator::minX
-    val maxX: Float by calculator::maxX
-    val minY: Float by calculator::minY
-    val maxY: Float by calculator::maxY
-    val step: Float by calculator::step
-    val stackedMaxY: Float by calculator::stackedMaxY
-    val stackedMinY: Float by calculator::stackedMinY
+    val minX: Float
+        get() = calculator.minX
+
+    val maxX: Float
+        get() = calculator.maxX
+
+    val minY: Float
+        get() = calculator.minY
+
+    val maxY: Float
+        get() = calculator.maxY
+
+    val step: Float
+        get() = calculator.step
+
+    val stackedMaxY: Float
+        get() = calculator.stackedMaxY
+
+    val stackedMinY: Float
+        get() = calculator.stackedMinY
 
     constructor(
         entryCollections: List<List<DataEntry>>,
@@ -97,13 +110,13 @@ class EntryList(
 
     private fun notifyChange() {
         model = entryModel(
-            data,
-            minX,
-            maxX,
-            minY,
-            maxY,
-            stackedMaxY,
-            step
+            entryCollections = data,
+            minX = minX,
+            maxX = maxX,
+            minY = minY,
+            maxY = maxY,
+            composedMaxY = stackedMaxY,
+            step = step
         )
         listeners.forEach { it(model) }
     }

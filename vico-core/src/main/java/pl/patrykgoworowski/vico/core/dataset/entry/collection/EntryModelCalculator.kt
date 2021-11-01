@@ -25,22 +25,43 @@ open class EntryModelCalculator {
 
     val stackedMap: HashMap<Float, Float> = HashMap()
 
-    var minX: Float = Float.MAX_VALUE
-    var maxX: Float = Float.MIN_VALUE
-    var minY: Float = Float.MAX_VALUE
-    var maxY: Float = Float.MIN_VALUE
-    var step: Float = Float.MAX_VALUE
-    var stackedMinY: Float = Float.MAX_VALUE
-    var stackedMaxY: Float = Float.MIN_VALUE
+    private var _minX: Float? = null
+    private var _maxX: Float? = null
+    private var _minY: Float? = null
+    private var _maxY: Float? = null
+    private var _step: Float? = null
+    private var _stackedMinY: Float? = null
+    private var _stackedMaxY: Float? = null
+
+    public val minX: Float
+        get() = _minX ?: 0f
+
+    public val maxX: Float
+        get() = _maxX ?: 0f
+
+    public val minY: Float
+        get() = _minY ?: 0f
+
+    public val maxY: Float
+        get() = _maxY ?: 0f
+
+    public val step: Float
+        get() = _step ?: 0f
+
+    public val stackedMinY: Float
+        get() = _stackedMinY ?: 0f
+
+    public val stackedMaxY: Float
+        get() = _stackedMaxY ?: 0f
 
     fun resetValues() {
-        minX = Float.MAX_VALUE
-        maxX = Float.MIN_VALUE
-        minY = Float.MAX_VALUE
-        maxY = Float.MIN_VALUE
-        step = Float.MAX_VALUE
-        stackedMinY = Float.MAX_VALUE
-        stackedMaxY = Float.MIN_VALUE
+        _minX = null
+        _maxX = null
+        _minY = null
+        _maxY = null
+        _step = null
+        _stackedMinY = null
+        _stackedMaxY = null
         stackedMap.clear()
     }
 
@@ -52,17 +73,17 @@ open class EntryModelCalculator {
     protected open fun calculateMinMax(data: List<List<DataEntry>>) {
         data.forEach { entryCollection ->
             entryCollection.forEach { entry ->
-                minX = minX.coerceAtMost(entry.x)
-                maxX = maxX.coerceAtLeast(entry.x)
-                minY = minY.coerceAtMost(entry.y)
-                maxY = maxY.coerceAtLeast(entry.y)
+                _minX = _minX?.coerceAtMost(entry.x) ?: entry.x
+                _maxX = _maxX?.coerceAtLeast(entry.x) ?: entry.x
+                _minY = _minY?.coerceAtMost(entry.y) ?: entry.y
+                _maxY = _maxY?.coerceAtLeast(entry.y) ?: entry.y
                 stackedMap[entry.x] = stackedMap.getOrElse(entry.x) { 0f } + entry.y
             }
             calculateStep(entryCollection)
         }
         stackedMap.values.forEach { y ->
-            stackedMinY = min(stackedMinY, y)
-            stackedMaxY = max(stackedMaxY, y)
+            _stackedMinY = min(_stackedMinY ?: y, y)
+            _stackedMaxY = max(_stackedMaxY ?: y, y)
         }
     }
 
@@ -74,15 +95,12 @@ open class EntryModelCalculator {
             currentEntry = iterator.next()
             previousEntry?.let { prevEntry ->
                 val difference = abs(currentEntry.x - prevEntry.x)
-                step = if (step == NO_VALUE) difference else min(
-                    step,
-                    difference
-                )
+                _step =  min(_step ?: difference, difference)
             }
 
             previousEntry = currentEntry
         }
-        if (step == NO_VALUE) step = 1f
+        if (_step == NO_VALUE) _step = 1f
     }
 
     companion object {
