@@ -31,12 +31,18 @@ fun horizontalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(context: DrawContext, bounds: RectF): Shader =
+    override fun createShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float
+    ): Shader =
         LinearGradient(
-            bounds.left,
-            bounds.top,
-            bounds.right,
-            bounds.top,
+            left,
+            top,
+            right,
+            top,
             IntArray(colors.size) { index -> colors[index].toArgb() },
             positions,
             Shader.TileMode.CLAMP,
@@ -49,12 +55,18 @@ fun verticalGradient(
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
 
-    override fun createShader(context: DrawContext, bounds: RectF): Shader =
+    override fun createShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float
+    ): Shader =
         LinearGradient(
-            bounds.left,
-            bounds.top,
-            bounds.left,
-            bounds.bottom,
+            left,
+            top,
+            left,
+            bottom,
             IntArray(colors.size) { index -> colors[index].toArgb() },
             positions,
             Shader.TileMode.CLAMP,
