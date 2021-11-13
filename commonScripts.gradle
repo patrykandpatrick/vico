@@ -14,22 +14,17 @@
  * limitations under the License.
  */
 
-plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-}
-apply from: "$rootDir/commonScripts.gradle"
+apply from: "$rootDir/compilerArgs.gradle"
 
 android {
     compileSdkVersion target_sdk_version
 
     defaultConfig {
-        minSdkVersion min_sdk_version_compose
+        minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
-        versionCode lib_version_code
-        versionName lib_version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
     }
 
     buildTypes {
@@ -38,27 +33,11 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    buildFeatures {
-        viewBinding true
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
         jvmTarget = '1.8'
-        useIR = true
-    }
-    buildFeatures {
-        compose true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion compose_version
-    }
-}
-
-dependencies {
-    app_dependencies.each {
-        add(it.configuration, it.dependency, it.options)
     }
 }
