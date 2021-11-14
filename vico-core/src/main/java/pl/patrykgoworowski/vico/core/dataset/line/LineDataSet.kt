@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.dataset.line
 
-import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
@@ -79,8 +78,8 @@ public open class LineDataSet(
         val lineBackgroundShader = lineBackgroundShader
         linePaint.strokeWidth = lineThicknessDp.pixels
 
-        val clipRestoreCount = context.canvas.save()
-        canvas.setUpClipBounds()
+        val clipRestoreCount = saveCanvas()
+        setUpClipBounds()
 
         val (cellWidth, spacing, segmentWidth) = segmentProperties
 
@@ -138,12 +137,12 @@ public open class LineDataSet(
         canvas.restoreToCount(clipRestoreCount)
     }
 
-    private fun Canvas.setUpClipBounds() {
+    private fun ChartDrawContext.setUpClipBounds() {
         clipRect(
-            bounds.left,
-            bounds.top - pointSizeDp.half,
-            bounds.right,
-            bounds.bottom + pointSizeDp.half
+            left = bounds.left,
+            top = bounds.top - pointSizeDp.half,
+            right = bounds.right,
+            bottom = bounds.bottom + pointSizeDp.half
         )
     }
 
