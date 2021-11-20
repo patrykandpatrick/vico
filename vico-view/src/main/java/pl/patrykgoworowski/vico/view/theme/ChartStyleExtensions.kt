@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.view.theme
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
+import androidx.annotation.StyleableRes
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
@@ -31,74 +32,82 @@ import pl.patrykgoworowski.vico.view.extension.colors
 
 fun TypedArray.getColumnChart(
     context: Context,
-): ColumnDataSet = ColumnDataSet(
-    columns = listOf(
-        getNestedTypedArray(
+    @StyleableRes resourceId: Int = R.styleable.BaseChartView_columnChartStyle,
+    @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnChartStyle,
+): ColumnDataSet = getNestedTypedArray(context, resourceId, styleableResourceId).run {
+    ColumnDataSet(
+        columns = listOf(
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.ColumnChartStyle_column1Style,
+                styleableResourceId = R.styleable.LineComponentStyle,
+            ).getLineComponent(context = context),
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.ColumnChartStyle_column2Style,
+                styleableResourceId = R.styleable.LineComponentStyle,
+            ).getLineComponent(context = context),
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.ColumnChartStyle_column3Style,
+                styleableResourceId = R.styleable.LineComponentStyle,
+            ).getLineComponent(context = context),
+        ),
+        spacingDp = getRawDimension(
             context = context,
-            resourceId = R.styleable.ColumnChartStyle_column1Style,
-            styleableResourceId = R.styleable.LineComponentStyle,
-        ).getLineComponent(context = context),
-        getNestedTypedArray(
+            index = R.styleable.ColumnChartStyle_columnOuterSpacing,
+            defaultValue = DEF_MERGED_BAR_SPACING
+        ),
+        innerSpacingDp = getRawDimension(
             context = context,
-            resourceId = R.styleable.ColumnChartStyle_column2Style,
-            styleableResourceId = R.styleable.LineComponentStyle,
-        ).getLineComponent(context = context),
-        getNestedTypedArray(
-            context = context,
-            resourceId = R.styleable.ColumnChartStyle_column3Style,
-            styleableResourceId = R.styleable.LineComponentStyle,
-        ).getLineComponent(context = context),
-    ),
-    spacingDp = getRawDimension(
-        context = context,
-        index = R.styleable.ColumnChartStyle_columnOuterSpacing,
-        defaultValue = DEF_MERGED_BAR_SPACING
-    ),
-    innerSpacingDp = getRawDimension(
-        context = context,
-        index = R.styleable.ColumnChartStyle_columnInnerSpacing,
-        defaultValue = DEF_MERGED_BAR_INNER_SPACING
-    ),
-)
+            index = R.styleable.ColumnChartStyle_columnInnerSpacing,
+            defaultValue = DEF_MERGED_BAR_INNER_SPACING
+        ),
+    )
+}
 
 fun TypedArray.getLineChart(
     context: Context,
-): LineDataSet = LineDataSet(
-    lineColor = getColor(
-        index = R.styleable.LineChartStyle_color,
-        defaultColor = context.colors.lineColor.toInt(),
-    ),
-    point = getNestedTypedArray(
-        context = context,
-        resourceId = R.styleable.LineChartStyle_pointStyle,
-        styleableResourceId = R.styleable.ComponentStyle,
-    ).getComponent(context),
-    pointSizeDp = getRawDimension(
-        context = context,
-        index = R.styleable.LineChartStyle_pointSize,
-        defaultValue = Dimens.POINT_SIZE,
-    ),
-    spacingDp = getRawDimension(
-        context = context,
-        index = R.styleable.LineChartStyle_spacing,
-        defaultValue = Dimens.POINT_SPACING,
-    ),
-    lineThicknessDp = getRawDimension(
-        context = context,
-        index = R.styleable.LineChartStyle_lineThickness,
-        defaultValue = Dimens.LINE_THICKNESS,
-    ),
-).apply {
-    cubicStrength = getFraction(
-        index = R.styleable.LineChartStyle_cubicStrength,
-        defaultValue = Dimens.CUBIC_STRENGTH
-    )
-    val gradientTopColor = getColor(index = R.styleable.LineChartStyle_gradientTopColor)
-    val gradientBottomColor = getColor(index = R.styleable.LineChartStyle_gradientBottomColor)
-
-    if (gradientTopColor != Color.TRANSPARENT || gradientBottomColor != Color.TRANSPARENT) {
-        lineBackgroundShader = DynamicShaders.verticalGradient(
-            gradientTopColor, gradientBottomColor
+    @StyleableRes resourceId: Int = R.styleable.BaseChartView_lineChartStyle,
+    @StyleableRes styleableResourceId: IntArray = R.styleable.LineChartStyle,
+): LineDataSet = getNestedTypedArray(context, resourceId, styleableResourceId).run {
+    LineDataSet(
+        lineColor = getColor(
+            index = R.styleable.LineChartStyle_color,
+            defaultColor = context.colors.lineColor.toInt(),
+        ),
+        point = getNestedTypedArray(
+            context = context,
+            resourceId = R.styleable.LineChartStyle_pointStyle,
+            styleableResourceId = R.styleable.ComponentStyle,
+        ).getComponent(context),
+        pointSizeDp = getRawDimension(
+            context = context,
+            index = R.styleable.LineChartStyle_pointSize,
+            defaultValue = Dimens.POINT_SIZE,
+        ),
+        spacingDp = getRawDimension(
+            context = context,
+            index = R.styleable.LineChartStyle_spacing,
+            defaultValue = Dimens.POINT_SPACING,
+        ),
+        lineThicknessDp = getRawDimension(
+            context = context,
+            index = R.styleable.LineChartStyle_lineThickness,
+            defaultValue = Dimens.LINE_THICKNESS,
+        ),
+    ).apply {
+        cubicStrength = getFraction(
+            index = R.styleable.LineChartStyle_cubicStrength,
+            defaultValue = Dimens.CUBIC_STRENGTH
         )
+        val gradientTopColor = getColor(index = R.styleable.LineChartStyle_gradientTopColor)
+        val gradientBottomColor = getColor(index = R.styleable.LineChartStyle_gradientBottomColor)
+
+        if (gradientTopColor != Color.TRANSPARENT || gradientBottomColor != Color.TRANSPARENT) {
+            lineBackgroundShader = DynamicShaders.verticalGradient(
+                gradientTopColor, gradientBottomColor
+            )
+        }
     }
 }

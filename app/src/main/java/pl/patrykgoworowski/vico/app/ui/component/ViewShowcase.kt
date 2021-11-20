@@ -45,7 +45,6 @@ fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
             AndroidViewBinding(FragmentViewBinding::inflate) {
                 ViewShowcaseUtil(
                     showcaseViewModel,
-                    context,
                     coroutineScope
                 ).run {
                     setUpColumnChart(columnChart, marker)
