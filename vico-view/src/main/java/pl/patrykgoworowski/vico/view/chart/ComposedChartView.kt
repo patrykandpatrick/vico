@@ -20,6 +20,7 @@ import android.content.Context
 import android.util.AttributeSet
 import pl.patrykgoworowski.vico.core.dataset.composed.ComposedEntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
 class ComposedChartView @JvmOverloads constructor(
@@ -35,5 +36,9 @@ class ComposedChartView @JvmOverloads constructor(
 
     init {
         chart = themeHandler.composedChart
+
+        if (isInEditMode) {
+            setModel(RandomEntriesGenerator().randomComposedEntryModel())
+        }
     }
 }
