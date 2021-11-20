@@ -55,10 +55,10 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
     ) = with(context) {
-        setParentBounds(bounds)
         applyShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
         drawGuideline(context, bounds, markedEntries)
         val halfIndicatorSize = indicatorSize.half.pixels
+        shadowProperties.maybeUpdateShadowLayer(this, paint)
 
         markedEntries.forEachIndexed { _, model ->
             onApplyEntryColor?.invoke(model.color)
@@ -125,7 +125,6 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
     ) {
-        guideline.setParentBounds(bounds)
         markedEntries
             .map { it.location.x }
             .toSet()

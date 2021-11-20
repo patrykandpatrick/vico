@@ -63,7 +63,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         for (index in 0 until tickCount) {
             guideline?.run {
-                setParentBounds(bounds)
                 takeIf {
                     it.fitsInVertical(
                         context = context,
@@ -115,7 +114,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         var valueIndex: Float = dataSetModel.minX + scrollAdjustment * step
 
         for (index in 0 until tickCount) {
-            tick?.setParentBounds(bounds)
             tick?.drawVertical(
                 context = context,
                 top = tickMarkTop,
@@ -124,7 +122,6 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
             )
 
             if (index < entryLength) {
-                // TODO label?.background?.setParentBounds(bounds)
                 label?.drawText(
                     context = context,
                     text = valueFormatter.formatValue(valueIndex, index, context.dataSetModel),
@@ -140,16 +137,13 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
             textDrawCenter += tickDrawStep
         }
 
-        axis?.run {
-            setParentBounds(bounds)
-            drawHorizontal(
-                context = context,
-                left = dataSetBounds.left,
-                right = dataSetBounds.right,
-                centerY = ((if (position is AxisPosition.Horizontal.Bottom) bounds.top
-                else bounds.bottom) + axisThickness.half)
-            )
-        }
+        axis?.drawHorizontal(
+            context = context,
+            left = dataSetBounds.left,
+            right = dataSetBounds.right,
+            centerY = ((if (position is AxisPosition.Horizontal.Bottom) bounds.top
+            else bounds.bottom) + axisThickness.half)
+        )
 
         label?.clearLayoutCache()
 

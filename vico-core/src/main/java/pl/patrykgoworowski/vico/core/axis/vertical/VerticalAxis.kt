@@ -65,7 +65,6 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         for (index in 0..drawLabelCount) {
             centerY = bounds.bottom - (axisStep * index) + guidelineThickness.half
 
-            guideline?.setParentBounds(bounds)
             guideline?.takeIf {
                 it.fitsInHorizontal(
                     context = context,
@@ -81,9 +80,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
                 centerY = centerY
             )
         }
-        axis?.apply {
-            setParentBounds(bounds)
-            drawVertical(
+        axis?.drawVertical(
                 context = context,
                 top = bounds.top,
                 bottom = bounds.bottom + axisThickness,
@@ -91,7 +88,6 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
                 if (isLeft) bounds.right - axisThickness.half
                 else bounds.left + axisThickness.half
             )
-        }
         Unit
     }
 
@@ -124,7 +120,6 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
             tickCenterY =
                 bounds.bottom - ((bounds.height() / labelCount) * index) + tickThickness.half
 
-            tick?.setParentBounds(bounds)
             tick?.drawHorizontal(
                 context = context,
                 left = tickLeftX,

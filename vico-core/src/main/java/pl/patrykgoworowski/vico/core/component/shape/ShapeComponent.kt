@@ -24,6 +24,7 @@ import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.setMargins
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.vico.core.component.shape.shadow.ComponentShadow
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
@@ -36,29 +37,16 @@ public open class ShapeComponent<T : Shape>(
     margins: Dimensions = emptyDimensions(),
 ) : Component() {
 
-    public val parentBounds = RectF()
-    public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    protected val shadowProperties: ComponentShadow = ComponentShadow()
     protected val path: Path = Path()
 
+    public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
     public var color by paint::color
-    public var applyShaderToParentBounds: Boolean = false
 
     init {
         paint.color = color
         setMargins(margins)
-    }
-
-    public fun setParentBounds(bounds: RectF) {
-        parentBounds.set(bounds)
-    }
-
-    public fun setParentBounds(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        parentBounds.set(left, top, right, bottom)
     }
 
     override fun draw(
@@ -70,19 +58,10 @@ public open class ShapeComponent<T : Shape>(
     ) = with(context) {
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         path.rewind()
-        if (applyShaderToParentBounds) {
-            applyShader(
-                context = context,
-                left = parentBounds.left,
-                top = parentBounds.top,
-                right = parentBounds.right,
-                bottom = parentBounds.bottom
-            )
-        } else {
-            applyShader(context, left, top, right, bottom)
-        }
+        applyShader(context, left, top, right, bottom)
         val centerX = left + (right - left) / 2
         val centerY = top + (bottom - top) / 2
+        shadowProperties.maybeUpdateShadowLayer(this, paint)
         shape.drawShape(
             context = context,
             paint = paint,
@@ -135,6 +114,20 @@ public open class ShapeComponent<T : Shape>(
         dy: Float = 0f,
         color: Int = DEF_SHADOW_COLOR,
     ) = apply {
-        paint.setShadowLayer(radius, dx, dy, color)
+        shadowProperties.apply {
+            this.radius = radius
+            this.dx = dx
+            this.dy = dy
+            this.color = color
+        }
+    }
+
+    public fun clearShadow() = apply {
+        shadowProperties.apply {
+            this.radius = 0f
+            this.dx = 0f
+            this.dy = 0f
+            this.color = 0
+        }
     }
 }
