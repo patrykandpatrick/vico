@@ -21,6 +21,7 @@ import android.content.res.TypedArray
 import android.graphics.Color
 import androidx.annotation.StyleableRes
 import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
@@ -35,23 +36,39 @@ fun TypedArray.getColumnChart(
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_columnChartStyle,
     @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnChartStyle,
 ): ColumnDataSet = getNestedTypedArray(context, resourceId, styleableResourceId).run {
+    val defaultShape = Shapes.roundedCornersShape(allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT)
     ColumnDataSet(
         columns = listOf(
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.ColumnChartStyle_column1Style,
                 styleableResourceId = R.styleable.LineComponentStyle,
-            ).getLineComponent(context = context),
+            ).getLineComponent(
+                context = context,
+                defaultColor = context.colors.column1Color.toInt(),
+                defaultThickness = Dimens.COLUMN_WIDTH,
+                defaultShape = defaultShape,
+            ),
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.ColumnChartStyle_column2Style,
                 styleableResourceId = R.styleable.LineComponentStyle,
-            ).getLineComponent(context = context),
+            ).getLineComponent(
+                context = context,
+                defaultColor = context.colors.column2Color.toInt(),
+                defaultThickness = Dimens.COLUMN_WIDTH,
+                defaultShape = defaultShape,
+            ),
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.ColumnChartStyle_column3Style,
                 styleableResourceId = R.styleable.LineComponentStyle,
-            ).getLineComponent(context = context),
+            ).getLineComponent(
+                context = context,
+                defaultColor = context.colors.column3Color.toInt(),
+                defaultThickness = Dimens.COLUMN_WIDTH,
+                defaultShape = defaultShape,
+            ),
         ),
         spacingDp = getRawDimension(
             context = context,

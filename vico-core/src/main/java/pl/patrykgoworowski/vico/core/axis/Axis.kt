@@ -80,20 +80,16 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     }
 
     public open class Builder(builder: Builder? = null) {
-        public var label: TextComponent? =
-            if (builder != null) builder.label else DEF_LABEL_COMPONENT
+        public var label: TextComponent? = builder?.label
 
-        public var axis: LineComponent? =
-            if (builder != null) builder.axis else DEF_AXIS_COMPONENT
+        public var axis: LineComponent? = builder?.axis
 
-        public var tick: LineComponent? =
-            if (builder != null) builder.tick else DEF_TICK_COMPONENT
+        public var tick: LineComponent? = builder?.tick
 
         public var tickLengthDp: Float =
             builder?.tickLengthDp ?: Dimens.AXIS_TICK_LENGTH
 
-        public var guideline: LineComponent? =
-            if (builder != null) builder.guideline else DEF_GUIDELINE_COMPONENT
+        public var guideline: LineComponent? = builder?.guideline
 
         public var valueFormatter: AxisValueFormatter =
             builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
