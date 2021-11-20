@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import java.util.TreeMap
 
-class ComposedDataSet<Model : EntryModel>(
+public class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>
 ) : BaseDataSet<ComposedEntryModel<Model>>() {
 

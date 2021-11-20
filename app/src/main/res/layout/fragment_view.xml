@@ -22,7 +22,7 @@
     android:orientation="vertical"
     tools:context=".app.MainActivity">
 
-    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+    <pl.patrykgoworowski.vico.view.chart.ChartView
         android:id="@+id/column_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -37,18 +37,18 @@
         android:layout_width="wrap_content"
         android:layout_height="16dp" />
 
-    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+    <pl.patrykgoworowski.vico.view.chart.ComposedChartView
         android:id="@+id/composed_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:columnChartStyle="@style/ColumnChartStyle"
-        app:chartType="column" />
+        app:charts="column|line"/>
 
     <Space
         android:layout_width="wrap_content"
         android:layout_height="16dp" />
 
-    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+    <pl.patrykgoworowski.vico.view.chart.ChartView
         android:id="@+id/line_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -59,16 +59,17 @@
         android:layout_width="wrap_content"
         android:layout_height="16dp" />
 
-    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+    <pl.patrykgoworowski.vico.view.chart.ChartView
         android:id="@+id/grouped_column_chart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:chartType="column"/>
 
     <Space
         android:layout_width="wrap_content"
         android:layout_height="16dp" />
 
-    <pl.patrykgoworowski.vico.view.dataset.DataSetView
+    <pl.patrykgoworowski.vico.view.chart.ChartView
         android:id="@+id/stacked_column_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

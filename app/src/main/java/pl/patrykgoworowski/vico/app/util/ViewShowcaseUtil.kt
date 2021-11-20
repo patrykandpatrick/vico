@@ -16,214 +16,59 @@
 
 package pl.patrykgoworowski.vico.app.util
 
-import android.content.Context
-import android.graphics.Color
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
-import pl.patrykgoworowski.vico.app.extension.byzantine
-import pl.patrykgoworowski.vico.app.extension.color
-import pl.patrykgoworowski.vico.app.extension.flickrPink
-import pl.patrykgoworowski.vico.app.extension.purple
-import pl.patrykgoworowski.vico.app.extension.trypanPurple
-import pl.patrykgoworowski.vico.core.component.shape.LineComponent
-import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
-import pl.patrykgoworowski.vico.core.component.shape.Shapes
-import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
-import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
-import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
-import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
-import pl.patrykgoworowski.vico.core.dataset.composed.ComposedDataSet
-import pl.patrykgoworowski.vico.core.dataset.composed.composedEntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.collectAsFlow
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModel
-import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
-import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
-import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.view.component.shape.cutCornerShape
-import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
-import pl.patrykgoworowski.vico.view.component.shape.shader.horizontalGradient
-import pl.patrykgoworowski.vico.view.component.shape.shader.verticalGradient
-import pl.patrykgoworowski.vico.view.dataset.DataSetView
-import pl.patrykgoworowski.vico.view.dataset.common.plus
+import pl.patrykgoworowski.vico.view.chart.ChartView
+import pl.patrykgoworowski.vico.view.chart.ComposedChartView
 
 @ExperimentalCoroutinesApi
 class ViewShowcaseUtil(
     private val viewModel: ShowcaseViewModel,
-    private val context: Context,
     private val coroutineScope: CoroutineScope
 ) {
 
-    fun setUpColumnChart(dataSetView: DataSetView, marker: Marker?) {
-
-        val columnDataSet = ColumnDataSet(
-            column = LineComponent(
-                color = context.flickrPink,
-                shape = Shapes.cutCornerShape(topLeft = 8f),
-                thicknessDp = 16f,
-                dynamicShader = DynamicShaders
-                    .horizontalGradient(context.flickrPink, context.trypanPurple),
-            ),
-        )
-
-        val dataSetRenderer = (dataSetView.dataSet as? ColumnDataSet ?: columnDataSet) + entryModel()
-
+    fun setUpColumnChart(chartView: ChartView, marker: Marker?) {
         viewModel.entries.collectAsFlow
-            .onEach(dataSetRenderer::setModel)
+            .onEach(chartView::setModel)
             .launchIn(coroutineScope)
 
-        dataSetView.apply {
-            // dataSet = dataSetRenderer
-            this.marker = marker
-        }
+        chartView.marker = marker
     }
 
-    fun setUpComposedChart(dataSetView: DataSetView, marker: Marker?) {
-
-        val composedDataSet = ComposedDataSet(
-            listOf(
-                ColumnDataSet(
-                    columns = listOf(
-                        LineComponent(
-                            color = context.trypanPurple,
-                            thicknessDp = 16f,
-                            shape = Shapes.cutCornerShape(topLeft = 8f),
-                        ),
-                        LineComponent(
-                            color = context.byzantine,
-                            thicknessDp = 12f,
-                            shape = pillShape,
-                        ),
-                        LineComponent(
-                            color = context.purple,
-                            thicknessDp = 16f,
-                            shape = Shapes.cutCornerShape(topRight = 8f),
-                        ),
-                    ),
-                ), LineDataSet(
-                    pointSizeDp = 62f,
-                    lineColor = context.flickrPink,
-                    lineThicknessDp = 2f,
-                    spacingDp = 8f,
-                )
-            )
-        )
-
-        val dataSetRenderer = composedDataSet + composedEntryModel()
-
+    fun setUpComposedChart(chartView: ComposedChartView, marker: Marker?) {
         viewModel.composedEntries.collectAsFlow
-            .onEach(dataSetRenderer::setModel)
+            .onEach(chartView::setModel)
             .launchIn(coroutineScope)
 
-        dataSetView.apply {
-            dataSet = dataSetRenderer
-            this.marker = marker
-        }
+        chartView.marker = marker
     }
 
-    fun setUpLineChart(dataSetView: DataSetView, marker: Marker?) {
-
-        val lineDataSet = LineDataSet(
-            pointSizeDp = 10f,
-            lineColor = context.flickrPink
-        ).apply {
-            lineBackgroundShader = DynamicShaders
-                .verticalGradient(context.flickrPink.copyColor(alpha = 128), Color.TRANSPARENT,)
-            lineBackgroundShader = DynamicShaders.fromComponent(
-                component = ShapeComponent(
-                    shape = pillShape,
-                    color = context.flickrPink,
-                    margins = dimensionsOf(allDp = .5f)
-                ),
-                componentSize = 4f,
-            )
-        }
-
-        val dataSetRenderer = lineDataSet + entryModel()
-
+    fun setUpLineChart(chartView: ChartView, marker: Marker?) {
         viewModel.entries.collectAsFlow
-            .onEach(dataSetRenderer::setModel)
+            .onEach(chartView::setModel)
             .launchIn(coroutineScope)
 
-        dataSetView.apply {
-            dataSet = dataSetRenderer
-            this.marker = marker
-        }
+        chartView.marker = marker
     }
 
-    fun setUpGroupedColumnChart(dataSetView: DataSetView, marker: Marker?) {
-
-        val columnDataSet = ColumnDataSet(
-            columns = listOf(
-                LineComponent(
-                    color = context.flickrPink,
-                    thicknessDp = 16f,
-                    shape = Shapes.cutCornerShape(topLeft = 8f)
-                ),
-                LineComponent(
-                    color = context.byzantine,
-                    thicknessDp = 24f,
-                ),
-                LineComponent(
-                    color = context.trypanPurple,
-                    thicknessDp = 16f,
-                    shape = Shapes.cutCornerShape(topRight = 8f)
-                ),
-            ),
-            mergeMode = MergeMode.Grouped,
-            spacingDp = 24f,
-            innerSpacingDp = 4f,
-        )
-
-        val dataSetRenderer = columnDataSet + entryModel()
-
+    fun setUpGroupedColumnChart(chartView: ChartView, marker: Marker?) {
         viewModel.multiEntries.collectAsFlow
-            .onEach(dataSetRenderer::setModel)
+            .onEach(chartView::setModel)
             .launchIn(coroutineScope)
 
-        dataSetView.apply {
-            dataSet = dataSetRenderer
-            this.marker = marker
-        }
+        chartView.marker = marker
     }
 
-    fun setUpStackedColumnChart(dataSetView: DataSetView, marker: Marker?) {
-
-        val columnDataSet = ColumnDataSet(
-            columns = listOf(
-                LineComponent(
-                    color = context.color { R.color.flickr_pink },
-                    thicknessDp = 16f,
-                    shape = Shapes.cutCornerShape(bottomRight = 8f)
-                ),
-                LineComponent(
-                    color = context.color { R.color.byzantine },
-                    thicknessDp = 16f,
-                ),
-                LineComponent(
-                    color = context.color { R.color.trypan_purple },
-                    thicknessDp = 16f,
-                    shape = Shapes.cutCornerShape(topLeft = 8f)
-                ),
-            ),
-            mergeMode = MergeMode.Stack,
-            spacingDp = 24f,
-            innerSpacingDp = 4f,
-        )
-
-        val dataSetRenderer = columnDataSet + entryModel()
-
+    fun setUpStackedColumnChart(chartView: ChartView, marker: Marker?) {
         viewModel.multiEntries.collectAsFlow
-            .onEach(dataSetRenderer::setModel)
+            .onEach(chartView::setModel)
             .launchIn(coroutineScope)
 
-        dataSetView.apply {
-            dataSet = dataSetRenderer
-            this.marker = marker
-        }
+        chartView.marker = marker
     }
 }

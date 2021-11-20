@@ -22,7 +22,21 @@
     <attr name="shapeStyle" format="reference" />
     <attr name="axisLabelStyle" format="reference" />
 
-    <declare-styleable name="DataSetView">
+    <declare-styleable name="ChartView">
+        <attr name="chartType" format="enum">
+            <enum name="column" value="1" />
+            <enum name="line" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="ComposedChartView">
+        <attr name="charts" format="integer">
+            <flag name="column" value="1" />
+            <flag name="line" value="2" />
+        </attr>
+    </declare-styleable>
+
+    <declare-styleable name="BaseChartView">
         <attr name="axisStyle" />
         <attr name="columnChartStyle" />
         <attr name="lineChartStyle" />
@@ -32,10 +46,6 @@
         <attr name="showBottomAxis" format="boolean" />
         <attr name="chartHorizontalScrollingEnabled" format="boolean" />
         <attr name="chartZoomEnabled" format="boolean" />
-        <attr name="chartType" format="integer">
-            <flag name="column" value="1" />
-            <flag name="line" value="2" />
-        </attr>
     </declare-styleable>
 
     <declare-styleable name="Axis">

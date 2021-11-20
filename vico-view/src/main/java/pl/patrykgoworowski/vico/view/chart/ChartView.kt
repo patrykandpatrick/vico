@@ -14,11 +14,25 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.view.dataset.common
+package pl.patrykgoworowski.vico.view.chart
 
+import android.content.Context
+import android.util.AttributeSet
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
+import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
-operator fun <Model : EntryModel> DataSet<Model>.plus(
-    model: Model,
-): ViewDataSet<Model> = ViewDataSet(this, model)
+class ChartView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null,
+    defStyleAttr: Int = 0,
+) : BaseChartView<EntryModel>(
+    context = context,
+    attrs = attrs,
+    defStyleAttr = defStyleAttr,
+    chartType = ThemeHandler.ChartType.Single,
+) {
+
+    init {
+        chart = themeHandler.chart
+    }
+}

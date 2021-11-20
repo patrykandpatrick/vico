@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.view.dataset
+package pl.patrykgoworowski.vico.view.chart
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -34,13 +34,13 @@ import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
-import pl.patrykgoworowski.vico.view.common.UpdateRequestListener
-import pl.patrykgoworowski.vico.view.dataset.common.DataSetWithModel
 import pl.patrykgoworowski.vico.view.extension.density
 import pl.patrykgoworowski.vico.view.extension.dpInt
 import pl.patrykgoworowski.vico.view.extension.fontScale
@@ -54,23 +54,16 @@ import pl.patrykgoworowski.vico.view.layout.MutableMeasureContext
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 import kotlin.properties.Delegates.observable
 
-class DataSetView @JvmOverloads constructor(
+public abstract class BaseChartView<Model : EntryModel>(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
+    chartType: ThemeHandler.ChartType,
 ) : View(context, attrs, defStyleAttr) {
 
     private val contentBounds = RectF()
     private val dataSetModel = MutableDataSetModel()
     private val scrollHandler = ScrollHandler()
-    private val themeHandler = ThemeHandler(context, attrs, isInEditMode)
-
-    private val updateRequestListener: UpdateRequestListener = {
-        if (ViewCompat.isAttachedToWindow(this@DataSetView)) {
-            updateBounds()
-            invalidate()
-        }
-    }
 
     private val scroller = OverScroller(context)
     private val virtualLayout = VirtualLayout()
@@ -93,12 +86,14 @@ class DataSetView @JvmOverloads constructor(
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
         ChartScaleGestureListener(
-            getChartBounds = { dataSet?.bounds },
-            onZoom = this::handleZoom,
+            getChartBounds = { chart?.bounds },
+            onZoom = ::handleZoom,
         )
     private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
     private var markerTouchPoint: Point? = null
+
+    protected val themeHandler = ThemeHandler(context, attrs, chartType)
 
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
@@ -113,22 +108,34 @@ class DataSetView @JvmOverloads constructor(
 
     public var isZoomEnabled = true
 
-    var dataSet: DataSetWithModel<*>? by observable(null) { _, oldValue, newValue ->
-        oldValue?.removeListener(updateRequestListener)
-        newValue?.addListener(updateRequestListener)
-        updateBounds()
+    public var chart: DataSet<Model>? by observable(null) { _, _, _ ->
+        tryUpdateBoundsAndInvalidate()
     }
 
-    var marker: Marker? = null
+    public var model: Model? = null
+        private set
+
+    public var marker: Marker? = null
 
     init {
         startAxis = themeHandler.startAxis
         topAxis = themeHandler.topAxis
         endAxis = themeHandler.endAxis
         bottomAxis = themeHandler.bottomAxis
-        dataSet = themeHandler.dataSet
         isHorizontalScrollEnabled = themeHandler.isHorizontalScrollEnabled
         isZoomEnabled = themeHandler.isChartZoomEnabled
+    }
+
+    public fun setModel(model: Model) {
+        this.model = model
+        tryUpdateBoundsAndInvalidate()
+    }
+
+    private fun tryUpdateBoundsAndInvalidate() {
+        if (ViewCompat.isAttachedToWindow(this)) {
+            updateBounds()
+            invalidate()
+        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -145,7 +152,7 @@ class DataSetView @JvmOverloads constructor(
     }
 
     private fun handleZoom(focusX: Float, zoomChange: Float) {
-        val dataSet = dataSet ?: return
+        val dataSet = chart ?: return
         val newZoom = measureContext.zoom * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
         val centerX = scrollHandler.currentScroll + focusX - dataSet.bounds.left
@@ -159,26 +166,25 @@ class DataSetView @JvmOverloads constructor(
         markerTouchPoint = point
     }
 
-    override fun onDraw(canvas: Canvas) {
-        val dataSet = dataSet ?: return
-        dataSet.setToAxisModel(dataSetModel)
+    override fun onDraw(canvas: Canvas) = withChartAndModel { chart, model ->
+        chart.setToAxisModel(dataSetModel, model)
         motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
-            ViewCompat.postInvalidateOnAnimation(this@DataSetView)
+            ViewCompat.postInvalidateOnAnimation(this)
         }
         val drawContext = chartDrawContext(
             canvas = canvas,
             measureContext = measureContext,
             horizontalScroll = scrollHandler.currentScroll,
             markerTouchPoint = markerTouchPoint,
-            segmentProperties = dataSet.getSegmentProperties(measureContext),
+            segmentProperties = chart.getSegmentProperties(measureContext, model),
             dataSetModel = dataSetModel,
         )
         axisManager.drawBehindDataSet(drawContext)
-        dataSet.draw(drawContext, marker)
+        chart.draw(drawContext, model, marker)
         axisManager.drawAboveDataSet(drawContext)
-        scrollHandler.maxScrollDistance = dataSet.maxScrollAmount
+        scrollHandler.maxScrollDistance = chart.maxScrollAmount
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -203,17 +209,22 @@ class DataSetView @JvmOverloads constructor(
         updateBounds()
     }
 
-    private fun updateBounds() {
-        val dataSet = dataSet ?: return
-        dataSet.setToAxisModel(dataSetModel)
+    private fun updateBounds() = withChartAndModel { chart, model ->
+        chart.setToAxisModel(dataSetModel, model)
         virtualLayout.setBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            dataSet = dataSet,
+            dataSet = chart,
             dataSetModel = dataSetModel,
             axisManager = axisManager,
             marker
         )
+    }
+
+    private inline fun withChartAndModel(block: (chart: DataSet<Model>, model: Model) -> Unit) {
+        val chart = chart ?: return
+        val model = model ?: return
+        block(chart, model)
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {
