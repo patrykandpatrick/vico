@@ -17,10 +17,6 @@
 package pl.patrykgoworowski.vico.core.axis
 
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.DEF_AXIS_COMPONENT
-import pl.patrykgoworowski.vico.core.DEF_GUIDELINE_COMPONENT
-import pl.patrykgoworowski.vico.core.DEF_LABEL_COMPONENT
-import pl.patrykgoworowski.vico.core.DEF_TICK_COMPONENT
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
