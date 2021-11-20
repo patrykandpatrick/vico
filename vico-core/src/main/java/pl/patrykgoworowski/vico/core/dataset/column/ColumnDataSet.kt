@@ -105,7 +105,6 @@ public open class ColumnDataSet(
         model.entryCollections.forEachIndexed { index, entryCollection ->
 
             column = columns.getRepeating(index)
-            column.setParentBounds(bounds)
             drawingStart = getDrawingStart(
                 entryCollectionIndex = index,
                 segmentCompensation = (cellWidth - defCellWidth) / 2,

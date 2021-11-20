@@ -94,6 +94,6 @@ fun markerComponent(): Marker {
             indicatorOuter.color = color.copyColor(alpha = 32)
         }
         indicatorSize = currentChartStyle.marker.indicatorSize.value
-        setShadow(4.dp.pixels, dy = 2.dp.pixels)
+        setShadow(4f, dy = 2f)
     }
 }
