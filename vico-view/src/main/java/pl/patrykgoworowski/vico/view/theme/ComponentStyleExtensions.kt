@@ -22,28 +22,39 @@ import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
+import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.extension.colors
 
 fun TypedArray.getLineComponent(
     context: Context,
+    defaultColor: Int = context.colors.axisLineColor.toInt(),
+    defaultThickness: Float = Dimens.AXIS_LINE_WIDTH,
+    defaultShape: Shape = Shapes.rectShape,
 ): LineComponent = use { array ->
     LineComponent(
         color = array.getColor(
             index = R.styleable.LineComponentStyle_color,
-            defaultColor = context.colors.axisLineColor.toInt(),
+            defaultColor = defaultColor,
         ),
         thicknessDp = array.getRawDimension(
             context = context,
             index = R.styleable.LineComponentStyle_thickness,
-            defaultValue = Dimens.AXIS_LINE_WIDTH,
+            defaultValue = defaultThickness,
         ),
-        shape = getNestedTypedArray(
-            context = context,
-            resourceId = R.styleable.LineComponentStyle_shapeStyle,
-            styleableResourceId = R.styleable.Shape,
-        ).getShape(context)
+        shape = if (hasValue(R.styleable.LineComponentStyle_shapeStyle)) {
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.LineComponentStyle_shapeStyle,
+                styleableResourceId = R.styleable.Shape,
+            ).getShape(
+                context = context,
+            )
+        } else {
+            defaultShape
+        }
     )
 }
 
@@ -88,7 +99,3 @@ fun TypedArray.getComponent(
         baseComponent
     }
 }
-
-//fun TypedArray.getTextAppearance(
-//
-//)
