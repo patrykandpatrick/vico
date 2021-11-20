@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.view.chart
 import android.content.Context
 import android.util.AttributeSet
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
 class ChartView @JvmOverloads constructor(
@@ -34,5 +35,9 @@ class ChartView @JvmOverloads constructor(
 
     init {
         chart = themeHandler.chart
+
+        if (isInEditMode) {
+            setModel(RandomEntriesGenerator().randomEntryModel())
+        }
     }
 }
