@@ -18,8 +18,8 @@ package pl.patrykgoworowski.vico.view.theme
 
 import android.content.Context
 import android.content.res.TypedArray
-import android.graphics.Color
 import androidx.annotation.StyleableRes
+import pl.patrykgoworowski.vico.core.Alpha
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
@@ -27,6 +27,7 @@ import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
 import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
+import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.vico.view.extension.colors
@@ -118,12 +119,20 @@ fun TypedArray.getLineChart(
             index = R.styleable.LineChartStyle_cubicStrength,
             defaultValue = Dimens.CUBIC_STRENGTH
         )
-        val gradientTopColor = getColor(index = R.styleable.LineChartStyle_gradientTopColor)
-        val gradientBottomColor = getColor(index = R.styleable.LineChartStyle_gradientBottomColor)
+        if (
+            hasValue(R.styleable.LineChartStyle_gradientTopColor) ||
+            hasValue(R.styleable.LineChartStyle_gradientBottomColor)
+        ) {
+            val gradientTopColor = getColor(R.styleable.LineChartStyle_gradientTopColor)
+            val gradientBottomColor = getColor(R.styleable.LineChartStyle_gradientBottomColor)
 
-        if (gradientTopColor != Color.TRANSPARENT || gradientBottomColor != Color.TRANSPARENT) {
             lineBackgroundShader = DynamicShaders.verticalGradient(
                 gradientTopColor, gradientBottomColor
+            )
+        } else {
+            lineBackgroundShader = DynamicShaders.verticalGradient(
+                lineColor.copyColor(alpha = Alpha.LINE_BACKGROUND_SHADER_START),
+                lineColor.copyColor(alpha = Alpha.LINE_BACKGROUND_SHADER_END),
             )
         }
     }
