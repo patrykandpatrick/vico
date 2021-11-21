@@ -122,7 +122,7 @@ public open class ColumnDataSet(
                         columnBottom = (bounds.bottom + bottomCompensation - cumulatedHeight)
                             .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        columnCenterX += cellWidth.half
+                        columnCenterX += cellWidth.half * drawScale
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                     MergeMode.Grouped -> {
@@ -199,10 +199,10 @@ public open class ColumnDataSet(
         columnWidth: Float,
         spacing: Float,
     ): Float {
-        val baseLeft = bounds.left + spacing.half + segmentCompensation - columnWidth.half
+        val baseLeft = bounds.left + spacing.half
         return when (mergeMode) {
             MergeMode.Stack -> baseLeft
-            MergeMode.Grouped -> baseLeft +
+            MergeMode.Grouped -> baseLeft + segmentCompensation - columnWidth.half +
                     (getCumulatedThickness(entryCollectionIndex, density, true) +
                             (innerSpacingDp.pixels * drawScale * entryCollectionIndex))
         }
