@@ -45,8 +45,8 @@ object Dimens {
 
     const val CUBIC_STRENGTH = 1f
 
-    const val DASH_LENGTH = 4
-    const val DASH_GAP = 2
+    const val DASH_LENGTH = 4f
+    const val DASH_GAP = 2f
 
     const val LINE_THICKNESS = 2f
 
@@ -93,4 +93,9 @@ interface Colors {
 
         override val lineColor: Long = 0xFFEFEFEF
     }
+}
+
+object Alpha {
+    const val LINE_BACKGROUND_SHADER_START = 0.5f
+    const val LINE_BACKGROUND_SHADER_END = 0f
 }

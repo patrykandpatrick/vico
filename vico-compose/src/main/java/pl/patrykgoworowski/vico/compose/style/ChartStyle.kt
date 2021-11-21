@@ -30,14 +30,15 @@ import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.fromBrush
+import pl.patrykgoworowski.vico.core.Alpha
 import pl.patrykgoworowski.vico.core.Colors
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
-import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
@@ -141,8 +142,8 @@ object LocalChartStyle {
             lineBackgroundShader = DynamicShaders.fromBrush(
                 brush = Brush.verticalGradient(
                     listOf(
-                        Color(colors.lineColor).copy(alpha = .5f),
-                        Color(colors.lineColor).copy(alpha = 0f),
+                        Color(colors.lineColor).copy(alpha = Alpha.LINE_BACKGROUND_SHADER_START),
+                        Color(colors.lineColor).copy(alpha = Alpha.LINE_BACKGROUND_SHADER_END),
                     ),
                 )
             )

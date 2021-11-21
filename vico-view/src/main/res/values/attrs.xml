@@ -21,6 +21,7 @@
     <attr name="axisTickStyle" format="reference" />
     <attr name="shapeStyle" format="reference" />
     <attr name="axisLabelStyle" format="reference" />
+    <attr name="color" format="color" />
 
     <declare-styleable name="ChartView">
         <attr name="chartType" format="enum">
@@ -59,7 +60,7 @@
 
     <declare-styleable name="LineComponentStyle">
         <attr name="color" />
-        <attr name="thickness" />
+        <attr name="thickness" format="dimension"/>
         <attr name="shapeStyle" />
     </declare-styleable>
 

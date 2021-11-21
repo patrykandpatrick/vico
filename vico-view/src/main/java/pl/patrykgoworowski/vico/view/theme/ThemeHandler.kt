@@ -27,6 +27,8 @@ import pl.patrykgoworowski.vico.core.axis.axisBuilder
 import pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
+import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.constants.Flags
 import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.composed.ComposedDataSet
@@ -102,12 +104,13 @@ public class ThemeHandler(
         fun TypedArray.getLineComponent(
             @StyleableRes resourceId: Int,
             @StyleableRes styleableResourceId: IntArray,
+            defaultShape: Shape = Shapes.rectShape,
         ): LineComponent =
             getNestedTypedArray(
                 context = context,
                 resourceId = resourceId,
                 styleableResourceId = styleableResourceId,
-            ).getLineComponent(context = context)
+            ).getLineComponent(context = context, defaultShape = defaultShape)
 
         return getNestedTypedArray(
             context = context,
@@ -130,7 +133,8 @@ public class ThemeHandler(
                 )
                 guideline = axisStyle.getLineComponent(
                     resourceId = R.styleable.Axis_axisGuidelineStyle,
-                    styleableResourceId = R.styleable.LineComponentStyle
+                    styleableResourceId = R.styleable.LineComponentStyle,
+                    defaultShape = Shapes.dashedShape(),
                 )
                 label = axisStyle.getNestedTypedArray(
                     context = context,
