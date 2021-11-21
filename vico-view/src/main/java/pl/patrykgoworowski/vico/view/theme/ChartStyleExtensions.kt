@@ -23,8 +23,6 @@ import pl.patrykgoworowski.vico.core.Alpha
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
-import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
-import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
 import pl.patrykgoworowski.vico.core.extension.copyColor
@@ -74,12 +72,12 @@ fun TypedArray.getColumnChart(
         spacingDp = getRawDimension(
             context = context,
             index = R.styleable.ColumnChartStyle_columnOuterSpacing,
-            defaultValue = DEF_MERGED_BAR_SPACING
+            defaultValue = Dimens.COLUMN_OUTSIDE_SPACING
         ),
         innerSpacingDp = getRawDimension(
             context = context,
             index = R.styleable.ColumnChartStyle_columnInnerSpacing,
-            defaultValue = DEF_MERGED_BAR_INNER_SPACING
+            defaultValue = Dimens.COLUMN_INSIDE_SPACING
         ),
     )
 }

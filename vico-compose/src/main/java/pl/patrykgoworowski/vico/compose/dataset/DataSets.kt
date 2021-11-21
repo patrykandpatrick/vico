@@ -39,13 +39,13 @@ import pl.patrykgoworowski.vico.compose.extension.addIf
 import pl.patrykgoworowski.vico.compose.extension.chartTouchEvent
 import pl.patrykgoworowski.vico.compose.gesture.OnZoom
 import pl.patrykgoworowski.vico.compose.layout.getMeasureContext
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.MAX_ZOOM
 import pl.patrykgoworowski.vico.core.MIN_ZOOM
 import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryCollection
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
@@ -126,7 +126,7 @@ fun <Model : EntryModel> DataSet(
 
     Canvas(
         modifier = modifier
-            .height(DEF_CHART_WIDTH.dp)
+            .height(Dimens.CHART_HEIGHT.dp)
             .fillMaxWidth()
             .addIf(marker != null) {
                 chartTouchEvent(
