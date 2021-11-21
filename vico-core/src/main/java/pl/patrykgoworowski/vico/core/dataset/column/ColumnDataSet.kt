@@ -16,10 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.dataset.column
 
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
-import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_INNER_SPACING
-import pl.patrykgoworowski.vico.core.constants.DEF_MERGED_BAR_SPACING
 import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.forEachIn
@@ -41,14 +40,14 @@ import kotlin.math.roundToInt
 
 public open class ColumnDataSet(
     public var columns: List<LineComponent>,
-    public var spacingDp: Float = DEF_MERGED_BAR_SPACING,
-    public var innerSpacingDp: Float = DEF_MERGED_BAR_INNER_SPACING,
+    public var spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
+    public var innerSpacingDp: Float = Dimens.COLUMN_INSIDE_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped
 ) : BaseDataSet<EntryModel>() {
 
     constructor(
         column: LineComponent,
-        spacingDp: Float = DEF_MERGED_BAR_SPACING,
+        spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
     ) : this(columns = listOf(column), spacingDp = spacingDp)
 
     constructor() : this(emptyList())

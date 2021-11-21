@@ -56,6 +56,8 @@ object Dimens {
 
     const val POINT_SIZE = 16f
     const val POINT_SPACING = 16f
+
+    const val CHART_HEIGHT = 200f
 }
 
 @Suppress("MagicNumber")

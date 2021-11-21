@@ -19,11 +19,11 @@ package pl.patrykgoworowski.vico.core.dataset.line
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.extension.horizontalCubicTo
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.vico.core.constants.DEF_LINE_CHART_SPACING
 import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.forEachIn
@@ -44,9 +44,9 @@ import kotlin.math.roundToInt
 
 public open class LineDataSet(
     public var point: Component? = null,
-    public var pointSizeDp: Float = 6f,
-    public var spacingDp: Float = DEF_LINE_CHART_SPACING,
-    public var lineThicknessDp: Float = 2f,
+    public var pointSizeDp: Float = Dimens.POINT_SIZE,
+    public var spacingDp: Float = Dimens.POINT_SPACING,
+    public var lineThicknessDp: Float = Dimens.LINE_THICKNESS,
     lineColor: Int = Color.LTGRAY,
 ) : BaseDataSet<EntryModel>() {
 

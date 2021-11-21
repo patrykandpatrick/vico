@@ -26,13 +26,13 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
+import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.MAX_ZOOM
 import pl.patrykgoworowski.vico.core.MIN_ZOOM
 import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.vico.core.constants.DEF_CHART_WIDTH
 import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
@@ -191,9 +191,9 @@ public abstract class BaseChartView<Model : EntryModel>(
         val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
 
         val height = when (MeasureSpec.getMode(heightMeasureSpec)) {
-            MeasureSpec.UNSPECIFIED -> DEF_CHART_WIDTH.dpInt + verticalPadding
+            MeasureSpec.UNSPECIFIED -> Dimens.CHART_HEIGHT.dpInt + verticalPadding
             MeasureSpec.AT_MOST -> minOf(
-                DEF_CHART_WIDTH.dpInt + verticalPadding,
+                Dimens.CHART_HEIGHT.dpInt + verticalPadding,
                 heightMeasureSpec.specSize
             )
             else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
