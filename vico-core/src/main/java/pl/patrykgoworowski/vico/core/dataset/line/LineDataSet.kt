@@ -110,14 +110,12 @@ public open class LineDataSet(
             prevX = x
             prevY = y
 
-            if (markerTouchPoint != null) {
-                markerLocationMap.put(
-                    x = ceil(x),
-                    y = y.between(bounds.top, bounds.bottom),
-                    entry = entry,
-                    color = lineColor
-                )
-            }
+            markerLocationMap.put(
+                x = ceil(x),
+                y = y.between(bounds.top, bounds.bottom),
+                entry = entry,
+                color = lineColor
+            )
         }
 
         if (lineBackgroundShader != null) {

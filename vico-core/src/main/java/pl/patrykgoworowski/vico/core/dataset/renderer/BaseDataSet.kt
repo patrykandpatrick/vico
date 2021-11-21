@@ -21,7 +21,8 @@ import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.threshold.ThresholdLine
-import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryPositionModel
+import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
+import pl.patrykgoworowski.vico.core.extension.getEntryModel
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
@@ -29,6 +30,7 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, BoundsAware {
 
     private val thresholdLines = ArrayList<ThresholdLine>()
+    private val persistentMarkers = HashMap<Float, Marker>()
 
     protected val Model.drawMinY: Float
         get() = this@BaseDataSet.minY ?: minY
@@ -56,31 +58,47 @@ public abstract class BaseDataSet<in Model : EntryModel> : DataSet<Model>, Bound
     override fun removeThresholdLine(thresholdLine: ThresholdLine): Boolean =
         thresholdLines.remove(thresholdLine)
 
+    override fun addPersistentMarker(x: Float, marker: Marker) {
+        persistentMarkers[x] = marker
+    }
+
+    override fun removePersistentMarker(x: Float): Boolean =
+        persistentMarkers.remove(x) != null
+
     override fun draw(
         context: ChartDrawContext,
         model: Model,
-        marker: Marker?
+        touchMarker: Marker?
     ) {
         if (model.entryCollections.isNotEmpty()) {
             drawDataSet(context, model)
         }
         drawThresholdLines(context, model)
-        drawMarker(context, model, marker)
+        persistentMarkers.forEach { (x, marker) ->
+            markerLocationMap.getEntryModel(x)?.also { markerModel ->
+                marker.draw(
+                    context = context,
+                    bounds = bounds,
+                    markedEntries = markerModel,
+                )
+            }
+        }
+        drawTouchMarker(context, model, touchMarker)
     }
 
-    abstract fun drawDataSet(
+    public abstract fun drawDataSet(
         context: ChartDrawContext,
         model: Model,
     )
 
-    open fun drawMarker(
+    public open fun drawTouchMarker(
         context: ChartDrawContext,
         model: Model,
         marker: Marker?
     ) {
         val touchPoint = context.markerTouchPoint
         if (touchPoint == null || marker == null) return
-        markerLocationMap.getClosestMarkerEntryPositionModel(touchPoint)?.let { markerModel ->
+        markerLocationMap.getClosestMarkerEntryModel(touchPoint)?.also { markerModel ->
             marker.draw(
                 context = context,
                 bounds = bounds,
