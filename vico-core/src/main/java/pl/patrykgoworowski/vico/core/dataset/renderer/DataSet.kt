@@ -37,11 +37,14 @@ public interface DataSet<in Model> : BoundsAware {
     public fun draw(
         context: ChartDrawContext,
         model: Model,
-        marker: Marker?
+        touchMarker: Marker?
     )
 
     public fun addThresholdLine(thresholdLine: ThresholdLine): Boolean
     public fun removeThresholdLine(thresholdLine: ThresholdLine): Boolean
+
+    public fun addPersistentMarker(x: Float, marker: Marker)
+    public fun removePersistentMarker(x: Float): Boolean
 
     public fun getMeasuredWidth(context: MeasureContext, model: Model): Int
     public fun getSegmentProperties(context: MeasureContext, model: Model): SegmentProperties

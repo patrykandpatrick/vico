@@ -143,10 +143,7 @@ public open class ColumnDataSet(
                         thicknessScale = drawScale
                     )
                 ) {
-                    if (markerTouchPoint != null) {
-                        updateMarkerLocationMap(entry, columnTop, columnCenterX, column)
-                    }
-
+                    updateMarkerLocationMap(entry, columnTop, columnCenterX, column)
                     column.drawVertical(this, columnTop, columnBottom, columnCenterX, drawScale)
                 }
             }
