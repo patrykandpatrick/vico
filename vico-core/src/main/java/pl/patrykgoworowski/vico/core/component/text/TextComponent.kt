@@ -95,9 +95,9 @@ public open class TextComponent(
             .getTextTopPosition(context, textY, layoutHeight.toFloat())
 
         val bgLeft = textStartPosition - padding.getLeftDp(isLtr).pixels
-        val bgTop = textTopPosition - ((layoutHeight / 2) + padding.topDp.pixels)
+        val bgTop = textTopPosition - (layoutHeight / 2 + padding.topDp.pixels)
         val bgRight = textStartPosition + layoutWidth + padding.getRightDp(isLtr).pixels
-        val bgBottom = textTopPosition + ((layoutHeight / 2) + padding.bottomDp.pixels)
+        val bgBottom = textTopPosition + (layoutHeight / 2 + padding.bottomDp.pixels)
 
         onPreDraw?.invoke(context, bgLeft, bgTop, bgRight, bgBottom)
 

@@ -67,7 +67,7 @@ public open class MarkerCorneredShape(
         val minLeft = contentBounds.left +
                 bottomLeft.getCornerSize(availableCornerSize, context.density)
         val maxLeft = contentBounds.right -
-                (bottomRight.getCornerSize(availableCornerSize, context.density) + (tickSize * 2))
+                (bottomRight.getCornerSize(availableCornerSize, context.density) + tickSize * 2)
 
         val tickTopLeft = (tickX - tickSize).between(minLeft, maxLeft)
         path.moveTo(tickTopLeft, bounds.bottom)
