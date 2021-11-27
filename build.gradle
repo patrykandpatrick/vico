@@ -33,11 +33,11 @@ buildscript {
 }
 
 plugins {
-    id 'io.gitlab.arturbosch.detekt' version '1.19.0-RC2'
+    id 'io.gitlab.arturbosch.detekt' version '1.18.1'
 }
 
 dependencies {
-    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0-RC2"
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.18.1"
 }
 
 detekt {
@@ -45,13 +45,11 @@ detekt {
     buildUponDefaultConfig = true
     source = files("app", "vico-core", "vico-compose", "vico-view")
     config = files(".idea/detekt-config.yml")
-}
 
-tasks.detekt {
     reports {
         html {
-            outputLocation.set(file("build/reports/detekt/detekt.html"))
-            required.set(true)
+            enabled = true
+            destination = file("build/reports/detekt/detekt.html")
         }
     }
 }
@@ -72,9 +70,6 @@ allprojects {
 
 tasks.withType(Detekt).configureEach {
     jvmTarget = "1.8"
-    reports {
-        html.required.set(true)
-    }
 }
 
 task clean(type: Delete) {
