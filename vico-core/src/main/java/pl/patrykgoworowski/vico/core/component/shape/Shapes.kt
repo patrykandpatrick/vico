@@ -19,8 +19,6 @@ package pl.patrykgoworowski.vico.core.component.shape
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
-import android.graphics.drawable.shapes.RoundRectShape
-import android.view.RoundedCorner
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
 import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
