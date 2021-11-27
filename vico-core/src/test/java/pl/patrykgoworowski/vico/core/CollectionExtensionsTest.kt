@@ -21,12 +21,12 @@ import pl.patrykgoworowski.vico.core.extension.forEachIndexedExtended
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-class CollectionExtensionsTest {
+public class CollectionExtensionsTest {
 
     private val format = "index=%d, isFirst=%s, isLast=%s, value=%d"
 
     @Test
-    fun `test forEachIndexedExtended with 1 value`() {
+    public fun `test forEachIndexedExtended with 1 value`() {
         (0 until 1).forEachIndexedExtended { index, isFirst, isLast, int ->
             val actual = format.format(index, isFirst, isLast, int)
             when (int) {
@@ -40,7 +40,7 @@ class CollectionExtensionsTest {
     }
 
     @Test
-    fun `test forEachIndexedExtended with 2 values`() {
+    public fun `test forEachIndexedExtended with 2 values`() {
         (0 until 2).forEachIndexedExtended { index, isFirst, isLast, int ->
             val actual = format.format(index, isFirst, isLast, int)
             when (int) {
@@ -58,7 +58,7 @@ class CollectionExtensionsTest {
     }
 
     @Test
-    fun `test forEachIndexedExtended with 3 values`() {
+    public fun `test forEachIndexedExtended with 3 values`() {
         (0 until 3).forEachIndexedExtended { index, isFirst, isLast, int ->
             val actual = format.format(index, isFirst, isLast, int)
             when (int) {
