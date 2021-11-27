@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.entriesOf
 import kotlin.test.assertEquals
 
-class EntryCollectionTests {
+public class EntryCollectionTests {
 
     private val minX = 0f
     private val maxX = 3f
@@ -37,7 +37,7 @@ class EntryCollectionTests {
     private val diffAnimator = TestDiffAnimator()
 
     @Test
-    fun `Test Min Max calculations`() {
+    public fun `Test Min Max calculations`() {
         val entryList = EntryList(TestDiffAnimator(), false)
         entryList.setEntries(entries1, entries2, entries3)
         assertEquals(minX, entryList.minX)
@@ -49,7 +49,7 @@ class EntryCollectionTests {
     }
 
     @Test
-    fun `Test entry update while diff animation is running`() {
+    public fun `Test entry update while diff animation is running`() {
         val first = entriesOf(0f to 2f, 1f to 0f)
         val second = entriesOf(0f to 0f, 1f to 2f)
 

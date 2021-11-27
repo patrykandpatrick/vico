@@ -32,9 +32,9 @@ public class TestDiffAnimator : DiffAnimator {
         onProgress(currentProgress)
     }
 
-    fun updateProgress(progress: Float) {
+    public fun updateProgress(progress: Float) {
         onProgress?.invoke(progress)
     }
 
-    override fun cancel() = Unit
+    override fun cancel(): Unit = Unit
 }
