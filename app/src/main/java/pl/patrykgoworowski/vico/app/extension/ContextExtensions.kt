@@ -17,10 +17,18 @@
 package pl.patrykgoworowski.vico.app.extension
 
 import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Configuration.UI_MODE_NIGHT_MASK
+import android.content.res.Configuration.UI_MODE_NIGHT_NO
+import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.core.content.ContextCompat
 import pl.patrykgoworowski.vico.R
+import pl.patrykgoworowski.vico.app.ui.theme.MainTheme
 
 val Context.flickrPink: Int
     get() = ContextCompat.getColor(this, R.color.flickr_pink)
@@ -45,5 +53,23 @@ fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null
         a.getColor(0, defValueRes?.let { ContextCompat.getColor(this, it) } ?: 0)
     } finally {
         a.recycle()
+    }
+}
+
+val Configuration.isDarkMode: Boolean
+    get() = (uiMode and UI_MODE_NIGHT_MASK) == UI_MODE_NIGHT_YES
+
+@Composable
+fun InvertedTheme(content: @Composable () -> Unit) {
+    val configuration = Configuration(LocalConfiguration.current)
+    val uiMode = configuration.uiMode
+    configuration.uiMode = if (configuration.isDarkMode) {
+        uiMode xor UI_MODE_NIGHT_MASK or UI_MODE_NIGHT_NO
+    } else {
+        uiMode xor UI_MODE_NIGHT_MASK or UI_MODE_NIGHT_YES
+    }
+
+    CompositionLocalProvider(LocalConfiguration provides configuration) {
+        MainTheme(configuration.isDarkMode, content = content)
     }
 }

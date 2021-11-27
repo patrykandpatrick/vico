@@ -26,10 +26,7 @@
         android:id="@+id/column_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:axisStyle="@style/AxisStyle"
         app:chartType="column"
-        app:columnChartStyle="@style/ColumnChartStyle"
-        app:lineChartStyle="@style/LineChartStyle"
         app:showBottomAxis="true"
         app:showStartAxis="true" />
 
@@ -41,7 +38,6 @@
         android:id="@+id/composed_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:columnChartStyle="@style/ColumnChartStyle"
         app:charts="column|line"/>
 
     <Space
@@ -52,7 +48,6 @@
         android:id="@+id/line_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:lineChartStyle="@style/LineChartStyle"
         app:chartType="line" />
 
     <Space
