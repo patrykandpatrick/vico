@@ -21,13 +21,13 @@ plugins {
 apply from: "$rootDir/commonScripts.gradle"
 
 android {
-    compileSdkVersion target_sdk_version
+    compileSdkVersion library.target_sdk
 
     defaultConfig {
-        minSdkVersion min_sdk_version_compose
-        targetSdkVersion target_sdk_version
-        versionCode lib_version_code
-        versionName lib_version_name
+        minSdkVersion library.compose_min_sdk
+        targetSdkVersion library.target_sdk
+        versionCode library.version_code
+        versionName library.version_name
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -53,7 +53,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion compose_version
+        kotlinCompilerExtensionVersion versions.compose
     }
 }
 

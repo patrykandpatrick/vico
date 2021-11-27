@@ -17,11 +17,11 @@
 apply from: "$rootDir/compilerArgs.gradle"
 
 android {
-    compileSdkVersion target_sdk_version
+    compileSdkVersion library.target_sdk
 
     defaultConfig {
-        minSdkVersion min_sdk_version
-        targetSdkVersion target_sdk_version
+        minSdkVersion library.min_sdk
+        targetSdkVersion library.target_sdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
