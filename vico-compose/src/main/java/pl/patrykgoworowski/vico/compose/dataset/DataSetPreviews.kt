@@ -57,7 +57,7 @@ private fun PreviewColumnChart(
 
 @Preview("Column Chart Left", heightDp = 100, showBackground = true, backgroundColor = 0xFFFFFF)
 @Composable
-fun PreviewColumnChartLeft() {
+public fun PreviewColumnChartLeft() {
     PreviewColumnChart(startAxis = startAxis)
 }
 
@@ -69,7 +69,7 @@ fun PreviewColumnChartLeft() {
     backgroundColor = 0xFFFFFF
 )
 @Composable
-fun PreviewColumnChartTop() {
+public fun PreviewColumnChartTop() {
     PreviewColumnChart(topAxis = topAxis)
 }
 
@@ -81,7 +81,7 @@ fun PreviewColumnChartTop() {
     backgroundColor = 0xFFFFFF
 )
 @Composable
-fun PreviewColumnChartRight() {
+public fun PreviewColumnChartRight() {
     PreviewColumnChart(endAxis = endAxis)
 }
 
@@ -93,7 +93,7 @@ fun PreviewColumnChartRight() {
     backgroundColor = 0xFFFFFF
 )
 @Composable
-fun PreviewColumnChartBottom() {
+public fun PreviewColumnChartBottom() {
     PreviewColumnChart(bottomAxis = bottomAxis)
 }
 
@@ -104,7 +104,7 @@ fun PreviewColumnChartBottom() {
     backgroundColor = 0xFFFFFF
 )
 @Composable
-fun PreviewColumnChartBottomLeft() {
+public fun PreviewColumnChartBottomLeft() {
     PreviewColumnChart(startAxis = startAxis, bottomAxis = bottomAxis)
 }
 
@@ -115,7 +115,7 @@ fun PreviewColumnChartBottomLeft() {
     backgroundColor = 0xFFFFFF
 )
 @Composable
-fun PreviewColumnChartTopRight() {
+public fun PreviewColumnChartTopRight() {
     PreviewColumnChart(topAxis = topAxis, endAxis = endAxis)
 }
 
@@ -127,7 +127,7 @@ fun PreviewColumnChartTopRight() {
     backgroundColor = 0xFFFFFF
 )
 @Composable
-fun PreviewColumnChartAll() {
+public fun PreviewColumnChartAll() {
     PreviewColumnChart(
         startAxis = startAxis,
         topAxis = topAxis,

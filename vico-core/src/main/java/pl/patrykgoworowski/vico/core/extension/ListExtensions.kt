@@ -16,10 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
-fun List<() -> Unit>.runEach() {
+public fun List<() -> Unit>.runEach() {
     forEach { it() }
 }
 
-fun <T> List<(T) -> Unit>.runEach(argument: T) {
+public fun <T> List<(T) -> Unit>.runEach(argument: T) {
     forEach { it(argument) }
 }

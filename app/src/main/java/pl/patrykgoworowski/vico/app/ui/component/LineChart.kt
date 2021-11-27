@@ -25,7 +25,7 @@ import pl.patrykgoworowski.vico.compose.dataset.line.lineDataSet
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 
 @Composable
-fun LineChart(
+internal fun LineChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {

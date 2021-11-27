@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.axis.formatter
 
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 
-object DefaultAxisFormatter : AxisValueFormatter {
+public object DefaultAxisFormatter : AxisValueFormatter {
     override fun formatValue(
         value: Float,
         index: Int,

@@ -18,20 +18,20 @@ package pl.patrykgoworowski.vico.core.dimensions
 
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
-interface Dimensions {
+public interface Dimensions {
 
-    val startDp: Float
-    val topDp: Float
-    val endDp: Float
-    val bottomDp: Float
+    public val startDp: Float
+    public val topDp: Float
+    public val endDp: Float
+    public val bottomDp: Float
 
-    val MeasureContext.leftDp: Float
+    public val MeasureContext.leftDp: Float
         get() = getLeftDp(isLtr)
 
-    val MeasureContext.rightDp: Float
+    public val MeasureContext.rightDp: Float
         get() = getRightDp(isLtr)
 
-    fun getLeftDp(isLtr: Boolean) = if (isLtr) startDp else endDp
+    public fun getLeftDp(isLtr: Boolean): Float = if (isLtr) startDp else endDp
 
-    fun getRightDp(isLtr: Boolean) = if (isLtr) endDp else startDp
+    public fun getRightDp(isLtr: Boolean): Float = if (isLtr) endDp else startDp
 }

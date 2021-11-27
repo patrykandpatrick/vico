@@ -32,7 +32,7 @@ public data class ComponentShadow(
     private var laColor: Int = 0
     private var laDensity: Float = 0f
 
-    public fun maybeUpdateShadowLayer(context: DrawContext, paint: Paint) = with(context) {
+    public fun maybeUpdateShadowLayer(context: DrawContext, paint: Paint): Unit = with(context) {
         if (shouldUpdateShadowLayer()) {
             if (color == 0 || (radius == 0f && dx == 0f && dy == 0f)) {
                 paint.clearShadowLayer()

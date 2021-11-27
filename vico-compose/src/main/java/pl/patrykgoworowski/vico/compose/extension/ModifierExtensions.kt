@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.compose.gesture.OnZoom
 import pl.patrykgoworowski.vico.compose.gesture.zoomable
 import pl.patrykgoworowski.vico.core.model.Point
 
-fun Modifier.chartTouchEvent(
+public fun Modifier.chartTouchEvent(
     setTouchPoint: (Point?) -> Unit,
     scrollableState: ScrollableState?,
     onZoom: OnZoom?,
@@ -61,5 +61,7 @@ fun Modifier.chartTouchEvent(
 private val Offset.point: Point
     get() = Point(x, y)
 
-inline fun Modifier.addIf(condition: Boolean, crossinline factory: Modifier.() -> Modifier) =
-    if (condition) factory() else this
+public inline fun Modifier.addIf(
+    condition: Boolean,
+    crossinline factory: Modifier.() -> Modifier,
+): Modifier = if (condition) factory() else this

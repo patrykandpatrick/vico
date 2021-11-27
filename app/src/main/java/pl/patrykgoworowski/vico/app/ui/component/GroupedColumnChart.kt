@@ -27,7 +27,7 @@ import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 
 @Composable
-fun GroupedColumnChart(
+internal fun GroupedColumnChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {

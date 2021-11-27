@@ -22,11 +22,11 @@ import java.util.TreeMap
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
+public fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
     touchPoint: Point,
 ): List<Marker.EntryModel>? = keys.findClosestPositiveValue(touchPoint.x)?.let(::get)
 
-fun Map<Float, List<Marker.EntryModel>>.getEntryModel(
+public fun Map<Float, List<Marker.EntryModel>>.getEntryModel(
     xValue: Float,
 ): List<Marker.EntryModel>? = values.find { entries -> entries.firstOrNull()?.entry?.x == xValue }
 

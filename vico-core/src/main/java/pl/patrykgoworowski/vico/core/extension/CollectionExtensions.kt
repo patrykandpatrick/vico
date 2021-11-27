@@ -19,10 +19,10 @@ package pl.patrykgoworowski.vico.core.extension
 import pl.patrykgoworowski.vico.core.constants.ERR_REPEATING_COLLECTION_EMPTY
 import kotlin.math.abs
 
-fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =
+internal fun <T> ArrayList<T>.getOrDefault(index: Int, getDefault: () -> T): T =
     getOrNull(index) ?: getDefault().also { add(it) }
 
-fun <T> List<T>.getRepeating(index: Int): T {
+internal fun <T> List<T>.getRepeating(index: Int): T {
     if (isEmpty()) throw IllegalStateException(ERR_REPEATING_COLLECTION_EMPTY)
     return get(index % size.coerceAtLeast(1))
 }
@@ -58,7 +58,7 @@ public inline fun <T> Iterable<T>.forEachIndexedExtended(
     }
 }
 
-fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
+internal fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
     if (isEmpty()) return null
     var closestValue: Float? = null
     forEach { checkedValue ->
@@ -71,7 +71,7 @@ fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
     return closestValue
 }
 
-fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
+internal fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
     fold(0f) { sum, element ->
         sum + selector(element)
     } / size

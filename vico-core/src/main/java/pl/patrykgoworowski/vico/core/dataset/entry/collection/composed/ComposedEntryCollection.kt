@@ -22,7 +22,7 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryCollection
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.extension.runEach
 
-class ComposedEntryCollection<Model : EntryModel>(
+public class ComposedEntryCollection<Model : EntryModel>(
     public val entryCollections: List<EntryCollection<Model>>
 ) : EntryCollection<ComposedEntryModel<Model>> {
 

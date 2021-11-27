@@ -21,9 +21,9 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
-open class EntryModelCalculator {
+public open class EntryModelCalculator {
 
-    val stackedMap: HashMap<Float, Float> = HashMap()
+    public val stackedMap: HashMap<Float, Float> = HashMap()
 
     private var _minX: Float? = null
     private var _maxX: Float? = null
@@ -54,7 +54,7 @@ open class EntryModelCalculator {
     public val stackedMaxY: Float
         get() = _stackedMaxY ?: 0f
 
-    fun resetValues() {
+    public fun resetValues() {
         _minX = null
         _maxX = null
         _minY = null
@@ -65,7 +65,7 @@ open class EntryModelCalculator {
         stackedMap.clear()
     }
 
-    fun calculateData(data: List<List<DataEntry>>) {
+    public fun calculateData(data: List<List<DataEntry>>) {
         resetValues()
         calculateMinMax(data)
     }
@@ -103,7 +103,7 @@ open class EntryModelCalculator {
         if (_step == NO_VALUE) _step = 1f
     }
 
-    companion object {
-        const val NO_VALUE = -1f
+    private companion object {
+        private const val NO_VALUE = -1f
     }
 }

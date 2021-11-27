@@ -21,7 +21,7 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 
-open class TickComponent(
+public open class TickComponent(
     color: Int,
     thicknessDp: Float,
     shape: Shape = rectShape,

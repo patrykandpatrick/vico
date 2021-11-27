@@ -20,16 +20,16 @@ import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.extension.piRad
 
-object SharpCornerTreatment : CornerTreatment {
+public object SharpCornerTreatment : CornerTreatment {
 
-    override fun createCorner(
+    public override fun createCorner(
         x1: Float,
         y1: Float,
         x2: Float,
         y2: Float,
         cornerLocation: CornerLocation,
         path: Path
-    ) = when (cornerLocation) {
+    ): Unit = when (cornerLocation) {
         CornerLocation.TopLeft -> {
             path.lineTo(x1, y2)
         }
@@ -45,7 +45,7 @@ object SharpCornerTreatment : CornerTreatment {
     }
 }
 
-object CutCornerTreatment : CornerTreatment {
+public object CutCornerTreatment : CornerTreatment {
 
     override fun createCorner(
         x1: Float,
@@ -60,7 +60,7 @@ object CutCornerTreatment : CornerTreatment {
     }
 }
 
-object RoundedCornerTreatment : CornerTreatment {
+public object RoundedCornerTreatment : CornerTreatment {
 
     private val tempRect = RectF()
 

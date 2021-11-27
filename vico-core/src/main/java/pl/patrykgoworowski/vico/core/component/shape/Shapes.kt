@@ -19,6 +19,8 @@ package pl.patrykgoworowski.vico.core.component.shape
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.shapes.RoundRectShape
+import android.view.RoundedCorner
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
 import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
@@ -27,10 +29,12 @@ import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatme
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.extension.setBounds
 
-object Shapes {
-    val pillShape = roundedCornersShape(allPercent = 50)
+public object Shapes {
 
-    val rectShape: Shape = object : Shape {
+    public val pillShape: CorneredShape = roundedCornersShape(allPercent = 50)
+
+    public val rectShape: Shape = object : Shape {
+
         override fun drawShape(
             context: DrawContext,
             paint: Paint,
@@ -49,10 +53,10 @@ object Shapes {
         }
     }
 
-    fun roundedCornersShape(allPercent: Int) =
+    public fun roundedCornersShape(allPercent: Int): CorneredShape =
         roundedCornersShape(allPercent, allPercent, allPercent, allPercent)
 
-    fun roundedCornersShape(
+    public fun roundedCornersShape(
         topLeftPercent: Int = 0,
         topRightPercent: Int = 0,
         bottomRightPercent: Int = 0,
@@ -64,10 +68,10 @@ object Shapes {
         Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
     )
 
-    fun cutCornerShape(allPercent: Int) =
+    public fun cutCornerShape(allPercent: Int): CorneredShape =
         cutCornerShape(allPercent, allPercent, allPercent, allPercent)
 
-    fun cutCornerShape(
+    public fun cutCornerShape(
         topLeftPercent: Int = 0,
         topRightPercent: Int = 0,
         bottomRightPercent: Int = 0,
@@ -79,7 +83,7 @@ object Shapes {
         Corner.Relative(bottomLeftPercent, CutCornerTreatment),
     )
 
-    fun drawableShape(
+    public fun drawableShape(
         drawable: Drawable,
         keepAspectRatio: Boolean = false,
         otherCreator: Shape? = rectShape
@@ -119,7 +123,7 @@ object Shapes {
         }
     }
 
-    fun dashedShape(
+    public fun dashedShape(
         shape: Shape = rectShape,
         dashLength: Float = Dimens.DASH_LENGTH,
         gapLength: Float = Dimens.DASH_GAP,

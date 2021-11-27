@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.component.text
 
-enum class HorizontalPosition {
+public enum class HorizontalPosition {
     Start,
     Center,
     End,

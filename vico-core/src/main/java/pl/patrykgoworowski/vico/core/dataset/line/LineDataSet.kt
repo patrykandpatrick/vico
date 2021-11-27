@@ -61,19 +61,19 @@ public open class LineDataSet(
 
     private val segmentProperties = MutableSegmentProperties()
 
-    override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
+    override val markerLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     public var lineColor: Int by linePaint::color
     public var lineWidth: Float by linePaint::strokeWidth
     public var lineBackgroundShader: DynamicShader? = null
     public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
 
-    public var cubicStrength = 1f
+    public var cubicStrength: Float = 1f
 
     override fun drawDataSet(
         context: ChartDrawContext,
         model: EntryModel,
-    ) = with(context) {
+    ): Unit = with(context) {
         resetTempData()
         val lineBackgroundShader = lineBackgroundShader
         linePaint.strokeWidth = lineThicknessDp.pixels
@@ -203,7 +203,7 @@ public open class LineDataSet(
         ) else 0f
     }
 
-    companion object {
-        private const val CUBIC_Y_MULTIPLIER = 4
+    private companion object {
+        const val CUBIC_Y_MULTIPLIER = 4
     }
 }

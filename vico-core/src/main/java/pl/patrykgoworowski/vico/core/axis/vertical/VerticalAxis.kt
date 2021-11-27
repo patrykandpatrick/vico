@@ -34,7 +34,7 @@ import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
-class VerticalAxis<Position : AxisPosition.Vertical>(
+public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
 ) : Axis<Position>() {
 
@@ -50,12 +50,12 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
     public var maxLabelCount: Int = DEF_LABEL_COUNT
     public var labelSpacing: Float = DEF_LABEL_SPACING
 
-    public var horizontalLabelPosition = Outside
-    public var verticalLabelPosition = Center
+    public var horizontalLabelPosition: HorizontalLabelPosition = Outside
+    public var verticalLabelPosition: VerticalLabelPosition = Center
 
     override fun drawBehindDataSet(
         context: ChartDrawContext,
-    ) = with(context) {
+    ): Unit = with(context) {
         val drawLabelCount = getDrawLabelCount(context, bounds.height().toInt())
 
         val axisStep = bounds.height() / drawLabelCount
@@ -91,7 +91,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         Unit
     }
 
-    override fun drawAboveDataSet(context: ChartDrawContext) = with(context) {
+    override fun drawAboveDataSet(context: ChartDrawContext): Unit = with(context) {
         val label = label
         val labelCount = getDrawLabelCount(this, bounds.height().toInt())
 
@@ -185,7 +185,7 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         availableHeight: Float,
         dataSetModel: DataSetModel,
         outInsets: Insets
-    ) = with(context) {
+    ): Unit = with(context) {
         val labels = getLabels(
             dataSetModel = dataSetModel,
             maxLabelCount = getDrawLabelCount(this, availableHeight.toInt()),
@@ -229,11 +229,11 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
         return axisThickness.half + maxLabelAndTickWidth
     }
 
-    enum class HorizontalLabelPosition {
+    public enum class HorizontalLabelPosition {
         Outside, Inside
     }
 
-    enum class VerticalLabelPosition(val textPosition: VerticalPosition) {
+    public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
         Center(VerticalPosition.Center),
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
@@ -242,8 +242,8 @@ class VerticalAxis<Position : AxisPosition.Vertical>(
     public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
         public var maxLabelCount: Int = DEF_LABEL_COUNT
         public var labelSpacing: Float = DEF_LABEL_SPACING
-        public var horizontalLabelPosition = Outside
-        public var verticalLabelPosition = Center
+        public var horizontalLabelPosition: HorizontalLabelPosition = Outside
+        public var verticalLabelPosition: VerticalLabelPosition = Center
 
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : AxisPosition.Vertical> build(): VerticalAxis<T> {

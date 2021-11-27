@@ -42,7 +42,7 @@ public open class ShapeComponent<T : Shape>(
 
     public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
-    public var color by paint::color
+    public var color: Int by paint::color
 
     init {
         paint.color = color
@@ -55,7 +55,7 @@ public open class ShapeComponent<T : Shape>(
         top: Float,
         right: Float,
         bottom: Float
-    ) = with(context) {
+    ): Unit = with(context) {
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         path.rewind()
         applyShader(context, left, top, right, bottom)
@@ -113,7 +113,7 @@ public open class ShapeComponent<T : Shape>(
         dx: Float = 0f,
         dy: Float = 0f,
         color: Int = DEF_SHADOW_COLOR,
-    ) = apply {
+    ): ShapeComponent<T> = apply {
         shadowProperties.apply {
             this.radius = radius
             this.dx = dx
@@ -122,7 +122,7 @@ public open class ShapeComponent<T : Shape>(
         }
     }
 
-    public fun clearShadow() = apply {
+    public fun clearShadow(): ShapeComponent<T> = apply {
         shadowProperties.apply {
             this.radius = 0f
             this.dx = 0f

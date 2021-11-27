@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 import pl.patrykgoworowski.vico.app.extension.InvertedTheme
 
 @Composable
-fun ComposeShowcase(
+internal fun ComposeShowcase(
     viewModel: ShowcaseViewModel,
 ) {
     Box(modifier = Modifier.verticalScroll(state = rememberScrollState())) {

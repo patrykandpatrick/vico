@@ -23,9 +23,9 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.diff.DiffProcessor
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 import pl.patrykgoworowski.vico.core.extension.setAll
 
-typealias EntryListModelListener = (EntryModel) -> Unit
+public typealias EntryListModelListener = (EntryModel) -> Unit
 
-class EntryList(
+public class EntryList(
     public var diffAnimator: DiffAnimator = DefaultDiffAnimator(),
     public var animateChanges: Boolean = true
 ) : EntryCollection<EntryModel> {
@@ -39,35 +39,35 @@ class EntryList(
     override var model: EntryModel = entryModel()
         private set
 
-    val minX: Float
+    public val minX: Float
         get() = calculator.minX
 
-    val maxX: Float
+    public val maxX: Float
         get() = calculator.maxX
 
-    val minY: Float
+    public val minY: Float
         get() = calculator.minY
 
-    val maxY: Float
+    public val maxY: Float
         get() = calculator.maxY
 
-    val step: Float
+    public val step: Float
         get() = calculator.step
 
-    val stackedMaxY: Float
+    public val stackedMaxY: Float
         get() = calculator.stackedMaxY
 
-    val stackedMinY: Float
+    public val stackedMinY: Float
         get() = calculator.stackedMinY
 
-    constructor(
+    public constructor(
         entryCollections: List<List<DataEntry>>,
         animateChanges: Boolean = true,
     ) : this(animateChanges = animateChanges) {
         setEntries(entryCollections)
     }
 
-    constructor(
+    public constructor(
         vararg entryCollections: List<DataEntry>,
         animateChanges: Boolean = true,
     ) : this(animateChanges = animateChanges) {

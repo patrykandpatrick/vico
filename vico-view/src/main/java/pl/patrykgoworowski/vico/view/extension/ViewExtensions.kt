@@ -16,11 +16,13 @@
 
 package pl.patrykgoworowski.vico.view.extension
 
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
+import pl.patrykgoworowski.vico.core.model.Point
 import kotlin.math.min
 
 internal fun View.measureDimension(desiredSize: Int, measureSpec: Int): Int {
@@ -71,3 +73,6 @@ internal fun OverScroller.fling(
         Int.MAX_VALUE
     )
 }
+
+public val MotionEvent.point: Point
+    get() = Point(x, y)

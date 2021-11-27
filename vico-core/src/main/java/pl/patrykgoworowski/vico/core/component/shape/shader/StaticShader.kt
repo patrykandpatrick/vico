@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.component.shape.shader
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-class StaticShader(private val shader: Shader) : DynamicShader {
+public class StaticShader(private val shader: Shader) : DynamicShader {
 
     override fun provideShader(
         context: DrawContext,
@@ -30,5 +30,5 @@ class StaticShader(private val shader: Shader) : DynamicShader {
     ): Shader = shader
 }
 
-val Shader.dynamic: DynamicShader
+public val Shader.dynamic: DynamicShader
     get() = StaticShader(this)

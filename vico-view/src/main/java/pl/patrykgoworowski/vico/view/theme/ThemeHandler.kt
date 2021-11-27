@@ -29,7 +29,6 @@ import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
-import pl.patrykgoworowski.vico.core.constants.Flags
 import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.composed.ComposedDataSet
 import pl.patrykgoworowski.vico.core.dataset.composed.ComposedEntryModel
@@ -38,8 +37,8 @@ import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
 import pl.patrykgoworowski.vico.core.extension.hasFlag
 import pl.patrykgoworowski.vico.view.R
 
-public class ThemeHandler(
-    val context: Context,
+internal class ThemeHandler(
+    private val context: Context,
     attrs: AttributeSet?,
     chartType: ChartType
 ) {
@@ -180,8 +179,14 @@ public class ThemeHandler(
         }
     }
 
-    enum class ChartType {
+    internal enum class ChartType {
         Single,
         Composed,
+        Unknown,
+    }
+
+    private companion object Flags {
+        const val COLUMN_CHART = 1
+        const val LINE_CHART = 2
     }
 }

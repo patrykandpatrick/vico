@@ -16,12 +16,12 @@
 
 package pl.patrykgoworowski.vico.core.scroll
 
-class ScrollHandler(
+public class ScrollHandler(
     private val setScrollAmount: (Float) -> Unit = {},
     public var maxScrollDistance: Float = 0f,
 ) {
 
-    var currentScroll: Float = 0f
+    public var currentScroll: Float = 0f
         set(value) {
             field = getClampedScroll(value)
             setScrollAmount(value)

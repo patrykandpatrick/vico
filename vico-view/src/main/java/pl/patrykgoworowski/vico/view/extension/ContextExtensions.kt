@@ -21,6 +21,7 @@ import android.content.res.Configuration
 import android.content.res.TypedArray
 import android.os.Build
 import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
@@ -37,17 +38,18 @@ internal val Context.isLtr: Boolean
         resources.configuration.layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
     } else true
 
-val Context.isDarkMode: Boolean
+public val Context.isDarkMode: Boolean
     get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
             Configuration.UI_MODE_NIGHT_YES
 
 internal val Context.colors: Colors
     get() = if (isDarkMode) Colors.Dark else Colors.Light
 
-fun Context.getColorCompat(@ColorRes colorRes: Int) =
+@ColorInt
+public fun Context.getColorCompat(@ColorRes colorRes: Int): Int =
     ContextCompat.getColor(this, colorRes)
 
-fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null): Int {
+public fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null): Int {
     val tempArray = IntArray(1)
     tempArray[0] = attr
     val a = obtainStyledAttributes(null, tempArray)
@@ -58,7 +60,7 @@ fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null
     }
 }
 
-fun Context.getThemeAttribute(@AttrRes attr: Int): TypedArray {
+public fun Context.getThemeAttribute(@AttrRes attr: Int): TypedArray {
     val tempArray = IntArray(1)
     tempArray[0] = attr
     return obtainStyledAttributes(null, tempArray)

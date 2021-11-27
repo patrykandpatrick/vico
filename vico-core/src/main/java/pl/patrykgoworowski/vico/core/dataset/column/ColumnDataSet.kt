@@ -45,17 +45,17 @@ public open class ColumnDataSet(
     public var mergeMode: MergeMode = MergeMode.Grouped
 ) : BaseDataSet<EntryModel>() {
 
-    constructor(
+    public constructor(
         column: LineComponent,
         spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
     ) : this(columns = listOf(column), spacingDp = spacingDp)
 
-    constructor() : this(emptyList())
+    public constructor() : this(emptyList())
 
     private val heightMap = HashMap<Float, Float>()
     private val segmentProperties = MutableSegmentProperties()
 
-    override val markerLocationMap = HashMap<Float, MutableList<Marker.EntryModel>>()
+    override val markerLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun getMeasuredWidth(context: MeasureContext, model: EntryModel): Int = with(context) {
         val length = model.getEntriesLength()
@@ -66,7 +66,7 @@ public open class ColumnDataSet(
     override fun drawDataSet(
         context: ChartDrawContext,
         model: EntryModel,
-    ) = with(context) {
+    ): Unit = with(context) {
         canvas.inClip(bounds) {
             markerLocationMap.clear()
             calculateDrawSegmentSpecIfNeeded(model)

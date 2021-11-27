@@ -41,7 +41,7 @@ import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private const val RADII_ARRAY_SIZE = 8
 
-fun ComposeShape.chartShape(): Shape = object : Shape {
+public fun ComposeShape.chartShape(): Shape = object : Shape {
     private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
     private val matrix: Matrix by lazy { Matrix() }
 
@@ -89,7 +89,7 @@ fun ComposeShape.chartShape(): Shape = object : Shape {
 
 @Suppress("MagicNumber")
 @LongParameterListDrawFunction
-fun Path.addRoundRect(
+public fun Path.addRoundRect(
     left: Float,
     top: Float,
     right: Float,
@@ -108,42 +108,42 @@ fun Path.addRoundRect(
     addRoundRect(left, top, right, bottom, radii, Path.Direction.CCW)
 }
 
-fun Shapes.roundedCornerShape(
+public fun Shapes.roundedCornerShape(
     all: Dp = 0.dp,
-) = CorneredShape(
+): CorneredShape = CorneredShape(
     Corner.Absolute(all.value, RoundedCornerTreatment),
     Corner.Absolute(all.value, RoundedCornerTreatment),
     Corner.Absolute(all.value, RoundedCornerTreatment),
     Corner.Absolute(all.value, RoundedCornerTreatment),
 )
 
-fun Shapes.roundedCornerShape(
+public fun Shapes.roundedCornerShape(
     topLeft: Dp = 0.dp,
     topRight: Dp = 0.dp,
     bottomRight: Dp = 0.dp,
     bottomLeft: Dp = 0.dp,
-) = CorneredShape(
+): CorneredShape = CorneredShape(
     Corner.Absolute(topLeft.value, RoundedCornerTreatment),
     Corner.Absolute(topRight.value, RoundedCornerTreatment),
     Corner.Absolute(bottomRight.value, RoundedCornerTreatment),
     Corner.Absolute(bottomLeft.value, RoundedCornerTreatment),
 )
 
-fun Shapes.cutCornerShape(
+public fun Shapes.cutCornerShape(
     all: Dp = 0.dp,
-) = CorneredShape(
+): CorneredShape = CorneredShape(
     Corner.Absolute(all.value, CutCornerTreatment),
     Corner.Absolute(all.value, CutCornerTreatment),
     Corner.Absolute(all.value, CutCornerTreatment),
     Corner.Absolute(all.value, CutCornerTreatment),
 )
 
-fun Shapes.cutCornerShape(
+public fun Shapes.cutCornerShape(
     topLeft: Dp = 0.dp,
     topRight: Dp = 0.dp,
     bottomRight: Dp = 0.dp,
     bottomLeft: Dp = 0.dp,
-) = CorneredShape(
+): CorneredShape = CorneredShape(
     Corner.Absolute(topLeft.value, CutCornerTreatment),
     Corner.Absolute(topRight.value, CutCornerTreatment),
     Corner.Absolute(bottomRight.value, CutCornerTreatment),

@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 import kotlin.math.ceil
 
-class HorizontalAxis<Position : AxisPosition.Horizontal>(
+public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
 ) : Axis<Position>() {
 
@@ -38,7 +38,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     public var tickType: TickType = TickType.Minor
 
-    override fun drawBehindDataSet(context: ChartDrawContext) = with(context) {
+    override fun drawBehindDataSet(context: ChartDrawContext): Unit = with(context) {
         val scrollX = context.horizontalScroll
         val clipRestoreCount = canvas.save()
 
@@ -86,7 +86,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
-    override fun drawAboveDataSet(context: ChartDrawContext) = with(context) {
+    override fun drawAboveDataSet(context: ChartDrawContext): Unit = with(context) {
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val scrollX = horizontalScroll
@@ -172,7 +172,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         dataSetModel: DataSetModel,
         outInsets: Insets
-    ) = with(context) {
+    ): Unit = with(context) {
         with(outInsets) {
             setHorizontal(
                 if (tickType == TickType.Minor) tickThickness.half
@@ -183,7 +183,7 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    override fun getDesiredHeight(context: MeasureContext) = with(context) {
+    override fun getDesiredHeight(context: MeasureContext): Int = with(context) {
         ((if (position.isBottom) axisThickness else 0f) +
                 tickLength +
                 label?.getHeight(context = this).orZero).toInt()
@@ -191,11 +191,12 @@ class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getDesiredWidth(context: MeasureContext, labels: List<String>): Float = 0f
 
-    enum class TickType {
+    public enum class TickType {
         Minor, Major
     }
 
     public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
+
         public var tickType: TickType = TickType.Minor
 
         @Suppress("UNCHECKED_CAST")

@@ -28,7 +28,7 @@ public fun drawContext(
     fontScale: Float,
     isLtr: Boolean,
     zoom: Float = 1f,
-) = object : DrawContext {
+): DrawContext = object : DrawContext {
     override val canvas: Canvas = canvas
     override val density: Float = density
     override val fontScale: Float = fontScale

@@ -18,35 +18,35 @@ package pl.patrykgoworowski.vico.core.extension
 
 import kotlin.math.roundToInt
 
-const val PI_RAD = 180f
+public const val PI_RAD: Float = 180f
 
-inline val Int.half: Int
+public inline val Int.half: Int
     get() = this / 2
 
-inline val Float.half: Float
+public inline val Float.half: Float
     get() = this / 2
 
-inline val Float.doubled: Float
+public inline val Float.doubled: Float
     get() = this * 2
 
-inline val Number?.orZeroInt: Int
+public inline val Number?.orZeroInt: Int
     get() = this?.toInt() ?: 0
 
-inline val Float?.orZero: Float
+public inline val Float?.orZero: Float
     get() = this ?: 0f
 
-inline val Int?.orZero: Int
+public inline val Int?.orZero: Int
     get() = this ?: 0
 
-inline val Float.round: Float
+public inline val Float.round: Float
     get() = roundToInt().toFloat()
 
-inline val Float.piRad: Float
+public inline val Float.piRad: Float
     get() = this * PI_RAD
 
-fun Float.between(min: Float, max: Float): Float =
+public fun Float.between(min: Float, max: Float): Float =
     minOf(maxOf(this, min), max)
 
-fun Int.hasFlag(flag: Int): Boolean = (this and flag) == flag
+public fun Int.hasFlag(flag: Int): Boolean = (this and flag) == flag
 
 public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull { it >= 0f }

@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.dataset
 
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 
-inline fun List<DataEntry>.forEachIn(
+public inline fun List<DataEntry>.forEachIn(
     range: ClosedFloatingPointRange<Float>,
     action: (DataEntry) -> Unit,
 ) {

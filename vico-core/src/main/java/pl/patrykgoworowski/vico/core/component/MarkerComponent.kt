@@ -54,7 +54,7 @@ public open class MarkerComponent(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
-    ) = with(context) {
+    ): Unit = with(context) {
         applyShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
         drawGuideline(context, bounds, markedEntries)
         val halfIndicatorSize = indicatorSize.half.pixels
@@ -77,7 +77,7 @@ public open class MarkerComponent(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
-    ) = with(context) {
+    ): Unit = with(context) {
         val text = labelFormatter.getLabel(markedEntries)
         val entryX = markedEntries.averageOf { it.location.x }
         val x = overrideXPositionToFit(context, entryX, bounds, text)
@@ -142,7 +142,7 @@ public open class MarkerComponent(
         context: MeasureContext,
         dataSetModel: DataSetModel,
         outInsets: Insets
-    ) = with(context) {
+    ): Unit = with(context) {
         outInsets.top = markerHeight
     }
 }

@@ -28,7 +28,7 @@ import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 
 @Composable
-fun textComponent(
+public fun textComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,
     textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
     background: ShapeComponent<Shape>? = currentChartStyle.axis.axisLabelBackground,

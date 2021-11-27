@@ -37,10 +37,10 @@ import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
-typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
+public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
 @Composable
-fun axisLabelComponent(
+public fun axisLabelComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,
     textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
     background: ShapeComponent<ChartShape>? = currentChartStyle.axis.axisLabelBackground,
@@ -63,13 +63,13 @@ fun axisLabelComponent(
 )
 
 @Composable
-fun axisLineComponent(
+public fun axisLineComponent(
     color: Color = currentChartStyle.axis.axisLineColor,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
     shape: ChartShape = currentChartStyle.axis.axisLineShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-) = LineComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
@@ -78,13 +78,13 @@ fun axisLineComponent(
 )
 
 @Composable
-fun axisLineComponent(
+public fun axisLineComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
     shape: Shape = RectangleShape,
     brush: Brush? = null,
     margins: Dimensions = emptyDimensions(),
-) = LineComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = brush?.let(::StaticShader),
@@ -93,12 +93,12 @@ fun axisLineComponent(
 )
 
 @Composable
-fun axisTickComponent(
+public fun axisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
     dynamicShader: DynamicShader? = null,
     shape: ChartShape = currentChartStyle.axis.axisTickShape,
-) = LineComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
@@ -106,12 +106,12 @@ fun axisTickComponent(
 )
 
 @Composable
-fun axisTickComponent(
+public fun axisTickComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
     brush: Brush? = null,
     shape: Shape = RectangleShape,
-) = LineComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = brush?.let(::StaticShader),
@@ -119,13 +119,13 @@ fun axisTickComponent(
 )
 
 @Composable
-fun axisGuidelineComponent(
+public fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
     thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
     dynamicShader: DynamicShader? = null,
     shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
     margins: Dimensions = emptyDimensions(),
-) = LineComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = dynamicShader,

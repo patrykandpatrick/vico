@@ -29,7 +29,7 @@ private const val MAX_LINES_FIELD = "mMaximumVisibleLineCount"
 private const val LINE_COUNT_FIELD = "mLineCount"
 
 @Suppress("DEPRECATION")
-fun staticLayout(
+internal fun staticLayout(
     source: CharSequence,
     paint: TextPaint,
     width: Int,
@@ -75,15 +75,15 @@ fun staticLayout(
         ).setLineCount(maxLines)
     }
 
-var StaticLayout.maxLines: Int
+internal var StaticLayout.maxLines: Int
     set(value) = setFieldValue(MAX_LINES_FIELD, value)
     get() = getFieldValue(MAX_LINES_FIELD)
 
-fun StaticLayout.setLineCount(count: Int) = apply {
+internal fun StaticLayout.setLineCount(count: Int) = apply {
     setFieldValue(LINE_COUNT_FIELD, count)
 }
 
-fun StaticLayout.getBounds(outBounds: Rect) {
+internal fun StaticLayout.getBounds(outBounds: Rect) {
     getLineBounds(0, outBounds)
     if (lineCount > 1) {
         val top = outBounds.top
@@ -92,7 +92,7 @@ fun StaticLayout.getBounds(outBounds: Rect) {
     }
 }
 
-val StaticLayout.widestLineWidth: Float
+internal val StaticLayout.widestLineWidth: Float
     get() =
         (0 until lineCount).maxOf { lineIndex ->
             getLineWidth(lineIndex)

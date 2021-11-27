@@ -25,16 +25,16 @@ import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
-interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
+public interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
 
-    val position: Position
-    val dataSetBounds: RectF
-    val MeasureContext.axisThickness: Float
-    val MeasureContext.tickThickness: Float
-    val MeasureContext.guidelineThickness: Float
-    val tickLengthDp: Float
-    val MeasureContext.tickLength: Float
-    val restrictedBounds: List<RectF>
+    public val position: Position
+    public val dataSetBounds: RectF
+    public val MeasureContext.axisThickness: Float
+    public val MeasureContext.tickThickness: Float
+    public val MeasureContext.guidelineThickness: Float
+    public val tickLengthDp: Float
+    public val MeasureContext.tickLength: Float
+    public val restrictedBounds: List<RectF>
 
     public val MeasureContext.maxAnyAxisLineThickness: Float
         get() = maxOf(axisThickness, tickThickness, guidelineThickness)
@@ -45,42 +45,43 @@ interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
     public val labelAllLinesHeight: Int
         get() = label?.allLinesHeight ?: 0
 
-    var label: TextComponent?
-    var axis: LineComponent?
-    var tick: LineComponent?
-    var guideline: LineComponent?
-    var isLtr: Boolean
-    var valueFormatter: AxisValueFormatter
+    public var label: TextComponent?
+    public var axis: LineComponent?
+    public var tick: LineComponent?
+    public var guideline: LineComponent?
+    public var isLtr: Boolean
+    public var valueFormatter: AxisValueFormatter
 
-    fun drawBehindDataSet(
+    public fun drawBehindDataSet(
         context: ChartDrawContext,
     )
 
-    fun drawAboveDataSet(
+    public fun drawAboveDataSet(
         context: ChartDrawContext,
     )
 
-    fun setDataSetBounds(
+    public fun setDataSetBounds(
         left: Number,
         top: Number,
         right: Number,
         bottom: Number
     )
 
-    fun setDataSetBounds(bounds: RectF) =
+    public fun setDataSetBounds(bounds: RectF) {
         setDataSetBounds(
             bounds.left,
             bounds.top,
             bounds.right,
             bounds.bottom
         )
+    }
 
-    fun getDesiredWidth(
+    public fun getDesiredWidth(
         context: MeasureContext,
         labels: List<String>,
     ): Float
 
-    fun setRestrictedBounds(vararg bounds: RectF?)
+    public fun setRestrictedBounds(vararg bounds: RectF?)
 
-    fun getDesiredHeight(context: MeasureContext): Int
+    public fun getDesiredHeight(context: MeasureContext): Int
 }

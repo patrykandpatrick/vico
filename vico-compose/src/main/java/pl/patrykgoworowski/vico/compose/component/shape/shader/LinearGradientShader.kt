@@ -25,7 +25,7 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShad
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-fun horizontalGradient(
+public fun horizontalGradient(
     colors: Array<Color>,
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {
@@ -49,7 +49,7 @@ fun horizontalGradient(
 }
 
 @Composable
-fun verticalGradient(
+public fun verticalGradient(
     colors: Array<Color>,
     positions: FloatArray? = null,
 ): DynamicShader = object : CacheableDynamicShader() {

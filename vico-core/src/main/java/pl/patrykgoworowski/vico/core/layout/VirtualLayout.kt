@@ -40,7 +40,7 @@ public open class VirtualLayout {
         dataSetModel: DataSetModel,
         axisManager: AxisManager,
         vararg dataSetInsetter: DataSetInsetter?,
-    ) = with(context) {
+    ): Unit = with(context) {
         tempInsetters.clear()
         finalInsets.clear()
         tempInsets.clear()
@@ -75,7 +75,7 @@ public open class VirtualLayout {
         bottom = max(bottom, other.bottom)
     }
 
-    companion object {
-        private const val TEMP_INSETTERS_INITIAL_SIZE = 5
+    private companion object {
+        const val TEMP_INSETTERS_INITIAL_SIZE = 5
     }
 }

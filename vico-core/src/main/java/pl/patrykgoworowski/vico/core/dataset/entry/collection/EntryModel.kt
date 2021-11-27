@@ -19,20 +19,20 @@ package pl.patrykgoworowski.vico.core.dataset.entry.collection
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 import kotlin.math.abs
 
-interface EntryModel {
-    val entryCollections: List<List<DataEntry>>
-    val minX: Float
-    val maxX: Float
-    val minY: Float
-    val maxY: Float
-    val composedMaxY: Float
-    val step: Float
+public interface EntryModel {
+    public val entryCollections: List<List<DataEntry>>
+    public val minX: Float
+    public val maxX: Float
+    public val minY: Float
+    public val maxY: Float
+    public val composedMaxY: Float
+    public val step: Float
 
-    fun getEntriesLength(): Int =
+    public fun getEntriesLength(): Int =
         (((abs(maxX) - abs(minX)) / step) + 1).toInt()
 }
 
-fun entryModel(
+public fun entryModel(
     entryCollections: List<List<DataEntry>> = emptyList(),
     minX: Float = 1f,
     maxX: Float = 1f,
@@ -40,7 +40,7 @@ fun entryModel(
     maxY: Float = 1f,
     composedMaxY: Float = 1f,
     step: Float = 1f,
-) = object : EntryModel {
+): EntryModel = object : EntryModel {
     override val entryCollections: List<List<DataEntry>> = entryCollections
     override val minX: Float = minX
     override val maxX: Float = maxX

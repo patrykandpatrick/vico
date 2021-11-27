@@ -18,6 +18,6 @@ package pl.patrykgoworowski.vico.compose.extension
 
 import androidx.compose.runtime.MutableState
 
-fun <T> MutableState<T>.set(value: T) {
+public fun <T> MutableState<T>.set(value: T) {
     component2().invoke(value)
 }

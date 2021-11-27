@@ -16,12 +16,12 @@
 
 package pl.patrykgoworowski.vico.core.dataset.segment
 
-interface SegmentProperties {
-    val cellWidth: Float
-    val marginWidth: Float
-    val segmentWidth: Float
+public interface SegmentProperties {
+    public val cellWidth: Float
+    public val marginWidth: Float
+    public val segmentWidth: Float
 
-    operator fun component1(): Float = cellWidth
-    operator fun component2(): Float = marginWidth
-    operator fun component3(): Float = segmentWidth
+    public operator fun component1(): Float = cellWidth
+    public operator fun component2(): Float = marginWidth
+    public operator fun component3(): Float = segmentWidth
 }

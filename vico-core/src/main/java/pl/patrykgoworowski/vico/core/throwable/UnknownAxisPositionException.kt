@@ -16,6 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.throwable
 
-class UnknownAxisPositionException(
+public class UnknownAxisPositionException(
     receivedClass: Class<*>,
 ) : IllegalArgumentException("Got unknown AxisPosition class ${receivedClass.name}")

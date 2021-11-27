@@ -28,14 +28,15 @@ import pl.patrykgoworowski.vico.core.DEF_LABEL_SIZE
 import pl.patrykgoworowski.vico.core.Dimens.AXIS_LABEL_HORIZONTAL_PADDING
 import pl.patrykgoworowski.vico.core.Dimens.AXIS_LABEL_VERTICAL_PADDING
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.constants.FONT_WEIGHT_NORMAL
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.core.extension.firstNonNegativeOf
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.extension.colors
 
-fun TypedArray.getTextComponent(
+private const val FONT_WEIGHT_NORMAL = 500
+
+internal fun TypedArray.getTextComponent(
     context: Context
 ): TextComponent = use {
     val color = getColor(R.styleable.LabelStyle_labelColor, context.colors.axisLabelColor.toInt())

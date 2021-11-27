@@ -16,16 +16,16 @@
 
 package pl.patrykgoworowski.vico.core.layout
 
-interface MeasureContext {
+public interface MeasureContext {
     public val density: Float
     public val fontScale: Float
     public val isLtr: Boolean
     public val isHorizontalScrollEnabled: Boolean
     public val zoom: Float
 
-    val Float.pixels: Float
+    public val Float.pixels: Float
         get() = this * density
 
-    public fun toPixels(dp: Float) = dp * density
-    public fun toFontSize(sp: Float) = sp * fontScale
+    public fun toPixels(dp: Float): Float = dp * density
+    public fun toFontSize(sp: Float): Float = sp * fontScale
 }

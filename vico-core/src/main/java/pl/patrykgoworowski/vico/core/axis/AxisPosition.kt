@@ -16,30 +16,31 @@
 
 package pl.patrykgoworowski.vico.core.axis
 
-sealed class AxisPosition {
-    val isTop: Boolean
+public sealed class AxisPosition {
+
+    public val isTop: Boolean
         get() = this is Horizontal.Top
 
-    val isBottom: Boolean
+    public val isBottom: Boolean
         get() = this is Horizontal.Bottom
 
-    val isStart: Boolean
+    public val isStart: Boolean
         get() = this is Vertical.Start
 
-    val isEnd: Boolean
+    public val isEnd: Boolean
         get() = this is Vertical.End
 
-    fun isLeft(isLtr: Boolean): Boolean = this is Vertical.Start && isLtr
+    public fun isLeft(isLtr: Boolean): Boolean = this is Vertical.Start && isLtr
 
-    fun isRight(isLtr: Boolean): Boolean = this is Vertical.End && isLtr
+    public fun isRight(isLtr: Boolean): Boolean = this is Vertical.End && isLtr
 
-    sealed class Horizontal : AxisPosition() {
-        object Top : Horizontal()
-        object Bottom : Horizontal()
+    public sealed class Horizontal : AxisPosition() {
+        public object Top : Horizontal()
+        public object Bottom : Horizontal()
     }
 
-    sealed class Vertical : AxisPosition() {
-        object Start : Vertical()
-        object End : Vertical()
+    public sealed class Vertical : AxisPosition() {
+        public object Start : Vertical()
+        public object End : Vertical()
     }
 }

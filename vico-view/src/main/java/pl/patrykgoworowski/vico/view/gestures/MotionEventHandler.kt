@@ -20,17 +20,17 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
-import pl.patrykgoworowski.vico.core.extension.point
 import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 import pl.patrykgoworowski.vico.view.extension.fling
+import pl.patrykgoworowski.vico.view.extension.point
 import kotlin.math.abs
 
 public open class MotionEventHandler(
     private val scroller: OverScroller,
     private val scrollHandler: ScrollHandler,
     density: Float,
-    var isHorizontalScrollEnabled: Boolean = false,
+    public var isHorizontalScrollEnabled: Boolean = false,
     private val onTouchPoint: (Point?) -> Unit,
     private val requestInvalidate: () -> Unit,
 ) {
@@ -106,8 +106,8 @@ public open class MotionEventHandler(
         }
     }
 
-    companion object {
-        private const val VELOCITY_PIXELS = 400
-        private const val DRAG_THRESHOLD_PIXELS = 8
+    private companion object {
+        const val VELOCITY_PIXELS = 400
+        const val DRAG_THRESHOLD_PIXELS = 8
     }
 }

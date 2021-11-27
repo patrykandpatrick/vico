@@ -32,7 +32,7 @@ import pl.patrykgoworowski.vico.databinding.FragmentViewBinding
 
 @Composable
 @OptIn(ExperimentalCoroutinesApi::class)
-fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
+internal fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
     val marker = markerComponent()
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()

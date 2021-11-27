@@ -21,7 +21,7 @@ import android.graphics.BitmapShader
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-object DynamicShaders {
+public object DynamicShaders {
 
     public fun fromBitmap(
         bitmap: Bitmap,

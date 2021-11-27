@@ -21,7 +21,7 @@ import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 
-data class ThresholdLine(
+public data class ThresholdLine(
     val thresholdValue: Float,
     val thresholdLabel: String = thresholdValue.toString(),
     val lineComponent: LineComponent,
@@ -29,12 +29,13 @@ data class ThresholdLine(
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Bottom,
 ) {
-    enum class LabelHorizontalPosition(val position: HorizontalPosition) {
+
+    public enum class LabelHorizontalPosition(public val position: HorizontalPosition) {
         Start(HorizontalPosition.Start),
         End(HorizontalPosition.End),
     }
 
-    enum class LabelVerticalPosition(val position: VerticalPosition) {
+    public enum class LabelVerticalPosition(public val position: VerticalPosition) {
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
     }

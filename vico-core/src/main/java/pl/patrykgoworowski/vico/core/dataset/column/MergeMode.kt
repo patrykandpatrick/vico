@@ -18,10 +18,10 @@ package pl.patrykgoworowski.vico.core.dataset.column
 
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 
-enum class MergeMode {
+public enum class MergeMode {
     Stack, Grouped;
 
-    fun getMaxY(model: EntryModel): Float = when (this) {
+    public fun getMaxY(model: EntryModel): Float = when (this) {
         Grouped -> model.maxY
         Stack -> model.composedMaxY
     }

@@ -16,24 +16,24 @@
 
 package pl.patrykgoworowski.vico.core.dataset.insets
 
-class Insets(
-    var start: Float = 0f,
-    var top: Float = 0f,
-    var end: Float = 0f,
-    var bottom: Float = 0f,
+public class Insets(
+    public var start: Float = 0f,
+    public var top: Float = 0f,
+    public var end: Float = 0f,
+    public var bottom: Float = 0f,
 ) {
 
-    val horizontal: Float
+    public val horizontal: Float
         get() = start + end
 
-    val vertical: Float
+    public val vertical: Float
         get() = top + bottom
 
-    fun set(other: Insets) = set(other.start, other.top, other.end, other.bottom)
+    public fun set(other: Insets): Insets = set(other.start, other.top, other.end, other.bottom)
 
-    fun set(all: Float) = set(all, all, all, all)
+    public fun set(all: Float): Insets = set(all, all, all, all)
 
-    fun set(
+    public fun set(
         start: Float = 0f,
         top: Float = 0f,
         end: Float = 0f,
@@ -45,16 +45,16 @@ class Insets(
         this.bottom = bottom
     }
 
-    fun getLeft(isLtr: Boolean) = if (isLtr) start else end
+    public fun getLeft(isLtr: Boolean): Float = if (isLtr) start else end
 
-    fun getRight(isLtr: Boolean) = if (isLtr) end else start
+    public fun getRight(isLtr: Boolean): Float = if (isLtr) end else start
 
-    fun setHorizontal(value: Float) = apply {
+    public fun setHorizontal(value: Float): Insets = apply {
         start = if (value == 0f) value else value / 2
         end = if (value == 0f) value else value / 2
     }
 
-    fun setVertical(value: Float) = apply {
+    public fun setVertical(value: Float): Insets = apply {
         top = if (value == 0f) value else value / 2
         bottom = if (value == 0f) value else value / 2
     }

@@ -22,7 +22,7 @@ import pl.patrykgoworowski.vico.core.extension.appendCompat
 import pl.patrykgoworowski.vico.core.extension.sumOf
 import pl.patrykgoworowski.vico.core.extension.transformToSpannable
 
-object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
+public object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
 
     private const val PATTERN = "%.02f"
 

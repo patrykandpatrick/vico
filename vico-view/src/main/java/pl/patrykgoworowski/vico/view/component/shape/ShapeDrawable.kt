@@ -42,7 +42,7 @@ public class ShapeDrawable(
     private val height: Int = 0,
 ) : Drawable() {
 
-    constructor(
+    public constructor(
         context: Context,
         shape: Shape,
         width: Int = 0,
@@ -60,7 +60,7 @@ public class ShapeDrawable(
 
     private var tintList: ColorStateList? = null
 
-    val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = DEF_COLOR
     }
 
@@ -121,12 +121,12 @@ public class ShapeDrawable(
 
     override fun getIntrinsicHeight(): Int = height
 
-    companion object {
+    private companion object {
         const val DEF_COLOR = Color.BLACK
     }
 }
 
-fun Shape.toDrawable(
+public fun Shape.toDrawable(
     context: Context,
     intrinsicWidth: Int = 0,
     intrinsicHeight: Int = 0,

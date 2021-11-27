@@ -21,9 +21,9 @@ import pl.patrykgoworowski.vico.core.util.packInts
 import pl.patrykgoworowski.vico.core.util.unpackFloat1
 import pl.patrykgoworowski.vico.core.util.unpackFloat2
 
-fun Point(x: Float, y: Float) = Point(packFloats(x, y))
+public fun Point(x: Float, y: Float): Point = Point(packFloats(x, y))
 
-fun Point(x: Int, y: Int) = Point(packInts(x, y))
+public fun Point(x: Int, y: Int): Point = Point(packInts(x, y))
 
 @JvmInline
 public value class Point internal constructor(private val packedValue: Long) {
@@ -38,7 +38,7 @@ public value class Point internal constructor(private val packedValue: Long) {
 
     public operator fun component2(): Float = y
 
-    fun copy(
+    public fun copy(
         x: Float = this.x,
         y: Float = this.y,
     ): Point = Point(x, y)

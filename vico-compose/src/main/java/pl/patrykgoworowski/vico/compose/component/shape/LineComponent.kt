@@ -26,13 +26,13 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
-fun lineComponent(
+public fun lineComponent(
     color: Color,
     thickness: Dp,
     shape: Shape = Shapes.rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-) = LineComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
@@ -40,13 +40,13 @@ fun lineComponent(
     margins = margins,
 )
 
-fun lineComponent(
+public fun lineComponent(
     color: Color,
     thickness: Dp,
     shape: androidx.compose.ui.graphics.Shape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-) = LineComponent(
+): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = dynamicShader,

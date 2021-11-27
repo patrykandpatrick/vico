@@ -19,11 +19,11 @@ package pl.patrykgoworowski.vico.core.dimensions
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.extension.set
 
-interface BoundsAware {
+public interface BoundsAware {
 
-    val bounds: RectF
+    public val bounds: RectF
 
-    fun setBounds(
+    public fun setBounds(
         left: Number,
         top: Number,
         right: Number,
@@ -32,7 +32,7 @@ interface BoundsAware {
         bounds.set(left, top, right, bottom)
     }
 
-    fun setBounds(bounds: RectF) =
+    public fun setBounds(bounds: RectF): Unit =
         setBounds(
             bounds.left,
             bounds.top,
