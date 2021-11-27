@@ -22,7 +22,6 @@ import android.content.res.TypedArray
 import android.os.Build
 import androidx.annotation.AttrRes
 import androidx.annotation.ColorRes
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.vico.core.Colors

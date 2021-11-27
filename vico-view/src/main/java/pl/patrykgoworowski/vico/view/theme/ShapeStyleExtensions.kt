@@ -29,6 +29,8 @@ import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatme
 import pl.patrykgoworowski.vico.core.component.shape.corner.SharpCornerTreatment
 import pl.patrykgoworowski.vico.view.R
 
+private const val ONE_HUNDRED_PERCENT = 100
+
 fun TypedArray.getShape(
     context: Context,
 ): Shape {
@@ -92,7 +94,7 @@ private fun TypedArray.getCorner(
         )
     }
     isFraction(sizeIndex) -> {
-        val percentage = (getFraction(sizeIndex, defaultValue = 0f) * 100).toInt()
+        val percentage = (getFraction(sizeIndex, defaultValue = 0f) * ONE_HUNDRED_PERCENT).toInt()
         Corner.Relative(
             percentage = percentage,
             cornerTreatment = if (percentage == 0) {

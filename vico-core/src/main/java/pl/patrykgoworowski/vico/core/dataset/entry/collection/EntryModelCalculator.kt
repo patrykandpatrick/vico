@@ -95,7 +95,7 @@ open class EntryModelCalculator {
             currentEntry = iterator.next()
             previousEntry?.let { prevEntry ->
                 val difference = abs(currentEntry.x - prevEntry.x)
-                _step =  min(_step ?: difference, difference)
+                _step = min(_step ?: difference, difference)
             }
 
             previousEntry = currentEntry

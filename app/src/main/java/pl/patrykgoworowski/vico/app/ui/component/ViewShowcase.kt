@@ -23,20 +23,17 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 import pl.patrykgoworowski.vico.app.util.ViewShowcaseUtil
-import pl.patrykgoworowski.vico.app.util.getMarkerComponent
 import pl.patrykgoworowski.vico.databinding.FragmentViewBinding
 
 @Composable
 @OptIn(ExperimentalCoroutinesApi::class)
 fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
-    val context = LocalContext.current
-    val marker = getMarkerComponent(context = context)
+    val marker = markerComponent()
     val scrollState = rememberScrollState()
     val coroutineScope = rememberCoroutineScope()
 

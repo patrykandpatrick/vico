@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
-
 import android.view.MotionEvent
 import pl.patrykgoworowski.vico.core.model.Point
 
