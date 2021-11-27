@@ -59,7 +59,7 @@ private enum class Page(
 @OptIn(ExperimentalPagerApi::class)
 fun Showcase(showcaseViewModel: ShowcaseViewModel) {
     val pages = Page.values().toList()
-    val pagerState = rememberPagerState(pageCount = pages.size)
+    val pagerState = rememberPagerState(initialPage = 0)
     val coroutineScope = rememberCoroutineScope()
 
     MainTheme {
