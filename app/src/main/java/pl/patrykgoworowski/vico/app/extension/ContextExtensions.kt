@@ -63,10 +63,10 @@ val Configuration.isDarkMode: Boolean
 fun InvertedTheme(content: @Composable () -> Unit) {
     val configuration = Configuration(LocalConfiguration.current)
     val uiMode = configuration.uiMode
-    configuration.uiMode = if (configuration.isDarkMode) {
-        uiMode xor UI_MODE_NIGHT_MASK or UI_MODE_NIGHT_NO
+    configuration.uiMode = uiMode xor UI_MODE_NIGHT_MASK or if (configuration.isDarkMode) {
+        UI_MODE_NIGHT_NO
     } else {
-        uiMode xor UI_MODE_NIGHT_MASK or UI_MODE_NIGHT_YES
+        UI_MODE_NIGHT_YES
     }
 
     CompositionLocalProvider(LocalConfiguration provides configuration) {
