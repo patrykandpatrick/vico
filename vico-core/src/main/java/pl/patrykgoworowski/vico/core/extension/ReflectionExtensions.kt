@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
-inline fun <reified T, V> T.setFieldValue(fieldName: String, value: V) {
+public inline fun <reified T, V> T.setFieldValue(fieldName: String, value: V) {
     val field = T::class.java.getDeclaredField(fieldName)
     val wasAccessible = field.isAccessible
     field.isAccessible = true
@@ -25,7 +25,7 @@ inline fun <reified T, V> T.setFieldValue(fieldName: String, value: V) {
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified T, V> T.getFieldValue(fieldName: String): V {
+public inline fun <reified T, V> T.getFieldValue(fieldName: String): V {
     val field = T::class.java.getDeclaredField(fieldName)
     val wasAccessible = field.isAccessible
     field.isAccessible = true

@@ -21,6 +21,15 @@ plugins {
 apply from: "$rootDir/commonScripts.gradle"
 
 android {
+
+    defaultConfig {
+        minSdkVersion library.compose_min_sdk
+        targetSdkVersion library.target_sdk
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
     kotlinOptions {
         jvmTarget = '1.8'
         useIR = true

@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Paint
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-class StaticShader(private val brush: Brush) : DynamicShader {
+public class StaticShader(private val brush: Brush) : DynamicShader {
 
     private var shader: Shader? = null
 
@@ -47,4 +47,4 @@ class StaticShader(private val brush: Brush) : DynamicShader {
     }.also { shader = it }
 }
 
-fun Brush.toDynamicShader(): DynamicShader = StaticShader(this)
+public fun Brush.toDynamicShader(): DynamicShader = StaticShader(this)

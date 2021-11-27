@@ -21,7 +21,7 @@ import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun <S, T : AxisRenderer<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =
+internal fun <S, T : AxisRenderer<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =
     object : ReadWriteProperty<AxisManager, T?> {
         var field: T? = null
 

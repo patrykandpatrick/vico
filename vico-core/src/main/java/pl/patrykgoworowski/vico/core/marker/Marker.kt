@@ -30,9 +30,9 @@ public interface Marker : DataSetInsetter {
         markedEntries: List<EntryModel>,
     )
 
-    class EntryModel(
-        val location: Point,
-        val entry: DataEntry,
-        val color: Int,
+    public class EntryModel(
+        public val location: Point,
+        public val entry: DataEntry,
+        public val color: Int,
     )
 }

@@ -24,7 +24,7 @@ import androidx.annotation.RequiresApi
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 
 @RequiresApi(Build.VERSION_CODES.Q)
-fun composeShader(
+public fun composeShader(
     first: DynamicShader,
     second: DynamicShader,
     mode: BlendMode,
@@ -36,7 +36,7 @@ fun composeShader(
     )
 }
 
-fun composeShader(
+public fun composeShader(
     first: DynamicShader,
     second: DynamicShader,
     mode: PorterDuff.Mode,

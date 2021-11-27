@@ -22,7 +22,7 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
-class ChartView @JvmOverloads constructor(
+public class ChartView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,

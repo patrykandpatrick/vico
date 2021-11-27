@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.extension
 
 import android.graphics.RectF
 
-fun RectF.updateBounds(
+public fun RectF.updateBounds(
     left: Float = this.left,
     top: Float = this.top,
     right: Float = this.right,
@@ -27,7 +27,7 @@ fun RectF.updateBounds(
     set(left, top, right, bottom)
 }
 
-fun RectF.updateBy(
+public fun RectF.updateBy(
     left: Float = 0f,
     top: Float = 0f,
     right: Float = 0f,
@@ -41,7 +41,7 @@ fun RectF.updateBy(
     )
 }
 
-fun RectF.set(
+public fun RectF.set(
     left: Number,
     top: Number,
     right: Number,
@@ -50,14 +50,14 @@ fun RectF.set(
     set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
 }
 
-val RectF.isNotEmpty: Boolean
+public val RectF.isNotEmpty: Boolean
     get() = left != 0f && top != 0f && right != 0f && bottom != 0f
 
-fun RectF.clear() {
+public fun RectF.clear() {
     set(0, 0, 0, 0)
 }
 
-fun RectF.set(
+public fun RectF.set(
     isLtr: Boolean,
     left: Number = this.left,
     top: Number = this.top,
@@ -72,6 +72,6 @@ fun RectF.set(
     )
 }
 
-fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right
+public fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right
 
-fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
+public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left

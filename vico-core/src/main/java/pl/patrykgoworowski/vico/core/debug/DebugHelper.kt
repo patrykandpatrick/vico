@@ -35,7 +35,7 @@ internal object DebugHelper {
         top: Float,
         right: Float,
         bottom: Float,
-    ) = with(context) {
+    ): Unit = with(context) {
         if (!enabled) return@with
         debugPaint.strokeWidth = strokeWidthDp.pixels
         canvas.drawRect(left, top, right, bottom, debugPaint)

@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
 public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
-    protected val labels = ArrayList<String>()
+    protected val labels: ArrayList<String> = ArrayList()
 
     override val bounds: RectF = RectF()
     override val restrictedBounds: MutableList<RectF> = mutableListOf()

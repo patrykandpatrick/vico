@@ -18,11 +18,11 @@ package pl.patrykgoworowski.vico.core.dataset.renderer
 
 import pl.patrykgoworowski.vico.core.model.Point
 
-interface RendererViewState {
+public interface RendererViewState {
 
-    val markerTouchPoint: Point?
-    val horizontalScroll: Float
+    public val markerTouchPoint: Point?
+    public val horizontalScroll: Float
 
-    operator fun component1(): Point? = markerTouchPoint
-    operator fun component2(): Float = horizontalScroll
+    public operator fun component1(): Point? = markerTouchPoint
+    public operator fun component2(): Float = horizontalScroll
 }

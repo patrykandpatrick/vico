@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.component.shape.extension
 
 import android.graphics.Path
 
-fun Path.horizontalCubicTo(
+public fun Path.horizontalCubicTo(
     prevX: Float,
     prevY: Float,
     x: Float,

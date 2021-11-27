@@ -24,7 +24,7 @@ import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.extension.half
 
-class ComponentShader(
+public class ComponentShader(
     private val component: Component,
     private val componentSize: Float,
     private val checkeredArrangement: Boolean = true,

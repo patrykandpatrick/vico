@@ -58,7 +58,7 @@ private val chartModifier = Modifier.height(100.dp)
 
 @Preview("Sample Card With Column Chart", widthDp = 200)
 @Composable
-fun ColumnChartCard() = MainTheme {
+public fun ColumnChartCard(): Unit = MainTheme {
     val colors = MaterialTheme.colors
 
     SampleCard {
@@ -104,7 +104,7 @@ fun ColumnChartCard() = MainTheme {
 
 @Preview("Sample Card With Line Chart", widthDp = 200)
 @Composable
-fun LineChartCard() = MainTheme {
+public fun LineChartCard(): Unit = MainTheme {
     val colors = MaterialTheme.colors
 
     SampleCard {
@@ -157,7 +157,7 @@ fun LineChartCard() = MainTheme {
 }
 
 @Composable
-fun SampleCard(
+public fun SampleCard(
     chart: @Composable ColumnScope.() -> Unit,
 ) {
     Card(

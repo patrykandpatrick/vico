@@ -25,7 +25,7 @@ import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 
 @Composable
-fun ColumnChart(
+internal fun ColumnChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {

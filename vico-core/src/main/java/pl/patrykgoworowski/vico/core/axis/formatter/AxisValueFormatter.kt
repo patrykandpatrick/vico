@@ -18,8 +18,9 @@ package pl.patrykgoworowski.vico.core.axis.formatter
 
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 
-fun interface AxisValueFormatter {
-    fun formatValue(
+public fun interface AxisValueFormatter {
+
+    public fun formatValue(
         value: Float,
         index: Int,
         dataSetModel: DataSetModel,

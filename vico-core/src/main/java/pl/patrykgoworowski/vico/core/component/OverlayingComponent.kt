@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.component
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-class OverlayingComponent(
+public class OverlayingComponent(
     public val outer: Component,
     public val inner: Component,
     public val insidePaddingStartDp: Float = 0f,
@@ -28,7 +28,7 @@ class OverlayingComponent(
     public val insidePaddingBottomDp: Float = 0f,
 ) : Component() {
 
-    constructor(
+    public constructor(
         outer: Component,
         inner: Component,
         innerPaddingAllDp: Float = 0f,
@@ -56,7 +56,7 @@ class OverlayingComponent(
         top: Float,
         right: Float,
         bottom: Float
-    ) = with(context) {
+    ): Unit = with(context) {
         val leftWithMargin = left + margins.startDp.pixels
         val topWithMargin = top + margins.topDp.pixels
         val rightWithMargin = right - margins.endDp.pixels

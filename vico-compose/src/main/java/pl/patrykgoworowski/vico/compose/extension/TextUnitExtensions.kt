@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SIZE
 
-fun TextUnit.pixelSize(): Float =
+public fun TextUnit.pixelSize(): Float =
     when (type) {
         TextUnitType.Sp -> value
         TextUnitType.Em -> value
-        else -> DEF_LABEL_SIZE.toFloat()
+        else -> DEF_LABEL_SIZE
     }

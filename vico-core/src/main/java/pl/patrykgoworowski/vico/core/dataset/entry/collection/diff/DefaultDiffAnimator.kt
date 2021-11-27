@@ -22,7 +22,7 @@ import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.view.animation.AccelerateDecelerateInterpolator
 
-class DefaultDiffAnimator(
+public class DefaultDiffAnimator(
     animationDuration: Long = DEFAULT_ANIM_DURATION,
     animationInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
 ) : DiffAnimator {
@@ -68,7 +68,7 @@ class DefaultDiffAnimator(
         onProgress = null
     }
 
-    companion object {
-        public const val DEFAULT_ANIM_DURATION = 250L
+    private companion object {
+        const val DEFAULT_ANIM_DURATION = 250L
     }
 }

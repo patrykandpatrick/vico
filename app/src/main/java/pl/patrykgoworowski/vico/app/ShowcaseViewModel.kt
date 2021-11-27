@@ -24,17 +24,19 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.plus
 
-class ShowcaseViewModel : ViewModel() {
+public class ShowcaseViewModel : ViewModel() {
 
     private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
     private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)
 
-    val entries = EntryList()
-    val multiEntries = EntryList()
+    public val entries: EntryList = EntryList()
+    public val multiEntries: EntryList = EntryList()
 
-    val composedEntries = multiEntries + entries
+    public val composedEntries: ComposedEntryCollection<EntryModel> = multiEntries + entries
 
     init {
         viewModelScope.launch {
@@ -52,9 +54,9 @@ class ShowcaseViewModel : ViewModel() {
         }
     }
 
-    companion object {
-        private const val GENERATOR_X_RANGE_TOP = 96
-        private const val MULTI_GENERATOR_X_RANGE_TOP = 32
-        private const val UPDATE_FREQUENCY = 2000L
+    private companion object {
+        const val GENERATOR_X_RANGE_TOP = 96
+        const val MULTI_GENERATOR_X_RANGE_TOP = 32
+        const val UPDATE_FREQUENCY = 2000L
     }
 }

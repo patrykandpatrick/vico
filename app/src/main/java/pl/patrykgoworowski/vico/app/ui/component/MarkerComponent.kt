@@ -29,7 +29,6 @@ import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
 import pl.patrykgoworowski.vico.compose.component.overlayingComponent
 import pl.patrykgoworowski.vico.compose.component.shape.markerComponent
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
-import pl.patrykgoworowski.vico.compose.extension.pixels
 import pl.patrykgoworowski.vico.compose.extension.setShadow
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
@@ -39,7 +38,7 @@ import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 @Composable
-fun markerComponent(): Marker {
+public fun markerComponent(): Marker {
     val colors = MaterialTheme.colors
     val label = textComponent(
         color = colors.onSurface,
@@ -50,7 +49,8 @@ fun markerComponent(): Marker {
     ).apply {
         setPadding(
             horizontal = currentChartStyle.marker.horizontalPadding,
-            vertical = currentChartStyle.marker.verticalPadding)
+            vertical = currentChartStyle.marker.verticalPadding
+        )
     }
 
     val indicatorInner = ShapeComponent(pillShape, colors.surface.toArgb())
@@ -77,8 +77,6 @@ fun markerComponent(): Marker {
         )
     )
 
-    val indicatorShadowSize = 12.dp.pixels
-
     return markerComponent(
         label = label,
         indicator = indicator,
@@ -91,7 +89,7 @@ fun markerComponent(): Marker {
     ).apply {
         onApplyEntryColor = { color ->
             indicatorCenter.color = color
-            indicatorCenter.setShadow(indicatorShadowSize, color = color)
+            indicatorCenter.setShadow(radius = 12.dp, color = Color(color))
             indicatorOuter.color = color.copyColor(alpha = 32)
         }
         indicatorSize = currentChartStyle.marker.indicatorSize.value

@@ -20,9 +20,9 @@ import android.graphics.RectF
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-fun interface DynamicShader {
+public fun interface DynamicShader {
 
-    fun provideShader(
+    public fun provideShader(
         context: DrawContext,
         bounds: RectF,
     ): Shader = provideShader(
@@ -33,7 +33,7 @@ fun interface DynamicShader {
         bottom = bounds.bottom
     )
 
-    fun provideShader(
+    public fun provideShader(
         context: DrawContext,
         left: Float,
         top: Float,

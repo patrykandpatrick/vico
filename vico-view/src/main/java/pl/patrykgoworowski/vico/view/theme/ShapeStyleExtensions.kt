@@ -31,7 +31,7 @@ import pl.patrykgoworowski.vico.view.R
 
 private const val ONE_HUNDRED_PERCENT = 100
 
-fun TypedArray.getShape(
+internal fun TypedArray.getShape(
     context: Context,
 ): Shape {
     val shape = CorneredShape(

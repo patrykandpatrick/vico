@@ -54,12 +54,18 @@ import pl.patrykgoworowski.vico.view.layout.MutableMeasureContext
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 import kotlin.properties.Delegates.observable
 
-public abstract class BaseChartView<Model : EntryModel>(
+public abstract class BaseChartView<Model : EntryModel> internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     chartType: ThemeHandler.ChartType,
 ) : View(context, attrs, defStyleAttr) {
+
+    public constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : this(context, attrs, defStyleAttr, ThemeHandler.ChartType.Unknown)
 
     private val contentBounds = RectF()
     private val dataSetModel = MutableDataSetModel()
@@ -93,7 +99,7 @@ public abstract class BaseChartView<Model : EntryModel>(
 
     private var markerTouchPoint: Point? = null
 
-    protected val themeHandler = ThemeHandler(context, attrs, chartType)
+    internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
 
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
@@ -106,7 +112,7 @@ public abstract class BaseChartView<Model : EntryModel>(
             measureContext.isHorizontalScrollEnabled = value
         }
 
-    public var isZoomEnabled = true
+    public var isZoomEnabled: Boolean = true
 
     public var chart: DataSet<Model>? by observable(null) { _, _, _ ->
         tryUpdateBoundsAndInvalidate()
@@ -166,7 +172,7 @@ public abstract class BaseChartView<Model : EntryModel>(
         markerTouchPoint = point
     }
 
-    override fun onDraw(canvas: Canvas) = withChartAndModel { chart, model ->
+    override fun onDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
         chart.setToAxisModel(dataSetModel, model)
         motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         if (scroller.computeScrollOffset()) {

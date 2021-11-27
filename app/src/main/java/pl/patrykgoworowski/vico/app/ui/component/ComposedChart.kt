@@ -28,7 +28,7 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
 
 @Composable
-fun ComposedChart(
+internal fun ComposedChart(
     modifier: Modifier = Modifier,
     model: ComposedEntryCollection<EntryModel>,
 ) {

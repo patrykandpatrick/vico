@@ -25,10 +25,10 @@ import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
 import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
 
-fun Shapes.roundedCornersShape(all: Float): Shape =
+public fun Shapes.roundedCornersShape(all: Float): Shape =
     roundedCornersShape(all, all, all, all)
 
-fun Shapes.roundedCornersShape(
+public fun Shapes.roundedCornersShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,
@@ -40,10 +40,10 @@ fun Shapes.roundedCornersShape(
     Corner.Absolute(bottomLeft, RoundedCornerTreatment),
 )
 
-fun Shapes.cutCornerShape(all: Float): Shape =
+public fun Shapes.cutCornerShape(all: Float): Shape =
     cutCornerShape(all, all, all, all)
 
-fun Shapes.cutCornerShape(
+public fun Shapes.cutCornerShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,

@@ -28,7 +28,7 @@ import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.extension.colors
 
-fun TypedArray.getLineComponent(
+internal fun TypedArray.getLineComponent(
     context: Context,
     defaultColor: Int = context.colors.axisLineColor.toInt(),
     defaultThickness: Float = Dimens.AXIS_LINE_WIDTH,
@@ -58,7 +58,7 @@ fun TypedArray.getLineComponent(
     )
 }
 
-fun TypedArray.getComponent(
+internal fun TypedArray.getComponent(
     context: Context,
 ): Component? = use { array ->
 

@@ -43,13 +43,13 @@ import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 
-data class ChartStyle(
+public data class ChartStyle(
     val axis: Axis,
     val columnChart: ColumnChart,
     val lineChart: LineChart,
     val marker: Marker,
 ) {
-    data class Axis(
+    public data class Axis(
         val axisLabelBackground: ShapeComponent<Shape>? = null,
         val axisLabelColor: Color,
         val axisLabelTextSize: TextUnit = Dimens.AXIS_LABEL_SIZE.sp,
@@ -73,13 +73,13 @@ data class ChartStyle(
         val axisValueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter()
     )
 
-    data class ColumnChart(
+    public data class ColumnChart(
         val columns: List<LineComponent>,
         val outsideSpacing: Dp = Dimens.COLUMN_OUTSIDE_SPACING.dp,
         val innerSpacing: Dp = Dimens.COLUMN_INSIDE_SPACING.dp,
     )
 
-    data class LineChart(
+    public data class LineChart(
         val getPoint: Component? = null,
         val pointSize: Dp,
         val spacing: Dp,
@@ -88,14 +88,14 @@ data class ChartStyle(
         val lineBackgroundShader: DynamicShader? = null,
     )
 
-    data class Marker(
+    public data class Marker(
         val indicatorSize: Dp = Dimens.MARKER_INDICATOR_SIZE.dp,
         val horizontalPadding: Dp = Dimens.MARKER_HORIZONTAL_PADDING.dp,
         val verticalPadding: Dp = Dimens.MARKER_VERTICAL_PADDING.dp,
     )
 }
 
-object LocalChartStyle {
+public object LocalChartStyle {
 
     private val LocalLightStyle: ProvidableCompositionLocal<ChartStyle> =
         compositionLocalOf { getChartStyle(Colors.Light) }
@@ -162,5 +162,5 @@ object LocalChartStyle {
         LocalProvidedStyle.provides(chartStyle)
 }
 
-val currentChartStyle: ChartStyle
+public val currentChartStyle: ChartStyle
     @Composable get() = LocalChartStyle.current

@@ -23,11 +23,11 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedE
 import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
 
-class RandomEntriesGenerator(
+public class RandomEntriesGenerator(
     private val xRange: IntRange = 0..X_RANGE_TOP,
     private val yRange: IntRange = 0..Y_RANGE_TOP
 ) {
-    fun generateRandomEntries(): List<FloatEntry> {
+    public fun generateRandomEntries(): List<FloatEntry> {
         val result = ArrayList<FloatEntry>()
         val yLength = yRange.last - yRange.first
         for (x in xRange) {
@@ -36,18 +36,18 @@ class RandomEntriesGenerator(
         return result
     }
 
-    fun randomEntryModel(): EntryModel =
+    public fun randomEntryModel(): EntryModel =
         EntryList(generateRandomEntries(), animateChanges = false).model
 
-    fun randomComposedEntryModel(): ComposedEntryModel<EntryModel> =
+    public fun randomComposedEntryModel(): ComposedEntryModel<EntryModel> =
         ComposedEntryCollection(
             EntryList(generateRandomEntries(), animateChanges = false),
             EntryList(generateRandomEntries(), animateChanges = false),
             EntryList(generateRandomEntries(), animateChanges = false),
         ).model
 
-    companion object {
-        private const val X_RANGE_TOP = 10
-        private const val Y_RANGE_TOP = 20
+    private companion object {
+        const val X_RANGE_TOP = 10
+        const val Y_RANGE_TOP = 20
     }
 }

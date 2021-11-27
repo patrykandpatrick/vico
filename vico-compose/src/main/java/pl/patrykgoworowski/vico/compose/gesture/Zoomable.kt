@@ -27,13 +27,13 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.debugInspectorInfo
 
-typealias OnZoom = (centroid: Offset, zoomChange: Float) -> Unit
+public typealias OnZoom = (centroid: Offset, zoomChange: Float) -> Unit
 
 @SuppressLint("UnnecessaryComposedModifier")
-fun Modifier.zoomable(
+public fun Modifier.zoomable(
     onZoom: OnZoom,
     enabled: Boolean = true,
-) = composed(
+): Modifier = composed(
     factory = {
         val block: suspend PointerInputScope.() -> Unit = remember {
             {

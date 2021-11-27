@@ -16,9 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.dimensions
 
-fun floatDimensions(
+public fun floatDimensions(
     startDp: Float = 0f,
     topDp: Float = 0f,
     endDp: Float = 0f,
     bottomDp: Float = 0f,
-) = MutableDimensions(startDp, topDp, endDp, bottomDp)
+): MutableDimensions = MutableDimensions(startDp, topDp, endDp, bottomDp)

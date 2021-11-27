@@ -19,11 +19,11 @@ package pl.patrykgoworowski.vico.core.dataset.composed
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 
-interface ComposedEntryModel<Model : EntryModel> : EntryModel {
-    val composedEntryCollections: List<Model>
+public interface ComposedEntryModel<Model : EntryModel> : EntryModel {
+    public val composedEntryCollections: List<Model>
 }
 
-fun <Model : EntryModel> composedEntryModel(
+public fun <Model : EntryModel> composedEntryModel(
     composedEntryCollections: List<Model> = emptyList(),
     entryCollections: List<List<DataEntry>> = emptyList(),
     minX: Float = 1f,
@@ -32,7 +32,7 @@ fun <Model : EntryModel> composedEntryModel(
     maxY: Float = 1f,
     composedMaxY: Float = 1f,
     step: Float = 1f,
-) = object : ComposedEntryModel<Model> {
+): ComposedEntryModel<Model> = object : ComposedEntryModel<Model> {
     override val composedEntryCollections: List<Model> = composedEntryCollections
     override val entryCollections: List<List<DataEntry>> = entryCollections
     override val minX: Float = minX

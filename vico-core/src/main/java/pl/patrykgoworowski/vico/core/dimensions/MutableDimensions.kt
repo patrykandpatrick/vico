@@ -16,51 +16,53 @@
 
 package pl.patrykgoworowski.vico.core.dimensions
 
-class MutableDimensions(
+public class MutableDimensions(
     override var startDp: Float,
     override var topDp: Float,
     override var endDp: Float,
     override var bottomDp: Float,
 ) : Dimensions {
 
-    val horizontalDp: Float
+    public val horizontalDp: Float
         get() = startDp + endDp
 
-    val verticalDp: Float
+    public val verticalDp: Float
         get() = topDp + bottomDp
 
-    fun set(other: Dimensions) = set(other.startDp, other.topDp, other.endDp, other.bottomDp)
+    public fun set(other: Dimensions): MutableDimensions =
+        set(other.startDp, other.topDp, other.endDp, other.bottomDp)
 
-    fun set(all: Float) = set(all, all, all, all)
+    public fun set(all: Float): MutableDimensions =
+        set(all, all, all, all)
 
-    fun set(
+    public fun set(
         startDp: Float = 0f,
         topDp: Float = 0f,
         endDp: Float = 0f,
         bottomDp: Float = 0f,
-    ): Dimensions = apply {
+    ): MutableDimensions = apply {
         this.startDp = startDp
         this.topDp = topDp
         this.endDp = endDp
         this.bottomDp = bottomDp
     }
 
-    fun setLeft(isLtr: Boolean, valueDp: Float) = apply {
+    public fun setLeft(isLtr: Boolean, valueDp: Float): MutableDimensions = apply {
         if (isLtr) startDp = valueDp
         else endDp = valueDp
     }
 
-    fun setRight(isLtr: Boolean, valueDp: Float) = apply {
+    public fun setRight(isLtr: Boolean, valueDp: Float): MutableDimensions = apply {
         if (isLtr) endDp = valueDp
         else startDp = valueDp
     }
 
-    fun setHorizontal(valueDp: Float) = apply {
+    public fun setHorizontal(valueDp: Float): MutableDimensions = apply {
         startDp = if (valueDp == 0f) valueDp else valueDp / 2
         endDp = if (valueDp == 0f) valueDp else valueDp / 2
     }
 
-    fun setVertical(valueDp: Float) = apply {
+    public fun setVertical(valueDp: Float): MutableDimensions = apply {
         topDp = if (valueDp == 0f) valueDp else valueDp / 2
         bottomDp = if (valueDp == 0f) valueDp else valueDp / 2
     }
@@ -70,13 +72,13 @@ class MutableDimensions(
     }
 }
 
-fun dimensionsOf(allDp: Float) = dimensionsOf(allDp, allDp, allDp, allDp)
+public fun dimensionsOf(allDp: Float): MutableDimensions = dimensionsOf(allDp, allDp, allDp, allDp)
 
-fun dimensionsOf(
+public fun dimensionsOf(
     startDp: Float = 0f,
     topDp: Float = 0f,
     endDp: Float = 0f,
     bottomDp: Float = 0f,
-) = MutableDimensions(startDp, topDp, endDp, bottomDp)
+): MutableDimensions = MutableDimensions(startDp, topDp, endDp, bottomDp)
 
-fun emptyDimensions() = dimensionsOf()
+public fun emptyDimensions(): MutableDimensions = dimensionsOf()

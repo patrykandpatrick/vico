@@ -26,12 +26,12 @@ import pl.patrykgoworowski.vico.compose.component.ChartShape
 import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 
-fun <T : ChartShape> ShapeComponent<T>.setShadow(
+public fun <T : ChartShape> ShapeComponent<T>.setShadow(
     radius: Dp,
     dx: Dp = 0.dp,
     dy: Dp = 0.dp,
     color: Color = Color(DEF_SHADOW_COLOR),
-) = setShadow(
+): ShapeComponent<T> = setShadow(
     radius = radius.value,
     dx = dx.value,
     dy = dy.value,

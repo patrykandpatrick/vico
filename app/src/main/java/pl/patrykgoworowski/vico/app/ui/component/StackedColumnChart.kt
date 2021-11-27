@@ -27,7 +27,7 @@ import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
 
 @Composable
-fun StackedColumnChart(
+internal fun StackedColumnChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {

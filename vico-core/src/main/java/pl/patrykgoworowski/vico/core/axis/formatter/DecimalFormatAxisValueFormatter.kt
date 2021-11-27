@@ -20,13 +20,13 @@ import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
-class DecimalFormatAxisValueFormatter(
+public class DecimalFormatAxisValueFormatter(
     private val decimalFormat: DecimalFormat
 ) : AxisValueFormatter {
 
-    constructor() : this(DEF_FORMAT)
+    public constructor() : this(DEF_FORMAT)
 
-    constructor(
+    public constructor(
         pattern: String,
         roundingMode: RoundingMode = RoundingMode.HALF_UP,
     ) : this(getDecimalFormat(pattern, roundingMode))
@@ -37,7 +37,7 @@ class DecimalFormatAxisValueFormatter(
         dataSetModel: DataSetModel
     ): String = decimalFormat.format(value)
 
-    companion object {
+    private companion object {
         private const val DEF_FORMAT = "#.##"
 
         private fun getDecimalFormat(

@@ -25,7 +25,7 @@ import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
 import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
 
 @Composable
-fun columnDataSet(
+public fun columnDataSet(
     columns: List<LineComponent> = currentChartStyle.columnChart.columns,
     spacing: Dp = currentChartStyle.columnChart.outsideSpacing,
     innerSpacing: Dp = currentChartStyle.columnChart.innerSpacing,

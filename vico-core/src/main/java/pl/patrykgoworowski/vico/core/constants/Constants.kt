@@ -16,11 +16,4 @@
 
 package pl.patrykgoworowski.vico.core.constants
 
-const val FONT_WEIGHT_NORMAL = 500
-
-const val ERR_REPEATING_COLLECTION_EMPTY = "Cannot get repeated item from empty collection."
-
-object Flags {
-    const val COLUMN_CHART = 1
-    const val LINE_CHART = 2
-}
+internal const val ERR_REPEATING_COLLECTION_EMPTY = "Cannot get repeated item from empty collection."

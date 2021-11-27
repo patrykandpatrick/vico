@@ -16,6 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.throwable
 
-class IllegalPercentageException(percentage: Int) : IllegalArgumentException(
+internal class IllegalPercentageException(percentage: Int) : IllegalArgumentException(
     "Expected a percentage (0-100), got $percentage."
 )

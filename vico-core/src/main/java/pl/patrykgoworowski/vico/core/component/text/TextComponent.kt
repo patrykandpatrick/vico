@@ -41,7 +41,7 @@ import pl.patrykgoworowski.vico.core.text.widestLineWidth
 import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
-typealias OnPreDrawListener =
+public typealias OnPreDrawListener =
             (context: DrawContext, left: Float, top: Float, right: Float, bottom: Float) -> Unit
 
 public open class TextComponent(
@@ -53,7 +53,7 @@ public open class TextComponent(
     override val padding: MutableDimensions = emptyDimensions(),
 ) : Padding, Margins by DefaultMargins() {
 
-    public val textPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
+    public val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
     public val lineHeight: Int
         get() = textPaint.lineHeight.roundToInt()
@@ -82,7 +82,7 @@ public open class TextComponent(
         verticalPosition: VerticalPosition = VerticalPosition.Center,
         width: Int = Int.MAX_VALUE,
         onPreDraw: OnPreDrawListener? = null,
-    ) = with(context) {
+    ): Unit = with(context) {
 
         if (text.isBlank()) return
         layout = getLayout(text, fontScale, width)
@@ -133,7 +133,7 @@ public open class TextComponent(
         context: MeasureContext,
         baseXPosition: Float,
         width: Float,
-    ) = with(context) {
+    ): Float = with(context) {
         when (this@getTextStartPosition) {
             HorizontalPosition.Start ->
                 if (isLtr) getTextLeftPosition(baseXPosition)
@@ -157,7 +157,7 @@ public open class TextComponent(
         context: MeasureContext,
         textY: Float,
         layoutHeight: Float,
-    ) = with(context) {
+    ): Float = with(context) {
         when (this@getTextTopPosition) {
             VerticalPosition.Top ->
                 textY + layoutHeight.half + padding.topDp.pixels + margins.topDp.pixels
@@ -173,7 +173,7 @@ public open class TextComponent(
         verticalPosition: VerticalPosition,
         textY: Float,
         layoutHeight: Float,
-    ) = verticalPosition.getTextTopPosition(context, textY, layoutHeight)
+    ): Float = verticalPosition.getTextTopPosition(context, textY, layoutHeight)
 
     public fun getWidth(
         context: MeasureContext,
@@ -210,7 +210,7 @@ public open class TextComponent(
             staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
         }
 
-    companion object {
+    private companion object {
         const val TEXT_MEASUREMENT_CHAR = "1"
     }
 }

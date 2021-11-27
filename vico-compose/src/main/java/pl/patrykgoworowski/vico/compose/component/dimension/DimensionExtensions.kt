@@ -22,12 +22,22 @@ import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 
 @Composable
-fun dimensionsOf(all: Dp) = dimensionsOf(all, all, all, all)
+public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
+    start = all,
+    top = all,
+    end = all,
+    bottom = all
+)
 
 @Composable
-fun dimensionsOf(
+public fun dimensionsOf(
     start: Dp = 0.dp,
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
-) = MutableDimensions(start.value, top.value, end.value, bottom.value)
+): MutableDimensions = MutableDimensions(
+    startDp = start.value,
+    topDp = top.value,
+    endDp = end.value,
+    bottomDp = bottom.value
+)

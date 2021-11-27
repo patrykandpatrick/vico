@@ -22,7 +22,7 @@ import pl.patrykgoworowski.vico.core.draw.DrawContext
 
 public abstract class Component : Margins by DefaultMargins() {
 
-    abstract fun draw(
+    public abstract fun draw(
         context: DrawContext,
         left: Float,
         top: Float,

@@ -19,13 +19,13 @@ package pl.patrykgoworowski.vico.core.axis.formatter
 import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
 import java.text.DecimalFormat
 
-class PercentageFormatAxisValueFormatter(
+public class PercentageFormatAxisValueFormatter(
     pattern: String
 ) : AxisValueFormatter {
 
     private val decimalFormat = DecimalFormat(pattern)
 
-    constructor() : this(DEF_PATTERN)
+    public constructor() : this(DEF_PATTERN)
 
     override fun formatValue(
         value: Float,
@@ -36,7 +36,7 @@ class PercentageFormatAxisValueFormatter(
         return decimalFormat.format(percentage)
     }
 
-    companion object {
+    private companion object {
         private const val DEF_PATTERN = "#.##%"
     }
 }

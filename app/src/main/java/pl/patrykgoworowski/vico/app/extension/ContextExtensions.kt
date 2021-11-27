@@ -30,22 +30,22 @@ import androidx.core.content.ContextCompat
 import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.ui.theme.MainTheme
 
-val Context.flickrPink: Int
+internal val Context.flickrPink: Int
     get() = ContextCompat.getColor(this, R.color.flickr_pink)
 
-val Context.byzantine: Int
+internal val Context.byzantine: Int
     get() = ContextCompat.getColor(this, R.color.byzantine)
 
-val Context.trypanPurple: Int
+internal val Context.trypanPurple: Int
     get() = ContextCompat.getColor(this, R.color.trypan_purple)
 
-val Context.purple: Int
+internal val Context.purple: Int
     get() = ContextCompat.getColor(this, R.color.purple)
 
-inline fun Context.color(resIdBlock: () -> Int): Int =
+internal inline fun Context.color(resIdBlock: () -> Int): Int =
     ContextCompat.getColor(this, resIdBlock())
 
-fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null): Int {
+internal fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null): Int {
     val tempArray = IntArray(1)
     tempArray[0] = attr
     val a = obtainStyledAttributes(null, tempArray)
@@ -56,11 +56,11 @@ fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null
     }
 }
 
-val Configuration.isDarkMode: Boolean
+internal val Configuration.isDarkMode: Boolean
     get() = (uiMode and UI_MODE_NIGHT_MASK) == UI_MODE_NIGHT_YES
 
 @Composable
-fun InvertedTheme(content: @Composable () -> Unit) {
+internal fun InvertedTheme(content: @Composable () -> Unit) {
     val configuration = Configuration(LocalConfiguration.current)
     val uiMode = configuration.uiMode
     configuration.uiMode = uiMode xor UI_MODE_NIGHT_MASK or if (configuration.isDarkMode) {

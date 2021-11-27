@@ -25,4 +25,4 @@ package pl.patrykgoworowski.vico.core.annotation
 
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)
-annotation class LongParameterListDrawFunction
+public annotation class LongParameterListDrawFunction

@@ -25,13 +25,13 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-fun DynamicShaders.fromComponent(
+public fun DynamicShaders.fromComponent(
     component: Component,
     componentSize: Float,
     checkeredArrangement: Boolean = true,
     tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     tileYMode: Shader.TileMode = tileXMode,
-) = ComponentShader(
+): ComponentShader = ComponentShader(
     component = component,
     componentSize = componentSize,
     checkeredArrangement = checkeredArrangement,
@@ -41,7 +41,7 @@ fun DynamicShaders.fromComponent(
 
 public fun DynamicShaders.horizontalGradient(
     vararg colors: Int,
-) = horizontalGradient(colors)
+): DynamicShader = horizontalGradient(colors)
 
 public fun DynamicShaders.horizontalGradient(
     colors: IntArray,
@@ -71,7 +71,7 @@ public fun DynamicShaders.horizontalGradient(
 
 public fun DynamicShaders.verticalGradient(
     vararg colors: Int,
-) = verticalGradient(colors)
+): DynamicShader = verticalGradient(colors)
 
 public fun DynamicShaders.verticalGradient(
     colors: IntArray,

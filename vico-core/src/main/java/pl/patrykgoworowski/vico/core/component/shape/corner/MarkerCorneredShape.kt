@@ -34,12 +34,12 @@ public open class MarkerCorneredShape(
     topLeft, topRight, bottomRight, bottomLeft
 ) {
 
-    constructor(
+    public constructor(
         all: Corner,
         tickSize: Float = DEF_MARKER_TICK_SIZE,
     ) : this(all, all, all, all, tickSize)
 
-    constructor(
+    public constructor(
         corneredShape: CorneredShape,
         tickSize: Float = DEF_MARKER_TICK_SIZE,
     ) : this(

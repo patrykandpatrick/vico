@@ -24,14 +24,14 @@ import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.model.Point
 
 @LongParameterListDrawFunction
-fun chartDrawContext(
+public fun chartDrawContext(
     canvas: Canvas,
     measureContext: MeasureContext,
     horizontalScroll: Float,
     markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
     dataSetModel: DataSetModel,
-) = object : ChartDrawContext {
+): ChartDrawContext = object : ChartDrawContext {
     override val canvas: Canvas = canvas
     override val dataSetModel: DataSetModel = dataSetModel
     override val segmentProperties: SegmentProperties = segmentProperties

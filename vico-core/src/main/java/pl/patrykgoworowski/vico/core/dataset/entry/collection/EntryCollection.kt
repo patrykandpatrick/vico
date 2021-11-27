@@ -16,10 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.dataset.entry.collection
 
-interface EntryCollection<Model : EntryModel> {
+public interface EntryCollection<Model : EntryModel> {
 
-    val model: Model
+    public  val model: Model
 
-    fun addOnEntriesChangedListener(listener: (Model) -> Unit)
-    fun removeOnEntriesChangedListener(listener: (Model) -> Unit)
+    public fun addOnEntriesChangedListener(listener: (Model) -> Unit)
+    public fun removeOnEntriesChangedListener(listener: (Model) -> Unit)
 }

@@ -33,14 +33,14 @@ public class ComposedDataSet<Model : EntryModel>(
     dataSets: List<DataSet<Model>>
 ) : BaseDataSet<ComposedEntryModel<Model>>() {
 
-    constructor(vararg dataSets: DataSet<Model>) : this(dataSets.toList())
+    public constructor(vararg dataSets: DataSet<Model>) : this(dataSets.toList())
 
-    public val dataSets = ArrayList(dataSets)
+    public val dataSets: ArrayList<DataSet<Model>> = ArrayList(dataSets)
 
     private val tempAxisModel = MutableDataSetModel()
     private val segmentProperties = MutableSegmentProperties()
 
-    override val markerLocationMap = TreeMap<Float, MutableList<Marker.EntryModel>>()
+    override val markerLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
         this.bounds.set(left, top, right, bottom)
@@ -48,7 +48,7 @@ public class ComposedDataSet<Model : EntryModel>(
     }
 
     override var maxScrollAmount: Float
-        set(value) {}
+        set(_) {}
         get() = dataSets.maxOf { it.maxScrollAmount }
 
     override fun drawDataSet(

@@ -18,10 +18,11 @@ package pl.patrykgoworowski.vico.core.axis.model
 
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 
-interface DataSetModel {
-    val minX: Float
-    val maxX: Float
-    val minY: Float
-    val maxY: Float
-    val entryModel: EntryModel
+public interface DataSetModel {
+
+    public val minX: Float
+    public val maxX: Float
+    public val minY: Float
+    public val maxY: Float
+    public val entryModel: EntryModel
 }

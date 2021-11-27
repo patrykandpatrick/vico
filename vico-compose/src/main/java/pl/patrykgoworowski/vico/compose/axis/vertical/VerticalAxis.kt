@@ -32,7 +32,7 @@ import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 
 @Composable
-fun startAxis(
+public fun startAxis(
     label: TextComponent? = axisLabelComponent(),
     axis: LineComponent? = axisLineComponent(),
     tick: LineComponent? = axisTickComponent(),
@@ -49,7 +49,7 @@ fun startAxis(
 }
 
 @Composable
-fun endAxis(
+public fun endAxis(
     label: TextComponent? = axisLabelComponent(),
     axis: LineComponent? = axisLineComponent(),
     tick: LineComponent? = axisTickComponent(),

@@ -115,7 +115,7 @@ public class DashedShape(
         }
     }
 
-    private fun calculateDrawLengths(context: DrawContext, length: Float) = with(context) {
+    private fun calculateDrawLengths(context: DrawContext, length: Float): Unit = with(context) {
         calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length)
     }
 

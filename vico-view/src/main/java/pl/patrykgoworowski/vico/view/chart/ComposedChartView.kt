@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
-class ComposedChartView @JvmOverloads constructor(
+public class ComposedChartView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,

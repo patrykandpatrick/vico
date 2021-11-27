@@ -33,7 +33,7 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
-typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
+public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
 public fun columnComponent(
     color: Color,
@@ -63,7 +63,7 @@ public fun columnComponent(
     margins = margins,
 )
 
-fun shapeComponent(
+public fun shapeComponent(
     shape: Shape,
     color: Color,
     shader: DynamicShader? = null,
@@ -75,7 +75,7 @@ fun shapeComponent(
     margins = margins,
 )
 
-fun shapeComponent(
+public fun shapeComponent(
     shape: ChartShape,
     color: Color,
     shader: DynamicShader? = null,
@@ -87,24 +87,24 @@ fun shapeComponent(
     margins = margins,
 )
 
-fun overlayingComponent(
+public fun overlayingComponent(
     outer: Component,
     inner: Component,
     innerPaddingAll: Dp,
-) = OverlayingComponent(
+): OverlayingComponent = OverlayingComponent(
     outer = outer,
     inner = inner,
     innerPaddingAllDp = innerPaddingAll.value,
 )
 
-fun overlayingComponent(
+public fun overlayingComponent(
     outer: Component,
     inner: Component,
     innerPaddingStart: Dp = 0.dp,
     innerPaddingTop: Dp = 0.dp,
     innerPaddingBottom: Dp = 0.dp,
     innerPaddingEnd: Dp = 0.dp,
-) = OverlayingComponent(
+): OverlayingComponent = OverlayingComponent(
     outer = outer,
     inner = inner,
     insidePaddingStartDp = innerPaddingStart.value,
@@ -113,24 +113,24 @@ fun overlayingComponent(
     insidePaddingEndDp = innerPaddingEnd.value,
 )
 
-fun dashedShape(
+public fun dashedShape(
     shape: Shape,
     dashLength: Dp,
     gapLength: Dp,
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize
-) = DashedShape(
+): DashedShape = DashedShape(
     shape = shape.chartShape(),
     dashLengthDp = dashLength.value,
     gapLengthDp = gapLength.value,
     fitStrategy = fitStrategy,
 )
 
-fun dashedShape(
+public fun dashedShape(
     shape: ChartShape,
     dashLength: Dp,
     gapLength: Dp,
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize
-) = DashedShape(
+): DashedShape = DashedShape(
     shape = shape,
     dashLengthDp = dashLength.value,
     gapLengthDp = gapLength.value,

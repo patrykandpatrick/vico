@@ -41,7 +41,7 @@ public open class LineComponent(
         right: Float,
         centerY: Float,
         thicknessScale: Float = 1f
-    ) = with(context) {
+    ): Unit = with(context) {
         draw(
             context,
             left = left,
@@ -74,7 +74,7 @@ public open class LineComponent(
         bottom: Float,
         centerX: Float,
         thicknessScale: Float = 1f,
-    ) = with(context) {
+    ): Unit = with(context) {
         draw(
             context,
             left = centerX - thickness * thicknessScale / 2,

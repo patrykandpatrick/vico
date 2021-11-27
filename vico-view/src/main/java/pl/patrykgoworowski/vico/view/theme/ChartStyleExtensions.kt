@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.vico.view.extension.colors
 
-fun TypedArray.getColumnChart(
+internal fun TypedArray.getColumnChart(
     context: Context,
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_columnChartStyle,
     @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnChartStyle,
@@ -82,7 +82,7 @@ fun TypedArray.getColumnChart(
     )
 }
 
-fun TypedArray.getLineChart(
+internal fun TypedArray.getLineChart(
     context: Context,
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_lineChartStyle,
     @StyleableRes styleableResourceId: IntArray = R.styleable.LineChartStyle,

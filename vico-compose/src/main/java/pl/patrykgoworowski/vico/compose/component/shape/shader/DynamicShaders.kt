@@ -23,13 +23,13 @@ import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 
-fun DynamicShaders.fromComponent(
+public fun DynamicShaders.fromComponent(
     component: Component,
     componentSize: Dp,
     checkeredArrangement: Boolean = true,
     tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     tileYMode: Shader.TileMode = tileXMode,
-) = ComponentShader(
+): ComponentShader = ComponentShader(
     component = component,
     componentSize = componentSize.value,
     checkeredArrangement = checkeredArrangement,
@@ -37,4 +37,4 @@ fun DynamicShaders.fromComponent(
     tileYMode = tileYMode,
 )
 
-fun DynamicShaders.fromBrush(brush: Brush) = StaticShader(brush)
+public fun DynamicShaders.fromBrush(brush: Brush): StaticShader = StaticShader(brush)

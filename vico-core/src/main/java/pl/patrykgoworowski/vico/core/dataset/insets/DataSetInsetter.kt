@@ -25,12 +25,12 @@ public interface DataSetInsetter {
         context: MeasureContext,
         dataSetModel: DataSetModel,
         outInsets: Insets,
-    ) = Unit
+    ): Unit = Unit
 
     public fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
         dataSetModel: DataSetModel,
         outInsets: Insets,
-    ) = Unit
+    ): Unit = Unit
 }

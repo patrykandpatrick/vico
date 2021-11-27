@@ -45,7 +45,7 @@ public open class AxisManager {
     public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by cacheInList()
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by cacheInList()
 
-    fun addInsetters(destination: MutableList<DataSetInsetter>) {
+    public fun addInsetters(destination: MutableList<DataSetInsetter>) {
         startAxis?.let(destination::add)
         topAxis?.let(destination::add)
         endAxis?.let(destination::add)
@@ -64,7 +64,7 @@ public open class AxisManager {
         this.bottomAxis = bottomAxis
     }
 
-    fun setAxesBounds(
+    public fun setAxesBounds(
         measureContext: MeasureContext,
         contentBounds: RectF,
         dataSetBounds: RectF,
@@ -102,7 +102,7 @@ public open class AxisManager {
         contentBounds: RectF,
         dataSetBounds: RectF,
         insets: Insets,
-    ) = with(context) {
+    ): Unit = with(context) {
         setBounds(
             left = if (isLtr) {
                 contentBounds.left
@@ -150,7 +150,7 @@ public open class AxisManager {
         contentBounds: RectF,
         dataSetBounds: RectF,
         insets: Insets,
-    ) = with(context) {
+    ): Unit = with(context) {
         setBounds(
             left = if (isLtr) {
                 contentBounds.right - (insets.end + axisThickness.half)
@@ -178,7 +178,7 @@ public open class AxisManager {
         contentBounds: RectF,
         dataSetBounds: RectF,
         insets: Insets,
-    ) = with(context) {
+    ): Unit = with(context) {
         setBounds(
             left = contentBounds.left + insets.start,
             top = contentBounds.bottom - insets.bottom,
@@ -200,26 +200,26 @@ public open class AxisManager {
         bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
     }
 
-    fun drawBehindDataSet(context: ChartDrawContext) {
+    public fun drawBehindDataSet(context: ChartDrawContext) {
         axisCache.forEach { axis ->
             axis.drawBehindDataSet(context)
         }
     }
 
-    fun drawAboveDataSet(context: ChartDrawContext) {
+    public fun drawAboveDataSet(context: ChartDrawContext) {
         axisCache.forEach { axis ->
             axis.drawAboveDataSet(context)
         }
     }
 
-    companion object {
+    public companion object {
         private const val MAX_AXIS_COUNT = 4
 
         private fun AxisManager.getHorizontalAxisLeftDrawBound(
             context: MeasureContext,
             dataSetBounds: RectF,
             insets: Insets,
-        ) = with(context) {
+        ): Float = with(context) {
             dataSetBounds.left + (leftAxis?.run { axisThickness.half } ?: -insets.getLeft(isLtr))
         }
 
@@ -227,7 +227,7 @@ public open class AxisManager {
             context: MeasureContext,
             dataSetBounds: RectF,
             insets: Insets,
-        ) = with(context) {
+        ): Float = with(context) {
             dataSetBounds.right - (rightAxis?.run { axisThickness.half } ?: -insets.getRight(isLtr))
         }
     }

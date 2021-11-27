@@ -26,7 +26,7 @@ import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
 
 @Composable
-fun markerComponent(
+public fun markerComponent(
     label: TextComponent,
     indicator: Component,
     guideline: LineComponent,

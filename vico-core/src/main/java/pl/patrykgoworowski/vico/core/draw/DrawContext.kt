@@ -22,17 +22,17 @@ import pl.patrykgoworowski.vico.core.layout.MeasureContext
 public interface DrawContext : MeasureContext {
     public val canvas: Canvas
 
-    fun saveCanvas(): Int = canvas.save()
+    public fun saveCanvas(): Int = canvas.save()
 
-    fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
+    public fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
         canvas.clipRect(left, top, right, bottom)
     }
 
-    fun restoreCanvas() {
+    public fun restoreCanvas() {
         canvas.restore()
     }
 
-    fun restoreCanvasToCount(count: Int) {
+    public fun restoreCanvasToCount(count: Int) {
         canvas.restoreToCount(count)
     }
 }

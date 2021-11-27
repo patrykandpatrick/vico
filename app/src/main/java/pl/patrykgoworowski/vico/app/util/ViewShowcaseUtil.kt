@@ -27,7 +27,7 @@ import pl.patrykgoworowski.vico.view.chart.ChartView
 import pl.patrykgoworowski.vico.view.chart.ComposedChartView
 
 @ExperimentalCoroutinesApi
-class ViewShowcaseUtil(
+internal class ViewShowcaseUtil(
     private val viewModel: ShowcaseViewModel,
     private val coroutineScope: CoroutineScope
 ) {

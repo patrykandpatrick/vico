@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.component.shape.corner
 
-enum class CornerLocation {
+public enum class CornerLocation {
     TopLeft,
     TopRight,
     BottomRight,

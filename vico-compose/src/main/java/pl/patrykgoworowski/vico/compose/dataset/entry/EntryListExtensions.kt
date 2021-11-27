@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryCollection
 import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
 
 @Composable
-fun <Model : EntryModel> EntryCollection<Model>.collectAsState(): State<Model> =
+public fun <Model : EntryModel> EntryCollection<Model>.collectAsState(): State<Model> =
     produceState(initialValue = model) {
         val listener: (Model) -> Unit = { entriesModel ->
             value = entriesModel

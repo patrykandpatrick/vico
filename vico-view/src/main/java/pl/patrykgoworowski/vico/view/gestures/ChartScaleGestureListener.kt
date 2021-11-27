@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.view.gestures
 import android.graphics.RectF
 import android.view.ScaleGestureDetector
 
-class ChartScaleGestureListener(
+internal class ChartScaleGestureListener(
     private val getChartBounds: () -> RectF?,
     private val onZoom: (focusX: Float, zoomChange: Float) -> Unit
 ) : ScaleGestureDetector.OnScaleGestureListener {

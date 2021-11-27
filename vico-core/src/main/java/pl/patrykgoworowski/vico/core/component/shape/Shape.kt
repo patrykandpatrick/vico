@@ -21,10 +21,10 @@ import android.graphics.Path
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-interface Shape {
+public interface Shape {
 
     @LongParameterListDrawFunction
-    fun drawShape(
+    public fun drawShape(
         context: DrawContext,
         paint: Paint,
         path: Path,

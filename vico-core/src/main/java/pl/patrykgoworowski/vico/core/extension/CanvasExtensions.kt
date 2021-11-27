@@ -19,14 +19,14 @@ package pl.patrykgoworowski.vico.core.extension
 import android.graphics.Canvas
 import android.graphics.RectF
 
-inline fun Canvas.inClip(
+public inline fun Canvas.inClip(
     rect: RectF,
     block: () -> Unit,
 ) {
     inClip(rect.left, rect.top, rect.right, rect.bottom, block)
 }
 
-inline fun Canvas.inClip(
+public inline fun Canvas.inClip(
     left: Float,
     top: Float,
     right: Float,

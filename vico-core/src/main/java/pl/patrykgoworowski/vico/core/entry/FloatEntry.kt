@@ -16,14 +16,14 @@
 
 package pl.patrykgoworowski.vico.core.entry
 
-data class FloatEntry(
+public data class FloatEntry(
     override val x: Float,
     override val y: Float,
 ) : DataEntry
 
-fun entryOf(x: Float, y: Float) = FloatEntry(x, y)
+public fun entryOf(x: Float, y: Float): FloatEntry = FloatEntry(x, y)
 
-fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> =
+public fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> =
     pairs.map { (x, y) ->
         FloatEntry(x.toFloat(), y.toFloat())
     }

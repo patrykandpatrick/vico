@@ -57,7 +57,7 @@ private enum class Page(
 
 @Composable
 @OptIn(ExperimentalPagerApi::class)
-fun Showcase(showcaseViewModel: ShowcaseViewModel) {
+internal fun Showcase(showcaseViewModel: ShowcaseViewModel) {
     val pages = Page.values().toList()
     val pagerState = rememberPagerState(initialPage = 0)
     val coroutineScope = rememberCoroutineScope()

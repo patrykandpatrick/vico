@@ -57,7 +57,7 @@ import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 
 @Composable
-fun <Model : EntryModel> DataSet(
+public fun <Model : EntryModel> DataSet(
     modifier: Modifier,
     dataSet: DataSet<Model>,
     entryCollection: EntryCollection<Model>,
@@ -87,7 +87,7 @@ fun <Model : EntryModel> DataSet(
 
 @Suppress("LongMethod")
 @Composable
-fun <Model : EntryModel> DataSet(
+public fun <Model : EntryModel> DataSet(
     modifier: Modifier,
     dataSet: DataSet<Model>,
     model: Model,
@@ -167,11 +167,11 @@ fun <Model : EntryModel> DataSet(
 }
 
 @Composable
-fun rememberSetHorizontalScroll(
+public fun rememberSetHorizontalScroll(
     scroll: MutableState<Float>,
     touchPoint: MutableState<Point?>,
     interaction: State<Interaction?>,
-) = remember {
+): (Float) -> Unit = remember {
     var canClearTouchPoint = false
     return@remember { newScroll: Float ->
         touchPoint.value?.let { point ->
@@ -188,7 +188,7 @@ fun rememberSetHorizontalScroll(
 }
 
 @Composable
-fun rememberZoomState(
+public fun rememberZoomState(
     zoom: MutableState<Float>,
     scrollHandler: ScrollHandler,
     dataSetBounds: RectF

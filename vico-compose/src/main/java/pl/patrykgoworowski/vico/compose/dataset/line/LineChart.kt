@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
 
 @Composable
-fun lineDataSet(
+public fun lineDataSet(
     point: Component? = null,
     pointSize: Dp = currentChartStyle.lineChart.pointSize,
     spacing: Dp = currentChartStyle.lineChart.spacing,

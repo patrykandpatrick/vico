@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.component.text
 
-enum class VerticalPosition {
+public enum class VerticalPosition {
     Top,
     Center,
     Bottom,

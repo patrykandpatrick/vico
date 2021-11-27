@@ -16,5 +16,5 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
-inline fun <T> T?.orElse(block: () -> T) =
+public inline fun <T> T?.orElse(block: () -> T): T =
     this ?: block()

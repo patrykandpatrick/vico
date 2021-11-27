@@ -16,9 +16,8 @@
 
 android {
     kotlinOptions {
-        println("Running for $this")
         freeCompilerArgs = [
-                /* TODO Enable soon '-Xexplicit-api=strict', */
+                '-Xexplicit-api=strict',
                 '-Xopt-in=kotlin.RequiresOptIn'
         ]
     }
