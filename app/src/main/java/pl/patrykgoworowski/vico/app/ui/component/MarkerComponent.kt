@@ -23,19 +23,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import pl.patrykgoworowski.vico.compose.component.columnComponent
 import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
-import pl.patrykgoworowski.vico.compose.component.shape.markerComponent
 import pl.patrykgoworowski.vico.compose.component.overlayingComponent
-import pl.patrykgoworowski.vico.compose.component.columnComponent
+import pl.patrykgoworowski.vico.compose.component.shape.markerComponent
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.extension.pixels
+import pl.patrykgoworowski.vico.compose.extension.setShadow
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
-import pl.patrykgoworowski.vico.core.extension.copyColor
-import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.extension.copyColor
+import pl.patrykgoworowski.vico.core.marker.Marker
 
 @Composable
 fun markerComponent(): Marker {
@@ -94,6 +95,6 @@ fun markerComponent(): Marker {
             indicatorOuter.color = color.copyColor(alpha = 32)
         }
         indicatorSize = currentChartStyle.marker.indicatorSize.value
-        setShadow(4f, dy = 2f)
+        setShadow(radius = 4.dp, dy = 2.dp)
     }
 }

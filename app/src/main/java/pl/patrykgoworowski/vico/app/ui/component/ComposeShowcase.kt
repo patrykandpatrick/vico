@@ -22,10 +22,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
+import pl.patrykgoworowski.vico.app.extension.InvertedTheme
 
 @Composable
 fun ComposeShowcase(
@@ -37,10 +39,20 @@ fun ComposeShowcase(
             modifier = Modifier.padding(all = 16.dp)
         ) {
             ColumnChart(entryList = viewModel.entries)
+
+            InvertedTheme {
+                Surface(
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                ) {
+                    ComposedChart(model = viewModel.composedEntries)
+                }
+            }
+
+            StackedColumnChart(entryList = viewModel.multiEntries)
             ComposedChart(model = viewModel.composedEntries)
             LineChart(entryList = viewModel.entries)
             GroupedColumnChart(entryList = viewModel.multiEntries)
-            StackedColumnChart(entryList = viewModel.multiEntries)
         }
     }
 }

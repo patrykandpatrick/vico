@@ -17,7 +17,6 @@
 package pl.patrykgoworowski.vico.compose.component.shape.shader
 
 import android.graphics.LinearGradient
-import android.graphics.RectF
 import android.graphics.Shader
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

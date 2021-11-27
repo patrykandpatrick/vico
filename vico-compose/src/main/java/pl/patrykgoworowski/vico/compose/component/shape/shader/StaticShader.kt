@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.compose.component.shape.shader
 
-import android.graphics.RectF
 import android.graphics.Shader
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush

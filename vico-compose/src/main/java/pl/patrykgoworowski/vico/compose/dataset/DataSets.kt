@@ -85,6 +85,7 @@ fun <Model : EntryModel> DataSet(
     )
 }
 
+@Suppress("LongMethod")
 @Composable
 fun <Model : EntryModel> DataSet(
     modifier: Modifier,
