@@ -27,17 +27,17 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0-alpha04'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "com.android.tools.build:gradle:$versions.gradle"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
     }
 }
 
 plugins {
-    id 'io.gitlab.arturbosch.detekt' version '1.18.1'
+    id 'io.gitlab.arturbosch.detekt' version '1.19.0-RC2'
 }
 
 dependencies {
-    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.18.1"
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0-RC2"
 }
 
 detekt {
@@ -45,11 +45,13 @@ detekt {
     buildUponDefaultConfig = true
     source = files("app", "vico-core", "vico-compose", "vico-view")
     config = files(".idea/detekt-config.yml")
+}
 
+tasks.detekt {
     reports {
         html {
-            enabled = true
-            destination = file("build/reports/detekt/detekt.html")
+            outputLocation.set(file("build/reports/detekt/detekt.html"))
+            required.set(true)
         }
     }
 }
@@ -70,6 +72,9 @@ allprojects {
 
 tasks.withType(Detekt).configureEach {
     jvmTarget = "1.8"
+    reports {
+        html.required.set(true)
+    }
 }
 
 task clean(type: Delete) {

@@ -17,39 +17,111 @@
 ext {
 
     def androidx_libs = [
-            appcompat: [group: 'androidx.appcompat', name: 'appcompat', version: androidx_appcompat_version],
-            core     : [group: 'androidx.core', name: 'core-ktx', version: androidx_core_version],
-            lifecycle: [group: 'androidx.lifecycle', name: 'lifecycle-runtime-ktx', version: lifecycle_runtime_version],
-            viewmodel: [group: 'androidx.lifecycle', name: 'lifecycle-viewmodel-ktx', version: viewmodel_version],
+            appcompat: [
+                    group  : 'androidx.appcompat',
+                    name   : 'appcompat',
+                    version: versions.androidx_appcompat
+            ],
+            core     : [
+                    group  : 'androidx.core',
+                    name   : 'core-ktx',
+                    version: versions.androidx_core
+            ],
+            lifecycle: [
+                    group  : 'androidx.lifecycle',
+                    name   : 'lifecycle-runtime-ktx',
+                    version: versions.lifecycle_runtime
+            ],
+            viewmodel: [
+                    group  : 'androidx.lifecycle',
+                    name   : 'lifecycle-viewmodel-ktx',
+                    version: versions.viewmodel
+            ],
     ]
 
     def jetpack_compose_libs = [
-            ui         : [group: 'androidx.compose.ui', name: 'ui', version: compose_version],
-            ui_tooling : [group: 'androidx.compose.ui', name: 'ui-tooling', version: compose_version],
-            material   : [group: 'androidx.compose.material', name: 'material', version: compose_version],
-            activity   : [group: 'androidx.activity', name: 'activity-compose', version: activity_version],
-            viewbinding: [group: 'androidx.compose.ui', name: 'ui-viewbinding', version: compose_version],
-            foundation : [group: 'androidx.compose.foundation', name: 'foundation', version: compose_version]
+            ui         : [
+                    group  : 'androidx.compose.ui',
+                    name   : 'ui',
+                    version: versions.compose
+            ],
+            ui_tooling : [
+                    group  : 'androidx.compose.ui',
+                    name   : 'ui-tooling',
+                    version: versions.compose
+            ],
+            material   : [
+                    group  : 'androidx.compose.material',
+                    name   : 'material',
+                    version: versions.compose
+            ],
+            activity   : [
+                    group  : 'androidx.activity',
+                    name   : 'activity-compose',
+                    version: versions.activity
+            ],
+            viewbinding: [
+                    group  : 'androidx.compose.ui',
+                    name   : 'ui-viewbinding',
+                    version: versions.compose
+            ],
+            foundation : [
+                    group  : 'androidx.compose.foundation',
+                    name   : 'foundation',
+                    version: versions.compose
+            ]
     ]
 
     def accompanist_libs = [
-            pager           : [group: 'com.google.accompanist', name: 'accompanist-pager', version: accompanist_version],
-            pager_indicators: [group: 'com.google.accompanist', name: 'accompanist-pager-indicators', version: accompanist_version]
+            pager           : [
+                    group  : 'com.google.accompanist',
+                    name   : 'accompanist-pager',
+                    version: versions.accompanist
+            ],
+            pager_indicators: [
+                    group  : 'com.google.accompanist',
+                    name   : 'accompanist-pager-indicators',
+                    version: versions.accompanist
+            ]
     ]
 
     def kotlin_libs = [
-            coroutines_android: [group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-android', version: coroutines_version],
-            coroutines        : [group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: coroutines_version],
-            std_lib           : [group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version],
-            test              : [group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: kotlin_version],
+            coroutines_android: [
+                    group  : 'org.jetbrains.kotlinx',
+                    name   : 'kotlinx-coroutines-android',
+                    version: versions.coroutines
+            ],
+            coroutines        : [
+                    group  : 'org.jetbrains.kotlinx',
+                    name   : 'kotlinx-coroutines-core',
+                    version: versions.coroutines
+            ],
+            std_lib           : [
+                    group  : 'org.jetbrains.kotlin',
+                    name   : 'kotlin-stdlib',
+                    version: versions.kotlin
+            ],
+            test              : [
+                    group  : 'org.jetbrains.kotlin',
+                    name   : 'kotlin-test',
+                    version: versions.kotlin
+            ],
     ]
 
     def material_libs = [
-            main: [group: 'com.google.android.material', name: 'material', version: material_version]
+            main: [
+                    group  : 'com.google.android.material',
+                    name   : 'material',
+                    version: versions.material
+            ]
     ]
 
     def test_libs = [
-            junit: [group: 'androidx.test.ext', name: 'junit', version: junit_version]
+            junit: [
+                    group  : 'androidx.test.ext',
+                    name   : 'junit',
+                    version: versions.junit
+            ]
     ]
 
     app_dependencies = [

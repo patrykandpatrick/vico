@@ -103,7 +103,7 @@ fun Showcase(showcaseViewModel: ShowcaseViewModel) {
             }
             HorizontalPager(
                 state = pagerState,
-                dragEnabled = false
+                count = pages.size,
             ) { index ->
                 pages[index].content(showcaseViewModel)
             }
