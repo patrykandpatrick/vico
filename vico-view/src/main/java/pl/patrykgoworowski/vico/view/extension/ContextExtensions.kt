@@ -42,11 +42,7 @@ val Context.isDarkMode: Boolean
             Configuration.UI_MODE_NIGHT_YES
 
 internal val Context.colors: Colors
-    get() = if (isDarkMode) {
-        Colors.Dark
-    } else {
-        Colors.Light
-    }
+    get() = if (isDarkMode) Colors.Dark else Colors.Light
 
 fun Context.getColorCompat(@ColorRes colorRes: Int) =
     ContextCompat.getColor(this, colorRes)
