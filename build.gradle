@@ -45,7 +45,7 @@ dependencies {
 detekt {
     allRules = true
     buildUponDefaultConfig = true
-    source = files("app", "vico:core", "vico:compose", "vico:view")
+    source = files("app", "vico/core", "vico/compose", "vico/view")
     config = files(".idea/detekt-config.yml")
 
     reports {
@@ -60,7 +60,7 @@ tasks.register('detektFix', Detekt) {
     autoCorrect = true
     allRules = true
     buildUponDefaultConfig = true
-    source = files("app", "vico:core", "vico:compose", "vico:view")
+    source = files("app", "vico/core", "vico/compose", "vico/view")
 }
 
 allprojects {
