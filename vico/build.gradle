@@ -15,13 +15,5 @@
  */
 
 plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-}
-apply from: "$rootDir/commonScripts.gradle"
-
-dependencies {
-    vico_view_dependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+    id "org.jetbrains.dokka"
 }

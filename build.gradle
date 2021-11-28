@@ -29,11 +29,13 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$versions.gradle"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+        classpath("org.jetbrains.dokka:dokka-gradle-plugin:$versions.dokka")
     }
 }
 
 plugins {
     id 'io.gitlab.arturbosch.detekt' version '1.18.1'
+    id 'org.jetbrains.dokka' version '1.6.0'
 }
 
 dependencies {
@@ -43,7 +45,7 @@ dependencies {
 detekt {
     allRules = true
     buildUponDefaultConfig = true
-    source = files("app", "vico-core", "vico-compose", "vico-view")
+    source = files("app", "vico:core", "vico:compose", "vico:view")
     config = files(".idea/detekt-config.yml")
 
     reports {
@@ -58,7 +60,7 @@ tasks.register('detektFix', Detekt) {
     autoCorrect = true
     allRules = true
     buildUponDefaultConfig = true
-    source = files("app", "vico-core", "vico-compose", "vico-view")
+    source = files("app", "vico:core", "vico:compose", "vico:view")
 }
 
 allprojects {
@@ -70,6 +72,10 @@ allprojects {
 
 tasks.withType(Detekt).configureEach {
     jvmTarget = "1.8"
+}
+
+tasks.dokkaHtmlMultiModule {
+    outputDirectory.set(file("$buildDir/dokka"))
 }
 
 task clean(type: Delete) {

@@ -19,31 +19,10 @@ plugins {
     id 'kotlin-android'
 }
 apply from: "$rootDir/commonScripts.gradle"
-
-android {
-
-    defaultConfig {
-        minSdkVersion library.compose_min_sdk
-        targetSdkVersion library.target_sdk
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-        useIR = true
-    }
-    buildFeatures {
-        compose true
-    }
-    composeOptions {
-        kotlinCompilerExtensionVersion versions.compose
-    }
-}
+apply from: "$rootDir/dokka-common.gradle"
 
 dependencies {
-    vico_compose_dependencies.each {
+    vico_common_dependencies.each {
         add(it.configuration, it.dependency, it.options)
     }
 }
