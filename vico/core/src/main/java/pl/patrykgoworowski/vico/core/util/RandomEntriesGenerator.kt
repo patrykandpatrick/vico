@@ -16,10 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.util
 
-import pl.patrykgoworowski.vico.core.dataset.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedEntryModel
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.entry.collection.composed.ComposedEntryCollection
 import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
 

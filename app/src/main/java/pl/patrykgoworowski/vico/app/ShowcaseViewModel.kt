@@ -23,10 +23,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.plus
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.entry.collection.composed.ComposedEntryCollection
+import pl.patrykgoworowski.vico.core.chart.entry.collection.composed.plus
 
 public class ShowcaseViewModel : ViewModel() {
 

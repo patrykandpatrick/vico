@@ -20,15 +20,15 @@ import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
-import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
+import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
-public interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetInsetter {
+public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInsetter {
 
     public val position: Position
-    public val dataSetBounds: RectF
+    public val chartBounds: RectF
     public val MeasureContext.axisThickness: Float
     public val MeasureContext.tickThickness: Float
     public val MeasureContext.guidelineThickness: Float
@@ -52,23 +52,23 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, DataSetIns
     public var isLtr: Boolean
     public var valueFormatter: AxisValueFormatter
 
-    public fun drawBehindDataSet(
+    public fun drawBehindChart(
         context: ChartDrawContext,
     )
 
-    public fun drawAboveDataSet(
+    public fun drawAboveChart(
         context: ChartDrawContext,
     )
 
-    public fun setDataSetBounds(
+    public fun setChartBounds(
         left: Number,
         top: Number,
         right: Number,
         bottom: Number
     )
 
-    public fun setDataSetBounds(bounds: RectF) {
-        setDataSetBounds(
+    public fun setChartBounds(bounds: RectF) {
+        setChartBounds(
             bounds.left,
             bounds.top,
             bounds.right,

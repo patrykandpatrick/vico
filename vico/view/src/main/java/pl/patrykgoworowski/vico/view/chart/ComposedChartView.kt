@@ -18,8 +18,8 @@ package pl.patrykgoworowski.vico.view.chart
 
 import android.content.Context
 import android.util.AttributeSet
-import pl.patrykgoworowski.vico.core.dataset.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedEntryModel
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 

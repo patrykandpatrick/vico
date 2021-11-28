@@ -29,11 +29,11 @@ import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
-import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
-import pl.patrykgoworowski.vico.core.dataset.composed.ComposedDataSet
-import pl.patrykgoworowski.vico.core.dataset.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChart
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedEntryModel
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.renderer.Chart
 import pl.patrykgoworowski.vico.core.extension.hasFlag
 import pl.patrykgoworowski.vico.view.R
 
@@ -61,10 +61,10 @@ internal class ThemeHandler(
     public var isChartZoomEnabled: Boolean = false
         private set
 
-    public var chart: DataSet<EntryModel>? = null
+    public var chart: Chart<EntryModel>? = null
         private set
 
-    public var composedChart: DataSet<ComposedEntryModel<EntryModel>>? = null
+    public var composedChart: Chart<ComposedEntryModel<EntryModel>>? = null
         private set
 
     init {
@@ -144,7 +144,7 @@ internal class ThemeHandler(
         }
     }
 
-    private fun TypedArray.getChart(): DataSet<EntryModel>? {
+    private fun TypedArray.getChart(): Chart<EntryModel>? {
         val chartFlags = getInt(R.styleable.ChartView_chartType, 0)
 
         return when {
@@ -154,27 +154,27 @@ internal class ThemeHandler(
         }
     }
 
-    private fun TypedArray.getComposedChart(): DataSet<ComposedEntryModel<EntryModel>>? {
+    private fun TypedArray.getComposedChart(): Chart<ComposedEntryModel<EntryModel>>? {
         val chartFlags = getInt(R.styleable.ComposedChartView_charts, 0)
 
-        val columnDataSet: ColumnDataSet? = if (chartFlags.hasFlag(Flags.COLUMN_CHART)) {
+        val columnChart: ColumnChart? = if (chartFlags.hasFlag(Flags.COLUMN_CHART)) {
             getColumnChart(context)
         } else {
             null
         }
-        val lineDataSet = if (chartFlags.hasFlag(Flags.LINE_CHART)) {
+        val lineChart = if (chartFlags.hasFlag(Flags.LINE_CHART)) {
             getLineChart(context)
         } else {
             null
         }
 
         return when {
-            columnDataSet != null && lineDataSet != null ->
-                ComposedDataSet(columnDataSet, lineDataSet)
-            columnDataSet != null ->
-                columnDataSet
-            lineDataSet != null ->
-                lineDataSet
+            columnChart != null && lineChart != null ->
+                ComposedChart(columnChart, lineChart)
+            columnChart != null ->
+                columnChart
+            lineChart != null ->
+                lineChart
             else -> null
         }
     }

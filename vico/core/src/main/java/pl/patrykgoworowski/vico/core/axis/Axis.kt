@@ -34,7 +34,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     override val bounds: RectF = RectF()
     override val restrictedBounds: MutableList<RectF> = mutableListOf()
-    override val dataSetBounds: RectF = RectF()
+    override val chartBounds: RectF = RectF()
 
     override val MeasureContext.axisThickness: Float
         get() = axis?.thicknessDp.orZero.pixels
@@ -58,8 +58,8 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     override var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
 
-    override fun setDataSetBounds(left: Number, top: Number, right: Number, bottom: Number) {
-        dataSetBounds.set(left, top, right, bottom)
+    override fun setChartBounds(left: Number, top: Number, right: Number, bottom: Number) {
+        chartBounds.set(left, top, right, bottom)
     }
 
     override fun setRestrictedBounds(vararg bounds: RectF?) {

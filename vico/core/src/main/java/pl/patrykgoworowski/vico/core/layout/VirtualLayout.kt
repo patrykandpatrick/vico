@@ -19,16 +19,16 @@ package pl.patrykgoworowski.vico.core.layout
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.axis.AxisManager
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
-import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
-import pl.patrykgoworowski.vico.core.dataset.insets.Insets
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.renderer.Chart
+import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
+import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import kotlin.math.max
 
 public open class VirtualLayout {
 
-    private val tempInsetters = ArrayList<DataSetInsetter>(TEMP_INSETTERS_INITIAL_SIZE)
+    private val tempInsetters = ArrayList<ChartInsetter>(TEMP_INSETTERS_INITIAL_SIZE)
     private val finalInsets: Insets = Insets()
     private val tempInsets: Insets = Insets()
 
@@ -36,36 +36,36 @@ public open class VirtualLayout {
     public open fun <Model : EntryModel> setBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        dataSet: DataSet<Model>,
-        dataSetModel: DataSetModel,
+        chart: Chart<Model>,
+        chartModel: ChartModel,
         axisManager: AxisManager,
-        vararg dataSetInsetter: DataSetInsetter?,
+        vararg chartInsetter: ChartInsetter?,
     ): Unit = with(context) {
         tempInsetters.clear()
         finalInsets.clear()
         tempInsets.clear()
         axisManager.addInsetters(tempInsetters)
-        dataSetInsetter.filterNotNull().forEach(tempInsetters::add)
+        chartInsetter.filterNotNull().forEach(tempInsetters::add)
 
         tempInsetters.forEach { insetter ->
-            insetter.getVerticalInsets(context, dataSetModel, tempInsets)
+            insetter.getVerticalInsets(context, chartModel, tempInsets)
             finalInsets.setAllGreater(tempInsets)
         }
 
         val availableHeight = contentBounds.height() - finalInsets.vertical
 
         tempInsetters.forEach { insetter ->
-            insetter.getHorizontalInsets(context, availableHeight, dataSetModel, tempInsets)
+            insetter.getHorizontalInsets(context, availableHeight, chartModel, tempInsets)
             finalInsets.setAllGreater(tempInsets)
         }
 
-        dataSet.setBounds(
+        chart.setBounds(
             left = contentBounds.left + finalInsets.getLeft(isLtr),
             top = contentBounds.top + finalInsets.top,
             right = contentBounds.right - finalInsets.getRight(isLtr),
             bottom = contentBounds.bottom - finalInsets.bottom
         )
-        axisManager.setAxesBounds(context, contentBounds, dataSet.bounds, finalInsets)
+        axisManager.setAxesBounds(context, contentBounds, chart.bounds, finalInsets)
     }
 
     private fun Insets.setAllGreater(other: Insets) {

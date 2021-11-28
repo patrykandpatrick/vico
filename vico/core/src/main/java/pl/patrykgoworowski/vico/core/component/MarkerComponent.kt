@@ -17,13 +17,13 @@
 package pl.patrykgoworowski.vico.core.component
 
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.dataset.insets.Insets
+import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.extension.averageOf
 import pl.patrykgoworowski.vico.core.extension.half
@@ -140,7 +140,7 @@ public open class MarkerComponent(
 
     override fun getVerticalInsets(
         context: MeasureContext,
-        dataSetModel: DataSetModel,
+        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
         outInsets.top = markerHeight

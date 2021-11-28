@@ -20,15 +20,15 @@ import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
 import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.axis.setTo
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
-import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.dataset.insets.Insets
+import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
@@ -53,7 +53,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     public var horizontalLabelPosition: HorizontalLabelPosition = Outside
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
-    override fun drawBehindDataSet(
+    override fun drawBehindChart(
         context: ChartDrawContext,
     ): Unit = with(context) {
         val drawLabelCount = getDrawLabelCount(context, bounds.height().toInt())
@@ -68,15 +68,15 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             guideline?.takeIf {
                 it.fitsInHorizontal(
                     context = context,
-                    left = dataSetBounds.left,
-                    right = dataSetBounds.right,
+                    left = chartBounds.left,
+                    right = chartBounds.right,
                     centerY = centerY,
-                    boundingBox = dataSetBounds
+                    boundingBox = chartBounds
                 )
             }?.drawHorizontal(
                 context = context,
-                left = dataSetBounds.left,
-                right = dataSetBounds.right,
+                left = chartBounds.left,
+                right = chartBounds.right,
                 centerY = centerY
             )
         }
@@ -91,11 +91,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         Unit
     }
 
-    override fun drawAboveDataSet(context: ChartDrawContext): Unit = with(context) {
+    override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
         val label = label
         val labelCount = getDrawLabelCount(this, bounds.height().toInt())
 
-        val labels = getLabels(context.dataSetModel, labelCount)
+        val labels = getLabels(context.chartModel, labelCount)
         val labelHeight = label?.getHeight(includeMargin = false, context = this).orZero
         val labelTextHeight = label?.getHeight(
             includePadding = false,
@@ -168,14 +168,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     private fun getLabels(
-        dataSetModel: DataSetModel,
+        chartModel: ChartModel,
         maxLabelCount: Int = this.maxLabelCount,
     ): List<String> {
         labels.clear()
-        val step = (dataSetModel.maxY - dataSetModel.minY) / maxLabelCount
+        val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
         for (index in maxLabelCount downTo 0) {
-            val value = dataSetModel.maxY - (step * index)
-            labels += valueFormatter.formatValue(value, index, dataSetModel)
+            val value = chartModel.maxY - (step * index)
+            labels += valueFormatter.formatValue(value, index, chartModel)
         }
         return labels
     }
@@ -183,11 +183,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
-        dataSetModel: DataSetModel,
+        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
         val labels = getLabels(
-            dataSetModel = dataSetModel,
+            chartModel = chartModel,
             maxLabelCount = getDrawLabelCount(this, availableHeight.toInt()),
         )
         if (labels.isEmpty()) {
@@ -214,7 +214,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      * — [axisThickness],
      * — [tickLengthDp].
      * @return Width of this [VerticalAxis] that should be enough to fit its contents
-     * in [drawBehindDataSet] and [drawAboveDataSet] functions.
+     * in [drawBehindChart] and [drawAboveChart] functions.
      */
     override fun getDesiredWidth(
         context: MeasureContext,

@@ -20,18 +20,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.dataset.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.line.lineDataSet
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
+import pl.patrykgoworowski.vico.compose.chart.Chart
+import pl.patrykgoworowski.vico.compose.chart.line.lineChart
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
 
 @Composable
 internal fun LineChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {
-    DataSet(
+    Chart(
         modifier = modifier,
-        dataSet = lineDataSet(),
+        chart = lineChart(),
         entryCollection = entryList,
         marker = markerComponent(),
         startAxis = startAxis(),

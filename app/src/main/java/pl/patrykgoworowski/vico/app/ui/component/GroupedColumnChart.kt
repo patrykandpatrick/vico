@@ -21,19 +21,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.dataset.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
-import pl.patrykgoworowski.vico.core.dataset.column.MergeMode
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
+import pl.patrykgoworowski.vico.compose.chart.Chart
+import pl.patrykgoworowski.vico.compose.chart.column.columnChart
+import pl.patrykgoworowski.vico.core.chart.column.MergeMode
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
 
 @Composable
 internal fun GroupedColumnChart(
     modifier: Modifier = Modifier,
     entryList: EntryList,
 ) {
-    DataSet(
+    Chart(
         modifier = modifier,
-        dataSet = columnDataSet(
+        chart = columnChart(
             innerSpacing = 4.dp,
             spacing = 24.dp,
             mergeMode = MergeMode.Grouped,
