@@ -21,31 +21,31 @@ import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
 public interface ChartModel {
 
     /**
-     * Minimum value on X axis. By default it equals to [EntryModel.minX] in [entryModel],
+     * The minimum value on the x-axis. It is equal to [EntryModel.minX] from [entryModel] by default
      * but may be overridden.
      */
     public val minX: Float
 
     /**
-     * Maximum value on X axis. By default it equals to [EntryModel.maxX] in [entryModel],
-     * but may be overridden.
-     */
+    * The maximum value on the x-axis. It is equal to [EntryModel.maxX] from [entryModel] by default
+    * but may be overridden.
+    */
     public val maxX: Float
 
     /**
-     * Minimum value on Y axis. By default it equals to [EntryModel.minY] in [entryModel],
-     * but may be overridden.
-     */
+    * The minimum value on the y-axis. It is equal to [EntryModel.minY] from [entryModel] by default
+    * but may be overridden.
+    */
     public val minY: Float
 
     /**
-     * Maximum value on Y axis. By default it equals to [EntryModel.maxY] in [entryModel],
-     * but may be overridden.
-     */
+    * The maximum value on the y-axis. It is equal to [EntryModel.maxY] from [entryModel] by default
+    * but may be overridden.
+    */
     public val maxY: Float
 
     /**
-     * Source of entries drawn on chart. It holds default values for [minX], [maxX], [minY], [maxY].
+     * The source of the entries drawn on the chart. It holds default values for [minX], [maxX], [minY], and [maxY].
      */
     public val entryModel: EntryModel
 }
