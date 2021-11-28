@@ -125,8 +125,8 @@ ext {
     ]
 
     app_dependencies = [
-            [configuration: "implementation", dependency: project(':vico-view')],
-            [configuration: "implementation", dependency: project(':vico-compose')],
+            [configuration: "implementation", dependency: project(':vico:view')],
+            [configuration: "implementation", dependency: project(':vico:compose')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: androidx_libs.lifecycle],
@@ -153,7 +153,7 @@ ext {
     ]
 
     vico_view_dependencies = [
-            [configuration: "api", dependency: project(':vico-core')],
+            [configuration: "api", dependency: project(':vico:core')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
@@ -165,7 +165,7 @@ ext {
     ]
 
     vico_compose_dependencies = [
-            [configuration: "api", dependency: project(':vico-core')],
+            [configuration: "api", dependency: project(':vico:core')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],

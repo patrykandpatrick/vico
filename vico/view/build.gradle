@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
-rootProject.name = "VicoChart"
-include ':app'
-include ':vico'
-include ':vico:view'
-include ':vico:compose'
-include ':vico:core'
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+}
+apply from: "$rootDir/commonScripts.gradle"
+apply from: "$rootDir/dokka-common.gradle"
+
+dependencies {
+    vico_view_dependencies.each {
+        add(it.configuration, it.dependency, it.options)
+    }
+}
