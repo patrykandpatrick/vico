@@ -23,8 +23,8 @@ import pl.patrykgoworowski.vico.core.Alpha
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
-import pl.patrykgoworowski.vico.core.dataset.column.ColumnDataSet
-import pl.patrykgoworowski.vico.core.dataset.line.LineDataSet
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
+import pl.patrykgoworowski.vico.core.chart.line.LineChart
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.component.shape.shader.verticalGradient
@@ -34,9 +34,9 @@ internal fun TypedArray.getColumnChart(
     context: Context,
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_columnChartStyle,
     @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnChartStyle,
-): ColumnDataSet = getNestedTypedArray(context, resourceId, styleableResourceId).run {
+): ColumnChart = getNestedTypedArray(context, resourceId, styleableResourceId).run {
     val defaultShape = Shapes.roundedCornersShape(allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT)
-    ColumnDataSet(
+    ColumnChart(
         columns = listOf(
             getNestedTypedArray(
                 context = context,
@@ -86,8 +86,8 @@ internal fun TypedArray.getLineChart(
     context: Context,
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_lineChartStyle,
     @StyleableRes styleableResourceId: IntArray = R.styleable.LineChartStyle,
-): LineDataSet = getNestedTypedArray(context, resourceId, styleableResourceId).run {
-    LineDataSet(
+): LineChart = getNestedTypedArray(context, resourceId, styleableResourceId).run {
+    LineChart(
         lineColor = getColor(
             index = R.styleable.LineChartStyle_color,
             defaultColor = context.colors.lineColor.toInt(),

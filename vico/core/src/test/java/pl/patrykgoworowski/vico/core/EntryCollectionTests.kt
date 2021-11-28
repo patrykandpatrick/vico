@@ -17,8 +17,8 @@
 package pl.patrykgoworowski.vico.core
 
 import org.junit.Test
-import pl.patrykgoworowski.vico.core.dataset.diff.TestDiffAnimator
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.chart.diff.TestDiffAnimator
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
 import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.entriesOf
 import kotlin.test.assertEquals

@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.axis.formatter
 
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import java.text.DecimalFormat
 
 public class PercentageFormatAxisValueFormatter(
@@ -30,9 +30,9 @@ public class PercentageFormatAxisValueFormatter(
     override fun formatValue(
         value: Float,
         index: Int,
-        dataSetModel: DataSetModel
+        chartModel: ChartModel
     ): String {
-        val percentage = value / dataSetModel.maxY
+        val percentage = value / chartModel.maxY
         return decimalFormat.format(percentage)
     }
 

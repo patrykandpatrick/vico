@@ -17,12 +17,12 @@
 package pl.patrykgoworowski.vico.core.marker
 
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
+import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.entry.DataEntry
 import pl.patrykgoworowski.vico.core.model.Point
 
-public interface Marker : DataSetInsetter {
+public interface Marker : ChartInsetter {
 
     public fun draw(
         context: DrawContext,

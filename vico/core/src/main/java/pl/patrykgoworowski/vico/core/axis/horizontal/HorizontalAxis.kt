@@ -18,11 +18,11 @@ package pl.patrykgoworowski.vico.core.axis.horizontal
 
 import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.axis.setTo
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
-import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.dataset.insets.Insets
+import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
@@ -38,15 +38,15 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     public var tickType: TickType = TickType.Minor
 
-    override fun drawBehindDataSet(context: ChartDrawContext): Unit = with(context) {
+    override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val scrollX = context.horizontalScroll
         val clipRestoreCount = canvas.save()
 
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
-            minOf(bounds.top, dataSetBounds.top),
+            minOf(bounds.top, chartBounds.top),
             bounds.right + if (tickType == TickType.Minor) tickThickness.half else 0f,
-            maxOf(bounds.bottom, dataSetBounds.bottom)
+            maxOf(bounds.bottom, chartBounds.bottom)
         )
 
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
@@ -58,8 +58,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         var tickDrawCenter =
             tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
 
-        val guidelineTop = dataSetBounds.top
-        val guidelineBottom = dataSetBounds.bottom
+        val guidelineTop = chartBounds.top
+        val guidelineBottom = chartBounds.bottom
 
         for (index in 0 until tickCount) {
             guideline?.run {
@@ -69,7 +69,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                         top = guidelineTop,
                         bottom = guidelineBottom,
                         centerX = tickDrawCenter,
-                        boundingBox = dataSetBounds
+                        boundingBox = chartBounds
                     )
                 }?.drawVertical(
                     context = context,
@@ -86,18 +86,18 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
-    override fun drawAboveDataSet(context: ChartDrawContext): Unit = with(context) {
+    override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val scrollX = horizontalScroll
         val clipRestoreCount = canvas.save()
-        val step = dataSetModel.entryModel.step
+        val step = chartModel.entryModel.step
 
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
-            minOf(bounds.top, dataSetBounds.top),
+            minOf(bounds.top, chartBounds.top),
             bounds.right + if (tickType == TickType.Minor) tickThickness.half else 0f,
-            maxOf(bounds.bottom, dataSetBounds.bottom)
+            maxOf(bounds.bottom, chartBounds.bottom)
         )
 
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
@@ -111,7 +111,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
-        var valueIndex: Float = dataSetModel.minX + scrollAdjustment * step
+        var valueIndex: Float = chartModel.minX + scrollAdjustment * step
 
         for (index in 0 until tickCount) {
             tick?.drawVertical(
@@ -124,7 +124,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             if (index < entryLength) {
                 label?.drawText(
                     context = context,
-                    text = valueFormatter.formatValue(valueIndex, index, context.dataSetModel),
+                    text = valueFormatter.formatValue(valueIndex, index, context.chartModel),
                     textX = textDrawCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -139,8 +139,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         axis?.drawHorizontal(
             context = context,
-            left = dataSetBounds.left,
-            right = dataSetBounds.right,
+            left = chartBounds.left,
+            right = chartBounds.right,
             centerY = ((if (position is AxisPosition.Horizontal.Bottom) bounds.top
             else bounds.bottom) + axisThickness.half)
         )
@@ -170,7 +170,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getVerticalInsets(
         context: MeasureContext,
-        dataSetModel: DataSetModel,
+        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
         with(outInsets) {

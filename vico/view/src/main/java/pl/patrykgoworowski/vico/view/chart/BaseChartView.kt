@@ -32,10 +32,10 @@ import pl.patrykgoworowski.vico.core.MIN_ZOOM
 import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
-import pl.patrykgoworowski.vico.core.axis.model.MutableDataSetModel
-import pl.patrykgoworowski.vico.core.dataset.draw.chartDrawContext
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.renderer.DataSet
+import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
+import pl.patrykgoworowski.vico.core.chart.draw.chartDrawContext
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.renderer.Chart
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
@@ -68,7 +68,7 @@ public abstract class BaseChartView<Model : EntryModel> internal constructor(
     ) : this(context, attrs, defStyleAttr, ThemeHandler.ChartType.Unknown)
 
     private val contentBounds = RectF()
-    private val dataSetModel = MutableDataSetModel()
+    private val chartModel = MutableChartModel()
     private val scrollHandler = ScrollHandler()
 
     private val scroller = OverScroller(context)
@@ -114,7 +114,7 @@ public abstract class BaseChartView<Model : EntryModel> internal constructor(
 
     public var isZoomEnabled: Boolean = true
 
-    public var chart: DataSet<Model>? by observable(null) { _, _, _ ->
+    public var chart: Chart<Model>? by observable(null) { _, _, _ ->
         tryUpdateBoundsAndInvalidate()
     }
 
@@ -158,10 +158,10 @@ public abstract class BaseChartView<Model : EntryModel> internal constructor(
     }
 
     private fun handleZoom(focusX: Float, zoomChange: Float) {
-        val dataSet = chart ?: return
+        val chart = chart ?: return
         val newZoom = measureContext.zoom * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
-        val centerX = scrollHandler.currentScroll + focusX - dataSet.bounds.left
+        val centerX = scrollHandler.currentScroll + focusX - chart.bounds.left
         val zoomedCenterX = centerX * zoomChange
         measureContext.zoom = newZoom
         scrollHandler.currentScroll += zoomedCenterX - centerX
@@ -173,7 +173,7 @@ public abstract class BaseChartView<Model : EntryModel> internal constructor(
     }
 
     override fun onDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
-        chart.setToAxisModel(dataSetModel, model)
+        chart.setToAxisModel(chartModel, model)
         motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
@@ -185,11 +185,11 @@ public abstract class BaseChartView<Model : EntryModel> internal constructor(
             horizontalScroll = scrollHandler.currentScroll,
             markerTouchPoint = markerTouchPoint,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
-            dataSetModel = dataSetModel,
+            chartModel = chartModel,
         )
-        axisManager.drawBehindDataSet(drawContext)
+        axisManager.drawBehindChart(drawContext)
         chart.draw(drawContext, model, marker)
-        axisManager.drawAboveDataSet(drawContext)
+        axisManager.drawAboveChart(drawContext)
         scrollHandler.maxScrollDistance = chart.maxScrollAmount
     }
 
@@ -216,18 +216,18 @@ public abstract class BaseChartView<Model : EntryModel> internal constructor(
     }
 
     private fun updateBounds() = withChartAndModel { chart, model ->
-        chart.setToAxisModel(dataSetModel, model)
+        chart.setToAxisModel(chartModel, model)
         virtualLayout.setBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            dataSet = chart,
-            dataSetModel = dataSetModel,
+            chart = chart,
+            chartModel = chartModel,
             axisManager = axisManager,
             marker
         )
     }
 
-    private inline fun withChartAndModel(block: (chart: DataSet<Model>, model: Model) -> Unit) {
+    private inline fun withChartAndModel(block: (chart: Chart<Model>, model: Model) -> Unit) {
         val chart = chart ?: return
         val model = model ?: return
         block(chart, model)

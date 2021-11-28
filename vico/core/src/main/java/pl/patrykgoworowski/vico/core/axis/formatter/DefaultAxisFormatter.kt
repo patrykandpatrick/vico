@@ -16,12 +16,12 @@
 
 package pl.patrykgoworowski.vico.core.axis.formatter
 
-import pl.patrykgoworowski.vico.core.axis.model.DataSetModel
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 
 public object DefaultAxisFormatter : AxisValueFormatter {
     override fun formatValue(
         value: Float,
         index: Int,
-        dataSetModel: DataSetModel
+        chartModel: ChartModel
     ): String = value.toString()
 }

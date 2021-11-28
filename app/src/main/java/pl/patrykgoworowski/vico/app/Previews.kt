@@ -40,9 +40,9 @@ import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.component.shapeComponent
-import pl.patrykgoworowski.vico.compose.dataset.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
-import pl.patrykgoworowski.vico.compose.dataset.line.lineDataSet
+import pl.patrykgoworowski.vico.compose.chart.Chart
+import pl.patrykgoworowski.vico.compose.chart.column.columnChart
+import pl.patrykgoworowski.vico.compose.chart.line.lineChart
 import pl.patrykgoworowski.vico.core.axis.horizontal.createHorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.createVerticalAxis
@@ -51,7 +51,7 @@ import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.entryModelOf
+import pl.patrykgoworowski.vico.core.chart.entry.collection.entryModelOf
 import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
 
 private val chartModifier = Modifier.height(100.dp)
@@ -62,9 +62,9 @@ public fun ColumnChartCard(): Unit = MainTheme {
     val colors = MaterialTheme.colors
 
     SampleCard {
-        DataSet(
+        Chart(
             modifier = chartModifier,
-            dataSet = columnDataSet(
+            chart = columnChart(
                 columns = listOf(
                     lineComponent(
                         colors.primary,
@@ -108,9 +108,9 @@ public fun LineChartCard(): Unit = MainTheme {
     val colors = MaterialTheme.colors
 
     SampleCard {
-        DataSet(
+        Chart(
             modifier = Modifier.height(100.dp),
-            dataSet = lineDataSet(
+            chart = lineChart(
                 point = null,
                 lineColor = colors.primary,
                 lineBackgroundShader = DynamicShaders.fromComponent(

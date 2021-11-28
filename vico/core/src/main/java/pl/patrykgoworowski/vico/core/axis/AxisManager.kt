@@ -18,10 +18,10 @@ package pl.patrykgoworowski.vico.core.axis
 
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.collections.cacheInList
-import pl.patrykgoworowski.vico.core.dataset.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
-import pl.patrykgoworowski.vico.core.dataset.insets.DataSetInsetter
-import pl.patrykgoworowski.vico.core.dataset.insets.Insets
+import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
+import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
 
 public open class AxisManager {
@@ -45,7 +45,7 @@ public open class AxisManager {
     public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by cacheInList()
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by cacheInList()
 
-    public fun addInsetters(destination: MutableList<DataSetInsetter>) {
+    public fun addInsetters(destination: MutableList<ChartInsetter>) {
         startAxis?.let(destination::add)
         topAxis?.let(destination::add)
         endAxis?.let(destination::add)
@@ -67,31 +67,31 @@ public open class AxisManager {
     public fun setAxesBounds(
         measureContext: MeasureContext,
         contentBounds: RectF,
-        dataSetBounds: RectF,
+        chartBounds: RectF,
         insets: Insets,
     ) {
         startAxis?.setStartAxisBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            dataSetBounds = dataSetBounds,
+            chartBounds = chartBounds,
             insets = insets,
         )
         topAxis?.setTopAxisBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            dataSetBounds = dataSetBounds,
+            chartBounds = chartBounds,
             insets = insets,
         )
         endAxis?.setEndAxisBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            dataSetBounds = dataSetBounds,
+            chartBounds = chartBounds,
             insets = insets,
         )
         bottomAxis?.setBottomAxisBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            dataSetBounds = dataSetBounds,
+            chartBounds = chartBounds,
             insets = insets,
         )
         setRestrictedBounds()
@@ -100,7 +100,7 @@ public open class AxisManager {
     private fun AxisRenderer<AxisPosition.Vertical.Start>.setStartAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        dataSetBounds: RectF,
+        chartBounds: RectF,
         insets: Insets,
     ): Unit = with(context) {
         setBounds(
@@ -117,18 +117,18 @@ public open class AxisManager {
             },
             bottom = contentBounds.bottom - insets.bottom
         )
-        this@setStartAxisBounds.dataSetBounds.set(
-            getHorizontalAxisLeftDrawBound(context, dataSetBounds, insets),
-            dataSetBounds.top + context.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
-            getHorizontalAxisRightDrawBound(context, dataSetBounds, insets),
-            dataSetBounds.bottom + if (hasBottomAxis) 0f else context.maxAnyAxisLineThickness
+        this@setStartAxisBounds.chartBounds.set(
+            getHorizontalAxisLeftDrawBound(context, chartBounds, insets),
+            chartBounds.top + context.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
+            getHorizontalAxisRightDrawBound(context, chartBounds, insets),
+            chartBounds.bottom + if (hasBottomAxis) 0f else context.maxAnyAxisLineThickness
         )
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Top>.setTopAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        dataSetBounds: RectF,
+        chartBounds: RectF,
         insets: Insets,
     ) {
         setBounds(
@@ -137,18 +137,18 @@ public open class AxisManager {
             right = contentBounds.right - insets.end,
             bottom = contentBounds.top + insets.top
         )
-        this.dataSetBounds.set(
-            getHorizontalAxisLeftDrawBound(context, dataSetBounds, insets),
-            dataSetBounds.top,
-            getHorizontalAxisRightDrawBound(context, dataSetBounds, insets),
-            dataSetBounds.bottom
+        this.chartBounds.set(
+            getHorizontalAxisLeftDrawBound(context, chartBounds, insets),
+            chartBounds.top,
+            getHorizontalAxisRightDrawBound(context, chartBounds, insets),
+            chartBounds.bottom
         )
     }
 
     private fun AxisRenderer<AxisPosition.Vertical.End>.setEndAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        dataSetBounds: RectF,
+        chartBounds: RectF,
         insets: Insets,
     ): Unit = with(context) {
         setBounds(
@@ -165,18 +165,18 @@ public open class AxisManager {
             },
             bottom = contentBounds.bottom - insets.bottom
         )
-        this@setEndAxisBounds.dataSetBounds.set(
-            getHorizontalAxisLeftDrawBound(context, dataSetBounds, insets),
-            dataSetBounds.top + context.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
-            getHorizontalAxisRightDrawBound(context, dataSetBounds, insets),
-            dataSetBounds.bottom + if (hasBottomAxis) 0f else context.maxAnyAxisLineThickness
+        this@setEndAxisBounds.chartBounds.set(
+            getHorizontalAxisLeftDrawBound(context, chartBounds, insets),
+            chartBounds.top + context.maxAnyAxisLineThickness * if (hasTopAxis) 1 else -1,
+            getHorizontalAxisRightDrawBound(context, chartBounds, insets),
+            chartBounds.bottom + if (hasBottomAxis) 0f else context.maxAnyAxisLineThickness
         )
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        dataSetBounds: RectF,
+        chartBounds: RectF,
         insets: Insets,
     ): Unit = with(context) {
         setBounds(
@@ -185,11 +185,11 @@ public open class AxisManager {
             right = contentBounds.right - insets.end,
             bottom = contentBounds.bottom
         )
-        this@setBottomAxisBounds.dataSetBounds.set(
-            getHorizontalAxisLeftDrawBound(context, dataSetBounds, insets),
-            dataSetBounds.top + if (hasTopAxis) axisThickness else 0f,
-            getHorizontalAxisRightDrawBound(context, dataSetBounds, insets),
-            dataSetBounds.bottom
+        this@setBottomAxisBounds.chartBounds.set(
+            getHorizontalAxisLeftDrawBound(context, chartBounds, insets),
+            chartBounds.top + if (hasTopAxis) axisThickness else 0f,
+            getHorizontalAxisRightDrawBound(context, chartBounds, insets),
+            chartBounds.bottom
         )
     }
 
@@ -200,15 +200,15 @@ public open class AxisManager {
         bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
     }
 
-    public fun drawBehindDataSet(context: ChartDrawContext) {
+    public fun drawBehindChart(context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawBehindDataSet(context)
+            axis.drawBehindChart(context)
         }
     }
 
-    public fun drawAboveDataSet(context: ChartDrawContext) {
+    public fun drawAboveChart(context: ChartDrawContext) {
         axisCache.forEach { axis ->
-            axis.drawAboveDataSet(context)
+            axis.drawAboveChart(context)
         }
     }
 
@@ -217,18 +217,18 @@ public open class AxisManager {
 
         private fun AxisManager.getHorizontalAxisLeftDrawBound(
             context: MeasureContext,
-            dataSetBounds: RectF,
+            chartBounds: RectF,
             insets: Insets,
         ): Float = with(context) {
-            dataSetBounds.left + (leftAxis?.run { axisThickness.half } ?: -insets.getLeft(isLtr))
+            chartBounds.left + (leftAxis?.run { axisThickness.half } ?: -insets.getLeft(isLtr))
         }
 
         private fun AxisManager.getHorizontalAxisRightDrawBound(
             context: MeasureContext,
-            dataSetBounds: RectF,
+            chartBounds: RectF,
             insets: Insets,
         ): Float = with(context) {
-            dataSetBounds.right - (rightAxis?.run { axisThickness.half } ?: -insets.getRight(isLtr))
+            chartBounds.right - (rightAxis?.run { axisThickness.half } ?: -insets.getRight(isLtr))
         }
     }
 }

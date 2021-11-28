@@ -20,21 +20,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
-import pl.patrykgoworowski.vico.compose.dataset.DataSet
-import pl.patrykgoworowski.vico.compose.dataset.column.columnDataSet
-import pl.patrykgoworowski.vico.compose.dataset.line.lineDataSet
-import pl.patrykgoworowski.vico.core.dataset.composed.plus
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.dataset.entry.collection.composed.ComposedEntryCollection
+import pl.patrykgoworowski.vico.compose.chart.Chart
+import pl.patrykgoworowski.vico.compose.chart.column.columnChart
+import pl.patrykgoworowski.vico.compose.chart.line.lineChart
+import pl.patrykgoworowski.vico.core.chart.composed.plus
+import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.entry.collection.composed.ComposedEntryCollection
 
 @Composable
 internal fun ComposedChart(
     modifier: Modifier = Modifier,
     model: ComposedEntryCollection<EntryModel>,
 ) {
-    DataSet(
+    Chart(
         modifier = modifier,
-        dataSet = columnDataSet() + lineDataSet(),
+        chart = columnChart() + lineChart(),
         entryCollection = model,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
