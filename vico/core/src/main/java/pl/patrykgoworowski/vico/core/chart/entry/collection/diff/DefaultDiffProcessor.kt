@@ -16,33 +16,31 @@
 
 package pl.patrykgoworowski.vico.core.chart.entry.collection.diff
 
-import pl.patrykgoworowski.vico.core.entry.DataEntry
-import pl.patrykgoworowski.vico.core.entry.component1
-import pl.patrykgoworowski.vico.core.entry.component2
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.extension.setAll
 import java.util.TreeMap
 
-public class DefaultDiffProcessor : DiffProcessor<DataEntry> {
+public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
 
     private val progressMaps = ArrayList<TreeMap<Float, ProgressModel>>()
 
-    private val oldEntries = ArrayList<List<DataEntry>>()
-    private val newEntries = ArrayList<List<DataEntry>>()
+    private val oldEntries = ArrayList<List<ChartEntry>>()
+    private val newEntries = ArrayList<List<ChartEntry>>()
 
-    override fun setEntries(old: List<List<DataEntry>>, new: List<List<DataEntry>>) {
+    override fun setEntries(old: List<List<ChartEntry>>, new: List<List<ChartEntry>>) {
         oldEntries.setAll(old)
         newEntries.setAll(new)
         updateProgressMap()
     }
 
-    override fun setEntries(new: List<List<DataEntry>>) {
+    override fun setEntries(new: List<List<ChartEntry>>) {
         oldEntries.setAll(newEntries)
         newEntries.setAll(new)
         updateProgressMap()
     }
 
-    override fun progressDiff(progress: Float): List<List<DataEntry>> =
+    override fun progressDiff(progress: Float): List<List<ChartEntry>> =
         progressMaps
             .map { map ->
                 map.map { (x, model) -> entryOf(x, model.progressDiff(progress)) }

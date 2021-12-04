@@ -16,11 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.chart.entry.collection
 
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import kotlin.math.abs
 
 public interface EntryModel {
-    public val entryCollections: List<List<DataEntry>>
+    public val entryCollections: List<List<ChartEntry>>
     public val minX: Float
     public val maxX: Float
     public val minY: Float
@@ -33,7 +33,7 @@ public interface EntryModel {
 }
 
 public fun entryModel(
-    entryCollections: List<List<DataEntry>> = emptyList(),
+    entryCollections: List<List<ChartEntry>> = emptyList(),
     minX: Float = 1f,
     maxX: Float = 1f,
     minY: Float = 1f,
@@ -41,7 +41,7 @@ public fun entryModel(
     composedMaxY: Float = 1f,
     step: Float = 1f,
 ): EntryModel = object : EntryModel {
-    override val entryCollections: List<List<DataEntry>> = entryCollections
+    override val entryCollections: List<List<ChartEntry>> = entryCollections
     override val minX: Float = minX
     override val maxX: Float = maxX
     override val minY: Float = minY

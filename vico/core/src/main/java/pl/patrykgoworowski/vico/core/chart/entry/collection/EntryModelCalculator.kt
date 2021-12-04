@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.chart.entry.collection
 
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -65,12 +65,12 @@ public open class EntryModelCalculator {
         stackedMap.clear()
     }
 
-    public fun calculateData(data: List<List<DataEntry>>) {
+    public fun calculateData(data: List<List<ChartEntry>>) {
         resetValues()
         calculateMinMax(data)
     }
 
-    protected open fun calculateMinMax(data: List<List<DataEntry>>) {
+    protected open fun calculateMinMax(data: List<List<ChartEntry>>) {
         data.forEach { entryCollection ->
             entryCollection.forEach { entry ->
                 _minX = _minX?.coerceAtMost(entry.x) ?: entry.x
@@ -87,10 +87,10 @@ public open class EntryModelCalculator {
         }
     }
 
-    private fun calculateStep(entries: Collection<DataEntry>) {
+    private fun calculateStep(entries: Collection<ChartEntry>) {
         val iterator = entries.iterator()
-        var currentEntry: DataEntry
-        var previousEntry: DataEntry? = null
+        var currentEntry: ChartEntry
+        var previousEntry: ChartEntry? = null
         while (iterator.hasNext()) {
             currentEntry = iterator.next()
             previousEntry?.let { prevEntry ->

@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.chart
 
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.extension.updateList
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.model.Point
@@ -24,7 +24,7 @@ import pl.patrykgoworowski.vico.core.model.Point
 public fun HashMap<Float, MutableList<Marker.EntryModel>>.put(
     x: Float,
     y: Float,
-    entry: DataEntry,
+    entry: ChartEntry,
     color: Int,
 ) {
     updateList(x) {

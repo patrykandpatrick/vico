@@ -20,7 +20,7 @@ import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DefaultDiffAnim
 import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DefaultDiffProcessor
 import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DiffAnimator
 import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DiffProcessor
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.extension.setAll
 
 public typealias EntryListModelListener = (EntryModel) -> Unit
@@ -31,10 +31,10 @@ public class EntryList(
 ) : EntryCollection<EntryModel> {
 
     private val calculator = EntryModelCalculator()
-    private val diffProcessor: DiffProcessor<DataEntry> = DefaultDiffProcessor()
+    private val diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor()
     private val listeners: ArrayList<EntryListModelListener> = ArrayList()
 
-    public val data: ArrayList<List<DataEntry>> = ArrayList()
+    public val data: ArrayList<List<ChartEntry>> = ArrayList()
 
     override var model: EntryModel = entryModel()
         private set
@@ -61,20 +61,20 @@ public class EntryList(
         get() = calculator.stackedMinY
 
     public constructor(
-        entryCollections: List<List<DataEntry>>,
+        entryCollections: List<List<ChartEntry>>,
         animateChanges: Boolean = true,
     ) : this(animateChanges = animateChanges) {
         setEntries(entryCollections)
     }
 
     public constructor(
-        vararg entryCollections: List<DataEntry>,
+        vararg entryCollections: List<ChartEntry>,
         animateChanges: Boolean = true,
     ) : this(animateChanges = animateChanges) {
         setEntries(entryCollections.toList())
     }
 
-    public fun setEntries(entries: List<List<DataEntry>>) {
+    public fun setEntries(entries: List<List<ChartEntry>>) {
         if (animateChanges) {
             diffProcessor.setEntries(
                 old = diffProcessor.progressDiff(diffAnimator.currentProgress),
@@ -88,11 +88,11 @@ public class EntryList(
         }
     }
 
-    public fun setEntries(vararg entries: List<DataEntry>) {
+    public fun setEntries(vararg entries: List<ChartEntry>) {
         setEntries(entries.toList())
     }
 
-    private fun refreshModel(entries: List<List<DataEntry>>) {
+    private fun refreshModel(entries: List<List<ChartEntry>>) {
         data.setAll(entries)
         calculator.resetValues()
         calculator.calculateData(data)

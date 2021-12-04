@@ -31,7 +31,7 @@ import pl.patrykgoworowski.vico.core.chart.put
 import pl.patrykgoworowski.vico.core.chart.renderer.BaseChart
 import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.extension.between
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
@@ -153,7 +153,7 @@ public open class LineChart(
     private inline fun EntryModel.forEachPoint(
         segment: SegmentProperties,
         drawingStart: Float,
-        action: (entry: DataEntry, x: Float, y: Float) -> Unit,
+        action: (entry: ChartEntry, x: Float, y: Float) -> Unit,
     ) {
         var x: Float
         var y: Float

@@ -16,11 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.chart
 
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 
-public inline fun List<DataEntry>.forEachIn(
+public inline fun List<ChartEntry>.forEachIn(
     range: ClosedFloatingPointRange<Float>,
-    action: (DataEntry) -> Unit,
+    action: (ChartEntry) -> Unit,
 ) {
     for (entry in this) {
         if (entry.x in range) action(entry)

@@ -26,7 +26,7 @@ import pl.patrykgoworowski.vico.core.chart.put
 import pl.patrykgoworowski.vico.core.chart.renderer.BaseChart
 import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.extension.between
 import pl.patrykgoworowski.vico.core.extension.getRepeating
 import pl.patrykgoworowski.vico.core.extension.half
@@ -88,7 +88,8 @@ public open class ColumnChart(
         cellWidth: Float,
         spacing: Float,
     ) {
-        val yRange = ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero).takeIf { it != 0f } ?: return
+        val yRange =
+            ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero).takeIf { it != 0f } ?: return
         val heightMultiplier = bounds.height() / yRange
 
         var drawingStart: Float
@@ -150,7 +151,7 @@ public open class ColumnChart(
     }
 
     private fun updateMarkerLocationMap(
-        entry: DataEntry,
+        entry: ChartEntry,
         columnTop: Float,
         columnCenterX: Float,
         column: LineComponent,

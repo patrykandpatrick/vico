@@ -16,9 +16,24 @@
 
 package pl.patrykgoworowski.vico.core.entry
 
-public data class IntEntry(val positionX: Int, val positionY: Int) : DataEntry {
-    override val x: Float = positionX.toFloat()
-    override val y: Float = positionY.toFloat()
-}
+import pl.patrykgoworowski.vico.core.chart.renderer.Chart
 
-public fun entryOf(x: Int, y: Int): IntEntry = IntEntry(x, y)
+/**
+ * The base for single chart entry rendered by [Chart] subclasses.
+ * It holds information about x-axis and y-axis location.
+ */
+public interface ChartEntry {
+
+    /**
+     * The position on x-axis of this [ChartEntry].
+     */
+    public val x: Float
+
+    /**
+     * The position on y-axis of this [ChartEntry].
+     */
+    public val y: Float
+
+    public operator fun component1(): Float = x
+    public operator fun component2(): Float = y
+}

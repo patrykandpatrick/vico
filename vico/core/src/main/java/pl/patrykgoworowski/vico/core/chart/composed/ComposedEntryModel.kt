@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.chart.composed
 
 import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 
 public interface ComposedEntryModel<Model : EntryModel> : EntryModel {
     public val composedEntryCollections: List<Model>
@@ -25,7 +25,7 @@ public interface ComposedEntryModel<Model : EntryModel> : EntryModel {
 
 public fun <Model : EntryModel> composedEntryModel(
     composedEntryCollections: List<Model> = emptyList(),
-    entryCollections: List<List<DataEntry>> = emptyList(),
+    entryCollections: List<List<ChartEntry>> = emptyList(),
     minX: Float = 1f,
     maxX: Float = 1f,
     minY: Float = 1f,
@@ -34,7 +34,7 @@ public fun <Model : EntryModel> composedEntryModel(
     step: Float = 1f,
 ): ComposedEntryModel<Model> = object : ComposedEntryModel<Model> {
     override val composedEntryCollections: List<Model> = composedEntryCollections
-    override val entryCollections: List<List<DataEntry>> = entryCollections
+    override val entryCollections: List<List<ChartEntry>> = entryCollections
     override val minX: Float = minX
     override val maxX: Float = maxX
     override val minY: Float = minY

@@ -16,14 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.entry
 
+/**
+ * The default implementation of [ChartEntry].
+ */
 public data class FloatEntry(
     override val x: Float,
     override val y: Float,
-) : DataEntry
-
-public fun entryOf(x: Float, y: Float): FloatEntry = FloatEntry(x, y)
-
-public fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> =
-    pairs.map { (x, y) ->
-        FloatEntry(x.toFloat(), y.toFloat())
-    }
+) : ChartEntry
