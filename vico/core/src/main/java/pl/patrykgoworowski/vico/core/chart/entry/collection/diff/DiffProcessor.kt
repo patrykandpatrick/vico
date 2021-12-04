@@ -16,9 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.chart.entry.collection.diff
 
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 
-public interface DiffProcessor<Entry : DataEntry> {
+public interface DiffProcessor<Entry : ChartEntry> {
 
     public fun setEntries(old: List<List<Entry>>, new: List<List<Entry>>)
 

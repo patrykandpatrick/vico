@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.marker
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
 import pl.patrykgoworowski.vico.core.draw.DrawContext
-import pl.patrykgoworowski.vico.core.entry.DataEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.model.Point
 
 public interface Marker : ChartInsetter {
@@ -32,7 +32,7 @@ public interface Marker : ChartInsetter {
 
     public class EntryModel(
         public val location: Point,
-        public val entry: DataEntry,
+        public val entry: ChartEntry,
         public val color: Int,
     )
 }
