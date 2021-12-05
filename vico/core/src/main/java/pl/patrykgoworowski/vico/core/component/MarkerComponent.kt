@@ -87,9 +87,9 @@ public open class MarkerComponent(
             text = text,
             textX = x,
             textY = bounds.top +
-                    label.allLinesHeight.half +
-                    label.padding.topDp.pixels -
-                    context.markerHeight,
+                label.allLinesHeight.half +
+                label.padding.topDp.pixels -
+                context.markerHeight,
         ) { textContext, left, top, right, bottom ->
             markerTempBounds.set(left, top, right, bottom)
             drawMarkerBackground(textContext, markerTempBounds, bounds, entryX)

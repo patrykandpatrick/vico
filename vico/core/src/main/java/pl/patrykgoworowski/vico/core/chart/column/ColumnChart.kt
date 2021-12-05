@@ -20,10 +20,10 @@ import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.chart.forEachIn
 import pl.patrykgoworowski.vico.core.chart.put
-import pl.patrykgoworowski.vico.core.chart.renderer.BaseChart
+import pl.patrykgoworowski.vico.core.chart.BaseChart
 import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
@@ -43,7 +43,7 @@ public open class ColumnChart(
     public var spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
     public var innerSpacingDp: Float = Dimens.COLUMN_INSIDE_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped
-) : BaseChart<EntryModel>() {
+) : BaseChart<ChartEntryModel>() {
 
     public constructor(
         column: LineComponent,
@@ -57,22 +57,22 @@ public open class ColumnChart(
 
     override val markerLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
-    override fun getMeasuredWidth(context: MeasureContext, model: EntryModel): Int = with(context) {
-        val length = model.getEntriesLength()
-        val segmentWidth = getCellWidth(model.entryCollections.size, false)
+    override fun getMeasuredWidth(context: MeasureContext, model: ChartEntryModel): Int = with(context) {
+        val length = model.getDrawnEntryCount()
+        val segmentWidth = getCellWidth(model.entries.size, false)
         return (segmentWidth * length + spacingDp.pixels * length).roundToInt()
     }
 
     override fun drawChart(
         context: ChartDrawContext,
-        model: EntryModel,
+        model: ChartEntryModel,
     ): Unit = with(context) {
         canvas.inClip(bounds) {
             markerLocationMap.clear()
             calculateDrawSegmentSpecIfNeeded(model)
             maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
                 a = 0f,
-                b = (segmentProperties.segmentWidth * model.getEntriesLength()) - bounds.width(),
+                b = (segmentProperties.segmentWidth * model.getDrawnEntryCount()) - bounds.width(),
             ) else 0f
             drawChartInternal(
                 model = model,
@@ -84,7 +84,7 @@ public open class ColumnChart(
     }
 
     private fun ChartDrawContext.drawChartInternal(
-        model: EntryModel,
+        model: ChartEntryModel,
         cellWidth: Float,
         spacing: Float,
     ) {
@@ -100,9 +100,9 @@ public open class ColumnChart(
         var columnBottom: Float
         val bottomCompensation = if (minY.orZero < 0f) (minY.orZero * heightMultiplier) else 0f
 
-        val defCellWidth = getCellWidth(model.entryCollections.size)
+        val defCellWidth = getCellWidth(model.entries.size)
 
-        model.entryCollections.forEachIndexed { index, entryCollection ->
+        model.entries.forEachIndexed { index, entryCollection ->
 
             column = columns.getRepeating(index)
             drawingStart = getDrawingStart(
@@ -115,7 +115,7 @@ public open class ColumnChart(
             entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
                 height = entry.y * heightMultiplier
                 columnCenterX = drawingStart +
-                        (cellWidth + spacing) * (entry.x - model.minX) / model.step
+                    (cellWidth + spacing) * (entry.x - model.minX) / model.step
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -164,21 +164,21 @@ public open class ColumnChart(
         )
     }
 
-    override fun setToAxisModel(axisModel: MutableChartModel, model: EntryModel) {
+    override fun setToAxisModel(axisModel: MutableChartModel, model: ChartEntryModel) {
         axisModel.minY = minY ?: min(model.minY, 0f)
         axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
-        axisModel.entryModel = model
+        axisModel.chartEntryModel = model
     }
 
     override fun getSegmentProperties(
         context: MeasureContext,
-        model: EntryModel
+        model: ChartEntryModel
     ): SegmentProperties = with(context) {
         calculateDrawSegmentSpecIfNeeded(model)
         segmentProperties.apply {
-            cellWidth = context.getCellWidth(model.entryCollections.size)
+            cellWidth = context.getCellWidth(model.entries.size)
             marginWidth = spacingDp.pixels * drawScale
         }
     }
@@ -191,7 +191,7 @@ public open class ColumnChart(
             columns.maxOf { it.thicknessDp.pixels }.applyScale(scaled)
         MergeMode.Grouped ->
             getCumulatedThickness(entryCollectionSize, density, scaled) +
-                    (innerSpacingDp.pixels.applyScale(scaled) * (entryCollectionSize - 1))
+                (innerSpacingDp.pixels.applyScale(scaled) * (entryCollectionSize - 1))
     }
 
     private fun MeasureContext.getDrawingStart(
@@ -202,10 +202,12 @@ public open class ColumnChart(
     ): Float {
         val baseLeft = bounds.left + spacing.half
         return when (mergeMode) {
-            MergeMode.Stack -> baseLeft
-            MergeMode.Grouped -> baseLeft + segmentCompensation - columnWidth.half +
-                    (getCumulatedThickness(entryCollectionIndex, density, true) +
-                            (innerSpacingDp.pixels * drawScale * entryCollectionIndex))
+            MergeMode.Stack ->
+                baseLeft
+            MergeMode.Grouped ->
+                baseLeft + segmentCompensation - columnWidth.half +
+                    getCumulatedThickness(entryCollectionIndex, density, true) +
+                    (innerSpacingDp.pixels * drawScale * entryCollectionIndex)
         }
     }
 

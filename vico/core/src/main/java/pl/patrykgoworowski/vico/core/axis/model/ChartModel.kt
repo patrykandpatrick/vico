@@ -16,36 +16,45 @@
 
 package pl.patrykgoworowski.vico.core.axis.model
 
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.Chart
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
+/**
+ * The actual source of data rendered by [Chart].
+ *
+ * By default [minX], [maxX], [minY] and [maxY] are equal to [ChartEntryModel.minX],
+ * [ChartEntryModel.maxX], [ChartEntryModel.minY] and [ChartEntryModel.maxY] respectively,
+ * but they will be replaced with [Chart.minX], [Chart.maxX], [Chart.minY] and [Chart.maxY]
+ * respectively when they are non-null.
+ */
 public interface ChartModel {
 
     /**
-     * The minimum value on the x-axis. It is equal to [EntryModel.minX] from [entryModel] by default
+     * The minimum value on the x-axis. It is equal to [ChartEntryModel.minX] from [chartEntryModel] by default
      * but may be overridden.
      */
     public val minX: Float
 
     /**
-    * The maximum value on the x-axis. It is equal to [EntryModel.maxX] from [entryModel] by default
-    * but may be overridden.
-    */
+     * The maximum value on the x-axis. It is equal to [ChartEntryModel.maxX] from [chartEntryModel] by default
+     * but may be overridden.
+     */
     public val maxX: Float
 
     /**
-    * The minimum value on the y-axis. It is equal to [EntryModel.minY] from [entryModel] by default
-    * but may be overridden.
-    */
+     * The minimum value on the y-axis. It is equal to [ChartEntryModel.minY] from [chartEntryModel] by default
+     * but may be overridden.
+     */
     public val minY: Float
 
     /**
-    * The maximum value on the y-axis. It is equal to [EntryModel.maxY] from [entryModel] by default
-    * but may be overridden.
-    */
+     * The maximum value on the y-axis. It is equal to [ChartEntryModel.maxY] from [chartEntryModel] by default
+     * but may be overridden.
+     */
     public val maxY: Float
 
     /**
      * The source of the entries drawn on the chart. It holds default values for [minX], [maxX], [minY], and [maxY].
      */
-    public val entryModel: EntryModel
+    public val chartEntryModel: ChartEntryModel
 }

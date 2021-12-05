@@ -51,7 +51,7 @@ import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
-import pl.patrykgoworowski.vico.core.chart.entry.collection.entryModelOf
+import pl.patrykgoworowski.vico.core.entry.entryModelOf
 import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
 
 private val chartModifier = Modifier.height(100.dp)
@@ -97,7 +97,7 @@ public fun ColumnChartCard(): Unit = MainTheme {
                     1.dp.value,
                 )
             },
-            model = @Suppress("MagicNumber") entryModelOf(1, 2, 3, 2)
+            model = @Suppress("MagicNumber") (entryModelOf(1, 2, 3, 2))
         )
     }
 }
@@ -122,9 +122,7 @@ public fun LineChartCard(): Unit = MainTheme {
                 minX = 0f,
                 maxY = 3f,
             ),
-            model = @Suppress("MagicNumber") entryModelOf(
-                -1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1
-            ),
+            model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
             startAxis = createVerticalAxis {
                 label = textComponent(
                     color = colors.onSurface,

@@ -16,16 +16,13 @@
 
 package pl.patrykgoworowski.vico.core.chart.diff
 
-import android.animation.TimeInterpolator
-import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DiffAnimator
+import pl.patrykgoworowski.vico.core.entry.diff.DiffAnimator
 
 public class TestDiffAnimator : DiffAnimator {
 
     private var onProgress: ((progress: Float) -> Unit)? = null
-    override var currentProgress: Float = 0f
-    override lateinit var animationInterpolator: TimeInterpolator
 
-    override var animationDuration: Long = 0
+    override var currentProgress: Float = 0f
 
     override fun start(onProgress: (progress: Float) -> Unit) {
         this.onProgress = onProgress

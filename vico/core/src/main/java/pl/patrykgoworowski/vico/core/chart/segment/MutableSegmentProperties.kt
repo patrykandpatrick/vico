@@ -30,6 +30,5 @@ public data class MutableSegmentProperties(
     }
 
     override fun toString(): String =
-        "MutableSegmentProperties(segmentWidth=$segmentWidth, contentWidth=$cellWidth," +
-                "marginWidth=$marginWidth)"
+        "MutableSegmentProperties(segmentWidth=$segmentWidth, contentWidth=$cellWidth," + "marginWidth=$marginWidth)"
 }

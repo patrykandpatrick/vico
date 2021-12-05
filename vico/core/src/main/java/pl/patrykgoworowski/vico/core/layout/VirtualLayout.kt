@@ -20,10 +20,10 @@ import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.renderer.Chart
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
+import pl.patrykgoworowski.vico.core.chart.Chart
 import kotlin.math.max
 
 public open class VirtualLayout {
@@ -33,7 +33,7 @@ public open class VirtualLayout {
     private val tempInsets: Insets = Insets()
 
     @LongParameterListDrawFunction
-    public open fun <Model : EntryModel> setBounds(
+    public open fun <Model : ChartEntryModel> setBounds(
         context: MeasureContext,
         contentBounds: RectF,
         chart: Chart<Model>,

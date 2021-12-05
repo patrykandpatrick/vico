@@ -16,11 +16,11 @@
 
 package pl.patrykgoworowski.vico.core.util
 
-import pl.patrykgoworowski.vico.core.chart.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.composed.ComposedEntryCollection
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
 import pl.patrykgoworowski.vico.core.entry.FloatEntry
+import pl.patrykgoworowski.vico.core.entry.composed.ComposedChartEntryModelProducer
 import pl.patrykgoworowski.vico.core.entry.entryOf
 
 public class RandomEntriesGenerator(
@@ -36,14 +36,14 @@ public class RandomEntriesGenerator(
         return result
     }
 
-    public fun randomEntryModel(): EntryModel =
-        EntryList(generateRandomEntries(), animateChanges = false).model
+    public fun randomEntryModel(): ChartEntryModel =
+        ChartEntryModelProducer(generateRandomEntries()).model
 
-    public fun randomComposedEntryModel(): ComposedEntryModel<EntryModel> =
-        ComposedEntryCollection(
-            EntryList(generateRandomEntries(), animateChanges = false),
-            EntryList(generateRandomEntries(), animateChanges = false),
-            EntryList(generateRandomEntries(), animateChanges = false),
+    public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> =
+        ComposedChartEntryModelProducer(
+            ChartEntryModelProducer(generateRandomEntries()),
+            ChartEntryModelProducer(generateRandomEntries()),
+            ChartEntryModelProducer(generateRandomEntries()),
         ).model
 
     private companion object {

@@ -31,9 +31,9 @@ import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
 import pl.patrykgoworowski.vico.core.chart.composed.ComposedChart
-import pl.patrykgoworowski.vico.core.chart.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.renderer.Chart
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.extension.hasFlag
 import pl.patrykgoworowski.vico.view.R
 
@@ -61,10 +61,10 @@ internal class ThemeHandler(
     public var isChartZoomEnabled: Boolean = false
         private set
 
-    public var chart: Chart<EntryModel>? = null
+    public var chart: Chart<ChartEntryModel>? = null
         private set
 
-    public var composedChart: Chart<ComposedEntryModel<EntryModel>>? = null
+    public var composedChart: Chart<ComposedChartEntryModel<ChartEntryModel>>? = null
         private set
 
     init {
@@ -144,7 +144,7 @@ internal class ThemeHandler(
         }
     }
 
-    private fun TypedArray.getChart(): Chart<EntryModel>? {
+    private fun TypedArray.getChart(): Chart<ChartEntryModel>? {
         val chartFlags = getInt(R.styleable.ChartView_chartType, 0)
 
         return when {
@@ -154,7 +154,7 @@ internal class ThemeHandler(
         }
     }
 
-    private fun TypedArray.getComposedChart(): Chart<ComposedEntryModel<EntryModel>>? {
+    private fun TypedArray.getComposedChart(): Chart<ComposedChartEntryModel<ChartEntryModel>>? {
         val chartFlags = getInt(R.styleable.ComposedChartView_charts, 0)
 
         val columnChart: ColumnChart? = if (chartFlags.hasFlag(Flags.COLUMN_CHART)) {

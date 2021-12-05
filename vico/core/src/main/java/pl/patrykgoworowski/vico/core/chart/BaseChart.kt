@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.renderer
+package pl.patrykgoworowski.vico.core.chart
 
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
 import pl.patrykgoworowski.vico.core.chart.threshold.ThresholdLine
+import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
 import pl.patrykgoworowski.vico.core.extension.getEntryModel
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 
-public abstract class BaseChart<in Model : EntryModel> : Chart<Model>, BoundsAware {
+public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
 
     private val thresholdLines = ArrayList<ThresholdLine>()
     private val persistentMarkers = HashMap<Float, Marker>()
@@ -70,7 +70,7 @@ public abstract class BaseChart<in Model : EntryModel> : Chart<Model>, BoundsAwa
         model: Model,
         touchMarker: Marker?
     ) {
-        if (model.entryCollections.isNotEmpty()) {
+        if (model.entries.isNotEmpty()) {
             drawChart(context, model)
         }
         drawThresholdLines(context, model)

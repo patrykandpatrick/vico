@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.entry.collection.diff
+package pl.patrykgoworowski.vico.core.entry.diff
 
+import java.util.TreeMap
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.extension.setAll
-import java.util.TreeMap
+import kotlin.collections.ArrayList
 
 public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
 

@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.entry
 
-import pl.patrykgoworowski.vico.core.chart.renderer.Chart
+import pl.patrykgoworowski.vico.core.chart.Chart
 
 /**
  * The base for single chart entry rendered by [Chart] subclasses.

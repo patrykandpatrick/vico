@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.entry.collection.diff
+package pl.patrykgoworowski.vico.core.entry
 
-import pl.patrykgoworowski.vico.core.entry.ChartEntry
+public interface ChartModelProducer<Model : ChartEntryModel> {
 
-public interface DiffProcessor<Entry : ChartEntry> {
+    public val model: Model
 
-    public fun setEntries(old: List<List<Entry>>, new: List<List<Entry>>)
-
-    public fun setEntries(new: List<List<Entry>>)
-
-    public fun progressDiff(progress: Float): List<List<Entry>>
+    public fun addOnEntriesChangedListener(listener: (Model) -> Unit)
+    public fun removeOnEntriesChangedListener(listener: (Model) -> Unit)
 }

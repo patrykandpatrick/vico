@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.renderer
+package pl.patrykgoworowski.vico.core.entry.diff
 
-import pl.patrykgoworowski.vico.core.model.Point
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 
-public interface RendererViewState {
+public interface DiffProcessor<Entry : ChartEntry> {
 
-    public val markerTouchPoint: Point?
-    public val horizontalScroll: Float
+    public fun setEntries(old: List<List<Entry>>, new: List<List<Entry>>)
 
-    public operator fun component1(): Point? = markerTouchPoint
-    public operator fun component2(): Float = horizontalScroll
+    public fun setEntries(new: List<List<Entry>>)
+
+    public fun progressDiff(progress: Float): List<List<Entry>>
 }

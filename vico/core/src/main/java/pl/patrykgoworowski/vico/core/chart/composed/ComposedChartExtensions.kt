@@ -16,20 +16,20 @@
 
 package pl.patrykgoworowski.vico.core.chart.composed
 
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.renderer.Chart
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.chart.Chart
 
-public operator fun <Model : EntryModel> Chart<Model>.plus(
+public operator fun <Model : ChartEntryModel> Chart<Model>.plus(
     other: Chart<Model>
 ): ComposedChart<Model> =
     ComposedChart(listOf(this, other))
 
-public operator fun <Model : EntryModel> ComposedChart<Model>.plus(
+public operator fun <Model : ChartEntryModel> ComposedChart<Model>.plus(
     other: Chart<Model>
 ): ComposedChart<Model> =
     ComposedChart(charts + other)
 
-public operator fun <Model : EntryModel> ComposedChart<Model>.plus(
+public operator fun <Model : ChartEntryModel> ComposedChart<Model>.plus(
     other: ComposedChart<Model>
 ): ComposedChart<Model> =
     ComposedChart(charts + other.charts)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.renderer
+package pl.patrykgoworowski.vico.core.chart
 
 import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext

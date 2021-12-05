@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.chart.diff
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
-import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DefaultDiffProcessor
+import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffProcessor
 import pl.patrykgoworowski.vico.core.entry.entriesOf
 
 public class DefaultDiffProcessorTest {

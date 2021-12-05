@@ -59,15 +59,17 @@ public open class MarkerCorneredShape(
         contentBounds: RectF,
         tickX: Float,
     ) {
-        createPath(context = context, path = path, left = bounds.left, top = bounds.top,
-        right = bounds.right, bottom = bounds.bottom)
+        createPath(
+            context = context, path = path, left = bounds.left, top = bounds.top,
+            right = bounds.right, bottom = bounds.bottom
+        )
         val tickSize = context.toPixels(tickSize)
         val availableCornerSize = minOf(bounds.width(), bounds.height())
 
         val minLeft = contentBounds.left +
-                bottomLeft.getCornerSize(availableCornerSize, context.density)
+            bottomLeft.getCornerSize(availableCornerSize, context.density)
         val maxLeft = contentBounds.right -
-                (bottomRight.getCornerSize(availableCornerSize, context.density) + tickSize * 2)
+            (bottomRight.getCornerSize(availableCornerSize, context.density) + tickSize * 2)
 
         val tickTopLeft = (tickX - tickSize).between(minLeft, maxLeft)
         path.moveTo(tickTopLeft, bounds.bottom)

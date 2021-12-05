@@ -39,8 +39,7 @@ internal val Context.isLtr: Boolean
     } else true
 
 public val Context.isDarkMode: Boolean
-    get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-            Configuration.UI_MODE_NIGHT_YES
+    get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
 internal val Context.colors: Colors
     get() = if (isDarkMode) Colors.Dark else Colors.Light

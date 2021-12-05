@@ -14,30 +14,27 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.entry.collection
+package pl.patrykgoworowski.vico.core.entry
 
-import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DefaultDiffAnimator
-import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DefaultDiffProcessor
-import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DiffAnimator
-import pl.patrykgoworowski.vico.core.chart.entry.collection.diff.DiffProcessor
-import pl.patrykgoworowski.vico.core.entry.ChartEntry
+import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffProcessor
+import pl.patrykgoworowski.vico.core.entry.diff.DiffAnimator
+import pl.patrykgoworowski.vico.core.entry.diff.DiffProcessor
 import pl.patrykgoworowski.vico.core.extension.setAll
 
-public typealias EntryListModelListener = (EntryModel) -> Unit
+private typealias Listener = (ChartEntryModel) -> Unit
 
-public class EntryList(
-    public var diffAnimator: DiffAnimator = DefaultDiffAnimator(),
-    public var animateChanges: Boolean = true
-) : EntryCollection<EntryModel> {
+public class ChartEntryModelProducer(
+    entryCollections: List<List<ChartEntry>>,
+    private val diffAnimator: DiffAnimator? = null,
+) : ChartModelProducer<ChartEntryModel> {
 
     private val calculator = EntryModelCalculator()
     private val diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor()
-    private val listeners: ArrayList<EntryListModelListener> = ArrayList()
+    private val listeners: ArrayList<Listener> = ArrayList()
 
     public val data: ArrayList<List<ChartEntry>> = ArrayList()
 
-    override var model: EntryModel = entryModel()
-        private set
+    override lateinit var model: ChartEntryModel
 
     public val minX: Float
         get() = calculator.minX
@@ -61,29 +58,24 @@ public class EntryList(
         get() = calculator.stackedMinY
 
     public constructor(
-        entryCollections: List<List<ChartEntry>>,
-        animateChanges: Boolean = true,
-    ) : this(animateChanges = animateChanges) {
+        vararg entryCollections: List<ChartEntry>,
+        diffAnimator: DiffAnimator? = null,
+    ) : this(entryCollections.toList(), diffAnimator = diffAnimator)
+
+    init {
         setEntries(entryCollections)
     }
 
-    public constructor(
-        vararg entryCollections: List<ChartEntry>,
-        animateChanges: Boolean = true,
-    ) : this(animateChanges = animateChanges) {
-        setEntries(entryCollections.toList())
-    }
-
     public fun setEntries(entries: List<List<ChartEntry>>) {
-        if (animateChanges) {
+        diffAnimator?.also { animator ->
             diffProcessor.setEntries(
-                old = diffProcessor.progressDiff(diffAnimator.currentProgress),
+                old = diffProcessor.progressDiff(animator.currentProgress),
                 new = entries,
             )
-            diffAnimator.start { progress ->
+            animator.start { progress ->
                 refreshModel(diffProcessor.progressDiff(progress))
             }
-        } else {
+        } ?: kotlin.run {
             refreshModel(entries)
         }
     }
@@ -99,18 +91,18 @@ public class EntryList(
         notifyChange()
     }
 
-    override fun addOnEntriesChangedListener(listener: EntryListModelListener) {
+    override fun addOnEntriesChangedListener(listener: Listener) {
         listeners += listener
         listener(model)
     }
 
-    override fun removeOnEntriesChangedListener(listener: EntryListModelListener) {
+    override fun removeOnEntriesChangedListener(listener: Listener) {
         listeners -= listener
     }
 
     private fun notifyChange() {
-        model = entryModel(
-            entryCollections = data,
+        model = Model(
+            entries = data,
             minX = minX,
             maxX = maxX,
             minY = minY,
@@ -120,4 +112,14 @@ public class EntryList(
         )
         listeners.forEach { it(model) }
     }
+
+    internal data class Model(
+        override val entries: List<List<ChartEntry>>,
+        override val minX: Float,
+        override val maxX: Float,
+        override val minY: Float,
+        override val maxY: Float,
+        override val composedMaxY: Float,
+        override val step: Float
+    ) : ChartEntryModel
 }

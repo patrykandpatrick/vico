@@ -43,7 +43,7 @@ public fun entryOf(x: Number, y: Number): FloatEntry = entryOf(x.toFloat(), y.to
  * For example:
  *
  * ```
- * entriesOf(0 to 1, 1 to 2, 3 to 5)
+ *  entriesOf(0 to 1, 1 to 2, 3 to 5)
  * ```
  *
  * All [Number] instances are converted to [Float].

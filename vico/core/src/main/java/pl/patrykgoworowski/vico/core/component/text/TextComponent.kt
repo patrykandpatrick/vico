@@ -41,8 +41,13 @@ import pl.patrykgoworowski.vico.core.text.widestLineWidth
 import kotlin.collections.HashMap
 import kotlin.math.roundToInt
 
-public typealias OnPreDrawListener =
-            (context: DrawContext, left: Float, top: Float, right: Float, bottom: Float) -> Unit
+public typealias OnPreDrawListener = (
+    context: DrawContext,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float
+) -> Unit
 
 public open class TextComponent(
     color: Int = Color.BLACK,
@@ -180,8 +185,8 @@ public open class TextComponent(
         text: CharSequence,
     ): Float = with(context) {
         getLayout(text, fontScale).widestLineWidth +
-                padding.horizontalDp.pixels +
-                margins.horizontalDp.pixels
+            padding.horizontalDp.pixels +
+            margins.horizontalDp.pixels
     }
 
     public fun getHeight(
@@ -192,8 +197,8 @@ public open class TextComponent(
         includeMargin: Boolean = true,
     ): Float = with(context) {
         getLayout(text, fontScale, width).height +
-                (if (includePadding) padding.verticalDp.pixels else 0f) +
-                (if (includeMargin) margins.verticalDp.pixels else 0f)
+            (if (includePadding) padding.verticalDp.pixels else 0f) +
+            (if (includeMargin) margins.verticalDp.pixels else 0f)
     }
 
     public fun clearLayoutCache() {

@@ -24,18 +24,18 @@ import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
 import pl.patrykgoworowski.vico.compose.chart.line.lineChart
 import pl.patrykgoworowski.vico.core.chart.composed.plus
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.composed.ComposedEntryCollection
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.composed.ComposedChartEntryModelProducer
 
 @Composable
 internal fun ComposedChart(
     modifier: Modifier = Modifier,
-    model: ComposedEntryCollection<EntryModel>,
+    model: ComposedChartEntryModelProducer<ChartEntryModel>,
 ) {
     Chart(
         modifier = modifier,
         chart = columnChart() + lineChart(),
-        entryCollection = model,
+        chartModelProducer = model,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         marker = markerComponent(),

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.entry.collection
+package pl.patrykgoworowski.vico.core.entry
 
-import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
 public open class EntryModelCalculator {
 
-    public val stackedMap: HashMap<Float, Float> = HashMap()
+    private val stackedMap: HashMap<Float, Float> = HashMap()
 
     private var _minX: Float? = null
     private var _maxX: Float? = null

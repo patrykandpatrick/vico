@@ -24,12 +24,12 @@ import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
 import pl.patrykgoworowski.vico.core.chart.column.MergeMode
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
 
 @Composable
 internal fun GroupedColumnChart(
     modifier: Modifier = Modifier,
-    entryList: EntryList,
+    chartEntryModelProducer: ChartEntryModelProducer,
 ) {
     Chart(
         modifier = modifier,
@@ -38,7 +38,7 @@ internal fun GroupedColumnChart(
             spacing = 24.dp,
             mergeMode = MergeMode.Grouped,
         ),
-        entryCollection = entryList,
+        chartModelProducer = chartEntryModelProducer,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         marker = markerComponent(),

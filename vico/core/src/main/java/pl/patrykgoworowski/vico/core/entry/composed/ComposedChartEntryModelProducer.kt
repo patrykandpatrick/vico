@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.entry.collection.composed
+package pl.patrykgoworowski.vico.core.entry.composed
 
-import pl.patrykgoworowski.vico.core.chart.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.chart.composed.composedEntryModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryCollection
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
+import pl.patrykgoworowski.vico.core.chart.composed.composedChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 import pl.patrykgoworowski.vico.core.extension.runEach
 
-public class ComposedEntryCollection<Model : EntryModel>(
-    public val entryCollections: List<EntryCollection<Model>>
-) : EntryCollection<ComposedEntryModel<Model>> {
+public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
+    public val chartModelProducers: List<ChartModelProducer<Model>>
+) : ChartModelProducer<ComposedChartEntryModel<Model>> {
 
-    override var model: ComposedEntryModel<Model> = composedEntryModel()
-        private set
+    override lateinit var model: ComposedChartEntryModel<Model>
 
-    private val listeners = ArrayList<(ComposedEntryModel<Model>) -> Unit>()
+    private val listeners = ArrayList<(ComposedChartEntryModel<Model>) -> Unit>()
 
     private val internalListener = { _: Model ->
         recalculateModel()
@@ -37,21 +36,22 @@ public class ComposedEntryCollection<Model : EntryModel>(
     }
 
     public constructor(
-        vararg entryCollections: EntryCollection<Model>,
-    ) : this(entryCollections.toList())
+        vararg producers: ChartModelProducer<Model>,
+    ) : this(producers.toList())
 
     init {
-        entryCollections.forEach { entryCollection ->
+        chartModelProducers.forEach { entryCollection ->
             entryCollection.addOnEntriesChangedListener(internalListener)
         }
+        recalculateModel()
     }
 
     private fun recalculateModel() {
-        val models = entryCollections.map { it.model }
+        val models = chartModelProducers.map { it.model }
 
-        model = composedEntryModel(
+        model = composedChartEntryModel(
             composedEntryCollections = models,
-            entryCollections = models.map { it.entryCollections }.flatten(),
+            entryCollections = models.map { it.entries }.flatten(),
             minX = models.minOf { it.minX },
             maxX = models.maxOf { it.maxX },
             minY = models.minOf { it.minY },
@@ -61,12 +61,12 @@ public class ComposedEntryCollection<Model : EntryModel>(
         )
     }
 
-    override fun addOnEntriesChangedListener(listener: (ComposedEntryModel<Model>) -> Unit) {
+    override fun addOnEntriesChangedListener(listener: (ComposedChartEntryModel<Model>) -> Unit) {
         listeners += listener
         listener(model)
     }
 
-    override fun removeOnEntriesChangedListener(listener: (ComposedEntryModel<Model>) -> Unit) {
+    override fun removeOnEntriesChangedListener(listener: (ComposedChartEntryModel<Model>) -> Unit) {
         listeners -= listener
     }
 }

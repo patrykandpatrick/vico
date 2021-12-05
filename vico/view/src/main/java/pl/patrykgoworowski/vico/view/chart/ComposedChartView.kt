@@ -18,8 +18,8 @@ package pl.patrykgoworowski.vico.view.chart
 
 import android.content.Context
 import android.util.AttributeSet
-import pl.patrykgoworowski.vico.core.chart.composed.ComposedEntryModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
@@ -27,7 +27,7 @@ public class ComposedChartView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : BaseChartView<ComposedEntryModel<EntryModel>>(
+) : BaseChartView<ComposedChartEntryModel<ChartEntryModel>>(
     context = context,
     attrs = attrs,
     defStyleAttr = defStyleAttr,

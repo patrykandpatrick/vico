@@ -22,17 +22,17 @@ import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.line.lineChart
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
 
 @Composable
 internal fun LineChart(
     modifier: Modifier = Modifier,
-    entryList: EntryList,
+    chartEntryModelProducer: ChartEntryModelProducer,
 ) {
     Chart(
         modifier = modifier,
         chart = lineChart(),
-        entryCollection = entryList,
+        chartModelProducer = chartEntryModelProducer,
         marker = markerComponent(),
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),

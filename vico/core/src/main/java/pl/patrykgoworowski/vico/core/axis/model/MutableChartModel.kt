@@ -16,24 +16,35 @@
 
 package pl.patrykgoworowski.vico.core.axis.model
 
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.entryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
 public class MutableChartModel(
     override var minX: Float = 0f,
     override var maxX: Float = 0f,
     override var minY: Float = 0f,
     override var maxY: Float = 0f,
-    override var entryModel: EntryModel = entryModel(),
+    override var chartEntryModel: ChartEntryModel = emptyChartEntryModel(),
 ) : ChartModel {
-
-    private val emptyModel = entryModel()
 
     public fun clear() {
         minX = 0f
         maxX = 0f
         minY = 0f
         maxY = 0f
-        entryModel = emptyModel
+        chartEntryModel = emptyChartEntryModel()
+    }
+
+    private companion object {
+
+        fun emptyChartEntryModel(): ChartEntryModel = object : ChartEntryModel {
+            override val entries: List<List<ChartEntry>> = emptyList()
+            override val minX: Float = 0f
+            override val maxX: Float = 0f
+            override val minY: Float = 0f
+            override val maxY: Float = 0f
+            override val composedMaxY: Float = 0f
+            override val step: Float = 1f
+        }
     }
 }

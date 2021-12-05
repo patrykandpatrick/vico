@@ -14,19 +14,34 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.entry.collection.diff
+package pl.patrykgoworowski.vico.core.entry.diff
 
-import android.animation.TimeInterpolator
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
+import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 
+/**
+ * The utility class used [ChartModelProducer] subclasses such as [ChartEntryModelProducer].
+ *
+ * It is used to animate y-axis values after data update.
+ *
+ * @see [ChartEntryModelProducer]
+ */
 public interface DiffAnimator {
 
+    /**
+     * Current progress of animation.
+     * Ranges between 0f and 1f.
+     */
     public val currentProgress: Float
 
-    public var animationInterpolator: TimeInterpolator
-
-    public var animationDuration: Long
-
+    /**
+     * Starts an animation.
+     * @param [onProgress] The callback yielding the current animation progress on each animation progress update.
+     */
     public fun start(onProgress: (progress: Float) -> Unit)
 
+    /**
+     * Cancels an animation.
+     */
     public fun cancel()
 }

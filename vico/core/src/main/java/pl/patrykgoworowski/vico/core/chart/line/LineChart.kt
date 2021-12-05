@@ -25,10 +25,10 @@ import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.extension.horizontalCubicTo
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.chart.forEachIn
 import pl.patrykgoworowski.vico.core.chart.put
-import pl.patrykgoworowski.vico.core.chart.renderer.BaseChart
+import pl.patrykgoworowski.vico.core.chart.BaseChart
 import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
@@ -48,7 +48,7 @@ public open class LineChart(
     public var spacingDp: Float = Dimens.POINT_SPACING,
     public var lineThicknessDp: Float = Dimens.LINE_THICKNESS,
     lineColor: Int = Color.LTGRAY,
-) : BaseChart<EntryModel>() {
+) : BaseChart<ChartEntryModel>() {
 
     private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         style = Paint.Style.STROKE
@@ -72,7 +72,7 @@ public open class LineChart(
 
     override fun drawChart(
         context: ChartDrawContext,
-        model: EntryModel,
+        model: ChartEntryModel,
     ): Unit = with(context) {
         resetTempData()
         val lineBackgroundShader = lineBackgroundShader
@@ -84,7 +84,7 @@ public open class LineChart(
         val (cellWidth, spacing, segmentWidth) = segmentProperties
 
         calculateDrawSegmentSpecIfNeeded(model)
-        updateMaxScrollAmount(model.getEntriesLength(), segmentWidth)
+        updateMaxScrollAmount(model.getDrawnEntryCount(), segmentWidth)
 
         var cubicCurvature: Float
         var prevX = bounds.left
@@ -101,7 +101,7 @@ public open class LineChart(
                 }
             } else {
                 cubicCurvature = spacing * cubicStrength *
-                        min(1f, abs((y - prevY) / bounds.bottom) * CUBIC_Y_MULTIPLIER)
+                    min(1f, abs((y - prevY) / bounds.bottom) * CUBIC_Y_MULTIPLIER)
                 linePath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature)
                 if (lineBackgroundShader != null) {
                     lineBackgroundPath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature)
@@ -150,7 +150,7 @@ public open class LineChart(
         lineBackgroundPath.rewind()
     }
 
-    private inline fun EntryModel.forEachPoint(
+    private inline fun ChartEntryModel.forEachPoint(
         segment: SegmentProperties,
         drawingStart: Float,
         action: (entry: ChartEntry, x: Float, y: Float) -> Unit,
@@ -159,24 +159,24 @@ public open class LineChart(
         var y: Float
         val heightMultiplier = bounds.height() / (drawMaxY - this@LineChart.minY.orZero)
 
-        entryCollections.forEach { collection ->
+        entries.forEach { collection ->
             collection.forEachIn((drawMinX - step)..(drawMaxX + step)) { entry ->
                 x = drawingStart + (segment.cellWidth + segment.marginWidth) *
-                        (entry.x - drawMinX) / step
+                    (entry.x - drawMinX) / step
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }
         }
     }
 
-    override fun getMeasuredWidth(context: MeasureContext, model: EntryModel): Int = with(context) {
-        val length = model.getEntriesLength()
+    override fun getMeasuredWidth(context: MeasureContext, model: ChartEntryModel): Int = with(context) {
+        val length = model.getDrawnEntryCount()
         (pointSizeDp.pixels * length + spacingDp.pixels * length).roundToInt()
     }
 
     override fun getSegmentProperties(
         context: MeasureContext,
-        model: EntryModel,
+        model: ChartEntryModel,
     ): SegmentProperties = with(context) {
         context.calculateDrawSegmentSpecIfNeeded(model)
         segmentProperties.apply {
@@ -185,12 +185,12 @@ public open class LineChart(
         }
     }
 
-    override fun setToAxisModel(axisModel: MutableChartModel, model: EntryModel) {
+    override fun setToAxisModel(axisModel: MutableChartModel, model: ChartEntryModel) {
         axisModel.minY = minY ?: min(model.minY, 0f)
         axisModel.maxY = maxY ?: model.maxY
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
-        axisModel.entryModel = model
+        axisModel.chartEntryModel = model
     }
 
     private fun MeasureContext.updateMaxScrollAmount(

@@ -46,10 +46,10 @@ import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
+import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.chart.draw.chartDrawContext
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryCollection
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.renderer.Chart
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
@@ -57,10 +57,10 @@ import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 
 @Composable
-public fun <Model : EntryModel> Chart(
+public fun <Model : ChartEntryModel> Chart(
     modifier: Modifier,
     chart: Chart<Model>,
-    entryCollection: EntryCollection<Model>,
+    chartModelProducer: ChartModelProducer<Model>,
     startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
     topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
     endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
@@ -69,7 +69,7 @@ public fun <Model : EntryModel> Chart(
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
 ) {
-    val model = entryCollection.collectAsState()
+    val model = chartModelProducer.collectAsState()
 
     Chart(
         modifier = modifier,
@@ -87,7 +87,7 @@ public fun <Model : EntryModel> Chart(
 
 @Suppress("LongMethod")
 @Composable
-public fun <Model : EntryModel> Chart(
+public fun <Model : ChartEntryModel> Chart(
     modifier: Modifier,
     chart: Chart<Model>,
     model: Model,

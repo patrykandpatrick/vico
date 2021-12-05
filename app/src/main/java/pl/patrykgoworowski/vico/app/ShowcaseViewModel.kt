@@ -22,21 +22,22 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
+import pl.patrykgoworowski.vico.core.entry.composed.ComposedChartEntryModelProducer
+import pl.patrykgoworowski.vico.core.entry.composed.plus
+import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffAnimator
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.composed.ComposedEntryCollection
-import pl.patrykgoworowski.vico.core.chart.entry.collection.composed.plus
 
 public class ShowcaseViewModel : ViewModel() {
 
     private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
     private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)
 
-    public val entries: EntryList = EntryList()
-    public val multiEntries: EntryList = EntryList()
+    public val entries: ChartEntryModelProducer = ChartEntryModelProducer(diffAnimator = DefaultDiffAnimator())
+    public val multiEntries: ChartEntryModelProducer = ChartEntryModelProducer(diffAnimator = DefaultDiffAnimator())
 
-    public val composedEntries: ComposedEntryCollection<EntryModel> = multiEntries + entries
+    public val composedEntries: ComposedChartEntryModelProducer<ChartEntryModel> = multiEntries + entries
 
     init {
         viewModelScope.launch {

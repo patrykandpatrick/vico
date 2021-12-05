@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.entry.collection.diff
+package pl.patrykgoworowski.vico.core.entry.diff
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
@@ -50,10 +50,6 @@ public class DefaultDiffAnimator(
 
     override val currentProgress: Float
         get() = valueAnimator.animatedFraction
-
-    override var animationInterpolator: TimeInterpolator by valueAnimator::interpolator
-
-    override var animationDuration: Long by valueAnimator::duration
 
     override fun start(onProgress: (progress: Float) -> Unit) {
         if (valueAnimator.isRunning) {

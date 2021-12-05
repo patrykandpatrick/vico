@@ -91,7 +91,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val scrollX = horizontalScroll
         val clipRestoreCount = canvas.save()
-        val step = chartModel.entryModel.step
+        val step = chartModel.chartEntryModel.step
 
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
@@ -141,8 +141,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             context = context,
             left = chartBounds.left,
             right = chartBounds.right,
-            centerY = ((if (position is AxisPosition.Horizontal.Bottom) bounds.top
-            else bounds.bottom) + axisThickness.half)
+            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half
         )
 
         label?.clearLayoutCache()
@@ -184,10 +183,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun getDesiredHeight(context: MeasureContext): Int = with(context) {
-        ((if (position.isBottom) axisThickness else 0f) +
-                tickLength +
-                label?.getHeight(context = this).orZero).toInt()
-    }
+        (if (position.isBottom) axisThickness else 0f) + tickLength + label?.getHeight(context = this).orZero
+    }.toInt()
 
     override fun getDesiredWidth(context: MeasureContext, labels: List<String>): Float = 0f
 

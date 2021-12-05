@@ -26,7 +26,7 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.horizontal.createHorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.createVerticalAxis
-import pl.patrykgoworowski.vico.core.chart.entry.collection.entryModelOf
+import pl.patrykgoworowski.vico.core.entry.entryModelOf
 
 @Suppress("MagicNumber")
 private val model = entryModelOf(1, 2, 3, 4)

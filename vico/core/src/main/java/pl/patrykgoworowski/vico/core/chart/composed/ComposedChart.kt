@@ -17,21 +17,21 @@
 package pl.patrykgoworowski.vico.core.chart.composed
 
 import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
+import pl.patrykgoworowski.vico.core.chart.BaseChart
+import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.renderer.BaseChart
-import pl.patrykgoworowski.vico.core.chart.renderer.Chart
 import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.updateAll
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import java.util.TreeMap
 
-public class ComposedChart<Model : EntryModel>(
+public class ComposedChart<Model : ChartEntryModel>(
     charts: List<Chart<Model>>
-) : BaseChart<ComposedEntryModel<Model>>() {
+) : BaseChart<ComposedChartEntryModel<Model>>() {
 
     public constructor(vararg charts: Chart<Model>) : this(charts.toList())
 
@@ -53,7 +53,7 @@ public class ComposedChart<Model : EntryModel>(
 
     override fun drawChart(
         context: ChartDrawContext,
-        model: ComposedEntryModel<Model>,
+        model: ComposedChartEntryModel<Model>,
     ) {
         markerLocationMap.clear()
         model.forEachModelWithChart { _, item, chart ->
@@ -62,7 +62,7 @@ public class ComposedChart<Model : EntryModel>(
         }
     }
 
-    override fun getMeasuredWidth(context: MeasureContext, model: ComposedEntryModel<Model>): Int {
+    override fun getMeasuredWidth(context: MeasureContext, model: ComposedChartEntryModel<Model>): Int {
         var result = 0
         model.forEachModelWithChart { _, item, chart ->
             result = maxOf(chart.getMeasuredWidth(context, item), result)
@@ -72,7 +72,7 @@ public class ComposedChart<Model : EntryModel>(
 
     override fun getSegmentProperties(
         context: MeasureContext,
-        model: ComposedEntryModel<Model>
+        model: ComposedChartEntryModel<Model>
     ): SegmentProperties {
         segmentProperties.clear()
         model.forEachModelWithChart { _, item, chart ->
@@ -85,7 +85,7 @@ public class ComposedChart<Model : EntryModel>(
         return segmentProperties
     }
 
-    override fun setToAxisModel(axisModel: MutableChartModel, model: ComposedEntryModel<Model>) {
+    override fun setToAxisModel(axisModel: MutableChartModel, model: ComposedChartEntryModel<Model>) {
         axisModel.clear()
         tempAxisModel.clear()
         model.forEachModelWithChart { index, item, chart ->
@@ -95,12 +95,12 @@ public class ComposedChart<Model : EntryModel>(
                 maxX = if (index == 0) tempAxisModel.maxX else maxOf(maxX, tempAxisModel.maxX)
                 minY = if (index == 0) tempAxisModel.minY else minOf(minY, tempAxisModel.minY)
                 maxY = if (index == 0) tempAxisModel.maxY else maxOf(maxY, tempAxisModel.maxY)
-                axisModel.entryModel = model
+                axisModel.chartEntryModel = model
             }
         }
     }
 
-    private inline fun ComposedEntryModel<Model>.forEachModelWithChart(
+    private inline fun ComposedChartEntryModel<Model>.forEachModelWithChart(
         action: (index: Int, item: Model, chart: Chart<Model>) -> Unit
     ) {
         val minSize = minOf(composedEntryCollections.size, charts.size)

@@ -26,6 +26,7 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
+import kotlin.properties.Delegates.observable
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.MAX_ZOOM
 import pl.patrykgoworowski.vico.core.MIN_ZOOM
@@ -33,9 +34,9 @@ import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
 import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
+import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.chart.draw.chartDrawContext
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
-import pl.patrykgoworowski.vico.core.chart.renderer.Chart
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
@@ -52,9 +53,8 @@ import pl.patrykgoworowski.vico.view.gestures.ChartScaleGestureListener
 import pl.patrykgoworowski.vico.view.gestures.MotionEventHandler
 import pl.patrykgoworowski.vico.view.layout.MutableMeasureContext
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
-import kotlin.properties.Delegates.observable
 
-public abstract class BaseChartView<Model : EntryModel> internal constructor(
+public abstract class BaseChartView<Model : ChartEntryModel> internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,

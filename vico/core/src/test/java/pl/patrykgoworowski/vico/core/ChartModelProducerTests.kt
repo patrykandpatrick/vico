@@ -18,12 +18,12 @@ package pl.patrykgoworowski.vico.core
 
 import org.junit.Test
 import pl.patrykgoworowski.vico.core.chart.diff.TestDiffAnimator
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryList
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
 import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.entriesOf
 import kotlin.test.assertEquals
 
-public class EntryCollectionTests {
+public class ChartModelProducerTests {
 
     private val minX = 0f
     private val maxX = 3f
@@ -38,8 +38,7 @@ public class EntryCollectionTests {
 
     @Test
     public fun `Test Min Max calculations`() {
-        val entryList = EntryList(TestDiffAnimator(), false)
-        entryList.setEntries(entries1, entries2, entries3)
+        val entryList = ChartEntryModelProducer(entries1, entries2, entries3)
         assertEquals(minX, entryList.minX)
         assertEquals(maxX, entryList.maxX)
         assertEquals(minY, entryList.minY)
@@ -53,11 +52,10 @@ public class EntryCollectionTests {
         val first = entriesOf(0f to 2f, 1f to 0f)
         val second = entriesOf(0f to 0f, 1f to 2f)
 
-        val entryCollection = EntryList(diffAnimator)
-        entryCollection.setEntries(first)
+        val entryCollection = ChartEntryModelProducer(first, diffAnimator = diffAnimator)
 
         fun assertEntriesAreEqual(entries: List<FloatEntry>) {
-            assertEquals(entries, entryCollection.model.entryCollections[0])
+            assertEquals(entries, entryCollection.model.entries[0])
         }
 
         diffAnimator.currentProgress = 1f

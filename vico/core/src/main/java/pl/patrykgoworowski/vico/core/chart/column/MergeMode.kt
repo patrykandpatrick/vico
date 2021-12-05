@@ -16,12 +16,12 @@
 
 package pl.patrykgoworowski.vico.core.chart.column
 
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
 public enum class MergeMode {
     Stack, Grouped;
 
-    public fun getMaxY(model: EntryModel): Float = when (this) {
+    public fun getMaxY(model: ChartEntryModel): Float = when (this) {
         Grouped -> model.maxY
         Stack -> model.composedMaxY
     }

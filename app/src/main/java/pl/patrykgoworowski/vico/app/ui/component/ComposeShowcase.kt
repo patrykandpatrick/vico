@@ -38,7 +38,7 @@ internal fun ComposeShowcase(
             verticalArrangement = Arrangement.spacedBy(16.dp),
             modifier = Modifier.padding(all = 16.dp)
         ) {
-            ColumnChart(entryList = viewModel.entries)
+            ColumnChart(chartEntryModelProducer = viewModel.entries)
 
             InvertedTheme {
                 Surface(
@@ -49,10 +49,10 @@ internal fun ComposeShowcase(
                 }
             }
 
-            StackedColumnChart(entryList = viewModel.multiEntries)
+            StackedColumnChart(chartEntryModelProducer = viewModel.multiEntries)
             ComposedChart(model = viewModel.composedEntries)
-            LineChart(entryList = viewModel.entries)
-            GroupedColumnChart(entryList = viewModel.multiEntries)
+            LineChart(chartEntryModelProducer = viewModel.entries)
+            GroupedColumnChart(chartEntryModelProducer = viewModel.multiEntries)
         }
     }
 }

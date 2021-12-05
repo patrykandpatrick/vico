@@ -44,19 +44,21 @@ public fun Modifier.chartTouchEvent(
     )
 }
     .then(onZoom?.let(Modifier::zoomable) ?: Modifier)
-    .then(scrollableState?.let { state ->
-        scrollable(
-            state = state,
-            orientation = Orientation.Horizontal,
-            interactionSource = interactionSource
-        )
-    } ?: pointerInput(Unit, Unit) {
-        detectDragGestures(
-            onDragEnd = { setTouchPoint(null) },
-            onDragCancel = { setTouchPoint(null) },
-            onDrag = { change, _ -> setTouchPoint(change.position.point) }
-        )
-    })
+    .then(
+        scrollableState?.let { state ->
+            scrollable(
+                state = state,
+                orientation = Orientation.Horizontal,
+                interactionSource = interactionSource
+            )
+        } ?: pointerInput(Unit, Unit) {
+            detectDragGestures(
+                onDragEnd = { setTouchPoint(null) },
+                onDragCancel = { setTouchPoint(null) },
+                onDrag = { change, _ -> setTouchPoint(change.position.point) }
+            )
+        }
+    )
 
 private val Offset.point: Point
     get() = Point(x, y)

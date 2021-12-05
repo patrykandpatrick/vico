@@ -19,11 +19,11 @@ package pl.patrykgoworowski.vico.compose.chart.entry
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.produceState
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryCollection
-import pl.patrykgoworowski.vico.core.chart.entry.collection.EntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
 @Composable
-public fun <Model : EntryModel> EntryCollection<Model>.collectAsState(): State<Model> =
+public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(): State<Model> =
     produceState(initialValue = model) {
         val listener: (Model) -> Unit = { entriesModel ->
             value = entriesModel

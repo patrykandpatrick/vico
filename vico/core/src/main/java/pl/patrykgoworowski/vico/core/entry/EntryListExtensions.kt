@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.entry.collection
+package pl.patrykgoworowski.vico.core.entry
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,10 +23,9 @@ import kotlinx.coroutines.channels.trySendBlocking
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flowOn
-import pl.patrykgoworowski.vico.core.entry.entryOf
 
 @ExperimentalCoroutinesApi
-public val <Model : EntryModel> EntryCollection<Model>.collectAsFlow: Flow<Model>
+public val <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsFlow: Flow<Model>
     get() = callbackFlow {
 
         val listener: (Model) -> Unit = { entriesModel ->
@@ -39,14 +38,14 @@ public val <Model : EntryModel> EntryCollection<Model>.collectAsFlow: Flow<Model
         }
     }.flowOn(Dispatchers.IO)
 
-public fun entryModelOf(vararg entries: Pair<Number, Number>): EntryModel =
+public fun entryModelOf(vararg entries: Pair<Number, Number>): ChartEntryModel =
     entries
         .map { (x, y) -> entryOf(x.toFloat(), y.toFloat()) }
-        .let { entryList -> EntryList(listOf(entryList), false) }
+        .let { entryList -> ChartEntryModelProducer(listOf(entryList)) }
         .model
 
-public fun entryModelOf(vararg values: Number): EntryModel =
+public fun entryModelOf(vararg values: Number): ChartEntryModel =
     values
         .mapIndexed { index, value -> entryOf(index.toFloat(), value.toFloat()) }
-        .let { entryList -> EntryList(listOf(entryList), false) }
+        .let { entryList -> ChartEntryModelProducer(listOf(entryList)) }
         .model

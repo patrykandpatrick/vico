@@ -21,7 +21,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
-import pl.patrykgoworowski.vico.core.chart.entry.collection.collectAsFlow
+import pl.patrykgoworowski.vico.core.entry.collectAsFlow
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.view.chart.ChartView
 import pl.patrykgoworowski.vico.view.chart.ComposedChartView
