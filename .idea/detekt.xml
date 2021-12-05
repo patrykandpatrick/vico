@@ -5,6 +5,6 @@
     <enableFormatting>true</enableFormatting>
     <buildUponDefaultConfig>true</buildUponDefaultConfig>
     <treatAsError>true</treatAsError>
-    <configPaths>$PROJECT_DIR$/../VicoChart\.idea\detekt-config.yml</configPaths>
+    <configPaths>$PROJECT_DIR$/.idea/detekt-config.yml</configPaths>
   </component>
 </project>
