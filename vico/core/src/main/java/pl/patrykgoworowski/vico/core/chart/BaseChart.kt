@@ -17,27 +17,29 @@
 package pl.patrykgoworowski.vico.core.chart
 
 import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.chart.decoration.Decoration
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.chart.threshold.ThresholdLine
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
 import pl.patrykgoworowski.vico.core.extension.getEntryModel
-import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
 
-    private val thresholdLines = ArrayList<ThresholdLine>()
+    private val decoration = ArrayList<Decoration>()
     private val persistentMarkers = HashMap<Float, Marker>()
 
     protected val Model.drawMinY: Float
         get() = this@BaseChart.minY ?: minY
+
     protected val Model.drawMaxY: Float
         get() = this@BaseChart.maxY ?: maxY
+
     protected val Model.drawMinX: Float
         get() = this@BaseChart.minX ?: minX
+
     protected val Model.drawMaxX: Float
         get() = this@BaseChart.maxX ?: maxX
 
@@ -52,11 +54,11 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     override var maxScrollAmount: Float = 0f
 
-    override fun addThresholdLine(thresholdLine: ThresholdLine): Boolean =
-        thresholdLines.add(thresholdLine)
+    override fun addDecoration(decoration: Decoration): Boolean =
+        this.decoration.add(decoration)
 
-    override fun removeThresholdLine(thresholdLine: ThresholdLine): Boolean =
-        thresholdLines.remove(thresholdLine)
+    override fun removeDecoration(decoration: Decoration): Boolean =
+        this.decoration.remove(decoration)
 
     override fun addPersistentMarker(x: Float, marker: Marker) {
         persistentMarkers[x] = marker
@@ -73,7 +75,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         if (model.entries.isNotEmpty()) {
             drawChart(context, model)
         }
-        drawThresholdLines(context, model)
+        drawThresholdLines(context)
         persistentMarkers.forEach { (x, marker) ->
             markerLocationMap.getEntryModel(x)?.also { markerModel ->
                 marker.draw(
@@ -109,52 +111,8 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     private fun drawThresholdLines(
         context: ChartDrawContext,
-        model: Model,
     ) {
-        val valueRange = (maxY ?: model.maxY) - (minY ?: model.minY)
-        thresholdLines.forEach { line ->
-            val centerY = bounds.bottom - (line.thresholdValue / valueRange * bounds.height())
-            val textY =
-                centerY + line.lineComponent.thicknessDp.half * when (line.labelVerticalPosition) {
-                    ThresholdLine.LabelVerticalPosition.Top -> -1
-                    ThresholdLine.LabelVerticalPosition.Bottom -> 1
-                }
-            line.lineComponent.drawHorizontal(
-                context = context,
-                left = bounds.left,
-                right = bounds.right,
-                centerY = centerY
-            )
-            line.textComponent.drawText(
-                context = context,
-                text = line.thresholdValue.toString(),
-                textX = when (line.labelHorizontalPosition) {
-                    ThresholdLine.LabelHorizontalPosition.Start -> bounds.left
-                    ThresholdLine.LabelHorizontalPosition.End -> bounds.right
-                },
-                textY = textY,
-                horizontalPosition = line.labelHorizontalPosition.position,
-                verticalPosition = line
-                    .getSuggestedLabelVerticalPosition(context, textY).position,
-            )
-        }
-    }
-
-    private fun ThresholdLine.getSuggestedLabelVerticalPosition(
-        context: MeasureContext,
-        textY: Float,
-    ): ThresholdLine.LabelVerticalPosition {
-        val labelHeight = textComponent.getHeight(context = context)
-        return when (labelVerticalPosition) {
-            ThresholdLine.LabelVerticalPosition.Top -> {
-                if (textY - labelHeight < bounds.top) ThresholdLine.LabelVerticalPosition.Bottom
-                else labelVerticalPosition
-            }
-            ThresholdLine.LabelVerticalPosition.Bottom -> {
-                if (textY + labelHeight > bounds.bottom) ThresholdLine.LabelVerticalPosition.Top
-                else labelVerticalPosition
-            }
-        }
+        decoration.forEach { line -> line.draw(context, bounds) }
     }
 
     protected fun MeasureContext.calculateDrawSegmentSpecIfNeeded(model: Model) {

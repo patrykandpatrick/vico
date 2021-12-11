@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.compose.component.columnComponent
+import pl.patrykgoworowski.vico.compose.component.lineComponent
 import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
 import pl.patrykgoworowski.vico.compose.component.overlayingComponent
@@ -67,7 +67,7 @@ public fun markerComponent(): Marker {
         innerPaddingAll = 10.dp,
     )
 
-    val guideline = columnComponent(
+    val guideline = lineComponent(
         color = colors.onSurface.copy(alpha = 0.18f),
         thickness = 2f.dp,
         shape = dashedShape(

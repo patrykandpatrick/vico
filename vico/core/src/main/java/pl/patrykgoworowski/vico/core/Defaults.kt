@@ -57,6 +57,8 @@ public object Dimens {
     public const val POINT_SIZE: Float = 16f
     public const val POINT_SPACING: Float = 16f
 
+    public const val THRESHOLD_LINE_THICKNESS: Float = 2f
+
     public const val CHART_HEIGHT: Float = 200f
 }
 
