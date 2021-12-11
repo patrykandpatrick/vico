@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
-import pl.patrykgoworowski.vico.compose.component.columnComponent
+import pl.patrykgoworowski.vico.compose.component.lineComponent
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
@@ -46,7 +46,7 @@ private fun PreviewColumnChart(
 ) {
     Chart(
         modifier = modifier,
-        chart = columnChart(listOf(columnComponent(color = Color.Blue))),
+        chart = columnChart(listOf(lineComponent(color = Color.Blue))),
         model = model,
         startAxis = startAxis,
         topAxis = topAxis,

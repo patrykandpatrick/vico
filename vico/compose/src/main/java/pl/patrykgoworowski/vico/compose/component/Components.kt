@@ -29,13 +29,14 @@ import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
+import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
 public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
-public fun columnComponent(
+public fun lineComponent(
     color: Color,
     thickness: Dp = Dimens.COLUMN_WIDTH.dp,
     shape: Shape = RectangleShape,
@@ -49,7 +50,7 @@ public fun columnComponent(
     margins = margins,
 )
 
-public fun columnComponent(
+public fun lineComponent(
     color: Color,
     thickness: Dp,
     shape: ChartShape,
@@ -63,27 +64,27 @@ public fun columnComponent(
     margins = margins,
 )
 
-public fun shapeComponent(
+public fun rectComponent(
     shape: Shape,
     color: Color,
-    shader: DynamicShader? = null,
+    dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): ShapeComponent<ChartShape> = ShapeComponent(
     shape = shape.chartShape(),
     color = color.toArgb(),
-    dynamicShader = shader,
+    dynamicShader = dynamicShader,
     margins = margins,
 )
 
-public fun shapeComponent(
-    shape: ChartShape,
+public fun rectComponent(
+    shape: ChartShape = Shapes.rectShape,
     color: Color,
-    shader: DynamicShader? = null,
+    dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): ShapeComponent<ChartShape> = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
-    dynamicShader = shader,
+    dynamicShader = dynamicShader,
     margins = margins,
 )
 
