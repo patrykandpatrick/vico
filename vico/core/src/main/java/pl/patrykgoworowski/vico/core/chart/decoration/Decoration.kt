@@ -23,16 +23,16 @@ import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 /**
- * A [Decoration] is drawn between a [Chart] and a persistent [Marker] layers.
+ * A [Decoration] is drawn between a [Chart] and persistent [Marker] layers.
  *
- * An example of [Decoration] implementation is [ThresholdLine], which draws threshold lines above the [Chart].
+ * An example [Decoration] implementation is [ThresholdLine], which draws threshold lines above the [Chart].
  *
  * @see [ThresholdLine]
  */
 public interface Decoration {
 
     /**
-     * Called right after [Chart] finishes drawing itself.
+     * Called immediately after the [Chart] finishes drawing itself.
      *
      * @param [context] A drawing context containing a [Canvas] and other data.
      * @param [bounds] A bounding box of the [Chart].
