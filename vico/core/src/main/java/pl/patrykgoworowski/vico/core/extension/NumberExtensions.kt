@@ -47,7 +47,7 @@ public inline val Float.piRad: Float
 public inline val ClosedFloatingPointRange<Float>.middle: Float
     get() = (endInclusive + start) / 2
 
-public fun Float.between(min: Float, max: Float) = when {
+public fun Float.between(min: Float, max: Float): Float = when {
     this < min -> min
     this in min..max -> this
     else -> max
