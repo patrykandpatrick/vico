@@ -75,7 +75,7 @@ public fun ThresholdLine() {
                         thresholdValue = 2f,
                         lineComponent = rectComponent(color = Color.Black),
                         textComponent = textComponent(Color.Black).apply {
-                            setPadding(horizontal = 8f.dp)
+                            setPadding(horizontal = 8.dp)
                         },
                     )
                 )
@@ -100,7 +100,7 @@ public fun RangedThresholdLine() {
                         thresholdRange = 2f..3f,
                         lineComponent = rectComponent(color = Color.Black.copy(alpha = 0.5f)),
                         textComponent = textComponent(Color.Black).apply {
-                            setPadding(horizontal = 8f.dp)
+                            setPadding(horizontal = 8.dp)
                         },
                     )
                 )
@@ -133,7 +133,7 @@ public fun RangedThresholdLineWithBrushShader() {
                             ).toDynamicShader()
                         ),
                         textComponent = textComponent(Color.Black).apply {
-                            setPadding(horizontal = 8f.dp)
+                            setPadding(horizontal = 8.dp)
                         },
                     )
                 )
@@ -164,7 +164,7 @@ public fun RangedThresholdLineWithComponentShader() {
                             )
                         ),
                         textComponent = textComponent(Color.Black).apply {
-                            setPadding(horizontal = 8f.dp)
+                            setPadding(horizontal = 8.dp)
                         },
                     )
                 )

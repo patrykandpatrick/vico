@@ -67,14 +67,14 @@ public data class ThresholdLine(
     ): Unit = with(context) {
         val valueRange = chartModel.maxY - chartModel.minY
 
-        val centerY = bounds.bottom - (thresholdRange.middle / valueRange * bounds.height())
+        val centerY = bounds.bottom - thresholdRange.middle / valueRange * bounds.height()
 
         val topY = minOf(
-            bounds.bottom - (thresholdRange.endInclusive / valueRange * bounds.height()),
+            bounds.bottom - thresholdRange.endInclusive / valueRange * bounds.height(),
             centerY - minimumLineThicknessDp.pixels.half,
         )
         val bottomY = maxOf(
-            bounds.bottom - (thresholdRange.start / valueRange * bounds.height()),
+            bounds.bottom - thresholdRange.start / valueRange * bounds.height(),
             centerY + minimumLineThicknessDp.pixels.half,
         )
         val textY = when (labelVerticalPosition) {
@@ -127,7 +127,7 @@ public data class ThresholdLine(
     }
 
     private companion object {
-        const val RANGE_FORMAT = "%s – %s"
+        const val RANGE_FORMAT = "%s–%s"
         val decimalFormat = DecimalFormat("#.##")
     }
 }
