@@ -31,10 +31,10 @@ public fun DynamicShaders.fromComponent(
     tileYMode: Shader.TileMode = tileXMode,
 ): ComponentShader = ComponentShader(
     component = component,
-    componentSize = componentSize.value,
+    componentSizeDp = componentSize.value,
     checkeredArrangement = checkeredArrangement,
     tileXMode = tileXMode,
     tileYMode = tileYMode,
 )
 
-public fun DynamicShaders.fromBrush(brush: Brush): StaticShader = StaticShader(brush)
+public fun DynamicShaders.fromBrush(brush: Brush): BrushShader = BrushShader(brush)

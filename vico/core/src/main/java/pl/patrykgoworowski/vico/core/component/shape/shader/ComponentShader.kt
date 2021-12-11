@@ -26,7 +26,7 @@ import pl.patrykgoworowski.vico.core.extension.half
 
 public class ComponentShader(
     private val component: Component,
-    private val componentSize: Float,
+    private val componentSizeDp: Float,
     private val checkeredArrangement: Boolean = true,
     private val tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     private val tileYMode: Shader.TileMode = tileXMode,
@@ -39,22 +39,23 @@ public class ComponentShader(
         right: Float,
         bottom: Float,
     ): Shader = with(context) {
-        val size = componentSize.pixels.toInt() * if (checkeredArrangement) 2 else 1
+        val size = componentSizeDp.pixels.toInt() * if (checkeredArrangement) 2 else 1
         val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
 
         val canvas = Canvas(bitmap)
-        if (checkeredArrangement) {
-            val halfSize = componentSize.pixels.half
-            canvas.clipRect(0f, 0f, size.toFloat(), size.toFloat())
-            with(component) {
-                draw(context, -halfSize, -halfSize, componentSize)
-                draw(context, -halfSize, size - halfSize, componentSize)
-                draw(context, size - halfSize, -halfSize, componentSize)
-                draw(context, size - halfSize, size - halfSize, componentSize)
-                draw(context, halfSize, halfSize, componentSize)
+        context.withOtherCanvas(canvas) {
+            if (checkeredArrangement) {
+                val halfSize = componentSizeDp.pixels.half
+                with(component) {
+                    draw(context, -halfSize, -halfSize, componentSizeDp.pixels)
+                    draw(context, -halfSize, size - halfSize, componentSizeDp.pixels)
+                    draw(context, size - halfSize, -halfSize, componentSizeDp.pixels)
+                    draw(context, size - halfSize, size - halfSize, componentSizeDp.pixels)
+                    draw(context, halfSize, halfSize, componentSizeDp.pixels)
+                }
+            } else {
+                component.draw(context, 0f, 0f, componentSizeDp.pixels, componentSizeDp.pixels)
             }
-        } else {
-            component.draw(context, 0f, 0f, componentSize, componentSize)
         }
         return BitmapShader(bitmap, tileXMode, tileYMode)
     }

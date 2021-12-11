@@ -16,24 +16,26 @@
 
 package pl.patrykgoworowski.vico.compose.component.shape.shader
 
+import android.graphics.Matrix
 import android.graphics.Shader
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
+import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
 
-public class StaticShader(private val brush: Brush) : DynamicShader {
+public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
 
-    private var shader: Shader? = null
+    private val matrix = Matrix()
 
-    override fun provideShader(
+    override fun createShader(
         context: DrawContext,
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float,
-    ): Shader = shader ?: kotlin.run {
+        bottom: Float
+    ): Shader {
         val tempPaint = Paint()
         brush.applyTo(
             size = Size(
@@ -43,8 +45,12 @@ public class StaticShader(private val brush: Brush) : DynamicShader {
             p = tempPaint,
             alpha = 1f,
         )
-        requireNotNull(tempPaint.shader)
-    }.also { shader = it }
+        return requireNotNull(tempPaint.shader).apply {
+            matrix.postTranslate(left, top)
+            setLocalMatrix(matrix)
+            matrix.reset()
+        }
+    }
 }
 
-public fun Brush.toDynamicShader(): DynamicShader = StaticShader(this)
+public fun Brush.toDynamicShader(): DynamicShader = BrushShader(this)

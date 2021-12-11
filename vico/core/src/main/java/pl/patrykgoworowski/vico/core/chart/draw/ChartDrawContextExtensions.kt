@@ -20,6 +20,7 @@ import android.graphics.Canvas
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
+import pl.patrykgoworowski.vico.core.draw.DrawContext
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.model.Point
 
@@ -32,7 +33,7 @@ public fun chartDrawContext(
     segmentProperties: SegmentProperties,
     chartModel: ChartModel,
 ): ChartDrawContext = object : ChartDrawContext {
-    override val canvas: Canvas = canvas
+    override var canvas: Canvas = canvas
     override val chartModel: ChartModel = chartModel
     override val segmentProperties: SegmentProperties = segmentProperties
     override val markerTouchPoint: Point? = markerTouchPoint
@@ -42,4 +43,11 @@ public fun chartDrawContext(
     override val isLtr: Boolean = measureContext.isLtr
     override val isHorizontalScrollEnabled: Boolean = measureContext.isHorizontalScrollEnabled
     override val zoom: Float = measureContext.zoom
+
+    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
+        val originalCanvas = this.canvas
+        this.canvas = canvas
+        block(this)
+        this.canvas = originalCanvas
+    }
 }
