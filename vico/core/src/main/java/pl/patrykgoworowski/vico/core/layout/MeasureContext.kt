@@ -26,6 +26,9 @@ public interface MeasureContext {
     public val Float.pixels: Float
         get() = this * density
 
+    public val Float.wholePixels: Int
+        get() = pixels.toInt()
+
     public fun toPixels(dp: Float): Float = dp * density
     public fun toFontSize(sp: Float): Float = sp * fontScale
 }

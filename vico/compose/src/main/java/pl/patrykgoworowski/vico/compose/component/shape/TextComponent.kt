@@ -23,9 +23,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.TextUnit
 import pl.patrykgoworowski.vico.compose.extension.pixelSize
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
+import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.component.shape.Shape
+import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
+import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
 @Composable
 public fun textComponent(
@@ -34,10 +36,14 @@ public fun textComponent(
     background: ShapeComponent<Shape>? = currentChartStyle.axis.axisLabelBackground,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    padding: MutableDimensions = emptyDimensions(),
+    margins: MutableDimensions = emptyDimensions(),
 ): TextComponent = TextComponent(
     color = color.toArgb(),
     textSizeSp = textSize.pixelSize(),
     ellipsize = ellipsize,
     lineCount = lineCount,
     background = background,
+    padding = padding,
+    margins = margins,
 )

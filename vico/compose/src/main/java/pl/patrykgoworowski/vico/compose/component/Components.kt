@@ -16,6 +16,7 @@
 
 package pl.patrykgoworowski.vico.compose.component
 
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
@@ -23,6 +24,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.component.shape.chartShape
+import pl.patrykgoworowski.vico.compose.component.shape.shader.toDynamicShader
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
@@ -37,7 +39,7 @@ import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
 public fun lineComponent(
-    color: Color,
+    color: Color = Color.Black,
     thickness: Dp = Dimens.COLUMN_WIDTH.dp,
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
@@ -51,7 +53,7 @@ public fun lineComponent(
 )
 
 public fun lineComponent(
-    color: Color,
+    color: Color = Color.Black,
     thickness: Dp,
     shape: ChartShape,
     dynamicShader: DynamicShader? = null,
@@ -66,7 +68,7 @@ public fun lineComponent(
 
 public fun rectComponent(
     shape: Shape,
-    color: Color,
+    color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): ShapeComponent<ChartShape> = ShapeComponent(
@@ -78,13 +80,25 @@ public fun rectComponent(
 
 public fun rectComponent(
     shape: ChartShape = Shapes.rectShape,
-    color: Color,
+    color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): ShapeComponent<ChartShape> = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
     dynamicShader = dynamicShader,
+    margins = margins,
+)
+
+public fun rectComponent(
+    shape: ChartShape = Shapes.rectShape,
+    color: Color = Color.Black,
+    brush: Brush,
+    margins: Dimensions = emptyDimensions(),
+): ShapeComponent<ChartShape> = ShapeComponent(
+    shape = shape,
+    color = color.toArgb(),
+    dynamicShader = brush.toDynamicShader(),
     margins = margins,
 )
 

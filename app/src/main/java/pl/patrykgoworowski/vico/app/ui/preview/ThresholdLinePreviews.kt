@@ -27,6 +27,7 @@ import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
+import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
 import pl.patrykgoworowski.vico.compose.component.lineComponent
 import pl.patrykgoworowski.vico.compose.component.rectComponent
@@ -38,7 +39,7 @@ import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
 import pl.patrykgoworowski.vico.core.entry.entryModelOf
 
-private val model = entryModelOf(1, 2, 3, 4)
+private val model = entryModelOf(1, 2, 3, 6)
 
 @Composable
 private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
@@ -77,6 +78,67 @@ public fun ThresholdLine() {
                         textComponent = textComponent(Color.Black).apply {
                             setPadding(horizontal = 8.dp)
                         },
+                    )
+                )
+            },
+            model = model,
+            startAxis = startAxis(),
+            bottomAxis = bottomAxis(),
+            isHorizontalScrollEnabled = false,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+public fun ThresholdLineWithCustomText() {
+    ProvidePreviewChartStyle {
+        Chart(
+            modifier = Modifier,
+            chart = columnChart().apply {
+                addDecoration(
+                    ThresholdLine(
+                        thresholdValue = 2f,
+                        thresholdLabel = "Threshold line 1 📐",
+                        lineComponent = rectComponent(color = Color.Black),
+                        textComponent = textComponent(
+                            color = Color.White,
+                            lineCount = 3,
+                            background = rectComponent(
+                                shape = Shapes.roundedCornersShape(bottomLeftPercent = 25, bottomRightPercent = 25),
+                                color = Color.Black,
+                            ),
+                            padding = dimensionsOf(
+                                start = 8.dp,
+                                top = 2.dp,
+                                end = 8.dp,
+                                bottom = 4.dp,
+                            ),
+                            margins = dimensionsOf(horizontal = 4.dp),
+                        ),
+                        labelVerticalPosition = ThresholdLine.LabelVerticalPosition.Bottom
+                    )
+                )
+                addDecoration(
+                    ThresholdLine(
+                        thresholdValue = 3f,
+                        thresholdLabel = "Threshold line 2 📐",
+                        lineComponent = rectComponent(color = Color.DarkGray),
+                        textComponent = textComponent(
+                            color = Color.White,
+                            lineCount = 3,
+                            background = rectComponent(
+                                shape = Shapes.cutCornerShape(topLeftPercent = 25, topRightPercent = 25),
+                                color = Color.DarkGray,
+                            ),
+                            padding = dimensionsOf(
+                                start = 8.dp,
+                                top = 4.dp,
+                                end = 8.dp,
+                                bottom = 2.dp,
+                            ),
+                            margins = dimensionsOf(horizontal = 4.dp),
+                        ),
                     )
                 )
             },
