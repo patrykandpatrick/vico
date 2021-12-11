@@ -24,7 +24,6 @@ import android.text.TextPaint
 import android.text.TextUtils
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
 import pl.patrykgoworowski.vico.core.component.Component
-import pl.patrykgoworowski.vico.core.component.dimension.DefaultMargins
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
@@ -56,7 +55,8 @@ public open class TextComponent(
     public val lineCount: Int = DEF_LABEL_LINE_COUNT,
     public open var background: Component? = null,
     override val padding: MutableDimensions = emptyDimensions(),
-) : Padding, Margins by DefaultMargins() {
+    override val margins: MutableDimensions = emptyDimensions(),
+) : Padding, Margins {
 
     public val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
@@ -90,7 +90,7 @@ public open class TextComponent(
     ): Unit = with(context) {
 
         if (text.isBlank()) return
-        layout = getLayout(text, fontScale, width)
+        layout = getLayout(text, fontScale, width - padding.horizontalDp.wholePixels)
         val layoutWidth = layout.widestLineWidth
         val layoutHeight = layout.height
 

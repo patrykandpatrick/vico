@@ -92,6 +92,7 @@ public data class ThresholdLine(
         textComponent.drawText(
             context = context,
             text = thresholdLabel,
+            width = bounds.width().toInt(),
             textX = when (labelHorizontalPosition) {
                 LabelHorizontalPosition.Start -> bounds.left
                 LabelHorizontalPosition.End -> bounds.right

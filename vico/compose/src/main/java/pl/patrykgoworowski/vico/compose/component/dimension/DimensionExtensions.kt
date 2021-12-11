@@ -31,6 +31,17 @@ public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
 
 @Composable
 public fun dimensionsOf(
+    horizontal: Dp = 0.dp,
+    vertical: Dp = 0.dp,
+): MutableDimensions = MutableDimensions(
+    startDp = horizontal.value,
+    topDp = vertical.value,
+    endDp = horizontal.value,
+    bottomDp = vertical.value
+)
+
+@Composable
+public fun dimensionsOf(
     start: Dp = 0.dp,
     top: Dp = 0.dp,
     end: Dp = 0.dp,
