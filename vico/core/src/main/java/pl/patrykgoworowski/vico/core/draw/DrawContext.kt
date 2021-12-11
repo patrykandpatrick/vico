@@ -24,6 +24,8 @@ public interface DrawContext : MeasureContext {
 
     public fun saveCanvas(): Int = canvas.save()
 
+    public fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit)
+
     public fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
         canvas.clipRect(left, top, right, bottom)
     }

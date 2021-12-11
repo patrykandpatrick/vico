@@ -33,7 +33,7 @@ public fun DynamicShaders.fromComponent(
     tileYMode: Shader.TileMode = tileXMode,
 ): ComponentShader = ComponentShader(
     component = component,
-    componentSize = componentSize,
+    componentSizeDp = componentSize,
     checkeredArrangement = checkeredArrangement,
     tileXMode = tileXMode,
     tileYMode = tileYMode,

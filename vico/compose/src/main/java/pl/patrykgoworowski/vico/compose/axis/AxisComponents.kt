@@ -26,7 +26,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import pl.patrykgoworowski.vico.compose.component.shape.chartShape
-import pl.patrykgoworowski.vico.compose.component.shape.shader.StaticShader
+import pl.patrykgoworowski.vico.compose.component.shape.shader.BrushShader
 import pl.patrykgoworowski.vico.compose.extension.pixelSize
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
@@ -87,7 +87,7 @@ public fun axisLineComponent(
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
-    dynamicShader = brush?.let(::StaticShader),
+    dynamicShader = brush?.let(::BrushShader),
     shape = shape.chartShape(),
     margins = margins,
 )
@@ -114,7 +114,7 @@ public fun axisTickComponent(
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
-    dynamicShader = brush?.let(::StaticShader),
+    dynamicShader = brush?.let(::BrushShader),
     shape = shape.chartShape(),
 )
 

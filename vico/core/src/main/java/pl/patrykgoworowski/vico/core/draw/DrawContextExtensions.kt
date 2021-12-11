@@ -29,10 +29,17 @@ public fun drawContext(
     isLtr: Boolean,
     zoom: Float = 1f,
 ): DrawContext = object : DrawContext {
-    override val canvas: Canvas = canvas
+    override var canvas: Canvas = canvas
     override val density: Float = density
     override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
     override val zoom: Float = zoom
+
+    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
+        val originalCanvas = this.canvas
+        this.canvas = canvas
+        block(this)
+        this.canvas = originalCanvas
+    }
 }
