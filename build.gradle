@@ -75,7 +75,7 @@ tasks.withType(Detekt).configureEach {
 }
 
 tasks.dokkaHtmlMultiModule {
-    outputDirectory.set(file("$buildDir/dokka"))
+    outputDirectory.set(file("docs"))
 }
 
 task clean(type: Delete) {
