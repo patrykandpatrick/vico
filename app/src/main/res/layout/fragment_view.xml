@@ -67,6 +67,8 @@
     <pl.patrykgoworowski.vico.view.chart.ChartView
         android:id="@+id/stacked_column_chart"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        app:chartType="column"
+        app:columnChartStyle="@style/StackedColumnChartStyle" />
 
 </LinearLayout>
