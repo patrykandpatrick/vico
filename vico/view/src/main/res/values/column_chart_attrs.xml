@@ -23,9 +23,5 @@
         <attr name="column3Style" format="reference" />
         <attr name="columnOuterSpacing" format="dimension" />
         <attr name="columnInnerSpacing" format="dimension" />
-        <attr name="mergeMode" format="enum" >
-            <enum name="grouped" value="0"/>
-            <enum name="stacked" value="1"/>
-        </attr>
     </declare-styleable>
 </resources>

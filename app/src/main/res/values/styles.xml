@@ -96,8 +96,4 @@
         <item name="color">?colorPrimaryVariant</item>
         <item name="shapeStyle">@style/CircleShape</item>
     </style>
-
-    <style name="StackedColumnChartStyle">
-        <item name="mergeMode">stacked</item>
-    </style>
 </resources>

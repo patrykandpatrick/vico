@@ -35,6 +35,7 @@ internal fun TypedArray.getColumnChart(
     context: Context,
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_columnChartStyle,
     @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnChartStyle,
+    mergeMode: MergeMode
 ): ColumnChart = getNestedTypedArray(context, resourceId, styleableResourceId).run {
     val defaultShape = Shapes.roundedCornersShape(allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT)
     ColumnChart(
@@ -80,9 +81,7 @@ internal fun TypedArray.getColumnChart(
             index = R.styleable.ColumnChartStyle_columnInnerSpacing,
             defaultValue = Dimens.COLUMN_INSIDE_SPACING
         ),
-        mergeMode = getInt(R.styleable.ColumnChartStyle_mergeMode, 0).let { int ->
-            MergeMode.values()[int]
-        }
+        mergeMode = mergeMode
     )
 }
 
