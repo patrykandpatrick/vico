@@ -29,6 +29,6 @@ jobs:
           git config --global user.email "96002241+vicochartbot@users.noreply.github.com"
           git config --global user.name "Vico Chart Bot"
           git add docs
-          git commit -m "Update docs"
+          git commit -m "Update docs" -m "[skip ci]"
           git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/VicoChart/VicoChart.git
           git push origin
