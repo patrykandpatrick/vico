@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.chart.column
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
 public enum class MergeMode {
-    Stack, Grouped;
+    Grouped, Stack;
 
     public fun getMaxY(model: ChartEntryModel): Float = when (this) {
         Grouped -> model.maxY
