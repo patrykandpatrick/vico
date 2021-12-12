@@ -16,6 +16,8 @@ tasks.configureEach { task ->
         task.configure {
             failOnWarning.set(true)
 
+            suppressInheritedMembers.set(true)
+
             dokkaSourceSets {
                 configureEach {
                     includes.from("Module.md")
