@@ -34,6 +34,8 @@ import pl.patrykgoworowski.vico.core.chart.composed.ComposedChart
 import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.chart.Chart
+import pl.patrykgoworowski.vico.core.chart.column.MergeMode
+import pl.patrykgoworowski.vico.core.extension.hasAnyFlagOf
 import pl.patrykgoworowski.vico.core.extension.hasFlag
 import pl.patrykgoworowski.vico.view.R
 
@@ -144,37 +146,35 @@ internal class ThemeHandler(
         }
     }
 
-    private fun TypedArray.getChart(): Chart<ChartEntryModel>? {
-        val chartFlags = getInt(R.styleable.ChartView_chartType, 0)
-
-        return when {
-            chartFlags.hasFlag(Flags.COLUMN_CHART) -> getColumnChart(context)
-            chartFlags.hasFlag(Flags.LINE_CHART) -> getLineChart(context)
+    private fun TypedArray.getChart(): Chart<ChartEntryModel>? =
+        when (getInt(R.styleable.ChartView_chartType, 0)) {
+            COLUMN_CHART -> getColumnChart(context, mergeMode = MergeMode.Grouped)
+            STACKED_COLUMN_CHART -> getColumnChart(context, mergeMode = MergeMode.Stack)
+            LINE_CHART -> getLineChart(context)
             else -> null
         }
-    }
 
     private fun TypedArray.getComposedChart(): Chart<ComposedChartEntryModel<ChartEntryModel>>? {
         val chartFlags = getInt(R.styleable.ComposedChartView_charts, 0)
 
-        val columnChart: ColumnChart? = if (chartFlags.hasFlag(Flags.COLUMN_CHART)) {
-            getColumnChart(context)
+        val columnChart: ColumnChart? = if (chartFlags.hasAnyFlagOf(COLUMN_CHART, STACKED_COLUMN_CHART)) {
+            getColumnChart(
+                context,
+                mergeMode = if (chartFlags.hasFlag(STACKED_COLUMN_CHART)) MergeMode.Stack else MergeMode.Grouped
+            )
         } else {
             null
         }
-        val lineChart = if (chartFlags.hasFlag(Flags.LINE_CHART)) {
+        val lineChart = if (chartFlags.hasFlag(LINE_CHART)) {
             getLineChart(context)
         } else {
             null
         }
 
         return when {
-            columnChart != null && lineChart != null ->
-                ComposedChart(columnChart, lineChart)
-            columnChart != null ->
-                columnChart
-            lineChart != null ->
-                lineChart
+            columnChart != null && lineChart != null -> ComposedChart(columnChart, lineChart)
+            columnChart != null -> columnChart
+            lineChart != null -> lineChart
             else -> null
         }
     }
@@ -185,8 +185,9 @@ internal class ThemeHandler(
         Unknown,
     }
 
-    private companion object Flags {
+    private companion object {
         const val COLUMN_CHART = 1
-        const val LINE_CHART = 2
+        const val STACKED_COLUMN_CHART = 2
+        const val LINE_CHART = 4
     }
 }
