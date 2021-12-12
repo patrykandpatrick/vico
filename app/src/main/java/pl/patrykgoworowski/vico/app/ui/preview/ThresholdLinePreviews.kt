@@ -39,7 +39,7 @@ import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
 import pl.patrykgoworowski.vico.core.entry.entryModelOf
 
-private val model = entryModelOf(1, 2, 3, 6)
+private val model = entryModelOf(1, 2, 3, 4)
 
 @Composable
 private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {

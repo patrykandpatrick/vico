@@ -191,19 +191,22 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             chartModel = chartModel,
             maxLabelCount = getDrawLabelCount(this, availableHeight.toInt()),
         )
-        if (labels.isEmpty()) {
-            outInsets.set(0f)
-            return@with
-        }
-
-        fun getHalfLabelHeight(text: String): Float =
-            label?.getHeight(context = context, text = text)?.half.orZero
 
         outInsets.set(
             start = if (position.isStart) getDesiredWidth(context, labels) else 0f,
-            top = getHalfLabelHeight(labels.first()) - axisThickness,
             end = if (position.isEnd) getDesiredWidth(context, labels) else 0f,
-            bottom = getHalfLabelHeight(labels.last())
+        )
+    }
+
+    override fun getVerticalInsets(
+        context: MeasureContext,
+        chartModel: ChartModel,
+        outInsets: Insets
+    ): Unit = with(context) {
+        val halfLabelHeight = label?.getHeight(context = context)?.half.orZero
+        outInsets.set(
+            top = halfLabelHeight - axisThickness,
+            bottom = halfLabelHeight
         )
     }
 

@@ -101,6 +101,7 @@ public fun <Model : ChartEntryModel> Chart(
 ) {
     val axisManager = remember { AxisManager() }
     val chartModel = remember { MutableChartModel() }
+    chart.setToAxisModel(chartModel, model)
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val horizontalScroll = remember { mutableStateOf(0f) }
@@ -149,8 +150,6 @@ public fun <Model : ChartEntryModel> Chart(
                 )
             }
     ) {
-        chart.setToAxisModel(chartModel, model)
-
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
             measureContext = measureContext,

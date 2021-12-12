@@ -115,7 +115,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var isZoomEnabled: Boolean = true
 
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
-        tryUpdateBoundsAndInvalidate()
+        tryUpdateBoundsAndInvalidate(chart, model)
     }
 
     public var model: Model? = null
@@ -134,13 +134,16 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     public fun setModel(model: Model) {
         this.model = model
-        tryUpdateBoundsAndInvalidate()
+        tryUpdateBoundsAndInvalidate(chart, model)
     }
 
-    private fun tryUpdateBoundsAndInvalidate() {
-        if (ViewCompat.isAttachedToWindow(this)) {
-            updateBounds()
-            invalidate()
+    private fun tryUpdateBoundsAndInvalidate(chart: Chart<Model>?, model: Model?) {
+        if (chart != null && model != null) {
+            chart.setToAxisModel(chartModel, model)
+            if (ViewCompat.isAttachedToWindow(this)) {
+                updateBounds()
+                invalidate()
+            }
         }
     }
 
@@ -173,7 +176,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun onDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
-        chart.setToAxisModel(chartModel, model)
         motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
@@ -216,7 +218,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     private fun updateBounds() = withChartAndModel { chart, model ->
-        chart.setToAxisModel(chartModel, model)
         virtualLayout.setBounds(
             context = measureContext,
             contentBounds = contentBounds,

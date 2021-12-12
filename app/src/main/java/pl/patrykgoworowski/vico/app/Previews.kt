@@ -35,14 +35,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.app.ui.theme.MainTheme
-import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
-import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
-import pl.patrykgoworowski.vico.compose.component.shape.shader.verticalGradient
-import pl.patrykgoworowski.vico.compose.component.shape.textComponent
-import pl.patrykgoworowski.vico.compose.component.rectComponent
 import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
 import pl.patrykgoworowski.vico.compose.chart.line.lineChart
+import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
+import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
+import pl.patrykgoworowski.vico.compose.component.shape.shader.verticalGradient
+import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.core.axis.horizontal.createHorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.createVerticalAxis
@@ -86,10 +86,9 @@ public fun ColumnChartCard(): Unit = MainTheme {
                             CornerSize(percent = 25)
                         ),
                         color = colors.primary.copy(alpha = 0.1f),
-                    )
-                ).apply {
-                    setPadding(end = 8.dp, start = 4.dp)
-                }
+                    ),
+                    padding = dimensionsOf(end = 8.dp, start = 4.dp),
+                )
                 axis = null
                 tick = null
                 guideline = LineComponent(
@@ -127,10 +126,9 @@ public fun LineChartCard(): Unit = MainTheme {
                 label = textComponent(
                     color = colors.onSurface,
                     textSize = 10.sp,
-                    background = rectComponent(shape = rectShape, color = Color.LightGray)
-                ).apply {
-                    setPadding(horizontal = 4.dp, vertical = 2.dp)
-                }
+                    background = rectComponent(shape = rectShape, color = Color.LightGray),
+                    padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp)
+                )
                 axis = null
                 tick = null
                 guideline = LineComponent(
