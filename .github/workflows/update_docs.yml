@@ -26,6 +26,8 @@ jobs:
         run: ./gradlew dokkaHtmlMultiModule
       - name: Update docs
         run: |
+          git config --global user.email "96002241+vicochartbot@users.noreply.github.com"
+          git config --global user.name "Vico Chart Bot"
           git add .
           git commit -m "Update docs"
           git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/VicoChart/VicoChart.git
