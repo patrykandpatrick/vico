@@ -24,6 +24,7 @@ import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
+import pl.patrykgoworowski.vico.core.chart.column.MergeMode
 import pl.patrykgoworowski.vico.core.chart.line.LineChart
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.view.R
@@ -79,6 +80,9 @@ internal fun TypedArray.getColumnChart(
             index = R.styleable.ColumnChartStyle_columnInnerSpacing,
             defaultValue = Dimens.COLUMN_INSIDE_SPACING
         ),
+        mergeMode = getInt(R.styleable.ColumnChartStyle_mergeMode, 0).let { int ->
+            MergeMode.values()[int]
+        }
     )
 }
 
