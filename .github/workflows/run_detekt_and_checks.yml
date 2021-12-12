@@ -1,9 +1,7 @@
 name: Run detekt & checks
 on:
   workflow_dispatch:
-  pull_request:
-    branches:
-      - master
+  push:
 jobs:
   run_detekt:
     runs-on: ubuntu-latest
