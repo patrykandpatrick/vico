@@ -217,7 +217,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         updateBounds()
     }
 
-    private fun updateBounds() = withChartAndModel { chart, model ->
+    private fun updateBounds() = withChartAndModel { chart, _ ->
         virtualLayout.setBounds(
             context = measureContext,
             contentBounds = contentBounds,
