@@ -72,7 +72,7 @@ public open class ColumnChart(
             calculateDrawSegmentSpecIfNeeded(model)
             maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
                 a = 0f,
-                b = (segmentProperties.segmentWidth * model.getDrawnEntryCount()) - bounds.width(),
+                b = segmentProperties.segmentWidth * model.getDrawnEntryCount() - bounds.width(),
             ) else 0f
             drawChartInternal(
                 model = model,
@@ -98,7 +98,7 @@ public open class ColumnChart(
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
-        val bottomCompensation = if (minY.orZero < 0f) (minY.orZero * heightMultiplier) else 0f
+        val bottomCompensation = if (minY.orZero < 0f) minY.orZero * heightMultiplier else 0f
 
         val defCellWidth = getCellWidth(model.entries.size)
 
