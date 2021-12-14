@@ -26,14 +26,16 @@
     <declare-styleable name="ChartView">
         <attr name="chartType" format="enum">
             <enum name="column" value="1" />
-            <enum name="line" value="2" />
+            <enum name="stackedColumn" value="2" />
+            <enum name="line" value="4" />
         </attr>
     </declare-styleable>
 
     <declare-styleable name="ComposedChartView">
         <attr name="charts" format="integer">
             <flag name="column" value="1" />
-            <flag name="line" value="2" />
+            <flag name="stackedColumn" value="2" />
+            <flag name="line" value="4" />
         </attr>
     </declare-styleable>
 

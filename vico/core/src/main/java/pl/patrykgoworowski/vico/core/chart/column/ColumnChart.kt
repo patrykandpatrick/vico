@@ -94,7 +94,7 @@ public open class ColumnChart(
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
-        val bottomCompensation = if (minY.orZero < 0f) (minY.orZero * heightMultiplier) else 0f
+        val bottomCompensation = if (minY.orZero < 0f) minY.orZero * heightMultiplier else 0f
 
         val defCellWidth = getCellWidth(model.entries.size)
 

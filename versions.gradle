@@ -32,7 +32,7 @@ ext {
             compose           : '1.0.5',
             coroutines        : '1.5.2',
             dokka             : '1.6.0',
-            gradle            : '7.2.0-alpha04',
+            gradle            : '7.2.0-alpha05',
             junit             : '1.1.2',
             kotlin            : '1.5.31',
             lifecycle_runtime : '2.4.0',

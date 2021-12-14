@@ -96,5 +96,4 @@
         <item name="color">?colorPrimaryVariant</item>
         <item name="shapeStyle">@style/CircleShape</item>
     </style>
-
 </resources>
