@@ -50,7 +50,6 @@ import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.chart.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
-import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
