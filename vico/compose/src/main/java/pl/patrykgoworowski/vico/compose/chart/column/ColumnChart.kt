@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.compose.chart.column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
+import pl.patrykgoworowski.vico.compose.style.ChartStyle
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
@@ -39,6 +40,25 @@ public fun columnChart(
     this.spacingDp = spacing.value
     this.innerSpacingDp = innerSpacing.value
     this.mergeMode = mergeMode
+    this.minX = minX
+    this.maxX = maxX
+    this.minY = minY
+    this.maxY = maxY
+}
+
+public fun columnChart(
+    chartStyle: ChartStyle,
+    mergeMode: MergeMode = MergeMode.Grouped,
+    minX: Float? = null,
+    maxX: Float? = null,
+    minY: Float? = null,
+    maxY: Float? = null,
+): ColumnChart = ColumnChart(
+    columns = chartStyle.columnChart.columns,
+    spacingDp = chartStyle.columnChart.outsideSpacing.value,
+    innerSpacingDp = chartStyle.columnChart.innerSpacing.value,
+    mergeMode = mergeMode,
+).apply {
     this.minX = minX
     this.maxX = maxX
     this.minY = minY

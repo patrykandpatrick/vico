@@ -84,7 +84,6 @@ public open class LineChart(
         val (cellWidth, spacing, segmentWidth) = segmentProperties
 
         calculateDrawSegmentSpecIfNeeded(model)
-        updateMaxScrollAmount(model.getDrawnEntryCount(), segmentWidth)
 
         var cubicCurvature: Float
         var prevX = bounds.left
@@ -138,9 +137,9 @@ public open class LineChart(
     private fun ChartDrawContext.setUpClipBounds() {
         clipRect(
             left = bounds.left,
-            top = bounds.top - pointSizeDp.half,
+            top = bounds.top - pointSizeDp.pixels.half,
             right = bounds.right,
-            bottom = bounds.bottom + pointSizeDp.half
+            bottom = bounds.bottom + pointSizeDp.pixels.half
         )
     }
 
@@ -191,16 +190,6 @@ public open class LineChart(
         axisModel.minX = minX ?: model.minX
         axisModel.maxX = maxX ?: model.maxX
         axisModel.chartEntryModel = model
-    }
-
-    private fun MeasureContext.updateMaxScrollAmount(
-        entryCollectionSize: Int,
-        segmentWidth: Float,
-    ) {
-        maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
-            a = 0f,
-            b = (segmentWidth * entryCollectionSize) - bounds.width()
-        ) else 0f
     }
 
     private companion object {
