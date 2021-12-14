@@ -70,10 +70,6 @@ public open class ColumnChart(
         canvas.inClip(bounds) {
             markerLocationMap.clear()
             calculateDrawSegmentSpecIfNeeded(model)
-            maxScrollAmount = if (isHorizontalScrollEnabled) maxOf(
-                a = 0f,
-                b = (segmentProperties.segmentWidth * model.getDrawnEntryCount()) - bounds.width(),
-            ) else 0f
             drawChartInternal(
                 model = model,
                 cellWidth = segmentProperties.cellWidth,
