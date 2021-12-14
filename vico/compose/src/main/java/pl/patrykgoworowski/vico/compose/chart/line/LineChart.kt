@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
+import pl.patrykgoworowski.vico.compose.style.ChartStyle
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.Component
@@ -50,6 +51,31 @@ public fun lineChart(
     this.lineWidth = lineWidth.value
     this.lineColor = lineColor.toArgb()
     this.lineBackgroundShader = lineBackgroundShader
+    this.lineStrokeCap = lineStrokeCap.paintCap
+    this.cubicStrength = cubicStrength
+    this.minX = minX
+    this.maxX = maxX
+    this.minY = minY
+    this.maxY = maxY
+}
+
+public fun lineChart(
+    chartStyle: ChartStyle,
+    point: Component? = null,
+    lineStrokeCap: StrokeCap = StrokeCap.Round,
+    cubicStrength: Float = Dimens.CUBIC_STRENGTH,
+    minX: Float? = null,
+    maxX: Float? = null,
+    minY: Float? = null,
+    maxY: Float? = null,
+): LineChart = LineChart(
+    point = point,
+    pointSizeDp = chartStyle.lineChart.pointSize.value,
+    spacingDp = chartStyle.lineChart.spacing.value,
+    lineThicknessDp = chartStyle.lineChart.lineWidth.value,
+    lineColor = chartStyle.lineChart.lineColor.toArgb(),
+).apply {
+    this.lineBackgroundShader = chartStyle.lineChart.lineBackgroundShader
     this.lineStrokeCap = lineStrokeCap.paintCap
     this.cubicStrength = cubicStrength
     this.minX = minX

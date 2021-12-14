@@ -17,12 +17,14 @@
 package pl.patrykgoworowski.vico.app.ui.component
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
 import pl.patrykgoworowski.vico.compose.chart.line.lineChart
+import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.chart.composed.plus
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.composed.ComposedChartEntryModelProducer
@@ -32,9 +34,10 @@ internal fun ComposedChart(
     modifier: Modifier = Modifier,
     model: ComposedChartEntryModelProducer<ChartEntryModel>,
 ) {
+    val chartStyle = currentChartStyle
     Chart(
         modifier = modifier,
-        chart = columnChart() + lineChart(),
+        chart = remember { columnChart(chartStyle) + lineChart(chartStyle) },
         chartModelProducer = model,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
