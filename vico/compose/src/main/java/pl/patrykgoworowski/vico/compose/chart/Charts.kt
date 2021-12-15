@@ -195,7 +195,7 @@ public fun rememberZoomState(
     onZoom@{ centroid, zoomChange ->
         val newZoom = zoom.value * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return@onZoom
-        val centerX = scrollHandler.currentScroll + centroid.x - chartBounds.left / 2
+        val centerX = scrollHandler.currentScroll + centroid.x - chartBounds.left
         val zoomedCenterX = centerX * zoomChange
         zoom.value = newZoom
         scrollHandler.currentScroll += zoomedCenterX - centerX
