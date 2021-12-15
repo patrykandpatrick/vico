@@ -119,7 +119,7 @@ public open class ColumnChart(
                         columnBottom = (bounds.bottom + bottomCompensation - cumulatedHeight)
                             .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        columnCenterX += cellWidth.half * drawScale
+                        columnCenterX += cellWidth.half
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                     MergeMode.Grouped -> {
