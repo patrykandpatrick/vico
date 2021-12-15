@@ -16,6 +16,8 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 public const val PI_RAD: Float = 180f
@@ -43,6 +45,12 @@ public inline val Float.round: Float
 
 public inline val Float.piRad: Float
     get() = this * PI_RAD
+
+public inline val Float.floor: Float
+    get() = floor(this)
+
+public inline val Float.ceil: Float
+    get() = ceil(this)
 
 public inline val ClosedFloatingPointRange<Float>.middle: Float
     get() = (endInclusive + start) / 2

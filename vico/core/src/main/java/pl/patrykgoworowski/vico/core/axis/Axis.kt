@@ -46,7 +46,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         get() = guideline?.thicknessDp.orZero.pixels
 
     override val MeasureContext.tickLength: Float
-        get() = tickLengthDp.pixels
+        get() = if (tick != null) tickLengthDp.pixels else 0f
 
     override var isLtr: Boolean = true
 

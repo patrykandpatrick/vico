@@ -38,6 +38,8 @@ import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
 import kotlin.collections.HashMap
+import kotlin.math.ceil
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 public typealias OnPreDrawListener = (
@@ -100,9 +102,9 @@ public open class TextComponent(
             .getTextTopPosition(context, textY, layoutHeight.toFloat())
 
         val bgLeft = textStartPosition - padding.getLeftDp(isLtr).pixels
-        val bgTop = textTopPosition - (layoutHeight / 2 + padding.topDp.pixels)
+        val bgTop = floor(textTopPosition - (layoutHeight.half + padding.topDp.pixels))
         val bgRight = textStartPosition + layoutWidth + padding.getRightDp(isLtr).pixels
-        val bgBottom = textTopPosition + (layoutHeight / 2 + padding.bottomDp.pixels)
+        val bgBottom = ceil(textTopPosition + (layoutHeight.half + padding.bottomDp.pixels))
 
         onPreDraw?.invoke(context, bgLeft, bgTop, bgRight, bgBottom)
 
@@ -216,6 +218,6 @@ public open class TextComponent(
         }
 
     private companion object {
-        const val TEXT_MEASUREMENT_CHAR = "1"
+        const val TEXT_MEASUREMENT_CHAR = ""
     }
 }

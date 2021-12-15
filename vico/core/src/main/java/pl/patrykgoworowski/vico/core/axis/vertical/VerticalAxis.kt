@@ -56,7 +56,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun drawBehindChart(
         context: ChartDrawContext,
     ): Unit = with(context) {
-        val drawLabelCount = getDrawLabelCount(context, bounds.height().toInt())
+        val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
 
         val axisStep = bounds.height() / drawLabelCount
 
@@ -93,7 +93,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
         val label = label
-        val labelCount = getDrawLabelCount(this, bounds.height().toInt())
+        val labelCount = getDrawLabelCount(bounds.height().toInt())
 
         val labels = getLabels(context.chartModel, labelCount)
         val labelHeight = label?.getHeight(includeMargin = false, context = this).orZero
@@ -140,7 +140,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     bottom = labelTop + labelHeight.half
                 )
             ) {
-                // TODO label.background?.setParentBounds(bounds)
                 label.drawText(
                     context = context,
                     text = labelText,
@@ -154,9 +153,9 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         label?.clearLayoutCache() ?: Unit
     }
 
-    private fun getDrawLabelCount(context: MeasureContext, availableHeight: Int): Int {
+    private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
         label?.let { label ->
-            val height = label.getHeight(context = context)
+            val height = label.getHeight(context = this)
             var result = 0f
             var addition: Float
             for (i in 0 until maxLabelCount) {
@@ -189,12 +188,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     ): Unit = with(context) {
         val labels = getLabels(
             chartModel = chartModel,
-            maxLabelCount = getDrawLabelCount(this, availableHeight.toInt()),
+            maxLabelCount = getDrawLabelCount(availableHeight.toInt()),
         )
 
+        val desiredWidth = getDesiredWidth(context, labels)
+
         outInsets.set(
-            start = if (position.isStart) getDesiredWidth(context, labels) else 0f,
-            end = if (position.isEnd) getDesiredWidth(context, labels) else 0f,
+            start = if (position.isStart) desiredWidth else 0f,
+            end = if (position.isEnd) desiredWidth else 0f,
         )
     }
 

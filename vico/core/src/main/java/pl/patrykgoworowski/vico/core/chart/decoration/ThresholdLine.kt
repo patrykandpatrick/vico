@@ -26,6 +26,8 @@ import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
+import pl.patrykgoworowski.vico.core.extension.ceil
+import pl.patrykgoworowski.vico.core.extension.floor
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.middle
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
@@ -72,11 +74,11 @@ public data class ThresholdLine(
         val topY = minOf(
             bounds.bottom - thresholdRange.endInclusive / valueRange * bounds.height(),
             centerY - minimumLineThicknessDp.pixels.half,
-        )
+        ).ceil
         val bottomY = maxOf(
             bounds.bottom - thresholdRange.start / valueRange * bounds.height(),
             centerY + minimumLineThicknessDp.pixels.half,
-        )
+        ).floor
         val textY = when (labelVerticalPosition) {
             LabelVerticalPosition.Top -> topY
             LabelVerticalPosition.Bottom -> bottomY
