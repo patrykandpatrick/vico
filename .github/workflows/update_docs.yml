@@ -2,6 +2,8 @@ name: Update docs
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
 jobs:
   update_docs:
     runs-on: ubuntu-latest
