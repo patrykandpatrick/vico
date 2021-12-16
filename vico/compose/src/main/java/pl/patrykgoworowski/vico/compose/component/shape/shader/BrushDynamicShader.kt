@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.compose.component.shape.shader
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
+import kotlin.math.abs
 import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.draw.DrawContext
@@ -44,8 +45,8 @@ public fun brushShader(
         shader(left, top, right, bottom)
             .applyTo(
                 size = Size(
-                    maxOf(right - left, left - right),
-                    maxOf(bottom - top, top - bottom)
+                    abs(left - right),
+                    abs(top - bottom)
                 ),
                 p = tempPaint,
                 alpha = 1f
