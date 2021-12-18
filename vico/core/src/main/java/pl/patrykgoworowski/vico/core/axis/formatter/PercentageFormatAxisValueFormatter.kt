@@ -20,12 +20,10 @@ import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import java.text.DecimalFormat
 
 public class PercentageFormatAxisValueFormatter(
-    pattern: String
+    pattern: String = DEF_PATTERN
 ) : AxisValueFormatter {
 
     private val decimalFormat = DecimalFormat(pattern)
-
-    public constructor() : this(DEF_PATTERN)
 
     override fun formatValue(
         value: Float,

@@ -24,7 +24,7 @@ import pl.patrykgoworowski.vico.core.extension.setAll
 private typealias Listener = (ChartEntryModel) -> Unit
 
 public class ChartEntryModelProducer(
-    entryCollections: List<List<ChartEntry>>,
+    entryCollections: List<List<ChartEntry>> = listOf(),
     private val diffAnimator: DiffAnimator? = null,
 ) : ChartModelProducer<ChartEntryModel> {
 
@@ -56,11 +56,6 @@ public class ChartEntryModelProducer(
 
     public val stackedMinY: Float
         get() = calculator.stackedMinY
-
-    public constructor(
-        vararg entryCollections: List<ChartEntry>,
-        diffAnimator: DiffAnimator? = null,
-    ) : this(entryCollections.toList(), diffAnimator = diffAnimator)
 
     init {
         setEntries(entryCollections)
@@ -122,4 +117,14 @@ public class ChartEntryModelProducer(
         override val composedMaxY: Float,
         override val step: Float
     ) : ChartEntryModel
+
+    public companion object {
+        public fun fromChartEntryList(
+            vararg entryCollections: List<ChartEntry>,
+            diffAnimator: DiffAnimator? = null,
+        ): ChartEntryModelProducer = ChartEntryModelProducer(
+            entryCollections.toList(),
+            diffAnimator = diffAnimator,
+        )
+    }
 }

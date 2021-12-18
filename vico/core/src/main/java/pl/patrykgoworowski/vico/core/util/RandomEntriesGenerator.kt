@@ -37,13 +37,13 @@ public class RandomEntriesGenerator(
     }
 
     public fun randomEntryModel(): ChartEntryModel =
-        ChartEntryModelProducer(generateRandomEntries()).model
+        ChartEntryModelProducer.fromChartEntryList(generateRandomEntries()).model
 
     public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> =
         ComposedChartEntryModelProducer(
-            ChartEntryModelProducer(generateRandomEntries()),
-            ChartEntryModelProducer(generateRandomEntries()),
-            ChartEntryModelProducer(generateRandomEntries()),
+            ChartEntryModelProducer.fromChartEntryList(generateRandomEntries()),
+            ChartEntryModelProducer.fromChartEntryList(generateRandomEntries()),
+            ChartEntryModelProducer.fromChartEntryList(generateRandomEntries()),
         ).model
 
     private companion object {

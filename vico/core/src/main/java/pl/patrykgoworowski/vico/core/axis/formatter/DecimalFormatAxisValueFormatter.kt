@@ -21,15 +21,8 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 
 public class DecimalFormatAxisValueFormatter(
-    private val decimalFormat: DecimalFormat
+    private val decimalFormat: DecimalFormat = defFormat
 ) : AxisValueFormatter {
-
-    public constructor() : this(DEF_FORMAT)
-
-    public constructor(
-        pattern: String,
-        roundingMode: RoundingMode = RoundingMode.HALF_UP,
-    ) : this(getDecimalFormat(pattern, roundingMode))
 
     override fun formatValue(
         value: Float,
@@ -37,15 +30,22 @@ public class DecimalFormatAxisValueFormatter(
         chartModel: ChartModel
     ): String = decimalFormat.format(value)
 
-    private companion object {
-        private const val DEF_FORMAT = "#.##"
+    public companion object {
+        private val defRoundingMode = RoundingMode.HALF_UP
+        private val defFormat = getDecimalFormat("#.##", defRoundingMode)
 
         private fun getDecimalFormat(
             pattern: String,
-            roundingMode: RoundingMode,
+            roundingMode: RoundingMode = defRoundingMode,
         ): DecimalFormat =
             DecimalFormat(pattern).apply {
                 this.roundingMode = roundingMode
             }
+
+        public fun fromStringPattern(
+            pattern: String,
+            roundingMode: RoundingMode = RoundingMode.HALF_UP,
+        ): DecimalFormatAxisValueFormatter =
+            DecimalFormatAxisValueFormatter(getDecimalFormat(pattern, roundingMode))
     }
 }

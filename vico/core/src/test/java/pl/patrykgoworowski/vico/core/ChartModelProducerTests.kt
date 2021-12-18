@@ -38,7 +38,7 @@ public class ChartModelProducerTests {
 
     @Test
     public fun `Test Min Max calculations`() {
-        val entryList = ChartEntryModelProducer(entries1, entries2, entries3)
+        val entryList = ChartEntryModelProducer.fromChartEntryList(entries1, entries2, entries3)
         assertEquals(minX, entryList.minX)
         assertEquals(maxX, entryList.maxX)
         assertEquals(minY, entryList.minY)
@@ -52,7 +52,7 @@ public class ChartModelProducerTests {
         val first = entriesOf(0f to 2f, 1f to 0f)
         val second = entriesOf(0f to 0f, 1f to 2f)
 
-        val entryCollection = ChartEntryModelProducer(first, diffAnimator = diffAnimator)
+        val entryCollection = ChartEntryModelProducer.fromChartEntryList(first, diffAnimator = diffAnimator)
 
         fun assertEntriesAreEqual(entries: List<FloatEntry>) {
             assertEquals(entries, entryCollection.model.entries[0])

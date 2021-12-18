@@ -170,9 +170,8 @@ internal class ThemeHandler(
         } else {
             null
         }
-
         return when {
-            columnChart != null && lineChart != null -> ComposedChart(columnChart, lineChart)
+            columnChart != null && lineChart != null -> ComposedChart.fromCharts(columnChart, lineChart)
             columnChart != null -> columnChart
             lineChart != null -> lineChart
             else -> null

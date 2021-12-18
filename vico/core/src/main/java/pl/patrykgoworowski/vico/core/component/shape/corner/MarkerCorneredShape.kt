@@ -34,22 +34,6 @@ public open class MarkerCorneredShape(
     topLeft, topRight, bottomRight, bottomLeft
 ) {
 
-    public constructor(
-        all: Corner,
-        tickSize: Float = DEF_MARKER_TICK_SIZE,
-    ) : this(all, all, all, all, tickSize)
-
-    public constructor(
-        corneredShape: CorneredShape,
-        tickSize: Float = DEF_MARKER_TICK_SIZE,
-    ) : this(
-        topLeft = corneredShape.topLeft,
-        topRight = corneredShape.topRight,
-        bottomRight = corneredShape.bottomRight,
-        bottomLeft = corneredShape.bottomLeft,
-        tickSize = tickSize,
-    )
-
     @LongParameterListDrawFunction
     public fun drawMarker(
         context: DrawContext,
@@ -84,6 +68,24 @@ public open class MarkerCorneredShape(
             top = bounds.top,
             right = bounds.right,
             bottom = bounds.bottom
+        )
+    }
+
+    public companion object {
+        public fun withUniformCorners(
+            all: Corner,
+            tickSize: Float = DEF_MARKER_TICK_SIZE,
+        ): MarkerCorneredShape = MarkerCorneredShape(all, all, all, all, tickSize)
+
+        public fun fromCorneredShape(
+            corneredShape: CorneredShape,
+            tickSize: Float = DEF_MARKER_TICK_SIZE,
+        ): MarkerCorneredShape = MarkerCorneredShape(
+            topLeft = corneredShape.topLeft,
+            topRight = corneredShape.topRight,
+            bottomRight = corneredShape.bottomRight,
+            bottomLeft = corneredShape.bottomLeft,
+            tickSize = tickSize,
         )
     }
 }

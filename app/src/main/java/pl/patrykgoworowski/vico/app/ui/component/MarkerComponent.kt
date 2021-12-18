@@ -81,7 +81,7 @@ public fun markerComponent(): Marker {
         label = label,
         indicator = indicator,
         guideline = guideline,
-        shape = MarkerCorneredShape(
+        shape = MarkerCorneredShape.fromCorneredShape(
             corneredShape = pillShape,
             tickSize = 6.dp.value
         ),

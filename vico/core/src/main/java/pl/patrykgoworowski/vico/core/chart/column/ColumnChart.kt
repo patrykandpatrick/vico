@@ -39,18 +39,11 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 public open class ColumnChart(
-    public var columns: List<LineComponent>,
+    public var columns: List<LineComponent> = emptyList(),
     public var spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
     public var innerSpacingDp: Float = Dimens.COLUMN_INSIDE_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped
 ) : BaseChart<ChartEntryModel>() {
-
-    public constructor(
-        column: LineComponent,
-        spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
-    ) : this(columns = listOf(column), spacingDp = spacingDp)
-
-    public constructor() : this(emptyList())
 
     private val heightMap = HashMap<Float, Float>()
     private val segmentProperties = MutableSegmentProperties()
@@ -220,4 +213,11 @@ public open class ColumnChart(
     }
 
     private fun Float.applyScale(applyScale: Boolean) = if (applyScale) this * drawScale else this
+
+    public companion object {
+        public fun withUniformColumns(
+            column: LineComponent,
+            spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
+        ): ColumnChart = ColumnChart(columns = listOf(column), spacingDp = spacingDp)
+    }
 }

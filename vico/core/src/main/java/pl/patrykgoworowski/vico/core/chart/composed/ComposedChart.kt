@@ -28,12 +28,11 @@ import pl.patrykgoworowski.vico.core.extension.updateAll
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import java.util.TreeMap
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
 
 public class ComposedChart<Model : ChartEntryModel>(
     charts: List<Chart<Model>>
 ) : BaseChart<ComposedChartEntryModel<Model>>() {
-
-    public constructor(vararg charts: Chart<Model>) : this(charts.toList())
 
     public val charts: ArrayList<Chart<Model>> = ArrayList(charts)
 
@@ -107,5 +106,10 @@ public class ComposedChart<Model : ChartEntryModel>(
         for (index in 0 until minSize) {
             action(index, composedEntryCollections[index], charts[index])
         }
+    }
+
+    public companion object {
+        public fun <Model : ChartEntryModel> fromCharts(vararg charts: Chart<Model>): ComposedChart<Model> =
+            ComposedChart(charts.toList())
     }
 }
