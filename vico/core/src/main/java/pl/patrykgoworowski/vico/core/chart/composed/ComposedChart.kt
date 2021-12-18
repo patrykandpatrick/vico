@@ -28,7 +28,6 @@ import pl.patrykgoworowski.vico.core.extension.updateAll
 import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import java.util.TreeMap
-import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
 
 public class ComposedChart<Model : ChartEntryModel>(
     charts: List<Chart<Model>>
