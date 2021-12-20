@@ -44,7 +44,7 @@ public class ShowcaseViewModel : ViewModel() {
             while (currentCoroutineContext().isActive) {
                 entries.setEntries(generator.generateRandomEntries())
                 multiEntries.setEntries(
-                    List(size = 3) { multiGenerator.generateRandomEntries() }
+                    List(size = MULTI_ENTRIES_COMBINED) { multiGenerator.generateRandomEntries() }
                 )
                 delay(UPDATE_FREQUENCY)
             }
