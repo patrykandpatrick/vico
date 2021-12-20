@@ -72,7 +72,7 @@ public fun ThresholdLine() {
             modifier = Modifier,
             chart = columnChart().apply {
                 addDecoration(
-                    ThresholdLine(
+                    ThresholdLine.fromThresholdValue(
                         thresholdValue = 2f,
                         lineComponent = rectComponent(color = Color.Black),
                         textComponent = textComponent(Color.Black).apply {
@@ -97,7 +97,7 @@ public fun ThresholdLineWithCustomText() {
             modifier = Modifier,
             chart = columnChart().apply {
                 addDecoration(
-                    ThresholdLine(
+                    ThresholdLine.fromThresholdValue(
                         thresholdValue = 2f,
                         thresholdLabel = "Threshold line 1 📐",
                         lineComponent = rectComponent(color = Color.Black),
@@ -120,7 +120,7 @@ public fun ThresholdLineWithCustomText() {
                     )
                 )
                 addDecoration(
-                    ThresholdLine(
+                    ThresholdLine.fromThresholdValue(
                         thresholdValue = 3f,
                         thresholdLabel = "Threshold line 2 📐",
                         lineComponent = rectComponent(color = Color.DarkGray),

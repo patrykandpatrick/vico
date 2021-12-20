@@ -106,7 +106,7 @@ public fun overlayingComponent(
     outer: Component,
     inner: Component,
     innerPaddingAll: Dp,
-): OverlayingComponent = OverlayingComponent(
+): OverlayingComponent = OverlayingComponent.withUniformInnerPadding(
     outer = outer,
     inner = inner,
     innerPaddingAllDp = innerPaddingAll.value,

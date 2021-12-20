@@ -28,19 +28,6 @@ public class OverlayingComponent(
     public val insidePaddingBottomDp: Float = 0f,
 ) : Component() {
 
-    public constructor(
-        outer: Component,
-        inner: Component,
-        innerPaddingAllDp: Float = 0f,
-    ) : this(
-        outer = outer,
-        inner = inner,
-        insidePaddingStartDp = innerPaddingAllDp,
-        insidePaddingTopDp = innerPaddingAllDp,
-        insidePaddingEndDp = innerPaddingAllDp,
-        insidePaddingBottomDp = innerPaddingAllDp
-    )
-
     init {
         inner.margins.set(
             startDp = insidePaddingStartDp,
@@ -71,6 +58,21 @@ public class OverlayingComponent(
             top = top,
             right = right,
             bottom = bottom
+        )
+    }
+
+    public companion object {
+        public fun withUniformInnerPadding(
+            outer: Component,
+            inner: Component,
+            innerPaddingAllDp: Float = 0f,
+        ): OverlayingComponent = OverlayingComponent(
+            outer = outer,
+            inner = inner,
+            insidePaddingStartDp = innerPaddingAllDp,
+            insidePaddingTopDp = innerPaddingAllDp,
+            insidePaddingEndDp = innerPaddingAllDp,
+            insidePaddingBottomDp = innerPaddingAllDp
         )
     }
 }

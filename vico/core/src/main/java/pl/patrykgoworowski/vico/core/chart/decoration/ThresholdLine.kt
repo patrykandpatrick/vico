@@ -45,24 +45,6 @@ public data class ThresholdLine(
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
 ) : Decoration {
 
-    public constructor(
-        thresholdValue: Float,
-        thresholdLabel: String = decimalFormat.format(thresholdValue),
-        lineComponent: ShapeComponent<Shape> = rectComponent(),
-        minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
-        textComponent: TextComponent = TextComponent(),
-        labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
-        labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
-    ) : this(
-        thresholdRange = thresholdValue..thresholdValue,
-        thresholdLabel = thresholdLabel,
-        lineComponent = lineComponent,
-        minimumLineThicknessDp = minimumLineThicknessDp,
-        textComponent = textComponent,
-        labelHorizontalPosition = labelHorizontalPosition,
-        labelVerticalPosition = labelVerticalPosition,
-    )
-
     override fun draw(
         context: ChartDrawContext,
         bounds: RectF,
@@ -129,8 +111,26 @@ public data class ThresholdLine(
         Bottom(VerticalPosition.Top),
     }
 
-    private companion object {
-        const val RANGE_FORMAT = "%s–%s"
-        val decimalFormat = DecimalFormat("#.##")
+    public companion object {
+        private const val RANGE_FORMAT = "%s–%s"
+        private val decimalFormat = DecimalFormat("#.##")
+
+        public fun fromThresholdValue(
+            thresholdValue: Float,
+            thresholdLabel: String = decimalFormat.format(thresholdValue),
+            lineComponent: ShapeComponent<Shape> = rectComponent(),
+            minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
+            textComponent: TextComponent = TextComponent(),
+            labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
+            labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
+        ): ThresholdLine = ThresholdLine(
+            thresholdRange = thresholdValue..thresholdValue,
+            thresholdLabel = thresholdLabel,
+            lineComponent = lineComponent,
+            minimumLineThicknessDp = minimumLineThicknessDp,
+            textComponent = textComponent,
+            labelHorizontalPosition = labelHorizontalPosition,
+            labelVerticalPosition = labelVerticalPosition,
+        )
     }
 }

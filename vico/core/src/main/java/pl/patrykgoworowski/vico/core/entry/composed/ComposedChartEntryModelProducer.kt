@@ -35,10 +35,6 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
         listeners.runEach(model)
     }
 
-    public constructor(
-        vararg producers: ChartModelProducer<Model>,
-    ) : this(producers.toList())
-
     init {
         chartModelProducers.forEach { entryCollection ->
             entryCollection.addOnEntriesChangedListener(internalListener)
@@ -68,5 +64,10 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
 
     override fun removeOnEntriesChangedListener(listener: (ComposedChartEntryModel<Model>) -> Unit) {
         listeners -= listener
+    }
+
+    public companion object {
+        public fun <Model : ChartEntryModel> fromProducers(vararg producers: ChartModelProducer<Model>)
+            : ComposedChartEntryModelProducer<Model> = ComposedChartEntryModelProducer(producers.toList())
     }
 }
