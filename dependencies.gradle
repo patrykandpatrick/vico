@@ -32,11 +32,6 @@ ext {
                     name   : 'lifecycle-runtime-ktx',
                     version: versions.lifecycle_runtime
             ],
-            viewmodel: [
-                    group  : 'androidx.lifecycle',
-                    name   : 'lifecycle-viewmodel-ktx',
-                    version: versions.viewmodel
-            ],
     ]
 
     def jetpack_compose_libs = [
@@ -69,7 +64,12 @@ ext {
                     group  : 'androidx.compose.foundation',
                     name   : 'foundation',
                     version: versions.compose
-            ]
+            ],
+            viewmodel: [
+                    group  : 'androidx.lifecycle',
+                    name   : 'lifecycle-viewmodel-compose',
+                    version: versions.viewmodel
+            ],
     ]
 
     def accompanist_libs = [
@@ -130,7 +130,7 @@ ext {
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: androidx_libs.lifecycle],
-            [configuration: "implementation", dependency: androidx_libs.viewmodel],
+            [configuration: "implementation", dependency: jetpack_compose_libs.viewmodel],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
             [configuration: "implementation", dependency: jetpack_compose_libs.material],

@@ -39,16 +39,11 @@ internal fun ComposeShowcase(
             modifier = Modifier.padding(all = 16.dp)
         ) {
             ColumnChart(chartEntryModelProducer = viewModel.entries)
-
             InvertedTheme {
-                Surface(
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                ) {
+                Surface(modifier = Modifier.padding(vertical = 4.dp)) {
                     ComposedChart(model = viewModel.composedEntries)
                 }
             }
-
             StackedColumnChart(chartEntryModelProducer = viewModel.multiEntries)
             ComposedChart(model = viewModel.composedEntries)
             LineChart(chartEntryModelProducer = viewModel.entries)

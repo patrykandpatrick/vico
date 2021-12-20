@@ -70,6 +70,9 @@ internal fun InvertedTheme(content: @Composable () -> Unit) {
     }
 
     CompositionLocalProvider(LocalConfiguration provides configuration) {
-        MainTheme(configuration.isDarkMode, content = content)
+        MainTheme(
+            darkTheme = configuration.isDarkMode,
+            content = content
+        )
     }
 }
