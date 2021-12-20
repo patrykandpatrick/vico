@@ -42,20 +42,6 @@ public class ShapeDrawable(
     private val height: Int = 0,
 ) : Drawable() {
 
-    public constructor(
-        context: Context,
-        shape: Shape,
-        width: Int = 0,
-        height: Int = 0,
-    ) : this(
-        shape = shape,
-        density = context.density,
-        fontScale = context.fontScale,
-        isLtr = context.isLtr,
-        width = width,
-        height = height,
-    )
-
     private val path: Path = Path()
 
     private var tintList: ColorStateList? = null
@@ -121,8 +107,22 @@ public class ShapeDrawable(
 
     override fun getIntrinsicHeight(): Int = height
 
-    private companion object {
-        const val DEF_COLOR = Color.BLACK
+    public companion object {
+        private const val DEF_COLOR = Color.BLACK
+
+        public fun withPropertiesFromContext(
+            context: Context,
+            shape: Shape,
+            width: Int = 0,
+            height: Int = 0,
+        ): ShapeDrawable = ShapeDrawable(
+            shape = shape,
+            density = context.density,
+            fontScale = context.fontScale,
+            isLtr = context.isLtr,
+            width = width,
+            height = height,
+        )
     }
 }
 
@@ -130,4 +130,4 @@ public fun Shape.toDrawable(
     context: Context,
     intrinsicWidth: Int = 0,
     intrinsicHeight: Int = 0,
-): Drawable = ShapeDrawable(context, this, intrinsicWidth, intrinsicHeight)
+): Drawable = ShapeDrawable.withPropertiesFromContext(context, this, intrinsicWidth, intrinsicHeight)

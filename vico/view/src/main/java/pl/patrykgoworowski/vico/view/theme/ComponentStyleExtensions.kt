@@ -86,7 +86,7 @@ internal fun TypedArray.getComponent(
     )
 
     if (overlayingComponent != null) {
-        OverlayingComponent(
+        OverlayingComponent.withUniformInnerPadding(
             outer = baseComponent,
             inner = overlayingComponent,
             innerPaddingAllDp = getRawDimension(

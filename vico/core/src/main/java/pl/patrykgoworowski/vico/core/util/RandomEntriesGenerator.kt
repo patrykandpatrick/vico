@@ -40,7 +40,7 @@ public class RandomEntriesGenerator(
         ChartEntryModelProducer.fromChartEntryList(generateRandomEntries()).model
 
     public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> =
-        ComposedChartEntryModelProducer(
+        ComposedChartEntryModelProducer.fromProducers(
             ChartEntryModelProducer.fromChartEntryList(generateRandomEntries()),
             ChartEntryModelProducer.fromChartEntryList(generateRandomEntries()),
             ChartEntryModelProducer.fromChartEntryList(generateRandomEntries()),
