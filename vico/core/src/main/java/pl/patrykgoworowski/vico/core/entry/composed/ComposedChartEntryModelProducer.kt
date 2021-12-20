@@ -67,7 +67,7 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
     }
 
     public companion object {
-        public fun <Model : ChartEntryModel> fromProducers(vararg producers: ChartModelProducer<Model>)
-            : ComposedChartEntryModelProducer<Model> = ComposedChartEntryModelProducer(producers.toList())
+        public fun <Model : ChartEntryModel> fromProducers(vararg producers: ChartModelProducer<Model>):
+            ComposedChartEntryModelProducer<Model> = ComposedChartEntryModelProducer(producers.toList())
     }
 }
