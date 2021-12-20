@@ -37,6 +37,6 @@ ext {
             kotlin            : '1.5.31',
             lifecycle_runtime : '2.4.0',
             material          : '1.5.0-beta01',
-            viewmodel         : '2.3.1',
+            viewmodel         : '2.4.0',
     ]
 }

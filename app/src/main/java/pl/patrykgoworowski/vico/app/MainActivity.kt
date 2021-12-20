@@ -19,17 +19,13 @@ package pl.patrykgoworowski.vico.app
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import pl.patrykgoworowski.vico.app.ui.component.Showcase
 
 internal class MainActivity : ComponentActivity() {
-
-    private val showcaseViewModel: ShowcaseViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            Showcase(showcaseViewModel = showcaseViewModel)
+            Showcase()
         }
     }
 }

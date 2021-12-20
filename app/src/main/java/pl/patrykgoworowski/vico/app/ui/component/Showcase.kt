@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.pagerTabIndicatorOffset
@@ -57,7 +58,7 @@ private enum class Page(
 
 @Composable
 @OptIn(ExperimentalPagerApi::class)
-internal fun Showcase(showcaseViewModel: ShowcaseViewModel) {
+internal fun Showcase(showcaseViewModel: ShowcaseViewModel = viewModel()) {
     val pages = Page.values().toList()
     val pagerState = rememberPagerState(initialPage = 0)
     val coroutineScope = rememberCoroutineScope()
