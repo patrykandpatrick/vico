@@ -35,8 +35,8 @@ public fun columnChart(
     maxX: Float? = null,
     minY: Float? = null,
     maxY: Float? = null,
-): ColumnChart = remember { ColumnChart() }.apply {
-    this.columns = columns
+): ColumnChart = remember { ColumnChart(columns) }.apply {
+    if (this.columns != columns) this.columns = columns
     this.spacingDp = spacing.value
     this.innerSpacingDp = innerSpacing.value
     this.mergeMode = mergeMode

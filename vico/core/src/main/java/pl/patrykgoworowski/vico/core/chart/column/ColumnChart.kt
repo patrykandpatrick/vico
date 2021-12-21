@@ -39,7 +39,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 public open class ColumnChart(
-    public var columns: List<LineComponent> = emptyList(),
+    public var columns: List<LineComponent>,
     public var spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
     public var innerSpacingDp: Float = Dimens.COLUMN_INSIDE_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped
