@@ -102,9 +102,9 @@ public open class TextComponent(
             .getTextTopPosition(context, textY, layoutHeight.toFloat())
 
         val bgLeft = textStartPosition - padding.getLeftDp(isLtr).pixels
-        val bgTop = floor(textTopPosition - (layoutHeight.half + padding.topDp.pixels))
+        val bgTop = floor(textTopPosition - layoutHeight.half - padding.topDp.pixels)
         val bgRight = textStartPosition + layoutWidth + padding.getRightDp(isLtr).pixels
-        val bgBottom = ceil(textTopPosition + (layoutHeight.half + padding.bottomDp.pixels))
+        val bgBottom = ceil(textTopPosition + layoutHeight.half + padding.bottomDp.pixels)
 
         onPreDraw?.invoke(context, bgLeft, bgTop, bgRight, bgBottom)
 
@@ -157,7 +157,7 @@ public open class TextComponent(
         baseXPosition + padding.getLeftDp(isLtr).pixels + margins.getLeftDp(isLtr).pixels
 
     private fun MeasureContext.getTextRightPosition(baseXPosition: Float, width: Float): Float =
-        baseXPosition - (padding.getRightDp(isLtr).pixels + margins.getRightDp(isLtr).pixels + width)
+        baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels - width
 
     @JvmName("getTextTopPositionExt")
     private fun VerticalPosition.getTextTopPosition(
@@ -171,7 +171,7 @@ public open class TextComponent(
             VerticalPosition.Center ->
                 textY
             VerticalPosition.Bottom ->
-                textY - (layoutHeight.half + padding.bottomDp.pixels + margins.bottomDp.pixels)
+                textY - layoutHeight.half - padding.bottomDp.pixels - margins.bottomDp.pixels
         }
     }
 

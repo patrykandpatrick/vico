@@ -30,7 +30,7 @@ public class ScrollHandler(
         }
 
     private fun getClampedScroll(scroll: Float): Float =
-        maxOf(0f, minOf(scroll, maxScrollDistance))
+        minOf(scroll, maxScrollDistance).coerceAtLeast(0f)
 
     public fun handleScrollDelta(delta: Float): Float {
         currentScroll = getClampedScroll(currentScroll - delta)
