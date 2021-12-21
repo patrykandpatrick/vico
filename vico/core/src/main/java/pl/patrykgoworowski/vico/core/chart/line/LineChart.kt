@@ -81,7 +81,7 @@ public open class LineChart(
         val clipRestoreCount = saveCanvas()
         setUpClipBounds()
 
-        val (cellWidth, spacing, segmentWidth) = segmentProperties
+        val (cellWidth, spacing, _) = segmentProperties
 
         calculateDrawSegmentSpecIfNeeded(model)
 
@@ -170,7 +170,7 @@ public open class LineChart(
 
     override fun getMeasuredWidth(context: MeasureContext, model: ChartEntryModel): Int = with(context) {
         val length = model.getDrawnEntryCount()
-        (pointSizeDp.pixels * length + spacingDp.pixels * length).roundToInt()
+        ((pointSizeDp.pixels + spacingDp.pixels) * length).roundToInt()
     }
 
     override fun getSegmentProperties(
