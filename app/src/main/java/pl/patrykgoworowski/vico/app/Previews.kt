@@ -39,7 +39,7 @@ import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
 import pl.patrykgoworowski.vico.compose.chart.line.lineChart
 import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
-import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.shapeComponent
 import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.verticalGradient
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
@@ -78,7 +78,7 @@ public fun ColumnChartCard(): Unit = MainTheme {
                 label = textComponent(
                     color = colors.primary,
                     textSize = 10.sp,
-                    background = rectComponent(
+                    background = shapeComponent(
                         shape = CutCornerShape(
                             CornerSize(percent = 25),
                             CornerSize(percent = 50),
@@ -114,7 +114,7 @@ public fun LineChartCard(): Unit = MainTheme {
                 lineColor = colors.primary,
                 lineBackgroundShader = DynamicShaders.fromComponent(
                     componentSize = 4.dp.value,
-                    component = rectComponent(shape = pillShape, color = colors.primary).apply {
+                    component = shapeComponent(shape = pillShape, color = colors.primary).apply {
                         setMargins(0.5.dp.value)
                     },
                 ),
@@ -126,7 +126,7 @@ public fun LineChartCard(): Unit = MainTheme {
                 label = textComponent(
                     color = colors.onSurface,
                     textSize = 10.sp,
-                    background = rectComponent(shape = rectShape, color = Color.LightGray),
+                    background = shapeComponent(shape = rectShape, color = Color.LightGray),
                     padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp)
                 )
                 axis = null

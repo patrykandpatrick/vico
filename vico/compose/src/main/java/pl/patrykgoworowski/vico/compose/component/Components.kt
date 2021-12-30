@@ -66,7 +66,7 @@ public fun lineComponent(
     margins = margins,
 )
 
-public fun rectComponent(
+public fun shapeComponent(
     shape: Shape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
@@ -78,7 +78,7 @@ public fun rectComponent(
     margins = margins,
 )
 
-public fun rectComponent(
+public fun shapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
@@ -90,7 +90,7 @@ public fun rectComponent(
     margins = margins,
 )
 
-public fun rectComponent(
+public fun shapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
     brush: Brush,
