@@ -11,6 +11,7 @@ pl.patrykgoworowski.vico.compose.chart.entry
 pl.patrykgoworowski.vico.compose.chart.line
 pl.patrykgoworowski.vico.compose.component
 pl.patrykgoworowski.vico.compose.component.dimension
+pl.patrykgoworowski.vico.compose.component.marker
 pl.patrykgoworowski.vico.compose.component.shape
 pl.patrykgoworowski.vico.compose.component.shape.shader
 pl.patrykgoworowski.vico.compose.extension
@@ -36,12 +37,14 @@ pl.patrykgoworowski.vico.core.chart.line
 pl.patrykgoworowski.vico.core.chart.segment
 pl.patrykgoworowski.vico.core.component
 pl.patrykgoworowski.vico.core.component.dimension
+pl.patrykgoworowski.vico.core.component.marker
 pl.patrykgoworowski.vico.core.component.shape
-pl.patrykgoworowski.vico.core.component.shape.corner
+pl.patrykgoworowski.vico.core.component.shape.cornered
 pl.patrykgoworowski.vico.core.component.shape.extension
 pl.patrykgoworowski.vico.core.component.shape.shader
 pl.patrykgoworowski.vico.core.component.shape.shadow
 pl.patrykgoworowski.vico.core.component.text
+pl.patrykgoworowski.vico.core.context
 pl.patrykgoworowski.vico.core.dimensions
 pl.patrykgoworowski.vico.core.draw
 pl.patrykgoworowski.vico.core.entry
