@@ -17,8 +17,13 @@
 package pl.patrykgoworowski.vico.core.context
 
 /**
- * A utility class used to hold and retrieve different kinds of data.
- * It acts like `Map<Any, Any>`, though data can be retrieved only once.
+ * An abstraction layer over [kotlin.collections.Map], used to store and retrieve data for:
+ * - Measuring operation, used within [pl.patrykgoworowski.vico.core.context.MeasureContext].
+ * - Draw operation, used within [pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext].
+ *
+ * Extras will be available downstream the measuring, or drawing operation. Once the operation is complete,
+ * the data will be lost.
+ *
  * Once the data for given key is retrieved, it is being cleared from underlying map.
  */
 public interface Extras {
