@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
-import pl.patrykgoworowski.vico.app.util.ViewShowcaseUtil
+import pl.patrykgoworowski.vico.app.extension.setUpChart
 import pl.patrykgoworowski.vico.databinding.FragmentViewBinding
 
 @Composable
@@ -40,15 +40,12 @@ internal fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
     Box(modifier = Modifier.verticalScroll(state = scrollState)) {
         Box(modifier = Modifier.padding(16.dp)) {
             AndroidViewBinding(FragmentViewBinding::inflate) {
-                ViewShowcaseUtil(
-                    showcaseViewModel,
-                    coroutineScope
-                ).run {
-                    setUpColumnChart(columnChart, marker)
-                    setUpLineChart(lineChart, marker)
-                    setUpComposedChart(composedChart, marker)
-                    setUpGroupedColumnChart(groupedColumnChart, marker)
-                    setUpStackedColumnChart(stackedColumnChart, marker)
+                with(showcaseViewModel) {
+                    columnChart.setUpChart(entries, coroutineScope, marker)
+                    lineChart.setUpChart(entries, coroutineScope, marker)
+                    composedChart.setUpChart(composedEntries, coroutineScope, marker)
+                    groupedColumnChart.setUpChart(multiEntries, coroutineScope, marker)
+                    stackedColumnChart.setUpChart(multiEntries, coroutineScope, marker)
                 }
             }
         }

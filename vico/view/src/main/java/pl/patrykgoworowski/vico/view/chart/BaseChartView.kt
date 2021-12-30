@@ -165,10 +165,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val chart = chart ?: return
         val newZoom = measureContext.zoom * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
-        val centerX = scrollHandler.currentScroll + focusX - chart.bounds.left
-        val zoomedCenterX = centerX * zoomChange
+        val transformationAxisX = scrollHandler.currentScroll + focusX - chart.bounds.left
+        val zoomedTransformationAxisX = transformationAxisX * zoomChange
         measureContext.zoom = newZoom
-        scrollHandler.currentScroll += zoomedCenterX - centerX
+        scrollHandler.currentScroll += zoomedTransformationAxisX - transformationAxisX
         invalidate()
     }
 

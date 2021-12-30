@@ -44,11 +44,7 @@ public class ShowcaseViewModel : ViewModel() {
             while (currentCoroutineContext().isActive) {
                 entries.setEntries(generator.generateRandomEntries())
                 multiEntries.setEntries(
-                    listOf(
-                        multiGenerator.generateRandomEntries(),
-                        multiGenerator.generateRandomEntries(),
-                        multiGenerator.generateRandomEntries(),
-                    )
+                    List(size = MULTI_ENTRIES_COMBINED) { multiGenerator.generateRandomEntries() }
                 )
                 delay(UPDATE_FREQUENCY)
             }
@@ -56,8 +52,9 @@ public class ShowcaseViewModel : ViewModel() {
     }
 
     private companion object {
+        const val MULTI_ENTRIES_COMBINED = 3
         const val GENERATOR_X_RANGE_TOP = 96
-        const val MULTI_GENERATOR_X_RANGE_TOP = 32
+        const val MULTI_GENERATOR_X_RANGE_TOP = GENERATOR_X_RANGE_TOP / MULTI_ENTRIES_COMBINED
         const val UPDATE_FREQUENCY = 2000L
     }
 }

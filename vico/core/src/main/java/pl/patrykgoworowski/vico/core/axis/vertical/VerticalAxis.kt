@@ -88,7 +88,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             if (isLeft) bounds.right - axisThickness.half
             else bounds.left + axisThickness.half
         )
-        Unit
     }
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {

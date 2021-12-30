@@ -203,7 +203,7 @@ public open class ColumnChart(
             MergeMode.Grouped ->
                 baseLeft + segmentCompensation - columnWidth.half +
                     getCumulatedThickness(entryCollectionIndex, density, true) +
-                    (innerSpacingDp.pixels * drawScale * entryCollectionIndex)
+                    innerSpacingDp.pixels * drawScale * entryCollectionIndex
         }
     }
 

@@ -76,19 +76,19 @@ public object RoundedCornerTreatment : CornerTreatment {
         when (cornerLocation) {
             CornerLocation.TopLeft -> {
                 startAngle = 1f.piRad
-                tempRect.set(x1, y2, (x2 * 2) - x1, (y1 * 2) - y2)
+                tempRect.set(x1, y2, x2 * 2 - x1, y1 * 2 - y2)
             }
             CornerLocation.TopRight -> {
                 startAngle = 1.5f.piRad
-                tempRect.set((x1 * 2) - x2, y1, x2, (y2 * 2) - y1)
+                tempRect.set(x1 * 2 - x2, y1, x2, y2 * 2 - y1)
             }
             CornerLocation.BottomRight -> {
                 startAngle = 0f
-                tempRect.set((x2 * 2) - x1, (y1 * 2) - y2, x1, y2)
+                tempRect.set(x2 * 2 - x1, y1 * 2 - y2, x1, y2)
             }
             CornerLocation.BottomLeft -> {
                 startAngle = 0.5f.piRad
-                tempRect.set(x2, (y2 * 2) - y1, (x1 * 2) - x2, y1)
+                tempRect.set(x2, y2 * 2 - y1, x1 * 2 - x2, y1)
             }
         }
         path.arcTo(tempRect, startAngle, 0.5f.piRad)

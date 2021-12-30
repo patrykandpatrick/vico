@@ -50,5 +50,5 @@ public abstract class CacheableDynamicShader : DynamicShader {
         top: Float,
         right: Float,
         bottom: Float,
-    ): String = "%s,%s,%s,%s".format(left, top, right, bottom)
+    ): String = "$left,$top,$right,$bottom"
 }
