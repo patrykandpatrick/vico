@@ -17,8 +17,11 @@
 package pl.patrykgoworowski.vico.core.context
 
 import android.graphics.Canvas
+import pl.patrykgoworowski.vico.core.Colors
 
 public interface DrawContext : MeasureContext {
+    public val colors: Colors
+
     public val canvas: Canvas
 
     public fun saveCanvas(): Int = canvas.save()

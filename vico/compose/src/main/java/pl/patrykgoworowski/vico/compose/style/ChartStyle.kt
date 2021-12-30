@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.compose.style
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
@@ -97,12 +96,6 @@ public data class ChartStyle(
 
 public object LocalChartStyle {
 
-    private val LocalLightStyle: ProvidableCompositionLocal<ChartStyle> =
-        compositionLocalOf { getChartStyle(Colors.Light) }
-
-    private val LocalDarkStyle: ProvidableCompositionLocal<ChartStyle> =
-        compositionLocalOf { getChartStyle(Colors.Dark) }
-
     private fun getChartStyle(colors: Colors): ChartStyle = ChartStyle(
         axis = ChartStyle.Axis(
             axisLabelColor = Color(colors.axisLabelColor),
@@ -155,8 +148,7 @@ public object LocalChartStyle {
         compositionLocalOf { null }
 
     public val current: ChartStyle
-        @Composable get() = LocalProvidedStyle.current
-            ?: if (isSystemInDarkTheme()) LocalDarkStyle.current else LocalLightStyle.current
+        @Composable get() = LocalProvidedStyle.current ?: getChartStyle(currentChartColors)
 
     public infix fun provides(chartStyle: ChartStyle): ProvidedValue<ChartStyle?> =
         LocalProvidedStyle.provides(chartStyle)

@@ -17,6 +17,7 @@
 package pl.patrykgoworowski.vico.core.draw
 
 import android.graphics.Canvas
+import pl.patrykgoworowski.vico.core.Colors
 import pl.patrykgoworowski.vico.core.context.DefaultExtras
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.context.Extras
@@ -31,7 +32,9 @@ public fun drawContext(
     fontScale: Float,
     isLtr: Boolean,
     zoom: Float = 1f,
+    colors: Colors = Colors.Light,
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
+    override val colors: Colors = colors
     override var canvas: Canvas = canvas
     override val density: Float = density
     override val fontScale: Float = fontScale

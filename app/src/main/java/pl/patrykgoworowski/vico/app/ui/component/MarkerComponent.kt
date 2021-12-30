@@ -49,7 +49,7 @@ public fun markerComponent(): Marker {
         background = ShapeComponent(
             shape = MarkerCorneredShape(all = Corner.FullyRounded),
             color = colors.surface.toArgb()
-        ).setShadow(radius = 4.dp, dy = 2.dp),
+        ).setShadow(radius = 4.dp, dy = 2.dp, applyElevationOverlay = true),
         padding = dimensionsOf(
             horizontal = currentChartStyle.marker.horizontalPadding,
             vertical = currentChartStyle.marker.verticalPadding,

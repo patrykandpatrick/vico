@@ -42,6 +42,7 @@ import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
+import pl.patrykgoworowski.vico.view.extension.colors
 import pl.patrykgoworowski.vico.view.extension.density
 import pl.patrykgoworowski.vico.view.extension.dpInt
 import pl.patrykgoworowski.vico.view.extension.fontScale
@@ -183,6 +184,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
         val drawContext = chartDrawContext(
             canvas = canvas,
+            colors = context.colors,
             measureContext = measureContext,
             horizontalScroll = scrollHandler.currentScroll,
             markerTouchPoint = markerTouchPoint,

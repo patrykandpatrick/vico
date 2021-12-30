@@ -30,9 +30,11 @@ public fun ShapeComponent.setShadow(
     dx: Dp = 0.dp,
     dy: Dp = 0.dp,
     color: Color = Color(DEF_SHADOW_COLOR),
+    applyElevationOverlay: Boolean = false,
 ): ShapeComponent = setShadow(
     radius = radius.value,
     dx = dx.value,
     dy = dy.value,
     color = color.toArgb(),
+    applyElevationOverlay = applyElevationOverlay,
 )

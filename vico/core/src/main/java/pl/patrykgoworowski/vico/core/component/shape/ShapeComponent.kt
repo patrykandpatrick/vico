@@ -20,6 +20,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import kotlin.properties.Delegates
 import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.setMargins
@@ -42,7 +43,7 @@ public open class ShapeComponent(
 
     protected val path: Path = Path()
 
-    public var color: Int by paint::color
+    public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = value }
 
     init {
         paint.color = color
@@ -61,7 +62,7 @@ public open class ShapeComponent(
         applyShader(context, left, top, right, bottom)
         val centerX = left + (right - left) / 2
         val centerY = top + (bottom - top) / 2
-        shadowProperties.maybeUpdateShadowLayer(this, paint)
+        shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
         shape.drawShape(
             context = context,
             paint = paint,
@@ -113,12 +114,14 @@ public open class ShapeComponent(
         dx: Float = 0f,
         dy: Float = 0f,
         color: Int = DEF_SHADOW_COLOR,
+        applyElevationOverlay: Boolean = false,
     ): ShapeComponent = apply {
         shadowProperties.apply {
             this.radius = radius
             this.dx = dx
             this.dy = dy
             this.color = color
+            this.applyElevationOverlay = applyElevationOverlay
         }
     }
 
