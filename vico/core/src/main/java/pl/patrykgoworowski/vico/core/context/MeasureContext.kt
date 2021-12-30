@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.layout
+package pl.patrykgoworowski.vico.core.context
 
-public interface MeasureContext {
+public interface MeasureContext : Extras {
     public val density: Float
     public val fontScale: Float
     public val isLtr: Boolean

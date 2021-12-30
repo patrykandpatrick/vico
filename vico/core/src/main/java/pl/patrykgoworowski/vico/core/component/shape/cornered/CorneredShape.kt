@@ -14,14 +14,19 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.component.shape.corner
+package pl.patrykgoworowski.vico.core.component.shape.cornered
 
 import android.graphics.Paint
 import android.graphics.Path
+import kotlin.math.absoluteValue
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.component.shape.Shape
-import pl.patrykgoworowski.vico.core.draw.DrawContext
-import kotlin.math.absoluteValue
+import pl.patrykgoworowski.vico.core.context.DrawContext
+
+/**
+ * An implementation of generic [Shape] allowing to specify look and size of each corner
+ * with [Corner]. It also allows to intercept drawing of each of [Shape]’s sides
+ */
 
 public open class CorneredShape(
     public val topLeft: Corner,
@@ -30,7 +35,7 @@ public open class CorneredShape(
     public val bottomLeft: Corner,
 ) : Shape {
 
-    private fun getCornerScale(width: Float, height: Float, density: Float): Float {
+    public fun getCornerScale(width: Float, height: Float, density: Float): Float {
         val availableSize = minOf(width, height)
         val tL = topLeft.getCornerSize(availableSize, density)
         val tR = topRight.getCornerSize(availableSize, density)

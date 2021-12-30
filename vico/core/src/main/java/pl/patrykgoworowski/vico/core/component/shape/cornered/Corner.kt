@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.component.shape.corner
+package pl.patrykgoworowski.vico.core.component.shape.cornered
 
 import pl.patrykgoworowski.vico.core.throwable.IllegalPercentageException
 
@@ -46,7 +46,9 @@ public sealed class Corner(
             availableCornerSize / MAX_PERCENTAGE * percentage
     }
 
-    private companion object {
+    public companion object {
         private const val MAX_PERCENTAGE = 100
+
+        public val FullyRounded: Corner = Relative(MAX_PERCENTAGE, RoundedCornerTreatment)
     }
 }

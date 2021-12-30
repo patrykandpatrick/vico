@@ -43,7 +43,7 @@ public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shap
 public fun axisLabelComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,
     textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
-    background: ShapeComponent<ChartShape>? = currentChartStyle.axis.axisLabelBackground,
+    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
     verticalPadding: Dp = currentChartStyle.axis.axisLabelVerticalPadding,

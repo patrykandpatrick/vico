@@ -50,7 +50,7 @@ public data class ChartStyle(
     val marker: Marker,
 ) {
     public data class Axis(
-        val axisLabelBackground: ShapeComponent<Shape>? = null,
+        val axisLabelBackground: ShapeComponent? = null,
         val axisLabelColor: Color,
         val axisLabelTextSize: TextUnit = Dimens.AXIS_LABEL_SIZE.sp,
         val axisLabelLineCount: Int = Dimens.AXIS_LABEL_MAX_LINES,

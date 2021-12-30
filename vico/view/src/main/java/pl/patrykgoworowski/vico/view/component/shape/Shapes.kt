@@ -20,10 +20,10 @@ package pl.patrykgoworowski.vico.view.component.shape
 
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
-import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
-import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
-import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
-import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreatment
 
 public fun Shapes.roundedCornersShape(all: Float): Shape =
     roundedCornersShape(all, all, all, all)

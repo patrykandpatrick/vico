@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShad
 import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 public fun DynamicShaders.fromComponent(
     component: Component,

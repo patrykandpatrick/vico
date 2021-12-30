@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.debug
 
 import android.graphics.Color
 import android.graphics.Paint
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 internal object DebugHelper {
     public var enabled: Boolean = false

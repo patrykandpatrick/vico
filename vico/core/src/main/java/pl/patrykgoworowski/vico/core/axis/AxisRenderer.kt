@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInsetter {
 

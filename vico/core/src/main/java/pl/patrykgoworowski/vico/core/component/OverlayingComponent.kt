@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.component
 
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 public class OverlayingComponent(
     public val outer: Component,

@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
 import pl.patrykgoworowski.vico.core.extension.getEntryModel
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {

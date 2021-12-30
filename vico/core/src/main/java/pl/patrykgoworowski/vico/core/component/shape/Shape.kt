@@ -19,7 +19,16 @@ package pl.patrykgoworowski.vico.core.component.shape
 import android.graphics.Paint
 import android.graphics.Path
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
+
+public typealias OnPathCreated = Shape.(
+    context: DrawContext,
+    path: Path,
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+) -> Unit
 
 public interface Shape {
 

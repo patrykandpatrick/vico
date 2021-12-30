@@ -35,7 +35,7 @@ import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.extension.between
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.abs
 import kotlin.math.ceil

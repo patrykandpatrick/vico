@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.draw
+package pl.patrykgoworowski.vico.core.context
 
 import android.graphics.Canvas
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
 
 public interface DrawContext : MeasureContext {
     public val canvas: Canvas

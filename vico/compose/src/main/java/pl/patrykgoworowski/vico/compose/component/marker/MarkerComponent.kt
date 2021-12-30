@@ -14,28 +14,21 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.component.shape
+package pl.patrykgoworowski.vico.compose.component.marker
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import pl.patrykgoworowski.vico.core.component.Component
-import pl.patrykgoworowski.vico.core.component.MarkerComponent
+import pl.patrykgoworowski.vico.core.component.marker.MarkerComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
 
 @Composable
 public fun markerComponent(
     label: TextComponent,
     indicator: Component,
     guideline: LineComponent,
-    shape: MarkerCorneredShape,
-    markerBackgroundColor: Color,
 ): MarkerComponent = MarkerComponent(
     label = label,
     indicator = indicator,
     guideline = guideline,
-    shape = shape,
-    markerBackgroundColor = markerBackgroundColor.toArgb()
 )

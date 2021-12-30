@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.component.shape.corner
+package pl.patrykgoworowski.vico.core.component.shape.cornered
 
 import android.graphics.Path
 import android.graphics.RectF

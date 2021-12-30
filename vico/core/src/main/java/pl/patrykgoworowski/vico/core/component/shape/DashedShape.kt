@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.component.shape
 import android.graphics.Paint
 import android.graphics.Path
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 public class DashedShape(
     public val shape: Shape,

@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.component.shape.shadow
 
 import android.graphics.Paint
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 @Suppress("ComplexCondition")
 public data class ComponentShadow(

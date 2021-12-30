@@ -21,7 +21,7 @@ import android.graphics.BitmapShader
 import android.graphics.Canvas
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.component.Component
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.extension.half
 
 public class ComponentShader(

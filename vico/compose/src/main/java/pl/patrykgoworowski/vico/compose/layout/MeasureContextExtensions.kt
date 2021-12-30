@@ -20,13 +20,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.DefaultExtras
+import pl.patrykgoworowski.vico.core.context.Extras
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
     zoom: Float
-): MeasureContext = object : MeasureContext {
+): MeasureContext = object : MeasureContext, Extras by DefaultExtras() {
     override val density: Float = LocalDensity.current.density
     override val fontScale: Float = LocalDensity.current.fontScale * density
     override val isLtr: Boolean = LocalLayoutDirection.current == LayoutDirection.Ltr

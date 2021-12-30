@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.component.shape.shader
 import android.graphics.Bitmap
 import android.graphics.BitmapShader
 import android.graphics.Shader
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 public object DynamicShaders {
 

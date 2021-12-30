@@ -20,11 +20,11 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
 import pl.patrykgoworowski.vico.core.Dimens
-import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
-import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
-import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
-import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreatment
+import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.extension.setBounds
 
 public object Shapes {

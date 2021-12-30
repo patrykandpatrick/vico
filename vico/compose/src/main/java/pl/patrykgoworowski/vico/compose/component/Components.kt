@@ -71,7 +71,7 @@ public fun rectComponent(
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): ShapeComponent<ChartShape> = ShapeComponent(
+): ShapeComponent = ShapeComponent(
     shape = shape.chartShape(),
     color = color.toArgb(),
     dynamicShader = dynamicShader,
@@ -83,7 +83,7 @@ public fun rectComponent(
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): ShapeComponent<ChartShape> = ShapeComponent(
+): ShapeComponent = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
     dynamicShader = dynamicShader,
@@ -95,7 +95,7 @@ public fun rectComponent(
     color: Color = Color.Black,
     brush: Brush,
     margins: Dimensions = emptyDimensions(),
-): ShapeComponent<ChartShape> = ShapeComponent(
+): ShapeComponent = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
     dynamicShader = brush.toDynamicShader(),

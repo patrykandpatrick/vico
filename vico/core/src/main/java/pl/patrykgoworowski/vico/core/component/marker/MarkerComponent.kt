@@ -14,20 +14,19 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.component
+package pl.patrykgoworowski.vico.core.component.marker
 
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
-import pl.patrykgoworowski.vico.core.component.shape.LineComponent
-import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
-import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
-import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.component.Component
+import pl.patrykgoworowski.vico.core.component.shape.LineComponent
+import pl.patrykgoworowski.vico.core.component.shape.cornered.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.component.text.TextComponent
+import pl.patrykgoworowski.vico.core.context.DrawContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.averageOf
 import pl.patrykgoworowski.vico.core.extension.half
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.marker.MarkerLabelFormatter
@@ -36,15 +35,10 @@ public open class MarkerComponent(
     private val label: TextComponent,
     private val indicator: Component,
     private val guideline: LineComponent,
-    shape: MarkerCorneredShape,
-    markerBackgroundColor: Int,
-    dynamicShader: DynamicShader? = null
-) : Marker, ShapeComponent<MarkerCorneredShape>(shape, markerBackgroundColor, dynamicShader) {
-
-    private val markerTempBounds = RectF()
+) : Marker {
 
     private val MeasureContext.markerHeight: Float
-        get() = label.getHeight(this) + shape.tickSize.pixels
+        get() = label.getHeight(this) // + shape.tickSize.pixels
 
     public var indicatorSize: Float = 0f
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
@@ -55,10 +49,8 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
     ): Unit = with(context) {
-        applyShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
         drawGuideline(context, bounds, markedEntries)
         val halfIndicatorSize = indicatorSize.half.pixels
-        shadowProperties.maybeUpdateShadowLayer(this, paint)
 
         markedEntries.forEachIndexed { _, model ->
             onApplyEntryColor?.invoke(model.color)
@@ -81,6 +73,7 @@ public open class MarkerComponent(
         val text = labelFormatter.getLabel(markedEntries)
         val entryX = markedEntries.averageOf { it.location.x }
         val x = overrideXPositionToFit(context, entryX, bounds, text)
+        putExtra(MarkerCorneredShape.tickXKey, entryX)
 
         label.drawText(
             context = context,
@@ -90,20 +83,7 @@ public open class MarkerComponent(
                 label.allLinesHeight.half +
                 label.padding.topDp.pixels -
                 context.markerHeight,
-        ) { textContext, left, top, right, bottom ->
-            markerTempBounds.set(left, top, right, bottom)
-            drawMarkerBackground(textContext, markerTempBounds, bounds, entryX)
-        }
-    }
-
-    private fun drawMarkerBackground(
-        context: DrawContext,
-        bounds: RectF,
-        contentBounds: RectF,
-        entryX: Float,
-    ) {
-        path.reset()
-        shape.drawMarker(context, paint, path, bounds, contentBounds, entryX)
+        )
     }
 
     private fun overrideXPositionToFit(

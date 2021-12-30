@@ -28,19 +28,19 @@ import pl.patrykgoworowski.vico.core.component.shape.shadow.ComponentShadow
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
-public open class ShapeComponent<T : Shape>(
-    public var shape: T,
+public open class ShapeComponent(
+    public val shape: Shape,
     color: Int = Color.BLACK,
-    public var dynamicShader: DynamicShader? = null,
+    public val dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ) : Component() {
 
-    protected val shadowProperties: ComponentShadow = ComponentShadow()
-    protected val path: Path = Path()
+    private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val shadowProperties: ComponentShadow = ComponentShadow()
 
-    public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    protected val path: Path = Path()
 
     public var color: Int by paint::color
 
@@ -54,7 +54,7 @@ public open class ShapeComponent<T : Shape>(
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float
+        bottom: Float,
     ): Unit = with(context) {
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         path.rewind()
@@ -113,7 +113,7 @@ public open class ShapeComponent<T : Shape>(
         dx: Float = 0f,
         dy: Float = 0f,
         color: Int = DEF_SHADOW_COLOR,
-    ): ShapeComponent<T> = apply {
+    ): ShapeComponent = apply {
         shadowProperties.apply {
             this.radius = radius
             this.dx = dx
@@ -122,7 +122,7 @@ public open class ShapeComponent<T : Shape>(
         }
     }
 
-    public fun clearShadow(): ShapeComponent<T> = apply {
+    public fun clearShadow(): ShapeComponent = apply {
         shadowProperties.apply {
             this.radius = 0f
             this.dx = 0f

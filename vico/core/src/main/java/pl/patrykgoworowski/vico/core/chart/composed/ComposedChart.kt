@@ -25,7 +25,7 @@ import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.updateAll
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import java.util.TreeMap
 
