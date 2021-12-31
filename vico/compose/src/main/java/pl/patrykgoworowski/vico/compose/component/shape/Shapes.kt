@@ -29,12 +29,14 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import pl.patrykgoworowski.vico.core.DEF_MARKER_TICK_SIZE
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
 import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.MarkerCorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreatment
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import androidx.compose.ui.graphics.Shape as ComposeShape
@@ -148,4 +150,40 @@ public fun Shapes.cutCornerShape(
     Corner.Absolute(topRight.value, CutCornerTreatment),
     Corner.Absolute(bottomRight.value, CutCornerTreatment),
     Corner.Absolute(bottomLeft.value, CutCornerTreatment),
+)
+
+public fun Shapes.markerCorneredShape(
+    topLeft: Corner,
+    topRight: Corner,
+    bottomRight: Corner,
+    bottomLeft: Corner,
+    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+): MarkerCorneredShape = MarkerCorneredShape(
+    topLeft = topLeft,
+    topRight = topRight,
+    bottomRight = bottomRight,
+    bottomLeft = bottomLeft,
+    tickSizeDp = tickSizeDp.value
+)
+
+public fun Shapes.markerCorneredShape(
+    all: Corner,
+    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+): MarkerCorneredShape = MarkerCorneredShape(
+    topLeft = all,
+    topRight = all,
+    bottomRight = all,
+    bottomLeft = all,
+    tickSizeDp = tickSizeDp.value
+)
+
+public fun Shapes.markerCorneredShape(
+    corneredShape: CorneredShape,
+    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+): MarkerCorneredShape = MarkerCorneredShape(
+    topLeft = corneredShape.topLeft,
+    topRight = corneredShape.topRight,
+    bottomRight = corneredShape.bottomRight,
+    bottomLeft = corneredShape.bottomLeft,
+    tickSizeDp = tickSizeDp.value
 )

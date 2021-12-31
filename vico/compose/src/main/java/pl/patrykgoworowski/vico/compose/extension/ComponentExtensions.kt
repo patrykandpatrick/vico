@@ -23,7 +23,12 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
+import pl.patrykgoworowski.vico.core.component.marker.MarkerComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
+
+public var MarkerComponent.indicatorSize: Dp
+    get() = indicatorSizeDp.dp
+    set(value) { indicatorSizeDp = value.value }
 
 public fun ShapeComponent.setShadow(
     radius: Dp,

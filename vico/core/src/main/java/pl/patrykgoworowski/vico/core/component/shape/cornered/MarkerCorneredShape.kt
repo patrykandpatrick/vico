@@ -27,25 +27,25 @@ public open class MarkerCorneredShape(
     topRight: Corner,
     bottomRight: Corner,
     bottomLeft: Corner,
-    private val tickSize: Float = DEF_MARKER_TICK_SIZE,
+    private val tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
 ) : CorneredShape(
     topLeft, topRight, bottomRight, bottomLeft
 ) {
 
     public constructor(
         all: Corner,
-        tickSize: Float = DEF_MARKER_TICK_SIZE,
-    ) : this(all, all, all, all, tickSize)
+        tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
+    ) : this(all, all, all, all, tickSizeDp)
 
     public constructor(
         corneredShape: CorneredShape,
-        tickSize: Float = DEF_MARKER_TICK_SIZE,
+        tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
     ) : this(
         topLeft = corneredShape.topLeft,
         topRight = corneredShape.topRight,
         bottomRight = corneredShape.bottomRight,
         bottomLeft = corneredShape.bottomLeft,
-        tickSize = tickSize,
+        tickSizeDp = tickSizeDp,
     )
 
     override fun drawShape(
@@ -67,7 +67,7 @@ public open class MarkerCorneredShape(
                 right = right,
                 bottom = bottom
             )
-            val tickSize = context.toPixels(tickSize)
+            val tickSize = context.toPixels(tickSizeDp)
             val availableCornerSize = minOf(right - left, bottom - top)
             val cornerScale = getCornerScale(right - left, bottom - top, density)
 

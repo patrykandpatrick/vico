@@ -40,7 +40,7 @@ public open class MarkerComponent(
     private val MeasureContext.markerHeight: Float
         get() = label.getHeight(this) // + shape.tickSize.pixels
 
-    public var indicatorSize: Float = 0f
+    public var indicatorSizeDp: Float = 0f
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
 
@@ -50,7 +50,7 @@ public open class MarkerComponent(
         markedEntries: List<Marker.EntryModel>,
     ): Unit = with(context) {
         drawGuideline(context, bounds, markedEntries)
-        val halfIndicatorSize = indicatorSize.half.pixels
+        val halfIndicatorSize = indicatorSizeDp.half.pixels
 
         markedEntries.forEachIndexed { _, model ->
             onApplyEntryColor?.invoke(model.color)
