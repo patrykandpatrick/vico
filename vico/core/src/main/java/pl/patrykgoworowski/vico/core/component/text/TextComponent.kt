@@ -18,29 +18,30 @@ package pl.patrykgoworowski.vico.core.component.text
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
+import kotlin.math.ceil
+import kotlin.math.floor
+import kotlin.math.roundToInt
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
+import pl.patrykgoworowski.vico.core.context.DrawContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.draw.withCanvas
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
-import pl.patrykgoworowski.vico.core.extension.piRad
-import pl.patrykgoworowski.vico.core.context.MeasureContext
+import pl.patrykgoworowski.vico.core.extension.rotate
+import pl.patrykgoworowski.vico.core.text.getBounds
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
-import kotlin.collections.HashMap
-import kotlin.math.ceil
-import kotlin.math.floor
-import kotlin.math.roundToInt
 
 public typealias OnPreDrawListener = (
     context: DrawContext,
@@ -74,6 +75,7 @@ public open class TextComponent(
     private var layout: StaticLayout = staticLayout("", textPaint, 0)
 
     private val layoutCache = HashMap<Int, StaticLayout>()
+    private val tempMeasureBounds = RectF()
 
     init {
         textPaint.color = color
@@ -120,7 +122,7 @@ public open class TextComponent(
             val centeredY = textTopPosition - layoutHeight.half
             save()
             if (rotationDegrees != 0f) {
-                rotate(0.25f.piRad, textStartPosition, textTopPosition)
+                rotate(rotationDegrees, textStartPosition, textTopPosition)
             }
             translate(textStartPosition, centeredY)
             layout.draw(this)
@@ -186,9 +188,9 @@ public open class TextComponent(
         context: MeasureContext,
         text: CharSequence,
     ): Float = with(context) {
-        getLayout(text, fontScale).widestLineWidth +
-            padding.horizontalDp.pixels +
-            margins.horizontalDp.pixels
+        getLayout(text, fontScale).getBounds(tempMeasureBounds).apply {
+            right += padding.horizontalDp.pixels + margins.horizontalDp.pixels
+        }.rotate(rotationDegrees).width()
     }
 
     public fun getHeight(
@@ -198,9 +200,10 @@ public open class TextComponent(
         includePadding: Boolean = true,
         includeMargin: Boolean = true,
     ): Float = with(context) {
-        getLayout(text, fontScale, width).height +
-            (if (includePadding) padding.verticalDp.pixels else 0f) +
-            (if (includeMargin) margins.verticalDp.pixels else 0f)
+        getLayout(text, fontScale, width).getBounds(tempMeasureBounds).apply {
+            bottom += (if (includePadding) padding.verticalDp.pixels else 0f) +
+                (if (includeMargin) margins.verticalDp.pixels else 0f)
+        }.rotate(rotationDegrees).height()
     }
 
     public fun clearLayoutCache() {

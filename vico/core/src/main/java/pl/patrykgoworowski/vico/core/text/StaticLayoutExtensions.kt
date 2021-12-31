@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.text
 
-import android.graphics.Rect
+import android.graphics.RectF
 import android.os.Build
 import android.text.Layout
 import android.text.StaticLayout
@@ -83,14 +83,13 @@ internal fun StaticLayout.setLineCount(count: Int) = apply {
     setFieldValue(LINE_COUNT_FIELD, count)
 }
 
-internal fun StaticLayout.getBounds(outBounds: Rect) {
-    getLineBounds(0, outBounds)
-    if (lineCount > 1) {
-        val top = outBounds.top
-        getLineBounds(lineCount - 1, outBounds)
-        outBounds.top = top
+internal fun StaticLayout.getBounds(outBounds: RectF): RectF =
+    outBounds.apply {
+        left = 0f
+        top = 0f
+        right = widestLineWidth
+        bottom = this@getBounds.height.toFloat()
     }
-}
 
 internal val StaticLayout.widestLineWidth: Float
     get() =
