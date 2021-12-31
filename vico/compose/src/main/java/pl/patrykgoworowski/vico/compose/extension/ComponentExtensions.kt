@@ -22,18 +22,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.compose.component.ChartShape
 import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 
-public fun <T : ChartShape> ShapeComponent<T>.setShadow(
+public fun ShapeComponent.setShadow(
     radius: Dp,
     dx: Dp = 0.dp,
     dy: Dp = 0.dp,
     color: Color = Color(DEF_SHADOW_COLOR),
-): ShapeComponent<T> = setShadow(
+    applyElevationOverlay: Boolean = false,
+): ShapeComponent = setShadow(
     radius = radius.value,
     dx = dx.value,
     dy = dy.value,
     color = color.toArgb(),
+    applyElevationOverlay = applyElevationOverlay,
 )

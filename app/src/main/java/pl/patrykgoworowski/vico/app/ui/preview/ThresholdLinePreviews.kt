@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.compose.chart.column.columnChart
 import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
 import pl.patrykgoworowski.vico.compose.component.lineComponent
-import pl.patrykgoworowski.vico.compose.component.rectComponent
+import pl.patrykgoworowski.vico.compose.component.shapeComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.toDynamicShader
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.style.LocalChartStyle
@@ -74,7 +74,7 @@ public fun ThresholdLine() {
                 addDecoration(
                     ThresholdLine(
                         thresholdValue = 2f,
-                        lineComponent = rectComponent(color = Color.Black),
+                        lineComponent = shapeComponent(color = Color.Black),
                         textComponent = textComponent(Color.Black).apply {
                             setPadding(horizontal = 8.dp)
                         },
@@ -100,11 +100,11 @@ public fun ThresholdLineWithCustomText() {
                     ThresholdLine(
                         thresholdValue = 2f,
                         thresholdLabel = "Threshold line 1 📐",
-                        lineComponent = rectComponent(color = Color.Black),
+                        lineComponent = shapeComponent(color = Color.Black),
                         textComponent = textComponent(
                             color = Color.White,
                             lineCount = 3,
-                            background = rectComponent(
+                            background = shapeComponent(
                                 shape = Shapes.roundedCornersShape(bottomLeftPercent = 25, bottomRightPercent = 25),
                                 color = Color.Black,
                             ),
@@ -123,11 +123,11 @@ public fun ThresholdLineWithCustomText() {
                     ThresholdLine(
                         thresholdValue = 3f,
                         thresholdLabel = "Threshold line 2 📐",
-                        lineComponent = rectComponent(color = Color.DarkGray),
+                        lineComponent = shapeComponent(color = Color.DarkGray),
                         textComponent = textComponent(
                             color = Color.White,
                             lineCount = 3,
-                            background = rectComponent(
+                            background = shapeComponent(
                                 shape = Shapes.cutCornerShape(topLeftPercent = 25, topRightPercent = 25),
                                 color = Color.DarkGray,
                             ),
@@ -160,7 +160,7 @@ public fun RangedThresholdLine() {
                 addDecoration(
                     ThresholdLine(
                         thresholdRange = 2f..3f,
-                        lineComponent = rectComponent(color = Color.Black.copy(alpha = 0.5f)),
+                        lineComponent = shapeComponent(color = Color.Black.copy(alpha = 0.5f)),
                         textComponent = textComponent(Color.Black).apply {
                             setPadding(horizontal = 8.dp)
                         },
@@ -185,7 +185,7 @@ public fun RangedThresholdLineWithBrushShader() {
                 addDecoration(
                     ThresholdLine(
                         thresholdRange = 2f..3f,
-                        lineComponent = rectComponent(
+                        lineComponent = shapeComponent(
                             color = Color.Black,
                             dynamicShader = Brush.verticalGradient(
                                 colors = listOf(
@@ -218,10 +218,10 @@ public fun RangedThresholdLineWithComponentShader() {
                 addDecoration(
                     ThresholdLine(
                         thresholdRange = 2f..3f,
-                        lineComponent = rectComponent(
+                        lineComponent = shapeComponent(
                             color = Color.Black,
                             dynamicShader = ComponentShader(
-                                rectComponent(shape = Shapes.pillShape, color = Color.Black),
+                                shapeComponent(shape = Shapes.pillShape, color = Color.Black),
                                 componentSizeDp = 4f,
                             )
                         ),

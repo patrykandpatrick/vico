@@ -25,6 +25,7 @@ import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.chart.Chart
 import kotlin.math.max
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public open class VirtualLayout {
 

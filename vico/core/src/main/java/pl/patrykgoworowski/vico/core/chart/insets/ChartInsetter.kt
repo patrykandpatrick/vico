@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.chart.insets
 
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public interface ChartInsetter {
 

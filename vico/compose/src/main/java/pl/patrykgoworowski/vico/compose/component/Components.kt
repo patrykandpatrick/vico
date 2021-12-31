@@ -66,36 +66,36 @@ public fun lineComponent(
     margins = margins,
 )
 
-public fun rectComponent(
+public fun shapeComponent(
     shape: Shape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): ShapeComponent<ChartShape> = ShapeComponent(
+): ShapeComponent = ShapeComponent(
     shape = shape.chartShape(),
     color = color.toArgb(),
     dynamicShader = dynamicShader,
     margins = margins,
 )
 
-public fun rectComponent(
+public fun shapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): ShapeComponent<ChartShape> = ShapeComponent(
+): ShapeComponent = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
     dynamicShader = dynamicShader,
     margins = margins,
 )
 
-public fun rectComponent(
+public fun shapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
     brush: Brush,
     margins: Dimensions = emptyDimensions(),
-): ShapeComponent<ChartShape> = ShapeComponent(
+): ShapeComponent = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
     dynamicShader = brush.toDynamicShader(),

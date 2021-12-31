@@ -20,9 +20,8 @@ import android.graphics.RectF
 import java.text.DecimalFormat
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.component.shape.rectComponent
-import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
+import pl.patrykgoworowski.vico.core.component.shape.rectComponent
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
@@ -30,7 +29,7 @@ import pl.patrykgoworowski.vico.core.extension.ceil
 import pl.patrykgoworowski.vico.core.extension.floor
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.middle
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
@@ -38,7 +37,7 @@ public data class ThresholdLine(
         decimalFormat.format(thresholdRange.start),
         decimalFormat.format(thresholdRange.endInclusive),
     ),
-    val lineComponent: ShapeComponent<Shape> = rectComponent(),
+    val lineComponent: ShapeComponent = rectComponent(),
     val minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
     val textComponent: TextComponent = TextComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
@@ -48,7 +47,7 @@ public data class ThresholdLine(
     public constructor(
         thresholdValue: Float,
         thresholdLabel: String = decimalFormat.format(thresholdValue),
-        lineComponent: ShapeComponent<Shape> = rectComponent(),
+        lineComponent: ShapeComponent = rectComponent(),
         minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
         textComponent: TextComponent = TextComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,

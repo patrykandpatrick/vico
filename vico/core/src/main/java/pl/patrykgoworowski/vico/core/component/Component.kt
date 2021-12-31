@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.component
 
 import pl.patrykgoworowski.vico.core.component.dimension.DefaultMargins
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 public abstract class Component : Margins by DefaultMargins() {
 

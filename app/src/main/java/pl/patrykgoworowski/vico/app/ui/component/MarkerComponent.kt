@@ -23,17 +23,18 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.compose.component.lineComponent
 import pl.patrykgoworowski.vico.compose.component.dashedShape
-import pl.patrykgoworowski.vico.compose.component.dimension.setPadding
+import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
+import pl.patrykgoworowski.vico.compose.component.lineComponent
+import pl.patrykgoworowski.vico.compose.component.marker.markerComponent
 import pl.patrykgoworowski.vico.compose.component.overlayingComponent
-import pl.patrykgoworowski.vico.compose.component.shape.markerComponent
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.extension.setShadow
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
-import pl.patrykgoworowski.vico.core.component.shape.corner.MarkerCorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
+import pl.patrykgoworowski.vico.core.component.shape.cornered.MarkerCorneredShape
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
 
@@ -45,13 +46,15 @@ public fun markerComponent(): Marker {
         textSize = 12f.sp,
         ellipsize = TextUtils.TruncateAt.END,
         lineCount = 1,
-        background = null
-    ).apply {
-        setPadding(
+        background = ShapeComponent(
+            shape = MarkerCorneredShape(all = Corner.FullyRounded),
+            color = colors.surface.toArgb()
+        ).setShadow(radius = 4.dp, dy = 2.dp, applyElevationOverlay = true),
+        padding = dimensionsOf(
             horizontal = currentChartStyle.marker.horizontalPadding,
-            vertical = currentChartStyle.marker.verticalPadding
+            vertical = currentChartStyle.marker.verticalPadding,
         )
-    }
+    )
 
     val indicatorInner = ShapeComponent(pillShape, colors.surface.toArgb())
     val indicatorCenter = ShapeComponent(pillShape, Color.White.toArgb())
@@ -81,11 +84,6 @@ public fun markerComponent(): Marker {
         label = label,
         indicator = indicator,
         guideline = guideline,
-        shape = MarkerCorneredShape(
-            corneredShape = pillShape,
-            tickSize = 6.dp.value
-        ),
-        markerBackgroundColor = colors.surface,
     ).apply {
         onApplyEntryColor = { color ->
             indicatorCenter.color = color
@@ -93,6 +91,5 @@ public fun markerComponent(): Marker {
             indicatorOuter.color = color.copyColor(alpha = 32)
         }
         indicatorSize = currentChartStyle.marker.indicatorSize.value
-        setShadow(radius = 4.dp, dy = 2.dp)
     }
 }

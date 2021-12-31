@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.Paint
 import kotlin.math.abs
 import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
 

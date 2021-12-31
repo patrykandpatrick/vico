@@ -26,7 +26,7 @@ public fun rectComponent(
     color: Int = Color.BLACK,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): ShapeComponent<Shape> = ShapeComponent(
+): ShapeComponent = ShapeComponent(
     shape = shape,
     color = color,
     dynamicShader = dynamicShader,

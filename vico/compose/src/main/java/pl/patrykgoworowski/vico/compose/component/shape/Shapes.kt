@@ -32,11 +32,11 @@ import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
-import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
-import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
-import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
-import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreatment
+import pl.patrykgoworowski.vico.core.context.DrawContext
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private const val RADII_ARRAY_SIZE = 8

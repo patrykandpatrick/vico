@@ -21,8 +21,8 @@ import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.draw.DrawContext
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public open class LineComponent(
     color: Int,
@@ -30,7 +30,7 @@ public open class LineComponent(
     shape: Shape = rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-) : ShapeComponent<Shape>(shape, color, dynamicShader, margins) {
+) : ShapeComponent(shape, color, dynamicShader, margins) {
 
     private val MeasureContext.thickness: Float
         get() = thicknessDp.pixels

@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.component.shape.shader
 
 import android.graphics.Shader
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 public abstract class CacheableDynamicShader : DynamicShader {
 

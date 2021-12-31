@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.dimensions
 
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public interface Dimensions {
 

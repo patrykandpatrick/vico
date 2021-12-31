@@ -21,7 +21,7 @@ import pl.patrykgoworowski.vico.core.chart.decoration.Decoration
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 public interface Chart<in Model> : BoundsAware {

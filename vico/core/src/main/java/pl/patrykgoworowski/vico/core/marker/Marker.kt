@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.marker
 
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.model.Point
 

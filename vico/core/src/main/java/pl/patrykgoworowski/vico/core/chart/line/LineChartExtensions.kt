@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.chart.line
 
 import pl.patrykgoworowski.vico.core.component.Component
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
 
 internal fun Component.drawPoint(
     context: DrawContext,

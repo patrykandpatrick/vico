@@ -21,12 +21,12 @@ import android.content.res.TypedArray
 import androidx.annotation.StyleableRes
 import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.Shape
-import pl.patrykgoworowski.vico.core.component.shape.corner.Corner
-import pl.patrykgoworowski.vico.core.component.shape.corner.CornerTreatment
-import pl.patrykgoworowski.vico.core.component.shape.corner.CorneredShape
-import pl.patrykgoworowski.vico.core.component.shape.corner.CutCornerTreatment
-import pl.patrykgoworowski.vico.core.component.shape.corner.RoundedCornerTreatment
-import pl.patrykgoworowski.vico.core.component.shape.corner.SharpCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.SharpCornerTreatment
 import pl.patrykgoworowski.vico.view.R
 
 private const val ONE_HUNDRED_PERCENT = 100

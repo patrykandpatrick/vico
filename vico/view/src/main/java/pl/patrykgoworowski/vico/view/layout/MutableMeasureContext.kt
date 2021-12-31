@@ -16,7 +16,9 @@
 
 package pl.patrykgoworowski.vico.view.layout
 
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.DefaultExtras
+import pl.patrykgoworowski.vico.core.context.Extras
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 internal data class MutableMeasureContext(
     override var density: Float,
@@ -24,4 +26,4 @@ internal data class MutableMeasureContext(
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean,
     override var zoom: Float,
-) : MeasureContext
+) : MeasureContext, Extras by DefaultExtras()

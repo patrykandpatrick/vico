@@ -39,6 +39,7 @@ import pl.patrykgoworowski.vico.compose.extension.addIf
 import pl.patrykgoworowski.vico.compose.extension.chartTouchEvent
 import pl.patrykgoworowski.vico.compose.gesture.OnZoom
 import pl.patrykgoworowski.vico.compose.layout.getMeasureContext
+import pl.patrykgoworowski.vico.compose.style.currentChartColors
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.MAX_ZOOM
 import pl.patrykgoworowski.vico.core.MIN_ZOOM
@@ -125,6 +126,7 @@ public fun <Model : ChartEntryModel> Chart(
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
     val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
     val virtualLayout = remember { VirtualLayout() }
+    val chartColors = currentChartColors
 
     Canvas(
         modifier = modifier
@@ -152,6 +154,7 @@ public fun <Model : ChartEntryModel> Chart(
     ) {
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
+            colors = chartColors,
             measureContext = measureContext,
             horizontalScroll = horizontalScroll.value,
             markerTouchPoint = markerTouchPoint.value,

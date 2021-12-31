@@ -64,6 +64,9 @@ public object Dimens {
 
 @Suppress("MagicNumber")
 public interface Colors {
+
+    public val elevationOverlayColor: Long
+
     public val axisLabelColor: Long
     public val axisGuidelineColor: Long
     public val axisLineColor: Long
@@ -75,6 +78,9 @@ public interface Colors {
     public val lineColor: Long
 
     public object Light : Colors {
+
+        override val elevationOverlayColor: Long = 0x00000000
+
         override val axisLabelColor: Long = 0xDE000000
         override val axisGuidelineColor: Long = 0xFFAAAAAA
         override val axisLineColor: Long = 0xFF8A8A8A
@@ -87,6 +93,9 @@ public interface Colors {
     }
 
     public object Dark : Colors {
+
+        override val elevationOverlayColor: Long = 0xFFFFFFFF
+
         override val axisLabelColor: Long = 0xFFFFFFFF
         override val axisGuidelineColor: Long = 0xFF424242
         override val axisLineColor: Long = 0xFF555555

@@ -17,7 +17,8 @@
 package pl.patrykgoworowski.vico.core.component.shape.shadow
 
 import android.graphics.Paint
-import pl.patrykgoworowski.vico.core.draw.DrawContext
+import pl.patrykgoworowski.vico.core.context.DrawContext
+import pl.patrykgoworowski.vico.core.extension.applyElevationOverlayToColor
 
 @Suppress("ComplexCondition")
 public data class ComponentShadow(
@@ -25,6 +26,7 @@ public data class ComponentShadow(
     var dx: Float = 0f,
     var dy: Float = 0f,
     var color: Int = 0,
+    var applyElevationOverlay: Boolean = false,
 ) {
     private var laRadius: Float = 0f
     private var laDx: Float = 0f
@@ -32,18 +34,34 @@ public data class ComponentShadow(
     private var laColor: Int = 0
     private var laDensity: Float = 0f
 
-    public fun maybeUpdateShadowLayer(context: DrawContext, paint: Paint): Unit = with(context) {
+    public fun maybeUpdateShadowLayer(
+        context: DrawContext,
+        paint: Paint,
+        backgroundColor: Int,
+    ): Unit = with(context) {
         if (shouldUpdateShadowLayer()) {
-            if (color == 0 || (radius == 0f && dx == 0f && dy == 0f)) {
-                paint.clearShadowLayer()
+            updateShadowLayer(paint, backgroundColor)
+        }
+    }
+
+    private fun DrawContext.updateShadowLayer(
+        paint: Paint,
+        backgroundColor: Int,
+    ) {
+        if (color == 0 || (radius == 0f && dx == 0f && dy == 0f)) {
+            paint.clearShadowLayer()
+        } else {
+            paint.color = if (applyElevationOverlay) {
+                applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius)
             } else {
-                paint.setShadowLayer(
-                    radius.pixels,
-                    dx.pixels,
-                    dy.pixels,
-                    color,
-                )
+                backgroundColor
             }
+            paint.setShadowLayer(
+                radius.pixels,
+                dx.pixels,
+                dy.pixels,
+                color,
+            )
         }
     }
 

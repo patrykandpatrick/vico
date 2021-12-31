@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.axis
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.collections.cacheInList
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.layout.MeasureContext
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.extension.half
