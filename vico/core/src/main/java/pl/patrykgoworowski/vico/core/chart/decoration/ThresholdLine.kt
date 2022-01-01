@@ -33,7 +33,7 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
-    val thresholdLabel: String = RANGE_FORMAT.format(
+    val thresholdLabel: CharSequence = RANGE_FORMAT.format(
         decimalFormat.format(thresholdRange.start),
         decimalFormat.format(thresholdRange.endInclusive),
     ),
@@ -46,7 +46,7 @@ public data class ThresholdLine(
 
     public constructor(
         thresholdValue: Float,
-        thresholdLabel: String = decimalFormat.format(thresholdValue),
+        thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = rectComponent(),
         minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
         textComponent: TextComponent = TextComponent(),
@@ -100,16 +100,17 @@ public data class ThresholdLine(
             },
             textY = textY,
             horizontalPosition = labelHorizontalPosition.position,
-            verticalPosition = getSuggestedLabelVerticalPosition(context, bounds, textY).position,
+            verticalPosition = getSuggestedLabelVerticalPosition(context, bounds, thresholdLabel, textY).position,
         )
     }
 
     private fun getSuggestedLabelVerticalPosition(
         context: MeasureContext,
         bounds: RectF,
+        text: CharSequence,
         textY: Float,
     ): LabelVerticalPosition {
-        val labelHeight = textComponent.getHeight(context = context)
+        val labelHeight = textComponent.getHeight(context = context, text = text)
         return when (labelVerticalPosition) {
             LabelVerticalPosition.Top ->
                 if (textY - labelHeight < bounds.top) LabelVerticalPosition.Bottom else labelVerticalPosition
