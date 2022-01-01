@@ -17,6 +17,7 @@
 package pl.patrykgoworowski.vico.compose.layout
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -28,8 +29,10 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
-    zoom: Float
+    zoom: Float,
+    model: Any,
 ): MeasureContext {
+    val rememberedModel = remember { mutableStateOf(model) }
     val context = remember {
         object : MeasureContext, Extras by DefaultExtras() {
             override var density: Float = 0f
@@ -38,6 +41,10 @@ public fun getMeasureContext(
             override var isHorizontalScrollEnabled: Boolean = isHorizontalScrollEnabled
             override var zoom: Float = zoom
         }
+    }
+    if (rememberedModel.value != model) {
+        context.clearExtras()
+        rememberedModel.value = model
     }
     context.density = LocalDensity.current.density
     context.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density

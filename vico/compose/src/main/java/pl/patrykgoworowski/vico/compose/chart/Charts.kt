@@ -109,7 +109,8 @@ public fun <Model : ChartEntryModel> Chart(
     val zoom = remember { mutableStateOf(1f) }
     val measureContext = getMeasureContext(
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-        zoom = zoom.value
+        zoom = zoom.value,
+        model = model,
     )
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
