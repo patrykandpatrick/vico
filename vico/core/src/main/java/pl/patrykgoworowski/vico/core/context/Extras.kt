@@ -44,7 +44,7 @@ public interface Extras {
      * Retrieves the stored value for the [key], if it exists and wasn’t already consumed with [consumeExtra].
      * @see consumeExtra
      */
-    public fun <T> getExtra(key: Any): T?
+    public fun <T> getExtra(key: Any): T
 
     /**
      * Retrieves the stored value for the [key], if it exists and wasn’t already consumed.
@@ -52,7 +52,7 @@ public interface Extras {
      * For non-consumable value retrieval use [getExtra].
      * @see getExtra
      */
-    public fun <T> consumeExtra(key: Any): T?
+    public fun <T> consumeExtra(key: Any): T
 
     /**
      * Convenience operator fun for [putExtra].
@@ -64,5 +64,10 @@ public interface Extras {
      * Convenience operator fun for [consumeExtra].
      * @see [consumeExtra]
      */
-    public operator fun <T> get(key: Any): T? = consumeExtra(key)
+    public operator fun <T> get(key: Any): T = consumeExtra(key)
+
+    /**
+     * Removes all stored extras.
+     */
+    public fun clearExtras()
 }

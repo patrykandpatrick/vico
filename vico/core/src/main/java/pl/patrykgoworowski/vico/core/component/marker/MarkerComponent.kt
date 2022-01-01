@@ -38,7 +38,7 @@ public open class MarkerComponent(
 ) : Marker {
 
     private val MeasureContext.markerHeight: Float
-        get() = label.getHeight(this) // + shape.tickSize.pixels
+        get() = label.getHeight(this)
 
     public var indicatorSizeDp: Float = 0f
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null

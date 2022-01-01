@@ -169,6 +169,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         measureContext.zoom = newZoom
         scrollHandler.currentScroll += zoomedTransformationAxisX - transformationAxisX
+        updateBounds()
         invalidate()
     }
 
@@ -220,6 +221,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     private fun updateBounds() = withChartAndModel { chart, _ ->
+        measureContext.clearExtras()
         virtualLayout.setBounds(
             context = measureContext,
             contentBounds = contentBounds,

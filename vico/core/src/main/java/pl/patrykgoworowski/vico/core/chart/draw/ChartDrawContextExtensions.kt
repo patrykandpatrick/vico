@@ -36,7 +36,7 @@ public fun chartDrawContext(
     markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
     chartModel: ChartModel,
-): ChartDrawContext = object : ChartDrawContext, Extras by DefaultExtras() {
+): ChartDrawContext = object : ChartDrawContext, Extras by measureContext {
     override var canvas: Canvas = canvas
     override val colors: Colors = colors
     override val chartModel: ChartModel = chartModel

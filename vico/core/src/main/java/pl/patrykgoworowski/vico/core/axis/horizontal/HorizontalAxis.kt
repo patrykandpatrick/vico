@@ -144,8 +144,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half
         )
 
-        label?.clearLayoutCache()
-
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 

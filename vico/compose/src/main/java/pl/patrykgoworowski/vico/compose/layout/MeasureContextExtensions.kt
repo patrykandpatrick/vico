@@ -17,6 +17,7 @@
 package pl.patrykgoworowski.vico.compose.layout
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -28,10 +29,20 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
     zoom: Float
-): MeasureContext = object : MeasureContext, Extras by DefaultExtras() {
-    override val density: Float = LocalDensity.current.density
-    override val fontScale: Float = LocalDensity.current.fontScale * density
-    override val isLtr: Boolean = LocalLayoutDirection.current == LayoutDirection.Ltr
-    override val isHorizontalScrollEnabled: Boolean = isHorizontalScrollEnabled
-    override val zoom: Float = zoom
+): MeasureContext {
+    val context = remember {
+        object : MeasureContext, Extras by DefaultExtras() {
+            override var density: Float = 0f
+            override var fontScale: Float = 0f
+            override var isLtr: Boolean = true
+            override var isHorizontalScrollEnabled: Boolean = isHorizontalScrollEnabled
+            override var zoom: Float = zoom
+        }
+    }
+    context.density = LocalDensity.current.density
+    context.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
+    context.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    context.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+    context.zoom = zoom
+    return context
 }

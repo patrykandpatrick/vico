@@ -51,6 +51,9 @@ public typealias OnPreDrawListener = (
     bottom: Float
 ) -> Unit
 
+private const val TEXT_MEASUREMENT_CHAR = ""
+private const val LAYOUT_KEY_PREFIX = "layout_"
+
 public open class TextComponent(
     color: Int = Color.BLACK,
     public var textSizeSp: Float = 12f,
@@ -74,7 +77,6 @@ public open class TextComponent(
     public var rotationDegrees: Float = 0f
     private var layout: StaticLayout = staticLayout("", textPaint, 0)
 
-    private val layoutCache = HashMap<Int, StaticLayout>()
     private val tempMeasureBounds = RectF()
 
     init {
@@ -206,21 +208,18 @@ public open class TextComponent(
         }.rotate(rotationDegrees).height()
     }
 
-    public fun clearLayoutCache() {
-        layoutCache.clear()
-    }
-
-    private fun getLayout(
+    private fun MeasureContext.getLayout(
         text: CharSequence,
         fontScale: Float,
         width: Int = Int.MAX_VALUE,
-    ): StaticLayout =
-        layoutCache.getOrPut(arrayOf(text, fontScale, width).contentHashCode()) {
+    ): StaticLayout {
+        val key = LAYOUT_KEY_PREFIX + text
+        return if (hasExtra(key)) {
+            getExtra(key)
+        } else {
             textPaint.textSize = textSizeSp * fontScale
             staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
+                .also { putExtra(key, it) }
         }
-
-    private companion object {
-        const val TEXT_MEASUREMENT_CHAR = ""
     }
 }

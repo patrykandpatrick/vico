@@ -80,7 +80,6 @@ public fun markerComponent(): Marker {
             gapLength = 4f.dp
         )
     )
-
     return markerComponent(
         label = label,
         indicator = indicator,

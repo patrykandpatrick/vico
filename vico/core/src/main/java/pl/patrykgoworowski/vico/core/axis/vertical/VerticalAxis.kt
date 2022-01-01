@@ -25,14 +25,16 @@ import pl.patrykgoworowski.vico.core.axis.setTo
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
-import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
-import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
+import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
+import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
-import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
+
+private const val LABELS_KEY = "labels"
 
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
@@ -94,7 +96,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val label = label
         val labelCount = getDrawLabelCount(bounds.height().toInt())
 
-        val labels = getLabels(context.chartModel, labelCount)
+        val labels = getLabels(chartModel, labelCount)
         val labelHeight = label?.getHeight(includeMargin = false, context = this).orZero
         val labelTextHeight = label?.getHeight(
             includePadding = false,
@@ -149,7 +151,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 )
             }
         }
-        label?.clearLayoutCache() ?: Unit
     }
 
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
@@ -166,17 +167,22 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         return maxLabelCount
     }
 
-    private fun getLabels(
+    private fun MeasureContext.getLabels(
         chartModel: ChartModel,
-        maxLabelCount: Int = this.maxLabelCount,
+        maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
     ): List<String> {
-        labels.clear()
-        val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
-        for (index in maxLabelCount downTo 0) {
-            val value = chartModel.maxY - (step * index)
-            labels += valueFormatter.formatValue(value, index, chartModel)
+        return if (hasExtra(LABELS_KEY)) {
+            getExtra(LABELS_KEY)
+        } else {
+            labels.clear()
+            val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
+            for (index in maxLabelCount downTo 0) {
+                val value = chartModel.maxY - (step * index)
+                labels += valueFormatter.formatValue(value, index, chartModel)
+            }
+            putExtra(LABELS_KEY, labels)
+            labels
         }
-        return labels
     }
 
     override fun getHorizontalInsets(
