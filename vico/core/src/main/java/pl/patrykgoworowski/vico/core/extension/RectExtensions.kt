@@ -83,33 +83,34 @@ public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
 
 public fun RectF.rotate(degrees: Float): RectF {
 
-    if (degrees % MAX_DEGREES == 0f) return this
+    when {
+        degrees % MAX_DEGREES == 0f -> Unit
+        degrees % 0.5f.piRad == 0f -> {
+            if (width() != height()) {
+                set(
+                    left = centerX() - height().half,
+                    top = centerY() + width().half,
+                    right = centerX() + height().half,
+                    bottom = centerY() - width().half,
+                )
+            }
+        }
+        else -> {
+            val alpha = Math.toRadians(degrees.toDouble())
+            val sinAlpha = sin(alpha)
+            val cosAlpha = cos(alpha)
 
-    if (degrees % 90 == 0f) {
-        if (width() != height()) {
+            val newWidth = abs(width() * cosAlpha) + abs(height() * sinAlpha)
+            val newHeight = abs(width() * sinAlpha) + abs(height() * cosAlpha)
+
             set(
-                left = centerX() - height().half,
-                top = centerY() + width().half,
-                right = centerX() + height().half,
-                bottom = centerY() - width().half,
+                left = centerX() - newWidth.half,
+                top = centerY() + newHeight.half,
+                right = centerX() + newWidth.half,
+                bottom = centerY() - newHeight.half
             )
         }
-        return this
     }
-
-    val alpha = Math.toRadians(degrees.toDouble())
-    val sinAlpha = sin(alpha)
-    val cosAlpha = cos(alpha)
-
-    val newWidth = abs(width() * cosAlpha) + abs(height() * sinAlpha)
-    val newHeight = abs(width() * sinAlpha) + abs(height() * cosAlpha)
-
-    set(
-        left = centerX() - newWidth.half,
-        top = centerY() + newHeight.half,
-        right = centerX() + newWidth.half,
-        bottom = centerY() - newHeight.half
-    )
 
     return this
 }
