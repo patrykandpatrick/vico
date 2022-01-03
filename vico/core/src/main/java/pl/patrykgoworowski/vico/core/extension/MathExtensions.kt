@@ -19,8 +19,8 @@ package pl.patrykgoworowski.vico.core.extension
 import kotlin.math.cos
 import kotlin.math.sin
 
-internal fun rotatePointX(x: Float, y: Float, centerX: Float, centerY: Float, radians: Double): Float =
+internal fun rotatePointX(x: Float, y: Float, centerX: Float = x / 2, centerY: Float = y / 2, radians: Double): Float =
     ((x - centerX) * cos(radians) - (y - centerY) * sin(radians) + centerX).toFloat()
 
-internal fun rotatePointY(x: Float, y: Float, centerX: Float, centerY: Float, radians: Double): Float =
+internal fun rotatePointY(x: Float, y: Float, centerX: Float = x / 2, centerY: Float = y / 2, radians: Double): Float =
     ((x - centerX) * sin(radians) + (y - centerY) * cos(radians) + centerY).toFloat()

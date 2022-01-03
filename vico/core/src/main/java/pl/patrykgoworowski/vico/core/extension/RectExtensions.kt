@@ -18,8 +18,6 @@ package pl.patrykgoworowski.vico.core.extension
 
 import android.graphics.RectF
 
-private const val MAX_DEGREES = 360
-
 public fun RectF.updateBounds(
     left: Float = this.left,
     top: Float = this.top,
@@ -79,7 +77,7 @@ public fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right
 public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
 
 public fun RectF.rotate(degrees: Float): RectF {
-    if (degrees % MAX_DEGREES == 0f) return this
+    if (degrees % PI_RAD == 0f) return this
     val radians = Math.toRadians(degrees.toDouble())
     // Top-left
     val x1 = rotatePointX(left, top, centerX(), centerY(), radians)
@@ -101,4 +99,11 @@ public fun RectF.rotate(degrees: Float): RectF {
         bottom = maxOf(y1, y2, y3, y4),
     )
     return this
+}
+
+public fun RectF.translate(x: Float, y: Float): RectF = apply {
+    left += x
+    top += y
+    right += x
+    bottom += y
 }

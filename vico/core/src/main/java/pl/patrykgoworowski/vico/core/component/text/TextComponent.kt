@@ -39,6 +39,9 @@ import pl.patrykgoworowski.vico.core.draw.withCanvas
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
 import pl.patrykgoworowski.vico.core.extension.rotate
+import pl.patrykgoworowski.vico.core.extension.rotatePointX
+import pl.patrykgoworowski.vico.core.extension.rotatePointY
+import pl.patrykgoworowski.vico.core.extension.translate
 import pl.patrykgoworowski.vico.core.text.getBounds
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
@@ -92,7 +95,6 @@ public open class TextComponent(
         horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
         verticalPosition: VerticalPosition = VerticalPosition.Center,
         width: Int = Int.MAX_VALUE,
-        onPreDraw: OnPreDrawListener? = null,
     ): Unit = with(context) {
 
         if (text.isBlank()) return
@@ -100,44 +102,72 @@ public open class TextComponent(
         val layoutWidth = layout.widestLineWidth
         val layoutHeight = layout.height
 
-        val textStartPosition = horizontalPosition
-            .getTextStartPosition(context, textX, layoutWidth)
-        val textTopPosition = verticalPosition
-            .getTextTopPosition(context, textY, layoutHeight.toFloat())
+        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layoutWidth)
+        val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layoutHeight.toFloat())
 
         val bgLeft = textStartPosition - padding.getLeftDp(isLtr).pixels
         val bgTop = floor(textTopPosition - layoutHeight.half - padding.topDp.pixels)
         val bgRight = textStartPosition + layoutWidth + padding.getRightDp(isLtr).pixels
         val bgBottom = ceil(textTopPosition + layoutHeight.half + padding.bottomDp.pixels)
 
-        onPreDraw?.invoke(context, bgLeft, bgTop, bgRight, bgBottom)
-
-        background?.draw(
-            context,
-            left = bgLeft,
-            top = bgTop,
-            right = bgRight,
-            bottom = bgBottom,
-        )
-
         context.withCanvas {
             val centeredY = textTopPosition - layoutHeight.half
             save()
+            val bounds = layout
+                .getBounds(tempMeasureBounds)
+                .translate(textStartPosition, centeredY)
+
+            val boundsWidth = bounds.width()
+            val boundsHeight = bounds.height()
+
+            //TODO debugging helper
+            background?.draw(
+                context,
+                left = bounds.left,
+                top = bounds.top,
+                right = bounds.right,
+                bottom = bounds.bottom,
+            )
+
             if (rotationDegrees != 0f) {
-                rotate(rotationDegrees, textStartPosition, textTopPosition)
+                bounds.rotate(rotationDegrees)
+                rotate(rotationDegrees, bounds.centerX(), bounds.centerY())
             }
-            translate(textStartPosition, centeredY)
+
+            translate(
+                textStartPosition -
+                    rotatePointX(
+                        0f,
+                        (bounds.width() - boundsWidth) / 2,
+                        radians = Math.toRadians(rotationDegrees.toDouble())
+                    ),
+                centeredY -
+                    rotatePointY(
+                        (bounds.height() - boundsHeight) / 2,
+                        0f,
+                        radians = Math.toRadians(rotationDegrees.toDouble())
+                    ),
+            )
+//            background?.draw(
+//                context,
+//                left = -padding.getLeftDp(isLtr).pixels,
+//                top = -padding.topDp.pixels,
+//                right = boundsWidth + padding.getRightDp(isLtr).pixels,
+//                bottom = boundsHeight + padding.bottomDp.pixels,
+//            )
+
             layout.draw(this)
             restore()
-        }
 
-        DebugHelper.drawDebugBounds(
-            context = context,
-            left = bgLeft,
-            top = bgTop,
-            right = bgRight,
-            bottom = bgBottom,
-        )
+            //TODO debugging helper
+            background?.draw(
+                context,
+                left = bounds.left,
+                top = bounds.top,
+                right = bounds.right,
+                bottom = bounds.bottom,
+            )
+        }
     }
 
     private fun HorizontalPosition.getTextStartPosition(
@@ -190,22 +220,28 @@ public open class TextComponent(
         context: MeasureContext,
         text: CharSequence,
     ): Float = with(context) {
-        getLayout(text, fontScale).getBounds(tempMeasureBounds).apply {
-            right += padding.horizontalDp.pixels + margins.horizontalDp.pixels
-        }.rotate(rotationDegrees).width()
+        getTextBoundsWithPadding(context, text).width() + margins.horizontalDp.pixels
     }
 
     public fun getHeight(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
-        includePadding: Boolean = true,
-        includeMargin: Boolean = true,
     ): Float = with(context) {
-        getLayout(text, fontScale, width).getBounds(tempMeasureBounds).apply {
-            bottom += (if (includePadding) padding.verticalDp.pixels else 0f) +
-                (if (includeMargin) margins.verticalDp.pixels else 0f)
-        }.rotate(rotationDegrees).height()
+        getTextBoundsWithPadding(context, text, width).height() + margins.verticalDp.pixels
+    }
+
+    public fun getTextBoundsWithPadding(
+        context: MeasureContext,
+        text: CharSequence = TEXT_MEASUREMENT_CHAR,
+        width: Int = Int.MAX_VALUE,
+        outRect: RectF = tempMeasureBounds,
+        includePadding: Boolean = true,
+    ): RectF = with(context) {
+        getLayout(text, fontScale, width).getBounds(outRect).apply {
+            right += if (includePadding) padding.horizontalDp.pixels else 0f
+            bottom += if (includePadding) padding.verticalDp.pixels else 0f
+        }.rotate(rotationDegrees)
     }
 
     private fun MeasureContext.getLayout(

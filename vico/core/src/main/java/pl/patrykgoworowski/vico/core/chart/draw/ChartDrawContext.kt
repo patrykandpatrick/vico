@@ -22,7 +22,6 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.model.Point
 
 public interface ChartDrawContext : DrawContext {
-    public val chartModel: ChartModel
     public val segmentProperties: SegmentProperties
     public val markerTouchPoint: Point?
     public val horizontalScroll: Float

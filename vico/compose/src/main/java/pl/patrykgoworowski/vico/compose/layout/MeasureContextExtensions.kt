@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.context.DefaultExtras
 import pl.patrykgoworowski.vico.core.context.Extras
 import pl.patrykgoworowski.vico.core.context.MeasureContext
@@ -30,11 +31,13 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
     zoom: Float,
-    model: Any,
+    chartModel: ChartModel,
+    dataModel: Any
 ): MeasureContext {
-    val rememberedModel = remember { mutableStateOf(model) }
+    val rememberedDataModel = remember { mutableStateOf(dataModel) }
     val context = remember {
         object : MeasureContext, Extras by DefaultExtras() {
+            override var chartModel: ChartModel = chartModel
             override var density: Float = 0f
             override var fontScale: Float = 0f
             override var isLtr: Boolean = true
@@ -42,9 +45,9 @@ public fun getMeasureContext(
             override var zoom: Float = zoom
         }
     }
-    if (rememberedModel.value != model) {
+    if (rememberedDataModel.value != dataModel) {
         context.clearExtras()
-        rememberedModel.value = model
+        rememberedDataModel.value = dataModel
     }
     context.density = LocalDensity.current.density
     context.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density

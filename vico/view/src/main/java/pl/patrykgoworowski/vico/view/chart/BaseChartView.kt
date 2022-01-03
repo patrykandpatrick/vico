@@ -89,6 +89,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
         zoom = 1f,
+        chartModel = chartModel,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
