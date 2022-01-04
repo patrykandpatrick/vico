@@ -32,7 +32,6 @@ import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.context.MeasureContext
-import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 import pl.patrykgoworowski.vico.core.draw.withCanvas
@@ -120,7 +119,7 @@ public open class TextComponent(
             val boundsWidth = bounds.width()
             val boundsHeight = bounds.height()
 
-            //TODO debugging helper
+            // TODO debugging helper
             background?.draw(
                 context,
                 left = bounds.left,
@@ -159,7 +158,7 @@ public open class TextComponent(
             layout.draw(this)
             restore()
 
-            //TODO debugging helper
+            // TODO debugging helper
             background?.draw(
                 context,
                 left = bounds.left,
