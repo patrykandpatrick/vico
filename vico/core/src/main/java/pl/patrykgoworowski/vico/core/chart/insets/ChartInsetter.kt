@@ -16,21 +16,18 @@
 
 package pl.patrykgoworowski.vico.core.chart.insets
 
-import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public interface ChartInsetter {
 
     public fun getVerticalInsets(
         context: MeasureContext,
-        chartModel: ChartModel,
         outInsets: Insets,
     ): Unit = Unit
 
     public fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
-        chartModel: ChartModel,
         outInsets: Insets,
     ): Unit = Unit
 }

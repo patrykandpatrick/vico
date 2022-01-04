@@ -16,7 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.context
 
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
+
 public interface MeasureContext : Extras {
+    public val chartModel: ChartModel
     public val density: Float
     public val fontScale: Float
     public val isLtr: Boolean

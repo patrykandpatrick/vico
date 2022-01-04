@@ -56,4 +56,18 @@ public class RectFExtensionsTest {
         Assert.assertEquals(originalCenterX, rect.centerX())
         Assert.assertEquals(originalCenterY, rect.centerY())
     }
+
+    @Test
+    public fun `Given RectF is rotated by 180 degrees resulting RectF has exact same dimensions`() {
+        val left = 0f
+        val top = 0f
+        val right = 10f
+        val bottom = 10f
+        rect.set(left, top, right, bottom)
+        rect.rotate(180f)
+        Assert.assertEquals(left, rect.left)
+        Assert.assertEquals(top, rect.top)
+        Assert.assertEquals(right, rect.right)
+        Assert.assertEquals(bottom, rect.bottom)
+    }
 }

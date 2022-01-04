@@ -114,3 +114,10 @@ public fun RectF.rotate(degrees: Float): RectF {
 
     return this
 }
+
+public fun RectF.translate(x: Float, y: Float): RectF = apply {
+    left += x
+    top += y
+    right += x
+    bottom += y
+}

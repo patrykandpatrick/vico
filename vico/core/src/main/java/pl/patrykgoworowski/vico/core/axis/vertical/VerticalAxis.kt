@@ -32,6 +32,7 @@ import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
+import pl.patrykgoworowski.vico.core.extension.translate
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
 private const val LABELS_KEY = "labels"
@@ -97,12 +98,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val labelCount = getDrawLabelCount(bounds.height().toInt())
 
         val labels = getLabels(chartModel, labelCount)
-        val labelHeight = label?.getHeight(includeMargin = false, context = this).orZero
-        val labelTextHeight = label?.getHeight(
-            includePadding = false,
-            includeMargin = false,
-            context = this,
-        ).orZero
 
         val tickLeftX =
             if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right - (axisThickness + tickLength)
@@ -115,7 +110,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
 
         var tickCenterY: Float
-        val textPosition = verticalLabelPosition.textPosition
 
         (0..labelCount).forEach { index ->
             tickCenterY =
@@ -129,16 +123,15 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             )
 
             label ?: return@forEach
-            val labelTop = label
-                .getTextTopPosition(this, textPosition, tickCenterY, labelTextHeight)
             val labelText = labels.getOrNull(index) ?: return@forEach
+            val textBounds = label.getTextBoundsWithPadding(context, labelText).translate(labelX, tickCenterY)
             if (
                 horizontalLabelPosition == Outside ||
                 isNotInRestrictedBounds(
-                    left = labelX,
-                    top = labelTop - labelHeight.half,
-                    right = labelX + 1,
-                    bottom = labelTop + labelHeight.half
+                    left = textBounds.left,
+                    top = textBounds.top,
+                    right = textBounds.right,
+                    bottom = textBounds.bottom
                 )
             ) {
                 label.drawText(
@@ -188,7 +181,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
-        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
         val labels = getLabels(
@@ -206,7 +198,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun getVerticalInsets(
         context: MeasureContext,
-        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
         val halfLabelHeight = label?.getHeight(context = context)?.half.orZero

@@ -16,18 +16,19 @@
 
 package pl.patrykgoworowski.vico.core.axis.horizontal
 
+import kotlin.math.ceil
 import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.axis.setTo
-import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
+import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
-import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
-import kotlin.math.ceil
+
+private val LABELS_KEY = "${HorizontalAxis::class.simpleName}_labels_key"
 
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
@@ -124,7 +125,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             if (index < entryLength) {
                 label?.drawText(
                     context = context,
-                    text = valueFormatter.formatValue(valueIndex, index, context.chartModel),
+                    text = getLabels().getOrNull(valueIndex.toInt()) ?: "",
                     textX = textDrawCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -167,7 +168,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getVerticalInsets(
         context: MeasureContext,
-        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
         with(outInsets) {
@@ -181,8 +181,24 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun getDesiredHeight(context: MeasureContext): Int = with(context) {
-        (if (position.isBottom) axisThickness else 0f) + tickLength + label?.getHeight(context = this).orZero
+        val maxLabelHeight = label?.let { label ->
+            getLabels().maxOf { labelText -> label.getHeight(context = this, text = labelText).orZero }
+        }
+        (if (position.isBottom) axisThickness else 0f) + tickLength + maxLabelHeight.orZero
     }.toInt()
+
+    private fun MeasureContext.getLabels(): List<String> =
+        if (hasExtra(LABELS_KEY)) {
+            getExtra(LABELS_KEY)
+        } else {
+            (0 until ((chartModel.maxX - chartModel.minX) / chartModel.chartEntryModel.step).toInt()).map { index ->
+                valueFormatter.formatValue(
+                    value = chartModel.minX + (index * chartModel.chartEntryModel.step),
+                    index = index,
+                    chartModel = chartModel,
+                )
+            }.also { labels -> putExtra(LABELS_KEY, labels) }
+        }
 
     override fun getDesiredWidth(context: MeasureContext, labels: List<String>): Float = 0f
 

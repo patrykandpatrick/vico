@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.draw
+package pl.patrykgoworowski.vico.core.extension
 
-import pl.patrykgoworowski.vico.core.axis.model.ChartModel
-import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.context.DrawContext
-import pl.patrykgoworowski.vico.core.model.Point
+import kotlin.math.cos
+import kotlin.math.sin
 
-public interface ChartDrawContext : DrawContext {
-    public val segmentProperties: SegmentProperties
-    public val markerTouchPoint: Point?
-    public val horizontalScroll: Float
-}
+internal fun rotatePointX(x: Float, y: Float, centerX: Float = x / 2, centerY: Float = y / 2, radians: Double): Float =
+    ((x - centerX) * cos(radians) - (y - centerY) * sin(radians) + centerX).toFloat()
+
+internal fun rotatePointY(x: Float, y: Float, centerX: Float = x / 2, centerY: Float = y / 2, radians: Double): Float =
+    ((x - centerX) * sin(radians) + (y - centerY) * cos(radians) + centerY).toFloat()
