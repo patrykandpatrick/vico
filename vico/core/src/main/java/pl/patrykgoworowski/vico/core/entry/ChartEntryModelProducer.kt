@@ -24,7 +24,7 @@ import pl.patrykgoworowski.vico.core.extension.setAll
 private typealias Listener = (ChartEntryModel) -> Unit
 
 public class ChartEntryModelProducer(
-    entryCollections: List<List<ChartEntry>> = listOf(),
+    entryCollections: List<List<ChartEntry>>,
     private val diffAnimator: DiffAnimator? = null,
 ) : ChartModelProducer<ChartEntryModel> {
 
