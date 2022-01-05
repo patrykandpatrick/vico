@@ -34,8 +34,14 @@ public class ShowcaseViewModel : ViewModel() {
     private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
     private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)
 
-    public val entries: ChartEntryModelProducer = ChartEntryModelProducer(entryCollections = listOf(), diffAnimator = DefaultDiffAnimator())
-    public val multiEntries: ChartEntryModelProducer = ChartEntryModelProducer(entryCollections = listOf(), diffAnimator = DefaultDiffAnimator())
+    public val entries: ChartEntryModelProducer = ChartEntryModelProducer(
+        entryCollections = listOf(),
+        diffAnimator = DefaultDiffAnimator(),
+    )
+    public val multiEntries: ChartEntryModelProducer = ChartEntryModelProducer(
+        entryCollections = listOf(),
+        diffAnimator = DefaultDiffAnimator(),
+    )
 
     public val composedEntries: ComposedChartEntryModelProducer<ChartEntryModel> = multiEntries + entries
 
