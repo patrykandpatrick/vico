@@ -17,6 +17,9 @@
 package pl.patrykgoworowski.vico.core.extension
 
 import android.graphics.RectF
+import kotlin.math.abs
+import kotlin.math.cos
+import kotlin.math.sin
 
 public fun RectF.updateBounds(
     left: Float = this.left,
@@ -77,27 +80,36 @@ public fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right
 public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
 
 public fun RectF.rotate(degrees: Float): RectF {
-    if (degrees % PI_RAD == 0f) return this
-    val radians = Math.toRadians(degrees.toDouble())
-    // Top-left
-    val x1 = rotatePointX(left, top, centerX(), centerY(), radians)
-    val y1 = rotatePointY(left, top, centerX(), centerY(), radians)
-    // Top-right
-    val x2 = rotatePointX(right, top, centerX(), centerY(), radians)
-    val y2 = rotatePointY(right, top, centerX(), centerY(), radians)
-    // Bottom-right
-    val x3 = rotatePointX(right, bottom, centerX(), centerY(), radians)
-    val y3 = rotatePointY(right, bottom, centerX(), centerY(), radians)
-    // Bottom-left
-    val x4 = rotatePointX(left, bottom, centerX(), centerY(), radians)
-    val y4 = rotatePointY(left, bottom, centerX(), centerY(), radians)
 
-    set(
-        left = minOf(x1, x2, x3, x4),
-        top = minOf(y1, y2, y3, y4),
-        right = maxOf(x1, x2, x3, x4),
-        bottom = maxOf(y1, y2, y3, y4),
-    )
+    when {
+        degrees % PI_RAD == 0f -> Unit
+        degrees % 0.5f.piRad == 0f -> {
+            if (width() != height()) {
+                set(
+                    left = centerX() - height().half,
+                    top = centerY() + width().half,
+                    right = centerX() + height().half,
+                    bottom = centerY() - width().half,
+                )
+            }
+        }
+        else -> {
+            val alpha = Math.toRadians(degrees.toDouble())
+            val sinAlpha = sin(alpha)
+            val cosAlpha = cos(alpha)
+
+            val newWidth = abs(width() * cosAlpha) + abs(height() * sinAlpha)
+            val newHeight = abs(width() * sinAlpha) + abs(height() * cosAlpha)
+
+            set(
+                left = centerX() - newWidth.half,
+                top = centerY() + newHeight.half,
+                right = centerX() + newWidth.half,
+                bottom = centerY() - newHeight.half
+            )
+        }
+    }
+
     return this
 }
 
