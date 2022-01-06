@@ -21,8 +21,6 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
-private const val MAX_DEGREES = 180
-
 public fun RectF.updateBounds(
     left: Float = this.left,
     top: Float = this.top,
@@ -84,7 +82,7 @@ public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
 public fun RectF.rotate(degrees: Float): RectF {
 
     when {
-        degrees % MAX_DEGREES == 0f -> Unit
+        degrees % PI_RAD == 0f -> Unit
         degrees % 0.5f.piRad == 0f -> {
             if (width() != height()) {
                 set(
