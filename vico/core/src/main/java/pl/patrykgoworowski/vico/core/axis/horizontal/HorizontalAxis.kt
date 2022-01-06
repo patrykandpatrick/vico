@@ -191,7 +191,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         if (hasExtra(LABELS_KEY)) {
             getExtra(LABELS_KEY)
         } else {
-            (0 until ((chartModel.maxX - chartModel.minX) / chartModel.chartEntryModel.step).toInt()).map { index ->
+            (0 until ((chartModel.maxX - chartModel.minX + 1) / chartModel.chartEntryModel.step).toInt()).map { index ->
                 valueFormatter.formatValue(
                     value = chartModel.minX + (index * chartModel.chartEntryModel.step),
                     index = index,
