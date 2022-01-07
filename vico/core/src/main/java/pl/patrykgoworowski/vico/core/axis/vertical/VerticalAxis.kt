@@ -124,7 +124,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
             label ?: return@forEach
             val labelText = labels.getOrNull(index) ?: return@forEach
-            val textBounds = label.getTextBoundsWithPadding(context, labelText).translate(labelX, tickCenterY)
+            val textBounds = label.getTextBounds(context, labelText).translate(labelX, tickCenterY)
             if (
                 horizontalLabelPosition == Outside ||
                 isNotInRestrictedBounds(

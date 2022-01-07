@@ -71,7 +71,7 @@ public open class MarkerComponent(
     ): Unit = with(context) {
         val text = labelFormatter.getLabel(markedEntries)
         val entryX = markedEntries.averageOf { it.location.x }
-        val labelBounds = label.getTextBoundsWithPadding(context, text, outRect = tempBounds, includePadding = true)
+        val labelBounds = label.getTextBounds(context, text, outRect = tempBounds)
         val halfOfTextWidth = labelBounds.width().half
         val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
         this[MarkerCorneredShape.tickXKey] = entryX

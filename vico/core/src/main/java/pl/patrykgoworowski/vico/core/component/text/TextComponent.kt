@@ -20,6 +20,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Typeface
+import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
@@ -73,7 +74,7 @@ public open class TextComponent(
     public var color: Int by textPaint::color
     public var typeface: Typeface by textPaint::typeface
     public var rotationDegrees: Float = 0f
-    private var layout: StaticLayout = staticLayout("", textPaint, 0)
+    private var layout: Layout = staticLayout("", textPaint, 0)
 
     private val tempMeasureBounds = RectF()
 
@@ -124,6 +125,8 @@ public open class TextComponent(
                 y = textTopPosition + yCorrection,
             )
 
+            rotate(rotationDegrees, bounds.centerX(), bounds.centerY())
+
             background?.draw(
                 context = context,
                 left = bounds.left - padding.getLeftDp(isLtr).pixels,
@@ -131,8 +134,6 @@ public open class TextComponent(
                 right = bounds.right + padding.getRightDp(isLtr).pixels,
                 bottom = bounds.bottom + padding.bottomDp.pixels,
             )
-
-            rotate(rotationDegrees, bounds.centerX(), bounds.centerY())
 
             translate(
                 bounds.centerX() - initialBoundsWidth.half,
@@ -193,19 +194,15 @@ public open class TextComponent(
     public fun getWidth(
         context: MeasureContext,
         text: CharSequence,
-    ): Float = with(context) {
-        getTextBoundsWithPadding(context, text).width() + margins.horizontalDp.pixels
-    }
+    ): Float = getTextBounds(context, text).width()
 
     public fun getHeight(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
-    ): Float = with(context) {
-        getTextBoundsWithPadding(context, text, width).height() + margins.verticalDp.pixels
-    }
+    ): Float = getTextBounds(context, text, width).height()
 
-    public fun getTextBoundsWithPadding(
+    public fun getTextBounds(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
@@ -213,8 +210,8 @@ public open class TextComponent(
         includePadding: Boolean = true,
     ): RectF = with(context) {
         getLayout(text, fontScale, width).getBounds(outRect).apply {
-            right += if (includePadding) padding.horizontalDp.pixels else 0f
-            bottom += if (includePadding) padding.verticalDp.pixels else 0f
+            right += if (includePadding) (padding.horizontalDp + margins.horizontalDp).pixels else 0f
+            bottom += if (includePadding) (padding.verticalDp + margins.verticalDp).pixels else 0f
         }.rotate(rotationDegrees)
     }
 
