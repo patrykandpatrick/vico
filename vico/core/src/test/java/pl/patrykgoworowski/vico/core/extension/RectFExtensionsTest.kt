@@ -46,7 +46,7 @@ public class RectFExtensionsTest {
     }
 
     @Test
-    public fun `Given RectF coordinates are rotated resulting transformation has correct dimensions`() {
+    public fun `Given square is rotated by 45 degrees width increases`() {
         rect.set(0f, 0f, 10f, 10f)
         val squareDiagonalWidth = rect.width() * sqrt(2f)
         val originalCenterX = rect.centerX()
@@ -69,5 +69,15 @@ public class RectFExtensionsTest {
         Assert.assertEquals(top, rect.top)
         Assert.assertEquals(right, rect.right)
         Assert.assertEquals(bottom, rect.bottom)
+    }
+
+    @Test
+    public fun `Given RectF is rotated by 90 degrees width and height are interchanged`() {
+        val width = 5f
+        val height = 10f
+        rect.set(0, 0, width, height)
+        rect.rotate(90f)
+        Assert.assertEquals(rect.width(), height)
+        Assert.assertEquals(rect.height(), width)
     }
 }
