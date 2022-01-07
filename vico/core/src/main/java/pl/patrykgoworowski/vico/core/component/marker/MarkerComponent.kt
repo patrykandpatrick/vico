@@ -80,7 +80,7 @@ public open class MarkerComponent(
             context = context,
             text = text,
             textX = x,
-            textY = bounds.top - labelBounds.height(),
+            textY = bounds.top - labelBounds.height() - label.padding.verticalDp.pixels,
             verticalPosition = VerticalPosition.Top,
         )
     }
