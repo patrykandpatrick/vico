@@ -79,6 +79,8 @@ public fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right
 
 public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
 
+public fun RectF.copy(): RectF = RectF(this)
+
 public fun RectF.rotate(degrees: Float): RectF {
 
     when {

@@ -34,6 +34,7 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 import pl.patrykgoworowski.vico.core.draw.withCanvas
+import pl.patrykgoworowski.vico.core.extension.copy
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
 import pl.patrykgoworowski.vico.core.extension.rotate
@@ -103,20 +104,27 @@ public open class TextComponent(
 
             save()
 
-            val bounds = layout.getBounds(tempMeasureBounds)
-            val initialBoundsWidth = bounds.width()
-            val initialBoundsHeight = bounds.height()
+            val bounds = layout.getBounds(tempMeasureBounds).apply {
+                set(
+                    left - padding.getLeftDp(isLtr).pixels,
+                    top - padding.topDp.pixels,
+                    right + padding.getRightDp(isLtr).pixels,
+                    bottom + padding.bottomDp.pixels,
+                )
+            }
 
-            bounds.rotate(rotationDegrees)
+            val boundsPostRotation = bounds.copy().rotate(rotationDegrees)
+            val heightDelta = bounds.height() - boundsPostRotation.height()
+            val widthDelta = bounds.width() - boundsPostRotation.width()
 
-            val yCorrection = when (verticalPosition) {
-                VerticalPosition.Top -> (bounds.height() - initialBoundsHeight).half
-                VerticalPosition.Bottom -> (initialBoundsHeight - bounds.height()).half
+            val xCorrection = when (horizontalPosition) {
+                HorizontalPosition.Start -> -widthDelta.half
+                HorizontalPosition.End -> widthDelta.half
                 else -> 0f
             }
-            val xCorrection = when (horizontalPosition) {
-                HorizontalPosition.Start -> (bounds.width() - initialBoundsWidth).half
-                HorizontalPosition.End -> (initialBoundsWidth - bounds.width()).half
+            val yCorrection = when (verticalPosition) {
+                VerticalPosition.Top -> -heightDelta.half
+                VerticalPosition.Bottom -> heightDelta.half
                 else -> 0f
             }
 
@@ -129,15 +137,15 @@ public open class TextComponent(
 
             background?.draw(
                 context = context,
-                left = bounds.left - padding.getLeftDp(isLtr).pixels,
-                top = bounds.top - padding.topDp.pixels,
-                right = bounds.right + padding.getRightDp(isLtr).pixels,
-                bottom = bounds.bottom + padding.bottomDp.pixels,
+                left = bounds.left,
+                top = bounds.top,
+                right = bounds.right,
+                bottom = bounds.bottom,
             )
 
             translate(
-                bounds.centerX() - initialBoundsWidth.half,
-                bounds.centerY() - initialBoundsHeight.half,
+                bounds.left + padding.getLeftDp(isLtr).pixels,
+                bounds.top + padding.topDp.pixels,
             )
 
             layout.draw(this)
