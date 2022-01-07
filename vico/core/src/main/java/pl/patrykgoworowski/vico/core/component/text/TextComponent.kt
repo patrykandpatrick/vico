@@ -124,20 +124,15 @@ public open class TextComponent(
                 y = textTopPosition + yCorrection,
             )
 
-            // TODO Remove this debugging helper.
             background?.draw(
                 context = context,
-                left = bounds.left,
-                top = bounds.top,
-                right = bounds.right,
-                bottom = bounds.bottom,
+                left = bounds.left - padding.getLeftDp(isLtr).pixels,
+                top = bounds.top - padding.topDp.pixels,
+                right = bounds.right + padding.getRightDp(isLtr).pixels,
+                bottom = bounds.bottom + padding.bottomDp.pixels,
             )
 
-            rotate(
-                rotationDegrees,
-                bounds.centerX(),
-                bounds.centerY(),
-            )
+            rotate(rotationDegrees, bounds.centerX(), bounds.centerY())
 
             translate(
                 bounds.centerX() - initialBoundsWidth.half,
