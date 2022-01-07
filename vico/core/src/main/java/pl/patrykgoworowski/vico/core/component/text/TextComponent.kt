@@ -23,8 +23,6 @@ import android.graphics.Typeface
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
-import kotlin.math.ceil
-import kotlin.math.floor
 import kotlin.math.roundToInt
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
 import pl.patrykgoworowski.vico.core.component.Component
@@ -38,8 +36,6 @@ import pl.patrykgoworowski.vico.core.draw.withCanvas
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
 import pl.patrykgoworowski.vico.core.extension.rotate
-import pl.patrykgoworowski.vico.core.extension.rotatePointX
-import pl.patrykgoworowski.vico.core.extension.rotatePointY
 import pl.patrykgoworowski.vico.core.extension.translate
 import pl.patrykgoworowski.vico.core.text.getBounds
 import pl.patrykgoworowski.vico.core.text.staticLayout
@@ -97,75 +93,59 @@ public open class TextComponent(
     ): Unit = with(context) {
 
         if (text.isBlank()) return
+
         layout = getLayout(text, fontScale, width - padding.horizontalDp.wholePixels)
-        val layoutWidth = layout.widestLineWidth
-        val layoutHeight = layout.height
-
-        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layoutWidth)
-        val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layoutHeight.toFloat())
-
-        val bgLeft = textStartPosition - padding.getLeftDp(isLtr).pixels
-        val bgTop = floor(textTopPosition - layoutHeight.half - padding.topDp.pixels)
-        val bgRight = textStartPosition + layoutWidth + padding.getRightDp(isLtr).pixels
-        val bgBottom = ceil(textTopPosition + layoutHeight.half + padding.bottomDp.pixels)
+        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
+        val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layout.height.toFloat())
 
         context.withCanvas {
-            val centeredY = textTopPosition - layoutHeight.half
+
             save()
-            val bounds = layout
-                .getBounds(tempMeasureBounds)
-                .translate(textStartPosition, centeredY)
 
-            val boundsWidth = bounds.width()
-            val boundsHeight = bounds.height()
+            val bounds = layout.getBounds(tempMeasureBounds)
+            val initialBoundsWidth = bounds.width()
+            val initialBoundsHeight = bounds.height()
 
-            // TODO debugging helper
+            bounds.rotate(rotationDegrees)
+
+            val yCorrection = when (verticalPosition) {
+                VerticalPosition.Top -> (bounds.height() - initialBoundsHeight).half
+                VerticalPosition.Bottom -> (initialBoundsHeight - bounds.height()).half
+                else -> 0f
+            }
+            val xCorrection = when (horizontalPosition) {
+                HorizontalPosition.Start -> (bounds.width() - initialBoundsWidth).half
+                HorizontalPosition.End -> (initialBoundsWidth - bounds.width()).half
+                else -> 0f
+            }
+
+            bounds.translate(
+                x = textStartPosition + xCorrection,
+                y = textTopPosition + yCorrection,
+            )
+
+            // TODO Remove this debugging helper.
             background?.draw(
-                context,
+                context = context,
                 left = bounds.left,
                 top = bounds.top,
                 right = bounds.right,
                 bottom = bounds.bottom,
             )
 
-            if (rotationDegrees != 0f) {
-                bounds.rotate(rotationDegrees)
-                rotate(rotationDegrees, bounds.centerX(), bounds.centerY())
-            }
+            rotate(
+                rotationDegrees,
+                bounds.centerX(),
+                bounds.centerY(),
+            )
 
             translate(
-                textStartPosition -
-                    rotatePointX(
-                        0f,
-                        (bounds.width() - boundsWidth) / 2,
-                        radians = Math.toRadians(rotationDegrees.toDouble())
-                    ),
-                centeredY -
-                    rotatePointY(
-                        (bounds.height() - boundsHeight) / 2,
-                        0f,
-                        radians = Math.toRadians(rotationDegrees.toDouble())
-                    ),
+                bounds.centerX() - initialBoundsWidth.half,
+                bounds.centerY() - initialBoundsHeight.half,
             )
-//            background?.draw(
-//                context,
-//                left = -padding.getLeftDp(isLtr).pixels,
-//                top = -padding.topDp.pixels,
-//                right = boundsWidth + padding.getRightDp(isLtr).pixels,
-//                bottom = boundsHeight + padding.bottomDp.pixels,
-//            )
 
             layout.draw(this)
             restore()
-
-            // TODO debugging helper
-            background?.draw(
-                context,
-                left = bounds.left,
-                top = bounds.top,
-                right = bounds.right,
-                bottom = bounds.bottom,
-            )
         }
     }
 
@@ -200,11 +180,11 @@ public open class TextComponent(
     ): Float = with(context) {
         when (this@getTextTopPosition) {
             VerticalPosition.Top ->
-                textY + layoutHeight.half + padding.topDp.pixels + margins.topDp.pixels
+                textY + padding.topDp.pixels + margins.topDp.pixels
             VerticalPosition.Center ->
-                textY
+                textY - layoutHeight.half
             VerticalPosition.Bottom ->
-                textY - layoutHeight.half - padding.bottomDp.pixels - margins.bottomDp.pixels
+                textY - layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
         }
     }
 
