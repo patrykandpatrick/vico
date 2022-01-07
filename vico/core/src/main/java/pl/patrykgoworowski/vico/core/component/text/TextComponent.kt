@@ -37,6 +37,7 @@ import pl.patrykgoworowski.vico.core.draw.withCanvas
 import pl.patrykgoworowski.vico.core.extension.copy
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.lineHeight
+import pl.patrykgoworowski.vico.core.extension.piRad
 import pl.patrykgoworowski.vico.core.extension.rotate
 import pl.patrykgoworowski.vico.core.extension.translate
 import pl.patrykgoworowski.vico.core.text.getBounds
@@ -95,8 +96,9 @@ public open class TextComponent(
     ): Unit = with(context) {
 
         if (text.isBlank()) return
-
         layout = getLayout(text, fontScale, width - padding.horizontalDp.wholePixels)
+
+        val shouldRotate = rotationDegrees % 2f.piRad != 0f
         val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
         val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layout.height.toFloat())
 
@@ -113,19 +115,25 @@ public open class TextComponent(
                 )
             }
 
-            val boundsPostRotation = bounds.copy().rotate(rotationDegrees)
-            val heightDelta = bounds.height() - boundsPostRotation.height()
-            val widthDelta = bounds.width() - boundsPostRotation.width()
+            var xCorrection = 0f
+            var yCorrection = 0f
 
-            val xCorrection = when (horizontalPosition) {
-                HorizontalPosition.Start -> -widthDelta.half
-                HorizontalPosition.End -> widthDelta.half
-                else -> 0f
-            }
-            val yCorrection = when (verticalPosition) {
-                VerticalPosition.Top -> -heightDelta.half
-                VerticalPosition.Bottom -> heightDelta.half
-                else -> 0f
+            if (shouldRotate) {
+
+                val boundsPostRotation = bounds.copy().rotate(rotationDegrees)
+                val heightDelta = bounds.height() - boundsPostRotation.height()
+                val widthDelta = bounds.width() - boundsPostRotation.width()
+
+                xCorrection = when (horizontalPosition) {
+                    HorizontalPosition.Start -> -widthDelta.half
+                    HorizontalPosition.End -> widthDelta.half
+                    else -> 0f
+                }
+                yCorrection = when (verticalPosition) {
+                    VerticalPosition.Top -> -heightDelta.half
+                    VerticalPosition.Bottom -> heightDelta.half
+                    else -> 0f
+                }
             }
 
             bounds.translate(
@@ -133,7 +141,9 @@ public open class TextComponent(
                 y = textTopPosition + yCorrection,
             )
 
-            rotate(rotationDegrees, bounds.centerX(), bounds.centerY())
+            if (shouldRotate) {
+                rotate(rotationDegrees, bounds.centerX(), bounds.centerY())
+            }
 
             background?.draw(
                 context = context,
