@@ -117,7 +117,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var isZoomEnabled: Boolean = true
 
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
-        tryUpdateBoundsAndInvalidate(chart, model)
+        tryInvalidate(chart, model)
     }
 
     public var model: Model? = null
@@ -136,14 +136,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     public fun setModel(model: Model) {
         this.model = model
-        tryUpdateBoundsAndInvalidate(chart, model)
+        tryInvalidate(chart, model)
     }
 
-    private fun tryUpdateBoundsAndInvalidate(chart: Chart<Model>?, model: Model?) {
+    private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
             chart.setToAxisModel(chartModel, model)
             if (ViewCompat.isAttachedToWindow(this)) {
-                updateBounds()
                 invalidate()
             }
         }
@@ -170,7 +169,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         measureContext.zoom = newZoom
         scrollHandler.currentScroll += zoomedTransformationAxisX - transformationAxisX
-        updateBounds()
         invalidate()
     }
 
@@ -179,6 +177,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun onDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
+        updateBounds()
         motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
@@ -218,7 +217,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             width - paddingRight,
             height - paddingBottom
         )
-        updateBounds()
     }
 
     private fun updateBounds() = withChartAndModel { chart, _ ->
