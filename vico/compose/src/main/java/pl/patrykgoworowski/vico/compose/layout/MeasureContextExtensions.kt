@@ -29,6 +29,7 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
+    horizontalScroll: Float,
     zoom: Float,
     chartModel: ChartModel,
 ): MeasureContext {
@@ -39,6 +40,7 @@ public fun getMeasureContext(
             override var fontScale: Float = 0f
             override var isLtr: Boolean = true
             override var isHorizontalScrollEnabled: Boolean = isHorizontalScrollEnabled
+            override var horizontalScroll: Float = horizontalScroll
             override var zoom: Float = zoom
         }
     }
@@ -46,6 +48,7 @@ public fun getMeasureContext(
     context.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
     context.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     context.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+    context.horizontalScroll = horizontalScroll
     context.zoom = zoom
     return context
 }

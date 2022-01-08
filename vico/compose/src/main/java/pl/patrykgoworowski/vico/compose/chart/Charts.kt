@@ -108,6 +108,7 @@ public fun <Model : ChartEntryModel> Chart(
     val zoom = remember { mutableStateOf(1f) }
     val measureContext = getMeasureContext(
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
+        horizontalScroll = horizontalScroll.value,
         zoom = zoom.value,
         chartModel = chartModel,
     )
@@ -154,7 +155,6 @@ public fun <Model : ChartEntryModel> Chart(
             canvas = drawContext.canvas.nativeCanvas,
             colors = chartColors,
             measureContext = measureContext,
-            horizontalScroll = horizontalScroll.value,
             markerTouchPoint = markerTouchPoint.value,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
             chartModel = chartModel,

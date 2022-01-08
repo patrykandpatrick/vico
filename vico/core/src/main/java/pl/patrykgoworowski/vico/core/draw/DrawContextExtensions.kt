@@ -43,6 +43,7 @@ public fun drawContext(
     override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
+    override val horizontalScroll: Float = 0f
     override val zoom: Float = zoom
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {

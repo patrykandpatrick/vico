@@ -31,7 +31,6 @@ public fun chartDrawContext(
     canvas: Canvas,
     colors: Colors,
     measureContext: MeasureContext,
-    horizontalScroll: Float,
     markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
     chartModel: ChartModel,
@@ -41,7 +40,7 @@ public fun chartDrawContext(
     override val chartModel: ChartModel = chartModel
     override val segmentProperties: SegmentProperties = segmentProperties
     override val markerTouchPoint: Point? = markerTouchPoint
-    override val horizontalScroll: Float = horizontalScroll
+    override val horizontalScroll: Float = measureContext.horizontalScroll
     override val density: Float = measureContext.density
     override val fontScale: Float = measureContext.fontScale
     override val isLtr: Boolean = measureContext.isLtr

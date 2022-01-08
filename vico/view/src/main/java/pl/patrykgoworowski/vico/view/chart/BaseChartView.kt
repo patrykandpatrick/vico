@@ -88,6 +88,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         fontScale = context.fontScale,
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
+        horizontalScroll = scrollHandler.currentScroll,
         zoom = 1f,
         chartModel = chartModel,
     )
@@ -183,11 +184,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             scrollHandler.handleScroll(scroller.currX.toFloat())
             ViewCompat.postInvalidateOnAnimation(this)
         }
+        measureContext.horizontalScroll = scrollHandler.currentScroll
         val drawContext = chartDrawContext(
             canvas = canvas,
             colors = context.colors,
             measureContext = measureContext,
-            horizontalScroll = scrollHandler.currentScroll,
             markerTouchPoint = markerTouchPoint,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
             chartModel = chartModel,

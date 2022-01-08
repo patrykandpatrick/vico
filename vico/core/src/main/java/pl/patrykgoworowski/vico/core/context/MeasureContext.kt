@@ -24,6 +24,7 @@ public interface MeasureContext : Extras {
     public val fontScale: Float
     public val isLtr: Boolean
     public val isHorizontalScrollEnabled: Boolean
+    public val horizontalScroll: Float
     public val zoom: Float
 
     public val Float.pixels: Float
