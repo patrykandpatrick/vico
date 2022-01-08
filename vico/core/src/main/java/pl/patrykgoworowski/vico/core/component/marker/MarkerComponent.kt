@@ -20,6 +20,7 @@ import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
+import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.cornered.MarkerCorneredShape
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
@@ -27,6 +28,7 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.averageOf
 import pl.patrykgoworowski.vico.core.extension.half
+import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.marker.MarkerLabelFormatter
@@ -38,6 +40,9 @@ public open class MarkerComponent(
 ) : Marker {
 
     private val tempBounds = RectF()
+
+    private val TextComponent.tickSizeDp: Float
+        get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
     public var indicatorSizeDp: Float = 0f
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
@@ -80,7 +85,7 @@ public open class MarkerComponent(
             context = context,
             text = text,
             textX = x,
-            textY = bounds.top - labelBounds.height() - label.padding.verticalDp.pixels,
+            textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
             verticalPosition = VerticalPosition.Top,
         )
     }
@@ -116,7 +121,7 @@ public open class MarkerComponent(
     override fun getVerticalInsets(
         context: MeasureContext,
         outInsets: Insets
-    ) {
-        outInsets.top = label.getHeight(context)
+    ): Unit = with(context) {
+        outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
     }
 }

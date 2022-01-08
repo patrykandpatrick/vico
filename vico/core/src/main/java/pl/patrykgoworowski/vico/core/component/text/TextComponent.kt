@@ -107,12 +107,10 @@ public open class TextComponent(
             save()
 
             val bounds = layout.getBounds(tempMeasureBounds).apply {
-                set(
-                    left - padding.getLeftDp(isLtr).pixels,
-                    top - padding.topDp.pixels,
-                    right + padding.getRightDp(isLtr).pixels,
-                    bottom + padding.bottomDp.pixels,
-                )
+                left -= padding.getLeftDp(isLtr).pixels
+                top -= padding.topDp.pixels
+                right += padding.getRightDp(isLtr).pixels
+                bottom += padding.bottomDp.pixels
             }
 
             var xCorrection = 0f
