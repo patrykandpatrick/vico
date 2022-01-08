@@ -90,7 +90,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-        val scrollX = horizontalScroll
         val clipRestoreCount = canvas.save()
         val step = chartModel.chartEntryModel.step
 
@@ -104,11 +103,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
         val tickCount = tickType.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
-        val scrollAdjustment = (scrollX / tickDrawStep).toInt()
+        val scrollAdjustment = (horizontalScroll / tickDrawStep).toInt()
         var textDrawCenter =
-            bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
+            bounds.left + tickDrawStep.half - horizontalScroll + (tickDrawStep * scrollAdjustment)
         var tickDrawCenter =
-            tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
+            tickType.getTickDrawCenter(horizontalScroll, tickDrawStep, scrollAdjustment, textDrawCenter)
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
@@ -188,9 +187,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }.toInt()
 
     private fun MeasureContext.getLabels(): List<String> =
-        if (hasExtra(LABELS_KEY)) {
-            getExtra(LABELS_KEY)
-        } else {
+        getExtra(LABELS_KEY) ?: run {
             (0 until ((chartModel.maxX - chartModel.minX + 1) / chartModel.chartEntryModel.step).toInt()).map { index ->
                 valueFormatter.formatValue(
                     value = chartModel.minX + (index * chartModel.chartEntryModel.step),
