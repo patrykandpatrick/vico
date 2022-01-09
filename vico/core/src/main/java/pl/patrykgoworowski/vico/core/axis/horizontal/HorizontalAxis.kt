@@ -28,8 +28,6 @@ import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
-private val LABELS_KEY = "${HorizontalAxis::class.simpleName}_labels_key"
-
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
 ) : Axis<Position>() {
@@ -124,7 +122,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             if (index < entryLength) {
                 label?.drawText(
                     context = context,
-                    text = getLabels().getOrNull(valueIndex.toInt()) ?: "",
+                    text = valueFormatter.formatValue(valueIndex, index, context.chartModel),
                     textX = textDrawCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -181,30 +179,24 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getDesiredHeight(context: MeasureContext): Float = with(context) {
         when (val constraint = sizeConstraint) {
-            is SizeConstraint.Auto -> {
-                val maxLabelHeight = label?.let { label ->
-                    getLabels().maxOf { labelText -> label.getHeight(context = this, text = labelText).orZero }
-                }
-                ((if (position.isBottom) axisThickness else 0f) + tickLength + maxLabelHeight.orZero)
-                    .coerceAtLeast(constraint.minSizeDp.pixels)
-                    .coerceAtMost(constraint.maxSizeDp.pixels)
-            }
+            is SizeConstraint.Auto -> (
+                label?.let { label ->
+                    getLabelsToMeasure().maxOf { labelText -> label.getHeight(context = this, text = labelText).orZero }
+                }.orZero + (if (position.isBottom) axisThickness else 0f) + tickLength
+                ).coerceAtLeast(constraint.minSizeDp.pixels)
+                .coerceAtMost(constraint.maxSizeDp.pixels)
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> (context.height * constraint.fraction)
             is SizeConstraint.TextWidth -> label?.getHeight(context = this, text = constraint.text).orZero
         }
     }
 
-    private fun MeasureContext.getLabels(): List<String> =
-        getExtra(LABELS_KEY) ?: run {
-            (0 until ((chartModel.maxX - chartModel.minX + 1) / chartModel.chartEntryModel.step).toInt()).map { index ->
-                valueFormatter.formatValue(
-                    value = chartModel.minX + (index * chartModel.chartEntryModel.step),
-                    index = index,
-                    chartModel = chartModel,
-                )
-            }.also { labels -> putExtra(LABELS_KEY, labels) }
-        }
+    private fun MeasureContext.getLabelsToMeasure(): List<String> =
+        listOf(
+            chartModel.minX,
+            (chartModel.maxX - chartModel.minX).half,
+            chartModel.maxX,
+        ).mapIndexed { index, x -> valueFormatter.formatValue(value = x, index = index, chartModel = chartModel) }
 
     override fun getDesiredWidth(context: MeasureContext, labels: List<String>): Float = 0f
 
