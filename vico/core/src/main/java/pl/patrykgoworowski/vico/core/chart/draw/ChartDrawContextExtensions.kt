@@ -17,6 +17,7 @@
 package pl.patrykgoworowski.vico.core.chart.draw
 
 import android.graphics.Canvas
+import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.Colors
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
@@ -35,6 +36,7 @@ public fun chartDrawContext(
     segmentProperties: SegmentProperties,
     chartModel: ChartModel,
 ): ChartDrawContext = object : ChartDrawContext, Extras by measureContext {
+    override val canvasBounds: RectF = measureContext.canvasBounds
     override var canvas: Canvas = canvas
     override val colors: Colors = colors
     override val chartModel: ChartModel = chartModel

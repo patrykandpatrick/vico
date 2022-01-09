@@ -174,17 +174,26 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 if (tickType == TickType.Minor) tickThickness.half
                 else 0f
             )
-            top = if (position.isTop) getDesiredHeight(context).toFloat() else 0f
-            bottom = if (position.isBottom) getDesiredHeight(context).toFloat() else 0f
+            top = if (position.isTop) getDesiredHeight(context) else 0f
+            bottom = if (position.isBottom) getDesiredHeight(context) else 0f
         }
     }
 
-    override fun getDesiredHeight(context: MeasureContext): Int = with(context) {
-        val maxLabelHeight = label?.let { label ->
-            getLabels().maxOf { labelText -> label.getHeight(context = this, text = labelText).orZero }
+    override fun getDesiredHeight(context: MeasureContext): Float = with(context) {
+        when (val constraint = sizeConstraint) {
+            is SizeConstraint.Auto -> {
+                val maxLabelHeight = label?.let { label ->
+                    getLabels().maxOf { labelText -> label.getHeight(context = this, text = labelText).orZero }
+                }
+                ((if (position.isBottom) axisThickness else 0f) + tickLength + maxLabelHeight.orZero)
+                    .coerceAtLeast(constraint.minSizeDp.pixels)
+                    .coerceAtMost(constraint.maxSizeDp.pixels)
+            }
+            is SizeConstraint.Exact -> constraint.sizeDp.pixels
+            is SizeConstraint.Fraction -> (context.height * constraint.fraction)
+            is SizeConstraint.TextWidth -> label?.getHeight(context = this, text = constraint.text).orZero
         }
-        (if (position.isBottom) axisThickness else 0f) + tickLength + maxLabelHeight.orZero
-    }.toInt()
+    }
 
     private fun MeasureContext.getLabels(): List<String> =
         getExtra(LABELS_KEY) ?: run {

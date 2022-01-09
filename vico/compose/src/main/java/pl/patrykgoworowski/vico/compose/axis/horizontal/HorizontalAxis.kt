@@ -16,13 +16,20 @@
 
 package pl.patrykgoworowski.vico.compose.axis.horizontal
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.vico.compose.axis.axisGuidelineComponent
 import pl.patrykgoworowski.vico.compose.axis.axisLabelComponent
 import pl.patrykgoworowski.vico.compose.axis.axisLineComponent
 import pl.patrykgoworowski.vico.compose.axis.axisTickComponent
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
+import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
@@ -39,6 +46,7 @@ public fun topAxis(
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -46,6 +54,7 @@ public fun topAxis(
     this.guideline = guideline
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
+    this.sizeConstraint = sizeConstraint
 }
 
 @Composable
@@ -56,11 +65,21 @@ public fun bottomAxis(
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
+    val infiniteTransition = rememberInfiniteTransition()
+    val degrees by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 5_000, easing = LinearEasing)
+        )
+    )
     this.label = label
     this.axis = axis
     this.tick = tick
     this.guideline = guideline
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
+    this.sizeConstraint = sizeConstraint
 }

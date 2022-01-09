@@ -141,6 +141,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     textY = tickCenterY,
                     horizontalPosition = textHorizontalPosition,
                     verticalPosition = verticalLabelPosition.textPosition,
+                    width = (bounds.width() - tickLength - axisThickness.half).toInt()
                 )
             }
         }
@@ -207,27 +208,32 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         )
     }
 
-    override fun getDesiredHeight(context: MeasureContext): Int = 0
+    override fun getDesiredHeight(context: MeasureContext): Float = 0f
 
     /**
-     * Calculates a width of this [VerticalAxis] by calculating:
-     * — Widest label width from passed [labels],
-     * — [axisThickness],
-     * — [tickLengthDp].
-     * @return Width of this [VerticalAxis] that should be enough to fit its contents
-     * in [drawBehindChart] and [drawAboveChart] functions.
+     * Calculates a width of this [VerticalAxis] by using constraints set in [sizeConstraint].
      */
     override fun getDesiredWidth(
         context: MeasureContext,
         labels: List<String>,
     ): Float = with(context) {
-        val maxLabelAndTickWidth = when (horizontalLabelPosition) {
-            Outside -> label?.let { label ->
-                labels.maxOf { label.getWidth(this, it) }
-            }.orZero + tickLength
-            Inside -> 0f
+        when (val constraint = sizeConstraint) {
+            is SizeConstraint.Auto ->
+                (getMaxLabelWidth(labels) + axisThickness.half + tickLength)
+                    .coerceAtLeast(constraint.minSizeDp.pixels)
+                    .coerceAtMost(constraint.maxSizeDp.pixels)
+            is SizeConstraint.Exact ->
+                constraint.sizeDp.pixels
+            is SizeConstraint.Fraction ->
+                (context.width * constraint.fraction)
+            is SizeConstraint.TextWidth ->
+                label?.getWidth(context = this, text = constraint.text).orZero + tickLength + axisThickness.half
         }
-        return axisThickness.half + maxLabelAndTickWidth
+    }
+
+    private fun MeasureContext.getMaxLabelWidth(labels: List<String>): Float = when (horizontalLabelPosition) {
+        Outside -> label?.let { label -> labels.maxOf { label.getWidth(this, it) } }.orZero
+        Inside -> 0f
     }
 
     public enum class HorizontalLabelPosition {

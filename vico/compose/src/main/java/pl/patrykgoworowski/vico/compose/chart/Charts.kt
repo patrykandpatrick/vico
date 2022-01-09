@@ -111,6 +111,7 @@ public fun <Model : ChartEntryModel> Chart(
         horizontalScroll = horizontalScroll.value,
         zoom = zoom.value,
         chartModel = chartModel,
+        canvasBounds = bounds,
     )
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)

@@ -23,10 +23,10 @@ import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormat
 import pl.patrykgoworowski.vico.core.axis.formatter.DefaultAxisFormatter
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.setAll
-import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
@@ -56,6 +56,8 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     override var guideline: LineComponent? = null
     override var tickLengthDp: Float = 0f
 
+    public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
+
     override var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
 
     override fun setChartBounds(left: Number, top: Number, right: Number, bottom: Number) {
@@ -82,13 +84,64 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
         public var tick: LineComponent? = builder?.tick
 
-        public var tickLengthDp: Float =
-            builder?.tickLengthDp ?: Dimens.AXIS_TICK_LENGTH
+        public var tickLengthDp: Float = builder?.tickLengthDp ?: Dimens.AXIS_TICK_LENGTH
 
         public var guideline: LineComponent? = builder?.guideline
 
         public var valueFormatter: AxisValueFormatter =
             builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
+
+        public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
+    }
+
+    /**
+     * Size constraint of [Axis]:
+     * - in [pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis] defines width.
+     * - in [pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis] defines height.
+     *
+     * @see [pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis]
+     * @see [pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis]
+     */
+    public sealed class SizeConstraint {
+
+        /**
+         * The axis will measure itself and use as much space as it needs, but not less than [minSizeDp] and no more
+         * than [maxSizeDp].
+         */
+        public class Auto(
+            public val minSizeDp: Float = 0f,
+            public val maxSizeDp: Float = Float.MAX_VALUE,
+        ) : SizeConstraint()
+
+        /**
+         * The axis size will be exactly [sizeDp].
+         */
+        public class Exact(public val sizeDp: Float) : SizeConstraint()
+
+        /**
+         * The axis size will take an exact fraction of available size:
+         * - in [pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis] the width.
+         * - in [pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis] the height.
+         */
+        public class Fraction(public val fraction: Float) : SizeConstraint() {
+            init {
+                if (fraction !in MIN..MAX) {
+                    throw IllegalArgumentException("Expected a value in range of $MIN to $MAX. Got $fraction.")
+                }
+            }
+
+            private companion object {
+                const val MIN = 0f
+                const val MAX = 0.5f
+            }
+        }
+
+        /**
+         * The axis will measure actual width of given [text] and use it as its size.
+         * [pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis] will append the width of axis line,
+         * the tick length, as well as [TextComponent] horizontal padding and margins.
+         */
+        public class TextWidth(public val text: String) : SizeConstraint()
     }
 }
 
@@ -102,5 +155,6 @@ public fun <T : AxisPosition, A : Axis<T>> Axis.Builder.setTo(axis: A): A {
     axis.label = label
     axis.tickLengthDp = tickLengthDp
     axis.valueFormatter = valueFormatter
+    axis.sizeConstraint = sizeConstraint
     return axis
 }

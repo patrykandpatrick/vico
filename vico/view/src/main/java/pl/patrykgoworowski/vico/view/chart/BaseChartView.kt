@@ -84,6 +84,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private val axisManager = AxisManager()
     private val measureContext = MutableMeasureContext(
+        canvasBounds = contentBounds,
         density = context.density,
         fontScale = context.fontScale,
         isLtr = context.isLtr,

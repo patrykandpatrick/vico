@@ -83,5 +83,5 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
 
     public fun setRestrictedBounds(vararg bounds: RectF?)
 
-    public fun getDesiredHeight(context: MeasureContext): Int
+    public fun getDesiredHeight(context: MeasureContext): Float
 }

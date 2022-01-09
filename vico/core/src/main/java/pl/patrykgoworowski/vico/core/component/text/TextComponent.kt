@@ -96,7 +96,7 @@ public open class TextComponent(
     ): Unit = with(context) {
 
         if (text.isBlank()) return
-        layout = getLayout(text, fontScale, width - padding.horizontalDp.wholePixels)
+        layout = getLayout(text, fontScale, width - (padding.horizontalDp + margins.horizontalDp).wholePixels)
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
         val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
@@ -236,7 +236,7 @@ public open class TextComponent(
         fontScale: Float,
         width: Int = Int.MAX_VALUE,
     ): StaticLayout {
-        val key = LAYOUT_KEY_PREFIX + text
+        val key = LAYOUT_KEY_PREFIX + text + width
         return if (hasExtra(key)) {
             getExtra(key)
         } else {

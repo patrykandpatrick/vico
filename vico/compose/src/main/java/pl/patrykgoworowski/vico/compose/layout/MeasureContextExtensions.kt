@@ -16,6 +16,7 @@
 
 package pl.patrykgoworowski.vico.compose.layout
 
+import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
@@ -32,9 +33,11 @@ public fun getMeasureContext(
     horizontalScroll: Float,
     zoom: Float,
     chartModel: ChartModel,
+    canvasBounds: RectF,
 ): MeasureContext {
     val context = remember {
         object : MeasureContext, Extras by DefaultExtras() {
+            override val canvasBounds: RectF = canvasBounds
             override var chartModel: ChartModel = chartModel
             override var density: Float = 0f
             override var fontScale: Float = 0f
