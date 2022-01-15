@@ -110,7 +110,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     override var padding: MutableDimensions = emptyDimensions()
 
     /**
-     * The margin (space) between each side of the [background] and the .
+     * The margin (space) between each side of the [background] and the x and y coordinates.
      * It is applied whether or not [background] is null.
      */
     override var margins: MutableDimensions = emptyDimensions()
