@@ -35,7 +35,7 @@ public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float
+        bottom: Float,
     ): Shader {
         val tempPaint = Paint()
         brush.applyTo(

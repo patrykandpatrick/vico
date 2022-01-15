@@ -26,7 +26,7 @@ public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
     start = all,
     top = all,
     end = all,
-    bottom = all
+    bottom = all,
 )
 
 @Composable
@@ -37,7 +37,7 @@ public fun dimensionsOf(
     startDp = horizontal.value,
     topDp = vertical.value,
     endDp = horizontal.value,
-    bottomDp = vertical.value
+    bottomDp = vertical.value,
 )
 
 @Composable
@@ -50,5 +50,5 @@ public fun dimensionsOf(
     startDp = start.value,
     topDp = top.value,
     endDp = end.value,
-    bottomDp = bottom.value
+    bottomDp = bottom.value,
 )

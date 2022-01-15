@@ -72,7 +72,7 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
             bounds.left,
             bounds.top,
             bounds.right,
-            bounds.bottom
+            bounds.bottom,
         )
     }
 
