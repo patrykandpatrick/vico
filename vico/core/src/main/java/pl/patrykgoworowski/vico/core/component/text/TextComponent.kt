@@ -43,7 +43,6 @@ import pl.patrykgoworowski.vico.core.text.getBounds
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
 
-
 private const val TEXT_MEASUREMENT_CHAR = ""
 private const val LAYOUT_KEY_PREFIX = "layout_"
 
