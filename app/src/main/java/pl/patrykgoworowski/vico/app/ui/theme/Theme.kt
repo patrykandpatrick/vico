@@ -25,24 +25,24 @@ import androidx.compose.runtime.Composable
 private val DarkColorPalette = darkColors(
     primary = purple,
     primaryVariant = trypanPurple,
-    secondary = flickrPink
+    secondary = flickrPink,
 )
 
 private val LightColorPalette = lightColors(
     primary = flickrPink,
     primaryVariant = byzantine,
-    secondary = purple
+    secondary = purple,
 )
 
 @Composable
 internal fun MainTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colors = if (darkTheme) DarkColorPalette else LightColorPalette
 
     MaterialTheme(
         colors = colors,
-        content = content
+        content = content,
     )
 }

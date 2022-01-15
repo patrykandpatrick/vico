@@ -90,7 +90,7 @@ public open class CorneredShape(
             x2 = left + tL,
             y2 = top,
             cornerLocation = CornerLocation.TopLeft,
-            path
+            path,
         )
 
         path.lineTo(right - tR, top)
@@ -100,7 +100,7 @@ public open class CorneredShape(
             x2 = right,
             y2 = top + tR,
             cornerLocation = CornerLocation.TopRight,
-            path
+            path,
         )
 
         path.lineTo(right, bottom - bR)
@@ -110,7 +110,7 @@ public open class CorneredShape(
             x2 = right - bR,
             y2 = bottom,
             cornerLocation = CornerLocation.BottomRight,
-            path
+            path,
         )
 
         path.lineTo(left + bL, bottom)
@@ -120,7 +120,7 @@ public open class CorneredShape(
             x2 = left,
             y2 = bottom - bL,
             cornerLocation = CornerLocation.BottomLeft,
-            path
+            path,
         )
         path.close()
     }

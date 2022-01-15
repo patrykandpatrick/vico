@@ -49,7 +49,7 @@ public fun Modifier.chartTouchEvent(
             scrollable(
                 state = state,
                 orientation = Orientation.Horizontal,
-                interactionSource = interactionSource
+                interactionSource = interactionSource,
             )
         } ?: pointerInput(Unit, Unit) {
             detectDragGestures(

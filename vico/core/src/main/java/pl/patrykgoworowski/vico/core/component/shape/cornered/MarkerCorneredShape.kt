@@ -65,7 +65,7 @@ public open class MarkerCorneredShape(
                 left = left,
                 top = top,
                 right = right,
-                bottom = bottom
+                bottom = bottom,
             )
             val tickSize = context.toPixels(tickSizeDp)
             val availableCornerSize = minOf(right - left, bottom - top)

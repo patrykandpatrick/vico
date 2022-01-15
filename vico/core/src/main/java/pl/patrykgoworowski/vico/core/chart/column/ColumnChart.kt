@@ -42,7 +42,7 @@ public open class ColumnChart(
     public var columns: List<LineComponent>,
     public var spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
     public var innerSpacingDp: Float = Dimens.COLUMN_INSIDE_SPACING,
-    public var mergeMode: MergeMode = MergeMode.Grouped
+    public var mergeMode: MergeMode = MergeMode.Grouped,
 ) : BaseChart<ChartEntryModel>() {
 
     public constructor(
@@ -170,7 +170,7 @@ public open class ColumnChart(
 
     override fun getSegmentProperties(
         context: MeasureContext,
-        model: ChartEntryModel
+        model: ChartEntryModel,
     ): SegmentProperties = with(context) {
         calculateDrawSegmentSpecIfNeeded(model)
         segmentProperties.apply {

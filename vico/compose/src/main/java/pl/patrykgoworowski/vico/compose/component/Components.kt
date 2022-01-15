@@ -132,7 +132,7 @@ public fun dashedShape(
     shape: Shape,
     dashLength: Dp,
     gapLength: Dp,
-    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize
+    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
 ): DashedShape = DashedShape(
     shape = shape.chartShape(),
     dashLengthDp = dashLength.value,
@@ -144,7 +144,7 @@ public fun dashedShape(
     shape: ChartShape,
     dashLength: Dp,
     gapLength: Dp,
-    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize
+    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
 ): DashedShape = DashedShape(
     shape = shape,
     dashLengthDp = dashLength.value,

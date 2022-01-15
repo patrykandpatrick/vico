@@ -27,7 +27,7 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
-    zoom: Float
+    zoom: Float,
 ): MeasureContext = object : MeasureContext, Extras by DefaultExtras() {
     override val density: Float = LocalDensity.current.density
     override val fontScale: Float = LocalDensity.current.fontScale * density

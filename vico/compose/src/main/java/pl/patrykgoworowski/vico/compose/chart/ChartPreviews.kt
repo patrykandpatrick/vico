@@ -66,7 +66,7 @@ public fun PreviewColumnChartLeft() {
     heightDp = 100,
     widthDp = 100,
     showBackground = true,
-    backgroundColor = 0xFFFFFF
+    backgroundColor = 0xFFFFFF,
 )
 @Composable
 public fun PreviewColumnChartTop() {
@@ -101,7 +101,7 @@ public fun PreviewColumnChartBottom() {
     "Column Chart Bottom-Left",
     heightDp = 100,
     showBackground = true,
-    backgroundColor = 0xFFFFFF
+    backgroundColor = 0xFFFFFF,
 )
 @Composable
 public fun PreviewColumnChartBottomLeft() {
@@ -112,7 +112,7 @@ public fun PreviewColumnChartBottomLeft() {
     "Column Chart Top-Right",
     heightDp = 100,
     showBackground = true,
-    backgroundColor = 0xFFFFFF
+    backgroundColor = 0xFFFFFF,
 )
 @Composable
 public fun PreviewColumnChartTopRight() {
@@ -124,7 +124,7 @@ public fun PreviewColumnChartTopRight() {
     heightDp = 100,
     widthDp = 100,
     showBackground = true,
-    backgroundColor = 0xFFFFFF
+    backgroundColor = 0xFFFFFF,
 )
 @Composable
 public fun PreviewColumnChartAll() {

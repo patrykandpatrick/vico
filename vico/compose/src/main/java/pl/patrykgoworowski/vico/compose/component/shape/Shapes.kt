@@ -97,7 +97,7 @@ public fun Path.addRoundRect(
     right: Float,
     bottom: Float,
     rect: RoundRect,
-    radii: FloatArray
+    radii: FloatArray,
 ) {
     radii[0] = rect.topLeftCornerRadius.x
     radii[1] = rect.topLeftCornerRadius.y

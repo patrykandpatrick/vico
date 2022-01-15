@@ -64,7 +64,7 @@ public class ComponentShader(
         context: DrawContext,
         x: Float,
         y: Float,
-        size: Float
+        size: Float,
     ) {
         draw(context, x, y, x + size, y + size)
     }
