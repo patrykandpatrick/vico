@@ -126,7 +126,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     textX = textDrawCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
-                    width = tickDrawStep.toInt(),
+                    maxTextWidth = tickDrawStep.toInt(),
                 )
 
                 valueIndex += step

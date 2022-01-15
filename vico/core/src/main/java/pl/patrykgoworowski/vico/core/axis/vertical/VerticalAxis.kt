@@ -141,7 +141,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     textY = tickCenterY,
                     horizontalPosition = textHorizontalPosition,
                     verticalPosition = verticalLabelPosition.textPosition,
-                    width = when (sizeConstraint) {
+                    maxTextWidth = when (sizeConstraint) {
                         is SizeConstraint.Auto ->
                             // Let the `TextComponent` use as much width as it needs, based on measuring phase.
                             Int.MAX_VALUE

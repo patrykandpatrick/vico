@@ -72,13 +72,4 @@ public class MutableDimensions(
     }
 }
 
-public fun dimensionsOf(allDp: Float): MutableDimensions = dimensionsOf(allDp, allDp, allDp, allDp)
-
-public fun dimensionsOf(
-    startDp: Float = 0f,
-    topDp: Float = 0f,
-    endDp: Float = 0f,
-    bottomDp: Float = 0f,
-): MutableDimensions = MutableDimensions(startDp, topDp, endDp, bottomDp)
-
-public fun emptyDimensions(): MutableDimensions = dimensionsOf()
+public fun emptyDimensions(): MutableDimensions = MutableDimensions(0f, 0f, 0f, 0f)

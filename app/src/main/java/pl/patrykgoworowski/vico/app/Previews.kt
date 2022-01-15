@@ -38,7 +38,7 @@ import pl.patrykgoworowski.vico.app.ui.theme.MainTheme
 import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
 import pl.patrykgoworowski.vico.compose.chart.line.lineChart
-import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
+import pl.patrykgoworowski.vico.compose.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.shapeComponent
 import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.verticalGradient

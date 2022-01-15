@@ -25,11 +25,12 @@ import pl.patrykgoworowski.vico.core.component.shape.rectComponent
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
+import pl.patrykgoworowski.vico.core.component.text.buildTextComponent
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.ceil
 import pl.patrykgoworowski.vico.core.extension.floor
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.middle
-import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
@@ -39,7 +40,7 @@ public data class ThresholdLine(
     ),
     val lineComponent: ShapeComponent = rectComponent(),
     val minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
-    val textComponent: TextComponent = TextComponent(),
+    val textComponent: TextComponent = buildTextComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
 ) : Decoration {
@@ -49,7 +50,7 @@ public data class ThresholdLine(
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = rectComponent(),
         minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
-        textComponent: TextComponent = TextComponent(),
+        textComponent: TextComponent = buildTextComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
     ) : this(
@@ -93,7 +94,7 @@ public data class ThresholdLine(
         textComponent.drawText(
             context = context,
             text = thresholdLabel,
-            width = bounds.width().toInt(),
+            maxTextWidth = bounds.width().toInt(),
             textX = when (labelHorizontalPosition) {
                 LabelHorizontalPosition.Start -> bounds.left
                 LabelHorizontalPosition.End -> bounds.right

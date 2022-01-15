@@ -25,6 +25,7 @@ import pl.patrykgoworowski.vico.compose.extension.pixelSize
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
+import pl.patrykgoworowski.vico.core.component.text.buildTextComponent
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
@@ -37,12 +38,12 @@ public fun textComponent(
     lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
-): TextComponent = TextComponent(
-    color = color.toArgb(),
-    textSizeSp = textSize.pixelSize(),
-    ellipsize = ellipsize,
-    lineCount = lineCount,
-    background = background,
-    padding = padding,
-    margins = margins,
-)
+): TextComponent = buildTextComponent {
+    this.color = color.toArgb()
+    this.textSizeSp = textSize.pixelSize()
+    this.ellipsize = ellipsize
+    this.lineCount = lineCount
+    this.background = background
+    this.padding = padding
+    this.margins = margins
+}

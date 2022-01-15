@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Patryk Goworowski
+ * Copyright (c) 2022. Patryk Goworowski
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,41 +14,35 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.component.dimension
+package pl.patrykgoworowski.vico.view.dimensions
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 
-@Composable
-public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
-    start = all,
-    top = all,
-    end = all,
-    bottom = all
+public fun dimensionsOf(allDp: Float): MutableDimensions = dimensionsOf(
+    startDp = allDp,
+    topDp = allDp,
+    endDp = allDp,
+    bottomDp = allDp
 )
 
-@Composable
 public fun dimensionsOf(
-    horizontal: Dp = 0.dp,
-    vertical: Dp = 0.dp,
+    startDp: Float = 0f,
+    topDp: Float = 0f,
+    endDp: Float = 0f,
+    bottomDp: Float = 0f,
 ): MutableDimensions = MutableDimensions(
-    startDp = horizontal.value,
-    topDp = vertical.value,
-    endDp = horizontal.value,
-    bottomDp = vertical.value
+    startDp = startDp,
+    topDp = topDp,
+    endDp = endDp,
+    bottomDp = bottomDp
 )
 
-@Composable
 public fun dimensionsOf(
-    start: Dp = 0.dp,
-    top: Dp = 0.dp,
-    end: Dp = 0.dp,
-    bottom: Dp = 0.dp,
+    verticalDp: Float = 0f,
+    horizontalDp: Float = 0f,
 ): MutableDimensions = MutableDimensions(
-    startDp = start.value,
-    topDp = top.value,
-    endDp = end.value,
-    bottomDp = bottom.value
+    startDp = horizontalDp,
+    topDp = verticalDp,
+    endDp = horizontalDp,
+    bottomDp = verticalDp
 )

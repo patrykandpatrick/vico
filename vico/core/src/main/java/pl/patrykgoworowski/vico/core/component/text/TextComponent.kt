@@ -25,6 +25,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
+import pl.patrykgoworowski.vico.core.Dimens.TEXT_COMPONENT_TEXT_SIZE
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
@@ -42,13 +43,6 @@ import pl.patrykgoworowski.vico.core.text.getBounds
 import pl.patrykgoworowski.vico.core.text.staticLayout
 import pl.patrykgoworowski.vico.core.text.widestLineWidth
 
-public typealias OnPreDrawListener = (
-    context: DrawContext,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float
-) -> Unit
 
 private const val TEXT_MEASUREMENT_CHAR = ""
 private const val LAYOUT_KEY_PREFIX = "layout_"
@@ -62,31 +56,78 @@ private const val LAYOUT_KEY_PREFIX = "layout_"
  * - Text rotation with [rotationDegrees].
  * - Text background with padding. Any [Component] can be used as text’s background.
  * - Text margins.
+ *
+ * @see [buildTextComponent]
  */
-public open class TextComponent(
-    color: Int = Color.BLACK,
-    public var textSizeSp: Float = 12f,
-    public val ellipsize: TextUtils.TruncateAt? = TextUtils.TruncateAt.END,
-    public val lineCount: Int = DEF_LABEL_LINE_COUNT,
-    public open var background: Component? = null,
-    override val padding: MutableDimensions = emptyDimensions(),
-    override val margins: MutableDimensions = emptyDimensions(),
-) : Padding, Margins {
+public open class TextComponent protected constructor() : Padding, Margins {
 
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-
-    public var color: Int by textPaint::color
-    public var typeface: Typeface by textPaint::typeface
-    public var rotationDegrees: Float = 0f
-    private var layout: Layout = staticLayout("", textPaint, 0)
-
     private val tempMeasureBounds = RectF()
 
-    init {
-        textPaint.color = color
-        textPaint.typeface = Typeface.MONOSPACE
-    }
+    /**
+     * The text’s color.
+     */
+    public var color: Int by textPaint::color
 
+    /**
+     * The [Typeface] of the text.
+     */
+    public var typeface: Typeface? by textPaint::typeface
+
+    /**
+     * The clockwise rotation of this text relatively to its center.
+     * [1f] equals to 1° of rotation.
+     */
+    public var rotationDegrees: Float = 0f
+
+    /**
+     * The size of the text in the sp unit.
+     */
+    public var textSizeSp: Float = 0f
+
+    /**
+     * The type of text truncation used when text’s width outranges available space.
+     * By default text will be truncated at the end with “…”.
+     */
+    public var ellipsize: TextUtils.TruncateAt? = TextUtils.TruncateAt.END
+
+    /**
+     * The maximum count of lines used by the text.
+     * For performance reasons during measurement phase the text’s height will be equal to
+     * height of single line of text × [lineCount] whether or not rendered text will use it.
+     */
+    public var lineCount: Int = DEF_LABEL_LINE_COUNT
+
+    /**
+     * The background rendered behind the text. The background’s padding can be specified in [padding].
+     * @see [padding]
+     */
+    public var background: Component? = null
+
+    /**
+     * The padding (space) between each side of the text and the [background].
+     * It is applied whether or not [background] is null.
+     */
+    override var padding: MutableDimensions = emptyDimensions()
+
+    /**
+     * The margin (space) between each side of the [background] and the .
+     * It is applied whether or not [background] is null.
+     */
+    override var margins: MutableDimensions = emptyDimensions()
+
+    private var layout: Layout = staticLayout("", textPaint, 0)
+
+    /**
+     * Draws the text onto [android.graphics.Canvas].
+     * @param context Draw context supplied by a renderer.
+     * @param text The text to be drawn.
+     * @param textX The X coordinate for the text.
+     * @param textY The Y coordinate for the text.
+     * @param horizontalPosition The horizontal position of the text, relative to [textX].
+     * @param verticalPosition The vertical position of the text, relative to [textY].
+     * @param maxTextWidth The maximum available width in pixels for the text.
+     */
     public fun drawText(
         context: DrawContext,
         text: CharSequence,
@@ -94,11 +135,11 @@ public open class TextComponent(
         textY: Float,
         horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
         verticalPosition: VerticalPosition = VerticalPosition.Center,
-        width: Int = Int.MAX_VALUE,
+        maxTextWidth: Int = Int.MAX_VALUE,
     ): Unit = with(context) {
 
         if (text.isBlank()) return
-        layout = getLayout(text, fontScale, width - (padding.horizontalDp + margins.horizontalDp).wholePixels)
+        layout = getLayout(text, fontScale, maxTextWidth - (padding.horizontalDp + margins.horizontalDp).wholePixels)
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
         val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
@@ -202,13 +243,6 @@ public open class TextComponent(
         }
     }
 
-    public fun getTextTopPosition(
-        context: MeasureContext,
-        verticalPosition: VerticalPosition,
-        textY: Float,
-        layoutHeight: Float,
-    ): Float = verticalPosition.getTextTopPosition(context, textY, layoutHeight)
-
     public fun getWidth(
         context: MeasureContext,
         text: CharSequence,
@@ -247,4 +281,86 @@ public open class TextComponent(
                 .also { putExtra(key, it) }
         }
     }
+
+    /**
+     * The builder for [TextComponent].
+     * @see buildTextComponent
+     */
+    public class Builder {
+
+        /**
+         * @see [TextComponent.color]
+         */
+        public var color: Int = Color.BLACK
+
+        /**
+         * @see [TextComponent.textSizeSp]
+         */
+        public var textSizeSp: Float = TEXT_COMPONENT_TEXT_SIZE
+
+        /**
+         * @see [TextComponent.typeface]
+         */
+        public var typeface: Typeface? = null
+
+        /**
+         * @see [TextComponent.rotationDegrees]
+         */
+        public var rotationDegrees: Float = 0f
+
+        /**
+         * @see [TextComponent.ellipsize]
+         */
+        public var ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END
+
+        /**
+         * @see [TextComponent.lineCount]
+         */
+        public var lineCount: Int = DEF_LABEL_LINE_COUNT
+
+        /**
+         * @see [TextComponent.background]
+         */
+        public var background: Component? = null
+
+        /**
+         * @see [TextComponent.padding]
+         */
+        public var padding: MutableDimensions = emptyDimensions()
+
+        /**
+         * @see [TextComponent.margins]
+         */
+        public var margins: MutableDimensions = emptyDimensions()
+
+        /**
+         * Creates a new instance of [TextComponent] with supplied properties.
+         */
+        public fun build(): TextComponent = TextComponent().apply {
+            color = this@Builder.color
+            textSizeSp = this@Builder.textSizeSp
+            typeface = this@Builder.typeface
+            rotationDegrees = this@Builder.rotationDegrees
+            ellipsize = this@Builder.ellipsize
+            lineCount = this@Builder.lineCount
+            background = this@Builder.background
+            padding.set(this@Builder.padding)
+            margins.set(this@Builder.margins)
+        }
+    }
 }
+
+/**
+ * The builder DSL for [TextComponent].
+ *
+ * Example usage:
+ * ```
+ * buildTextComponent {
+ *    this.color = 0xFF000000 // Black color
+ *    this.textSizeSp = 12f
+ *    this.typeface = Typeface.MONOSPACE
+ * }
+ *```
+ */
+public fun buildTextComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
+    TextComponent.Builder().apply(block).build()

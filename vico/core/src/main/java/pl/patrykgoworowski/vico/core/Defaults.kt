@@ -18,7 +18,6 @@ package pl.patrykgoworowski.vico.core
 
 public const val DEF_LABEL_LINE_COUNT: Int = 1
 public const val DEF_LABEL_COUNT: Int = 99
-public const val DEF_LABEL_SIZE: Float = 12f
 public const val DEF_LABEL_SPACING: Float = 16f
 
 public const val DEF_MARKER_TICK_SIZE: Float = 6f
@@ -33,6 +32,8 @@ public object Dimens {
     public const val AXIS_LABEL_MAX_LINES: Int = 1
     public const val AXIS_LABEL_VERTICAL_PADDING: Int = 2
     public const val AXIS_LABEL_SIZE: Int = 12
+    public const val AXIS_LABEL_HORIZONTAL_MARGIN: Int = 0
+    public const val AXIS_LABEL_VERTICAL_MARGIN: Int = 0
 
     public const val AXIS_GUIDELINE_WIDTH: Float = 1f
     public const val AXIS_LINE_WIDTH: Float = 1f
@@ -57,6 +58,7 @@ public object Dimens {
     public const val POINT_SIZE: Float = 16f
     public const val POINT_SPACING: Float = 16f
 
+    public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
     public const val THRESHOLD_LINE_THICKNESS: Float = 2f
 
     public const val CHART_HEIGHT: Float = 200f
