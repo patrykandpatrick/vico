@@ -18,32 +18,28 @@ package pl.patrykgoworowski.vico.core.axis
 
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
+import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
-import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
 import pl.patrykgoworowski.vico.core.context.MeasureContext
+import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 
 public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInsetter {
 
     public val position: Position
     public val chartBounds: RectF
+
+    public val tickLengthDp: Float
+
+    public val restrictedBounds: List<RectF>
+
+    public val MeasureContext.tickLength: Float
     public val MeasureContext.axisThickness: Float
     public val MeasureContext.tickThickness: Float
     public val MeasureContext.guidelineThickness: Float
-    public val tickLengthDp: Float
-    public val MeasureContext.tickLength: Float
-    public val restrictedBounds: List<RectF>
-
     public val MeasureContext.maxAnyAxisLineThickness: Float
         get() = maxOf(axisThickness, tickThickness, guidelineThickness)
-
-    public val labelLineHeight: Int
-        get() = label?.lineHeight ?: 0
-
-    public val labelAllLinesHeight: Int
-        get() = label?.allLinesHeight ?: 0
 
     public var label: TextComponent?
     public var axis: LineComponent?
@@ -52,13 +48,9 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
     public var isLtr: Boolean
     public var valueFormatter: AxisValueFormatter
 
-    public fun drawBehindChart(
-        context: ChartDrawContext,
-    )
+    public fun drawBehindChart(context: ChartDrawContext)
 
-    public fun drawAboveChart(
-        context: ChartDrawContext,
-    )
+    public fun drawAboveChart(context: ChartDrawContext)
 
     public fun setChartBounds(
         left: Number,

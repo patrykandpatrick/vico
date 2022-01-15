@@ -24,7 +24,6 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
-import kotlin.math.roundToInt
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
@@ -36,7 +35,6 @@ import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 import pl.patrykgoworowski.vico.core.draw.withCanvas
 import pl.patrykgoworowski.vico.core.extension.copy
 import pl.patrykgoworowski.vico.core.extension.half
-import pl.patrykgoworowski.vico.core.extension.lineHeight
 import pl.patrykgoworowski.vico.core.extension.piRad
 import pl.patrykgoworowski.vico.core.extension.rotate
 import pl.patrykgoworowski.vico.core.extension.translate
@@ -55,6 +53,16 @@ public typealias OnPreDrawListener = (
 private const val TEXT_MEASUREMENT_CHAR = ""
 private const val LAYOUT_KEY_PREFIX = "layout_"
 
+/**
+ * The component capable of rendering text directly on [android.graphics.Canvas].
+ * It uses [StaticLayout] under the hood for text rendering. It supports:
+ * - Multiple lines of text with automatic line breaking.
+ * - Text truncation.
+ * - [android.text.Spanned] text.
+ * - Text rotation with [rotationDegrees].
+ * - Text background with padding. Any [Component] can be used as text’s background.
+ * - Text margins.
+ */
 public open class TextComponent(
     color: Int = Color.BLACK,
     public var textSizeSp: Float = 12f,
@@ -65,13 +73,7 @@ public open class TextComponent(
     override val margins: MutableDimensions = emptyDimensions(),
 ) : Padding, Margins {
 
-    public val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
-
-    public val lineHeight: Int
-        get() = textPaint.lineHeight.roundToInt()
-
-    public val allLinesHeight: Int
-        get() = lineHeight * lineCount
+    private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
 
     public var color: Int by textPaint::color
     public var typeface: Typeface by textPaint::typeface
@@ -236,7 +238,7 @@ public open class TextComponent(
         fontScale: Float,
         width: Int = Int.MAX_VALUE,
     ): StaticLayout {
-        val key = LAYOUT_KEY_PREFIX + text + width
+        val key = LAYOUT_KEY_PREFIX + text + width + rotationDegrees
         return if (hasExtra(key)) {
             getExtra(key)
         } else {

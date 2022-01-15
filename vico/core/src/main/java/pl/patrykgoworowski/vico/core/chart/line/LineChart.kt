@@ -159,9 +159,9 @@ public open class LineChart(
         val heightMultiplier = bounds.height() / (drawMaxY - this@LineChart.minY.orZero)
 
         entries.forEach { collection ->
-            collection.forEachIn((drawMinX - step)..(drawMaxX + step)) { entry ->
+            collection.forEachIn((drawMinX - stepX)..(drawMaxX + stepX)) { entry ->
                 x = drawingStart + (segment.cellWidth + segment.marginWidth) *
-                    (entry.x - drawMinX) / step
+                    (entry.x - drawMinX) / stepX
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }

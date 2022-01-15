@@ -89,7 +89,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val clipRestoreCount = canvas.save()
-        val step = chartModel.chartEntryModel.step
+        val step = chartModel.stepX
 
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,

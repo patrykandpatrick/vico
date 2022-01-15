@@ -62,17 +62,28 @@ public fun RectF.clear() {
 
 public fun RectF.set(
     isLtr: Boolean,
-    left: Number = this.left,
+    start: Number = this.left,
     top: Number = this.top,
-    right: Number = this.right,
+    end: Number = this.right,
     bottom: Number = this.bottom,
 ) {
     set(
-        if (isLtr) left.toFloat() else right.toFloat(),
+        if (isLtr) start.toFloat() else end.toFloat(),
         top.toFloat(),
-        if (isLtr) right.toFloat() else left.toFloat(),
+        if (isLtr) end.toFloat() else start.toFloat(),
         bottom.toFloat()
     )
+}
+
+public fun RectF.setAndRotate(
+    left: Number,
+    top: Number,
+    right: Number,
+    bottom: Number,
+    rotationDegrees: Float,
+): RectF {
+    set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
+    return rotate(rotationDegrees)
 }
 
 public fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right

@@ -17,6 +17,7 @@
 package pl.patrykgoworowski.vico.core.axis.model
 
 import pl.patrykgoworowski.vico.core.chart.Chart
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
 /**
@@ -42,6 +43,11 @@ public interface ChartModel {
     public val maxX: Float
 
     /**
+     * The value at which [Chart] increments x-axis value between each [ChartEntry].
+     */
+    public val stepX: Float
+
+    /**
      * The minimum value on the y-axis. It is equal to [ChartEntryModel.minY] from [chartEntryModel] by default
      * but may be overridden.
      */
@@ -57,4 +63,16 @@ public interface ChartModel {
      * The source of the entries drawn on the chart. It holds default values for [minX], [maxX], [minY], and [maxY].
      */
     public val chartEntryModel: ChartEntryModel
+
+    /**
+     * The length of value ranges on x-axis.
+     */
+    public val lengthX: Float
+        get() = maxX - minX
+
+    /**
+     * The length of value ranges on y-axis.
+     */
+    public val lengthY: Float
+        get() = maxY - minY
 }

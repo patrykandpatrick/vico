@@ -141,7 +141,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     textY = tickCenterY,
                     horizontalPosition = textHorizontalPosition,
                     verticalPosition = verticalLabelPosition.textPosition,
-                    width = (bounds.width() - tickLength - axisThickness.half).toInt()
+                    width = when (sizeConstraint) {
+                        is SizeConstraint.Auto ->
+                            // Let the `TextComponent` use as much width as it needs, based on measuring phase.
+                            Int.MAX_VALUE
+                        else ->
+                            (bounds.width() - tickLength - axisThickness.half).toInt()
+                    }
                 )
             }
         }
@@ -149,13 +155,20 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
         label?.let { label ->
-            val height = label.getHeight(context = this)
+
+            fun getLabelHeight(value: Float, valueIndex: Int): Float =
+                label.getHeight(this, valueFormatter.formatValue(value, valueIndex, chartModel))
+
+            val avgHeight = arrayOf(
+                getLabelHeight(chartModel.minY, 0),
+                getLabelHeight((chartModel.maxY + chartModel.minY) / 2, chartModel.lengthY.half.toInt()),
+                getLabelHeight(chartModel.maxY, chartModel.lengthY.toInt()),
+            ).maxOrNull().orZero
+
             var result = 0f
-            var addition: Float
-            for (i in 0 until maxLabelCount) {
-                addition = if (i > 0) height + labelSpacing else height
-                if (result + addition > availableHeight) return i
-                result += addition
+            for (count in 0 until maxLabelCount) {
+                if (result + avgHeight > availableHeight) return count
+                result += avgHeight
             }
         }
         return maxLabelCount
@@ -184,10 +197,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         availableHeight: Float,
         outInsets: Insets
     ): Unit = with(context) {
-        val labels = getLabels(
-            chartModel = chartModel,
-            maxLabelCount = getDrawLabelCount(availableHeight.toInt()),
-        )
+        val labels = getLabels(chartModel = chartModel, maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
 
         val desiredWidth = getDesiredWidth(context, labels)
 
@@ -211,7 +221,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getDesiredHeight(context: MeasureContext): Float = 0f
 
     /**
-     * Calculates a width of this [VerticalAxis] by using constraints set in [sizeConstraint].
+     * Calculates a width of this [VerticalAxis] according to constraints set in [sizeConstraint].
      */
     override fun getDesiredWidth(
         context: MeasureContext,

@@ -111,7 +111,7 @@ public open class ColumnChart(
             entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
                 height = entry.y * heightMultiplier
                 columnCenterX = drawingStart +
-                    (cellWidth + spacing) * (entry.x - model.minX) / model.step
+                    (cellWidth + spacing) * (entry.x - model.minX) / model.stepX
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
