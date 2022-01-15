@@ -48,14 +48,6 @@ public fun startAxis(
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): VerticalAxis<AxisPosition.Vertical.Start> = createVerticalAxis {
-    val infiniteTransition = rememberInfiniteTransition()
-    val degrees by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(durationMillis = 5_000, easing = LinearEasing)
-        )
-    )
     this.label = label
     this.axis = axis
     this.tick = tick
