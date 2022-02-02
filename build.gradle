@@ -34,12 +34,12 @@ buildscript {
 }
 
 plugins {
-    id 'io.gitlab.arturbosch.detekt' version '1.18.1'
+    id 'io.gitlab.arturbosch.detekt' version '1.19.0'
     id 'org.jetbrains.dokka' version '1.6.0'
 }
 
 dependencies {
-    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.18.1"
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0"
 }
 
 detekt {
@@ -47,13 +47,6 @@ detekt {
     buildUponDefaultConfig = true
     source = files("app", "vico/core", "vico/compose", "vico/view")
     config = files(".idea/detekt-config.yml")
-
-    reports {
-        html {
-            enabled = true
-            destination = file("build/reports/detekt/detekt.html")
-        }
-    }
 }
 
 tasks.register('detektFix', Detekt) {
@@ -72,6 +65,13 @@ allprojects {
 
 tasks.withType(Detekt).configureEach {
     jvmTarget = "1.8"
+
+    reports {
+        html {
+            enabled = true
+            destination = file("build/reports/detekt/detekt.html")
+        }
+    }
 }
 
 tasks.dokkaHtmlMultiModule {
