@@ -22,7 +22,7 @@ public fun dimensionsOf(allDp: Float): MutableDimensions = dimensionsOf(
     startDp = allDp,
     topDp = allDp,
     endDp = allDp,
-    bottomDp = allDp
+    bottomDp = allDp,
 )
 
 public fun dimensionsOf(
@@ -34,7 +34,7 @@ public fun dimensionsOf(
     startDp = startDp,
     topDp = topDp,
     endDp = endDp,
-    bottomDp = bottomDp
+    bottomDp = bottomDp,
 )
 
 public fun dimensionsOf(
@@ -44,5 +44,5 @@ public fun dimensionsOf(
     startDp = horizontalDp,
     topDp = verticalDp,
     endDp = horizontalDp,
-    bottomDp = verticalDp
+    bottomDp = verticalDp,
 )

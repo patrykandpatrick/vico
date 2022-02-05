@@ -118,7 +118,7 @@ public fun RectF.rotate(degrees: Float): RectF {
                 left = centerX() - newWidth.half,
                 top = centerY() - newHeight.half,
                 right = centerX() + newWidth.half,
-                bottom = centerY() + newHeight.half
+                bottom = centerY() + newHeight.half,
             )
         }
     }

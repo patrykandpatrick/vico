@@ -184,7 +184,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             labels.clear()
             val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
             for (index in maxLabelCount downTo 0) {
-                val value = chartModel.maxY - (step * index)
+                val value = chartModel.maxY - step * index
                 labels += valueFormatter.formatValue(value, index, chartModel)
             }
             putExtra(LABELS_KEY, labels)
@@ -235,7 +235,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             is SizeConstraint.Exact ->
                 constraint.sizeDp.pixels
             is SizeConstraint.Fraction ->
-                (context.width * constraint.fraction)
+                context.width * constraint.fraction
             is SizeConstraint.TextWidth ->
                 label?.getWidth(context = this, text = constraint.text).orZero + tickLength + axisThickness.half
         }

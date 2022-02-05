@@ -150,7 +150,7 @@ public fun <Model : ChartEntryModel> Chart(
             chart = chart,
             chartModel = chartModel,
             axisManager = axisManager,
-            marker
+            marker,
         )
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
