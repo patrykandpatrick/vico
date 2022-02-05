@@ -108,7 +108,7 @@ public class ChartEntryModelProducer(
             minY = minY,
             maxY = maxY,
             composedMaxY = stackedMaxY,
-            step = step
+            stepX = step,
         )
         listeners.forEach { it(model) }
     }
@@ -120,6 +120,6 @@ public class ChartEntryModelProducer(
         override val minY: Float,
         override val maxY: Float,
         override val composedMaxY: Float,
-        override val step: Float
+        override val stepX: Float,
     ) : ChartEntryModel
 }

@@ -27,6 +27,9 @@ public class MutableChartModel(
     override var chartEntryModel: ChartEntryModel = emptyChartEntryModel(),
 ) : ChartModel {
 
+    override val stepX: Float
+        get() = chartEntryModel.stepX
+
     public fun clear() {
         minX = 0f
         maxX = 0f
@@ -44,7 +47,7 @@ public class MutableChartModel(
             override val minY: Float = 0f
             override val maxY: Float = 0f
             override val composedMaxY: Float = 0f
-            override val step: Float = 1f
+            override val stepX: Float = 1f
         }
     }
 }

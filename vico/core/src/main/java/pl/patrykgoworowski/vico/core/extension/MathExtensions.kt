@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.core.chart.insets
+package pl.patrykgoworowski.vico.core.extension
 
-import pl.patrykgoworowski.vico.core.context.MeasureContext
+import kotlin.math.cos
+import kotlin.math.sin
 
-public interface ChartInsetter {
+internal fun rotatePointX(x: Float, y: Float, centerX: Float = x / 2, centerY: Float = y / 2, radians: Double): Float =
+    ((x - centerX) * cos(radians) - (y - centerY) * sin(radians) + centerX).toFloat()
 
-    public fun getVerticalInsets(
-        context: MeasureContext,
-        outInsets: Insets,
-    ): Unit = Unit
-
-    public fun getHorizontalInsets(
-        context: MeasureContext,
-        availableHeight: Float,
-        outInsets: Insets,
-    ): Unit = Unit
-}
+internal fun rotatePointY(x: Float, y: Float, centerX: Float = x / 2, centerY: Float = y / 2, radians: Double): Float =
+    ((x - centerX) * sin(radians) + (y - centerY) * cos(radians) + centerY).toFloat()

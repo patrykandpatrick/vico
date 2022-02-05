@@ -40,7 +40,6 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 public open class LineChart(
     public var point: Component? = null,
@@ -82,8 +81,6 @@ public open class LineChart(
         setUpClipBounds()
 
         val (cellWidth, spacing, _) = segmentProperties
-
-        calculateDrawSegmentSpecIfNeeded(model)
 
         var cubicCurvature: Float
         var prevX = bounds.left
@@ -159,29 +156,20 @@ public open class LineChart(
         val heightMultiplier = bounds.height() / (drawMaxY - this@LineChart.minY.orZero)
 
         entries.forEach { collection ->
-            collection.forEachIn((drawMinX - step)..(drawMaxX + step)) { entry ->
+            collection.forEachIn((drawMinX - stepX)..(drawMaxX + stepX)) { entry ->
                 x = drawingStart + (segment.cellWidth + segment.marginWidth) *
-                    (entry.x - drawMinX) / step
+                    (entry.x - drawMinX) / stepX
                 y = bounds.bottom - entry.y * heightMultiplier
                 action(entry, x, y)
             }
         }
     }
 
-    override fun getMeasuredWidth(context: MeasureContext, model: ChartEntryModel): Int = with(context) {
-        val length = model.getDrawnEntryCount()
-        ((pointSizeDp.pixels + spacingDp.pixels) * length).roundToInt()
-    }
-
     override fun getSegmentProperties(
         context: MeasureContext,
         model: ChartEntryModel,
     ): SegmentProperties = with(context) {
-        context.calculateDrawSegmentSpecIfNeeded(model)
-        segmentProperties.apply {
-            cellWidth = pointSizeDp.pixels * drawScale
-            marginWidth = spacingDp.pixels * drawScale
-        }
+        segmentProperties.set(cellWidth = pointSizeDp.pixels, marginWidth = spacingDp.pixels)
     }
 
     override fun setToAxisModel(axisModel: MutableChartModel, model: ChartEntryModel) {

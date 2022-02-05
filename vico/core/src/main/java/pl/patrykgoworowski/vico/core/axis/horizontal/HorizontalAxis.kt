@@ -16,18 +16,17 @@
 
 package pl.patrykgoworowski.vico.core.axis.horizontal
 
+import kotlin.math.ceil
 import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.axis.setTo
-import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
+import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
-import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
-import kotlin.math.ceil
 
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
@@ -89,9 +88,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-        val scrollX = horizontalScroll
         val clipRestoreCount = canvas.save()
-        val step = chartModel.chartEntryModel.step
+        val step = chartModel.stepX
 
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
@@ -103,11 +101,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
         val tickCount = tickType.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
-        val scrollAdjustment = (scrollX / tickDrawStep).toInt()
+        val scrollAdjustment = (horizontalScroll / tickDrawStep).toInt()
         var textDrawCenter =
-            bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
+            bounds.left + tickDrawStep.half - horizontalScroll + (tickDrawStep * scrollAdjustment)
         var tickDrawCenter =
-            tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
+            tickType.getTickDrawCenter(horizontalScroll, tickDrawStep, scrollAdjustment, textDrawCenter)
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
@@ -128,7 +126,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     textX = textDrawCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
-                    width = tickDrawStep.toInt(),
+                    maxTextWidth = tickDrawStep.toInt(),
                 )
 
                 valueIndex += step
@@ -143,8 +141,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             right = chartBounds.right,
             centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half
         )
-
-        label?.clearLayoutCache()
 
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
@@ -169,7 +165,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getVerticalInsets(
         context: MeasureContext,
-        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
         with(outInsets) {
@@ -177,14 +172,31 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 if (tickType == TickType.Minor) tickThickness.half
                 else 0f
             )
-            top = if (position.isTop) getDesiredHeight(context).toFloat() else 0f
-            bottom = if (position.isBottom) getDesiredHeight(context).toFloat() else 0f
+            top = if (position.isTop) getDesiredHeight(context) else 0f
+            bottom = if (position.isBottom) getDesiredHeight(context) else 0f
         }
     }
 
-    override fun getDesiredHeight(context: MeasureContext): Int = with(context) {
-        (if (position.isBottom) axisThickness else 0f) + tickLength + label?.getHeight(context = this).orZero
-    }.toInt()
+    override fun getDesiredHeight(context: MeasureContext): Float = with(context) {
+        when (val constraint = sizeConstraint) {
+            is SizeConstraint.Auto -> (
+                label?.let { label ->
+                    getLabelsToMeasure().maxOf { labelText -> label.getHeight(context = this, text = labelText).orZero }
+                }.orZero + (if (position.isBottom) axisThickness else 0f) + tickLength
+                ).coerceAtLeast(constraint.minSizeDp.pixels)
+                .coerceAtMost(constraint.maxSizeDp.pixels)
+            is SizeConstraint.Exact -> constraint.sizeDp.pixels
+            is SizeConstraint.Fraction -> context.height * constraint.fraction
+            is SizeConstraint.TextWidth -> label?.getHeight(context = this, text = constraint.text).orZero
+        }
+    }
+
+    private fun MeasureContext.getLabelsToMeasure(): List<String> =
+        listOf(
+            chartModel.minX,
+            (chartModel.maxX - chartModel.minX).half,
+            chartModel.maxX,
+        ).mapIndexed { index, x -> valueFormatter.formatValue(value = x, index = index, chartModel = chartModel) }
 
     override fun getDesiredWidth(context: MeasureContext, labels: List<String>): Float = 0f
 

@@ -16,10 +16,13 @@
 
 package pl.patrykgoworowski.vico.compose.layout
 
+import android.graphics.RectF
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.context.DefaultExtras
 import pl.patrykgoworowski.vico.core.context.Extras
 import pl.patrykgoworowski.vico.core.context.MeasureContext
@@ -27,11 +30,28 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
+    horizontalScroll: Float,
     zoom: Float,
-): MeasureContext = object : MeasureContext, Extras by DefaultExtras() {
-    override val density: Float = LocalDensity.current.density
-    override val fontScale: Float = LocalDensity.current.fontScale * density
-    override val isLtr: Boolean = LocalLayoutDirection.current == LayoutDirection.Ltr
-    override val isHorizontalScrollEnabled: Boolean = isHorizontalScrollEnabled
-    override val zoom: Float = zoom
+    chartModel: ChartModel,
+    canvasBounds: RectF,
+): MeasureContext {
+    val context = remember {
+        object : MeasureContext, Extras by DefaultExtras() {
+            override val canvasBounds: RectF = canvasBounds
+            override var chartModel: ChartModel = chartModel
+            override var density: Float = 0f
+            override var fontScale: Float = 0f
+            override var isLtr: Boolean = true
+            override var isHorizontalScrollEnabled: Boolean = isHorizontalScrollEnabled
+            override var horizontalScroll: Float = horizontalScroll
+            override var chartScale: Float = zoom
+        }
+    }
+    context.density = LocalDensity.current.density
+    context.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
+    context.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    context.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+    context.horizontalScroll = horizontalScroll
+    context.chartScale = zoom
+    return context
 }

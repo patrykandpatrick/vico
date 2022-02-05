@@ -25,31 +25,32 @@ import pl.patrykgoworowski.vico.core.component.shape.rectComponent
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
+import pl.patrykgoworowski.vico.core.component.text.buildTextComponent
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.ceil
 import pl.patrykgoworowski.vico.core.extension.floor
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.middle
-import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
-    val thresholdLabel: String = RANGE_FORMAT.format(
+    val thresholdLabel: CharSequence = RANGE_FORMAT.format(
         decimalFormat.format(thresholdRange.start),
         decimalFormat.format(thresholdRange.endInclusive),
     ),
     val lineComponent: ShapeComponent = rectComponent(),
     val minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
-    val textComponent: TextComponent = TextComponent(),
+    val textComponent: TextComponent = buildTextComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
 ) : Decoration {
 
     public constructor(
         thresholdValue: Float,
-        thresholdLabel: String = decimalFormat.format(thresholdValue),
+        thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = rectComponent(),
         minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
-        textComponent: TextComponent = TextComponent(),
+        textComponent: TextComponent = buildTextComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
     ) : this(
@@ -93,23 +94,24 @@ public data class ThresholdLine(
         textComponent.drawText(
             context = context,
             text = thresholdLabel,
-            width = bounds.width().toInt(),
+            maxTextWidth = bounds.width().toInt(),
             textX = when (labelHorizontalPosition) {
                 LabelHorizontalPosition.Start -> bounds.left
                 LabelHorizontalPosition.End -> bounds.right
             },
             textY = textY,
             horizontalPosition = labelHorizontalPosition.position,
-            verticalPosition = getSuggestedLabelVerticalPosition(context, bounds, textY).position,
+            verticalPosition = getSuggestedLabelVerticalPosition(context, bounds, thresholdLabel, textY).position,
         )
     }
 
     private fun getSuggestedLabelVerticalPosition(
         context: MeasureContext,
         bounds: RectF,
+        text: CharSequence,
         textY: Float,
     ): LabelVerticalPosition {
-        val labelHeight = textComponent.getHeight(context = context)
+        val labelHeight = textComponent.getHeight(context = context, text = text)
         return when (labelVerticalPosition) {
             LabelVerticalPosition.Top ->
                 if (textY - labelHeight < bounds.top) LabelVerticalPosition.Bottom else labelVerticalPosition

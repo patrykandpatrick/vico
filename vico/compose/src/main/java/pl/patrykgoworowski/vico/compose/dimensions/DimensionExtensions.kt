@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021. Patryk Goworowski
+ * Copyright (c) 2022. Patryk Goworowski
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-package pl.patrykgoworowski.vico.compose.component.dimension
+package pl.patrykgoworowski.vico.compose.dimensions
 
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 
-@Composable
 public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
     start = all,
     top = all,
@@ -29,7 +27,6 @@ public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
     bottom = all,
 )
 
-@Composable
 public fun dimensionsOf(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
@@ -40,7 +37,6 @@ public fun dimensionsOf(
     bottomDp = vertical.value,
 )
 
-@Composable
 public fun dimensionsOf(
     start: Dp = 0.dp,
     top: Dp = 0.dp,

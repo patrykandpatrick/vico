@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.compose.component.dashedShape
-import pl.patrykgoworowski.vico.compose.component.dimension.dimensionsOf
+import pl.patrykgoworowski.vico.compose.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.lineComponent
 import pl.patrykgoworowski.vico.compose.component.marker.markerComponent
 import pl.patrykgoworowski.vico.compose.component.overlayingComponent
@@ -80,7 +80,6 @@ public fun markerComponent(): Marker {
             gapLength = 4f.dp
         )
     )
-
     return markerComponent(
         label = label,
         indicator = indicator,

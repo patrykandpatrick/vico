@@ -36,7 +36,6 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.ceil
 import kotlin.math.min
-import kotlin.math.roundToInt
 
 public open class ColumnChart(
     public var columns: List<LineComponent>,
@@ -57,19 +56,12 @@ public open class ColumnChart(
 
     override val markerLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
-    override fun getMeasuredWidth(context: MeasureContext, model: ChartEntryModel): Int = with(context) {
-        val length = model.getDrawnEntryCount()
-        val segmentWidth = getCellWidth(model.entries.size, false)
-        return (segmentWidth * length + spacingDp.pixels * length).roundToInt()
-    }
-
     override fun drawChart(
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
         canvas.inClip(bounds) {
             markerLocationMap.clear()
-            calculateDrawSegmentSpecIfNeeded(model)
             drawChartInternal(
                 model = model,
                 cellWidth = segmentProperties.cellWidth,
@@ -84,8 +76,7 @@ public open class ColumnChart(
         cellWidth: Float,
         spacing: Float,
     ) {
-        val yRange =
-            ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero).takeIf { it != 0f } ?: return
+        val yRange = ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero).takeIf { it != 0f } ?: return
         val heightMultiplier = bounds.height() / yRange
 
         var drawingStart: Float
@@ -96,7 +87,7 @@ public open class ColumnChart(
         var columnBottom: Float
         val bottomCompensation = if (minY.orZero < 0f) minY.orZero * heightMultiplier else 0f
 
-        val defCellWidth = getCellWidth(model.entries.size)
+        val defCellWidth = getCellWidth(model.entries.size) * chartScale
 
         model.entries.forEachIndexed { index, entryCollection ->
 
@@ -105,13 +96,13 @@ public open class ColumnChart(
                 entryCollectionIndex = index,
                 segmentCompensation = (cellWidth - defCellWidth) / 2,
                 spacing = spacing,
-                columnWidth = column.thicknessDp.pixels * drawScale,
+                columnWidth = column.thicknessDp.pixels * chartScale,
             ) - horizontalScroll
 
             entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
                 height = entry.y * heightMultiplier
                 columnCenterX = drawingStart +
-                    (cellWidth + spacing) * (entry.x - model.minX) / model.step
+                    (cellWidth + spacing) * (entry.x - model.minX) / model.stepX
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -126,7 +117,7 @@ public open class ColumnChart(
                         columnBottom = (bounds.bottom + bottomCompensation)
                             .between(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        columnCenterX += column.thicknessDp.pixels * drawScale
+                        columnCenterX += column.thicknessDp.pixels * chartScale
                     }
                 }
 
@@ -136,11 +127,11 @@ public open class ColumnChart(
                         bottom = columnBottom,
                         centerX = columnCenterX,
                         boundingBox = bounds,
-                        thicknessScale = drawScale
+                        thicknessScale = chartScale
                     )
                 ) {
                     updateMarkerLocationMap(entry, columnTop, columnCenterX, column)
-                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, drawScale)
+                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, chartScale)
                 }
             }
         }
@@ -172,22 +163,16 @@ public open class ColumnChart(
         context: MeasureContext,
         model: ChartEntryModel,
     ): SegmentProperties = with(context) {
-        calculateDrawSegmentSpecIfNeeded(model)
-        segmentProperties.apply {
-            cellWidth = context.getCellWidth(model.entries.size)
-            marginWidth = spacingDp.pixels * drawScale
-        }
+        segmentProperties.set(cellWidth = context.getCellWidth(model.entries.size), marginWidth = spacingDp.pixels)
     }
 
     private fun MeasureContext.getCellWidth(
         entryCollectionSize: Int,
-        scaled: Boolean = true,
     ): Float = when (mergeMode) {
         MergeMode.Stack ->
-            columns.maxOf { it.thicknessDp.pixels }.applyScale(scaled)
+            columns.maxOf { it.thicknessDp.pixels }
         MergeMode.Grouped ->
-            getCumulatedThickness(entryCollectionSize, density, scaled) +
-                (innerSpacingDp.pixels.applyScale(scaled) * (entryCollectionSize - 1))
+            getCumulatedThickness(entryCollectionSize) + (innerSpacingDp.pixels * (entryCollectionSize - 1))
     }
 
     private fun MeasureContext.getDrawingStart(
@@ -202,22 +187,16 @@ public open class ColumnChart(
                 baseLeft
             MergeMode.Grouped ->
                 baseLeft + segmentCompensation - columnWidth.half +
-                    getCumulatedThickness(entryCollectionIndex, density, true) +
-                    innerSpacingDp.pixels * drawScale * entryCollectionIndex
+                    getCumulatedThickness(entryCollectionIndex) * chartScale +
+                    innerSpacingDp.pixels * chartScale * entryCollectionIndex
         }
     }
 
-    private fun getCumulatedThickness(
-        count: Int,
-        density: Float,
-        scaled: Boolean,
-    ): Float {
+    private fun MeasureContext.getCumulatedThickness(count: Int): Float {
         var thickness = 0f
         for (i in 0 until count) {
-            thickness += columns.getRepeating(i).thicknessDp * density.applyScale(scaled)
+            thickness += columns.getRepeating(i).thicknessDp * density
         }
         return thickness
     }
-
-    private fun Float.applyScale(applyScale: Boolean) = if (applyScale) this * drawScale else this
 }

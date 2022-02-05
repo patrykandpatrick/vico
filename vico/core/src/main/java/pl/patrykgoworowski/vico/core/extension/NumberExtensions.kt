@@ -28,6 +28,9 @@ public inline val Int.half: Int
 public inline val Float.half: Float
     get() = this / 2
 
+public inline val Double.half: Double
+    get() = this / 2
+
 public inline val Float.doubled: Float
     get() = this * 2
 

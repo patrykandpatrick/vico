@@ -22,7 +22,7 @@ apply from: "$rootDir/commonScripts.gradle"
 apply from: "$rootDir/dokka-common.gradle"
 
 dependencies {
-    vico_common_dependencies.each {
+    vico_core_dependencies.each {
         add(it.configuration, it.dependency, it.options)
     }
 }

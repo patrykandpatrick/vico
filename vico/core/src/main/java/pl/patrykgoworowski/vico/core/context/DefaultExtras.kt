@@ -33,9 +33,13 @@ public class DefaultExtras : Extras {
 
     public override fun hasExtra(key: Any): Boolean = extrasMap.containsKey(key)
 
-    override fun <T> getExtra(key: Any): T? = extrasMap[key] as? T
+    override fun <T> getExtra(key: Any): T = extrasMap[key] as T
 
-    public override fun <T> consumeExtra(key: Any): T? = getExtra<T>(key)?.also {
+    public override fun <T> consumeExtra(key: Any): T = getExtra<T>(key).also {
         extrasMap.remove(key)
+    }
+
+    override fun clearExtras() {
+        extrasMap.clear()
     }
 }

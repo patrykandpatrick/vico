@@ -84,11 +84,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private val axisManager = AxisManager()
     private val measureContext = MutableMeasureContext(
+        canvasBounds = contentBounds,
         density = context.density,
         fontScale = context.fontScale,
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
-        zoom = 1f,
+        horizontalScroll = scrollHandler.currentScroll,
+        chartScale = 1f,
+        chartModel = chartModel,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -116,7 +119,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var isZoomEnabled: Boolean = true
 
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
-        tryUpdateBoundsAndInvalidate(chart, model)
+        tryInvalidate(chart, model)
     }
 
     public var model: Model? = null
@@ -135,14 +138,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     public fun setModel(model: Model) {
         this.model = model
-        tryUpdateBoundsAndInvalidate(chart, model)
+        tryInvalidate(chart, model)
     }
 
-    private fun tryUpdateBoundsAndInvalidate(chart: Chart<Model>?, model: Model?) {
+    private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
             chart.setToAxisModel(chartModel, model)
             if (ViewCompat.isAttachedToWindow(this)) {
-                updateBounds()
                 invalidate()
             }
         }
@@ -163,11 +165,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun handleZoom(focusX: Float, zoomChange: Float) {
         val chart = chart ?: return
-        val newZoom = measureContext.zoom * zoomChange
+        val newZoom = measureContext.chartScale * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
         val transformationAxisX = scrollHandler.currentScroll + focusX - chart.bounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
-        measureContext.zoom = newZoom
+        measureContext.chartScale = newZoom
         scrollHandler.currentScroll += zoomedTransformationAxisX - transformationAxisX
         invalidate()
     }
@@ -177,24 +179,27 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun onDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
+        updateBounds()
         motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
             ViewCompat.postInvalidateOnAnimation(this)
         }
+        measureContext.horizontalScroll = scrollHandler.currentScroll
         val drawContext = chartDrawContext(
             canvas = canvas,
             colors = context.colors,
             measureContext = measureContext,
-            horizontalScroll = scrollHandler.currentScroll,
             markerTouchPoint = markerTouchPoint,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
             chartModel = chartModel,
+            chartBounds = chart.bounds,
         )
         axisManager.drawBehindChart(drawContext)
         chart.draw(drawContext, model, marker)
         axisManager.drawAboveChart(drawContext)
-        scrollHandler.maxScrollDistance = chart.maxScrollAmount
+        scrollHandler.maxScrollDistance =
+            (drawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount()) - chart.bounds.width()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -216,10 +221,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             width - paddingRight,
             height - paddingBottom
         )
-        updateBounds()
     }
 
     private fun updateBounds() = withChartAndModel { chart, _ ->
+        measureContext.clearExtras()
         virtualLayout.setBounds(
             context = measureContext,
             contentBounds = contentBounds,

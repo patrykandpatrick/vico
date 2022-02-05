@@ -16,14 +16,19 @@
 
 package pl.patrykgoworowski.vico.view.layout
 
+import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.context.DefaultExtras
 import pl.patrykgoworowski.vico.core.context.Extras
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 internal data class MutableMeasureContext(
+    override val canvasBounds: RectF,
     override var density: Float,
     override var fontScale: Float,
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean,
-    override var zoom: Float,
+    override var horizontalScroll: Float,
+    override var chartScale: Float,
+    override val chartModel: ChartModel,
 ) : MeasureContext, Extras by DefaultExtras()

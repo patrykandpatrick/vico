@@ -16,18 +16,30 @@
 
 package pl.patrykgoworowski.vico.core.context
 
+import android.graphics.RectF
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
+
 public interface MeasureContext : Extras {
+    public val canvasBounds: RectF
+    public val chartModel: ChartModel
     public val density: Float
     public val fontScale: Float
     public val isLtr: Boolean
     public val isHorizontalScrollEnabled: Boolean
-    public val zoom: Float
+    public val horizontalScroll: Float
+    public val chartScale: Float
 
     public val Float.pixels: Float
         get() = this * density
 
     public val Float.wholePixels: Int
         get() = pixels.toInt()
+
+    public val width: Float
+        get() = canvasBounds.width()
+
+    public val height: Float
+        get() = canvasBounds.height()
 
     public fun toPixels(dp: Float): Float = dp * density
     public fun toFontSize(sp: Float): Float = sp * fontScale

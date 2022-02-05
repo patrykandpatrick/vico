@@ -32,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.chart.entry.collectAsState
 import pl.patrykgoworowski.vico.compose.extension.addIf
@@ -109,7 +108,10 @@ public fun <Model : ChartEntryModel> Chart(
     val zoom = remember { mutableStateOf(1f) }
     val measureContext = getMeasureContext(
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-        zoom = zoom.value
+        horizontalScroll = horizontalScroll.value,
+        zoom = zoom.value,
+        chartModel = chartModel,
+        canvasBounds = bounds,
     )
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
@@ -140,31 +142,31 @@ public fun <Model : ChartEntryModel> Chart(
                     interactionSource = interactionSource,
                 )
             }
-            .onSizeChanged { size ->
-                bounds.set(0, 0, size.width, size.height)
-                virtualLayout.setBounds(
-                    context = measureContext,
-                    contentBounds = bounds,
-                    chart = chart,
-                    chartModel = chartModel,
-                    axisManager = axisManager,
-                    marker
-                )
-            }
     ) {
+        bounds.set(0, 0, size.width, size.height)
+        virtualLayout.setBounds(
+            context = measureContext,
+            contentBounds = bounds,
+            chart = chart,
+            chartModel = chartModel,
+            axisManager = axisManager,
+            marker,
+        )
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
             colors = chartColors,
             measureContext = measureContext,
-            horizontalScroll = horizontalScroll.value,
             markerTouchPoint = markerTouchPoint.value,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
             chartModel = chartModel,
+            chartBounds = chart.bounds,
         )
         axisManager.drawBehindChart(chartDrawContext)
         chart.draw(chartDrawContext, model, marker)
         axisManager.drawAboveChart(chartDrawContext)
-        scrollHandler.maxScrollDistance = chart.maxScrollAmount
+        scrollHandler.maxScrollDistance =
+            chartDrawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount() - chart.bounds.width()
+        measureContext.clearExtras()
     }
 }
 

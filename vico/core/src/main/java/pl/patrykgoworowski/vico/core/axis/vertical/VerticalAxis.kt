@@ -25,14 +25,17 @@ import pl.patrykgoworowski.vico.core.axis.setTo
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
-import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
-import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
+import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
+import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
+import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
-import pl.patrykgoworowski.vico.core.context.MeasureContext
+import pl.patrykgoworowski.vico.core.extension.translate
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
+
+private const val LABELS_KEY = "labels"
 
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
@@ -94,13 +97,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val label = label
         val labelCount = getDrawLabelCount(bounds.height().toInt())
 
-        val labels = getLabels(context.chartModel, labelCount)
-        val labelHeight = label?.getHeight(includeMargin = false, context = this).orZero
-        val labelTextHeight = label?.getHeight(
-            includePadding = false,
-            includeMargin = false,
-            context = this,
-        ).orZero
+        val labels = getLabels(chartModel, labelCount)
 
         val tickLeftX =
             if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right - (axisThickness + tickLength)
@@ -113,7 +110,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
 
         var tickCenterY: Float
-        val textPosition = verticalLabelPosition.textPosition
 
         (0..labelCount).forEach { index ->
             tickCenterY =
@@ -127,16 +123,15 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             )
 
             label ?: return@forEach
-            val labelTop = label
-                .getTextTopPosition(this, textPosition, tickCenterY, labelTextHeight)
             val labelText = labels.getOrNull(index) ?: return@forEach
+            val textBounds = label.getTextBounds(context, labelText).translate(labelX, tickCenterY)
             if (
                 horizontalLabelPosition == Outside ||
                 isNotInRestrictedBounds(
-                    left = labelX,
-                    top = labelTop - labelHeight.half,
-                    right = labelX + 1,
-                    bottom = labelTop + labelHeight.half
+                    left = textBounds.left,
+                    top = textBounds.top,
+                    right = textBounds.right,
+                    bottom = textBounds.bottom
                 )
             ) {
                 label.drawText(
@@ -146,49 +141,63 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     textY = tickCenterY,
                     horizontalPosition = textHorizontalPosition,
                     verticalPosition = verticalLabelPosition.textPosition,
+                    maxTextWidth = when (sizeConstraint) {
+                        is SizeConstraint.Auto ->
+                            // Let the `TextComponent` use as much width as it needs, based on measuring phase.
+                            Int.MAX_VALUE
+                        else ->
+                            (bounds.width() - tickLength - axisThickness.half).toInt()
+                    }
                 )
             }
         }
-        label?.clearLayoutCache() ?: Unit
     }
 
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
         label?.let { label ->
-            val height = label.getHeight(context = this)
+
+            fun getLabelHeight(value: Float, valueIndex: Int): Float =
+                label.getHeight(this, valueFormatter.formatValue(value, valueIndex, chartModel))
+
+            val avgHeight = arrayOf(
+                getLabelHeight(chartModel.minY, 0),
+                getLabelHeight((chartModel.maxY + chartModel.minY) / 2, chartModel.lengthY.half.toInt()),
+                getLabelHeight(chartModel.maxY, chartModel.lengthY.toInt()),
+            ).maxOrNull().orZero
+
             var result = 0f
-            var addition: Float
-            for (i in 0 until maxLabelCount) {
-                addition = if (i > 0) height + labelSpacing else height
-                if (result + addition > availableHeight) return i
-                result += addition
+            for (count in 0 until maxLabelCount) {
+                if (result + avgHeight > availableHeight) return count
+                result += avgHeight
             }
         }
         return maxLabelCount
     }
 
-    private fun getLabels(
+    private fun MeasureContext.getLabels(
         chartModel: ChartModel,
-        maxLabelCount: Int = this.maxLabelCount,
+        maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
     ): List<String> {
-        labels.clear()
-        val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
-        for (index in maxLabelCount downTo 0) {
-            val value = chartModel.maxY - (step * index)
-            labels += valueFormatter.formatValue(value, index, chartModel)
+        return if (hasExtra(LABELS_KEY)) {
+            getExtra(LABELS_KEY)
+        } else {
+            labels.clear()
+            val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
+            for (index in maxLabelCount downTo 0) {
+                val value = chartModel.maxY - step * index
+                labels += valueFormatter.formatValue(value, index, chartModel)
+            }
+            putExtra(LABELS_KEY, labels)
+            labels
         }
-        return labels
     }
 
     override fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
-        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
-        val labels = getLabels(
-            chartModel = chartModel,
-            maxLabelCount = getDrawLabelCount(availableHeight.toInt()),
-        )
+        val labels = getLabels(chartModel = chartModel, maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
 
         val desiredWidth = getDesiredWidth(context, labels)
 
@@ -200,7 +209,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun getVerticalInsets(
         context: MeasureContext,
-        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
         val halfLabelHeight = label?.getHeight(context = context)?.half.orZero
@@ -210,27 +218,32 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         )
     }
 
-    override fun getDesiredHeight(context: MeasureContext): Int = 0
+    override fun getDesiredHeight(context: MeasureContext): Float = 0f
 
     /**
-     * Calculates a width of this [VerticalAxis] by calculating:
-     * — Widest label width from passed [labels],
-     * — [axisThickness],
-     * — [tickLengthDp].
-     * @return Width of this [VerticalAxis] that should be enough to fit its contents
-     * in [drawBehindChart] and [drawAboveChart] functions.
+     * Calculates a width of this [VerticalAxis] according to constraints set in [sizeConstraint].
      */
     override fun getDesiredWidth(
         context: MeasureContext,
         labels: List<String>,
     ): Float = with(context) {
-        val maxLabelAndTickWidth = when (horizontalLabelPosition) {
-            Outside -> label?.let { label ->
-                labels.maxOf { label.getWidth(this, it) }
-            }.orZero + tickLength
-            Inside -> 0f
+        when (val constraint = sizeConstraint) {
+            is SizeConstraint.Auto ->
+                (getMaxLabelWidth(labels) + axisThickness.half + tickLength)
+                    .coerceAtLeast(constraint.minSizeDp.pixels)
+                    .coerceAtMost(constraint.maxSizeDp.pixels)
+            is SizeConstraint.Exact ->
+                constraint.sizeDp.pixels
+            is SizeConstraint.Fraction ->
+                context.width * constraint.fraction
+            is SizeConstraint.TextWidth ->
+                label?.getWidth(context = this, text = constraint.text).orZero + tickLength + axisThickness.half
         }
-        return axisThickness.half + maxLabelAndTickWidth
+    }
+
+    private fun MeasureContext.getMaxLabelWidth(labels: List<String>): Float = when (horizontalLabelPosition) {
+        Outside -> label?.let { label -> labels.maxOf { label.getWidth(this, it) } }.orZero
+        Inside -> 0f
     }
 
     public enum class HorizontalLabelPosition {

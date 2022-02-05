@@ -17,16 +17,18 @@
 package pl.patrykgoworowski.vico.core.component.marker
 
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
+import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.cornered.MarkerCorneredShape
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
+import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.averageOf
 import pl.patrykgoworowski.vico.core.extension.half
+import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.marker.MarkerLabelFormatter
@@ -37,8 +39,10 @@ public open class MarkerComponent(
     private val guideline: LineComponent,
 ) : Marker {
 
-    private val MeasureContext.markerHeight: Float
-        get() = label.getHeight(this) // + shape.tickSize.pixels
+    private val tempBounds = RectF()
+
+    private val TextComponent.tickSizeDp: Float
+        get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
     public var indicatorSizeDp: Float = 0f
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
@@ -72,32 +76,28 @@ public open class MarkerComponent(
     ): Unit = with(context) {
         val text = labelFormatter.getLabel(markedEntries)
         val entryX = markedEntries.averageOf { it.location.x }
-        val x = overrideXPositionToFit(context, entryX, bounds, text)
-        putExtra(MarkerCorneredShape.tickXKey, entryX)
+        val labelBounds = label.getTextBounds(context, text, outRect = tempBounds)
+        val halfOfTextWidth = labelBounds.width().half
+        val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
+        this[MarkerCorneredShape.tickXKey] = entryX
 
         label.drawText(
             context = context,
             text = text,
             textX = x,
-            textY = bounds.top +
-                label.allLinesHeight.half +
-                label.padding.topDp.pixels -
-                context.markerHeight,
+            textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
+            verticalPosition = VerticalPosition.Top,
         )
     }
 
     private fun overrideXPositionToFit(
-        context: MeasureContext,
         xPosition: Float,
         bounds: RectF,
-        text: CharSequence,
-    ): Float {
-        val halfOfTextWidth = label.getWidth(context, text).half
-        return when {
-            xPosition - halfOfTextWidth < bounds.left -> bounds.left + halfOfTextWidth
-            xPosition + halfOfTextWidth > bounds.right -> bounds.right - halfOfTextWidth
-            else -> xPosition
-        }
+        halfOfTextWidth: Float,
+    ): Float = when {
+        xPosition - halfOfTextWidth < bounds.left -> bounds.left + halfOfTextWidth
+        xPosition + halfOfTextWidth > bounds.right -> bounds.right - halfOfTextWidth
+        else -> xPosition
     }
 
     private fun drawGuideline(
@@ -120,9 +120,8 @@ public open class MarkerComponent(
 
     override fun getVerticalInsets(
         context: MeasureContext,
-        chartModel: ChartModel,
         outInsets: Insets
     ): Unit = with(context) {
-        outInsets.top = markerHeight
+        outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
     }
 }

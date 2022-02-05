@@ -65,7 +65,7 @@ ext {
                     name   : 'foundation',
                     version: versions.compose
             ],
-            viewmodel: [
+            viewmodel  : [
                     group  : 'androidx.lifecycle',
                     name   : 'lifecycle-viewmodel-compose',
                     version: versions.viewmodel
@@ -117,10 +117,25 @@ ext {
     ]
 
     def test_libs = [
-            junit: [
-                    group  : 'androidx.test.ext',
+            junit   : [
+                    group  : 'junit',
                     name   : 'junit',
                     version: versions.junit
+            ],
+            junitExt: [
+                    group  : 'androidx.test.ext',
+                    name   : 'junit',
+                    version: versions.junitExt
+            ],
+            mockk   : [
+                    group  : 'io.mockk',
+                    name   : 'mockk',
+                    version: versions.mockk
+            ],
+            testCore: [
+                    group  : 'androidx.test',
+                    name   : 'core-ktx',
+                    version: versions.testCore
             ]
     ]
 
@@ -139,17 +154,21 @@ ext {
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "implementation", dependency: material_libs.main],
             [configuration: "testImplementation", dependency: test_libs.junit],
+            [configuration: "testImplementation", dependency: test_libs.junitExt],
             [configuration: "implementation", dependency: jetpack_compose_libs.activity],
             [configuration: "implementation", dependency: jetpack_compose_libs.viewbinding],
             [configuration: "implementation", dependency: accompanist_libs.pager],
             [configuration: "implementation", dependency: accompanist_libs.pager_indicators]
     ]
 
-    vico_common_dependencies = [
+    vico_core_dependencies = [
             [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "testImplementation", dependency: test_libs.junit],
+            [configuration: "testImplementation", dependency: test_libs.junitExt],
+            [configuration: "testImplementation", dependency: test_libs.mockk],
+            [configuration: "testImplementation", dependency: test_libs.testCore],
     ]
 
     vico_view_dependencies = [
@@ -162,6 +181,7 @@ ext {
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "implementation", dependency: material_libs.main],
             [configuration: "testImplementation", dependency: test_libs.junit],
+            [configuration: "testImplementation", dependency: test_libs.junitExt],
     ]
 
     vico_compose_dependencies = [
@@ -175,6 +195,7 @@ ext {
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "testImplementation", dependency: test_libs.junit],
+            [configuration: "testImplementation", dependency: test_libs.junitExt],
     ]
 
 }

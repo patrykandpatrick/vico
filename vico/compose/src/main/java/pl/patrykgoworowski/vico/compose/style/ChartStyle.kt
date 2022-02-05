@@ -55,6 +55,8 @@ public data class ChartStyle(
         val axisLabelLineCount: Int = Dimens.AXIS_LABEL_MAX_LINES,
         val axisLabelVerticalPadding: Dp = Dimens.AXIS_LABEL_VERTICAL_PADDING.dp,
         val axisLabelHorizontalPadding: Dp = Dimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+        val axisLabelVerticalMargin: Dp = Dimens.AXIS_LABEL_VERTICAL_MARGIN.dp,
+        val axisLabelHorizontalMargin: Dp = Dimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = Dimens.AXIS_GUIDELINE_WIDTH.dp,
         val axisGuidelineShape: Shape = dashedShape(

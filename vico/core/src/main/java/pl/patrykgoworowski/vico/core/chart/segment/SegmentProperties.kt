@@ -17,11 +17,23 @@
 package pl.patrykgoworowski.vico.core.chart.segment
 
 public interface SegmentProperties {
+
     public val cellWidth: Float
+
     public val marginWidth: Float
+
     public val segmentWidth: Float
+        get() = cellWidth + marginWidth
 
     public operator fun component1(): Float = cellWidth
     public operator fun component2(): Float = marginWidth
     public operator fun component3(): Float = segmentWidth
+
+    public fun scaled(scale: Float): SegmentProperties =
+        SegmentProperties(cellWidth * scale, marginWidth * scale)
+}
+
+public fun SegmentProperties(cellWidth: Float, marginWidth: Float): SegmentProperties = object : SegmentProperties {
+    override val cellWidth: Float = cellWidth
+    override val marginWidth: Float = marginWidth
 }

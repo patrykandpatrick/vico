@@ -23,12 +23,12 @@ import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
 import pl.patrykgoworowski.vico.core.extension.getEntryModel
-import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
+import pl.patrykgoworowski.vico.core.model.Point
 
 public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
 
-    private val decoration = ArrayList<Decoration>()
+    private val decorations = ArrayList<Decoration>()
     private val persistentMarkers = HashMap<Float, Marker>()
 
     protected val Model.drawMinY: Float
@@ -43,8 +43,6 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     protected val Model.drawMaxX: Float
         get() = this@BaseChart.maxX ?: maxX
 
-    protected var drawScale: Float = 1f
-
     override val bounds: RectF = RectF()
 
     override var minY: Float? = null
@@ -52,20 +50,17 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     override var minX: Float? = null
     override var maxX: Float? = null
 
-    override var maxScrollAmount: Float = 0f
+    override fun addDecoration(decoration: Decoration): Boolean = decorations.add(decoration)
 
-    override fun addDecoration(decoration: Decoration): Boolean =
-        this.decoration.add(decoration)
-
-    override fun removeDecoration(decoration: Decoration): Boolean =
-        this.decoration.remove(decoration)
+    override fun removeDecoration(decoration: Decoration): Boolean = decorations.remove(decoration)
 
     override fun addPersistentMarker(x: Float, marker: Marker) {
         persistentMarkers[x] = marker
     }
 
-    override fun removePersistentMarker(x: Float): Boolean =
+    override fun removePersistentMarker(x: Float) {
         persistentMarkers.remove(x) != null
+    }
 
     override fun draw(
         context: ChartDrawContext,
@@ -85,7 +80,10 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
                 )
             }
         }
-        drawTouchMarker(context, model, touchMarker)
+        val touchPoint = context.markerTouchPoint
+        if (touchMarker != null && touchPoint != null) {
+            drawTouchMarker(context, model, touchMarker, touchPoint)
+        }
     }
 
     protected abstract fun drawChart(
@@ -96,10 +94,9 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     public open fun drawTouchMarker(
         context: ChartDrawContext,
         model: Model,
-        marker: Marker?
+        marker: Marker,
+        touchPoint: Point,
     ) {
-        val touchPoint = context.markerTouchPoint
-        if (touchPoint == null || marker == null) return
         markerLocationMap.getClosestMarkerEntryModel(touchPoint)?.also { markerModel ->
             marker.draw(
                 context = context,
@@ -109,20 +106,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         }
     }
 
-    private fun drawThresholdLines(
-        context: ChartDrawContext,
-    ) {
-        decoration.forEach { line -> line.draw(context, bounds) }
-    }
-
-    protected fun MeasureContext.calculateDrawSegmentSpecIfNeeded(model: Model) {
-        val measuredWidth = getMeasuredWidth(this, model)
-        if (isHorizontalScrollEnabled) {
-            drawScale = zoom
-            maxScrollAmount = maxOf(0f, measuredWidth * drawScale - bounds.width())
-        } else {
-            maxScrollAmount = 0f
-            drawScale = minOf(bounds.width() / measuredWidth, 1f)
-        }
+    private fun drawThresholdLines(context: ChartDrawContext) {
+        decorations.forEach { line -> line.draw(context, bounds) }
     }
 }

@@ -24,12 +24,12 @@ import android.text.TextUtils
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
-import pl.patrykgoworowski.vico.core.DEF_LABEL_SIZE
 import pl.patrykgoworowski.vico.core.Dimens.AXIS_LABEL_HORIZONTAL_PADDING
 import pl.patrykgoworowski.vico.core.Dimens.AXIS_LABEL_VERTICAL_PADDING
+import pl.patrykgoworowski.vico.core.Dimens.TEXT_COMPONENT_TEXT_SIZE
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
+import pl.patrykgoworowski.vico.core.component.text.buildTextComponent
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
-import pl.patrykgoworowski.vico.core.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.core.extension.firstNonNegativeOf
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.extension.colors
@@ -46,29 +46,27 @@ internal fun TypedArray.getTextComponent(
         styleableResourceId = R.styleable.ComponentStyle,
     ).getComponent(context)
 
-    TextComponent(
-        color = color,
-        background = background,
-        padding = getLabelPadding(context),
-        textSizeSp = getRawDimension(
-            context,
-            R.styleable.LabelStyle_android_textSize,
-            DEF_LABEL_SIZE
-        ),
-        lineCount = getInteger(R.styleable.LabelStyle_android_maxLines, DEF_LABEL_LINE_COUNT),
-        ellipsize = getLabelTruncateAt(),
-    ).apply {
-        getLabelTypeface(context)?.let { typeface = it }
+    buildTextComponent {
+        this.color = color
+        this.background = background
+        this.padding = getLabelPadding(context)
+        this.textSizeSp = getRawDimension(
+            context = context,
+            index = R.styleable.LabelStyle_android_textSize,
+            defaultValue = TEXT_COMPONENT_TEXT_SIZE,
+        )
+        this.lineCount = getInteger(R.styleable.LabelStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
+        this.ellipsize = getLabelTruncateAt()
+        getLabelTypeface(context)?.let { this.typeface = it }
     }
 }
 
-private fun TypedArray.getLabelTruncateAt(): TextUtils.TruncateAt? {
+private fun TypedArray.getLabelTruncateAt(): TextUtils.TruncateAt {
     val int = getInt(R.styleable.LabelStyle_android_ellipsize, TextUtils.TruncateAt.END.ordinal)
     val values = TextUtils.TruncateAt.values()
     return when (int) {
-        0 -> null
-        in 1..values.size -> values[int + 1]
-        else -> null
+        in 1..values.size -> values[int]
+        else -> TextUtils.TruncateAt.END
     }
 }
 
@@ -112,8 +110,7 @@ private fun TypedArray.getLabelPadding(context: Context): MutableDimensions {
     val paddingTop = getDpDimension(R.styleable.LabelStyle_android_paddingTop)
     val paddingEnd = getDpDimension(R.styleable.LabelStyle_android_paddingEnd)
     val paddingBottom = getDpDimension(R.styleable.LabelStyle_android_paddingBottom)
-
-    return dimensionsOf(
+    return MutableDimensions(
         startDp = firstNonNegativeOf(paddingStart, paddingHorizontal, padding)
             ?: AXIS_LABEL_HORIZONTAL_PADDING.toFloat(),
         topDp = firstNonNegativeOf(paddingTop, paddingVertical, padding)

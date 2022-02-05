@@ -49,14 +49,14 @@ public open class VirtualLayout {
         chartInsetter.filterNotNull().forEach(tempInsetters::add)
 
         tempInsetters.forEach { insetter ->
-            insetter.getVerticalInsets(context, chartModel, tempInsets)
+            insetter.getVerticalInsets(context, tempInsets)
             finalInsets.setAllGreater(tempInsets)
         }
 
         val availableHeight = contentBounds.height() - finalInsets.vertical
 
         tempInsetters.forEach { insetter ->
-            insetter.getHorizontalInsets(context, availableHeight, chartModel, tempInsets)
+            insetter.getHorizontalInsets(context, availableHeight, tempInsets)
             finalInsets.setAllGreater(tempInsets)
         }
 

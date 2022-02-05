@@ -23,6 +23,7 @@ import pl.patrykgoworowski.vico.compose.axis.axisLabelComponent
 import pl.patrykgoworowski.vico.compose.axis.axisLineComponent
 import pl.patrykgoworowski.vico.compose.axis.axisTickComponent
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
+import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
@@ -39,6 +40,7 @@ public fun topAxis(
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -46,6 +48,7 @@ public fun topAxis(
     this.guideline = guideline
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
+    this.sizeConstraint = sizeConstraint
 }
 
 @Composable
@@ -56,6 +59,7 @@ public fun bottomAxis(
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -63,4 +67,5 @@ public fun bottomAxis(
     this.guideline = guideline
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
+    this.sizeConstraint = sizeConstraint
 }

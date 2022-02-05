@@ -57,7 +57,7 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
             minY = models.minOf { it.minY },
             maxY = models.maxOf { it.maxY },
             composedMaxY = models.maxOf { it.composedMaxY },
-            step = models.minOf { it.step }
+            step = models.minOf { it.stepX }
         )
     }
 

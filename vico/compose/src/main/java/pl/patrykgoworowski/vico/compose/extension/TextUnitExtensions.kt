@@ -18,11 +18,11 @@ package pl.patrykgoworowski.vico.compose.extension
 
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import pl.patrykgoworowski.vico.core.DEF_LABEL_SIZE
+import pl.patrykgoworowski.vico.core.Dimens.TEXT_COMPONENT_TEXT_SIZE
 
 public fun TextUnit.pixelSize(): Float =
     when (type) {
         TextUnitType.Sp -> value
         TextUnitType.Em -> value
-        else -> DEF_LABEL_SIZE
+        else -> TEXT_COMPONENT_TEXT_SIZE
     }

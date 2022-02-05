@@ -17,7 +17,10 @@
 package pl.patrykgoworowski.vico.core.draw
 
 import android.graphics.Canvas
+import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.Colors
+import pl.patrykgoworowski.vico.core.axis.model.ChartModel
+import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
 import pl.patrykgoworowski.vico.core.context.DefaultExtras
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.context.Extras
@@ -34,13 +37,16 @@ public fun drawContext(
     zoom: Float = 1f,
     colors: Colors = Colors.Light,
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
+    override val canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
+    override val chartModel: ChartModel = MutableChartModel()
     override val colors: Colors = colors
     override var canvas: Canvas = canvas
     override val density: Float = density
     override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
-    override val zoom: Float = zoom
+    override val horizontalScroll: Float = 0f
+    override val chartScale: Float = zoom
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
         val originalCanvas = this.canvas

@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import pl.patrykgoworowski.vico.compose.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.shape.chartShape
 import pl.patrykgoworowski.vico.compose.component.shape.shader.BrushShader
 import pl.patrykgoworowski.vico.compose.extension.pixelSize
@@ -33,8 +34,8 @@ import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
+import pl.patrykgoworowski.vico.core.component.text.buildTextComponent
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
-import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
 public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
@@ -48,19 +49,23 @@ public fun axisLabelComponent(
     lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
     verticalPadding: Dp = currentChartStyle.axis.axisLabelVerticalPadding,
     horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
-): TextComponent = TextComponent(
-    color = color.toArgb(),
-    textSizeSp = textSize.pixelSize(),
-    ellipsize = ellipsize,
-    lineCount = lineCount,
-    background = background,
-    padding = MutableDimensions(
-        startDp = horizontalPadding.value,
-        topDp = verticalPadding.value,
-        endDp = horizontalPadding.value,
-        bottomDp = verticalPadding.value,
+    verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
+    horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
+): TextComponent = buildTextComponent {
+    this.color = color.toArgb()
+    this.textSizeSp = textSize.pixelSize()
+    this.ellipsize = ellipsize
+    this.lineCount = lineCount
+    this.background = background
+    this.padding = dimensionsOf(
+        vertical = horizontalPadding,
+        horizontal = verticalPadding,
     )
-)
+    this.margins = dimensionsOf(
+        vertical = verticalMargin,
+        horizontal = horizontalMargin,
+    )
+}
 
 @Composable
 public fun axisLineComponent(
