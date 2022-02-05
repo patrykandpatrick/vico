@@ -65,7 +65,7 @@ private fun TypedArray.getLabelTruncateAt(): TextUtils.TruncateAt {
     val int = getInt(R.styleable.LabelStyle_android_ellipsize, TextUtils.TruncateAt.END.ordinal)
     val values = TextUtils.TruncateAt.values()
     return when (int) {
-        in 1..values.size -> values[int + 1]
+        in 1..values.size -> values[int]
         else -> TextUtils.TruncateAt.END
     }
 }
