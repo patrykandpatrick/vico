@@ -25,7 +25,7 @@ public class DashedShape(
     public val shape: Shape,
     public val dashLengthDp: Float,
     public val gapLengthDp: Float,
-    public val fitStrategy: FitStrategy = FitStrategy.Resize
+    public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
 
     private var drawDashLength = dashLengthDp

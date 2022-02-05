@@ -83,7 +83,7 @@ public fun ColumnChartCard(): Unit = MainTheme {
                             CornerSize(percent = 25),
                             CornerSize(percent = 50),
                             CornerSize(percent = 50),
-                            CornerSize(percent = 25)
+                            CornerSize(percent = 25),
                         ),
                         color = colors.primary.copy(alpha = 0.1f),
                     ),
@@ -127,7 +127,7 @@ public fun LineChartCard(): Unit = MainTheme {
                     color = colors.onSurface,
                     textSize = 10.sp,
                     background = shapeComponent(shape = rectShape, color = Color.LightGray),
-                    padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp)
+                    padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
                 )
                 axis = null
                 tick = null

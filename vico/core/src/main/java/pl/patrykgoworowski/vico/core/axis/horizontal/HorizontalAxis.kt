@@ -68,13 +68,13 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                         top = guidelineTop,
                         bottom = guidelineBottom,
                         centerX = tickDrawCenter,
-                        boundingBox = chartBounds
+                        boundingBox = chartBounds,
                     )
                 }?.drawVertical(
                     context = context,
                     top = guidelineTop,
                     bottom = guidelineBottom,
-                    centerX = tickDrawCenter
+                    centerX = tickDrawCenter,
                 )
             }
 

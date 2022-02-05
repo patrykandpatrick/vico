@@ -33,7 +33,7 @@ public object DynamicShaders {
             left: Float,
             top: Float,
             right: Float,
-            bottom: Float
+            bottom: Float,
         ): Shader = BitmapShader(bitmap, tileXMode, tileYMode)
     }
 }

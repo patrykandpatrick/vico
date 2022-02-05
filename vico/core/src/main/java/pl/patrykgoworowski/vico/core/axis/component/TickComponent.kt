@@ -25,5 +25,5 @@ public open class TickComponent(
     color: Int,
     thicknessDp: Float,
     shape: Shape = rectShape,
-    dynamicShader: DynamicShader? = null
+    dynamicShader: DynamicShader? = null,
 ) : LineComponent(color, thicknessDp, shape, dynamicShader)

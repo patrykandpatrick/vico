@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.view.chart.BaseChartView
 public fun <T : ChartEntryModel> BaseChartView<T>.setUpChart(
     entries: ChartModelProducer<T>,
     coroutineScope: CoroutineScope,
-    marker: Marker
+    marker: Marker,
 ) {
     this.marker = marker
     entries.collectAsFlow

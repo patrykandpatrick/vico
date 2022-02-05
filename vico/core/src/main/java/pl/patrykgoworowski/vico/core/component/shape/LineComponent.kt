@@ -47,7 +47,7 @@ public open class LineComponent(
             left = left,
             top = centerY - thickness * thicknessScale / 2,
             right = right,
-            bottom = centerY + thickness * thicknessScale / 2
+            bottom = centerY + thickness * thicknessScale / 2,
         )
     }
 
@@ -64,7 +64,7 @@ public open class LineComponent(
             top = centerY - thickness * thicknessScale / 2,
             right = right,
             bottom = centerY + thickness * thicknessScale / 2,
-            boundingBox = boundingBox
+            boundingBox = boundingBox,
         )
     }
 
@@ -80,7 +80,7 @@ public open class LineComponent(
             left = centerX - thickness * thicknessScale / 2,
             top = top,
             right = centerX + thickness * thicknessScale / 2,
-            bottom = bottom
+            bottom = bottom,
         )
     }
 
@@ -97,7 +97,7 @@ public open class LineComponent(
             top = top,
             right = centerX + thickness * thicknessScale / 2,
             bottom = bottom,
-            boundingBox = boundingBox
+            boundingBox = boundingBox,
         )
     }
 
@@ -114,7 +114,7 @@ public open class LineComponent(
             top = top,
             right = centerX + thickness * thicknessScale / 2,
             bottom = bottom,
-            boundingBox = boundingBox
+            boundingBox = boundingBox,
         )
     }
 }

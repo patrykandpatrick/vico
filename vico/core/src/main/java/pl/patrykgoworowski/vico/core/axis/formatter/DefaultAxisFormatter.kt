@@ -22,6 +22,6 @@ public object DefaultAxisFormatter : AxisValueFormatter {
     override fun formatValue(
         value: Float,
         index: Int,
-        chartModel: ChartModel
+        chartModel: ChartModel,
     ): String = value.toString()
 }

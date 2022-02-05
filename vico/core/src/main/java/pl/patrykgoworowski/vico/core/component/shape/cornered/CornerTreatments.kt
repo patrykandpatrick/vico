@@ -28,7 +28,7 @@ public object SharpCornerTreatment : CornerTreatment {
         x2: Float,
         y2: Float,
         cornerLocation: CornerLocation,
-        path: Path
+        path: Path,
     ): Unit = when (cornerLocation) {
         CornerLocation.TopLeft -> {
             path.lineTo(x1, y2)
@@ -53,7 +53,7 @@ public object CutCornerTreatment : CornerTreatment {
         x2: Float,
         y2: Float,
         cornerLocation: CornerLocation,
-        path: Path
+        path: Path,
     ) {
         path.lineTo(x1, y1)
         path.lineTo(x2, y2)
@@ -70,7 +70,7 @@ public object RoundedCornerTreatment : CornerTreatment {
         x2: Float,
         y2: Float,
         cornerLocation: CornerLocation,
-        path: Path
+        path: Path,
     ) {
         val startAngle: Float
         when (cornerLocation) {

@@ -21,7 +21,7 @@ import java.math.RoundingMode
 import java.text.DecimalFormat
 
 public class DecimalFormatAxisValueFormatter(
-    private val decimalFormat: DecimalFormat
+    private val decimalFormat: DecimalFormat,
 ) : AxisValueFormatter {
 
     public constructor() : this(DEF_FORMAT)

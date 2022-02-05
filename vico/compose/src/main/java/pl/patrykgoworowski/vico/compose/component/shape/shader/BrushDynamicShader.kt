@@ -49,7 +49,7 @@ public fun brushShader(
                     abs(top - bottom)
                 ),
                 p = tempPaint,
-                alpha = 1f
+                alpha = 1f,
             )
         return requireNotNull(tempPaint.shader)
     }
