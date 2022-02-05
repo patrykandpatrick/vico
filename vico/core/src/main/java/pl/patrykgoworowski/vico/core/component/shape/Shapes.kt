@@ -100,9 +100,9 @@ public object Shapes {
             bottom: Float,
         ) {
             if (bottom - top == 0f) return
-            val drawableHeight = if (keepAspectRatio) (right - left) * ratio else bottom - top
-            val top = minOf(top, bottom - drawableHeight)
-            drawable.setBounds(left, top, right, top + drawableHeight)
+            val drawableHeight = if (keepAspectRatio) (right - left) / ratio else bottom - top
+            val topWithoutClipping = minOf(top, bottom - drawableHeight)
+            drawable.setBounds(left, topWithoutClipping, right, topWithoutClipping + drawableHeight)
             drawable.draw(context.canvas)
             otherCreator ?: return
 
