@@ -165,7 +165,7 @@ public fun <Model : ChartEntryModel> Chart(
         chart.draw(chartDrawContext, model, marker)
         axisManager.drawAboveChart(chartDrawContext)
         scrollHandler.maxScrollDistance =
-            (chartDrawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount()) - chart.bounds.width()
+            chartDrawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount() - chart.bounds.width()
         measureContext.clearExtras()
     }
 }
