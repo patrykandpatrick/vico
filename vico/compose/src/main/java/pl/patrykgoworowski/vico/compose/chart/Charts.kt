@@ -159,11 +159,13 @@ public fun <Model : ChartEntryModel> Chart(
             markerTouchPoint = markerTouchPoint.value,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
             chartModel = chartModel,
+            chartBounds = chart.bounds,
         )
         axisManager.drawBehindChart(chartDrawContext)
         chart.draw(chartDrawContext, model, marker)
         axisManager.drawAboveChart(chartDrawContext)
-        scrollHandler.maxScrollDistance = chart.maxScrollAmount
+        scrollHandler.maxScrollDistance =
+            (chartDrawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount()) - chart.bounds.width()
         measureContext.clearExtras()
     }
 }

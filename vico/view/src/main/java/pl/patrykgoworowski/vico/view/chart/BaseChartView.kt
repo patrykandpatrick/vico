@@ -90,7 +90,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
         horizontalScroll = scrollHandler.currentScroll,
-        zoom = 1f,
+        chartScale = 1f,
         chartModel = chartModel,
     )
 
@@ -165,11 +165,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun handleZoom(focusX: Float, zoomChange: Float) {
         val chart = chart ?: return
-        val newZoom = measureContext.zoom * zoomChange
+        val newZoom = measureContext.chartScale * zoomChange
         if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
         val transformationAxisX = scrollHandler.currentScroll + focusX - chart.bounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
-        measureContext.zoom = newZoom
+        measureContext.chartScale = newZoom
         scrollHandler.currentScroll += zoomedTransformationAxisX - transformationAxisX
         invalidate()
     }
@@ -193,11 +193,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             markerTouchPoint = markerTouchPoint,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
             chartModel = chartModel,
+            chartBounds = chart.bounds,
         )
         axisManager.drawBehindChart(drawContext)
         chart.draw(drawContext, model, marker)
         axisManager.drawAboveChart(drawContext)
-        scrollHandler.maxScrollDistance = chart.maxScrollAmount
+        scrollHandler.maxScrollDistance =
+            (drawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount()) - chart.bounds.width()
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

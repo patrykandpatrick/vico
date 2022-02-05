@@ -21,8 +21,11 @@ public data class MutableSegmentProperties(
     override var marginWidth: Float = 0f,
 ) : SegmentProperties {
 
-    override val segmentWidth: Float
-        get() = cellWidth + marginWidth
+    public fun set(cellWidth: Float, marginWidth: Float): MutableSegmentProperties {
+        this.cellWidth = cellWidth
+        this.marginWidth = marginWidth
+        return this
+    }
 
     public fun clear() {
         cellWidth = 0f
@@ -30,5 +33,5 @@ public data class MutableSegmentProperties(
     }
 
     override fun toString(): String =
-        "MutableSegmentProperties(segmentWidth=$segmentWidth, contentWidth=$cellWidth," + "marginWidth=$marginWidth)"
+        "MutableSegmentProperties(segmentWidth=$segmentWidth, contentWidth=$cellWidth, marginWidth=$marginWidth)"
 }

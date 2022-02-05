@@ -16,11 +16,13 @@
 
 package pl.patrykgoworowski.vico.core.chart.draw
 
+import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.model.Point
 
 public interface ChartDrawContext : DrawContext {
+    public val chartBounds: RectF
     public val segmentProperties: SegmentProperties
     public val markerTouchPoint: Point?
 }

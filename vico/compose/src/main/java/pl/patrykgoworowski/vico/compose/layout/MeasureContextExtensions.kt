@@ -44,7 +44,7 @@ public fun getMeasureContext(
             override var isLtr: Boolean = true
             override var isHorizontalScrollEnabled: Boolean = isHorizontalScrollEnabled
             override var horizontalScroll: Float = horizontalScroll
-            override var zoom: Float = zoom
+            override var chartScale: Float = zoom
         }
     }
     context.density = LocalDensity.current.density
@@ -52,6 +52,6 @@ public fun getMeasureContext(
     context.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     context.isHorizontalScrollEnabled = isHorizontalScrollEnabled
     context.horizontalScroll = horizontalScroll
-    context.zoom = zoom
+    context.chartScale = zoom
     return context
 }

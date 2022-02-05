@@ -29,6 +29,6 @@ internal data class MutableMeasureContext(
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean,
     override var horizontalScroll: Float,
-    override var zoom: Float,
+    override var chartScale: Float,
     override val chartModel: ChartModel,
 ) : MeasureContext, Extras by DefaultExtras()

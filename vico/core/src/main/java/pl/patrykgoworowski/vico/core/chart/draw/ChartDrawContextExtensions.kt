@@ -27,6 +27,8 @@ import pl.patrykgoworowski.vico.core.context.Extras
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.model.Point
 
+private const val DEFAULT_SCALE = 1f
+
 @LongParameterListDrawFunction
 public fun chartDrawContext(
     canvas: Canvas,
@@ -35,19 +37,21 @@ public fun chartDrawContext(
     markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
     chartModel: ChartModel,
+    chartBounds: RectF,
 ): ChartDrawContext = object : ChartDrawContext, Extras by measureContext {
     override val canvasBounds: RectF = measureContext.canvasBounds
+    override val chartBounds: RectF = chartBounds
     override var canvas: Canvas = canvas
     override val colors: Colors = colors
     override val chartModel: ChartModel = chartModel
-    override val segmentProperties: SegmentProperties = segmentProperties
     override val markerTouchPoint: Point? = markerTouchPoint
     override val horizontalScroll: Float = measureContext.horizontalScroll
     override val density: Float = measureContext.density
     override val fontScale: Float = measureContext.fontScale
     override val isLtr: Boolean = measureContext.isLtr
     override val isHorizontalScrollEnabled: Boolean = measureContext.isHorizontalScrollEnabled
-    override val zoom: Float = measureContext.zoom
+    override val chartScale: Float = calculateDrawScale()
+    override val segmentProperties: SegmentProperties = segmentProperties.scaled(chartScale)
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
         val originalCanvas = this.canvas
@@ -55,4 +59,12 @@ public fun chartDrawContext(
         block(this)
         this.canvas = originalCanvas
     }
+
+    private fun calculateDrawScale(): Float =
+        if (isHorizontalScrollEnabled) {
+            measureContext.chartScale
+        } else {
+            (chartBounds.width() / (segmentProperties.segmentWidth * chartModel.chartEntryModel.getDrawnEntryCount()))
+                .coerceAtMost(DEFAULT_SCALE)
+        }
 }

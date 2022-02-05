@@ -123,7 +123,7 @@ complexity:
     ignoreDataClasses: true
     ignoreAnnotated: [
         'androidx.compose.runtime.Composable',
-        'pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction',
+        'LongParameterListDrawFunction',
     ]
   MethodOverloading:
     active: false

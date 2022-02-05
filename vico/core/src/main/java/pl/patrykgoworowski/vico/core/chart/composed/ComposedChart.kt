@@ -47,10 +47,6 @@ public class ComposedChart<Model : ChartEntryModel>(
         charts.forEach { chart -> chart.setBounds(left, top, right, bottom) }
     }
 
-    override var maxScrollAmount: Float
-        set(_) {}
-        get() = charts.maxOf { it.maxScrollAmount }
-
     override fun drawChart(
         context: ChartDrawContext,
         model: ComposedChartEntryModel<Model>,
@@ -60,14 +56,6 @@ public class ComposedChart<Model : ChartEntryModel>(
             chart.draw(context, item, null)
             markerLocationMap.updateAll(chart.markerLocationMap)
         }
-    }
-
-    override fun getMeasuredWidth(context: MeasureContext, model: ComposedChartEntryModel<Model>): Int {
-        var result = 0
-        model.forEachModelWithChart { _, item, chart ->
-            result = maxOf(chart.getMeasuredWidth(context, item), result)
-        }
-        return result
     }
 
     override fun getSegmentProperties(

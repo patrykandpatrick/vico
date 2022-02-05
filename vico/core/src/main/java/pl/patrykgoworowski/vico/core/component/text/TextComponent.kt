@@ -138,7 +138,11 @@ public open class TextComponent protected constructor() : Padding, Margins {
     ): Unit = with(context) {
 
         if (text.isBlank()) return
-        layout = getLayout(text, fontScale, maxTextWidth - (padding.horizontalDp + margins.horizontalDp).wholePixels)
+        layout = getLayout(
+            text = text,
+            fontScale = fontScale,
+            width = (maxTextWidth - (padding.horizontalDp + margins.horizontalDp).wholePixels).coerceAtLeast(0),
+        )
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
         val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
