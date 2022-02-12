@@ -31,29 +31,29 @@ public class Insets(
 ) : HorizontalInsets {
 
     /**
-     * Returns a total value of horizontal insets.
+     * Returns the total value of the horizontal insets.
      */
     public val horizontal: Float
         get() = start + end
 
     /**
-     * Returns a total value of vertical insets.
+     * Returns the total value of the vertical insets.
      */
     public val vertical: Float
         get() = top + bottom
 
     /**
-     * Sets inset values specified by other [Insets] instance.
+     * Sets the inset values specified by another [Insets] instance.
      */
     public fun set(other: Insets): Insets = set(other.start, other.top, other.end, other.bottom)
 
     /**
-     * Sets all inset values equal to [all].
+     * Sets all inset values to [all].
      */
     public fun set(all: Float): Insets = set(all, all, all, all)
 
     /**
-     * Sets insets for each side.
+     * Sets the insets for each side.
      */
     public fun set(
         start: Float = 0f,
@@ -68,7 +68,7 @@ public class Insets(
     }
 
     /**
-     * Sets [start] and [end] insets.
+     * Sets the [start] and [end] insets.
      */
     override fun set(start: Float, end: Float) {
         this.start = start
@@ -76,20 +76,20 @@ public class Insets(
     }
 
     /**
-     * Returns left inset depending on layout direction.
+     * Returns the left inset, depending on the layout direction.
      * @param isLtr true if layout is Left-to-Right, false otherwise.
      */
     public fun getLeft(isLtr: Boolean): Float = if (isLtr) start else end
 
     /**
-     * Returns right inset depending on layout direction.
+     * Returns the right inset, depending the on layout direction.
      * @param isLtr true if layout is Left-to-Right, false otherwise.
      */
     public fun getRight(isLtr: Boolean): Float = if (isLtr) end else start
 
     /**
-     * Sets [start] and [end] insets.
-     * The [value] defines a total width, thus each horizontal inset gets half of the [value].
+     * Sets the [start] and [end] insets.
+     * The [value] defines a total width. Thus, each horizontal inset gets half of the [value].
      */
     public fun setHorizontal(value: Float): Insets = apply {
         start = value.half
@@ -97,8 +97,8 @@ public class Insets(
     }
 
     /**
-     * Sets [top] and [bottom] insets.
-     * The [value] defines a total height, thus each vertical inset gets half of the [value].
+     * Sets the [top] and [bottom] insets.
+     * The [value] defines a total height. Thus, each vertical inset gets half of the [value].
      */
     public fun setVertical(value: Float): Insets = apply {
         top = value.half
