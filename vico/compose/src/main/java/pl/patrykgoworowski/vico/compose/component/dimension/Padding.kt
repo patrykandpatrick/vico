@@ -24,26 +24,29 @@ import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
 
 @Composable
-public fun Padding.setPadding(
+public fun <P : Padding> P.setPadding(
     start: Dp = 0.dp,
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
-) {
+): P {
     padding.set(start.value, top.value, end.value, bottom.value)
+    return this
 }
 
 @Composable
-public fun Padding.setPadding(
+public fun <P : Padding> P.setPadding(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
-) {
+): P {
     padding.set(horizontal.value, vertical.value, horizontal.value, vertical.value)
+    return this
 }
 
 @Composable
-public fun Padding.setPadding(
+public fun <P : Padding> P.setPadding(
     all: Dp = 0.dp,
-) {
+): P {
     padding.set(all.value, all.value, all.value, all.value)
+    return this
 }
