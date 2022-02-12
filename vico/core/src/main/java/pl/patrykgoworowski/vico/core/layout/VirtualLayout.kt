@@ -49,7 +49,7 @@ public open class VirtualLayout {
         chartInsetter.filterNotNull().forEach(tempInsetters::add)
 
         tempInsetters.forEach { insetter ->
-            insetter.getVerticalInsets(context, tempInsets)
+            insetter.getInsets(context, tempInsets)
             finalInsets.setAllGreater(tempInsets)
         }
 
@@ -66,7 +66,7 @@ public open class VirtualLayout {
             right = contentBounds.right - finalInsets.getRight(isLtr),
             bottom = contentBounds.bottom - finalInsets.bottom
         )
-        axisManager.setAxesBounds(context, contentBounds, chart.bounds, finalInsets)
+        axisManager.setAxesBounds(context, contentBounds, finalInsets)
     }
 
     private fun Insets.setAllGreater(other: Insets) {

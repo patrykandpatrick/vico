@@ -118,7 +118,7 @@ public open class MarkerComponent(
             }
     }
 
-    override fun getVerticalInsets(
+    override fun getInsets(
         context: MeasureContext,
         outInsets: Insets
     ): Unit = with(context) {

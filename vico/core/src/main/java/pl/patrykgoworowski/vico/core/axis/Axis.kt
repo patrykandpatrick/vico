@@ -25,44 +25,39 @@ import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.orZero
-import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.extension.setAll
 
 public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
+    private val restrictedBounds: MutableList<RectF> = mutableListOf()
+
     protected val labels: ArrayList<String> = ArrayList()
 
     override val bounds: RectF = RectF()
-    override val restrictedBounds: MutableList<RectF> = mutableListOf()
-    override val chartBounds: RectF = RectF()
 
-    override val MeasureContext.axisThickness: Float
-        get() = axis?.thicknessDp.orZero.pixels
+    protected val MeasureContext.axisThickness: Float
+        get() = axisLine?.thicknessDp.orZero.pixels
 
-    override val MeasureContext.tickThickness: Float
+    protected val MeasureContext.tickThickness: Float
         get() = tick?.thicknessDp.orZero.pixels
 
-    override val MeasureContext.guidelineThickness: Float
+    protected val MeasureContext.guidelineThickness: Float
         get() = guideline?.thicknessDp.orZero.pixels
 
-    override val MeasureContext.tickLength: Float
+    public val MeasureContext.tickLength: Float
         get() = if (tick != null) tickLengthDp.pixels else 0f
 
-    override var isLtr: Boolean = true
+    public var isLtr: Boolean = true
 
-    override var label: TextComponent? = null
-    override var axis: LineComponent? = null
-    override var tick: LineComponent? = null
-    override var guideline: LineComponent? = null
-    override var tickLengthDp: Float = 0f
+    public var label: TextComponent? = null
+    public var axisLine: LineComponent? = null
+    public var tick: LineComponent? = null
+    public var guideline: LineComponent? = null
+    public var tickLengthDp: Float = 0f
 
     public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
-    override var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
-
-    override fun setChartBounds(left: Number, top: Number, right: Number, bottom: Number) {
-        chartBounds.set(left, top, right, bottom)
-    }
+    public var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
 
     override fun setRestrictedBounds(vararg bounds: RectF?) {
         restrictedBounds.setAll(bounds.filterNotNull())
@@ -149,7 +144,7 @@ public fun axisBuilder(block: Axis.Builder.() -> Unit = {}): Axis.Builder =
     Axis.Builder().apply(block)
 
 public fun <T : AxisPosition, A : Axis<T>> Axis.Builder.setTo(axis: A): A {
-    axis.axis = this.axis
+    axis.axisLine = this.axis
     axis.tick = tick
     axis.guideline = guideline
     axis.label = label

@@ -26,6 +26,7 @@ import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelP
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.chart.insets.HorizontalInsets
 import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
@@ -83,13 +84,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 centerY = centerY
             )
         }
-        axis?.drawVertical(
+        axisLine?.drawVertical(
             context = context,
             top = bounds.top,
             bottom = bounds.bottom + axisThickness,
             centerX =
-            if (isLeft) bounds.right - axisThickness.half
-            else bounds.left + axisThickness.half
+            if (isLeft) bounds.right else bounds.left
         )
     }
 
@@ -100,12 +100,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val labels = getLabels(chartModel, labelCount)
 
         val tickLeftX =
-            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right - (axisThickness + tickLength)
+            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right - (axisThickness.half + tickLength)
             else bounds.left
 
         val tickRightX =
             if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right
-            else bounds.left + axisThickness + tickLength
+            else bounds.left + axisThickness.half + tickLength
 
         val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
 
@@ -195,7 +195,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
-        outInsets: Insets
+        outInsets: HorizontalInsets
     ): Unit = with(context) {
         val labels = getLabels(chartModel = chartModel, maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
 
@@ -207,7 +207,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         )
     }
 
-    override fun getVerticalInsets(
+    override fun getInsets(
         context: MeasureContext,
         outInsets: Insets
     ): Unit = with(context) {
@@ -218,12 +218,10 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         )
     }
 
-    override fun getDesiredHeight(context: MeasureContext): Float = 0f
-
     /**
      * Calculates a width of this [VerticalAxis] according to constraints set in [sizeConstraint].
      */
-    override fun getDesiredWidth(
+    private fun getDesiredWidth(
         context: MeasureContext,
         labels: List<String>,
     ): Float = with(context) {

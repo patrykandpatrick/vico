@@ -17,63 +17,41 @@
 package pl.patrykgoworowski.vico.core.axis
 
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.chart.insets.ChartInsetter
-import pl.patrykgoworowski.vico.core.component.shape.LineComponent
-import pl.patrykgoworowski.vico.core.component.text.TextComponent
-import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 
+/**
+ * The interface defining minimal set of properties and functions required by other parts of the library to draw
+ * an axis.
+ */
 public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInsetter {
 
+    /**
+     * Defines a position of axis relative to the [pl.patrykgoworowski.vico.core.chart.Chart].
+     */
     public val position: Position
-    public val chartBounds: RectF
 
-    public val tickLengthDp: Float
-
-    public val restrictedBounds: List<RectF>
-
-    public val MeasureContext.tickLength: Float
-    public val MeasureContext.axisThickness: Float
-    public val MeasureContext.tickThickness: Float
-    public val MeasureContext.guidelineThickness: Float
-    public val MeasureContext.maxAnyAxisLineThickness: Float
-        get() = maxOf(axisThickness, tickThickness, guidelineThickness)
-
-    public var label: TextComponent?
-    public var axis: LineComponent?
-    public var tick: LineComponent?
-    public var guideline: LineComponent?
-    public var isLtr: Boolean
-    public var valueFormatter: AxisValueFormatter
-
+    /**
+     * Called before [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
+     * Subclasses should rely on this function to draw themselves, unless they want to draw something above the chart.
+     *
+     * @param context Drawing context holding information necessary to draw axis.
+     *
+     * @see drawAboveChart
+     */
     public fun drawBehindChart(context: ChartDrawContext)
 
+    /**
+     * Called after [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
+     * Subclasses can use this function to draw something in the chart’s bounds, that can’t be covered by the chart.
+     *
+     * @param context Drawing context holding information necessary to draw axis.
+     */
     public fun drawAboveChart(context: ChartDrawContext)
 
-    public fun setChartBounds(
-        left: Number,
-        top: Number,
-        right: Number,
-        bottom: Number
-    )
-
-    public fun setChartBounds(bounds: RectF) {
-        setChartBounds(
-            bounds.left,
-            bounds.top,
-            bounds.right,
-            bounds.bottom,
-        )
-    }
-
-    public fun getDesiredWidth(
-        context: MeasureContext,
-        labels: List<String>,
-    ): Float
-
+    /**
+     * The bounds ([RectF]) passed here define rectangle coordinates where the [AxisRenderer] shouldn’t draw anything.
+     */
     public fun setRestrictedBounds(vararg bounds: RectF?)
-
-    public fun getDesiredHeight(context: MeasureContext): Float
 }

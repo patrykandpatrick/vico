@@ -135,11 +135,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             textDrawCenter += tickDrawStep
         }
 
-        axis?.drawHorizontal(
+        axisLine?.drawHorizontal(
             context = context,
             left = chartBounds.left,
             right = chartBounds.right,
-            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half
+            centerY = if (position.isBottom) bounds.top + axisThickness.half else bounds.bottom - axisThickness.half
         )
 
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
@@ -163,7 +163,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         TickType.Major -> textDrawCenter
     }
 
-    override fun getVerticalInsets(
+    override fun getInsets(
         context: MeasureContext,
         outInsets: Insets
     ): Unit = with(context) {
@@ -177,7 +177,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    override fun getDesiredHeight(context: MeasureContext): Float = with(context) {
+    private fun getDesiredHeight(context: MeasureContext): Float = with(context) {
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> (
                 label?.let { label ->
@@ -197,8 +197,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             (chartModel.maxX - chartModel.minX).half,
             chartModel.maxX,
         ).mapIndexed { index, x -> valueFormatter.formatValue(value = x, index = index, chartModel = chartModel) }
-
-    override fun getDesiredWidth(context: MeasureContext, labels: List<String>): Float = 0f
 
     public enum class TickType {
         Minor, Major
