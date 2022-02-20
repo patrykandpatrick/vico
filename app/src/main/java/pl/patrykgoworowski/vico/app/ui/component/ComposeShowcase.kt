@@ -22,12 +22,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
-import pl.patrykgoworowski.vico.app.extension.InvertedTheme
 
 @Composable
 internal fun ComposeShowcase(

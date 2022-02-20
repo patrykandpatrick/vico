@@ -42,7 +42,8 @@ public interface ChartInsetter {
     /**
      * Called during the measurement phase, after [getInsets].
      * Subclasses can specify the chart’s horizontal insets only.
-     * Unless the component needs to know the [availableHeight] that it may use, it can specify all insets in [getInsets].
+     * Unless the component needs to know the [availableHeight] that it may use,
+     * it can specify all insets in [getInsets].
      * The [pl.patrykgoworowski.vico.core.layout.VirtualLayout] will use the highest horizontal inset values returned by
      * any [ChartInsetter] for the resulting insets.
      *

@@ -99,17 +99,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         val labels = getLabels(chartModel, labelCount)
 
-        val tickLeftX = when {
-            position.isLeft(isLtr) && horizontalLabelPosition == Outside ->
-                bounds.right - (axisThickness.half + tickLength)
-            position.isLeft(isLtr) && horizontalLabelPosition == Inside ->
-                bounds.right
-            position.isRight(isLtr) && horizontalLabelPosition == Outside ->
-                bounds.left
-            position.isRight(isLtr) && horizontalLabelPosition == Inside ->
-                bounds.left - (axisThickness.half + tickLength)
-            else -> throw IllegalStateException("Unexpected case while determining tick left X position.")
-        }
+        val tickLeftX = getTickLeftX()
 
         val tickRightX = tickLeftX + axisThickness.half + tickLength
 
@@ -157,6 +147,18 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 )
             }
         }
+    }
+
+    private fun MeasureContext.getTickLeftX(): Float = when {
+        position.isLeft(isLtr) && horizontalLabelPosition == Outside ->
+            bounds.right - (axisThickness.half + tickLength)
+        position.isLeft(isLtr) && horizontalLabelPosition == Inside ->
+            bounds.right
+        position.isRight(isLtr) && horizontalLabelPosition == Outside ->
+            bounds.left
+        position.isRight(isLtr) && horizontalLabelPosition == Inside ->
+            bounds.left - (axisThickness.half + tickLength)
+        else -> throw IllegalStateException("Unexpected case while determining tick left X position.")
     }
 
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
