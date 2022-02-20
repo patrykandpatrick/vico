@@ -16,6 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.axis.vertical
 
+import java.lang.IllegalStateException
 import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
 import pl.patrykgoworowski.vico.core.axis.Axis
@@ -70,12 +71,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             centerY = bounds.bottom - (axisStep * index) + guidelineThickness.half
 
             guideline?.takeIf {
-                it.fitsInHorizontal(
-                    context = context,
+                isNotInRestrictedBounds(
                     left = chartBounds.left,
+                    top = centerY - guidelineThickness.half,
                     right = chartBounds.right,
-                    centerY = centerY,
-                    boundingBox = chartBounds
+                    bottom = centerY + guidelineThickness.half,
                 )
             }?.drawHorizontal(
                 context = context,
@@ -99,13 +99,19 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         val labels = getLabels(chartModel, labelCount)
 
-        val tickLeftX =
-            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right - (axisThickness.half + tickLength)
-            else bounds.left
+        val tickLeftX = when {
+            position.isLeft(isLtr) && horizontalLabelPosition == Outside ->
+                bounds.right - (axisThickness.half + tickLength)
+            position.isLeft(isLtr) && horizontalLabelPosition == Inside ->
+                bounds.right
+            position.isRight(isLtr) && horizontalLabelPosition == Outside ->
+                bounds.left
+            position.isRight(isLtr) && horizontalLabelPosition == Inside ->
+                bounds.left - (axisThickness.half + tickLength)
+            else -> throw IllegalStateException("Unexpected case while determining tick left X position.")
+        }
 
-        val tickRightX =
-            if (isLabelOutsideOnLeftOrInsideOnRight) bounds.right
-            else bounds.left + axisThickness.half + tickLength
+        val tickRightX = tickLeftX + axisThickness.half + tickLength
 
         val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
 
