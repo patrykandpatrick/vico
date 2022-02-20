@@ -58,8 +58,8 @@ public fun axisLabelComponent(
     this.lineCount = lineCount
     this.background = background
     this.padding = dimensionsOf(
-        vertical = horizontalPadding,
-        horizontal = verticalPadding,
+        vertical = verticalPadding,
+        horizontal = horizontalPadding,
     )
     this.margins = dimensionsOf(
         vertical = verticalMargin,
