@@ -41,6 +41,8 @@ public fun startAxis(
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
+    horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+    verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
 ): VerticalAxis<AxisPosition.Vertical.Start> = createVerticalAxis {
     this.label = label
     this.axis = axis
@@ -49,6 +51,8 @@ public fun startAxis(
     this.valueFormatter = valueFormatter
     tickLengthDp = tickLength.value
     this.sizeConstraint = sizeConstraint
+    this.horizontalLabelPosition = horizontalLabelPosition
+    this.verticalLabelPosition = verticalLabelPosition
 }
 
 @Composable
@@ -60,6 +64,8 @@ public fun endAxis(
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
+    horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+    verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
 ): VerticalAxis<AxisPosition.Vertical.End> = createVerticalAxis {
     this.label = label
     this.axis = axis
@@ -68,4 +74,6 @@ public fun endAxis(
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
     this.sizeConstraint = sizeConstraint
+    this.horizontalLabelPosition = horizontalLabelPosition
+    this.verticalLabelPosition = verticalLabelPosition
 }
