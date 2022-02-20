@@ -58,9 +58,9 @@ import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 
 @Composable
 public fun <Model : ChartEntryModel> Chart(
-    modifier: Modifier,
     chart: Chart<Model>,
     chartModelProducer: ChartModelProducer<Model>,
+    modifier: Modifier = Modifier,
     startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
     topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
     endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
@@ -88,9 +88,9 @@ public fun <Model : ChartEntryModel> Chart(
 @Suppress("LongMethod")
 @Composable
 public fun <Model : ChartEntryModel> Chart(
-    modifier: Modifier,
     chart: Chart<Model>,
     model: Model,
+    modifier: Modifier = Modifier,
     startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
     topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
     endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
