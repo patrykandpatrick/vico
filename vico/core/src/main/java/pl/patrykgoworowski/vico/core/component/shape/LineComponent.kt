@@ -16,6 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.component.shape
 
+import android.graphics.Color
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
@@ -30,7 +31,9 @@ public open class LineComponent(
     shape: Shape = rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-) : ShapeComponent(shape, color, dynamicShader, margins) {
+    strokeWidthDp: Float = 0f,
+    strokeColor: Int = Color.TRANSPARENT,
+) : ShapeComponent(shape, color, dynamicShader, margins, strokeWidthDp, strokeColor) {
 
     private val MeasureContext.thickness: Float
         get() = thicknessDp.pixels

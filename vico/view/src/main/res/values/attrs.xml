@@ -22,6 +22,8 @@
     <attr name="shapeStyle" format="reference" />
     <attr name="axisLabelStyle" format="reference" />
     <attr name="color" format="color" />
+    <attr name="strokeColor" format="color" />
+    <attr name="strokeWidth" format="dimension" />
 
     <declare-styleable name="ChartView">
         <attr name="chartType" format="enum">
@@ -62,8 +64,10 @@
 
     <declare-styleable name="LineComponentStyle">
         <attr name="color" />
-        <attr name="thickness" format="dimension"/>
+        <attr name="thickness" format="dimension" />
         <attr name="shapeStyle" />
+        <attr name="strokeColor" />
+        <attr name="strokeWidth" />
     </declare-styleable>
 
     <declare-styleable name="Shape">

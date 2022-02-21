@@ -18,6 +18,7 @@ package pl.patrykgoworowski.vico.view.theme
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Color
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
@@ -54,7 +55,16 @@ internal fun TypedArray.getLineComponent(
             )
         } else {
             defaultShape
-        }
+        },
+        strokeColor = array.getColor(
+            index = R.styleable.LineComponentStyle_strokeColor,
+            defaultColor = Color.TRANSPARENT,
+        ),
+        strokeWidthDp = array.getRawDimension(
+            context = context,
+            index = R.styleable.LineComponentStyle_strokeWidth,
+            defaultValue = 0f,
+        ),
     )
 }
 
@@ -82,7 +92,16 @@ internal fun TypedArray.getComponent(
             context = context,
             resourceId = R.styleable.ComponentStyle_shapeStyle,
             styleableResourceId = R.styleable.Shape,
-        ).getShape(context)
+        ).getShape(context),
+        strokeColor = array.getColor(
+            index = R.styleable.ComponentStyle_strokeColor,
+            defaultColor = Color.TRANSPARENT,
+        ),
+        strokeWidthDp = array.getRawDimension(
+            context = context,
+            index = R.styleable.ComponentStyle_strokeWidth,
+            defaultValue = 0f,
+        ),
     )
 
     if (overlayingComponent != null) {

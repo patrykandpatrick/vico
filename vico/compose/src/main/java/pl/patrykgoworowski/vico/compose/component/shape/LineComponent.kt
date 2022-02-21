@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.compose.component.shape
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
@@ -30,6 +31,8 @@ public fun lineComponent(
     color: Color,
     thickness: Dp,
     shape: Shape = Shapes.rectShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
@@ -38,12 +41,16 @@ public fun lineComponent(
     dynamicShader = dynamicShader,
     shape = shape,
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 public fun lineComponent(
     color: Color,
     thickness: Dp,
     shape: androidx.compose.ui.graphics.Shape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
@@ -52,4 +59,6 @@ public fun lineComponent(
     dynamicShader = dynamicShader,
     shape = shape.chartShape(),
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )

@@ -25,6 +25,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.shape.chartShape
 import pl.patrykgoworowski.vico.compose.component.shape.shader.BrushShader
@@ -72,6 +73,8 @@ public fun axisLineComponent(
     color: Color = currentChartStyle.axis.axisLineColor,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
     shape: ChartShape = currentChartStyle.axis.axisLineShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
@@ -80,6 +83,8 @@ public fun axisLineComponent(
     dynamicShader = dynamicShader,
     shape = shape,
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 @Composable
@@ -87,6 +92,8 @@ public fun axisLineComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
     shape: Shape = RectangleShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
@@ -95,40 +102,52 @@ public fun axisLineComponent(
     dynamicShader = brush?.let(::BrushShader),
     shape = shape.chartShape(),
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 @Composable
 public fun axisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    dynamicShader: DynamicShader? = null,
     shape: ChartShape = currentChartStyle.axis.axisTickShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
+    dynamicShader: DynamicShader? = null,
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = dynamicShader,
     shape = shape,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 @Composable
 public fun axisTickComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    brush: Brush? = null,
     shape: Shape = RectangleShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
+    brush: Brush? = null,
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     dynamicShader = brush?.let(::BrushShader),
     shape = shape.chartShape(),
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 @Composable
 public fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
     thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
-    dynamicShader: DynamicShader? = null,
     shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
+    dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent = LineComponent(
     color = color.toArgb(),
@@ -136,4 +155,6 @@ public fun axisGuidelineComponent(
     dynamicShader = dynamicShader,
     shape = shape,
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )

@@ -49,5 +49,8 @@ public fun Int.copyColor(
 public val Int.colorHex: String
     get() = String.format("#%08X", 0xFFFFFFFF and this.toLong())
 
+public val Int.alpha: Int
+    get() = extractColorChannel(ALPHA_BIT_SHIFT)
+
 private fun Int.extractColorChannel(bitShift: Int): Int =
     this shr bitShift and COLOR_MASK

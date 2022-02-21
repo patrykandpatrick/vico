@@ -44,12 +44,16 @@ public fun lineComponent(
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     shape = shape.chartShape(),
     dynamicShader = dynamicShader,
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 public fun lineComponent(
@@ -58,12 +62,16 @@ public fun lineComponent(
     shape: ChartShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
 ): LineComponent = LineComponent(
     color = color.toArgb(),
     thicknessDp = thickness.value,
     shape = shape,
     dynamicShader = dynamicShader,
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 public fun shapeComponent(
@@ -71,11 +79,15 @@ public fun shapeComponent(
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
 ): ShapeComponent = ShapeComponent(
     shape = shape.chartShape(),
     color = color.toArgb(),
     dynamicShader = dynamicShader,
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 public fun shapeComponent(
@@ -83,11 +95,15 @@ public fun shapeComponent(
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
 ): ShapeComponent = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
     dynamicShader = dynamicShader,
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 public fun shapeComponent(
@@ -95,11 +111,15 @@ public fun shapeComponent(
     color: Color = Color.Black,
     brush: Brush,
     margins: Dimensions = emptyDimensions(),
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
 ): ShapeComponent = ShapeComponent(
     shape = shape,
     color = color.toArgb(),
     dynamicShader = brush.toDynamicShader(),
     margins = margins,
+    strokeWidthDp = strokeWidth.value,
+    strokeColor = strokeColor.toArgb(),
 )
 
 public fun overlayingComponent(

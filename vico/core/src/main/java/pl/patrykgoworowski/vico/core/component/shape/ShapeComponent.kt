@@ -30,23 +30,35 @@ import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 import pl.patrykgoworowski.vico.core.context.DrawContext
+import pl.patrykgoworowski.vico.core.extension.alpha
+import pl.patrykgoworowski.vico.core.extension.half
 
 public open class ShapeComponent(
     public val shape: Shape,
     color: Int = Color.BLACK,
     public val dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
+    public val strokeWidthDp: Float = 0f,
+    strokeColor: Int = Color.TRANSPARENT,
 ) : Component() {
 
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+    private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val shadowProperties: ComponentShadow = ComponentShadow()
 
     protected val path: Path = Path()
 
     public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = value }
+    public var strokeColor: Int by Delegates.observable(color) { _, _, value -> strokePaint.color = value }
 
     init {
         paint.color = color
+
+        with(strokePaint) {
+            this.color = strokeColor
+            style = Paint.Style.STROKE
+        }
+
         setMargins(margins)
     }
 
@@ -63,15 +75,25 @@ public open class ShapeComponent(
         val centerX = left + (right - left) / 2
         val centerY = top + (bottom - top) / 2
         shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
-        shape.drawShape(
-            context = context,
-            paint = paint,
-            path = path,
-            left = minOf(left + margins.startDp.pixels, centerX),
-            top = minOf(top + margins.topDp.pixels, centerY),
-            right = maxOf(right - margins.endDp.pixels, centerX),
-            bottom = maxOf(bottom - margins.bottomDp.pixels, centerY)
-        )
+
+        val strokeWidth = strokeWidthDp.pixels
+        strokePaint.strokeWidth = strokeWidth
+
+        fun drawShape(paint: Paint) {
+            shape.drawShape(
+                context = context,
+                paint = paint,
+                path = path,
+                left = minOf(left + margins.startDp.pixels + strokeWidth.half, centerX),
+                top = minOf(top + margins.topDp.pixels + strokeWidth.half, centerY),
+                right = maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX),
+                bottom = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY)
+            )
+        }
+
+        drawShape(paint)
+        if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
+
         DebugHelper.drawDebugBounds(
             context = context,
             left = left,
