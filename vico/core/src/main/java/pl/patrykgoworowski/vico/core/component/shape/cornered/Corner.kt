@@ -50,5 +50,6 @@ public sealed class Corner(
         private const val MAX_PERCENTAGE = 100
 
         public val FullyRounded: Corner = Relative(MAX_PERCENTAGE, RoundedCornerTreatment)
+        public val Sharp: Corner = Relative(0, SharpCornerTreatment)
     }
 }

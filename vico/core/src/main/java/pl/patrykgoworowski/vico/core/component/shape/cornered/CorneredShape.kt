@@ -29,10 +29,10 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
  */
 
 public open class CorneredShape(
-    public val topLeft: Corner,
-    public val topRight: Corner,
-    public val bottomRight: Corner,
-    public val bottomLeft: Corner,
+    public val topLeft: Corner = Corner.Sharp,
+    public val topRight: Corner = Corner.Sharp,
+    public val bottomRight: Corner = Corner.Sharp,
+    public val bottomLeft: Corner = Corner.Sharp,
 ) : Shape {
 
     public fun getCornerScale(width: Float, height: Float, density: Float): Float {
