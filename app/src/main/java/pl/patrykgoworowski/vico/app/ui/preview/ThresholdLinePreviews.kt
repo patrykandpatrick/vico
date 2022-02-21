@@ -219,7 +219,9 @@ public fun RangedThresholdLineWithComponentShader() {
                             dynamicShader = ComponentShader(
                                 shapeComponent(shape = Shapes.pillShape, color = Color.Black),
                                 componentSizeDp = 4f,
-                            )
+                            ),
+                            strokeWidth = 2.dp,
+                            strokeColor = Color.Black,
                         ),
                         textComponent = textComponent(Color.Black).setPadding(horizontal = 8.dp),
                     )
