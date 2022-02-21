@@ -23,7 +23,6 @@ module:core
 pl.patrykgoworowski.vico.core
 pl.patrykgoworowski.vico.core.annotation
 pl.patrykgoworowski.vico.core.axis
-pl.patrykgoworowski.vico.core.axis.component
 pl.patrykgoworowski.vico.core.axis.formatter
 pl.patrykgoworowski.vico.core.axis.horizontal
 pl.patrykgoworowski.vico.core.axis.model
