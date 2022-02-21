@@ -32,6 +32,10 @@ import pl.patrykgoworowski.vico.compose.component.shapeComponent
 import pl.patrykgoworowski.vico.compose.style.LocalChartStyle
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
+import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
+import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
+import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreatment
 import pl.patrykgoworowski.vico.core.entry.entryModelOf
 
 private val model = entryModelOf(1, 2, 3, 4)
@@ -60,13 +64,24 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
 }
 
 @Composable
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisTextInside() {
     ProvidePreviewChartStyle {
         val label = axisLabelComponent(
             background = shapeComponent(
-                shape = Shapes.pillShape,
+                shape = CorneredShape(
+                    topLeft = Corner.Relative(
+                        percentage = 50,
+                        cornerTreatment = CutCornerTreatment,
+                    ),
+                    bottomRight = Corner.Relative(
+                        percentage = 50,
+                        cornerTreatment = RoundedCornerTreatment,
+                    ),
+                ),
                 color = Color.LightGray,
+                strokeColor = Color.Gray,
+                strokeWidth = 1.dp,
             ),
             verticalPadding = 2.dp,
             horizontalPadding = 8.dp,
@@ -90,7 +105,38 @@ public fun HorizontalAxisTextInside() {
 }
 
 @Composable
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
+public fun HorizontalAxisTextInsideAndBottomAxis() {
+    ProvidePreviewChartStyle {
+        val label = axisLabelComponent(
+            background = shapeComponent(
+                shape = Shapes.pillShape,
+                color = Color.LightGray,
+            ),
+            verticalPadding = 2.dp,
+            horizontalPadding = 8.dp,
+            verticalMargin = 4.dp,
+            horizontalMargin = 4.dp,
+        )
+        Chart(
+            chart = columnChart(),
+            model = model,
+            startAxis = startAxis(
+                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                label = label,
+            ),
+            endAxis = endAxis(
+                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                guideline = null,
+                label = label,
+            ),
+            bottomAxis = bottomAxis(),
+        )
+    }
+}
+
+@Composable
+@Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisTextOutside() {
     ProvidePreviewChartStyle {
         Chart(
@@ -108,7 +154,7 @@ public fun HorizontalAxisTextOutside() {
 }
 
 @Composable
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
     ProvidePreviewChartStyle {
         Chart(
