@@ -34,7 +34,7 @@ public interface Chart<in Model> : BoundsAware {
      * A [Map] holding x-axis values as keys to their corresponding [Marker.EntryModel] holding data necessary
      * to draw a [Marker].
      */
-    public val markerLocationMap: Map<Float, MutableList<Marker.EntryModel>>
+    public val entryLocationMap: Map<Float, MutableList<Marker.EntryModel>>
 
     /**
      * The minimum value shown on the y-axis.
@@ -80,14 +80,12 @@ public interface Chart<in Model> : BoundsAware {
      * The function responsible for drawing the chart itself.
      * @param context The drawing context holding data about environment, as well as Canvas to draw on.
      * @param model The model holding data about entries that are meant to be drawn.
-     * @param touchMarker The indication of certain entry appearing on physical touch of the [Chart].
      *
      * @see ChartDrawContext
      */
     public fun draw(
         context: ChartDrawContext,
         model: Model,
-        touchMarker: Marker?
     )
 
     /**

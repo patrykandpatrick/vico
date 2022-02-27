@@ -54,14 +54,14 @@ public open class ColumnChart(
     private val heightMap = HashMap<Float, Float>()
     private val segmentProperties = MutableSegmentProperties()
 
-    override val markerLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
+    override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
         canvas.inClip(bounds) {
-            markerLocationMap.clear()
+            entryLocationMap.clear()
             drawChartInternal(
                 model = model,
                 cellWidth = segmentProperties.cellWidth,
@@ -143,7 +143,7 @@ public open class ColumnChart(
         columnCenterX: Float,
         column: LineComponent,
     ) {
-        markerLocationMap.put(
+        entryLocationMap.put(
             x = ceil(columnCenterX),
             y = columnTop.between(bounds.top, bounds.bottom),
             entry = entry,

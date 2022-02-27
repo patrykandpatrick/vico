@@ -50,6 +50,8 @@ import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.chart.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
+import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
+import pl.patrykgoworowski.vico.core.extension.ifNotNull
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
@@ -162,8 +164,18 @@ public fun <Model : ChartEntryModel> Chart(
             chartBounds = chart.bounds,
         )
         axisManager.drawBehindChart(chartDrawContext)
-        chart.draw(chartDrawContext, model, marker)
+        chart.draw(chartDrawContext, model)
         axisManager.drawAboveChart(chartDrawContext)
+        ifNotNull(
+            t1 = marker,
+            t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
+        ) { marker, markerModel ->
+            marker.draw(
+                context = chartDrawContext,
+                bounds = chart.bounds,
+                markedEntries = markerModel,
+            )
+        }
         scrollHandler.maxScrollDistance =
             chartDrawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount() - chart.bounds.width()
         measureContext.clearExtras()

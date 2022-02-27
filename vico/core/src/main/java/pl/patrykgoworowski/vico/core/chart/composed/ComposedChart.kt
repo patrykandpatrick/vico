@@ -40,7 +40,7 @@ public class ComposedChart<Model : ChartEntryModel>(
     private val tempAxisModel = MutableChartModel()
     private val segmentProperties = MutableSegmentProperties()
 
-    override val markerLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
+    override val entryLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
         this.bounds.set(left, top, right, bottom)
@@ -51,10 +51,10 @@ public class ComposedChart<Model : ChartEntryModel>(
         context: ChartDrawContext,
         model: ComposedChartEntryModel<Model>,
     ) {
-        markerLocationMap.clear()
+        entryLocationMap.clear()
         model.forEachModelWithChart { _, item, chart ->
-            chart.draw(context, item, null)
-            markerLocationMap.updateAll(chart.markerLocationMap)
+            chart.draw(context, item)
+            entryLocationMap.updateAll(chart.entryLocationMap)
         }
     }
 

@@ -60,7 +60,7 @@ public open class LineChart(
 
     private val segmentProperties = MutableSegmentProperties()
 
-    override val markerLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
+    override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     public var lineColor: Int by linePaint::color
     public var lineWidth: Float by linePaint::strokeWidth
@@ -106,7 +106,7 @@ public open class LineChart(
             prevX = x
             prevY = y
 
-            markerLocationMap.put(
+            entryLocationMap.put(
                 x = ceil(x),
                 y = y.between(bounds.top, bounds.bottom),
                 entry = entry,
@@ -141,7 +141,7 @@ public open class LineChart(
     }
 
     private fun resetTempData() {
-        markerLocationMap.clear()
+        entryLocationMap.clear()
         linePath.rewind()
         lineBackgroundPath.rewind()
     }

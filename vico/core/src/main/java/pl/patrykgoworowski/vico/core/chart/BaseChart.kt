@@ -21,10 +21,8 @@ import pl.patrykgoworowski.vico.core.chart.decoration.Decoration
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
-import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
 import pl.patrykgoworowski.vico.core.extension.getEntryModel
 import pl.patrykgoworowski.vico.core.marker.Marker
-import pl.patrykgoworowski.vico.core.model.Point
 
 public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
 
@@ -64,15 +62,14 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     override fun draw(
         context: ChartDrawContext,
-        model: Model,
-        touchMarker: Marker?
+        model: Model
     ) {
         if (model.entries.isNotEmpty()) {
             drawChart(context, model)
         }
         drawThresholdLines(context)
         persistentMarkers.forEach { (x, marker) ->
-            markerLocationMap.getEntryModel(x)?.also { markerModel ->
+            entryLocationMap.getEntryModel(x)?.also { markerModel ->
                 marker.draw(
                     context = context,
                     bounds = bounds,
@@ -80,31 +77,12 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
                 )
             }
         }
-        val touchPoint = context.markerTouchPoint
-        if (touchMarker != null && touchPoint != null) {
-            drawTouchMarker(context, model, touchMarker, touchPoint)
-        }
     }
 
     protected abstract fun drawChart(
         context: ChartDrawContext,
         model: Model,
     )
-
-    public open fun drawTouchMarker(
-        context: ChartDrawContext,
-        model: Model,
-        marker: Marker,
-        touchPoint: Point,
-    ) {
-        markerLocationMap.getClosestMarkerEntryModel(touchPoint)?.also { markerModel ->
-            marker.draw(
-                context = context,
-                bounds = bounds,
-                markedEntries = markerModel,
-            )
-        }
-    }
 
     private fun drawThresholdLines(context: ChartDrawContext) {
         decorations.forEach { line -> line.draw(context, bounds) }

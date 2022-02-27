@@ -37,6 +37,8 @@ import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
 import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.chart.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
+import pl.patrykgoworowski.vico.core.extension.ifNotNull
 import pl.patrykgoworowski.vico.core.extension.set
 import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
@@ -125,6 +127,9 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var model: Model? = null
         private set
 
+    /**
+     * The indication of certain entry appearing on physical touch of the [Chart].
+     */
     public var marker: Marker? = null
 
     init {
@@ -196,10 +201,29 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             chartBounds = chart.bounds,
         )
         axisManager.drawBehindChart(drawContext)
-        chart.draw(drawContext, model, marker)
+        chart.draw(drawContext, model)
         axisManager.drawAboveChart(drawContext)
-        scrollHandler.maxScrollDistance =
-            (drawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount()) - chart.bounds.width()
+
+        ifNotNull(
+            t1 = marker,
+            t2 = markerTouchPoint?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
+        ) { marker, markerModel ->
+            marker.draw(
+                context = drawContext,
+                bounds = chart.bounds,
+                markedEntries = markerModel,
+            )
+        }
+
+        updateMaxScrollDistance(
+            segmentWidth = drawContext.segmentProperties.segmentWidth,
+            drawnEntryCount = model.getDrawnEntryCount(),
+            chartBounds = chart.bounds.width(),
+        )
+    }
+
+    private fun updateMaxScrollDistance(segmentWidth: Float, drawnEntryCount: Int, chartBounds: Float) {
+        scrollHandler.maxScrollDistance = segmentWidth * drawnEntryCount - chartBounds
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
