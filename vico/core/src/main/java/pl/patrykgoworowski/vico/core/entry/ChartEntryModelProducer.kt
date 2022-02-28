@@ -28,7 +28,6 @@ public class ChartEntryModelProducer(
     private val diffAnimator: DiffAnimator? = null,
 ) : ChartModelProducer<ChartEntryModel> {
 
-    private val calculator = EntryModelCalculator()
     private val diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor()
     private val listeners: ArrayList<Listener> = ArrayList()
 
@@ -36,26 +35,26 @@ public class ChartEntryModelProducer(
 
     override lateinit var model: ChartEntryModel
 
-    public val minX: Float
-        get() = calculator.minX
+    public var minX: Float = 0f
+        private set
 
-    public val maxX: Float
-        get() = calculator.maxX
+    public var maxX: Float = 0f
+        private set
 
-    public val minY: Float
-        get() = calculator.minY
+    public var minY: Float = 0f
+        private set
 
-    public val maxY: Float
-        get() = calculator.maxY
+    public var maxY: Float = 0f
+        private set
 
-    public val step: Float
-        get() = calculator.step
+    public var step: Float = 0f
+        private set
 
-    public val stackedMaxY: Float
-        get() = calculator.stackedMaxY
+    public var stackedMinY: Float = 0f
+        private set
 
-    public val stackedMinY: Float
-        get() = calculator.stackedMinY
+    public var stackedMaxY: Float = 0f
+        private set
 
     public constructor(
         vararg entryCollections: List<ChartEntry>,
@@ -73,7 +72,11 @@ public class ChartEntryModelProducer(
                 new = entries,
             )
             animator.start { progress ->
-                refreshModel(diffProcessor.progressDiff(progress))
+                refreshModel(
+                    entries = diffProcessor.progressDiff(progress),
+                    yRange = diffProcessor.yRangeProgressDiff(progress),
+                    stackedYRange = diffProcessor.stackedYRangeProgressDiff(progress),
+                )
             }
         } ?: kotlin.run {
             refreshModel(entries)
@@ -84,10 +87,20 @@ public class ChartEntryModelProducer(
         setEntries(entries.toList())
     }
 
-    private fun refreshModel(entries: List<List<ChartEntry>>) {
+    private fun refreshModel(
+        entries: List<List<ChartEntry>>,
+        yRange: ClosedFloatingPointRange<Float> = entries.yRange,
+        stackedYRange: ClosedFloatingPointRange<Float> = entries.calculateStackedYRange(),
+    ) {
         data.setAll(entries)
-        calculator.resetValues()
-        calculator.calculateData(data)
+        val xRange = entries.xRange
+        this.minX = xRange.start
+        this.maxX = xRange.endInclusive
+        this.minY = yRange.start
+        this.maxY = yRange.endInclusive
+        this.step = entries.calculateStep()
+        this.stackedMinY = stackedYRange.start
+        this.stackedMaxY = stackedYRange.endInclusive
         notifyChange()
     }
 
