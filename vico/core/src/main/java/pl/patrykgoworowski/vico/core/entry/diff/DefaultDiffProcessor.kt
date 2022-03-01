@@ -18,9 +18,10 @@ package pl.patrykgoworowski.vico.core.entry.diff
 
 import java.util.TreeMap
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
+import pl.patrykgoworowski.vico.core.entry.calculateStackedYRange
 import pl.patrykgoworowski.vico.core.entry.entryOf
+import pl.patrykgoworowski.vico.core.entry.yRange
 import pl.patrykgoworowski.vico.core.extension.setAll
-import kotlin.collections.ArrayList
 
 public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
 
@@ -29,23 +30,53 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
     private val oldEntries = ArrayList<List<ChartEntry>>()
     private val newEntries = ArrayList<List<ChartEntry>>()
 
-    override fun setEntries(old: List<List<ChartEntry>>, new: List<List<ChartEntry>>) {
+    private var oldYRange = 0f..0f
+    private var newYRange = 0f..0f
+    private var oldStackedYRange = 0f..0f
+    private var newStackedYRange = 0f..0f
+
+    override fun setEntries(
+        old: List<List<ChartEntry>>,
+        new: List<List<ChartEntry>>,
+    ) {
         oldEntries.setAll(old)
         newEntries.setAll(new)
         updateProgressMap()
+        updateRanges()
     }
 
     override fun setEntries(new: List<List<ChartEntry>>) {
         oldEntries.setAll(newEntries)
         newEntries.setAll(new)
         updateProgressMap()
+        updateRanges()
     }
 
     override fun progressDiff(progress: Float): List<List<ChartEntry>> =
-        progressMaps
-            .map { map ->
-                map.map { (x, model) -> entryOf(x, model.progressDiff(progress)) }
+        progressMaps.map { map ->
+            map.map { (x, model) ->
+                entryOf(x, model.progressDiff(progress))
             }
+        }
+
+    override fun yRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float> =
+        RangeProgressModel(
+            oldRange = oldYRange,
+            newRange = newYRange,
+        ).progressDiff(progress)
+
+    override fun stackedYRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float> =
+        RangeProgressModel(
+            oldRange = oldStackedYRange,
+            newRange = newStackedYRange,
+        ).progressDiff(progress)
+
+    private fun updateRanges() {
+        oldYRange = oldEntries.yRange
+        newYRange = newEntries.yRange
+        oldStackedYRange = oldEntries.calculateStackedYRange()
+        newStackedYRange = newEntries.calculateStackedYRange()
+    }
 
     private fun updateProgressMap() {
         progressMaps.clear()
@@ -66,6 +97,26 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
                     )
                 }
             progressMaps.add(map)
+        }
+    }
+
+    private data class RangeProgressModel(
+        val oldRange: ClosedFloatingPointRange<Float>,
+        val newRange: ClosedFloatingPointRange<Float>,
+    ) {
+
+        fun progressDiff(progress: Float): ClosedFloatingPointRange<Float> {
+            val minValue = ProgressModel(
+                oldY = oldRange.start,
+                newY = newRange.start,
+            ).progressDiff(progress)
+
+            val maxValue = ProgressModel(
+                oldY = oldRange.endInclusive,
+                newY = newRange.endInclusive,
+            ).progressDiff(progress)
+
+            return minValue..maxValue
         }
     }
 

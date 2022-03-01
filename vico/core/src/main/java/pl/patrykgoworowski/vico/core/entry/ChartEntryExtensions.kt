@@ -16,6 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.entry
 
+import kotlin.math.abs
+import kotlin.math.min
+import pl.patrykgoworowski.vico.core.extension.rangeOfOrNull
+
 /**
  * Conveniently creates an instance of [FloatEntry].
  * @param [x] Position on x-axis of this [FloatEntry].
@@ -74,3 +78,35 @@ public fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> =
  */
 public fun entriesOf(vararg yValues: Number): List<FloatEntry> =
     yValues.mapIndexed { index, y -> entryOf(index, y) }
+
+internal inline val Iterable<Iterable<ChartEntry>>.yRange: ClosedFloatingPointRange<Float>
+    get() = flatten().rangeOfOrNull { it.y } ?: 0f..0f
+
+internal inline val Iterable<Iterable<ChartEntry>>.xRange: ClosedFloatingPointRange<Float>
+    get() = flatten().rangeOfOrNull { it.x } ?: 0f..0f
+
+internal fun Iterable<Iterable<ChartEntry>>.calculateStep(): Float {
+    var step: Float? = null
+    forEach { entryCollection ->
+        val iterator = entryCollection.iterator()
+        var currentEntry: ChartEntry
+        var previousEntry: ChartEntry? = null
+        while (iterator.hasNext()) {
+            currentEntry = iterator.next()
+            previousEntry?.let { prevEntry ->
+                val difference = abs(x = currentEntry.x - prevEntry.x)
+                step = min(a = step ?: difference, b = difference)
+            }
+            previousEntry = currentEntry
+        }
+        if (step == -1f) step = 1f
+    }
+    return step ?: 0f
+}
+
+internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =
+    flatten().fold(HashMap<Float, Float>()) { map, entry ->
+        map[entry.x] = map.getOrElse(entry.x) { 0f } + entry.y
+        map
+    }.values.rangeOfOrNull { it } ?: 0f..0f
+}
