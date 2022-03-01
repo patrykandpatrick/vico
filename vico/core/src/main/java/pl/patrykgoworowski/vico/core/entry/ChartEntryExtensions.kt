@@ -104,10 +104,9 @@ internal fun Iterable<Iterable<ChartEntry>>.calculateStep(): Float {
     return step ?: 0f
 }
 
-internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> {
-    val stackedMap: HashMap<Float, Float> = HashMap()
-    flatten().forEach { entry ->
-        stackedMap[entry.x] = stackedMap.getOrElse(entry.x) { 0f } + entry.y
-    }
-    return stackedMap.values.rangeOfOrNull { it } ?: 0f..0f
+internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =
+    flatten().fold(HashMap<Float, Float>()) { map, entry ->
+        map[entry.x] = map.getOrElse(entry.x) { 0f } + entry.y
+        map
+    }.values.rangeOfOrNull { it } ?: 0f..0f
 }
