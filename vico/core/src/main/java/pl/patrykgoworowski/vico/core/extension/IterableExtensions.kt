@@ -20,7 +20,7 @@ public inline fun <T> Iterable<T>.rangeOfOrNull(selector: (T) -> Float): ClosedF
     val iterator = iterator()
     if (!iterator.hasNext()) return null
     var minValue = selector(iterator.next())
-    var maxValue = selector(iterator.next())
+    var maxValue = minValue
     while (iterator.hasNext()) {
         val v = selector(iterator.next())
         minValue = minOf(minValue, v)
