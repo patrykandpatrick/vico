@@ -109,4 +109,3 @@ internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloa
         map[entry.x] = map.getOrElse(entry.x) { 0f } + entry.y
         map
     }.values.rangeOfOrNull { it } ?: 0f..0f
-}
