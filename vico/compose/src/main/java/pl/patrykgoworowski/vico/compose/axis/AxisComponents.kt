@@ -52,6 +52,7 @@ public fun axisLabelComponent(
     horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
     verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
     horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
+    rotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
 ): TextComponent = buildTextComponent {
     this.color = color.toArgb()
     this.textSizeSp = textSize.pixelSize()
@@ -66,6 +67,7 @@ public fun axisLabelComponent(
         vertical = verticalMargin,
         horizontal = horizontalMargin,
     )
+    this.rotationDegrees = rotationDegrees
 }
 
 @Composable

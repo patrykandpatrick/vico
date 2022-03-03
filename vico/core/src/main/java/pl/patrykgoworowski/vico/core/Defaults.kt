@@ -34,6 +34,7 @@ public object Dimens {
     public const val AXIS_LABEL_SIZE: Int = 12
     public const val AXIS_LABEL_HORIZONTAL_MARGIN: Int = 0
     public const val AXIS_LABEL_VERTICAL_MARGIN: Int = 0
+    public const val AXIS_LABEL_ROTATION_DEGREES: Float = 0f
 
     public const val AXIS_GUIDELINE_WIDTH: Float = 1f
     public const val AXIS_LINE_WIDTH: Float = 1f
