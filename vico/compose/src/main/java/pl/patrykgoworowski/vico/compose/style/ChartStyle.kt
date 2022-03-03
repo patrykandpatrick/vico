@@ -57,6 +57,7 @@ public data class ChartStyle(
         val axisLabelHorizontalPadding: Dp = Dimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
         val axisLabelVerticalMargin: Dp = Dimens.AXIS_LABEL_VERTICAL_MARGIN.dp,
         val axisLabelHorizontalMargin: Dp = Dimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
+        val axisLabelRotationDegrees: Float = Dimens.AXIS_LABEL_ROTATION_DEGREES,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = Dimens.AXIS_GUIDELINE_WIDTH.dp,
         val axisGuidelineShape: Shape = dashedShape(
