@@ -21,11 +21,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import pl.patrykgoworowski.vico.compose.style.ChartStyle
 
-public class ChartStyleOverrideManager {
+internal class ChartStyleOverrideManager {
 
-    public var chartStyleOverrides: ChartStyleOverrides by mutableStateOf(value = ChartStyleOverrides())
+    internal var chartStyleOverrides: ChartStyleOverrides by mutableStateOf(value = ChartStyleOverrides())
 
-    public fun updateChartStyle(
+    internal fun updateChartStyle(
         axisLabelRotationDegrees: Float? = chartStyleOverrides.axis.axisLabelRotationDegrees,
     ) {
         chartStyleOverrides = chartStyleOverrides.copy(
@@ -35,9 +35,9 @@ public class ChartStyleOverrideManager {
         )
     }
 
-    public companion object {
+    internal companion object {
 
-        public fun overrideChartStyle(
+        internal fun overrideChartStyle(
             chartStyle: ChartStyle,
             chartStyleOverrides: ChartStyleOverrides,
         ): ChartStyle =

@@ -42,7 +42,7 @@ import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 import pl.patrykgoworowski.vico.app.extension.surfaceColorAtElevation
 import pl.patrykgoworowski.vico.compose.style.LocalChartStyle
 
-internal enum class Page(
+internal enum class ShowcasePage(
     @StringRes val labelRes: Int,
     val content: @Composable (ShowcaseViewModel) -> Unit,
 ) {
@@ -63,7 +63,7 @@ internal fun Showcase() {
     val density = LocalDensity.current
     val windowInsets = LocalWindowInsets.current
     val navigationBarHeight = windowInsets.navigationBars.bottom
-    val pages = Page.values().toList()
+    val pages = ShowcasePage.values().toList()
     val pagerState = rememberPagerState(initialPage = 0)
     val chartStyleOverrideManager = showcaseViewModel.chartStyleOverrideManager
     var firstSheetItemHeight by remember { mutableStateOf(value = 0) }
@@ -88,7 +88,7 @@ internal fun Showcase() {
                 Column(modifier = Modifier.padding(paddingValues = innerPadding)) {
                     ShowcaseTabRow(
                         pagerState = pagerState,
-                        pages = pages,
+                        showcasePages = pages,
                     )
                     HorizontalPager(
                         state = pagerState,

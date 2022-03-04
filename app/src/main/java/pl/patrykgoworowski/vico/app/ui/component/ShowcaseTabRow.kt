@@ -39,7 +39,7 @@ import pl.patrykgoworowski.vico.app.extension.surfaceColorAtElevation
 @OptIn(ExperimentalPagerApi::class)
 internal fun ShowcaseTabRow(
     pagerState: PagerState,
-    pages: List<Page>,
+    showcasePages: List<ShowcasePage>,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val indicatorShape = RoundedCornerShape(
@@ -69,7 +69,7 @@ internal fun ShowcaseTabRow(
             )
         }
     ) {
-        pages.mapIndexed { index, page ->
+        showcasePages.mapIndexed { index, page ->
             Tab(
                 selectedContentColor = MaterialTheme.colorScheme.primary,
                 unselectedContentColor = MaterialTheme.colorScheme.onSurface,

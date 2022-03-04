@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.core.entry.composed.plus
 import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffAnimator
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 
-public class ShowcaseViewModel : ViewModel() {
+internal class ShowcaseViewModel : ViewModel() {
 
     private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
     private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)

@@ -26,13 +26,13 @@ import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 
-public data class ChartStyleOverrides(
+internal data class ChartStyleOverrides(
     var axis: Axis = Axis(),
     var columnChart: ColumnChart = ColumnChart(),
     var lineChart: LineChart = LineChart(),
     var marker: Marker = Marker(),
 ) {
-    public data class Axis(
+    internal data class Axis(
         var axisLabelBackground: ShapeComponent? = null,
         var axisLabelColor: Color? = null,
         var axisLabelTextSize: TextUnit? = null,
@@ -55,13 +55,13 @@ public data class ChartStyleOverrides(
         var axisValueFormatter: AxisValueFormatter ? = null,
     )
 
-    public data class ColumnChart(
+    internal data class ColumnChart(
         var columns: List<LineComponent>? = null,
         var outsideSpacing: Dp? = null,
         var innerSpacing: Dp? = null,
     )
 
-    public data class LineChart(
+    internal data class LineChart(
         var getPoint: Component? = null,
         var pointSize: Dp? = null,
         var spacing: Dp? = null,
@@ -70,7 +70,7 @@ public data class ChartStyleOverrides(
         var lineBackgroundShader: DynamicShader? = null,
     )
 
-    public data class Marker(
+    internal data class Marker(
         var indicatorSize: Dp? = null,
         var horizontalPadding: Dp? = null,
         var verticalPadding: Dp? = null,
