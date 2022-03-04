@@ -50,6 +50,11 @@ ext {
                     name   : 'material',
                     version: versions.compose
             ],
+            material3  : [
+                    group  : 'androidx.compose.material3',
+                    name   : 'material3',
+                    version: versions.compose_material3,
+            ],
             activity   : [
                     group  : 'androidx.activity',
                     name   : 'activity-compose',
@@ -73,15 +78,25 @@ ext {
     ]
 
     def accompanist_libs = [
-            pager           : [
+            pager               : [
                     group  : 'com.google.accompanist',
                     name   : 'accompanist-pager',
                     version: versions.accompanist
             ],
-            pager_indicators: [
+            pager_indicators    : [
                     group  : 'com.google.accompanist',
                     name   : 'accompanist-pager-indicators',
                     version: versions.accompanist
+            ],
+            insets              : [
+                    group  : 'com.google.accompanist',
+                    name   : 'accompanist-insets',
+                    version: versions.accompanist,
+            ],
+            system_ui_controller: [
+                    group  : 'com.google.accompanist',
+                    name   : 'accompanist-systemuicontroller',
+                    version: versions.accompanist,
             ]
     ]
 
@@ -158,7 +173,10 @@ ext {
             [configuration: "implementation", dependency: jetpack_compose_libs.activity],
             [configuration: "implementation", dependency: jetpack_compose_libs.viewbinding],
             [configuration: "implementation", dependency: accompanist_libs.pager],
-            [configuration: "implementation", dependency: accompanist_libs.pager_indicators]
+            [configuration: "implementation", dependency: accompanist_libs.pager_indicators],
+            [configuration: "implementation", dependency: jetpack_compose_libs.material3],
+            [configuration: "implementation", dependency: accompanist_libs.system_ui_controller],
+            [configuration: "implementation", dependency: accompanist_libs.insets],
     ]
 
     vico_core_dependencies = [
