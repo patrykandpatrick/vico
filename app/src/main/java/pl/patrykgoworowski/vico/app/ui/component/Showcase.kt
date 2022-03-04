@@ -21,23 +21,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffold
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.accompanist.insets.LocalWindowInsets
@@ -45,14 +37,12 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import kotlinx.coroutines.launch
 import pl.patrykgoworowski.vico.R
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
-import pl.patrykgoworowski.vico.app.extension.material3pagerTabIndicatorOffset
 import pl.patrykgoworowski.vico.app.extension.surfaceColorAtElevation
 import pl.patrykgoworowski.vico.compose.style.LocalChartStyle
 
-private enum class Page(
+internal enum class Page(
     @StringRes val labelRes: Int,
     val content: @Composable (ShowcaseViewModel) -> Unit,
 ) {
@@ -75,7 +65,6 @@ internal fun Showcase() {
     val navigationBarHeight = windowInsets.navigationBars.bottom
     val pages = Page.values().toList()
     val pagerState = rememberPagerState(initialPage = 0)
-    val coroutineScope = rememberCoroutineScope()
     val chartStyleOverrideManager = showcaseViewModel.chartStyleOverrideManager
     var firstSheetItemHeight by remember { mutableStateOf(value = 0) }
     val sheetPeekHeight = with(density) { (firstSheetItemHeight + navigationBarHeight).toDp() }
@@ -97,47 +86,10 @@ internal fun Showcase() {
                 },
             ) { innerPadding ->
                 Column(modifier = Modifier.padding(paddingValues = innerPadding)) {
-                    TabRow(
-                        selectedTabIndex = pagerState.currentPage,
-                        contentColor = MaterialTheme.colorScheme.primary,
-                        containerColor = elevatedSurfaceColor,
-                        divider = {},
-                        indicator = { tabPositions ->
-                            TabRowDefaults.Indicator(
-                                modifier = Modifier
-                                    .material3pagerTabIndicatorOffset(
-                                        pagerState = pagerState,
-                                        tabPositions = tabPositions,
-                                    )
-                                    .padding(horizontal = 16.dp)
-                                    .clip(
-                                        shape = RoundedCornerShape(
-                                            topStartPercent = 100,
-                                            topEndPercent = 100,
-                                        )
-                                    ),
-                            )
-                        }
-                    ) {
-                        pages.mapIndexed { index, page ->
-                            Tab(
-                                selectedContentColor = MaterialTheme.colorScheme.primary,
-                                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                                selected = pagerState.currentPage == index,
-                                onClick = {
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(page = index)
-                                    }
-                                },
-                                text = {
-                                    Text(
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        text = stringResource(id = page.labelRes),
-                                    )
-                                }
-                            )
-                        }
-                    }
+                    ShowcaseTabRow(
+                        pagerState = pagerState,
+                        pages = pages,
+                    )
                     HorizontalPager(
                         state = pagerState,
                         count = pages.size,
