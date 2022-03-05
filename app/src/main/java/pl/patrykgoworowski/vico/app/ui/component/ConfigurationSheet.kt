@@ -37,6 +37,10 @@ import pl.patrykgoworowski.vico.app.ChartStyleOverrideManager
 import pl.patrykgoworowski.vico.compose.style.ChartStyle
 import pl.patrykgoworowski.vico.core.extension.piRad
 
+private const val PI_RAD_BY_THIRTY_DEGREES = 6f
+private val thirtyDegrees = (1f / PI_RAD_BY_THIRTY_DEGREES).piRad
+private val rotationSliderSteps = (2f.piRad / thirtyDegrees).toInt() - 1
+
 @Composable
 internal fun ConfigurationSheet(
     chartStyle: ChartStyle,
@@ -62,7 +66,7 @@ internal fun ConfigurationSheet(
                 value = chartStyleOverrideManager.chartStyleOverrides.axis.axisLabelRotationDegrees,
                 default = chartStyle.axis.axisLabelRotationDegrees,
                 valueRange = (-1f).piRad..1f.piRad,
-                steps = 11,
+                steps = rotationSliderSteps,
                 label = stringResource(id = R.string.axis_label_rotation_title),
                 onValueChange = {
                     chartStyleOverrideManager.updateChartStyle(

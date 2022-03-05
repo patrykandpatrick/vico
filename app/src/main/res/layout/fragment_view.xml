@@ -32,7 +32,7 @@
 
     <Space
         android:layout_width="wrap_content"
-        android:layout_height="16dp" />
+        android:layout_height="20dp" />
 
     <pl.patrykgoworowski.vico.view.chart.ComposedChartView
         android:id="@+id/composed_chart"
@@ -42,7 +42,7 @@
 
     <Space
         android:layout_width="wrap_content"
-        android:layout_height="16dp" />
+        android:layout_height="20dp" />
 
     <pl.patrykgoworowski.vico.view.chart.ChartView
         android:id="@+id/line_chart"
@@ -52,7 +52,7 @@
 
     <Space
         android:layout_width="wrap_content"
-        android:layout_height="16dp" />
+        android:layout_height="20dp" />
 
     <pl.patrykgoworowski.vico.view.chart.ChartView
         android:id="@+id/grouped_column_chart"
@@ -62,7 +62,7 @@
 
     <Space
         android:layout_width="wrap_content"
-        android:layout_height="16dp" />
+        android:layout_height="20dp" />
 
     <pl.patrykgoworowski.vico.view.chart.ChartView
         android:id="@+id/stacked_column_chart"

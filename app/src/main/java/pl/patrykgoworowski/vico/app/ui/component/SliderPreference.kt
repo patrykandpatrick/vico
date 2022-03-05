@@ -35,15 +35,9 @@ internal fun SliderPreference(
     valueRange: ClosedFloatingPointRange<Float>,
     label: String,
 ) {
-    Column(
-        modifier = Modifier.padding(
-            horizontal = 8.dp,
-            vertical = 16.dp,
-        ),
-    ) {
+    Column(modifier = Modifier.padding(all = 20.dp)) {
         Text(
             text = label,
-            modifier = Modifier.padding(start = 8.dp),
             color = MaterialTheme.colorScheme.onSurface,
         )
         Slider(

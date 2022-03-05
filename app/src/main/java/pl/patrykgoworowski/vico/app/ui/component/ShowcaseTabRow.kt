@@ -64,7 +64,7 @@ internal fun ShowcaseTabRow(
                         pagerState = pagerState,
                         tabPositions = tabPositions,
                     )
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 20.dp)
                     .clip(shape = indicatorShape),
             )
         }

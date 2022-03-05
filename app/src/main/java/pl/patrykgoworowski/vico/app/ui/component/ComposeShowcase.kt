@@ -29,12 +29,10 @@ import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 
 @Composable
 internal fun ComposeShowcase(showcaseViewModel: ShowcaseViewModel) {
-    val scrollState = rememberScrollState()
-
-    Box(modifier = Modifier.verticalScroll(state = scrollState)) {
+    Box(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(all = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier.padding(all = 20.dp),
         ) {
             ColumnChart(chartEntryModelProducer = showcaseViewModel.entries)
             ComposedChart(model = showcaseViewModel.composedEntries)
