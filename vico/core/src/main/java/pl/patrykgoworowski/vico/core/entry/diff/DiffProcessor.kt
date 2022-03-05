@@ -28,5 +28,5 @@ public interface DiffProcessor<Entry : ChartEntry> {
 
     public fun yRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float>
 
-    public fun stackedYRangeProgressDiff(progress: Float):ClosedFloatingPointRange<Float>
+    public fun stackedYRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float>
 }
