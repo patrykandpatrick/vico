@@ -16,8 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.scroll
 
-import pl.patrykgoworowski.vico.core.extension.between
-
 public class ScrollHandler(
     private val setScrollAmount: (Float) -> Unit = {},
     public var maxScrollDistance: Float = 0f,
@@ -33,9 +31,13 @@ public class ScrollHandler(
         minOf(scroll, maxScrollDistance).coerceAtLeast(0f)
 
     public fun handleScrollDelta(delta: Float): Float {
+        val previousScroll = currentScroll
         currentScroll = getClampedScroll(currentScroll - delta)
-        return (maxScrollDistance - currentScroll).between(0f, delta)
+        return previousScroll - currentScroll
     }
+
+    public fun canScrollBy(delta: Float): Boolean =
+        currentScroll - getClampedScroll(currentScroll - delta) != 0f
 
     public fun handleScroll(targetScroll: Float): Float =
         handleScrollDelta(currentScroll - targetScroll)

@@ -157,10 +157,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val scaleHandled = if (isZoomEnabled) scaleGestureDetector.onTouchEvent(event) else false
+        val scaleHandled =
+            if (isZoomEnabled && event.pointerCount > 1) scaleGestureDetector.onTouchEvent(event)
+            else false
         val touchHandled = motionEventHandler.handleTouchPoint(event)
-        return if (scaleHandled || touchHandled) {
-            parent.requestDisallowInterceptTouchEvent(isHorizontalScrollEnabled)
+        return if (touchHandled || scaleHandled) {
+            parent.requestDisallowInterceptTouchEvent(event.action == MotionEvent.ACTION_MOVE)
             true
         } else {
             parent.requestDisallowInterceptTouchEvent(false)

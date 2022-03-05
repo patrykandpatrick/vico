@@ -60,21 +60,24 @@ public open class MotionEventHandler(
                 true
             }
             MotionEvent.ACTION_MOVE -> {
+                var scrollHandled = false
                 if (isHorizontalScrollEnabled) {
                     currentX = motionEvent.x
                     if (abs(currentX - initialX) > dragThreshold && !ignoreEvent) {
                         velocityTracker.get().addMovement(motionEvent)
-                        scrollHandler.handleScrollDelta(currentX - lastX)
+                        scrollHandled = scrollHandler.handleScrollDelta(currentX - lastX) != 0f
                         onTouchPoint(motionEvent.point)
                         requestInvalidate()
                         initialX = -dragThreshold
+                    } else {
+                        scrollHandled = scrollHandler.canScrollBy(currentX - lastX)
                     }
                     lastX = motionEvent.x
                 } else {
                     onTouchPoint(motionEvent.point)
                     requestInvalidate()
                 }
-                true
+                scrollHandled
             }
             MotionEvent.ACTION_CANCEL,
             MotionEvent.ACTION_UP -> {
