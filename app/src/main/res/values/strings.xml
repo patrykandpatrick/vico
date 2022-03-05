@@ -18,4 +18,5 @@
     <string name="app_name">Vico Chart</string>
     <string name="showcase_view_title">Classic View</string>
     <string name="showcase_compose_title">Jetpack Compose</string>
+    <string name="axis_label_rotation_title">Axis Label Rotation</string>
 </resources>

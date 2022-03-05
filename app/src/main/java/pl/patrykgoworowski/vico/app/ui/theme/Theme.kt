@@ -16,22 +16,24 @@
 
 package pl.patrykgoworowski.vico.app.ui.theme
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Colors
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.material.MaterialTheme as Material2Theme
 
-private val DarkColorPalette = darkColors(
-    primary = purple,
-    primaryVariant = trypanPurple,
-    secondary = flickrPink,
-)
-
-private val LightColorPalette = lightColors(
-    primary = flickrPink,
-    primaryVariant = byzantine,
-    secondary = purple,
+private val shapes = androidx.compose.material.Shapes(
+    large = RoundedCornerShape(size = 16.dp),
 )
 
 @Composable
@@ -39,10 +41,45 @@ internal fun MainTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colors = if (darkTheme) DarkColorPalette else LightColorPalette
+    val context = LocalContext.current
+    val colorScheme = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+    } else {
+        if (darkTheme) darkColorScheme() else lightColorScheme()
+    }
 
-    MaterialTheme(
-        colors = colors,
-        content = content,
+    Material2Theme(
+        shapes = shapes,
+        colors = material2Colors(
+            colorScheme = colorScheme,
+            darkTheme = darkTheme,
+        ),
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            content = content,
+        )
+    }
+}
+
+@Composable
+private fun material2Colors(
+    colorScheme: ColorScheme,
+    darkTheme: Boolean,
+) = remember(colorScheme, darkTheme) {
+    Colors(
+        primary = colorScheme.primary,
+        primaryVariant = colorScheme.primaryContainer,
+        secondary = colorScheme.primary,
+        secondaryVariant = colorScheme.primaryContainer,
+        background = colorScheme.background,
+        surface = colorScheme.surface,
+        error = colorScheme.error,
+        onPrimary = colorScheme.onPrimary,
+        onSecondary = colorScheme.onSecondary,
+        onBackground = colorScheme.onBackground,
+        onSurface = colorScheme.onSurface,
+        onError = colorScheme.onError,
+        isLight = !darkTheme,
     )
 }

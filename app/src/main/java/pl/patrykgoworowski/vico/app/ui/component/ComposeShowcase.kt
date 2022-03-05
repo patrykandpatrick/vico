@@ -22,32 +22,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.app.ShowcaseViewModel
-import pl.patrykgoworowski.vico.app.extension.InvertedTheme
 
 @Composable
-internal fun ComposeShowcase(
-    viewModel: ShowcaseViewModel,
-) {
+internal fun ComposeShowcase(showcaseViewModel: ShowcaseViewModel) {
     Box(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.padding(all = 16.dp)
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            modifier = Modifier.padding(all = 20.dp),
         ) {
-            ColumnChart(chartEntryModelProducer = viewModel.entries)
-            InvertedTheme {
-                Surface(modifier = Modifier.padding(vertical = 4.dp)) {
-                    ComposedChart(model = viewModel.composedEntries)
-                }
-            }
-            StackedColumnChart(chartEntryModelProducer = viewModel.multiEntries)
-            ComposedChart(model = viewModel.composedEntries)
-            LineChart(chartEntryModelProducer = viewModel.entries)
-            GroupedColumnChart(chartEntryModelProducer = viewModel.multiEntries)
+            ColumnChart(chartEntryModelProducer = showcaseViewModel.entries)
+            ComposedChart(model = showcaseViewModel.composedEntries)
+            StackedColumnChart(chartEntryModelProducer = showcaseViewModel.multiEntries)
+            ComposedChart(model = showcaseViewModel.composedEntries)
+            LineChart(chartEntryModelProducer = showcaseViewModel.entries)
+            GroupedColumnChart(chartEntryModelProducer = showcaseViewModel.multiEntries)
         }
     }
 }

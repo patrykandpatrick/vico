@@ -38,7 +38,7 @@ internal fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.verticalScroll(state = scrollState)) {
-        Box(modifier = Modifier.padding(16.dp)) {
+        Box(modifier = Modifier.padding(20.dp)) {
             AndroidViewBinding(FragmentViewBinding::inflate) {
                 with(showcaseViewModel) {
                     columnChart.setUpChart(entries, coroutineScope, marker)

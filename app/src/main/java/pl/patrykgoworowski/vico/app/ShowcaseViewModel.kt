@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.core.entry.composed.plus
 import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffAnimator
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 
-public class ShowcaseViewModel : ViewModel() {
+internal class ShowcaseViewModel : ViewModel() {
 
     private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
     private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)
@@ -38,6 +38,8 @@ public class ShowcaseViewModel : ViewModel() {
     public val multiEntries: ChartEntryModelProducer = ChartEntryModelProducer(diffAnimator = DefaultDiffAnimator())
 
     public val composedEntries: ComposedChartEntryModelProducer<ChartEntryModel> = multiEntries + entries
+
+    public var chartStyleOverrideManager: ChartStyleOverrideManager = ChartStyleOverrideManager()
 
     init {
         viewModelScope.launch {
