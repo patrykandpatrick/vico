@@ -157,6 +157,7 @@ ext {
     app_dependencies = [
             [configuration: "implementation", dependency: project(':vico:view')],
             [configuration: "implementation", dependency: project(':vico:compose')],
+            [configuration: "implementation", dependency: project(':vico:compose-m3')],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: androidx_libs.lifecycle],
@@ -216,4 +217,8 @@ ext {
             [configuration: "testImplementation", dependency: test_libs.junitExt],
     ]
 
+    vico_compose_m3_dependencies = [
+            [configuration: "api", dependency: project(":vico:compose")],
+            [configuration: "implementation", dependency: jetpack_compose_libs.material3],
+    ]
 }
