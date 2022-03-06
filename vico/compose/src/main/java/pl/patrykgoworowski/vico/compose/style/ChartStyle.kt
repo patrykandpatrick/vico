@@ -101,6 +101,9 @@ public data class ChartStyle(
 
     public companion object {
 
+        /**
+         * Creates a base implementation of [ChartStyle] using the provided colors.
+         */
         public fun fromColors(
             axisLabelColor: Color,
             axisGuidelineColor: Color,
@@ -155,6 +158,9 @@ public data class ChartStyle(
     }
 }
 
+/**
+ * Provides a [ChartStyle] instance.
+ */
 public object LocalChartStyle {
 
     internal val default: ChartStyle
@@ -166,16 +172,32 @@ public object LocalChartStyle {
     private val LocalProvidedStyle: ProvidableCompositionLocal<ChartStyle?> =
         compositionLocalOf { null }
 
+    /**
+     * The [ChartStyle] instance provided by [LocalChartStyle] at the call site.
+     */
     public val current: ChartStyle
         @Composable get() = LocalProvidedStyle.current ?: default
 
+    /**
+     * Provides a [ChartStyle] instance via [LocalChartStyle].
+     *
+     * @param chartStyle the [ChartStyle] instance to provide.
+     */
     public infix fun provides(chartStyle: ChartStyle): ProvidedValue<ChartStyle?> =
         LocalProvidedStyle.provides(chartStyle)
 }
 
+/**
+ * Offers quick access to [LocalChartStyle.current].
+ */
 public val currentChartStyle: ChartStyle
     @Composable get() = LocalChartStyle.current
 
+/**
+ * Provides a [ChartStyle] instance to [content] via [LocalChartStyle].
+ *
+ * @param chartStyle the [ChartStyle] instance to provide.
+ */
 @Composable
 public fun ProvideChartStyle(
     chartStyle: ChartStyle = LocalChartStyle.default,
