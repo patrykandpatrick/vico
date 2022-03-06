@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.chart.line
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.extension.horizontalCubicTo
@@ -43,9 +43,9 @@ import kotlin.math.min
 
 public open class LineChart(
     public var point: Component? = null,
-    public var pointSizeDp: Float = Dimens.POINT_SIZE,
-    public var spacingDp: Float = Dimens.POINT_SPACING,
-    public var lineThicknessDp: Float = Dimens.LINE_THICKNESS,
+    public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+    public var spacingDp: Float = DefaultDimens.POINT_SPACING,
+    public var lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
     lineColor: Int = Color.LTGRAY,
 ) : BaseChart<ChartEntryModel>() {
 

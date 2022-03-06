@@ -16,7 +16,9 @@
 
 package pl.patrykgoworowski.vico.compose.style
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.compositionLocalOf
@@ -29,9 +31,9 @@ import androidx.compose.ui.unit.sp
 import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.fromBrush
-import pl.patrykgoworowski.vico.core.Alpha
-import pl.patrykgoworowski.vico.core.Colors
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultAlpha
+import pl.patrykgoworowski.vico.core.DefaultColors
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.component.Component
@@ -47,111 +49,125 @@ public data class ChartStyle(
     val columnChart: ColumnChart,
     val lineChart: LineChart,
     val marker: Marker,
+    val elevationOverlayColor: Color,
 ) {
     public data class Axis(
         val axisLabelBackground: ShapeComponent? = null,
         val axisLabelColor: Color,
-        val axisLabelTextSize: TextUnit = Dimens.AXIS_LABEL_SIZE.sp,
-        val axisLabelLineCount: Int = Dimens.AXIS_LABEL_MAX_LINES,
-        val axisLabelVerticalPadding: Dp = Dimens.AXIS_LABEL_VERTICAL_PADDING.dp,
-        val axisLabelHorizontalPadding: Dp = Dimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
-        val axisLabelVerticalMargin: Dp = Dimens.AXIS_LABEL_VERTICAL_MARGIN.dp,
-        val axisLabelHorizontalMargin: Dp = Dimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
-        val axisLabelRotationDegrees: Float = Dimens.AXIS_LABEL_ROTATION_DEGREES,
+        val axisLabelTextSize: TextUnit = DefaultDimens.AXIS_LABEL_SIZE.sp,
+        val axisLabelLineCount: Int = DefaultDimens.AXIS_LABEL_MAX_LINES,
+        val axisLabelVerticalPadding: Dp = DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp,
+        val axisLabelHorizontalPadding: Dp = DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+        val axisLabelVerticalMargin: Dp = DefaultDimens.AXIS_LABEL_VERTICAL_MARGIN.dp,
+        val axisLabelHorizontalMargin: Dp = DefaultDimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
+        val axisLabelRotationDegrees: Float = DefaultDimens.AXIS_LABEL_ROTATION_DEGREES,
         val axisGuidelineColor: Color,
-        val axisGuidelineWidth: Dp = Dimens.AXIS_GUIDELINE_WIDTH.dp,
+        val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
         val axisGuidelineShape: Shape = dashedShape(
             shape = Shapes.rectShape,
-            dashLength = Dimens.DASH_LENGTH.dp,
-            gapLength = Dimens.DASH_GAP.dp,
+            dashLength = DefaultDimens.DASH_LENGTH.dp,
+            gapLength = DefaultDimens.DASH_GAP.dp,
         ),
         val axisLineColor: Color,
-        val axisLineWidth: Dp = Dimens.AXIS_LINE_WIDTH.dp,
+        val axisLineWidth: Dp = DefaultDimens.AXIS_LINE_WIDTH.dp,
         val axisLineShape: Shape = Shapes.rectShape,
         val axisTickColor: Color = axisLineColor,
         val axisTickWidth: Dp = axisLineWidth,
         val axisTickShape: Shape = Shapes.rectShape,
-        val axisTickLength: Dp = Dimens.AXIS_TICK_LENGTH.dp,
-        val axisValueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter()
+        val axisTickLength: Dp = DefaultDimens.AXIS_TICK_LENGTH.dp,
+        val axisValueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
     )
 
     public data class ColumnChart(
         val columns: List<LineComponent>,
-        val outsideSpacing: Dp = Dimens.COLUMN_OUTSIDE_SPACING.dp,
-        val innerSpacing: Dp = Dimens.COLUMN_INSIDE_SPACING.dp,
+        val outsideSpacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
+        val innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
     )
 
     public data class LineChart(
         val getPoint: Component? = null,
-        val pointSize: Dp,
-        val spacing: Dp,
-        val lineWidth: Dp,
+        val pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
+        val spacing: Dp = DefaultDimens.POINT_SPACING.dp,
+        val lineWidth: Dp = DefaultDimens.LINE_THICKNESS.dp,
         val lineColor: Color,
         val lineBackgroundShader: DynamicShader? = null,
     )
 
     public data class Marker(
-        val indicatorSize: Dp = Dimens.MARKER_INDICATOR_SIZE.dp,
-        val horizontalPadding: Dp = Dimens.MARKER_HORIZONTAL_PADDING.dp,
-        val verticalPadding: Dp = Dimens.MARKER_VERTICAL_PADDING.dp,
+        val indicatorSize: Dp = DefaultDimens.MARKER_INDICATOR_SIZE.dp,
+        val horizontalPadding: Dp = DefaultDimens.MARKER_HORIZONTAL_PADDING.dp,
+        val verticalPadding: Dp = DefaultDimens.MARKER_VERTICAL_PADDING.dp,
     )
+
+    public companion object {
+
+        public fun fromColors(
+            axisLabelColor: Color,
+            axisGuidelineColor: Color,
+            axisLineColor: Color,
+            columnColors: List<Color>,
+            lineColor: Color,
+            elevationOverlayColor: Color,
+        ): ChartStyle = ChartStyle(
+            axis = Axis(
+                axisLabelColor = axisLabelColor,
+                axisGuidelineColor = axisGuidelineColor,
+                axisLineColor = axisLineColor,
+            ),
+            columnChart = ColumnChart(
+                columns = columnColors.map { columnColor ->
+                    lineComponent(
+                        color = columnColor,
+                        thickness = DefaultDimens.COLUMN_WIDTH.dp,
+                        shape = Shapes.roundedCornersShape(
+                            allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT,
+                        ),
+                    )
+                },
+            ),
+            lineChart = LineChart(
+                lineColor = lineColor,
+                lineBackgroundShader = DynamicShaders.fromBrush(
+                    brush = Brush.verticalGradient(
+                        listOf(
+                            lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                            lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                        ),
+                    ),
+                ),
+            ),
+            marker = Marker(),
+            elevationOverlayColor = elevationOverlayColor,
+        )
+
+        internal fun fromDefaultColors(defaultColors: DefaultColors) = fromColors(
+            axisLabelColor = Color(defaultColors.axisLabelColor),
+            axisGuidelineColor = Color(defaultColors.axisGuidelineColor),
+            axisLineColor = Color(defaultColors.axisLineColor),
+            columnColors = listOf(
+                defaultColors.column1Color,
+                defaultColors.column2Color,
+                defaultColors.column3Color,
+            ).map { Color(it) },
+            lineColor = Color(defaultColors.lineColor),
+            elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
+        )
+    }
 }
 
 public object LocalChartStyle {
 
-    private fun getChartStyle(colors: Colors): ChartStyle = ChartStyle(
-        axis = ChartStyle.Axis(
-            axisLabelColor = Color(colors.axisLabelColor),
-            axisGuidelineColor = Color(colors.axisGuidelineColor),
-            axisLineColor = Color(colors.axisLineColor),
-        ),
-        columnChart = ChartStyle.ColumnChart(
-            columns = listOf(
-                lineComponent(
-                    color = Color(colors.column1Color),
-                    thickness = Dimens.COLUMN_WIDTH.dp,
-                    shape = Shapes.roundedCornersShape(
-                        allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
-                    )
-                ),
-                lineComponent(
-                    color = Color(colors.column2Color),
-                    thickness = Dimens.COLUMN_WIDTH.dp,
-                    shape = Shapes.roundedCornersShape(
-                        allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
-                    )
-                ),
-                lineComponent(
-                    color = Color(colors.column3Color),
-                    thickness = Dimens.COLUMN_WIDTH.dp,
-                    shape = Shapes.roundedCornersShape(
-                        allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT
-                    )
-                ),
-            )
-        ),
-        lineChart = ChartStyle.LineChart(
-            pointSize = Dimens.POINT_SIZE.dp,
-            spacing = Dimens.POINT_SPACING.dp,
-            lineWidth = Dimens.LINE_THICKNESS.dp,
-            lineColor = Color(colors.lineColor),
-            lineBackgroundShader = DynamicShaders.fromBrush(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        Color(colors.lineColor).copy(alpha = Alpha.LINE_BACKGROUND_SHADER_START),
-                        Color(colors.lineColor).copy(alpha = Alpha.LINE_BACKGROUND_SHADER_END),
-                    ),
-                )
-            )
-        ),
-        marker = ChartStyle.Marker()
-    )
+    internal val default: ChartStyle
+        @Composable
+        get() = ChartStyle.fromDefaultColors(
+            defaultColors = if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light,
+        )
 
     private val LocalProvidedStyle: ProvidableCompositionLocal<ChartStyle?> =
         compositionLocalOf { null }
 
     public val current: ChartStyle
-        @Composable get() = LocalProvidedStyle.current ?: getChartStyle(currentChartColors)
+        @Composable get() = LocalProvidedStyle.current ?: default
 
     public infix fun provides(chartStyle: ChartStyle): ProvidedValue<ChartStyle?> =
         LocalProvidedStyle.provides(chartStyle)
@@ -159,3 +175,14 @@ public object LocalChartStyle {
 
 public val currentChartStyle: ChartStyle
     @Composable get() = LocalChartStyle.current
+
+@Composable
+public fun ProvideChartStyle(
+    chartStyle: ChartStyle = LocalChartStyle.default,
+    content: @Composable () -> Unit,
+) {
+    CompositionLocalProvider(
+        LocalChartStyle provides chartStyle,
+        content = content,
+    )
+}

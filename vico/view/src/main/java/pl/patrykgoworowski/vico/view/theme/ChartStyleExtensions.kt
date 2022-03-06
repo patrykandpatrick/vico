@@ -19,8 +19,8 @@ package pl.patrykgoworowski.vico.view.theme
 import android.content.Context
 import android.content.res.TypedArray
 import androidx.annotation.StyleableRes
-import pl.patrykgoworowski.vico.core.Alpha
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultAlpha
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.core.chart.line.LineChart
 import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.view.R
 import pl.patrykgoworowski.vico.view.component.shape.shader.verticalGradient
-import pl.patrykgoworowski.vico.view.extension.colors
+import pl.patrykgoworowski.vico.view.extension.defaultColors
 
 internal fun TypedArray.getColumnChart(
     context: Context,
@@ -37,7 +37,7 @@ internal fun TypedArray.getColumnChart(
     @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnChartStyle,
     mergeMode: MergeMode
 ): ColumnChart = getNestedTypedArray(context, resourceId, styleableResourceId).run {
-    val defaultShape = Shapes.roundedCornersShape(allPercent = Dimens.COLUMN_ROUNDNESS_PERCENT)
+    val defaultShape = Shapes.roundedCornersShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT)
     ColumnChart(
         columns = listOf(
             getNestedTypedArray(
@@ -46,8 +46,8 @@ internal fun TypedArray.getColumnChart(
                 styleableResourceId = R.styleable.LineComponentStyle,
             ).getLineComponent(
                 context = context,
-                defaultColor = context.colors.column1Color.toInt(),
-                defaultThickness = Dimens.COLUMN_WIDTH,
+                defaultColor = context.defaultColors.column1Color.toInt(),
+                defaultThickness = DefaultDimens.COLUMN_WIDTH,
                 defaultShape = defaultShape,
             ),
             getNestedTypedArray(
@@ -56,8 +56,8 @@ internal fun TypedArray.getColumnChart(
                 styleableResourceId = R.styleable.LineComponentStyle,
             ).getLineComponent(
                 context = context,
-                defaultColor = context.colors.column2Color.toInt(),
-                defaultThickness = Dimens.COLUMN_WIDTH,
+                defaultColor = context.defaultColors.column2Color.toInt(),
+                defaultThickness = DefaultDimens.COLUMN_WIDTH,
                 defaultShape = defaultShape,
             ),
             getNestedTypedArray(
@@ -66,20 +66,20 @@ internal fun TypedArray.getColumnChart(
                 styleableResourceId = R.styleable.LineComponentStyle,
             ).getLineComponent(
                 context = context,
-                defaultColor = context.colors.column3Color.toInt(),
-                defaultThickness = Dimens.COLUMN_WIDTH,
+                defaultColor = context.defaultColors.column3Color.toInt(),
+                defaultThickness = DefaultDimens.COLUMN_WIDTH,
                 defaultShape = defaultShape,
             ),
         ),
         spacingDp = getRawDimension(
             context = context,
             index = R.styleable.ColumnChartStyle_columnOuterSpacing,
-            defaultValue = Dimens.COLUMN_OUTSIDE_SPACING
+            defaultValue = DefaultDimens.COLUMN_OUTSIDE_SPACING
         ),
         innerSpacingDp = getRawDimension(
             context = context,
             index = R.styleable.ColumnChartStyle_columnInnerSpacing,
-            defaultValue = Dimens.COLUMN_INSIDE_SPACING
+            defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING
         ),
         mergeMode = mergeMode
     )
@@ -93,7 +93,7 @@ internal fun TypedArray.getLineChart(
     LineChart(
         lineColor = getColor(
             index = R.styleable.LineChartStyle_color,
-            defaultColor = context.colors.lineColor.toInt(),
+            defaultColor = context.defaultColors.lineColor.toInt(),
         ),
         point = getNestedTypedArray(
             context = context,
@@ -103,22 +103,22 @@ internal fun TypedArray.getLineChart(
         pointSizeDp = getRawDimension(
             context = context,
             index = R.styleable.LineChartStyle_pointSize,
-            defaultValue = Dimens.POINT_SIZE,
+            defaultValue = DefaultDimens.POINT_SIZE,
         ),
         spacingDp = getRawDimension(
             context = context,
             index = R.styleable.LineChartStyle_spacing,
-            defaultValue = Dimens.POINT_SPACING,
+            defaultValue = DefaultDimens.POINT_SPACING,
         ),
         lineThicknessDp = getRawDimension(
             context = context,
             index = R.styleable.LineChartStyle_lineThickness,
-            defaultValue = Dimens.LINE_THICKNESS,
+            defaultValue = DefaultDimens.LINE_THICKNESS,
         ),
     ).apply {
         cubicStrength = getFraction(
             index = R.styleable.LineChartStyle_cubicStrength,
-            defaultValue = Dimens.CUBIC_STRENGTH
+            defaultValue = DefaultDimens.CUBIC_STRENGTH
         )
         if (
             hasValue(R.styleable.LineChartStyle_gradientTopColor) ||
@@ -132,8 +132,8 @@ internal fun TypedArray.getLineChart(
             )
         } else {
             lineBackgroundShader = DynamicShaders.verticalGradient(
-                lineColor.copyColor(alpha = Alpha.LINE_BACKGROUND_SHADER_START),
-                lineColor.copyColor(alpha = Alpha.LINE_BACKGROUND_SHADER_END),
+                lineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                lineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
             )
         }
     }

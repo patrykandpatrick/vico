@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.view.theme
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
@@ -27,12 +27,12 @@ import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.view.R
-import pl.patrykgoworowski.vico.view.extension.colors
+import pl.patrykgoworowski.vico.view.extension.defaultColors
 
 internal fun TypedArray.getLineComponent(
     context: Context,
-    defaultColor: Int = context.colors.axisLineColor.toInt(),
-    defaultThickness: Float = Dimens.AXIS_LINE_WIDTH,
+    defaultColor: Int = context.defaultColors.axisLineColor.toInt(),
+    defaultThickness: Float = DefaultDimens.AXIS_LINE_WIDTH,
     defaultShape: Shape = Shapes.rectShape,
 ): LineComponent = use { array ->
     LineComponent(

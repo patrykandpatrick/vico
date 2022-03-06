@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.core.chart.decoration
 
 import android.graphics.RectF
 import java.text.DecimalFormat
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.rectComponent
@@ -39,7 +39,7 @@ public data class ThresholdLine(
         decimalFormat.format(thresholdRange.endInclusive),
     ),
     val lineComponent: ShapeComponent = rectComponent(),
-    val minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
+    val minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
     val textComponent: TextComponent = buildTextComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
@@ -49,7 +49,7 @@ public data class ThresholdLine(
         thresholdValue: Float,
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = rectComponent(),
-        minimumLineThicknessDp: Float = Dimens.THRESHOLD_LINE_THICKNESS,
+        minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
         textComponent: TextComponent = buildTextComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
