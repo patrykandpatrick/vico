@@ -18,16 +18,26 @@ package pl.patrykgoworowski.vico.compose.m3.style
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import pl.patrykgoworowski.vico.compose.style.ChartStyle
 
 @Composable
-public fun m3ChartStyle(): ChartStyle = with(MaterialTheme.colorScheme) {
-    ChartStyle.fromColors(
-        axisLabelColor = onBackground,
-        axisGuidelineColor = outline,
-        axisLineColor = outline,
-        columnColors = listOf(primary, secondary, tertiary),
-        lineColor = primary,
-        elevationOverlayColor = primary,
-    )
-}
+public fun m3ChartStyle(
+    axisLabelColor: Color = MaterialTheme.colorScheme.onBackground,
+    axisGuidelineColor: Color = MaterialTheme.colorScheme.outline,
+    axisLineColor: Color = MaterialTheme.colorScheme.outline,
+    columnColors: List<Color> = listOf(
+        MaterialTheme.colorScheme.primary,
+        MaterialTheme.colorScheme.secondary,
+        MaterialTheme.colorScheme.tertiary,
+    ),
+    lineColor: Color = MaterialTheme.colorScheme.primary,
+    elevationOverlayColor: Color = MaterialTheme.colorScheme.primary,
+): ChartStyle = ChartStyle.fromColors(
+    axisLabelColor = axisLabelColor,
+    axisGuidelineColor = axisGuidelineColor,
+    axisLineColor = axisLineColor,
+    columnColors = columnColors,
+    lineColor = lineColor,
+    elevationOverlayColor = elevationOverlayColor,
+)
