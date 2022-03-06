@@ -19,6 +19,8 @@ pl.patrykgoworowski.vico.compose.extension
 pl.patrykgoworowski.vico.compose.gesture
 pl.patrykgoworowski.vico.compose.layout
 pl.patrykgoworowski.vico.compose.style
+module:compose-m2
+pl.patrykgoworowski.vico.compose.m2.style
 module:compose-m3
 pl.patrykgoworowski.vico.compose.m3.style
 module:core
