@@ -16,7 +16,7 @@
 
 package pl.patrykgoworowski.vico.core.chart.column
 
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
@@ -39,14 +39,14 @@ import kotlin.math.min
 
 public open class ColumnChart(
     public var columns: List<LineComponent>,
-    public var spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
-    public var innerSpacingDp: Float = Dimens.COLUMN_INSIDE_SPACING,
+    public var spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
+    public var innerSpacingDp: Float = DefaultDimens.COLUMN_INSIDE_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped,
 ) : BaseChart<ChartEntryModel>() {
 
     public constructor(
         column: LineComponent,
-        spacingDp: Float = Dimens.COLUMN_OUTSIDE_SPACING,
+        spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
     ) : this(columns = listOf(column), spacingDp = spacingDp)
 
     public constructor() : this(emptyList())

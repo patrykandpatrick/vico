@@ -25,7 +25,7 @@ import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
-import pl.patrykgoworowski.vico.core.Dimens.TEXT_COMPONENT_TEXT_SIZE
+import pl.patrykgoworowski.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.component.dimension.Padding

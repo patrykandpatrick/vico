@@ -21,23 +21,26 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import pl.patrykgoworowski.vico.app.ChartStyleOverrideManager
 import pl.patrykgoworowski.vico.app.ChartStyleOverrides
+import pl.patrykgoworowski.vico.compose.m3.style.m3ChartStyle
 import pl.patrykgoworowski.vico.compose.style.LocalChartStyle
+import pl.patrykgoworowski.vico.compose.style.ProvideChartStyle
 
 @Composable
 internal fun ProvideOverriddenChartStyle(
     chartStyleOverrides: ChartStyleOverrides,
     content: @Composable () -> Unit,
 ) {
-    val chartStyle = LocalChartStyle.current
-    val overriddenChartStyle = remember(chartStyle, chartStyleOverrides) {
-        ChartStyleOverrideManager.overrideChartStyle(
-            chartStyle = chartStyle,
-            chartStyleOverrides = chartStyleOverrides,
+    ProvideChartStyle(chartStyle = m3ChartStyle()) {
+        val chartStyle = LocalChartStyle.current
+        val overriddenChartStyle = remember(chartStyle, chartStyleOverrides) {
+            ChartStyleOverrideManager.overrideChartStyle(
+                chartStyle = chartStyle,
+                chartStyleOverrides = chartStyleOverrides,
+            )
+        }
+        CompositionLocalProvider(
+            LocalChartStyle provides overriddenChartStyle,
+            content = content,
         )
     }
-
-    CompositionLocalProvider(
-        LocalChartStyle provides overriddenChartStyle,
-        content = content,
-    )
 }

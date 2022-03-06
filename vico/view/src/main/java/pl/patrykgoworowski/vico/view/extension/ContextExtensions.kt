@@ -25,7 +25,7 @@ import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
-import pl.patrykgoworowski.vico.core.Colors
+import pl.patrykgoworowski.vico.core.DefaultColors
 
 internal val Context.density: Float
     get() = resources.displayMetrics.density
@@ -41,8 +41,8 @@ internal val Context.isLtr: Boolean
 public val Context.isDarkMode: Boolean
     get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
-internal val Context.colors: Colors
-    get() = if (isDarkMode) Colors.Dark else Colors.Light
+internal val Context.defaultColors: DefaultColors
+    get() = if (isDarkMode) DefaultColors.Dark else DefaultColors.Light
 
 @ColorInt
 public fun Context.getColorCompat(@ColorRes colorRes: Int): Int =

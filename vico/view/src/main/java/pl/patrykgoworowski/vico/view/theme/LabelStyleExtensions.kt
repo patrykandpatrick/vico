@@ -24,22 +24,22 @@ import android.text.TextUtils
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
 import pl.patrykgoworowski.vico.core.DEF_LABEL_LINE_COUNT
-import pl.patrykgoworowski.vico.core.Dimens.AXIS_LABEL_HORIZONTAL_PADDING
-import pl.patrykgoworowski.vico.core.Dimens.AXIS_LABEL_VERTICAL_PADDING
-import pl.patrykgoworowski.vico.core.Dimens.TEXT_COMPONENT_TEXT_SIZE
+import pl.patrykgoworowski.vico.core.DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING
+import pl.patrykgoworowski.vico.core.DefaultDimens.AXIS_LABEL_VERTICAL_PADDING
+import pl.patrykgoworowski.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.buildTextComponent
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.extension.firstNonNegativeOf
 import pl.patrykgoworowski.vico.view.R
-import pl.patrykgoworowski.vico.view.extension.colors
+import pl.patrykgoworowski.vico.view.extension.defaultColors
 
 private const val FONT_WEIGHT_NORMAL = 500
 
 internal fun TypedArray.getTextComponent(
     context: Context
 ): TextComponent = use {
-    val color = getColor(R.styleable.LabelStyle_labelColor, context.colors.axisLabelColor.toInt())
+    val color = getColor(R.styleable.LabelStyle_labelColor, context.defaultColors.axisLabelColor.toInt())
     val background = getNestedTypedArray(
         context = context,
         resourceId = R.styleable.LabelStyle_backgroundStyle,

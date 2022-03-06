@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.vico.compose.style.ChartStyle
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.chart.line.LineChart
@@ -39,7 +39,7 @@ public fun lineChart(
     lineColor: Color = currentChartStyle.lineChart.lineColor,
     lineBackgroundShader: DynamicShader? = currentChartStyle.lineChart.lineBackgroundShader,
     lineStrokeCap: StrokeCap = StrokeCap.Round,
-    cubicStrength: Float = Dimens.CUBIC_STRENGTH,
+    cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
     minX: Float? = null,
     maxX: Float? = null,
     minY: Float? = null,
@@ -63,7 +63,7 @@ public fun lineChart(
     chartStyle: ChartStyle,
     point: Component? = null,
     lineStrokeCap: StrokeCap = StrokeCap.Round,
-    cubicStrength: Float = Dimens.CUBIC_STRENGTH,
+    cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
     minX: Float? = null,
     maxX: Float? = null,
     minY: Float? = null,

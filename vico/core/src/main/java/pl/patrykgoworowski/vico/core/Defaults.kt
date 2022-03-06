@@ -22,12 +22,12 @@ public const val DEF_LABEL_SPACING: Float = 16f
 
 public const val DEF_MARKER_TICK_SIZE: Float = 6f
 
-public const val MAX_ZOOM: Float = 10f
-public const val MIN_ZOOM: Float = 0.1f
+public const val DEF_MAX_ZOOM: Float = 10f
+public const val DEF_MIN_ZOOM: Float = 0.1f
 
 public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
 
-public object Dimens {
+public object DefaultDimens {
     public const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
     public const val AXIS_LABEL_MAX_LINES: Int = 1
     public const val AXIS_LABEL_VERTICAL_PADDING: Int = 2
@@ -66,7 +66,7 @@ public object Dimens {
 }
 
 @Suppress("MagicNumber")
-public interface Colors {
+public interface DefaultColors {
 
     public val elevationOverlayColor: Long
 
@@ -80,7 +80,7 @@ public interface Colors {
 
     public val lineColor: Long
 
-    public object Light : Colors {
+    public object Light : DefaultColors {
 
         override val elevationOverlayColor: Long = 0x00000000
 
@@ -95,7 +95,7 @@ public interface Colors {
         override val lineColor: Long = 0xFF1A1A1A
     }
 
-    public object Dark : Colors {
+    public object Dark : DefaultColors {
 
         override val elevationOverlayColor: Long = 0xFFFFFFFF
 
@@ -111,7 +111,7 @@ public interface Colors {
     }
 }
 
-public object Alpha {
+public object DefaultAlpha {
     public const val LINE_BACKGROUND_SHADER_START: Float = 0.5f
     public const val LINE_BACKGROUND_SHADER_END: Float = 0f
 }

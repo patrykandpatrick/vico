@@ -18,7 +18,7 @@ package pl.patrykgoworowski.vico.compose.extension
 
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import pl.patrykgoworowski.vico.core.Dimens.TEXT_COMPONENT_TEXT_SIZE
+import pl.patrykgoworowski.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
 
 public fun TextUnit.pixelSize(): Float =
     when (type) {

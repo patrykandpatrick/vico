@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.component.shape.chartShape
 import pl.patrykgoworowski.vico.compose.component.shape.shader.toDynamicShader
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
 import pl.patrykgoworowski.vico.core.component.shape.DashedShape
@@ -40,7 +40,7 @@ public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shap
 
 public fun lineComponent(
     color: Color = Color.Black,
-    thickness: Dp = Dimens.COLUMN_WIDTH.dp,
+    thickness: Dp = DefaultDimens.COLUMN_WIDTH.dp,
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
