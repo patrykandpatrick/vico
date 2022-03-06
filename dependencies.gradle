@@ -217,6 +217,11 @@ ext {
             [configuration: "testImplementation", dependency: test_libs.junitExt],
     ]
 
+    vico_compose_m2_dependencies = [
+            [configuration: "api", dependency: project(":vico:compose")],
+            [configuration: "implementation", dependency: jetpack_compose_libs.material],
+    ]
+
     vico_compose_m3_dependencies = [
             [configuration: "api", dependency: project(":vico:compose")],
             [configuration: "implementation", dependency: jetpack_compose_libs.material3],
