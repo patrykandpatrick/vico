@@ -40,7 +40,7 @@ import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 @Composable
-public fun markerComponent(): Marker {
+internal fun markerComponent(): Marker {
     val colors = MaterialTheme.colors
     val label = textComponent(
         color = colors.onSurface,
