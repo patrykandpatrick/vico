@@ -21,6 +21,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import pl.patrykgoworowski.vico.compose.style.ChartStyle
 
+/**
+ * Creates a baseline [ChartStyle] implementation using the colors provided via [MaterialTheme.colorScheme].
+ * The colors may be customized.
+ */
 @Composable
 public fun m3ChartStyle(
     axisLabelColor: Color = MaterialTheme.colorScheme.onBackground,
