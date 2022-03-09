@@ -76,10 +76,8 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
         private val modelReceivers: SortedMap<Int, Model?> = TreeMap()
 
         internal fun getModelReceiver(index: Int): (Model) -> Unit {
-            val modelReceiver: (Model) -> Unit = object : (Model) -> Unit {
-                override fun invoke(model: Model) {
-                    onModelUpdate(index, model)
-                }
+            val modelReceiver: (Model) -> Unit = { model ->
+                onModelUpdate(index, model)
             }
             modelReceivers[index] = null
             return modelReceiver

@@ -51,7 +51,7 @@ public class ChartEntryModelProducer(
         updateReceivers.values.forEach { (updateListener, _, diffProcessor) ->
             val oldModel = updateListener()
             executor.execute {
-                diffProcessor.setEntries(old = oldModel?.entries ?: emptyList(), new = entries)
+                diffProcessor.setEntries(old = oldModel?.entries.orEmpty(), new = entries)
             }
         }
     }
@@ -111,7 +111,7 @@ public class ChartEntryModelProducer(
         )
         val oldModel = updateListener()
         executor.execute {
-            diffProcessor.setEntries(old = oldModel?.entries ?: emptyList(), new = entries)
+            diffProcessor.setEntries(old = oldModel?.entries.orEmpty(), new = entries)
             progressModelSynchronously(0f, onModel, diffProcessor)
         }
     }

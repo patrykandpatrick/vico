@@ -91,7 +91,7 @@ public fun <Model : ChartEntryModel> Chart(
             bottomAxis = bottomAxis,
             marker = marker,
             isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-            isZoomEnabled = isZoomEnabled
+            isZoomEnabled = isZoomEnabled,
         )
     }
 }
