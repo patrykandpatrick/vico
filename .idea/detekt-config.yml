@@ -122,7 +122,7 @@ complexity:
     ignoreDefaultParameters: true
     ignoreDataClasses: true
     ignoreAnnotated: [
-        'androidx.compose.runtime.Composable',
+        'Composable',
         'LongParameterListDrawFunction',
     ]
   MethodOverloading:

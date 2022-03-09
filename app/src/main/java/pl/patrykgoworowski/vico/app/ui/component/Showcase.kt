@@ -42,20 +42,6 @@ import pl.patrykgoworowski.vico.app.ShowcaseViewModel
 import pl.patrykgoworowski.vico.app.extension.surfaceColorAtElevation
 import pl.patrykgoworowski.vico.compose.style.LocalChartStyle
 
-internal enum class ShowcasePage(
-    @StringRes val labelRes: Int,
-    val content: @Composable (ShowcaseViewModel) -> Unit,
-) {
-    ComposeShowcasePage(
-        labelRes = R.string.showcase_compose_title,
-        content = { ComposeShowcase(showcaseViewModel = it) },
-    ),
-    ViewShowcasePage(
-        labelRes = R.string.showcase_view_title,
-        content = { ViewShowcase(showcaseViewModel = it) },
-    ),
-}
-
 @Composable
 @OptIn(ExperimentalPagerApi::class, androidx.compose.material.ExperimentalMaterialApi::class)
 internal fun Showcase() {
@@ -100,4 +86,18 @@ internal fun Showcase() {
             }
         }
     }
+}
+
+internal enum class ShowcasePage(
+    @StringRes val labelRes: Int,
+    val content: @Composable (ShowcaseViewModel) -> Unit,
+) {
+    ComposeShowcasePage(
+        labelRes = R.string.showcase_compose_title,
+        content = { ComposeShowcase(showcaseViewModel = it) },
+    ),
+    ViewShowcasePage(
+        labelRes = R.string.showcase_view_title,
+        content = { ViewShowcase(showcaseViewModel = it) },
+    ),
 }

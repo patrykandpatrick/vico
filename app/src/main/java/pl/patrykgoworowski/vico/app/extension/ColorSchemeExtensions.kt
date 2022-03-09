@@ -23,8 +23,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.math.ln
 
+private const val ALPHA_LOG_N_MULTIPLIER = 4.5f
+
 internal fun ColorScheme.surfaceColorAtElevation(elevation: Dp): Color {
     if (elevation == 0.dp) return surface
-    val alpha = ((4.5f * ln(x = elevation.value + 1)) + 2f) / 100f
+    val alpha = ((ALPHA_LOG_N_MULTIPLIER * ln(x = elevation.value + 1)) + 2f) / 100f
     return primary.copy(alpha = alpha).compositeOver(surface)
 }
