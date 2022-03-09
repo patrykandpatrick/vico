@@ -104,6 +104,7 @@ public data class ChartStyle(
         /**
          * Creates a base implementation of [ChartStyle] using the provided colors.
          */
+        @Suppress("LongParameterList")
         public fun fromColors(
             axisLabelColor: Color,
             axisGuidelineColor: Color,
