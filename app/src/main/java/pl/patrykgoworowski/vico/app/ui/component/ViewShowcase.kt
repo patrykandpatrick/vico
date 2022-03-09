@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -35,17 +34,16 @@ import pl.patrykgoworowski.vico.databinding.FragmentViewBinding
 internal fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
     val marker = markerComponent()
     val scrollState = rememberScrollState()
-    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.verticalScroll(state = scrollState)) {
         Box(modifier = Modifier.padding(20.dp)) {
             AndroidViewBinding(FragmentViewBinding::inflate) {
                 with(showcaseViewModel) {
-                    columnChart.setUpChart(entries, coroutineScope, marker)
-                    lineChart.setUpChart(entries, coroutineScope, marker)
-                    composedChart.setUpChart(composedEntries, coroutineScope, marker)
-                    groupedColumnChart.setUpChart(multiEntries, coroutineScope, marker)
-                    stackedColumnChart.setUpChart(multiEntries, coroutineScope, marker)
+                    columnChart.setUpChart(chartEntryModelProducer, marker)
+                    lineChart.setUpChart(chartEntryModelProducer, marker)
+                    composedChart.setUpChart(composedChartEntryModelProducer, marker)
+                    groupedColumnChart.setUpChart(multiChartEntryModelProducer, marker)
+                    stackedColumnChart.setUpChart(multiChartEntryModelProducer, marker)
                 }
             }
         }

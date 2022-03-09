@@ -16,115 +16,115 @@
 
 package pl.patrykgoworowski.vico.core.entry
 
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import pl.patrykgoworowski.vico.core.THREAD_POOL_COUNT
 import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffProcessor
-import pl.patrykgoworowski.vico.core.entry.diff.DiffAnimator
 import pl.patrykgoworowski.vico.core.entry.diff.DiffProcessor
 import pl.patrykgoworowski.vico.core.extension.setAll
 
-private typealias Listener = (ChartEntryModel) -> Unit
-
 public class ChartEntryModelProducer(
     entryCollections: List<List<ChartEntry>>,
-    private val diffAnimator: DiffAnimator? = null,
+    backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
 ) : ChartModelProducer<ChartEntryModel> {
 
-    private val diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor()
-    private val listeners: ArrayList<Listener> = ArrayList()
+    private var cachedModel: ChartEntryModel? = null
 
-    public val data: ArrayList<List<ChartEntry>> = ArrayList()
+    private val updateReceivers: HashMap<Any, UpdateReceiver> = HashMap()
 
-    override lateinit var model: ChartEntryModel
+    private val executor: Executor = backgroundExecutor
 
-    public var minX: Float = 0f
-        private set
-
-    public var maxX: Float = 0f
-        private set
-
-    public var minY: Float = 0f
-        private set
-
-    public var maxY: Float = 0f
-        private set
-
-    public var step: Float = 0f
-        private set
-
-    public var stackedMinY: Float = 0f
-        private set
-
-    public var stackedMaxY: Float = 0f
-        private set
+    public val entries: ArrayList<List<ChartEntry>> = ArrayList()
 
     public constructor(
         vararg entryCollections: List<ChartEntry>,
-        diffAnimator: DiffAnimator? = null,
-    ) : this(entryCollections.toList(), diffAnimator = diffAnimator)
+        backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
+    ) : this(entryCollections.toList(), backgroundExecutor)
 
     init {
         setEntries(entryCollections)
     }
 
     public fun setEntries(entries: List<List<ChartEntry>>) {
-        diffAnimator?.also { animator ->
-            diffProcessor.setEntries(
-                old = diffProcessor.progressDiff(animator.currentProgress),
-                new = entries,
-            )
-            animator.start { progress ->
-                refreshModel(
-                    entries = diffProcessor.progressDiff(progress),
-                    yRange = diffProcessor.yRangeProgressDiff(progress),
-                    stackedYRange = diffProcessor.stackedYRangeProgressDiff(progress),
-                )
+        this.entries.setAll(entries)
+        cachedModel = null
+        updateReceivers.values.forEach { (updateListener, _, diffProcessor) ->
+            val oldModel = updateListener()
+            executor.execute {
+                diffProcessor.setEntries(old = oldModel?.entries.orEmpty(), new = entries)
             }
-        } ?: kotlin.run {
-            refreshModel(entries)
         }
+    }
+
+    override fun getModel(): ChartEntryModel =
+        cachedModel ?: getModel(entries).also { cachedModel = it }
+
+    override fun progressModel(key: Any, progress: Float) {
+        val (_, modelReceiver, diffProcessor) = updateReceivers[key] ?: return
+        executor.execute {
+            progressModelSynchronously(progress, modelReceiver, diffProcessor)
+        }
+    }
+
+    private fun progressModelSynchronously(
+        progress: Float,
+        modelReceiver: (ChartEntryModel) -> Unit,
+        diffProcessor: DiffProcessor<ChartEntry>,
+    ) {
+        val model = getModel(
+            entries = diffProcessor.progressDiff(progress),
+            yRange = diffProcessor.yRangeProgressDiff(progress),
+            stackedYRange = diffProcessor.stackedYRangeProgressDiff(progress),
+        )
+        modelReceiver(model)
     }
 
     public fun setEntries(vararg entries: List<ChartEntry>) {
         setEntries(entries.toList())
     }
 
-    private fun refreshModel(
+    private fun getModel(
         entries: List<List<ChartEntry>>,
         yRange: ClosedFloatingPointRange<Float> = entries.yRange,
         stackedYRange: ClosedFloatingPointRange<Float> = entries.calculateStackedYRange(),
-    ) {
-        data.setAll(entries)
-        val xRange = entries.xRange
-        this.minX = xRange.start
-        this.maxX = xRange.endInclusive
-        this.minY = yRange.start
-        this.maxY = yRange.endInclusive
-        this.step = entries.calculateStep()
-        this.stackedMinY = stackedYRange.start
-        this.stackedMaxY = stackedYRange.endInclusive
-        notifyChange()
-    }
-
-    override fun addOnEntriesChangedListener(listener: Listener) {
-        listeners += listener
-        listener(model)
-    }
-
-    override fun removeOnEntriesChangedListener(listener: Listener) {
-        listeners -= listener
-    }
-
-    private fun notifyChange() {
-        model = Model(
-            entries = data,
-            minX = minX,
-            maxX = maxX,
-            minY = minY,
-            maxY = maxY,
-            composedMaxY = stackedMaxY,
-            stepX = step,
+    ): ChartEntryModel =
+        Model(
+            entries = entries,
+            minX = entries.xRange.start,
+            maxX = entries.xRange.endInclusive,
+            minY = yRange.start,
+            maxY = yRange.endInclusive,
+            stackedMaxY = stackedYRange.endInclusive,
+            stepX = entries.calculateStep(),
         )
-        listeners.forEach { it(model) }
+
+    override fun registerForUpdates(
+        key: Any,
+        updateListener: () -> ChartEntryModel?,
+        onModel: (ChartEntryModel) -> Unit,
+    ) {
+        val diffProcessor = DefaultDiffProcessor()
+        updateReceivers[key] = UpdateReceiver(
+            listener = updateListener,
+            onModel = onModel,
+            diffProcessor = diffProcessor,
+        )
+        val oldModel = updateListener()
+        executor.execute {
+            diffProcessor.setEntries(old = oldModel?.entries.orEmpty(), new = entries)
+            progressModelSynchronously(0f, onModel, diffProcessor)
+        }
     }
+
+    override fun unregisterFromUpdates(key: Any) {
+        updateReceivers.remove(key)
+    }
+
+    private data class UpdateReceiver(
+        val listener: () -> ChartEntryModel?,
+        val onModel: (ChartEntryModel) -> Unit,
+        val diffProcessor: DiffProcessor<ChartEntry>,
+    )
 
     internal data class Model(
         override val entries: List<List<ChartEntry>>,
@@ -132,7 +132,7 @@ public class ChartEntryModelProducer(
         override val maxX: Float,
         override val minY: Float,
         override val maxY: Float,
-        override val composedMaxY: Float,
+        override val stackedMaxY: Float,
         override val stepX: Float,
     ) : ChartEntryModel
 }

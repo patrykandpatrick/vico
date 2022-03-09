@@ -17,6 +17,7 @@
 package pl.patrykgoworowski.vico.compose.chart
 
 import android.graphics.RectF
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.interaction.DragInteraction
@@ -34,7 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import pl.patrykgoworowski.vico.compose.chart.entry.collectAsState
+import pl.patrykgoworowski.vico.compose.chart.entry.collect
+import pl.patrykgoworowski.vico.compose.chart.entry.defaultDiffAnimationSpec
 import pl.patrykgoworowski.vico.compose.extension.addIf
 import pl.patrykgoworowski.vico.compose.extension.chartTouchEvent
 import pl.patrykgoworowski.vico.compose.gesture.OnZoom
@@ -71,21 +73,27 @@ public fun <Model : ChartEntryModel> Chart(
     marker: Marker? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
+    diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
 ) {
-    val model = chartModelProducer.collectAsState()
-
-    Chart(
-        modifier = modifier,
-        chart = chart,
-        model = model.value,
-        startAxis = startAxis,
-        topAxis = topAxis,
-        endAxis = endAxis,
-        bottomAxis = bottomAxis,
-        marker = marker,
-        isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-        isZoomEnabled = isZoomEnabled
+    val model = chartModelProducer.collect(
+        key = chart,
+        animationSpec = diffAnimationSpec,
     )
+
+    if (model != null) {
+        Chart(
+            modifier = modifier,
+            chart = chart,
+            model = model,
+            startAxis = startAxis,
+            topAxis = topAxis,
+            endAxis = endAxis,
+            bottomAxis = bottomAxis,
+            marker = marker,
+            isHorizontalScrollEnabled = isHorizontalScrollEnabled,
+            isZoomEnabled = isZoomEnabled,
+        )
+    }
 }
 
 @Suppress("LongMethod")

@@ -181,7 +181,6 @@ ext {
     ]
 
     vico_core_dependencies = [
-            [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "testImplementation", dependency: test_libs.junit],
@@ -195,8 +194,6 @@ ext {
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
-            [configuration: "implementation", dependency: kotlin_libs.coroutines],
-            [configuration: "implementation", dependency: kotlin_libs.coroutines_android],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "implementation", dependency: material_libs.main],
             [configuration: "testImplementation", dependency: test_libs.junit],
@@ -210,7 +207,6 @@ ext {
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
             [configuration: "implementation", dependency: jetpack_compose_libs.foundation],
-            [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "testImplementation", dependency: test_libs.junit],

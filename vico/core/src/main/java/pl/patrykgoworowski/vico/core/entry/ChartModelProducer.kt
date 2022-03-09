@@ -18,8 +18,10 @@ package pl.patrykgoworowski.vico.core.entry
 
 public interface ChartModelProducer<Model : ChartEntryModel> {
 
-    public val model: Model
+    public fun getModel(): Model
 
-    public fun addOnEntriesChangedListener(listener: (Model) -> Unit)
-    public fun removeOnEntriesChangedListener(listener: (Model) -> Unit)
+    public fun progressModel(key: Any, progress: Float)
+
+    public fun registerForUpdates(key: Any, updateListener: () -> Model?, onModel: (Model) -> Unit)
+    public fun unregisterFromUpdates(key: Any)
 }

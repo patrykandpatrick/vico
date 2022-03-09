@@ -23,6 +23,6 @@ public enum class MergeMode {
 
     public fun getMaxY(model: ChartEntryModel): Float = when (this) {
         Grouped -> model.maxY
-        Stack -> model.composedMaxY
+        Stack -> model.stackedMaxY
     }
 }

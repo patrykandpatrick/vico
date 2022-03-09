@@ -16,6 +16,7 @@
 
 package pl.patrykgoworowski.vico.app.ui.component
 
+import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
+import pl.patrykgoworowski.vico.compose.chart.entry.defaultDiffAnimationSpec
 import pl.patrykgoworowski.vico.compose.chart.line.lineChart
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
 import pl.patrykgoworowski.vico.core.chart.composed.plus
@@ -33,6 +35,7 @@ import pl.patrykgoworowski.vico.core.entry.composed.ComposedChartEntryModelProdu
 internal fun ComposedChart(
     modifier: Modifier = Modifier,
     model: ComposedChartEntryModelProducer<ChartEntryModel>,
+    diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
 ) {
     val chartStyle = currentChartStyle
     Chart(
@@ -42,5 +45,6 @@ internal fun ComposedChart(
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         marker = markerComponent(),
+        diffAnimationSpec = diffAnimationSpec,
     )
 }

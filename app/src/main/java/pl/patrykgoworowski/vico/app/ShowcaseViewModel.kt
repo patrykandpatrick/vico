@@ -26,7 +26,6 @@ import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
 import pl.patrykgoworowski.vico.core.entry.composed.ComposedChartEntryModelProducer
 import pl.patrykgoworowski.vico.core.entry.composed.plus
-import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffAnimator
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 
 internal class ShowcaseViewModel : ViewModel() {
@@ -34,18 +33,20 @@ internal class ShowcaseViewModel : ViewModel() {
     private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
     private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)
 
-    internal val entries: ChartEntryModelProducer = ChartEntryModelProducer(diffAnimator = DefaultDiffAnimator())
-    internal val multiEntries: ChartEntryModelProducer = ChartEntryModelProducer(diffAnimator = DefaultDiffAnimator())
+    internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
-    internal val composedEntries: ComposedChartEntryModelProducer<ChartEntryModel> = multiEntries + entries
+    internal val multiChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
+
+    internal val composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel> =
+        multiChartEntryModelProducer + chartEntryModelProducer
 
     internal var chartStyleOverrideManager: ChartStyleOverrideManager = ChartStyleOverrideManager()
 
     init {
         viewModelScope.launch {
             while (currentCoroutineContext().isActive) {
-                entries.setEntries(generator.generateRandomEntries())
-                multiEntries.setEntries(
+                chartEntryModelProducer.setEntries(generator.generateRandomEntries())
+                multiChartEntryModelProducer.setEntries(
                     List(size = MULTI_ENTRIES_COMBINED) { multiGenerator.generateRandomEntries() }
                 )
                 delay(UPDATE_FREQUENCY)

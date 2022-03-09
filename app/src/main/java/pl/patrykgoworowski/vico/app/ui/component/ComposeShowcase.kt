@@ -34,12 +34,13 @@ internal fun ComposeShowcase(showcaseViewModel: ShowcaseViewModel) {
             verticalArrangement = Arrangement.spacedBy(20.dp),
             modifier = Modifier.padding(all = 20.dp),
         ) {
-            ColumnChart(chartEntryModelProducer = showcaseViewModel.entries)
-            ComposedChart(model = showcaseViewModel.composedEntries)
-            StackedColumnChart(chartEntryModelProducer = showcaseViewModel.multiEntries)
-            ComposedChart(model = showcaseViewModel.composedEntries)
-            LineChart(chartEntryModelProducer = showcaseViewModel.entries)
-            GroupedColumnChart(chartEntryModelProducer = showcaseViewModel.multiEntries)
+            ColumnChart(chartEntryModelProducer = showcaseViewModel.chartEntryModelProducer)
+            StackedColumnChart(chartEntryModelProducer = showcaseViewModel.multiChartEntryModelProducer)
+            ComposedChart(model = showcaseViewModel.composedChartEntryModelProducer)
+            StackedColumnChart(chartEntryModelProducer = showcaseViewModel.multiChartEntryModelProducer)
+            ComposedChart(model = showcaseViewModel.composedChartEntryModelProducer)
+            LineChart(chartEntryModelProducer = showcaseViewModel.chartEntryModelProducer)
+            GroupedColumnChart(chartEntryModelProducer = showcaseViewModel.multiChartEntryModelProducer)
         }
     }
 }

@@ -37,14 +37,14 @@ public class RandomEntriesGenerator(
     }
 
     public fun randomEntryModel(): ChartEntryModel =
-        ChartEntryModelProducer(generateRandomEntries()).model
+        ChartEntryModelProducer(generateRandomEntries()).getModel()
 
     public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> =
         ComposedChartEntryModelProducer(
             ChartEntryModelProducer(generateRandomEntries()),
             ChartEntryModelProducer(generateRandomEntries()),
             ChartEntryModelProducer(generateRandomEntries()),
-        ).model
+        ).getModel()
 
     private companion object {
         const val X_RANGE_TOP = 10
