@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.ceil
 import pl.patrykgoworowski.vico.core.extension.floor
 import pl.patrykgoworowski.vico.core.extension.half
-import pl.patrykgoworowski.vico.core.extension.middle
+import pl.patrykgoworowski.vico.core.extension.median
 
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
@@ -69,7 +69,7 @@ public data class ThresholdLine(
     ): Unit = with(context) {
         val valueRange = chartModel.maxY - chartModel.minY
 
-        val centerY = bounds.bottom - thresholdRange.middle / valueRange * bounds.height()
+        val centerY = bounds.bottom - thresholdRange.median / valueRange * bounds.height()
 
         val topY = minOf(
             bounds.bottom - thresholdRange.endInclusive / valueRange * bounds.height(),

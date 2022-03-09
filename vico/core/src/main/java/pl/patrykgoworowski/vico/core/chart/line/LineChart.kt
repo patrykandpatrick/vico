@@ -32,7 +32,6 @@ import pl.patrykgoworowski.vico.core.chart.BaseChart
 import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
-import pl.patrykgoworowski.vico.core.extension.between
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.context.MeasureContext
@@ -108,7 +107,7 @@ public open class LineChart(
 
             entryLocationMap.put(
                 x = ceil(x),
-                y = y.between(bounds.top, bounds.bottom),
+                y = y.coerceIn(bounds.top, bounds.bottom),
                 entry = entry,
                 color = lineColor
             )

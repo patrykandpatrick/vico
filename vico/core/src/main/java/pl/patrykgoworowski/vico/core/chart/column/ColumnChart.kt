@@ -27,7 +27,6 @@ import pl.patrykgoworowski.vico.core.chart.BaseChart
 import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
-import pl.patrykgoworowski.vico.core.extension.between
 import pl.patrykgoworowski.vico.core.extension.getRepeating
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.inClip
@@ -108,14 +107,14 @@ public open class ColumnChart(
                     MergeMode.Stack -> {
                         val cumulatedHeight = heightMap.getOrElse(entry.x) { 0f }
                         columnBottom = (bounds.bottom + bottomCompensation - cumulatedHeight)
-                            .between(bounds.top, bounds.bottom)
+                            .coerceIn(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += cellWidth.half
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                     MergeMode.Grouped -> {
                         columnBottom = (bounds.bottom + bottomCompensation)
-                            .between(bounds.top, bounds.bottom)
+                            .coerceIn(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += column.thicknessDp.pixels * chartScale
                     }
@@ -145,7 +144,7 @@ public open class ColumnChart(
     ) {
         entryLocationMap.put(
             x = ceil(columnCenterX),
-            y = columnTop.between(bounds.top, bounds.bottom),
+            y = columnTop.coerceIn(bounds.top, bounds.bottom),
             entry = entry,
             color = column.color
         )
