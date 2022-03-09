@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.axis
 
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DefaultAxisFormatter
@@ -79,7 +79,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
         public var tick: LineComponent? = builder?.tick
 
-        public var tickLengthDp: Float = builder?.tickLengthDp ?: Dimens.AXIS_TICK_LENGTH
+        public var tickLengthDp: Float = builder?.tickLengthDp ?: DefaultDimens.AXIS_TICK_LENGTH
 
         public var guideline: LineComponent? = builder?.guideline
 

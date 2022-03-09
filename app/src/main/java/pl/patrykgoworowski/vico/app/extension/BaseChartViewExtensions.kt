@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.view.chart.BaseChartView
 
 @OptIn(ExperimentalCoroutinesApi::class)
-public fun <T : ChartEntryModel> BaseChartView<T>.setUpChart(
+internal fun <T : ChartEntryModel> BaseChartView<T>.setUpChart(
     entries: ChartModelProducer<T>,
     marker: Marker,
 ) {

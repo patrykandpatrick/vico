@@ -17,11 +17,13 @@
 package pl.patrykgoworowski.vico.core.extension
 
 import android.graphics.Color
-import pl.patrykgoworowski.vico.core.Colors
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
 @Suppress("MagicNumber")
-private fun Colors.getElevationOverlayColorWithCorrectAlpha(elevationDp: Float): Int {
+private fun getElevationOverlayColorWithCorrectAlpha(
+    elevationOverlayColor: Long,
+    elevationDp: Float,
+): Int {
     val overlayPercentage = when {
         elevationDp < 1f -> 0.00f
         elevationDp < 2f -> 0.05f
@@ -42,4 +44,9 @@ private fun Colors.getElevationOverlayColorWithCorrectAlpha(elevationDp: Float):
 }
 
 public fun DrawContext.applyElevationOverlayToColor(color: Int, elevationDp: Float): Int =
-    color.overlayColor(colors.getElevationOverlayColorWithCorrectAlpha(elevationDp))
+    color.overlayColor(
+        getElevationOverlayColorWithCorrectAlpha(
+            elevationOverlayColor = elevationOverlayColor,
+            elevationDp = elevationDp,
+        )
+    )

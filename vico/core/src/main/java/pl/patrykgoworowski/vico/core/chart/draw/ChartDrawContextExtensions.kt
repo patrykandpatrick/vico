@@ -18,7 +18,6 @@ package pl.patrykgoworowski.vico.core.chart.draw
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import pl.patrykgoworowski.vico.core.Colors
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
@@ -32,7 +31,7 @@ private const val DEFAULT_SCALE = 1f
 @LongParameterListDrawFunction
 public fun chartDrawContext(
     canvas: Canvas,
-    colors: Colors,
+    elevationOverlayColor: Long,
     measureContext: MeasureContext,
     markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
@@ -42,7 +41,7 @@ public fun chartDrawContext(
     override val canvasBounds: RectF = measureContext.canvasBounds
     override val chartBounds: RectF = chartBounds
     override var canvas: Canvas = canvas
-    override val colors: Colors = colors
+    override val elevationOverlayColor: Long = elevationOverlayColor
     override val chartModel: ChartModel = chartModel
     override val markerTouchPoint: Point? = markerTouchPoint
     override val horizontalScroll: Float = measureContext.horizontalScroll

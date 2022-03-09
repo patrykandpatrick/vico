@@ -19,7 +19,7 @@ package pl.patrykgoworowski.vico.core.component.shape
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
 import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
@@ -123,8 +123,8 @@ public object Shapes {
 
     public fun dashedShape(
         shape: Shape = rectShape,
-        dashLength: Float = Dimens.DASH_LENGTH,
-        gapLength: Float = Dimens.DASH_GAP,
+        dashLength: Float = DefaultDimens.DASH_LENGTH,
+        gapLength: Float = DefaultDimens.DASH_GAP,
     ): Shape = DashedShape(
         shape = shape,
         dashLengthDp = dashLength,

@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.compose.chart.entry.collect
 import pl.patrykgoworowski.vico.compose.chart.entry.defaultDiffAnimationSpec
@@ -40,10 +41,10 @@ import pl.patrykgoworowski.vico.compose.extension.addIf
 import pl.patrykgoworowski.vico.compose.extension.chartTouchEvent
 import pl.patrykgoworowski.vico.compose.gesture.OnZoom
 import pl.patrykgoworowski.vico.compose.layout.getMeasureContext
-import pl.patrykgoworowski.vico.compose.style.currentChartColors
-import pl.patrykgoworowski.vico.core.Dimens
-import pl.patrykgoworowski.vico.core.MAX_ZOOM
-import pl.patrykgoworowski.vico.core.MIN_ZOOM
+import pl.patrykgoworowski.vico.compose.style.currentChartStyle
+import pl.patrykgoworowski.vico.core.DefaultDimens
+import pl.patrykgoworowski.vico.core.DEF_MAX_ZOOM
+import pl.patrykgoworowski.vico.core.DEF_MIN_ZOOM
 import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
@@ -138,11 +139,11 @@ public fun <Model : ChartEntryModel> Chart(
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
     val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
     val virtualLayout = remember { VirtualLayout() }
-    val chartColors = currentChartColors
+    val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb().toLong()
 
     Canvas(
         modifier = modifier
-            .height(Dimens.CHART_HEIGHT.dp)
+            .height(DefaultDimens.CHART_HEIGHT.dp)
             .fillMaxWidth()
             .addIf(marker != null) {
                 chartTouchEvent(
@@ -164,7 +165,7 @@ public fun <Model : ChartEntryModel> Chart(
         )
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
-            colors = chartColors,
+            elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint.value,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
@@ -219,7 +220,7 @@ public fun rememberZoomState(
 ): OnZoom = remember {
     onZoom@{ centroid, zoomChange ->
         val newZoom = zoom.value * zoomChange
-        if (newZoom !in MIN_ZOOM..MAX_ZOOM) return@onZoom
+        if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return@onZoom
         val transformationAxisX = scrollHandler.currentScroll + centroid.x - chartBounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         zoom.value = newZoom

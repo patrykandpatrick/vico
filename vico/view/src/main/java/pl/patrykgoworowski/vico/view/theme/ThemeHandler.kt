@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
 import androidx.annotation.StyleableRes
-import pl.patrykgoworowski.vico.core.Dimens
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.axisBuilder
@@ -130,7 +130,7 @@ internal class ThemeHandler(
                 tickLengthDp = axisStyle.getRawDimension(
                     context = context,
                     R.styleable.Axis_axisTickLength,
-                    defaultValue = Dimens.AXIS_TICK_LENGTH,
+                    defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
                 )
                 guideline = axisStyle.getLineComponent(
                     resourceId = R.styleable.Axis_axisGuidelineStyle,

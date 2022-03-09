@@ -33,9 +33,9 @@ import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import kotlin.properties.Delegates.observable
 import pl.patrykgoworowski.vico.core.Animation
-import pl.patrykgoworowski.vico.core.Dimens
-import pl.patrykgoworowski.vico.core.MAX_ZOOM
-import pl.patrykgoworowski.vico.core.MIN_ZOOM
+import pl.patrykgoworowski.vico.core.DefaultDimens
+import pl.patrykgoworowski.vico.core.DEF_MAX_ZOOM
+import pl.patrykgoworowski.vico.core.DEF_MIN_ZOOM
 import pl.patrykgoworowski.vico.core.axis.AxisManager
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.AxisRenderer
@@ -51,7 +51,7 @@ import pl.patrykgoworowski.vico.core.layout.VirtualLayout
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
-import pl.patrykgoworowski.vico.view.extension.colors
+import pl.patrykgoworowski.vico.view.extension.defaultColors
 import pl.patrykgoworowski.vico.view.extension.density
 import pl.patrykgoworowski.vico.view.extension.dpInt
 import pl.patrykgoworowski.vico.view.extension.fontScale
@@ -212,7 +212,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private fun handleZoom(focusX: Float, zoomChange: Float) {
         val chart = chart ?: return
         val newZoom = measureContext.chartScale * zoomChange
-        if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
+        if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return
         val transformationAxisX = scrollHandler.currentScroll + focusX - chart.bounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         measureContext.chartScale = newZoom
@@ -234,7 +234,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         measureContext.horizontalScroll = scrollHandler.currentScroll
         val drawContext = chartDrawContext(
             canvas = canvas,
-            colors = context.colors,
+            elevationOverlayColor = context.defaultColors.elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
@@ -278,9 +278,9 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
 
         val height = when (MeasureSpec.getMode(heightMeasureSpec)) {
-            MeasureSpec.UNSPECIFIED -> Dimens.CHART_HEIGHT.dpInt + verticalPadding
+            MeasureSpec.UNSPECIFIED -> DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
             MeasureSpec.AT_MOST -> minOf(
-                Dimens.CHART_HEIGHT.dpInt + verticalPadding,
+                DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding,
                 heightMeasureSpec.specSize
             )
             else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)

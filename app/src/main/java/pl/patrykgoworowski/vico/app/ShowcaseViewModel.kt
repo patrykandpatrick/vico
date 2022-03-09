@@ -33,14 +33,14 @@ internal class ShowcaseViewModel : ViewModel() {
     private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
     private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)
 
-    public val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
+    internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
-    public val multiChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
+    internal val multiChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
-    public val composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel> =
+    internal val composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel> =
         multiChartEntryModelProducer + chartEntryModelProducer
 
-    public var chartStyleOverrideManager: ChartStyleOverrideManager = ChartStyleOverrideManager()
+    internal var chartStyleOverrideManager: ChartStyleOverrideManager = ChartStyleOverrideManager()
 
     init {
         viewModelScope.launch {
