@@ -41,6 +41,20 @@ import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
 public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
+/**
+ * Creates a label to be displayed on chart axes.
+ *
+ * @param color the text color.
+ * @param textSize the text size.
+ * @param background a [ShapeComponent] to be displayed behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param verticalPadding the vertical padding between the text and the background.
+ * @param horizontalPadding the horizontal padding between the text and the background.
+ * @param verticalMargin the vertical margin around the background.
+ * @param horizontalMargin the horizontal margin around the background.
+ * @param rotationDegrees the rotation of the component in degrees.
+ */
 @Composable
 public fun axisLabelComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,

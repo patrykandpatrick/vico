@@ -20,7 +20,6 @@ import android.graphics.Paint
 import android.graphics.Path
 import pl.patrykgoworowski.vico.core.DEF_MARKER_TICK_SIZE
 import pl.patrykgoworowski.vico.core.context.DrawContext
-import pl.patrykgoworowski.vico.core.extension.between
 
 public open class MarkerCorneredShape(
     topLeft: Corner,
@@ -74,7 +73,7 @@ public open class MarkerCorneredShape(
             val minLeft = left + bottomLeft.getCornerSize(availableCornerSize, density) * cornerScale
             val maxLeft = right - (bottomRight.getCornerSize(availableCornerSize, density) * cornerScale + tickSize * 2)
 
-            val tickTopLeft = (tickX - tickSize).between(minLeft, maxLeft)
+            val tickTopLeft = (tickX - tickSize).coerceIn(minLeft, maxLeft)
             path.moveTo(tickTopLeft, bottom)
             path.lineTo(tickX, bottom + tickSize)
             path.lineTo(tickTopLeft + (tickSize * 2), bottom)

@@ -153,7 +153,7 @@ public fun LineChartCard(): Unit = MainTheme {
 }
 
 @Composable
-public fun SampleCard(
+private fun SampleCard(
     chart: @Composable ColumnScope.() -> Unit,
 ) {
     Card(
