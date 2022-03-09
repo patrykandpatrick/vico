@@ -16,6 +16,7 @@
 
 package pl.patrykgoworowski.vico.view.chart
 
+import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
@@ -24,9 +25,14 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.animation.Interpolator
 import android.widget.OverScroller
+import androidx.core.animation.doOnEnd
+import androidx.core.animation.doOnStart
 import androidx.core.view.ViewCompat
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import kotlin.properties.Delegates.observable
+import pl.patrykgoworowski.vico.core.Animation
 import pl.patrykgoworowski.vico.core.Dimens
 import pl.patrykgoworowski.vico.core.MAX_ZOOM
 import pl.patrykgoworowski.vico.core.MIN_ZOOM
@@ -37,6 +43,7 @@ import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
 import pl.patrykgoworowski.vico.core.chart.Chart
 import pl.patrykgoworowski.vico.core.chart.draw.chartDrawContext
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 import pl.patrykgoworowski.vico.core.extension.getClosestMarkerEntryModel
 import pl.patrykgoworowski.vico.core.extension.ifNotNull
 import pl.patrykgoworowski.vico.core.extension.set
@@ -103,6 +110,20 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         )
     private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
+    private val animator: ValueAnimator = ValueAnimator.ofFloat(
+        Animation.range.start, Animation.range.endInclusive,
+    ).apply {
+        duration = Animation.DIFF_DURATION.toLong()
+        interpolator = FastOutSlowInInterpolator()
+        doOnStart { invalidate() }
+        doOnEnd { progressModelOnAnimationProgress(Animation.range.endInclusive) }
+    }
+
+    private val updateListener: () -> Model? = {
+        animator.start()
+        model
+    }
+
     private var markerTouchPoint: Point? = null
 
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
@@ -128,6 +149,21 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         private set
 
     /**
+     * A [ChartModelProducer] can provide the [Model] updates asynchronously.
+     *
+     * @see ChartModelProducer
+     */
+    public var entryProducer: ChartModelProducer<Model>? = null
+        set(value) {
+            field?.unregisterFromUpdates(key = this)
+            field = value
+            value?.registerForUpdates(key = this, updateListener = updateListener) { model ->
+                setModel(model)
+                postInvalidateOnAnimation()
+            }
+        }
+
+    /**
      * The indication of certain entry appearing on physical touch of the [Chart].
      */
     public var marker: Marker? = null
@@ -141,6 +177,9 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         isZoomEnabled = themeHandler.isChartZoomEnabled
     }
 
+    /**
+     * Sets a [Model] used to render data of the chart.
+     */
     public fun setModel(model: Model) {
         this.model = model
         tryInvalidate(chart, model)
@@ -222,6 +261,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             drawnEntryCount = model.getDrawnEntryCount(),
             chartBounds = chart.bounds.width(),
         )
+        if (animator.isRunning) {
+            progressModelOnAnimationProgress(animator.animatedValue as Float)
+        }
+    }
+
+    private fun progressModelOnAnimationProgress(progress: Float) {
+        entryProducer?.progressModel(this, progress)
     }
 
     private fun updateMaxScrollDistance(segmentWidth: Float, drawnEntryCount: Int, chartBounds: Float) {
@@ -265,6 +311,20 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val chart = chart ?: return
         val model = model ?: return
         block(chart, model)
+    }
+
+    /**
+     * Sets a duration in milliseconds of the animation run on each [model] update.
+     */
+    public fun setDiffAnimationDuration(durationMillis: Long) {
+        animator.duration = durationMillis
+    }
+
+    /**
+     * Sets an interpolator used in the animation run on each [model] update.
+     */
+    public fun setDiffAnimationInterpolator(interpolator: Interpolator) {
+        animator.interpolator = interpolator
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {

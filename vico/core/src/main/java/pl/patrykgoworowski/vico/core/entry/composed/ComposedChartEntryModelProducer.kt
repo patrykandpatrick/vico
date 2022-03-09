@@ -16,57 +16,105 @@
 
 package pl.patrykgoworowski.vico.core.entry.composed
 
+import java.util.SortedMap
+import java.util.TreeMap
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import pl.patrykgoworowski.vico.core.THREAD_POOL_COUNT
 import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
 import pl.patrykgoworowski.vico.core.chart.composed.composedChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
-import pl.patrykgoworowski.vico.core.extension.runEach
 
 public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
-    public val chartModelProducers: List<ChartModelProducer<Model>>
+    public val chartModelProducers: List<ChartModelProducer<Model>>,
+    backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
 ) : ChartModelProducer<ComposedChartEntryModel<Model>> {
 
-    override lateinit var model: ComposedChartEntryModel<Model>
+    private val compositeModelReceivers: HashMap<Any, CompositeModelReceiver<Model>> = HashMap()
 
-    private val listeners = ArrayList<(ComposedChartEntryModel<Model>) -> Unit>()
+    private val executor: Executor = backgroundExecutor
 
-    private val internalListener = { _: Model ->
-        recalculateModel()
-        listeners.runEach(model)
-    }
+    private var cachedModel: ComposedChartEntryModel<Model>? = null
 
     public constructor(
-        vararg producers: ChartModelProducer<Model>,
-    ) : this(producers.toList())
+        vararg chartModelProducers: ChartModelProducer<Model>,
+        backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
+    ) : this(chartModelProducers.toList(), backgroundExecutor)
 
-    init {
-        chartModelProducers.forEach { entryCollection ->
-            entryCollection.addOnEntriesChangedListener(internalListener)
+    override fun getModel(): ComposedChartEntryModel<Model> =
+        cachedModel ?: getModel(chartModelProducers.map { it.getModel() })
+            .also { cachedModel = it }
+
+    override fun progressModel(key: Any, progress: Float) {
+        chartModelProducers.forEach { producer ->
+            producer.progressModel(key, progress)
         }
-        recalculateModel()
     }
 
-    private fun recalculateModel() {
-        val models = chartModelProducers.map { it.model }
+    override fun registerForUpdates(
+        key: Any,
+        updateListener: () -> ComposedChartEntryModel<Model>?,
+        onModel: (ComposedChartEntryModel<Model>) -> Unit,
+    ) {
+        val receiver = CompositeModelReceiver(onModel, executor)
+        compositeModelReceivers[key] = receiver
+        chartModelProducers.forEachIndexed { index, producer ->
+            producer.registerForUpdates(
+                key = key,
+                updateListener = { updateListener()?.composedEntryCollections?.get(index) },
+                onModel = receiver.getModelReceiver(index),
+            )
+        }
+    }
 
-        model = composedChartEntryModel(
+    private class CompositeModelReceiver<Model : ChartEntryModel>(
+        private val onModel: (ComposedChartEntryModel<Model>) -> Unit,
+        private val executor: Executor,
+    ) {
+
+        private val modelReceivers: SortedMap<Int, Model?> = TreeMap()
+
+        internal fun getModelReceiver(index: Int): (Model) -> Unit {
+            val modelReceiver: (Model) -> Unit = object : (Model) -> Unit {
+                override fun invoke(model: Model) {
+                    onModelUpdate(index, model)
+                }
+            }
+            modelReceivers[index] = null
+            return modelReceiver
+        }
+
+        private fun onModelUpdate(index: Int, model: Model) {
+            modelReceivers[index] = model
+            val models = modelReceivers.values.mapNotNull { it }
+            if (modelReceivers.values.size == models.size) {
+                executor.execute {
+                    onModel(getModel(models))
+                }
+            }
+        }
+    }
+
+    override fun unregisterFromUpdates(key: Any) {
+        compositeModelReceivers.remove(key)
+        chartModelProducers.forEach { producer ->
+            producer.unregisterFromUpdates(key)
+        }
+    }
+
+    private companion object {
+        private fun <Model : ChartEntryModel> getModel(
+            models: List<Model>,
+        ): ComposedChartEntryModel<Model> = composedChartEntryModel(
             composedEntryCollections = models,
             entryCollections = models.map { it.entries }.flatten(),
             minX = models.minOf { it.minX },
             maxX = models.maxOf { it.maxX },
             minY = models.minOf { it.minY },
             maxY = models.maxOf { it.maxY },
-            composedMaxY = models.maxOf { it.composedMaxY },
+            composedMaxY = models.maxOf { it.stackedMaxY },
             step = models.minOf { it.stepX }
         )
-    }
-
-    override fun addOnEntriesChangedListener(listener: (ComposedChartEntryModel<Model>) -> Unit) {
-        listeners += listener
-        listener(model)
-    }
-
-    override fun removeOnEntriesChangedListener(listener: (ComposedChartEntryModel<Model>) -> Unit) {
-        listeners -= listener
     }
 }

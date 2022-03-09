@@ -46,7 +46,7 @@ public class MutableChartModel(
             override val maxX: Float = 0f
             override val minY: Float = 0f
             override val maxY: Float = 0f
-            override val composedMaxY: Float = 0f
+            override val stackedMaxY: Float = 0f
             override val stepX: Float = 1f
         }
     }

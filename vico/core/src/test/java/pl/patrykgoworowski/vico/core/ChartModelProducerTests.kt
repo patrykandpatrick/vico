@@ -16,12 +16,11 @@
 
 package pl.patrykgoworowski.vico.core
 
-import org.junit.Test
-import pl.patrykgoworowski.vico.core.chart.diff.TestDiffAnimator
-import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
-import pl.patrykgoworowski.vico.core.entry.FloatEntry
-import pl.patrykgoworowski.vico.core.entry.entriesOf
 import kotlin.test.assertEquals
+import org.junit.Test
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
+import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffProcessor
+import pl.patrykgoworowski.vico.core.entry.entriesOf
 
 public class ChartModelProducerTests {
 
@@ -34,17 +33,14 @@ public class ChartModelProducerTests {
     private val entries2 = entriesOf(minX to minY, 1 to maxY, maxX to minY)
     private val entries3 = entriesOf(minX to 2, 1 to 4, maxX to 3)
 
-    private val diffAnimator = TestDiffAnimator()
-
     @Test
     public fun `Test Min Max calculations`() {
-        val entryList = ChartEntryModelProducer(entries1, entries2, entries3)
+        val entryList = ChartEntryModelProducer(entries1, entries2, entries3).getModel()
         assertEquals(minX, entryList.minX)
         assertEquals(maxX, entryList.maxX)
         assertEquals(minY, entryList.minY)
         assertEquals(maxY, entryList.maxY)
         assertEquals(10f, entryList.stackedMaxY)
-        assertEquals(2f, entryList.stackedMinY)
     }
 
     @Test
@@ -52,18 +48,12 @@ public class ChartModelProducerTests {
         val first = entriesOf(0f to 2f, 1f to 0f)
         val second = entriesOf(0f to 0f, 1f to 2f)
 
-        val entryCollection = ChartEntryModelProducer(first, diffAnimator = diffAnimator)
+        val diffProcessor = DefaultDiffProcessor()
+        diffProcessor.setEntries(listOf(first))
 
-        fun assertEntriesAreEqual(entries: List<FloatEntry>) {
-            assertEquals(entries, entryCollection.model.entries[0])
-        }
+        assertEquals(first, diffProcessor.progressDiff(1f)[0])
 
-        diffAnimator.currentProgress = 1f
-        entryCollection.setEntries(second)
-        assertEntriesAreEqual(second)
-
-        entryCollection.setEntries(first)
-        diffAnimator.updateProgress(0.5f)
-        assertEntriesAreEqual(entriesOf(0f to 1f, 1f to 1f))
+        diffProcessor.setEntries(listOf(second))
+        assertEquals(entriesOf(0f to 1f, 1f to 1f), diffProcessor.progressDiff(.5f)[0])
     }
 }

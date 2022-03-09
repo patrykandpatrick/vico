@@ -39,6 +39,6 @@ public fun <Model : ChartEntryModel> composedChartEntryModel(
     override val maxX: Float = maxX
     override val minY: Float = minY
     override val maxY: Float = maxY
-    override val composedMaxY: Float = composedMaxY
+    override val stackedMaxY: Float = composedMaxY
     override val stepX: Float = step
 }

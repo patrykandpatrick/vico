@@ -27,6 +27,13 @@ public const val MIN_ZOOM: Float = 0.1f
 
 public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
 
+public const val THREAD_POOL_COUNT: Int = 4
+
+public object Animation {
+    public val range: ClosedFloatingPointRange<Float> = 0f..1f
+    public const val DIFF_DURATION: Int = 500
+}
+
 public object Dimens {
     public const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
     public const val AXIS_LABEL_MAX_LINES: Int = 1
