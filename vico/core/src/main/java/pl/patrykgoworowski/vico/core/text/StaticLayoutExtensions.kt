@@ -22,10 +22,8 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
-import pl.patrykgoworowski.vico.core.extension.getFieldValue
 import pl.patrykgoworowski.vico.core.extension.setFieldValue
 
-private const val MAX_LINES_FIELD = "mMaximumVisibleLineCount"
 private const val LINE_COUNT_FIELD = "mLineCount"
 
 @Suppress("DEPRECATION")

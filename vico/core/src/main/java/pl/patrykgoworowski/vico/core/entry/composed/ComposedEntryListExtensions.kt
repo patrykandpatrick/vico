@@ -28,7 +28,8 @@ public operator fun <Model : ChartEntryModel> ChartModelProducer<Model>.plus(
     ComposedChartEntryModelProducer(listOf(this, other))
 
 /**
- * Combines this [ComposedChartEntryModelProducer] and a [ChartModelProducer] into a single [ComposedChartEntryModelProducer].
+ * Combines this [ComposedChartEntryModelProducer] and a [ChartModelProducer]
+ * into a single [ComposedChartEntryModelProducer].
  */
 public operator fun <Model : ChartEntryModel> ComposedChartEntryModelProducer<Model>.plus(
     other: ChartModelProducer<Model>

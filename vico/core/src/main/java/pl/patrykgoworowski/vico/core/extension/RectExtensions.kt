@@ -104,7 +104,6 @@ public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
  */
 public fun RectF.copy(): RectF = RectF(this)
 
-
 /**
  * Creates a [RectF] representing the bounding box of this [RectF] rotated by the provided number of degrees.
  */
