@@ -37,4 +37,7 @@ public fun DynamicShaders.fromComponent(
     tileYMode = tileYMode,
 )
 
+/**
+ * Creates a [BrushShader] using the given [Brush].
+ */
 public fun DynamicShaders.fromBrush(brush: Brush): BrushShader = BrushShader(brush)
