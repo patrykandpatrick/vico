@@ -22,6 +22,9 @@ public interface SegmentProperties {
 
     public val marginWidth: Float
 
+    /**
+     * The sum of the cell width and margin width.
+     */
     public val segmentWidth: Float
         get() = cellWidth + marginWidth
 
@@ -29,6 +32,10 @@ public interface SegmentProperties {
     public operator fun component2(): Float = marginWidth
     public operator fun component3(): Float = segmentWidth
 
+    /**
+     * Creates a new `SegmentProperties` implementation by multiplying the cell width
+     * and margin width from these `SegmentProperties` by the provided factor.
+     */
     public fun scaled(scale: Float): SegmentProperties =
         SegmentProperties(cellWidth * scale, marginWidth * scale)
 }

@@ -23,9 +23,15 @@ public class MutableDimensions(
     override var bottomDp: Float,
 ) : Dimensions {
 
+    /**
+     * The sum of [startDp] and [endDp].
+     */
     public val horizontalDp: Float
         get() = startDp + endDp
 
+    /**
+     * The sum of [topDp] and [bottomDp].
+     */
     public val verticalDp: Float
         get() = topDp + bottomDp
 

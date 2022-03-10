@@ -16,6 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.dimensions
 
+/**
+ * Creates a [MutableDimensions] instance using the sizes provided.
+ */
 public fun floatDimensions(
     startDp: Float = 0f,
     topDp: Float = 0f,
