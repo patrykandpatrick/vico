@@ -30,6 +30,9 @@ public fun RectF.updateBounds(
     set(left, top, right, bottom)
 }
 
+/**
+ * Increments the coordinates of this [RectF] by the provided values.
+ */
 public fun RectF.updateBy(
     left: Float = 0f,
     top: Float = 0f,
@@ -44,6 +47,9 @@ public fun RectF.updateBy(
     )
 }
 
+/**
+ * Sets the coordinates of this [RectF] to the provided values converted to [Float]s.
+ */
 public fun RectF.set(
     left: Number,
     top: Number,
@@ -53,9 +59,9 @@ public fun RectF.set(
     set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
 }
 
-public val RectF.isNotEmpty: Boolean
-    get() = left != 0f && top != 0f && right != 0f && bottom != 0f
-
+/**
+ * Sets all coordinates of this [RectF] to 0.
+ */
 public fun RectF.clear() {
     set(0, 0, 0, 0)
 }
@@ -75,6 +81,9 @@ public fun RectF.set(
     )
 }
 
+/**
+ * Applies the provided coordinates to this [RectF] and rotates it by the given number of degrees.
+ */
 public fun RectF.setAndRotate(
     left: Number,
     top: Number,
@@ -90,8 +99,15 @@ public fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right
 
 public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
 
+/**
+ * Creates a new [RectF] with the same coordinates as this [RectF] without modifying this [RectF].
+ */
 public fun RectF.copy(): RectF = RectF(this)
 
+
+/**
+ * Creates a [RectF] representing the bounding box of this [RectF] rotated by the provided number of degrees.
+ */
 public fun RectF.rotate(degrees: Float): RectF {
 
     when {

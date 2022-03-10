@@ -32,5 +32,8 @@ public val Paint.textHeight: Float
         return fm.descent - fm.ascent
     }
 
+/**
+ * Returns the width of the provided text.
+ */
 public fun Paint.measureText(text: CharSequence): Float =
     measureText(text, 0, text.length)

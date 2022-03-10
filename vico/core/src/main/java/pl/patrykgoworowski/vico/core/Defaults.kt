@@ -25,6 +25,9 @@ public const val DEF_MARKER_TICK_SIZE: Float = 6f
 public const val DEF_MAX_ZOOM: Float = 10f
 public const val DEF_MIN_ZOOM: Float = 0.1f
 
+/**
+ * The default color for shadows.
+ */
 public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
 
 public const val THREAD_POOL_COUNT: Int = 4
@@ -34,6 +37,9 @@ public object Animation {
     public const val DIFF_DURATION: Int = 500
 }
 
+/**
+ * The default chart dimensions.
+ */
 public object DefaultDimens {
     public const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
     public const val AXIS_LABEL_MAX_LINES: Int = 1
@@ -43,10 +49,24 @@ public object DefaultDimens {
     public const val AXIS_LABEL_VERTICAL_MARGIN: Int = 0
     public const val AXIS_LABEL_ROTATION_DEGREES: Float = 0f
 
+    /**
+     * The default width for axis guidelines in dp.
+     */
     public const val AXIS_GUIDELINE_WIDTH: Float = 1f
+
+    /**
+     * The default width for axis lines in dp.
+     */
     public const val AXIS_LINE_WIDTH: Float = 1f
+
+    /**
+     * The default length for axis ticks in dp.
+     */
     public const val AXIS_TICK_LENGTH: Float = 4f
 
+    /**
+     * The default width for columns in dp.
+     */
     public const val COLUMN_WIDTH: Float = 8f
     public const val COLUMN_INSIDE_SPACING: Float = 8f
     public const val COLUMN_OUTSIDE_SPACING: Float = 32f
@@ -57,6 +77,9 @@ public object DefaultDimens {
     public const val DASH_LENGTH: Float = 4f
     public const val DASH_GAP: Float = 2f
 
+    /**
+     * The default line thickness for line charts in dp.
+     */
     public const val LINE_THICKNESS: Float = 2f
 
     public const val MARKER_INDICATOR_SIZE: Float = 36f
@@ -69,6 +92,9 @@ public object DefaultDimens {
     public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
     public const val THRESHOLD_LINE_THICKNESS: Float = 2f
 
+    /**
+     * The default height for charts in dp.
+     */
     public const val CHART_HEIGHT: Float = 200f
 }
 

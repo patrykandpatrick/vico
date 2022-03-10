@@ -19,16 +19,25 @@ package pl.patrykgoworowski.vico.core.entry.composed
 import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
+/**
+ * Combines two [ChartEntryModel] instances into a [ComposedChartEntryModelProducer].
+ */
 public operator fun <Model : ChartEntryModel> ChartModelProducer<Model>.plus(
     other: ChartModelProducer<Model>
 ): ComposedChartEntryModelProducer<Model> =
     ComposedChartEntryModelProducer(listOf(this, other))
 
+/**
+ * Combines this [ComposedChartEntryModelProducer] and a [ChartModelProducer] into a single [ComposedChartEntryModelProducer].
+ */
 public operator fun <Model : ChartEntryModel> ComposedChartEntryModelProducer<Model>.plus(
     other: ChartModelProducer<Model>
 ): ComposedChartEntryModelProducer<Model> =
     ComposedChartEntryModelProducer(chartModelProducers + other)
 
+/**
+ * Combines two [ComposedChartEntryModelProducer] instances into a single one.
+ */
 public operator fun <Model : ChartEntryModel> ComposedChartEntryModelProducer<Model>.plus(
     other: ComposedChartEntryModelProducer<Model>
 ): ComposedChartEntryModelProducer<Model> =

@@ -75,10 +75,6 @@ internal fun staticLayout(
         ).setLineCount(maxLines)
     }
 
-internal var StaticLayout.maxLines: Int
-    set(value) = setFieldValue(MAX_LINES_FIELD, value)
-    get() = getFieldValue(MAX_LINES_FIELD)
-
 internal fun StaticLayout.setLineCount(count: Int) = apply {
     setFieldValue(LINE_COUNT_FIELD, count)
 }

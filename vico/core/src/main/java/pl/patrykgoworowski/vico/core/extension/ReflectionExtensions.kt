@@ -16,6 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
+/**
+ * Updates the value of the field with the specified name to the given value.
+ * This involves temporarily setting the `accessible` flag to `true`.
+ */
 public inline fun <reified T, V> T.setFieldValue(fieldName: String, value: V) {
     val field = T::class.java.getDeclaredField(fieldName)
     val wasAccessible = field.isAccessible
