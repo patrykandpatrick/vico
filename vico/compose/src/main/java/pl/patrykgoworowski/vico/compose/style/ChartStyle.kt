@@ -123,7 +123,7 @@ public data class ChartStyle(
                     lineComponent(
                         color = columnColor,
                         thickness = DefaultDimens.COLUMN_WIDTH.dp,
-                        shape = Shapes.roundedCornersShape(
+                        shape = Shapes.roundedCornerShape(
                             allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT,
                         ),
                     )

@@ -25,10 +25,16 @@ import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
 import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreatment
 
-public fun Shapes.roundedCornersShape(all: Float): Shape =
-    roundedCornersShape(all, all, all, all)
+/**
+ * Creates a [CorneredShape] with rounded corners of the provided size.
+ */
+public fun Shapes.roundedCornerShape(all: Float): Shape =
+    roundedCornerShape(all, all, all, all)
 
-public fun Shapes.roundedCornersShape(
+/**
+ * Creates a [CorneredShape] with rounded corners of the provided sizes.
+ */
+public fun Shapes.roundedCornerShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,
@@ -40,9 +46,15 @@ public fun Shapes.roundedCornersShape(
     Corner.Absolute(bottomLeft, RoundedCornerTreatment),
 )
 
+/**
+ * Creates a [CorneredShape] with cut corners of the provided size.
+ */
 public fun Shapes.cutCornerShape(all: Float): Shape =
     cutCornerShape(all, all, all, all)
 
+/**
+ * Creates a [CorneredShape] with cut corners of the provided sizes.
+ */
 public fun Shapes.cutCornerShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
