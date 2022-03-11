@@ -110,6 +110,9 @@ public fun Path.addRoundRect(
     addRoundRect(left, top, right, bottom, radii, Path.Direction.CCW)
 }
 
+/**
+ * Creates a [CorneredShape] with rounded corners of the provided size.
+ */
 public fun Shapes.roundedCornerShape(
     all: Dp = 0.dp,
 ): CorneredShape = CorneredShape(
@@ -119,6 +122,9 @@ public fun Shapes.roundedCornerShape(
     Corner.Absolute(all.value, RoundedCornerTreatment),
 )
 
+/**
+ * Creates a [CorneredShape] with rounded corners of the provided sizes.
+ */
 public fun Shapes.roundedCornerShape(
     topLeft: Dp = 0.dp,
     topRight: Dp = 0.dp,
@@ -131,6 +137,9 @@ public fun Shapes.roundedCornerShape(
     Corner.Absolute(bottomLeft.value, RoundedCornerTreatment),
 )
 
+/**
+ * Creates a [CorneredShape] with cut corners of the provided size.
+ */
 public fun Shapes.cutCornerShape(
     all: Dp = 0.dp,
 ): CorneredShape = CorneredShape(
@@ -140,6 +149,9 @@ public fun Shapes.cutCornerShape(
     Corner.Absolute(all.value, CutCornerTreatment),
 )
 
+/**
+ * Creates a [CorneredShape] with cut corners of the provided sizes.
+ */
 public fun Shapes.cutCornerShape(
     topLeft: Dp = 0.dp,
     topRight: Dp = 0.dp,
