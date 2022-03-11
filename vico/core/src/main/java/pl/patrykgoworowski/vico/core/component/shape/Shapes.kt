@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.core.extension.setBounds
 
 public object Shapes {
 
-    public val pillShape: CorneredShape = roundedCornersShape(allPercent = 50)
+    public val pillShape: CorneredShape = roundedCornerShape(allPercent = 50)
 
     public val rectShape: Shape = object : Shape {
 
@@ -51,10 +51,10 @@ public object Shapes {
         }
     }
 
-    public fun roundedCornersShape(allPercent: Int): CorneredShape =
-        roundedCornersShape(allPercent, allPercent, allPercent, allPercent)
+    public fun roundedCornerShape(allPercent: Int): CorneredShape =
+        roundedCornerShape(allPercent, allPercent, allPercent, allPercent)
 
-    public fun roundedCornersShape(
+    public fun roundedCornerShape(
         topLeftPercent: Int = 0,
         topRightPercent: Int = 0,
         bottomRightPercent: Int = 0,

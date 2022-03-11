@@ -30,6 +30,14 @@ public var MarkerComponent.indicatorSize: Dp
     get() = indicatorSizeDp.dp
     set(value) { indicatorSizeDp = value.value }
 
+/**
+ * Applies a drop shadow to this [ShapeComponent].
+ * @param radius the blur radius.
+ * @param dx the horizontal offset.
+ * @param dy the vertical offset.
+ * @param color the shadow color.
+ * @param applyElevationOverlay whether to apply an elevation overlay to the [ShapeComponent].
+ */
 public fun ShapeComponent.setShadow(
     radius: Dp,
     dx: Dp = 0.dp,

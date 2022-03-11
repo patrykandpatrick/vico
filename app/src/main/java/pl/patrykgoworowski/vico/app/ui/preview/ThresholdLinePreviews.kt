@@ -105,7 +105,7 @@ public fun ThresholdLineWithCustomText() {
                             color = Color.White,
                             lineCount = 3,
                             background = shapeComponent(
-                                shape = Shapes.roundedCornersShape(bottomLeftPercent = 25, bottomRightPercent = 25),
+                                shape = Shapes.roundedCornerShape(bottomLeftPercent = 25, bottomRightPercent = 25),
                                 color = Color.Black,
                             ),
                             padding = dimensionsOf(

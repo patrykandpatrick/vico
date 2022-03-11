@@ -25,6 +25,9 @@ public fun dimensionsOf(allDp: Float): MutableDimensions = dimensionsOf(
     bottomDp = allDp,
 )
 
+/**
+ * Creates a [MutableDimensions] instance using the provided measurements.
+ */
 public fun dimensionsOf(
     startDp: Float = 0f,
     topDp: Float = 0f,
@@ -37,6 +40,9 @@ public fun dimensionsOf(
     bottomDp = bottomDp,
 )
 
+/**
+ * Creates a [MutableDimensions] instance using the provided measurements.
+ */
 public fun dimensionsOf(
     verticalDp: Float = 0f,
     horizontalDp: Float = 0f,

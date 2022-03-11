@@ -61,9 +61,20 @@ public open class LineChart(
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
+    /**
+     * The color of the line.
+     */
     public var lineColor: Int by linePaint::color
+
+    /**
+     * The width of the line in dp.
+     */
     public var lineWidth: Float by linePaint::strokeWidth
     public var lineBackgroundShader: DynamicShader? = null
+
+    /**
+     * The stroke cap for the line.
+     */
     public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
 
     public var cubicStrength: Float = 1f

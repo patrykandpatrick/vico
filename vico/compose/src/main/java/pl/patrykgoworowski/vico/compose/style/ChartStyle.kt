@@ -44,6 +44,14 @@ import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 
+/**
+ * Defines the appearance of charts.
+ * @property axis the appearance of chart axes.
+ * @property columnChart the appearance of column charts.
+ * @property lineChart the appearance of line charts.
+ * @property marker the appearance of chart markers.
+ * @property elevationOverlayColor the color used for elevation overlays.
+ */
 public data class ChartStyle(
     val axis: Axis,
     val columnChart: ColumnChart,
@@ -51,6 +59,31 @@ public data class ChartStyle(
     val marker: Marker,
     val elevationOverlayColor: Color,
 ) {
+    /**
+     * Defines the appearance of chart axes.
+     * @property axisLabelBackground an optional [ShapeComponent] to display behind the text of axis labels.
+     * @property axisLabelColor the text color for axis labels.
+     * @property axisLabelTextSize the text size for axis labels.
+     * @property axisLabelLineCount the line count for axis labels.
+     * @property axisLabelVerticalPadding the amount of vertical padding between the background and the text of axis
+     * labels.
+     * @property axisLabelHorizontalPadding the amount of horizontal padding between the background and the text of axis
+     * labels.
+     * @property axisLabelVerticalMargin the vertical margin around the backgrounds of axis labels.
+     * @property axisLabelHorizontalMargin the horizontal margin around the backgrounds of axis labels.
+     * @property axisLabelRotationDegrees the number of degrees by which axis labels are rotated.
+     * @property axisGuidelineColor the color of axis guidelines.
+     * @property axisGuidelineWidth the width of axis guidelines.
+     * @property axisGuidelineShape the [Shape] used for axis guidelines.
+     * @property axisLineColor the color of axis lines.
+     * @property axisLineWidth the width of axis lines.
+     * @property axisLineShape the [Shape] used for axis lines.
+     * @property axisTickColor the color of axis ticks.
+     * @property axisTickWidth the width of axis ticks.
+     * @property axisTickShape the [Shape] used for axis ticks.
+     * @property axisTickLength the length of axis ticks.
+     * @property axisValueFormatter the [AxisValueFormatter] to use for axis labels.
+     */
     public data class Axis(
         val axisLabelBackground: ShapeComponent? = null,
         val axisLabelColor: Color,
@@ -78,6 +111,14 @@ public data class ChartStyle(
         val axisValueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
     )
 
+    /**
+     * Defines the appearance of column charts.
+     * @property columns the [LineComponent] instances to use for columns. This list is iterated through as many times
+     * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
+     * @property outsideSpacing the horizontal padding between the edges of chart segments and the columns they contain.
+     * @property innerSpacing the spacing between the columns contained in chart segments. This has no effect on
+     * segments that contain a single column only.
+     */
     public data class ColumnChart(
         val columns: List<LineComponent>,
         val outsideSpacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
@@ -123,7 +164,7 @@ public data class ChartStyle(
                     lineComponent(
                         color = columnColor,
                         thickness = DefaultDimens.COLUMN_WIDTH.dp,
-                        shape = Shapes.roundedCornersShape(
+                        shape = Shapes.roundedCornerShape(
                             allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT,
                         ),
                     )

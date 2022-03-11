@@ -22,10 +22,8 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
-import pl.patrykgoworowski.vico.core.extension.getFieldValue
 import pl.patrykgoworowski.vico.core.extension.setFieldValue
 
-private const val MAX_LINES_FIELD = "mMaximumVisibleLineCount"
 private const val LINE_COUNT_FIELD = "mLineCount"
 
 @Suppress("DEPRECATION")
@@ -74,10 +72,6 @@ internal fun staticLayout(
             ellipsizedWidth,
         ).setLineCount(maxLines)
     }
-
-internal var StaticLayout.maxLines: Int
-    set(value) = setFieldValue(MAX_LINES_FIELD, value)
-    get() = getFieldValue(MAX_LINES_FIELD)
 
 internal fun StaticLayout.setLineCount(count: Int) = apply {
     setFieldValue(LINE_COUNT_FIELD, count)

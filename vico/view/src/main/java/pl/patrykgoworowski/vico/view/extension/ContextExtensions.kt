@@ -38,7 +38,7 @@ internal val Context.isLtr: Boolean
         resources.configuration.layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
     } else true
 
-public val Context.isDarkMode: Boolean
+internal val Context.isDarkMode: Boolean
     get() = (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
 
 internal val Context.defaultColors: DefaultColors

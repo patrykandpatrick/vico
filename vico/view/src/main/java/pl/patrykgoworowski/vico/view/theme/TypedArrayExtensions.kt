@@ -28,6 +28,9 @@ private val typeCompatTypedValue = TypedValue()
 private val rawValueTypedValue = TypedValue()
 private val lock = Any()
 
+/**
+ * Calls the given function block with this [TypedArray] as its argument, then recycles this [TypedArray].
+ */
 public inline fun <R> TypedArray.use(block: (TypedArray) -> R): R =
     block(this).also { recycle() }
 
