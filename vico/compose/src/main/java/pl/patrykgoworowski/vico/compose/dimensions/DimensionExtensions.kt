@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 
+/**
+ * Creates a [MutableDimensions] instance with a common value for each coordinate.
+ */
 public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
     start = all,
     top = all,
@@ -27,6 +30,9 @@ public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
     bottom = all,
 )
 
+/**
+ * Creates a [MutableDimensions] instance using the provided measurements.
+ */
 public fun dimensionsOf(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
@@ -37,6 +43,9 @@ public fun dimensionsOf(
     bottomDp = vertical.value,
 )
 
+/**
+ * Creates a [MutableDimensions] instance using the provided measurements.
+ */
 public fun dimensionsOf(
     start: Dp = 0.dp,
     top: Dp = 0.dp,

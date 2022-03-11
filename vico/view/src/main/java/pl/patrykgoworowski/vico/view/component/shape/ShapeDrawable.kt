@@ -60,6 +60,9 @@ public class ShapeDrawable(
 
     private var tintList: ColorStateList? = null
 
+    /**
+     * The [Paint] used to draw the shape.
+     */
     public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         color = DEF_COLOR
     }
@@ -126,6 +129,11 @@ public class ShapeDrawable(
     }
 }
 
+/**
+ * Converts this [Shape] to a [Drawable].
+ * @param intrinsicWidth the width of the [Drawable].
+ * @param intrinsicHeight the height of the [Drawable].
+ */
 public fun Shape.toDrawable(
     context: Context,
     intrinsicWidth: Int = 0,

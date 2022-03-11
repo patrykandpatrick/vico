@@ -23,10 +23,19 @@ import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.composed.ComposedChartEntryModelProducer
 import pl.patrykgoworowski.vico.core.entry.entryOf
 
+/**
+ * Generates randomized chart entries.
+ * @param xRange the range of x values.
+ * @param yRange the range from which y values are randomly selected.
+ */
 public class RandomEntriesGenerator(
     private val xRange: IntRange = 0..X_RANGE_TOP,
     private val yRange: IntRange = 0..Y_RANGE_TOP
 ) {
+    /**
+     * Generates a [List] of [FloatEntry] instances with randomized y values.
+     * The size of the [List] is equal to the number of values in [xRange].
+     */
     public fun generateRandomEntries(): List<FloatEntry> {
         val result = ArrayList<FloatEntry>()
         val yLength = yRange.last - yRange.first
@@ -36,9 +45,18 @@ public class RandomEntriesGenerator(
         return result
     }
 
+    /**
+     * Creates a [ChartEntryModel] containing a collection of [FloatEntry] instances with randomized y values.
+     * The size of the collection is equal to the number of values in [xRange].
+     */
     public fun randomEntryModel(): ChartEntryModel =
         ChartEntryModelProducer(generateRandomEntries()).getModel()
 
+    /**
+     * Creates a [ComposedChartEntryModel] with three [ChartEntryModelProducer]s, each containing a collection of
+     * [FloatEntry] instances with randomized y values. The size of each collection is equal to the number of values in
+     * [xRange].
+     */
     public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> =
         ComposedChartEntryModelProducer(
             ChartEntryModelProducer(generateRandomEntries()),
