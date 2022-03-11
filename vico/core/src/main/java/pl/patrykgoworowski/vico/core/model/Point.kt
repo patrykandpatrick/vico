@@ -21,16 +21,31 @@ import pl.patrykgoworowski.vico.core.util.packInts
 import pl.patrykgoworowski.vico.core.util.unpackFloat1
 import pl.patrykgoworowski.vico.core.util.unpackFloat2
 
+/**
+ * Creates a new [Point] with the provided coordinates.
+ */
 public fun Point(x: Float, y: Float): Point = Point(packFloats(x, y))
 
+/**
+ * Creates a new [Point] with the provided coordinates.
+ */
 public fun Point(x: Int, y: Int): Point = Point(packInts(x, y))
 
+/**
+ * Represents a point in a coordinate system.
+ */
 @JvmInline
 public value class Point internal constructor(private val packedValue: Long) {
 
+    /**
+     * The x coordinate.
+     */
     public val x: Float
         get() = unpackFloat1(packedValue)
 
+    /**
+     * The y coordinate.
+     */
     public val y: Float
         get() = unpackFloat2(packedValue)
 

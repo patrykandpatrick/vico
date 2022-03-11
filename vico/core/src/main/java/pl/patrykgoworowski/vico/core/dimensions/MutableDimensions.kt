@@ -63,16 +63,25 @@ public class MutableDimensions(
         else startDp = valueDp
     }
 
+    /**
+     * Evenly distributes the provided measurement between [startDp] and [endDp].
+     */
     public fun setHorizontal(valueDp: Float): MutableDimensions = apply {
         startDp = if (valueDp == 0f) valueDp else valueDp / 2
         endDp = if (valueDp == 0f) valueDp else valueDp / 2
     }
 
+    /**
+     * Evenly distributes the provided measurement between [topDp] and [bottomDp].
+     */
     public fun setVertical(valueDp: Float): MutableDimensions = apply {
         topDp = if (valueDp == 0f) valueDp else valueDp / 2
         bottomDp = if (valueDp == 0f) valueDp else valueDp / 2
     }
 
+    /**
+     * Sets all coordinates to 0.
+     */
     public fun clear() {
         set(0f)
     }
