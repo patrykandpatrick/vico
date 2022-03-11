@@ -18,6 +18,9 @@ package pl.patrykgoworowski.vico.core.extension
 
 import android.graphics.drawable.Drawable
 
+/**
+ * Sets a bounding box for this [Drawable].
+ */
 public fun Drawable.setBounds(left: Float, top: Float, right: Float, bottom: Float) {
     setBounds(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
 }
