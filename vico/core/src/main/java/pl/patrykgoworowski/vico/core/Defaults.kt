@@ -71,7 +71,15 @@ public object DefaultDimens {
      * The default width for columns in dp.
      */
     public const val COLUMN_WIDTH: Float = 8f
+
+    /**
+     * The default spacing (in dp) between the columns in a chart segment.
+     */
     public const val COLUMN_INSIDE_SPACING: Float = 8f
+
+    /**
+     * The default spacing (in dp) between the left and right edges of a chart segment and the columns it contains.
+     */
     public const val COLUMN_OUTSIDE_SPACING: Float = 32f
     public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
 
