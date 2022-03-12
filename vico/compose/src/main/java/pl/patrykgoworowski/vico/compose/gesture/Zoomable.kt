@@ -27,8 +27,18 @@ import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.debugInspectorInfo
 
+/**
+ * Represents a function block that handles the pinch-to-zoom gesture.
+ * `centroid` is the average position of the touch points.
+ * `zoomChange` is the factor by which the content scale should be multiplied.
+ */
 public typealias OnZoom = (centroid: Offset, zoomChange: Float) -> Unit
 
+/**
+ * Handles the pinch-to-zoom gesture.
+ * @param onZoom called when a pinch gesture is detected.
+ * @param enabled whether zooming is enabled.
+ */
 @SuppressLint("UnnecessaryComposedModifier")
 public fun Modifier.zoomable(
     onZoom: OnZoom,
