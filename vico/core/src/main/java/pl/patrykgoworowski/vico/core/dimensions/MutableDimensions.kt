@@ -87,4 +87,7 @@ public class MutableDimensions(
     }
 }
 
+/**
+ * Creates a [MutableDimensions] instance with all coordinates set to 0.
+ */
 public fun emptyDimensions(): MutableDimensions = MutableDimensions(0f, 0f, 0f, 0f)
