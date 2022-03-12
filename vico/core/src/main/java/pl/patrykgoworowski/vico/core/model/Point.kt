@@ -53,6 +53,10 @@ public value class Point internal constructor(private val packedValue: Long) {
 
     public operator fun component2(): Float = y
 
+    /**
+     * Copies this [Point], updating one or both of the coordinates. If providing new values for both [x] and [y],
+     * consider creating a new [Point] using one of the helper functions instead.
+     */
     public fun copy(
         x: Float = this.x,
         y: Float = this.y,
