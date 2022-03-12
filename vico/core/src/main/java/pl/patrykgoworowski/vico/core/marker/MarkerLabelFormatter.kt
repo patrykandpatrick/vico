@@ -18,6 +18,9 @@ package pl.patrykgoworowski.vico.core.marker
 
 public fun interface MarkerLabelFormatter {
 
+    /**
+     * Creates a formatted label for the given list of marked entries.
+     */
     public fun getLabel(
         markedEntries: List<Marker.EntryModel>,
     ): CharSequence

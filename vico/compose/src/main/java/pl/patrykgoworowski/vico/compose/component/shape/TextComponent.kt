@@ -29,6 +29,9 @@ import pl.patrykgoworowski.vico.core.component.text.buildTextComponent
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
+/**
+ * Creates a [TextComponent].
+ */
 @Composable
 public fun textComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,
