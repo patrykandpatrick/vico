@@ -16,6 +16,9 @@
 
 package pl.patrykgoworowski.vico.core
 
+import pl.patrykgoworowski.vico.core.component.shape.DashedShape
+import pl.patrykgoworowski.vico.core.component.text.TextComponent
+
 public const val DEF_LABEL_LINE_COUNT: Int = 1
 public const val DEF_LABEL_COUNT: Int = 99
 public const val DEF_LABEL_SPACING: Float = 16f
@@ -74,6 +77,9 @@ public object DefaultDimens {
 
     public const val CUBIC_STRENGTH: Float = 1f
 
+    /**
+     * The default dash length for [DashedShape].
+     */
     public const val DASH_LENGTH: Float = 4f
     public const val DASH_GAP: Float = 2f
 
@@ -89,7 +95,14 @@ public object DefaultDimens {
     public const val POINT_SIZE: Float = 16f
     public const val POINT_SPACING: Float = 16f
 
+    /**
+     * The default text size for [TextComponent].
+     */
     public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
+
+    /**
+     * The default thickness for threshold lines in dp.
+     */
     public const val THRESHOLD_LINE_THICKNESS: Float = 2f
 
     /**
