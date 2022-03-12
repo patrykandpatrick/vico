@@ -18,6 +18,9 @@ package pl.patrykgoworowski.vico.view.dimensions
 
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 
+/**
+ * Creates a [MutableDimensions] instance with a common value for each coordinate.
+ */
 public fun dimensionsOf(allDp: Float): MutableDimensions = dimensionsOf(
     startDp = allDp,
     topDp = allDp,

@@ -96,8 +96,19 @@ public object DefaultDimens {
      */
     public const val LINE_THICKNESS: Float = 2f
 
+    /**
+     * The default size for marker indicators in dp.
+     */
     public const val MARKER_INDICATOR_SIZE: Float = 36f
+
+    /**
+     * The default horizontal padding for markers in dp.
+     */
     public const val MARKER_HORIZONTAL_PADDING: Float = 8f
+
+    /**
+     * The default vertical padding for markers in dp.
+     */
     public const val MARKER_VERTICAL_PADDING: Float = 4f
 
     public const val POINT_SIZE: Float = 16f
@@ -119,13 +130,30 @@ public object DefaultDimens {
     public const val CHART_HEIGHT: Float = 200f
 }
 
+/**
+ * The default chart colors.
+ */
 @Suppress("MagicNumber")
 public interface DefaultColors {
 
+    /**
+     * The default color for elevation overlays. Its opacity is modified depending on the elevation.
+     */
     public val elevationOverlayColor: Long
 
+    /**
+     * The default color for axis labels.
+     */
     public val axisLabelColor: Long
+
+    /**
+     * The default color for axis guidelines.
+     */
     public val axisGuidelineColor: Long
+
+    /**
+     * The default color for axis lines.
+     */
     public val axisLineColor: Long
 
     public val column1Color: Long
@@ -134,6 +162,9 @@ public interface DefaultColors {
 
     public val lineColor: Long
 
+    /**
+     * The default chart colors for light mode.
+     */
     public object Light : DefaultColors {
 
         override val elevationOverlayColor: Long = 0x00000000
@@ -149,6 +180,9 @@ public interface DefaultColors {
         override val lineColor: Long = 0xFF1A1A1A
     }
 
+    /**
+     * The default chart colors for dark mode.
+     */
     public object Dark : DefaultColors {
 
         override val elevationOverlayColor: Long = 0xFFFFFFFF
