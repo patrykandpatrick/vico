@@ -32,7 +32,7 @@ import pl.patrykgoworowski.vico.core.chart.line.LineChart
 
 @Composable
 public fun lineChart(
-    point: Component? = null,
+    point: Component? = currentChartStyle.lineChart.point,
     pointSize: Dp = currentChartStyle.lineChart.pointSize,
     spacing: Dp = currentChartStyle.lineChart.spacing,
     lineWidth: Dp = currentChartStyle.lineChart.lineWidth,
@@ -61,7 +61,6 @@ public fun lineChart(
 
 public fun lineChart(
     chartStyle: ChartStyle,
-    point: Component? = null,
     lineStrokeCap: StrokeCap = StrokeCap.Round,
     cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
     minX: Float? = null,
@@ -69,7 +68,7 @@ public fun lineChart(
     minY: Float? = null,
     maxY: Float? = null,
 ): LineChart = LineChart(
-    point = point,
+    point = chartStyle.lineChart.point,
     pointSizeDp = chartStyle.lineChart.pointSize.value,
     spacingDp = chartStyle.lineChart.spacing.value,
     lineThicknessDp = chartStyle.lineChart.lineWidth.value,

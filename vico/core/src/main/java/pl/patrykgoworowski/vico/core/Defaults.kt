@@ -23,9 +23,19 @@ public const val DEF_LABEL_LINE_COUNT: Int = 1
 public const val DEF_LABEL_COUNT: Int = 99
 public const val DEF_LABEL_SPACING: Float = 16f
 
+/**
+ * The default tick size for markers in dp.
+ */
 public const val DEF_MARKER_TICK_SIZE: Float = 6f
 
+/**
+ * The default maximum zoom factor.
+ */
 public const val DEF_MAX_ZOOM: Float = 10f
+
+/**
+ * The default minimum zoom factor.
+ */
 public const val DEF_MIN_ZOOM: Float = 0.1f
 
 /**
@@ -44,12 +54,39 @@ public object Animation {
  * The default chart dimensions.
  */
 public object DefaultDimens {
+    /**
+     * The default horizontal padding for axis labels in dp.
+     */
     public const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
+
+    /**
+     * The default maximum line count for axis labels in dp.
+     */
     public const val AXIS_LABEL_MAX_LINES: Int = 1
+
+    /**
+     * The default vertical padding for axis labels in dp.
+     */
     public const val AXIS_LABEL_VERTICAL_PADDING: Int = 2
+
+    /**
+     * The default text size for axis labels in sp.
+     */
     public const val AXIS_LABEL_SIZE: Int = 12
+
+    /**
+     * The default horizontal margin for axis labels in dp.
+     */
     public const val AXIS_LABEL_HORIZONTAL_MARGIN: Int = 0
+
+    /**
+     * The default vertical margin for axis labels in dp.
+     */
     public const val AXIS_LABEL_VERTICAL_MARGIN: Int = 0
+
+    /**
+     * The default rotation for axis labels in degrees.
+     */
     public const val AXIS_LABEL_ROTATION_DEGREES: Float = 0f
 
     /**
@@ -93,9 +130,13 @@ public object DefaultDimens {
     public const val CUBIC_STRENGTH: Float = 1f
 
     /**
-     * The default dash length for [DashedShape].
+     * The default dash length for [DashedShape] in dp.
      */
     public const val DASH_LENGTH: Float = 4f
+
+    /**
+     * The default dash gap for [DashedShape] in dp.
+     */
     public const val DASH_GAP: Float = 2f
 
     /**
@@ -118,7 +159,14 @@ public object DefaultDimens {
      */
     public const val MARKER_VERTICAL_PADDING: Float = 4f
 
+    /**
+     * The default size for line chart points in dp.
+     */
     public const val POINT_SIZE: Float = 16f
+
+    /**
+     * The default spacing for line chart points in dp.
+     */
     public const val POINT_SPACING: Float = 16f
 
     /**
@@ -167,6 +215,9 @@ public interface DefaultColors {
     public val column2Color: Long
     public val column3Color: Long
 
+    /**
+     * The default line color for line charts.
+     */
     public val lineColor: Long
 
     /**
