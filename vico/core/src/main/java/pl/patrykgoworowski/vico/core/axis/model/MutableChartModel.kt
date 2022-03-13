@@ -30,6 +30,9 @@ public class MutableChartModel(
     override val stepX: Float
         get() = chartEntryModel.stepX
 
+    /**
+     * Sets [minX], [maxX], [minY], and [maxY] to 0.
+     */
     public fun clear() {
         minX = 0f
         maxX = 0f
