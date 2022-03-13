@@ -18,10 +18,19 @@ package pl.patrykgoworowski.vico.core.component.dimension
 
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 
+/**
+ * Allows a component to implement padding.
+ */
 public interface Padding {
 
+    /**
+     * The current padding.
+     */
     public val padding: MutableDimensions
 
+    /**
+     * Updates the padding for each side individually.
+     */
     public fun setPadding(
         start: Float = 0f,
         top: Float = 0f,
@@ -31,6 +40,9 @@ public interface Padding {
         padding.set(start, top, end, bottom)
     }
 
+    /**
+     * Updates the horizontal and vertical padding.
+     */
     public fun setPadding(
         horizontal: Float = 0f,
         vertical: Float = 0f,
@@ -38,8 +50,11 @@ public interface Padding {
         padding.set(horizontal, vertical, horizontal, vertical)
     }
 
+    /**
+     * Sets a common padding value for each side.
+     */
     public fun setPadding(
-        all: Float = 0f
+        all: Float = 0f,
     ) {
         padding.set(all)
     }
