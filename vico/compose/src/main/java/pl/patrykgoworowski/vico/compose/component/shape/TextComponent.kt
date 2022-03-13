@@ -31,6 +31,13 @@ import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
 /**
  * Creates a [TextComponent].
+ * @param color the text color.
+ * @param textSize the text size.
+ * @param background an optional [ShapeComponent] to display behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param padding the padding between the text and the background.
+ * @param margins the margins around the background.
  */
 @Composable
 public fun textComponent(
