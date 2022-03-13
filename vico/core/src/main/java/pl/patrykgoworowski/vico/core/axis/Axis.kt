@@ -132,6 +132,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
          * The axis size will take an exact fraction of available size:
          * - in [pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis] the width.
          * - in [pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis] the height.
+         * @property fraction the fraction of the available space that the axis should use.
          */
         public class Fraction(public val fraction: Float) : SizeConstraint() {
             init {
