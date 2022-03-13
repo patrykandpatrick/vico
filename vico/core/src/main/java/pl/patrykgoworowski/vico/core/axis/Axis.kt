@@ -75,14 +75,29 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     public open class Builder(builder: Builder? = null) {
         public var label: TextComponent? = builder?.label
 
+        /**
+         * The [LineComponent] to use for the axis.
+         */
         public var axis: LineComponent? = builder?.axis
 
+        /**
+         * The [LineComponent] to use for axis ticks.
+         */
         public var tick: LineComponent? = builder?.tick
 
+        /**
+         * The tick length in dp.
+         */
         public var tickLengthDp: Float = builder?.tickLengthDp ?: DefaultDimens.AXIS_TICK_LENGTH
 
+        /**
+         * The [LineComponent] to use for guidelines.
+         */
         public var guideline: LineComponent? = builder?.guideline
 
+        /**
+         * The [AxisValueFormatter] for the axis.
+         */
         public var valueFormatter: AxisValueFormatter =
             builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
 
