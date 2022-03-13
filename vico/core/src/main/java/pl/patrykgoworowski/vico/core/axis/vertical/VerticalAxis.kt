@@ -52,7 +52,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     private val textHorizontalPosition: HorizontalPosition
         get() = if (isLabelOutsideOnLeftOrInsideOnRight) HorizontalPosition.End else HorizontalPosition.Start
 
+    /**
+     * The maximum label count.
+     */
     public var maxLabelCount: Int = DEF_LABEL_COUNT
+
+    /**
+     * The label spacing in dp.
+     */
     public var labelSpacing: Float = DEF_LABEL_SPACING
 
     public var horizontalLabelPosition: HorizontalLabelPosition = Outside

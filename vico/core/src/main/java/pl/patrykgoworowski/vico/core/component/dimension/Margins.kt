@@ -19,10 +19,19 @@ package pl.patrykgoworowski.vico.core.component.dimension
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 
+/**
+ * Allows a component to implement margins.
+ */
 public interface Margins {
 
+    /**
+     * The current margins.
+     */
     public val margins: MutableDimensions
 
+    /**
+     * Updates each margin individually.
+     */
     public fun setMargins(
         start: Float = 0f,
         top: Float = 0f,
@@ -32,8 +41,11 @@ public interface Margins {
         margins.set(start, top, end, bottom)
     }
 
+    /**
+     * Sets a common size for each margin.
+     */
     public fun setMargins(
-        all: Float = 0f
+        all: Float = 0f,
     ) {
         margins.set(all)
     }

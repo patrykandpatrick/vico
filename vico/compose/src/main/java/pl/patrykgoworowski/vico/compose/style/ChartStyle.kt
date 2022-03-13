@@ -125,8 +125,17 @@ public data class ChartStyle(
         val innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
     )
 
+    /**
+     * Defines the appearance of line charts.
+     * @property point an optional [Component] to display on lines for each x-axis value.
+     * @property pointSize the size of points.
+     * @property spacing the spacing between points.
+     * @property lineWidth the width of lines.
+     * @property lineColor the color of lines.
+     * @property lineBackgroundShader a [DynamicShader] to apply to the areas between lines and bottom x-axes.
+     */
     public data class LineChart(
-        val getPoint: Component? = null,
+        val point: Component? = null,
         val pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
         val spacing: Dp = DefaultDimens.POINT_SPACING.dp,
         val lineWidth: Dp = DefaultDimens.LINE_THICKNESS.dp,
@@ -134,6 +143,13 @@ public data class ChartStyle(
         val lineBackgroundShader: DynamicShader? = null,
     )
 
+    /**
+     * Defines the appearance of chart markers.
+     * @property indicatorSize the size of indicators (these are the components shown at the top of columns and on lines
+     * to highlight the value or values that a marker refers to).
+     * @property horizontalPadding the horizontal padding for marker bubbles.
+     * @property verticalPadding the vertical padding for marker bubbles.
+     */
     public data class Marker(
         val indicatorSize: Dp = DefaultDimens.MARKER_INDICATOR_SIZE.dp,
         val horizontalPadding: Dp = DefaultDimens.MARKER_HORIZONTAL_PADDING.dp,
