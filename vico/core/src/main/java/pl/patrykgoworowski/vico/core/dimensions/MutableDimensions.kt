@@ -35,12 +35,21 @@ public class MutableDimensions(
     public val verticalDp: Float
         get() = topDp + bottomDp
 
+    /**
+     * Updates these [MutableDimensions] to match the provided [Dimensions].
+     */
     public fun set(other: Dimensions): MutableDimensions =
         set(other.startDp, other.topDp, other.endDp, other.bottomDp)
 
+    /**
+     * Sets a common value for each coordinate.
+     */
     public fun set(all: Float): MutableDimensions =
         set(all, all, all, all)
 
+    /**
+     * Updates the coordinates to the provided values.
+     */
     public fun set(
         startDp: Float = 0f,
         topDp: Float = 0f,
