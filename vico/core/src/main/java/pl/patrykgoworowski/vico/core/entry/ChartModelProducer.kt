@@ -18,6 +18,9 @@ package pl.patrykgoworowski.vico.core.entry
 
 public interface ChartModelProducer<Model : ChartEntryModel> {
 
+    /**
+     * Returns the [ChartEntryModel] for this [ChartModelProducer].
+     */
     public fun getModel(): Model
 
     public fun progressModel(key: Any, progress: Float)

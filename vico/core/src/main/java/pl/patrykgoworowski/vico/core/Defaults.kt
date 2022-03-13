@@ -47,6 +47,10 @@ public const val THREAD_POOL_COUNT: Int = 4
 
 public object Animation {
     public val range: ClosedFloatingPointRange<Float> = 0f..1f
+
+    /**
+     * The default duration for difference animations.
+     */
     public const val DIFF_DURATION: Int = 500
 }
 
