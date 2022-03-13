@@ -81,8 +81,15 @@ public object DefaultDimens {
      * The default spacing (in dp) between the left and right edges of a chart segment and the columns it contains.
      */
     public const val COLUMN_OUTSIDE_SPACING: Float = 32f
+
+    /**
+     * The default corner radius for columns in percent.
+     */
     public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
 
+    /**
+     * The default cubic bezier strength for line charts.
+     */
     public const val CUBIC_STRENGTH: Float = 1f
 
     /**

@@ -38,6 +38,9 @@ import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
 public typealias ChartShape = pl.patrykgoworowski.vico.core.component.shape.Shape
 
+/**
+ * Creates a [LineComponent] with the specified properties.
+ */
 public fun lineComponent(
     color: Color = Color.Black,
     thickness: Dp = DefaultDimens.COLUMN_WIDTH.dp,
@@ -56,6 +59,9 @@ public fun lineComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates a [LineComponent] with the specified properties.
+ */
 public fun lineComponent(
     color: Color = Color.Black,
     thickness: Dp,
@@ -74,6 +80,9 @@ public fun lineComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates a [ShapeComponent] with the specified properties.
+ */
 public fun shapeComponent(
     shape: Shape,
     color: Color = Color.Black,
@@ -90,6 +99,9 @@ public fun shapeComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates a [ShapeComponent] with the specified properties.
+ */
 public fun shapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
@@ -106,6 +118,9 @@ public fun shapeComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates a [ShapeComponent] with the specified properties.
+ */
 public fun shapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,

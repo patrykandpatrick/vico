@@ -133,12 +133,18 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
+    /**
+     * Whether the chart can be scrolled horizontally.
+     */
     public var isHorizontalScrollEnabled: Boolean = false
         set(value) {
             field = value
             measureContext.isHorizontalScrollEnabled = value
         }
 
+    /**
+     * Whether the pinch-to-zoom gesture is enabled.
+     */
     public var isZoomEnabled: Boolean = true
 
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
