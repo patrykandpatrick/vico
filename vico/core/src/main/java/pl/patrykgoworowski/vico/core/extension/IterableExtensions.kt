@@ -16,6 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.extension
 
+/**
+ * Calls the [selector] function for each value in the collection and returns the range of the produced values.
+ */
 public inline fun <T> Iterable<T>.rangeOfOrNull(selector: (T) -> Float): ClosedFloatingPointRange<Float>? {
     val iterator = iterator()
     if (!iterator.hasNext()) return null
