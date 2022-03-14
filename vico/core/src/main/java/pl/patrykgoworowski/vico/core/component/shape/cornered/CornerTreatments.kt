@@ -20,6 +20,9 @@ import android.graphics.Path
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.extension.piRad
 
+/**
+ * Creates sharp corners.
+ */
 public object SharpCornerTreatment : CornerTreatment {
 
     public override fun createCorner(
@@ -45,6 +48,9 @@ public object SharpCornerTreatment : CornerTreatment {
     }
 }
 
+/**
+ * Creates cut corners.
+ */
 public object CutCornerTreatment : CornerTreatment {
 
     override fun createCorner(
@@ -60,6 +66,9 @@ public object CutCornerTreatment : CornerTreatment {
     }
 }
 
+/**
+ * Creates rounded corners.
+ */
 public object RoundedCornerTreatment : CornerTreatment {
 
     private val tempRect = RectF()

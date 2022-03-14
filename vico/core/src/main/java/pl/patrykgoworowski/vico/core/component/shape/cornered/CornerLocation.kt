@@ -16,6 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.component.shape.cornered
 
+/**
+ * Defines the location of a shape corner.
+ */
 public enum class CornerLocation {
     TopLeft,
     TopRight,
