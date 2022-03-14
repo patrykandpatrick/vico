@@ -179,8 +179,8 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 }
 
 /**
- * Provides a quick way to create an axis. Creates an [Axis.Builder] instance and calls the provided function block in
- * the scope of the [Axis.Builder] instance.
+ * Provides a quick way to create an axis. Creates an [Axis.Builder] instance, calls the provided function block with
+ * the [Axis.Builder] instance as its receiver, and returns the [Axis.Builder] instance.
  */
 public fun axisBuilder(block: Axis.Builder.() -> Unit = {}): Axis.Builder =
     Axis.Builder().apply(block)
