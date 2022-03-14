@@ -49,14 +49,36 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     public var isLtr: Boolean = true
 
+    /**
+     * The [TextComponent] to use for labels.
+     */
     public var label: TextComponent? = null
+
+    /**
+     * The [LineComponent] to use for axis lines.
+     */
     public var axisLine: LineComponent? = null
+
+    /**
+     * The [LineComponent] to use for ticks.
+     */
     public var tick: LineComponent? = null
+
+    /**
+     * The [LineComponent] to use for guidelines.
+     */
     public var guideline: LineComponent? = null
+
+    /**
+     * The tick length in dp.
+     */
     public var tickLengthDp: Float = 0f
 
     public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
+    /**
+     * The [AxisValueFormatter] for the axis.
+     */
     public var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
 
     override fun setRestrictedBounds(vararg bounds: RectF?) {
@@ -156,6 +178,10 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     }
 }
 
+/**
+ * Provides a quick way to create an axis. Creates an [Axis.Builder] instance, calls the provided function block with
+ * the [Axis.Builder] instance as its receiver, and returns the [Axis.Builder] instance.
+ */
 public fun axisBuilder(block: Axis.Builder.() -> Unit = {}): Axis.Builder =
     Axis.Builder().apply(block)
 

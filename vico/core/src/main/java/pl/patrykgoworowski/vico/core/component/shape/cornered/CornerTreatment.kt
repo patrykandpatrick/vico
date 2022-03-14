@@ -19,8 +19,20 @@ package pl.patrykgoworowski.vico.core.component.shape.cornered
 import android.graphics.Path
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 
+/**
+ * Defines a shape corner style.
+ */
 public interface CornerTreatment {
 
+    /**
+     * Draws a shape corner of the appropriate style.
+     * @param x1 the horizontal coordinate of the starting point.
+     * @param y1 the vertical coordinate of the starting point.
+     * @param x2 the horizontal coordinate of the end point.
+     * @param y2 the vertical coordinate of the end point.
+     * @param cornerLocation the location of the corner.
+     * @path the [Path] to use to draw the corner.
+     */
     @LongParameterListDrawFunction
     public fun createCorner(
         x1: Float,

@@ -270,7 +270,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
+        /**
+         * The maximum label count.
+         */
         public var maxLabelCount: Int = DEF_LABEL_COUNT
+
+        /**
+         * The label spacing in dp.
+         */
         public var labelSpacing: Float = DEF_LABEL_SPACING
         public var horizontalLabelPosition: HorizontalLabelPosition = Outside
         public var verticalLabelPosition: VerticalLabelPosition = Center

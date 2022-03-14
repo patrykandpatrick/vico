@@ -44,8 +44,15 @@ public open class MarkerComponent(
     private val TextComponent.tickSizeDp: Float
         get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
+    /**
+     * The indicator size in dp.
+     */
     public var indicatorSizeDp: Float = 0f
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
+
+    /**
+     * The [MarkerLabelFormatter] for this marker.
+     */
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
 
     override fun draw(
