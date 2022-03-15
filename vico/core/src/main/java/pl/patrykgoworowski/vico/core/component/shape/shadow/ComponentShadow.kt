@@ -20,6 +20,14 @@ import android.graphics.Paint
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.extension.applyElevationOverlayToColor
 
+/**
+ * Draws a drop shadow.
+ * @property radius the blur radius.
+ * @property dx the horizontal offset.
+ * @property dy the vertical offset.
+ * @property color the shadow color.
+ * @property applyElevationOverlay whether to apply an elevation overlay to the component casting the shadow.
+ */
 @Suppress("ComplexCondition")
 public data class ComponentShadow(
     var radius: Float = 0f,
