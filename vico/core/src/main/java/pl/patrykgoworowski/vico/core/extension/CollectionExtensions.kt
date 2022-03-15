@@ -87,5 +87,8 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
     return sum
 }
 
+/**
+ * Creates a [MutableList] containing all elements of the specified source collection.
+ */
 public fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
     ArrayList<T>(sourceCollection.size).apply { addAll(sourceCollection) }
