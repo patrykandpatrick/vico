@@ -35,6 +35,9 @@ public class ComposedChart<Model : ChartEntryModel>(
 
     public constructor(vararg charts: Chart<Model>) : this(charts.toList())
 
+    /**
+     * The [Chart]s that make up this [ComposedChart].
+     */
     public val charts: ArrayList<Chart<Model>> = ArrayList(charts)
 
     private val tempAxisModel = MutableChartModel()

@@ -19,16 +19,25 @@ package pl.patrykgoworowski.vico.core.chart.composed
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.chart.Chart
 
+/**
+ * Combines this [Chart] with another one to create a [ComposedChart].
+ */
 public operator fun <Model : ChartEntryModel> Chart<Model>.plus(
     other: Chart<Model>
 ): ComposedChart<Model> =
     ComposedChart(listOf(this, other))
 
+/**
+ * Combines this [ComposedChart] with a [Chart] to create a [ComposedChart].
+ */
 public operator fun <Model : ChartEntryModel> ComposedChart<Model>.plus(
     other: Chart<Model>
 ): ComposedChart<Model> =
     ComposedChart(charts + other)
 
+/**
+ * Combines this [ComposedChart] and another one into a single [ComposedChart].
+ */
 public operator fun <Model : ChartEntryModel> ComposedChart<Model>.plus(
     other: ComposedChart<Model>
 ): ComposedChart<Model> =
