@@ -22,9 +22,17 @@ import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 public interface MeasureContext : Extras {
     public val canvasBounds: RectF
     public val chartModel: ChartModel
+
+    /**
+     * The pixel density.
+     */
     public val density: Float
     public val fontScale: Float
     public val isLtr: Boolean
+
+    /**
+     * Whether horizontal scrolling is enabled.
+     */
     public val isHorizontalScrollEnabled: Boolean
     public val horizontalScroll: Float
     public val chartScale: Float
