@@ -33,7 +33,7 @@ public fun <T> MutableList<T>.setAll(other: Collection<T>) {
 }
 
 /**
- * Replaces all of the elements of this [MutableList] with the elements of the provided collection.
+ * Replaces all of the elements of this [MutableList] with the elements of the provided array.
  */
 public fun <T> MutableList<T>.setAll(other: Array<out T>) {
     clear()
