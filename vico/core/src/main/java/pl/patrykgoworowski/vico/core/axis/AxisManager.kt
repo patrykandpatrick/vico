@@ -27,9 +27,24 @@ public open class AxisManager {
 
     internal val axisCache = ArrayList<AxisRenderer<*>>(MAX_AXIS_COUNT)
 
+    /**
+     * The [AxisRenderer] for the start axis.
+     */
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by cacheInList()
+
+    /**
+     * The [AxisRenderer] for the top axis.
+     */
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by cacheInList()
+
+    /**
+     * The [AxisRenderer] for the end axis.
+     */
     public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by cacheInList()
+
+    /**
+     * The [AxisRenderer] for the bottom axis.
+     */
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by cacheInList()
 
     public fun addInsetters(destination: MutableList<ChartInsetter>) {

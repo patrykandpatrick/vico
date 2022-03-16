@@ -95,6 +95,9 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     }
 
     public open class Builder(builder: Builder? = null) {
+        /**
+         * The [TextComponent] to use for labels.
+         */
         public var label: TextComponent? = builder?.label
 
         /**
