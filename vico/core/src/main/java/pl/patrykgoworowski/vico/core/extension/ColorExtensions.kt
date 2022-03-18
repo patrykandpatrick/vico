@@ -45,6 +45,9 @@ public fun Int.copyColor(
     blue = (blue * MAX_HEX_VALUE).toInt(),
 )
 
+/**
+ * The hex code for this color.
+ */
 @Suppress("MagicNumber", "ImplicitDefaultLocale")
 public val Int.colorHex: String
     get() = String.format("#%08X", 0xFFFFFFFF and this.toLong())

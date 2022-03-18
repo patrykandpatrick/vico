@@ -18,6 +18,10 @@ package pl.patrykgoworowski.vico.core.chart
 
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
 
+/**
+ * For each [ChartEntry] the list, calls the [action] function block with the [ChartEntry] as the block’s argument if
+ * [ChartEntry.x] belongs to the provided range.
+ */
 public inline fun List<ChartEntry>.forEachIn(
     range: ClosedFloatingPointRange<Float>,
     action: (ChartEntry) -> Unit,

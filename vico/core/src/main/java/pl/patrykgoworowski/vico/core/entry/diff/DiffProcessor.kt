@@ -45,6 +45,11 @@ public interface DiffProcessor<Entry : ChartEntry> {
      */
     public fun progressDiff(progress: Float): List<List<Entry>>
 
+    /**
+     * Creates an intermediate y-value range for use in difference animations.
+     * @param progress the balance between the initial and target range. A value of `Of` yields the initial range, and
+     * a value of `1f` yields the target range.
+     */
     public fun yRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float>
 
     public fun stackedYRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float>

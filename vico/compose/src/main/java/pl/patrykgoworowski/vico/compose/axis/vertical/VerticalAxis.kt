@@ -32,6 +32,18 @@ import pl.patrykgoworowski.vico.core.axis.vertical.createVerticalAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 
+/**
+ * Creates a start axis.
+ * @param label the [TextComponent] to use for labels.
+ * @param axis the [LineComponent] to use for the axis line.
+ * @param tick the [LineComponent] to use for ticks.
+ * @param tickLength the length of ticks.
+ * @param guideline the [LineComponent] to use for guidelines.
+ * @param valueFormatter the [AxisValueFormatter] for the axis.
+ * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its width.
+ * @param horizontalLabelPosition the horizontal position of the labels along the axis.
+ * @param verticalLabelPosition the vertical position of the labels along the axis.
+ */
 @Composable
 public fun startAxis(
     label: TextComponent? = axisLabelComponent(),
@@ -55,6 +67,18 @@ public fun startAxis(
     this.verticalLabelPosition = verticalLabelPosition
 }
 
+/**
+ * Creates an end axis.
+ * @param label the [TextComponent] to use for labels.
+ * @param axis the [LineComponent] to use for the axis line.
+ * @param tick the [LineComponent] to use for ticks.
+ * @param tickLength the length of ticks.
+ * @param guideline the [LineComponent] to use for guidelines.
+ * @param valueFormatter the [AxisValueFormatter] for the axis.
+ * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its width.
+ * @param horizontalLabelPosition the horizontal position of the labels along the axis.
+ * @param verticalLabelPosition the vertical position of the labels along the axis.
+ */
 @Composable
 public fun endAxis(
     label: TextComponent? = axisLabelComponent(),

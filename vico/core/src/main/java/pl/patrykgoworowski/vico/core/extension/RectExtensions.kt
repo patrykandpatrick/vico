@@ -141,6 +141,9 @@ public fun RectF.rotate(degrees: Float): RectF {
     return this
 }
 
+/**
+ * Moves this [RectF] horizontally and vertically by the specified distances.
+ */
 public fun RectF.translate(x: Float, y: Float): RectF = apply {
     left += x
     top += y

@@ -25,6 +25,9 @@ import pl.patrykgoworowski.vico.core.context.DefaultExtras
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.context.Extras
 
+/**
+ * Calls the specified function block with [DrawContext.canvas] as its receiver.
+ */
 public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
     canvas.block()
 }

@@ -34,6 +34,13 @@ public interface ChartEntry {
      */
     public val y: Float
 
+    /**
+     * @see x
+     */
     public operator fun component1(): Float = x
+
+    /**
+     * @see y
+     */
     public operator fun component2(): Float = y
 }

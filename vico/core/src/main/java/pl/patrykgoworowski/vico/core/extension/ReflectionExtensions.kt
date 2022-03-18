@@ -28,6 +28,10 @@ public inline fun <reified T, V> T.setFieldValue(fieldName: String, value: V) {
     field.isAccessible = wasAccessible
 }
 
+/**
+ * Returns the value of the field with the specified name.
+ * This involves temporarily setting the `accessible` flag to `true`.
+ */
 @Suppress("UNCHECKED_CAST")
 public inline fun <reified T, V> T.getFieldValue(fieldName: String): V {
     val field = T::class.java.getDeclaredField(fieldName)

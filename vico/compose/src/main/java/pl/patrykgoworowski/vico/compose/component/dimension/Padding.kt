@@ -29,24 +29,21 @@ public fun <P : Padding> P.setPadding(
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
-): P {
+): P = apply {
     padding.set(start.value, top.value, end.value, bottom.value)
-    return this
 }
 
 @Composable
 public fun <P : Padding> P.setPadding(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
-): P {
+): P = apply {
     padding.set(horizontal.value, vertical.value, horizontal.value, vertical.value)
-    return this
 }
 
 @Composable
 public fun <P : Padding> P.setPadding(
     all: Dp = 0.dp,
-): P {
+): P = apply {
     padding.set(all.value, all.value, all.value, all.value)
-    return this
 }

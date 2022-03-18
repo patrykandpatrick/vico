@@ -21,12 +21,18 @@ public data class MutableSegmentProperties(
     override var marginWidth: Float = 0f,
 ) : SegmentProperties {
 
+    /**
+     * Sets a cell width and margin width.
+     */
     public fun set(cellWidth: Float, marginWidth: Float): MutableSegmentProperties {
         this.cellWidth = cellWidth
         this.marginWidth = marginWidth
         return this
     }
 
+    /**
+     * Sets the cell width and margin width to 0.
+     */
     public fun clear() {
         cellWidth = 0f
         marginWidth = 0f

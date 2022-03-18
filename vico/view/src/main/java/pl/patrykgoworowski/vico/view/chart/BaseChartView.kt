@@ -128,9 +128,24 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
 
+    /**
+     * The [AxisRenderer] for the start axis.
+     */
     public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
+
+    /**
+     * The [AxisRenderer] for the top axis.
+     */
     public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
+
+    /**
+     * The [AxisRenderer] for the end axis.
+     */
     public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
+
+    /**
+     * The [AxisRenderer] for the bottom axis.
+     */
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
     /**

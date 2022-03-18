@@ -24,16 +24,25 @@ internal fun <T> List<T>.getRepeating(index: Int): T {
     return get(index % size.coerceAtLeast(1))
 }
 
+/**
+ * Replaces all of the elements of this [MutableList] with the elements of the provided collection.
+ */
 public fun <T> MutableList<T>.setAll(other: Collection<T>) {
     clear()
     addAll(other)
 }
 
+/**
+ * Replaces all of the elements of this [MutableList] with the elements of the provided array.
+ */
 public fun <T> MutableList<T>.setAll(other: Array<out T>) {
     clear()
     addAll(other)
 }
 
+/**
+ * Calls the [selector] function for each value in the collection and returns the sum of the produced [Float]s.
+ */
 public inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
     var sum = 0f
     for (element in this) {
@@ -42,6 +51,10 @@ public inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
     return sum
 }
 
+/**
+ * Calls the [selector] function for each element in the collection, providing the index of the element and [Boolean]s
+ * indicating whether the element is the first or last element in the collection.
+ */
 public inline fun <T> Iterable<T>.forEachIndexedExtended(
     selector: (index: Int, isFirst: Boolean, isLast: Boolean, value: T) -> Unit
 ) {
@@ -87,5 +100,8 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
     return sum
 }
 
+/**
+ * Creates a [MutableList] containing all elements of the specified source collection.
+ */
 public fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
     ArrayList<T>(sourceCollection.size).apply { addAll(sourceCollection) }
