@@ -40,7 +40,7 @@ import pl.patrykgoworowski.vico.core.component.text.TextComponent
  * @param tickLength the length of ticks.
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
- * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
+ * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its width.
  * @param horizontalLabelPosition the horizontal position of the labels along the axis.
  * @param verticalLabelPosition the vertical position of the labels along the axis.
  */
