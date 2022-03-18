@@ -27,6 +27,13 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.extension.setAll
 
+/**
+ * The basic implementation of [AxisRenderer] used throughout the library.
+ *
+ * @see AxisRenderer
+ * @see pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
+ * @see pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
+ */
 public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     private val restrictedBounds: MutableList<RectF> = mutableListOf()
@@ -44,9 +51,12 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     protected val MeasureContext.guidelineThickness: Float
         get() = guideline?.thicknessDp.orZero.pixels
 
-    public val MeasureContext.tickLength: Float
+    protected val MeasureContext.tickLength: Float
         get() = if (tick != null) tickLengthDp.pixels else 0f
 
+    /**
+     * Whether chart is drawn in Left-to-Right layout system.
+     */
     public var isLtr: Boolean = true
 
     /**
@@ -74,6 +84,9 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
      */
     public var tickLengthDp: Float = 0f
 
+    /**
+     * The [SizeConstraint] used by [Axis] subclass to layout itself.
+     */
     public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
     /**
@@ -94,6 +107,9 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         it.contains(left, top, right, bottom) || it.intersects(left, top, right, bottom)
     }
 
+    /**
+     * The base builder class for constructing [Axis].
+     */
     public open class Builder(builder: Builder? = null) {
         /**
          * The [TextComponent] to use for labels.
@@ -126,6 +142,9 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         public var valueFormatter: AxisValueFormatter =
             builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
 
+        /**
+         * The [SizeConstraint] used by [Axis] subclass to layout itself.
+         */
         public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
     }
 
@@ -188,6 +207,11 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 public fun axisBuilder(block: Axis.Builder.() -> Unit = {}): Axis.Builder =
     Axis.Builder().apply(block)
 
+/**
+ * A convenience function allowing to set [Axis.Builder]’s properties to an [Axis] subclass.
+ *
+ * @param axis an [Axis] which properties will be updated with this [Axis.Builder]’s properties.
+ */
 public fun <T : AxisPosition, A : Axis<T>> Axis.Builder.setTo(axis: A): A {
     axis.axisLine = this.axis
     axis.tick = tick
