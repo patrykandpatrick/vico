@@ -24,6 +24,9 @@ import pl.patrykgoworowski.vico.core.entry.entryOf
 import pl.patrykgoworowski.vico.core.entry.yRange
 import pl.patrykgoworowski.vico.core.extension.setAll
 
+/**
+ * The default implementation of [DiffProcessor].
+ */
 public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
 
     private val setEntriesLock: ReentrantLock = ReentrantLock()
