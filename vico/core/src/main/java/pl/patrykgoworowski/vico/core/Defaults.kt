@@ -289,6 +289,9 @@ public interface DefaultColors {
     }
 }
 
+/**
+ * Default alpha values.
+ */
 public object DefaultAlpha {
     public const val LINE_BACKGROUND_SHADER_START: Float = 0.5f
     public const val LINE_BACKGROUND_SHADER_END: Float = 0f
