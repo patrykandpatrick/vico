@@ -30,7 +30,7 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import java.util.TreeMap
 
 /**
- * The [ComposedChart] can compose multiple [Chart]s and overlay them.
+ * [ComposedChart] can compose multiple [Chart]s and overlay them.
  */
 public class ComposedChart<Model : ChartEntryModel>(
     charts: List<Chart<Model>>

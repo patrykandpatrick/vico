@@ -33,7 +33,7 @@ import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.median
 
 /**
- * The [ThresholdLine] is drawn on top of the chart and marks a certain range of y-axis values.
+ * [ThresholdLine] is drawn on top of the chart and marks a certain range of y-axis values.
  *
  * @property thresholdRange the range of y-axis values which this [ThresholdLine] will cover.
  * @property thresholdLabel the label of this [ThresholdLine].
