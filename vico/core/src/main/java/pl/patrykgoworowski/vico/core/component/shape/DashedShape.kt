@@ -21,6 +21,14 @@ import android.graphics.Path
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
+/**
+ * [DashedShape] can draw a line by repeating provided [shape] which is separated with gaps.
+ *
+ * @property shape the base [Shape] from which to create the [DashedShape].
+ * @property dashLengthDp the dash length in dp unit.
+ * @property gapLengthDp the gap length in dp unit.
+ * @property fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
+ */
 public class DashedShape(
     public val shape: Shape,
     public val dashLengthDp: Float,
@@ -145,8 +153,20 @@ public class DashedShape(
         }
     }
 
+    /**
+     * Defines a way to render the [DashedShape].
+     */
     public enum class FitStrategy {
+        /**
+         * The [DashedShape] will slightly scale up or down the [DashedShape.dashLengthDp] and [DashedShape.gapLengthDp]
+         * in order to fit it exactly within given bounds without it being cut-off.
+         */
         Resize,
-        Fixed
+
+        /**
+         * The [DashedShape] will use exact [DashedShape.dashLengthDp] and [DashedShape.gapLengthDp] as provided.
+         * In effect the [DashedShape] may not fit within its bounds, or be cut-off.
+         */
+        Fixed,
     }
 }
