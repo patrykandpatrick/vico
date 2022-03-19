@@ -21,8 +21,23 @@ import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.model.Point
 
+/**
+ * The extension of [DrawContext] which holds additional data required to render the chart.
+ */
 public interface ChartDrawContext : DrawContext {
+
+    /**
+     * The bounds in which the [pl.patrykgoworowski.vico.core.chart.Chart] will be drawn.
+     */
     public val chartBounds: RectF
+
+    /**
+     * Holds information about the width of each individual segment on the x-axis.
+     */
     public val segmentProperties: SegmentProperties
+
+    /**
+     * The point inside the chart’s coordinates where physical touch is occurring.
+     */
     public val markerTouchPoint: Point?
 }
