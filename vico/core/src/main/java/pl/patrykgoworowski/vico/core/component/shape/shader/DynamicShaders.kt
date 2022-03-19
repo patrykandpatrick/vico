@@ -21,8 +21,14 @@ import android.graphics.BitmapShader
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
+/**
+ * The object holding simple, anonymous implementations of [DynamicShader].
+ */
 public object DynamicShaders {
 
+    /**
+     * Creates a [DynamicShader] out of given [bitmap].
+     */
     public fun fromBitmap(
         bitmap: Bitmap,
         tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,

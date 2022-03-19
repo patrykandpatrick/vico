@@ -19,6 +19,11 @@ package pl.patrykgoworowski.vico.core.component.shape.shader
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
+/**
+ * Creates a [DynamicShader], which always provides the same [Shader] instance.
+ *
+ * @property shader the [Shader] that will always be provided regardless of [provideShader] function’s arguments.
+ */
 public class StaticShader(private val shader: Shader) : DynamicShader {
 
     override fun provideShader(
@@ -30,5 +35,8 @@ public class StaticShader(private val shader: Shader) : DynamicShader {
     ): Shader = shader
 }
 
+/**
+ * Converts the [Shader] to [StaticShader] and returns it as the [DynamicShader].
+ */
 public val Shader.dynamic: DynamicShader
     get() = StaticShader(this)
