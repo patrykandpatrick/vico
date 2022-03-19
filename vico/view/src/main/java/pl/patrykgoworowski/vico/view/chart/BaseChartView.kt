@@ -208,7 +208,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
-            chart.setToAxisModel(chartModel, model)
+            chart.setToChartModel(chartModel, model)
             if (ViewCompat.isAttachedToWindow(this)) {
                 invalidate()
             }

@@ -150,12 +150,12 @@ public open class ColumnChart(
         )
     }
 
-    override fun setToAxisModel(axisModel: MutableChartModel, model: ChartEntryModel) {
-        axisModel.minY = minY ?: min(model.minY, 0f)
-        axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
-        axisModel.minX = minX ?: model.minX
-        axisModel.maxX = maxX ?: model.maxX
-        axisModel.chartEntryModel = model
+    override fun setToChartModel(chartModel: MutableChartModel, model: ChartEntryModel) {
+        chartModel.minY = minY ?: min(model.minY, 0f)
+        chartModel.maxY = maxY ?: mergeMode.getMaxY(model)
+        chartModel.minX = minX ?: model.minX
+        chartModel.maxX = maxX ?: model.maxX
+        chartModel.chartEntryModel = model
     }
 
     override fun getSegmentProperties(

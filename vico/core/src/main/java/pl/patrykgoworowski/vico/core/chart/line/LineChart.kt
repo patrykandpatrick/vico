@@ -182,12 +182,12 @@ public open class LineChart(
         segmentProperties.set(cellWidth = pointSizeDp.pixels, marginWidth = spacingDp.pixels)
     }
 
-    override fun setToAxisModel(axisModel: MutableChartModel, model: ChartEntryModel) {
-        axisModel.minY = minY ?: min(model.minY, 0f)
-        axisModel.maxY = maxY ?: model.maxY
-        axisModel.minX = minX ?: model.minX
-        axisModel.maxX = maxX ?: model.maxX
-        axisModel.chartEntryModel = model
+    override fun setToChartModel(chartModel: MutableChartModel, model: ChartEntryModel) {
+        chartModel.minY = minY ?: min(model.minY, 0f)
+        chartModel.maxY = maxY ?: model.maxY
+        chartModel.minX = minX ?: model.minX
+        chartModel.maxX = maxX ?: model.maxX
+        chartModel.chartEntryModel = model
     }
 
     private companion object {
