@@ -43,6 +43,9 @@ public const val DEF_MIN_ZOOM: Float = 0.1f
  */
 public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
 
+/**
+ * The default size of the thread pools used for difference animations.
+ */
 public const val THREAD_POOL_COUNT: Int = 4
 
 public object Animation {
