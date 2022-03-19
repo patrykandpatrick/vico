@@ -28,7 +28,6 @@ import pl.patrykgoworowski.vico.compose.component.shape.shader.toDynamicShader
 import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
-import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
@@ -161,42 +160,4 @@ public fun overlayingComponent(
     insidePaddingTopDp = innerPaddingTop.value,
     insidePaddingBottomDp = innerPaddingBottom.value,
     insidePaddingEndDp = innerPaddingEnd.value,
-)
-
-/**
- * Creates a [DashedShape].
- * @param shape the base [Shape] from which to create the [DashedShape].
- * @param dashLength the dash length.
- * @param gapLength the gap length.
- * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
- */
-public fun dashedShape(
-    shape: Shape,
-    dashLength: Dp,
-    gapLength: Dp,
-    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
-): DashedShape = DashedShape(
-    shape = shape.chartShape(),
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
-)
-
-/**
- * Creates a [DashedShape].
- * @param shape the base [ChartShape] from which to create the [DashedShape].
- * @param dashLength the dash length.
- * @param gapLength the gap length.
- * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
- */
-public fun dashedShape(
-    shape: ChartShape,
-    dashLength: Dp,
-    gapLength: Dp,
-    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
-): DashedShape = DashedShape(
-    shape = shape,
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
 )

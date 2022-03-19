@@ -29,8 +29,10 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import pl.patrykgoworowski.vico.compose.component.ChartShape
 import pl.patrykgoworowski.vico.core.DEF_MARKER_TICK_SIZE
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
+import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
@@ -198,4 +200,42 @@ public fun Shapes.markerCorneredShape(
     bottomRight = corneredShape.bottomRight,
     bottomLeft = corneredShape.bottomLeft,
     tickSizeDp = tickSizeDp.value
+)
+
+/**
+ * Creates a [DashedShape].
+ * @param shape the base [Shape] from which to create the [DashedShape].
+ * @param dashLength the dash length.
+ * @param gapLength the gap length.
+ * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
+ */
+public fun Shapes.dashedShape(
+    shape: androidx.compose.ui.graphics.Shape,
+    dashLength: Dp,
+    gapLength: Dp,
+    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
+): DashedShape = DashedShape(
+    shape = shape.chartShape(),
+    dashLengthDp = dashLength.value,
+    gapLengthDp = gapLength.value,
+    fitStrategy = fitStrategy,
+)
+
+/**
+ * Creates a [DashedShape].
+ * @param shape the base [ChartShape] from which to create the [DashedShape].
+ * @param dashLength the dash length.
+ * @param gapLength the gap length.
+ * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
+ */
+public fun Shapes.dashedShape(
+    shape: ChartShape,
+    dashLength: Dp,
+    gapLength: Dp,
+    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
+): DashedShape = DashedShape(
+    shape = shape,
+    dashLengthDp = dashLength.value,
+    gapLengthDp = gapLength.value,
+    fitStrategy = fitStrategy,
 )

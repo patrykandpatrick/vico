@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.compose.component.dashedShape
+import pl.patrykgoworowski.vico.compose.component.shape.dashedShape
 import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.fromBrush
 import pl.patrykgoworowski.vico.core.DefaultAlpha
@@ -98,7 +98,7 @@ public data class ChartStyle(
         val axisLabelRotationDegrees: Float = DefaultDimens.AXIS_LABEL_ROTATION_DEGREES,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
-        val axisGuidelineShape: Shape = dashedShape(
+        val axisGuidelineShape: Shape = Shapes.dashedShape(
             shape = Shapes.rectShape,
             dashLength = DefaultDimens.DASH_LENGTH.dp,
             gapLength = DefaultDimens.DASH_GAP.dp,
