@@ -19,6 +19,9 @@ package pl.patrykgoworowski.vico.core.axis.model
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
+/**
+ * A subclass of [ChartModel] which has all of its properties mutable.
+ */
 public class MutableChartModel(
     override var minX: Float = 0f,
     override var maxX: Float = 0f,
