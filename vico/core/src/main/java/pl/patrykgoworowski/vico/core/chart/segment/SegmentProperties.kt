@@ -16,10 +16,19 @@
 
 package pl.patrykgoworowski.vico.core.chart.segment
 
+/**
+ * [SegmentProperties] holds information about the width of each individual segment on the x-axis.
+ */
 public interface SegmentProperties {
 
+    /**
+     * The width of individual cell, e.g. a column in the column chart, or a point in the line chart.
+     */
     public val cellWidth: Float
 
+    /**
+     * The width of margin around given cell.
+     */
     public val marginWidth: Float
 
     /**
@@ -28,8 +37,19 @@ public interface SegmentProperties {
     public val segmentWidth: Float
         get() = cellWidth + marginWidth
 
+    /**
+     * @see cellWidth
+     */
     public operator fun component1(): Float = cellWidth
+
+    /**
+     * @see marginWidth
+     */
     public operator fun component2(): Float = marginWidth
+
+    /**
+     * @see segmentWidth
+     */
     public operator fun component3(): Float = segmentWidth
 
     /**
@@ -40,6 +60,12 @@ public interface SegmentProperties {
         SegmentProperties(cellWidth * scale, marginWidth * scale)
 }
 
+/**
+ * A convenience function creating an anonymous implementation of the [SegmentProperties].
+ *
+ * @param cellWidth the width of individual cell, e.g. a column in the column chart, or a point in the line chart.
+ * @param marginWidth the sum of the cell width and margin width.
+ */
 public fun SegmentProperties(cellWidth: Float, marginWidth: Float): SegmentProperties = object : SegmentProperties {
     override val cellWidth: Float = cellWidth
     override val marginWidth: Float = marginWidth
