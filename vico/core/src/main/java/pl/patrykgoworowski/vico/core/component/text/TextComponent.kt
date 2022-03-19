@@ -246,17 +246,26 @@ public open class TextComponent protected constructor() : Padding, Margins {
         }
     }
 
+    /**
+     * Returns a width of this [TextComponent] for given [text].
+     */
     public fun getWidth(
         context: MeasureContext,
         text: CharSequence,
     ): Float = getTextBounds(context, text).width()
 
+    /**
+     * Returns a height of this [TextComponent] for given [text] and available [width].
+     */
     public fun getHeight(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
     ): Float = getTextBounds(context, text, width).height()
 
+    /**
+     * Returns the bounds ([RectF]) of this [TextComponent] for given [text] and available [width].
+     */
     public fun getTextBounds(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
