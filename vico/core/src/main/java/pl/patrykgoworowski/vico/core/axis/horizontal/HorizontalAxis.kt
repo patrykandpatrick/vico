@@ -28,6 +28,13 @@ import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
+/**
+ * A subclass of [pl.patrykgoworowski.vico.core.axis.AxisRenderer] used for horizontal axes, used either on the top,
+ * or the bottom of the chart. It uses [Axis] as its base implementation.
+ *
+ * @see pl.patrykgoworowski.vico.core.axis.AxisRenderer
+ * @see Axis
+ */
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
 ) : Axis<Position>() {
@@ -35,6 +42,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Top else VerticalPosition.Bottom
 
+    /**
+     * Defines the tick placement.
+     */
     public var tickType: TickType = TickType.Minor
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
@@ -198,16 +208,46 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             chartModel.maxX,
         ).map { x -> valueFormatter.formatValue(value = x, chartModel = chartModel) }
 
+    /**
+     * Defines the tick placement.
+     */
     public enum class TickType {
-        Minor, Major
+        /**
+         * The tick will be placed at the edges of each section on the horizontal axis.
+         *```
+         * —————————————
+         * |   |   |   |
+         *   1   2   3
+         * ```
+         */
+        Minor,
+
+        /**
+         * The tick will be placed at the center of each section on the horizontal axis.
+         *```
+         * —————————————
+         *   |   |   |
+         *   1   2   3
+         * ```
+         */
+        Major,
     }
 
+    /**
+     * A subclass of base [Axis.Builder] used to build instances of [HorizontalAxis].
+     */
     public class Builder<Position : AxisPosition.Horizontal>(
         builder: Axis.Builder<Position>? = null,
     ) : Axis.Builder<Position>(builder) {
 
+        /**
+         * Defines the tick placement.
+         */
         public var tickType: TickType = TickType.Minor
 
+        /**
+         * Creates an instance of [HorizontalAxis] using properties set in this [Builder].
+         */
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : Position> build(): HorizontalAxis<T> {
             val position = when (T::class.java) {
@@ -222,6 +262,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 }
 
+/**
+ * A convenience function which creates an instance of [HorizontalAxis].
+ *
+ * @param block A lambda function yielding [HorizontalAxis.Builder] as its receiver.
+ */
 public inline fun <reified Position : AxisPosition.Horizontal> createHorizontalAxis(
     block: HorizontalAxis.Builder<Position>.() -> Unit = {},
 ): HorizontalAxis<Position> = HorizontalAxis.Builder<Position>().apply(block).build()

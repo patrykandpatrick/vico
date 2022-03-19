@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.axis.vertical
 
-import java.lang.IllegalStateException
 import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
 import pl.patrykgoworowski.vico.core.axis.Axis
@@ -39,6 +38,13 @@ import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
 private const val LABELS_KEY = "labels"
 
+/**
+ * A subclass of [pl.patrykgoworowski.vico.core.axis.AxisRenderer] used for vertical axes, used either on the start,
+ * or the end of the chart. It uses [Axis] as its base implementation.
+ *
+ * @see pl.patrykgoworowski.vico.core.axis.AxisRenderer
+ * @see Axis
+ */
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
 ) : Axis<Position>() {
@@ -62,7 +68,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public var labelSpacing: Float = DEF_LABEL_SPACING
 
+    /**
+     * Defines a horizontal label position relative to the axis line.
+     */
     public var horizontalLabelPosition: HorizontalLabelPosition = Outside
+
+    /**
+     * Defines a vertical label position relative to the tick line.
+     */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
     override fun drawBehindChart(
@@ -259,16 +272,30 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         Inside -> 0f
     }
 
+    /**
+     * Defines a horizontal label position relative to the axis line.
+     */
     public enum class HorizontalLabelPosition {
         Outside, Inside
     }
 
+    /**
+     * Defines a vertical label position relative to the tick line.
+     *
+     * @param textPosition A vertical text position definition used internally by
+     * [pl.patrykgoworowski.vico.core.component.text.TextComponent].
+     *
+     * @see VerticalPosition
+     */
     public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
         Center(VerticalPosition.Center),
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
     }
 
+    /**
+     * A subclass of base [Axis.Builder] used to build instances of [VerticalAxis].
+     */
     public class Builder<Position : AxisPosition.Vertical>(
         builder: Axis.Builder<Position>? = null,
     ) : Axis.Builder<Position>(builder) {
@@ -281,9 +308,20 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
          * The label spacing in dp.
          */
         public var labelSpacing: Float = DEF_LABEL_SPACING
+
+        /**
+         * Defines a horizontal label position relative to the axis line.
+         */
         public var horizontalLabelPosition: HorizontalLabelPosition = Outside
+
+        /**
+         * Defines a vertical label position relative to the tick line.
+         */
         public var verticalLabelPosition: VerticalLabelPosition = Center
 
+        /**
+         * Creates an instance of [VerticalAxis] using properties set in this [Builder].
+         */
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : Position> build(): VerticalAxis<T> {
             val position = when (T::class.java) {
@@ -301,6 +339,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 }
 
+/**
+ * A convenience function which creates an instance of [VerticalAxis].
+ *
+ * @param block A lambda function yielding [VerticalAxis.Builder] as its receiver.
+ */
 public inline fun <reified Position : AxisPosition.Vertical> createVerticalAxis(
     block: VerticalAxis.Builder<Position>.() -> Unit = {},
 ): VerticalAxis<Position> = VerticalAxis.Builder<Position>().apply(block).build()
