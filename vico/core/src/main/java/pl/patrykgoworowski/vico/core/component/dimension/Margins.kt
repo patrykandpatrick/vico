@@ -51,6 +51,11 @@ public interface Margins {
     }
 }
 
+/**
+ * Sets margins of receiver [Margins] to other [Margins].
+ *
+ * @param margins that will be updated with values from this [Margins].
+ */
 public fun Margins.setMargins(margins: Dimensions) {
     this.margins.set(margins)
 }
