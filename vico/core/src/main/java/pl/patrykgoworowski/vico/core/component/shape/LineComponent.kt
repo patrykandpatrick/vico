@@ -25,6 +25,16 @@ import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 
+/**
+ * Draws a line.
+ * @property color the background color.
+ * @property thicknessDp the thickness of the line.
+ * @property shape the [Shape] to use for the line.
+ * @property dynamicShader an optional [DynamicShader] to apply to the line.
+ * @property margins the margins of the line.
+ * @property strokeWidthDp the stroke width.
+ * @property strokeColor the stroke color.
+ */
 public open class LineComponent(
     color: Int,
     public var thicknessDp: Float = 2f,
