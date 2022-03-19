@@ -20,7 +20,7 @@ import java.util.SortedMap
 import java.util.TreeMap
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import pl.patrykgoworowski.vico.core.THREAD_POOL_COUNT
+import pl.patrykgoworowski.vico.core.DEF_THREAD_POOL_SIZE
 import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
@@ -28,7 +28,7 @@ import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 
 public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
     public val chartModelProducers: List<ChartModelProducer<Model>>,
-    backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
+    backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
 ) : ChartModelProducer<ComposedChartEntryModel<Model>> {
 
     private val compositeModelReceivers: HashMap<Any, CompositeModelReceiver<Model>> = HashMap()
@@ -39,7 +39,7 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
 
     public constructor(
         vararg chartModelProducers: ChartModelProducer<Model>,
-        backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
+        backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
     ) : this(chartModelProducers.toList(), backgroundExecutor)
 
     override fun getModel(): ComposedChartEntryModel<Model> =

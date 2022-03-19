@@ -18,14 +18,14 @@ package pl.patrykgoworowski.vico.core.entry
 
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import pl.patrykgoworowski.vico.core.THREAD_POOL_COUNT
+import pl.patrykgoworowski.vico.core.DEF_THREAD_POOL_SIZE
 import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffProcessor
 import pl.patrykgoworowski.vico.core.entry.diff.DiffProcessor
 import pl.patrykgoworowski.vico.core.extension.setAll
 
 public class ChartEntryModelProducer(
     entryCollections: List<List<ChartEntry>>,
-    backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
+    backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
 ) : ChartModelProducer<ChartEntryModel> {
 
     private var cachedModel: ChartEntryModel? = null
@@ -38,7 +38,7 @@ public class ChartEntryModelProducer(
 
     public constructor(
         vararg entryCollections: List<ChartEntry>,
-        backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
+        backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
     ) : this(entryCollections.toList(), backgroundExecutor)
 
     init {
