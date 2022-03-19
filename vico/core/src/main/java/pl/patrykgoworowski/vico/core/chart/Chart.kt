@@ -123,16 +123,16 @@ public interface Chart<in Model> : BoundsAware {
     /**
      * Called to get the [SegmentProperties] of this chart, which influences the look of various parts of the chart.
      *
-     * @param context The measuring context holding data used for component measurements.
-     * @param model The model used to represent data rendered by this chart.
+     * @param context the measuring context holding data used for component measurements.
+     * @param model the model used to represent data rendered by this chart.
      */
     public fun getSegmentProperties(context: MeasureContext, model: Model): SegmentProperties
 
     /**
      * Called to update values stored in the [MutableChartModel] with values managed by this chart.
      *
-     * @param chartModel The [MutableChartModel] which will have its properties updated.
-     * @param model The model used to represent data rendered by this chart.
+     * @param chartModel the [MutableChartModel] which will have its properties updated.
+     * @param model the model used to represent data rendered by this chart.
      */
     public fun setToChartModel(chartModel: MutableChartModel, model: Model)
 }
