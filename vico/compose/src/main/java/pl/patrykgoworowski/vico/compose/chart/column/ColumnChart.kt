@@ -21,16 +21,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import pl.patrykgoworowski.vico.compose.style.ChartStyle
 import pl.patrykgoworowski.vico.compose.style.currentChartStyle
-import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
-import pl.patrykgoworowski.vico.core.chart.column.MergeMode
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart.MergeMode
+import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 
 @Composable
 public fun columnChart(
     columns: List<LineComponent> = currentChartStyle.columnChart.columns,
     spacing: Dp = currentChartStyle.columnChart.outsideSpacing,
     innerSpacing: Dp = currentChartStyle.columnChart.innerSpacing,
-    mergeMode: MergeMode = MergeMode.Grouped,
+    mergeMode: MergeMode = currentChartStyle.columnChart.mergeMode,
     minX: Float? = null,
     maxX: Float? = null,
     minY: Float? = null,
@@ -48,7 +48,6 @@ public fun columnChart(
 
 public fun columnChart(
     chartStyle: ChartStyle,
-    mergeMode: MergeMode = MergeMode.Grouped,
     minX: Float? = null,
     maxX: Float? = null,
     minY: Float? = null,
@@ -57,7 +56,7 @@ public fun columnChart(
     columns = chartStyle.columnChart.columns,
     spacingDp = chartStyle.columnChart.outsideSpacing.value,
     innerSpacingDp = chartStyle.columnChart.innerSpacing.value,
-    mergeMode = mergeMode,
+    mergeMode = chartStyle.columnChart.mergeMode,
 ).apply {
     this.minX = minX
     this.maxX = maxX

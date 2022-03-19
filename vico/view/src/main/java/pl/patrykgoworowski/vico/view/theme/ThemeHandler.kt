@@ -34,7 +34,7 @@ import pl.patrykgoworowski.vico.core.chart.composed.ComposedChart
 import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.chart.Chart
-import pl.patrykgoworowski.vico.core.chart.column.MergeMode
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart.MergeMode
 import pl.patrykgoworowski.vico.core.extension.hasAnyFlagOf
 import pl.patrykgoworowski.vico.core.extension.hasFlag
 import pl.patrykgoworowski.vico.view.R

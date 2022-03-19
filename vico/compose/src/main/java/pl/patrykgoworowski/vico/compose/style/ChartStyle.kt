@@ -37,6 +37,7 @@ import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart.MergeMode
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
@@ -119,11 +120,13 @@ public data class ChartStyle(
      * @property outsideSpacing the horizontal padding between the edges of chart segments and the columns they contain.
      * @property innerSpacing the spacing between the columns contained in chart segments. This has no effect on
      * segments that contain a single column only.
+     * @property mergeMode defines the way multiple columns are rendered in the [ColumnChart].
      */
     public data class ColumnChart(
         val columns: List<LineComponent>,
         val outsideSpacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
         val innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
+        val mergeMode: MergeMode = MergeMode.Grouped,
     )
 
     /**
