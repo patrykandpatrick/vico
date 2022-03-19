@@ -16,6 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.chart.segment
 
+/**
+ * The implementation of [SegmentProperties] which has all of its properties mutable.
+ */
 public data class MutableSegmentProperties(
     override var cellWidth: Float = 0f,
     override var marginWidth: Float = 0f,
