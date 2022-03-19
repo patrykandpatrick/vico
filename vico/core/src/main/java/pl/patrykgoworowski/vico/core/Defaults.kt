@@ -215,8 +215,19 @@ public interface DefaultColors {
      */
     public val axisLineColor: Long
 
+    /**
+     * The color for columns whose index in a segment is 3k (k ∈ N).
+     */
     public val column1Color: Long
+
+    /**
+     * The color for columns whose index in a segment is 1 + 3k (k ∈ N).
+     */
     public val column2Color: Long
+
+    /**
+     * The color for columns whose index in a segment is 2 + 3k (k ∈ N).
+     */
     public val column3Color: Long
 
     /**
