@@ -48,6 +48,9 @@ public open class LineComponent(
     private val MeasureContext.thickness: Float
         get() = thicknessDp.pixels
 
+    /**
+     * A convenience function for [draw], which draws the [LineComponent] horizontally.
+     */
     public open fun drawHorizontal(
         context: DrawContext,
         left: Float,
@@ -64,6 +67,9 @@ public open class LineComponent(
         )
     }
 
+    /**
+     * Checks whether the [LineComponent] fits horizontally within given [boundingBox] with its current [thicknessDp].
+     */
     public open fun fitsInHorizontal(
         context: DrawContext,
         left: Float,
@@ -81,6 +87,9 @@ public open class LineComponent(
         )
     }
 
+    /**
+     * A convenience function for [draw], which draws the [LineComponent] vertically.
+     */
     public open fun drawVertical(
         context: DrawContext,
         top: Float,
@@ -97,6 +106,9 @@ public open class LineComponent(
         )
     }
 
+    /**
+     * Checks whether the [LineComponent] fits vertically within given [boundingBox] with its current [thicknessDp].
+     */
     public open fun fitsInVertical(
         context: DrawContext,
         top: Float,
@@ -114,6 +126,9 @@ public open class LineComponent(
         )
     }
 
+    /**
+     * Checks whether the [LineComponent] intersects vertically given [boundingBox] with its current [thicknessDp].
+     */
     public open fun intersectsVertical(
         context: DrawContext,
         top: Float,
