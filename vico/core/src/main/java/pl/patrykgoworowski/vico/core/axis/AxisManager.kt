@@ -208,7 +208,7 @@ public open class AxisManager {
      * Called after [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
      * It simply forwards a call for [Axis] subclasses to draw above the chart.
      *
-     * @param context Drawing context holding information necessary to draw axis.
+     * @param context Drawing context holding information necessary to draw the axis.
      *
      * @see Axis.drawAboveChart
      */
