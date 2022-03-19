@@ -86,9 +86,9 @@ public open class AxisManager {
     /**
      * Sets bounds of each axis.
      *
-     * @param measureContext The measuring context holding data used for component measurements.
-     * @param contentBounds The bounds in which the chart contents must be drawn.
-     * @param insets The final insets storing the maximum insets for each side specified by all [ChartInsetter]s used
+     * @param measureContext the measuring context holding data used for component measurements.
+     * @param contentBounds the bounds in which the chart contents must be drawn.
+     * @param insets the final insets storing the maximum insets for each side specified by all [ChartInsetter]s used
      * in this Chart. Axes should take them into account while setting their bounds to avoid being drawn incorrectly.
      */
     public fun setAxesBounds(
