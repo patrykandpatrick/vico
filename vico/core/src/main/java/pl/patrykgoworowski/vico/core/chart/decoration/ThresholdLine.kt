@@ -21,7 +21,6 @@ import java.text.DecimalFormat
 import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
-import pl.patrykgoworowski.vico.core.component.shape.rectComponent
 import pl.patrykgoworowski.vico.core.component.text.HorizontalPosition
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 import pl.patrykgoworowski.vico.core.component.text.VerticalPosition
@@ -52,7 +51,7 @@ public data class ThresholdLine(
         decimalFormat.format(thresholdRange.start),
         decimalFormat.format(thresholdRange.endInclusive),
     ),
-    val lineComponent: ShapeComponent = rectComponent(),
+    val lineComponent: ShapeComponent = ShapeComponent(),
     val minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
     val labelComponent: TextComponent = buildTextComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
@@ -74,7 +73,7 @@ public data class ThresholdLine(
     public constructor(
         thresholdValue: Float,
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
-        lineComponent: ShapeComponent = rectComponent(),
+        lineComponent: ShapeComponent = ShapeComponent(),
         minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
         textComponent: TextComponent = buildTextComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,

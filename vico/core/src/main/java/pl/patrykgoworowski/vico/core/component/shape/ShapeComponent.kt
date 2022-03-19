@@ -43,7 +43,7 @@ import pl.patrykgoworowski.vico.core.extension.half
  * @param strokeColor the color of the stroke.
  */
 public open class ShapeComponent(
-    public val shape: Shape,
+    public val shape: Shape = Shapes.rectShape,
     color: Int = Color.BLACK,
     public val dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
