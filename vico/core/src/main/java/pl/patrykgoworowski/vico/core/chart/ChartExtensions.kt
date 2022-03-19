@@ -21,7 +21,7 @@ import pl.patrykgoworowski.vico.core.extension.updateList
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.model.Point
 
-public fun HashMap<Float, MutableList<Marker.EntryModel>>.put(
+internal fun HashMap<Float, MutableList<Marker.EntryModel>>.put(
     x: Float,
     y: Float,
     entry: ChartEntry,
