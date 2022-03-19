@@ -18,6 +18,7 @@ package pl.patrykgoworowski.vico.core.component.shape
 
 import android.graphics.Paint
 import android.graphics.Path
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
@@ -30,9 +31,9 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
  * @property fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public class DashedShape(
-    public val shape: Shape,
-    public val dashLengthDp: Float,
-    public val gapLengthDp: Float,
+    public val shape: Shape = Shapes.rectShape,
+    public val dashLengthDp: Float = DefaultDimens.DASH_LENGTH,
+    public val gapLengthDp: Float = DefaultDimens.DASH_GAP,
     public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
 

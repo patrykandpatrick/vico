@@ -26,15 +26,16 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.axisBuilder
 import pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
+import pl.patrykgoworowski.vico.core.chart.Chart
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart.MergeMode
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChart
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
+import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
-import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
-import pl.patrykgoworowski.vico.core.chart.composed.ComposedChart
-import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
-import pl.patrykgoworowski.vico.core.chart.Chart
-import pl.patrykgoworowski.vico.core.chart.column.ColumnChart.MergeMode
 import pl.patrykgoworowski.vico.core.extension.hasAnyFlagOf
 import pl.patrykgoworowski.vico.core.extension.hasFlag
 import pl.patrykgoworowski.vico.view.R
@@ -135,7 +136,7 @@ internal class ThemeHandler(
                 guideline = axisStyle.getLineComponent(
                     resourceId = R.styleable.Axis_axisGuidelineStyle,
                     styleableResourceId = R.styleable.LineComponentStyle,
-                    defaultShape = Shapes.dashedShape(),
+                    defaultShape = DashedShape(),
                 )
                 label = axisStyle.getNestedTypedArray(
                     context = context,
