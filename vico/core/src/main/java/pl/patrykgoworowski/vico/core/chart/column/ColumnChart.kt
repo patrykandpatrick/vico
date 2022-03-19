@@ -37,7 +37,7 @@ import kotlin.math.ceil
 import kotlin.math.min
 
 /**
- * The [ColumnChart] displays data in vertical columns.
+ * [ColumnChart] displays data in vertical columns.
  * It supports rendering multiple columns for multiple sets of data.
  *
  * @property columns the [LineComponent] instances to use for columns. This list is iterated through as many times
