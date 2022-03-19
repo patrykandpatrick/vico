@@ -63,6 +63,9 @@ public const val DEF_THREAD_POOL_SIZE: Int = 4
  * Defaults for animations.
  */
 public object Animation {
+    /**
+     * The [Float] range of values used in difference animations.
+     */
     public val range: ClosedFloatingPointRange<Float> = 0f..1f
 
     /**
@@ -293,6 +296,13 @@ public interface DefaultColors {
  * Default alpha values.
  */
 public object DefaultAlpha {
+    /**
+     * The default value for alpha on the start of line’s background gradient.
+     */
     public const val LINE_BACKGROUND_SHADER_START: Float = 0.5f
+
+    /**
+     * The default value for alpha on the end of line’s background gradient.
+     */
     public const val LINE_BACKGROUND_SHADER_END: Float = 0f
 }
