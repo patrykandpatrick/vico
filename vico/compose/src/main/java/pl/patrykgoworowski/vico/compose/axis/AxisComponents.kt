@@ -84,6 +84,16 @@ public fun axisLabelComponent(
     this.rotationDegrees = rotationDegrees
 }
 
+/**
+ * Creates an axis line.
+ * @param color the background color.
+ * @param thickness the line thickness.
+ * @param shape the [ChartShape] to use for the line.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param dynamicShader an optional [DynamicShader] to apply to the line.
+ * @param margins the margins of the line.
+ */
 @Composable
 public fun axisLineComponent(
     color: Color = currentChartStyle.axis.axisLineColor,
@@ -122,6 +132,15 @@ public fun axisLineComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates an axis tick.
+ * @param color the background color.
+ * @param thickness the thickness of the tick.
+ * @param shape the [ChartShape] to use for the tick.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param dynamicShader an optional [DynamicShader] to apply to the tick.
+ */
 @Composable
 public fun axisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
