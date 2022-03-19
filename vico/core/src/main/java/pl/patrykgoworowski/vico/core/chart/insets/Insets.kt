@@ -21,6 +21,11 @@ import pl.patrykgoworowski.vico.core.extension.half
 /**
  * The class used to store insets specified by [ChartInsetter].
  *
+ * @param start defines an inset at the start of given rectangle.
+ * @param top defines an inset at the top of given rectangle.
+ * @param end defines an inset at the end of given rectangle.
+ * @param bottom defines an inset at the bottom of given rectangle.
+ *
  * @see ChartInsetter
  */
 public class Insets(
