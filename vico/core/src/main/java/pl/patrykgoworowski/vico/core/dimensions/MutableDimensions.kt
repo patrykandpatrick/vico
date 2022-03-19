@@ -16,6 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.dimensions
 
+/**
+ * A subclass of [Dimensions] which has all of its properties mutable.
+ */
 public class MutableDimensions(
     override var startDp: Float,
     override var topDp: Float,
@@ -60,16 +63,6 @@ public class MutableDimensions(
         this.topDp = topDp
         this.endDp = endDp
         this.bottomDp = bottomDp
-    }
-
-    public fun setLeft(isLtr: Boolean, valueDp: Float): MutableDimensions = apply {
-        if (isLtr) startDp = valueDp
-        else endDp = valueDp
-    }
-
-    public fun setRight(isLtr: Boolean, valueDp: Float): MutableDimensions = apply {
-        if (isLtr) endDp = valueDp
-        else startDp = valueDp
     }
 
     /**
