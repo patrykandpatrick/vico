@@ -16,6 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.scroll
 
+/**
+ * Handles scroll events.
+ * @param maxScrollDistance the maximum scroll distance.
+ */
 public class ScrollHandler(
     private val setScrollAmount: (Float) -> Unit = {},
     public var maxScrollDistance: Float = 0f,
