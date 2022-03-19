@@ -32,6 +32,20 @@ import pl.patrykgoworowski.vico.core.extension.floor
 import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.median
 
+/**
+ * The [ThresholdLine] is drawn on top of the chart and marks a certain range of y-axis values.
+ *
+ * @property thresholdRange the range of y-axis values which this [ThresholdLine] will cover.
+ * @property thresholdLabel the label of this [ThresholdLine].
+ * @property lineComponent the [ShapeComponent] drawn as the threshold line.
+ * @property minimumLineThicknessDp the minimal thickness of the threshold line. If [thresholdRange] covered in pixels
+ * is smaller than this value, the [minimumLineThicknessDp] will be used as threshold line’s thickness.
+ * @property labelComponent the [TextComponent] used to draw the [thresholdLabel] text.
+ * @property labelHorizontalPosition defines the horizontal position of the label.
+ * @property labelVerticalPosition defines the vertical position of the label.
+ *
+ * @see Decoration
+ */
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
     val thresholdLabel: CharSequence = RANGE_FORMAT.format(
@@ -40,11 +54,23 @@ public data class ThresholdLine(
     ),
     val lineComponent: ShapeComponent = rectComponent(),
     val minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
-    val textComponent: TextComponent = buildTextComponent(),
+    val labelComponent: TextComponent = buildTextComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
 ) : Decoration {
 
+    /**
+     * The alternative constructor allowing usage of single value on y-axis.
+     *
+     * @property thresholdValue the single value on y-axis which this [ThresholdLine] will cover.
+     * @property thresholdLabel the label of this [ThresholdLine].
+     * @property lineComponent the [ShapeComponent] drawn as the threshold line.
+     * @property minimumLineThicknessDp the minimal thickness of the threshold line. If [thresholdRange] covered
+     * in pixels is smaller than this value, the [minimumLineThicknessDp] will be used as threshold line’s thickness.
+     * @property labelComponent the [TextComponent] used to draw the [thresholdLabel] text.
+     * @property labelHorizontalPosition defines the horizontal position of the label.
+     * @property labelVerticalPosition defines the vertical position of the label.
+     */
     public constructor(
         thresholdValue: Float,
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
@@ -58,7 +84,7 @@ public data class ThresholdLine(
         thresholdLabel = thresholdLabel,
         lineComponent = lineComponent,
         minimumLineThicknessDp = minimumLineThicknessDp,
-        textComponent = textComponent,
+        labelComponent = textComponent,
         labelHorizontalPosition = labelHorizontalPosition,
         labelVerticalPosition = labelVerticalPosition,
     )
@@ -91,7 +117,7 @@ public data class ThresholdLine(
             top = topY,
             bottom = bottomY
         )
-        textComponent.drawText(
+        labelComponent.drawText(
             context = context,
             text = thresholdLabel,
             maxTextWidth = bounds.width().toInt(),
@@ -111,7 +137,7 @@ public data class ThresholdLine(
         text: CharSequence,
         textY: Float,
     ): LabelVerticalPosition {
-        val labelHeight = textComponent.getHeight(context = context, text = text)
+        val labelHeight = labelComponent.getHeight(context = context, text = text)
         return when (labelVerticalPosition) {
             LabelVerticalPosition.Top ->
                 if (textY - labelHeight < bounds.top) LabelVerticalPosition.Bottom else labelVerticalPosition
@@ -120,11 +146,21 @@ public data class ThresholdLine(
         }
     }
 
+    /**
+     * Defines the horizontal position of the label.
+     *
+     * @property position the [HorizontalPosition] used under the hood for drawing the label.
+     */
     public enum class LabelHorizontalPosition(public val position: HorizontalPosition) {
         Start(HorizontalPosition.Start),
         End(HorizontalPosition.End),
     }
 
+    /**
+     * Defines the vertical position of the label.
+     *
+     * @property position the [VerticalPosition] used under the hood for drawing the label.
+     */
     public enum class LabelVerticalPosition(public val position: VerticalPosition) {
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
