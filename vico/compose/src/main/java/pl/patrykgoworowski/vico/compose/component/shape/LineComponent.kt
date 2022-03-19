@@ -27,6 +27,16 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
+/**
+ * Creates a [LineComponent].
+ * @param color the background color.
+ * @param thickness the thickness of the line.
+ * @param shape the [Shape] to use for the line.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param dynamicShader an optional [DynamicShader] to apply to the line.
+ * @param margins the margins of the line.
+ */
 public fun lineComponent(
     color: Color,
     thickness: Dp,
@@ -45,6 +55,16 @@ public fun lineComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates a [LineComponent].
+ * @param color the background color.
+ * @param thickness the thickness of the line.
+ * @param shape the [Shape] to use for the line.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param dynamicShader an optional [DynamicShader] to apply to the line.
+ * @param margins the margins of the line.
+ */
 public fun lineComponent(
     color: Color,
     thickness: Dp,
