@@ -39,6 +39,9 @@ public fun DynamicShaders.fromComponent(
     tileYMode = tileYMode,
 )
 
+/**
+ * Creates a horizontal linear gradient comprising the provided colors.
+ */
 public fun DynamicShaders.horizontalGradient(
     vararg colors: Int,
 ): DynamicShader = horizontalGradient(colors)
