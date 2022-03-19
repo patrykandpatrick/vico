@@ -23,9 +23,19 @@ import pl.patrykgoworowski.vico.core.axis.model.ChartModel
  */
 public fun interface AxisValueFormatter {
 
+    /**
+     * Called by [pl.patrykgoworowski.vico.core.axis.AxisRenderer] subclasses in order to format either y-axis,
+     * or x-axis values for display.
+     *
+     * @param value The values to be formatted. It’s either a value on y-axis, or x-axis.
+     * @param chartModel The model used by the chart holding information about values on both y-axis and x-axis.
+     *
+     * @see ChartModel
+     *
+     * @return formatted value that will be displayed on the axis.
+     */
     public fun formatValue(
         value: Float,
-        index: Int,
         chartModel: ChartModel,
     ): String
 }

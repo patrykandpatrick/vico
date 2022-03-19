@@ -171,13 +171,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
         label?.let { label ->
 
-            fun getLabelHeight(value: Float, valueIndex: Int): Float =
-                label.getHeight(this, valueFormatter.formatValue(value, valueIndex, chartModel))
+            fun getLabelHeight(value: Float): Float =
+                label.getHeight(this, valueFormatter.formatValue(value, chartModel))
 
             val avgHeight = arrayOf(
-                getLabelHeight(chartModel.minY, 0),
-                getLabelHeight((chartModel.maxY + chartModel.minY) / 2, chartModel.lengthY.half.toInt()),
-                getLabelHeight(chartModel.maxY, chartModel.lengthY.toInt()),
+                getLabelHeight(chartModel.minY),
+                getLabelHeight((chartModel.maxY + chartModel.minY) / 2),
+                getLabelHeight(chartModel.maxY),
             ).maxOrNull().orZero
 
             var result = 0f
@@ -200,7 +200,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
             for (index in maxLabelCount downTo 0) {
                 val value = chartModel.maxY - step * index
-                labels += valueFormatter.formatValue(value, index, chartModel)
+                labels += valueFormatter.formatValue(value, chartModel)
             }
             putExtra(LABELS_KEY, labels)
             labels

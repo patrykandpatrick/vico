@@ -122,7 +122,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             if (index < entryLength) {
                 label?.drawText(
                     context = context,
-                    text = valueFormatter.formatValue(valueIndex, index, context.chartModel),
+                    text = valueFormatter.formatValue(valueIndex, context.chartModel),
                     textX = textDrawCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -196,7 +196,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             chartModel.minX,
             (chartModel.maxX - chartModel.minX).half,
             chartModel.maxX,
-        ).mapIndexed { index, x -> valueFormatter.formatValue(value = x, index = index, chartModel = chartModel) }
+        ).map { x -> valueFormatter.formatValue(value = x, chartModel = chartModel) }
 
     public enum class TickType {
         Minor, Major

@@ -33,7 +33,6 @@ public class DecimalFormatAxisValueFormatter(
 
     override fun formatValue(
         value: Float,
-        index: Int,
         chartModel: ChartModel
     ): String = decimalFormat.format(value)
 

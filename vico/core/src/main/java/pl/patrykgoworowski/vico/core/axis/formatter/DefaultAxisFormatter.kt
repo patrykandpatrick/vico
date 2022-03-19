@@ -21,7 +21,6 @@ import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 public object DefaultAxisFormatter : AxisValueFormatter {
     override fun formatValue(
         value: Float,
-        index: Int,
         chartModel: ChartModel,
     ): String = value.toString()
 }

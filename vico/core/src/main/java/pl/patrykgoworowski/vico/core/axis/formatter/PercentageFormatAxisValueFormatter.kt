@@ -29,7 +29,6 @@ public class PercentageFormatAxisValueFormatter(
 
     override fun formatValue(
         value: Float,
-        index: Int,
         chartModel: ChartModel,
     ): String {
         val percentage = value / chartModel.maxY
