@@ -42,7 +42,7 @@ import pl.patrykgoworowski.vico.view.R
 internal class ThemeHandler(
     private val context: Context,
     attrs: AttributeSet?,
-    chartType: ChartType
+    chartType: ChartType,
 ) {
 
     public var startAxis: VerticalAxis<AxisPosition.Vertical.Start>? = null
@@ -72,16 +72,16 @@ internal class ThemeHandler(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.BaseChartView).use { typedArray ->
             if (typedArray.getBoolean(R.styleable.BaseChartView_showStartAxis, false)) {
-                startAxis = VerticalAxis.Builder(typedArray.getAxis()).build()
+                startAxis = VerticalAxis.Builder<AxisPosition.Vertical.Start>(typedArray.getAxis()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showTopAxis, false)) {
-                topAxis = HorizontalAxis.Builder(typedArray.getAxis()).build()
+                topAxis = HorizontalAxis.Builder<AxisPosition.Horizontal.Top>(typedArray.getAxis()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showEndAxis, false)) {
-                endAxis = VerticalAxis.Builder(typedArray.getAxis()).build()
+                endAxis = VerticalAxis.Builder<AxisPosition.Vertical.End>(typedArray.getAxis()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showBottomAxis, false)) {
-                bottomAxis = HorizontalAxis.Builder(typedArray.getAxis()).build()
+                bottomAxis = HorizontalAxis.Builder<AxisPosition.Horizontal.Bottom>(typedArray.getAxis()).build()
             }
             isHorizontalScrollEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, false)
@@ -100,7 +100,7 @@ internal class ThemeHandler(
         }
     }
 
-    private fun TypedArray.getAxis(): Axis.Builder {
+    private fun <Position : AxisPosition> TypedArray.getAxis(): Axis.Builder<Position> {
 
         fun TypedArray.getLineComponent(
             @StyleableRes resourceId: Int,

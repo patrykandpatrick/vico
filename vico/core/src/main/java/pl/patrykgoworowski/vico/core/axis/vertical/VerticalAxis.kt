@@ -210,7 +210,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
-        outInsets: HorizontalInsets
+        outInsets: HorizontalInsets,
     ): Unit = with(context) {
         val labels = getLabels(chartModel = chartModel, maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
 
@@ -224,7 +224,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun getInsets(
         context: MeasureContext,
-        outInsets: Insets
+        outInsets: Insets,
     ): Unit = with(context) {
         val halfLabelHeight = label?.getHeight(context = context)?.half.orZero
         outInsets.set(
@@ -269,7 +269,9 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         Bottom(VerticalPosition.Top),
     }
 
-    public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
+    public class Builder<Position : AxisPosition.Vertical>(
+        builder: Axis.Builder<Position>? = null,
+    ) : Axis.Builder<Position>(builder) {
         /**
          * The maximum label count.
          */
@@ -283,13 +285,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         public var verticalLabelPosition: VerticalLabelPosition = Center
 
         @Suppress("UNCHECKED_CAST")
-        public inline fun <reified T : AxisPosition.Vertical> build(): VerticalAxis<T> {
+        public inline fun <reified T : Position> build(): VerticalAxis<T> {
             val position = when (T::class.java) {
                 AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
                 AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
                 else -> throw UnknownAxisPositionException(T::class.java)
-            }
-            return setTo(VerticalAxis(position = position)).also { axis ->
+            } as Position
+            return setTo(VerticalAxis(position)).also { axis ->
                 axis.maxLabelCount = maxLabelCount
                 axis.labelSpacing = labelSpacing
                 axis.horizontalLabelPosition = horizontalLabelPosition
@@ -299,6 +301,6 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 }
 
-public inline fun <reified T : AxisPosition.Vertical> createVerticalAxis(
-    block: VerticalAxis.Builder.() -> Unit = {},
-): VerticalAxis<T> = VerticalAxis.Builder().apply(block).build()
+public inline fun <reified Position : AxisPosition.Vertical> createVerticalAxis(
+    block: VerticalAxis.Builder<Position>.() -> Unit = {},
+): VerticalAxis<Position> = VerticalAxis.Builder<Position>().apply(block).build()

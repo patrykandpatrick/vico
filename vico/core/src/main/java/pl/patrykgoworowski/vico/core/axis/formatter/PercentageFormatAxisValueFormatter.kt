@@ -18,13 +18,23 @@ package pl.patrykgoworowski.vico.core.axis.formatter
 
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import java.text.DecimalFormat
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 
-public class PercentageFormatAxisValueFormatter(
+/**
+ * A subclass of [AxisValueFormatter] which converts y-axis values into percents.
+ * It uses [DecimalFormat] to format values under the hood.
+ *
+ * @param pattern The pattern used by [DecimalFormat] to format percent values.
+ */
+public class PercentageFormatAxisValueFormatter<Position : AxisPosition.Vertical>(
     pattern: String,
-) : AxisValueFormatter {
+) : AxisValueFormatter<Position> {
 
     private val decimalFormat = DecimalFormat(pattern)
 
+    /**
+     * Creates a [PercentageFormatAxisValueFormatter] using default percentage pattern.
+     */
     public constructor() : this(DEF_PATTERN)
 
     override fun formatValue(

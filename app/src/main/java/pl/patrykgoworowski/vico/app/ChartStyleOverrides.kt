@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.app
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
@@ -52,7 +53,7 @@ internal data class ChartStyleOverrides(
         var axisTickWidth: Dp? = null,
         var axisTickShape: Shape? = null,
         var axisTickLength: Dp? = null,
-        var axisValueFormatter: AxisValueFormatter ? = null,
+        var axisValueFormatter: AxisValueFormatter<AxisPosition>? = null,
     )
 
     internal data class ColumnChart(

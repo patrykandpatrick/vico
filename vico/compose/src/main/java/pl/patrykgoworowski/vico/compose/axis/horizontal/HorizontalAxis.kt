@@ -39,7 +39,7 @@ public fun topAxis(
     tick: LineComponent? = axisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
-    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Top> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
     this.label = label
@@ -58,7 +58,7 @@ public fun bottomAxis(
     tick: LineComponent? = axisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
-    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
     this.label = label

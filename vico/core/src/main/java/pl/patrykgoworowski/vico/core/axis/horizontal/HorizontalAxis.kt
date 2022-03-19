@@ -165,7 +165,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getInsets(
         context: MeasureContext,
-        outInsets: Insets
+        outInsets: Insets,
     ): Unit = with(context) {
         with(outInsets) {
             setHorizontal(
@@ -202,17 +202,19 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         Minor, Major
     }
 
-    public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
+    public class Builder<Position : AxisPosition.Horizontal>(
+        builder: Axis.Builder<Position>? = null,
+    ) : Axis.Builder<Position>(builder) {
 
         public var tickType: TickType = TickType.Minor
 
         @Suppress("UNCHECKED_CAST")
-        public inline fun <reified T : AxisPosition.Horizontal> build(): HorizontalAxis<T> {
+        public inline fun <reified T : Position> build(): HorizontalAxis<T> {
             val position = when (T::class.java) {
                 AxisPosition.Horizontal.Top::class.java -> AxisPosition.Horizontal.Top
                 AxisPosition.Horizontal.Bottom::class.java -> AxisPosition.Horizontal.Bottom
                 else -> throw UnknownAxisPositionException(T::class.java)
-            }
+            } as Position
             return setTo(HorizontalAxis(position = position)).also { axis ->
                 axis.tickType = tickType
             } as HorizontalAxis<T>
@@ -220,6 +222,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 }
 
-public inline fun <reified T : AxisPosition.Horizontal> createHorizontalAxis(
-    block: HorizontalAxis.Builder.() -> Unit = {},
-): HorizontalAxis<T> = HorizontalAxis.Builder().apply(block).build()
+public inline fun <reified Position : AxisPosition.Horizontal> createHorizontalAxis(
+    block: HorizontalAxis.Builder<Position>.() -> Unit = {},
+): HorizontalAxis<Position> = HorizontalAxis.Builder<Position>().apply(block).build()

@@ -34,6 +34,7 @@ import pl.patrykgoworowski.vico.compose.component.shape.shader.fromBrush
 import pl.patrykgoworowski.vico.core.DefaultAlpha
 import pl.patrykgoworowski.vico.core.DefaultColors
 import pl.patrykgoworowski.vico.core.DefaultDimens
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import pl.patrykgoworowski.vico.core.component.Component
@@ -108,7 +109,7 @@ public data class ChartStyle(
         val axisTickWidth: Dp = axisLineWidth,
         val axisTickShape: Shape = Shapes.rectShape,
         val axisTickLength: Dp = DefaultDimens.AXIS_TICK_LENGTH.dp,
-        val axisValueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+        val axisValueFormatter: AxisValueFormatter<AxisPosition> = DecimalFormatAxisValueFormatter(),
     )
 
     /**

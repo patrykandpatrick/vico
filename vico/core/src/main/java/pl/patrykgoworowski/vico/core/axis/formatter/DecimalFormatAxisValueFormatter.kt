@@ -19,13 +19,14 @@ package pl.patrykgoworowski.vico.core.axis.formatter
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 
 /**
  * A subclass of [AxisValueFormatter] which formats values using [DecimalFormat] with given pattern under the hood.
  */
-public class DecimalFormatAxisValueFormatter(
+public class DecimalFormatAxisValueFormatter<Position : AxisPosition>(
     private val decimalFormat: DecimalFormat,
-) : AxisValueFormatter {
+) : AxisValueFormatter<Position> {
 
     /**
      * Creates a [DecimalFormatAxisValueFormatter] using the default pattern.

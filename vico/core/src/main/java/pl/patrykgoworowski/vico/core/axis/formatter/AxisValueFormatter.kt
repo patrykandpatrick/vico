@@ -16,12 +16,13 @@
 
 package pl.patrykgoworowski.vico.core.axis.formatter
 
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 
 /**
  * Formats the values displayed along chart axes.
  */
-public fun interface AxisValueFormatter {
+public fun interface AxisValueFormatter<Position : AxisPosition> {
 
     /**
      * Called by [pl.patrykgoworowski.vico.core.axis.AxisRenderer] subclasses in order to format either y-axis,

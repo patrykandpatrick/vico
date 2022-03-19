@@ -92,7 +92,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     /**
      * The [AxisValueFormatter] for the axis.
      */
-    public var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
+    public var valueFormatter: AxisValueFormatter<Position> = DefaultAxisFormatter()
 
     override fun setRestrictedBounds(vararg bounds: RectF?) {
         restrictedBounds.setAll(bounds.filterNotNull())
@@ -110,7 +110,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     /**
      * The base builder class for constructing [Axis].
      */
-    public open class Builder(builder: Builder? = null) {
+    public open class Builder<Position : AxisPosition>(builder: Builder<Position>? = null) {
         /**
          * The [TextComponent] to use for labels.
          */
@@ -139,7 +139,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         /**
          * The [AxisValueFormatter] for the axis.
          */
-        public var valueFormatter: AxisValueFormatter =
+        public var valueFormatter: AxisValueFormatter<Position> =
             builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
 
         /**
@@ -204,15 +204,16 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
  * Provides a quick way to create an axis. Creates an [Axis.Builder] instance, calls the provided function block with
  * the [Axis.Builder] instance as its receiver, and returns the [Axis.Builder] instance.
  */
-public fun axisBuilder(block: Axis.Builder.() -> Unit = {}): Axis.Builder =
-    Axis.Builder().apply(block)
+public fun <Position : AxisPosition> axisBuilder(
+    block: Axis.Builder<Position>.() -> Unit = {},
+): Axis.Builder<Position> = Axis.Builder<Position>().apply(block)
 
 /**
  * A convenience function allowing to set [Axis.Builder]’s properties to an [Axis] subclass.
  *
  * @param axis an [Axis] which properties will be updated with this [Axis.Builder]’s properties.
  */
-public fun <T : AxisPosition, A : Axis<T>> Axis.Builder.setTo(axis: A): A {
+public fun <Position : AxisPosition, A : Axis<Position>> Axis.Builder<Position>.setTo(axis: A): A {
     axis.axisLine = this.axis
     axis.tick = tick
     axis.guideline = guideline
