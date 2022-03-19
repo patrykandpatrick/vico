@@ -49,7 +49,7 @@ public open class LineComponent(
         get() = thicknessDp.pixels
 
     /**
-     * A convenience function for [draw], which draws the [LineComponent] horizontally.
+     * A convenience function for [draw] that draws the [LineComponent] horizontally.
      */
     public open fun drawHorizontal(
         context: DrawContext,
@@ -88,7 +88,7 @@ public open class LineComponent(
     }
 
     /**
-     * A convenience function for [draw], which draws the [LineComponent] vertically.
+     * A convenience function for [draw] that draws the [LineComponent] vertically.
      */
     public open fun drawVertical(
         context: DrawContext,
