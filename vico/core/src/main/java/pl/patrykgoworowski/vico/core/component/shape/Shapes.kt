@@ -27,10 +27,19 @@ import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreat
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.extension.setBounds
 
+/**
+ * Houses utilities for creating [Shape]s.
+ */
 public object Shapes {
 
+    /**
+     * A shape whose each corner is fully rounded.
+     */
     public val pillShape: CorneredShape = roundedCornerShape(allPercent = 50)
 
+    /**
+     * A rectangle with sharp corners.
+     */
     public val rectShape: Shape = object : Shape {
 
         override fun drawShape(
