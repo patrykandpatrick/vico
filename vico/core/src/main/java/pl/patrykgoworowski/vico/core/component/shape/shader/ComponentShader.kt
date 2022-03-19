@@ -24,6 +24,15 @@ import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.extension.half
 
+/**
+ * [ComponentShader] creates a [Shader] out of provided [component].
+ *
+ * @property component used as a pattern in the [Shader].
+ * @property componentSizeDp the size of the [component] in dp unit.
+ * @property checkeredArrangement whether the [component] will have checkered arrangement in the [Shader].
+ * @property tileXMode The tiling mode for x to draw the [component] in.
+ * @property tileYMode The tiling mode for y to draw the [component] in.
+ */
 public class ComponentShader(
     private val component: Component,
     private val componentSizeDp: Float,
