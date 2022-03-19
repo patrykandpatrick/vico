@@ -175,6 +175,16 @@ public fun axisTickComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates an axis guideline.
+ * @param color the background color.
+ * @param thickness the line thickness.
+ * @param shape the [ChartShape] to use for the guideline.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param dynamicShader an optional [DynamicShader] to apply to the guideline.
+ * @param margins the margins of the guideline.
+ */
 @Composable
 public fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
