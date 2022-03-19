@@ -56,7 +56,7 @@ public open class LineComponent(
         left: Float,
         right: Float,
         centerY: Float,
-        thicknessScale: Float = 1f
+        thicknessScale: Float = 1f,
     ): Unit = with(context) {
         draw(
             context,
@@ -78,12 +78,11 @@ public open class LineComponent(
         boundingBox: RectF,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        fitsIn(
-            left = left,
-            top = centerY - thickness * thicknessScale / 2,
-            right = right,
-            bottom = centerY + thickness * thicknessScale / 2,
-            boundingBox = boundingBox,
+        boundingBox.contains(
+            left,
+            centerY - thickness * thicknessScale / 2,
+            right,
+            centerY + thickness * thicknessScale / 2,
         )
     }
 
@@ -117,12 +116,11 @@ public open class LineComponent(
         boundingBox: RectF,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        fitsIn(
-            left = centerX - thickness * thicknessScale / 2,
-            top = top,
-            right = centerX + thickness * thicknessScale / 2,
-            bottom = bottom,
-            boundingBox = boundingBox,
+        boundingBox.contains(
+            centerX - thickness * thicknessScale / 2,
+            top,
+            centerX + thickness * thicknessScale / 2,
+            bottom,
         )
     }
 
@@ -137,12 +135,11 @@ public open class LineComponent(
         boundingBox: RectF,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        intersects(
-            left = centerX - thickness * thicknessScale / 2,
-            top = top,
-            right = centerX + thickness * thicknessScale / 2,
-            bottom = bottom,
-            boundingBox = boundingBox,
+        boundingBox.intersects(
+            centerX - thickness * thicknessScale / 2,
+            top,
+            centerX + thickness * thicknessScale / 2,
+            bottom,
         )
     }
 }
