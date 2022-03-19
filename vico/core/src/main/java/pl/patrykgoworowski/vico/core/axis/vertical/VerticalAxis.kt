@@ -261,7 +261,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             is SizeConstraint.Exact ->
                 constraint.sizeDp.pixels
             is SizeConstraint.Fraction ->
-                context.width * constraint.fraction
+                canvasBounds.width() * constraint.fraction
             is SizeConstraint.TextWidth ->
                 label?.getWidth(context = this, text = constraint.text).orZero + tickLength + axisThickness.half
         }

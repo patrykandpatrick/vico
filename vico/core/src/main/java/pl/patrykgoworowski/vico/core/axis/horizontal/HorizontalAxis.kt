@@ -196,7 +196,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 ).coerceAtLeast(constraint.minSizeDp.pixels)
                 .coerceAtMost(constraint.maxSizeDp.pixels)
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
-            is SizeConstraint.Fraction -> context.height * constraint.fraction
+            is SizeConstraint.Fraction -> canvasBounds.height() * constraint.fraction
             is SizeConstraint.TextWidth -> label?.getHeight(context = this, text = constraint.text).orZero
         }
     }
