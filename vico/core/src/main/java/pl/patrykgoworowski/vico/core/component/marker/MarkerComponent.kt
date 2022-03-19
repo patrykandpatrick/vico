@@ -33,10 +33,17 @@ import pl.patrykgoworowski.vico.core.marker.DefaultMarkerLabelFormatter
 import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.marker.MarkerLabelFormatter
 
+/**
+ * The default implementation of [Marker] interface.
+ *
+ * @param label the [TextComponent] used to draw the label.
+ * @param indicator is an optional indication drawn at given x,y point of the data entry.
+ * @param guideline is an optional line drawn from the bottom of the chart to the bottom edge of the [label].
+ */
 public open class MarkerComponent(
-    private val label: TextComponent,
-    private val indicator: Component,
-    private val guideline: LineComponent,
+    public val label: TextComponent,
+    public val indicator: Component?,
+    public val guideline: LineComponent?,
 ) : Marker {
 
     private val tempBounds = RectF()
@@ -48,6 +55,10 @@ public open class MarkerComponent(
      * The indicator size in dp.
      */
     public var indicatorSizeDp: Float = 0f
+
+    /**
+     * The optional lambda function which allows to apply a color associated with given data entry to some [Component].
+     */
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
 
     /**
@@ -65,7 +76,7 @@ public open class MarkerComponent(
 
         markedEntries.forEachIndexed { _, model ->
             onApplyEntryColor?.invoke(model.color)
-            indicator.draw(
+            indicator?.draw(
                 context,
                 model.location.x - halfIndicatorSize,
                 model.location.y - halfIndicatorSize,
@@ -116,7 +127,7 @@ public open class MarkerComponent(
             .map { it.location.x }
             .toSet()
             .forEach { x ->
-                guideline.drawVertical(
+                guideline?.drawVertical(
                     context,
                     bounds.top,
                     bounds.bottom,
