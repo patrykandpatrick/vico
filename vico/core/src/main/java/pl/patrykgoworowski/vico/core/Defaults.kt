@@ -59,6 +59,9 @@ public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
  */
 public const val DEF_THREAD_POOL_SIZE: Int = 4
 
+/**
+ * Defaults for animations.
+ */
 public object Animation {
     public val range: ClosedFloatingPointRange<Float> = 0f..1f
 
