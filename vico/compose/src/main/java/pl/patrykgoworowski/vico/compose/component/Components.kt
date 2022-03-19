@@ -163,6 +163,13 @@ public fun overlayingComponent(
     insidePaddingEndDp = innerPaddingEnd.value,
 )
 
+/**
+ * Creates a [DashedShape].
+ * @param shape the base [Shape] from which to create the [DashedShape].
+ * @param dashLength the dash length.
+ * @param gapLength the gap length.
+ * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
+ */
 public fun dashedShape(
     shape: Shape,
     dashLength: Dp,
@@ -175,6 +182,13 @@ public fun dashedShape(
     fitStrategy = fitStrategy,
 )
 
+/**
+ * Creates a [DashedShape].
+ * @param shape the base [ChartShape] from which to create the [DashedShape].
+ * @param dashLength the dash length.
+ * @param gapLength the gap length.
+ * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
+ */
 public fun dashedShape(
     shape: ChartShape,
     dashLength: Dp,
