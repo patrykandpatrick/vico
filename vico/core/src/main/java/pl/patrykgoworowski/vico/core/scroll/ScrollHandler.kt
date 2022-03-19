@@ -21,6 +21,9 @@ public class ScrollHandler(
     public var maxScrollDistance: Float = 0f,
 ) {
 
+    /**
+     * The current scroll amount.
+     */
     public var currentScroll: Float = 0f
         set(value) {
             field = getClampedScroll(value)

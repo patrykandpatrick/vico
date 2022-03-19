@@ -69,6 +69,9 @@ public fun DynamicShaders.horizontalGradient(
         "%s,%s".format(left, right)
 }
 
+/**
+ * Creates a vertical linear gradient comprising the provided colors.
+ */
 public fun DynamicShaders.verticalGradient(
     vararg colors: Int,
 ): DynamicShader = verticalGradient(colors)
