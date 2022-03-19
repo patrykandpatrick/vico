@@ -20,8 +20,15 @@ import pl.patrykgoworowski.vico.core.component.dimension.DefaultMargins
 import pl.patrykgoworowski.vico.core.component.dimension.Margins
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
+/**
+ * [Component] is a generic concept of an object that can be drawn on canvas at given coordinates.
+ * Its subclasses are used throughout the library.
+ */
 public abstract class Component : Margins by DefaultMargins() {
 
+    /**
+     * Instructs the [Component] to draw itself at given coordinates.
+     */
     public abstract fun draw(
         context: DrawContext,
         left: Float,
