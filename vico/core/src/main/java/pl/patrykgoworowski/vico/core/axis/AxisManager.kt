@@ -23,6 +23,13 @@ import pl.patrykgoworowski.vico.core.chart.insets.Insets
 import pl.patrykgoworowski.vico.core.collections.cacheInList
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 
+/**
+ * Class managing all axes that can be used in the chart.
+ * It supports axes placed to start, top, end and bottom of the chart.
+ * This class is responsible for setting bounds and drawing each axis.
+ *
+ * @see AxisRenderer
+ */
 public open class AxisManager {
 
     internal val axisCache = ArrayList<AxisRenderer<*>>(MAX_AXIS_COUNT)
@@ -47,6 +54,13 @@ public open class AxisManager {
      */
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by cacheInList()
 
+    /**
+     * Adds axes ([AxisRenderer]s) to list of [ChartInsetter]s, that can influence the chart layout.
+     *
+     * @param destination An output [MutableList] which stores [ChartInsetter]s.
+     *
+     * @see ChartInsetter
+     */
     public fun addInsetters(destination: MutableList<ChartInsetter>) {
         startAxis?.let(destination::add)
         topAxis?.let(destination::add)
@@ -54,6 +68,9 @@ public open class AxisManager {
         bottomAxis?.let(destination::add)
     }
 
+    /**
+     * Sets axes managed by this [AxisManager].
+     */
     public fun setAxes(
         startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = this.startAxis,
         topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = this.topAxis,
@@ -66,6 +83,14 @@ public open class AxisManager {
         this.bottomAxis = bottomAxis
     }
 
+    /**
+     * Sets bounds of each axis.
+     *
+     * @param measureContext The measuring context holding data used for component measurements.
+     * @param contentBounds The bounds in which the chart contents must be drawn.
+     * @param insets The final insets storing the maximum insets for each side specified by all [ChartInsetter]s used
+     * in this Chart. Axes should take them into account while setting their bounds to avoid being drawn incorrectly.
+     */
     public fun setAxesBounds(
         measureContext: MeasureContext,
         contentBounds: RectF,
@@ -165,12 +190,28 @@ public open class AxisManager {
         bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
     }
 
+    /**
+     * Called before [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
+     * It simply forwards a call for [Axis] subclasses to draw behind the chart.
+     *
+     * @param context Drawing context holding information necessary to draw the axis.
+     *
+     * @see Axis.drawBehindChart
+     */
     public fun drawBehindChart(context: ChartDrawContext) {
         axisCache.forEach { axis ->
             axis.drawBehindChart(context)
         }
     }
 
+    /**
+     * Called after [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
+     * It simply forwards a call for [Axis] subclasses to draw above the chart.
+     *
+     * @param context Drawing context holding information necessary to draw axis.
+     *
+     * @see Axis.drawAboveChart
+     */
     public fun drawAboveChart(context: ChartDrawContext) {
         axisCache.forEach { axis ->
             axis.drawAboveChart(context)
