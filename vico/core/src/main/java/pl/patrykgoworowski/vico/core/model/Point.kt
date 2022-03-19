@@ -49,8 +49,14 @@ public value class Point internal constructor(private val packedValue: Long) {
     public val y: Float
         get() = unpackFloat2(packedValue)
 
+    /**
+     * @see x
+     */
     public operator fun component1(): Float = x
 
+    /**
+     * @see y
+     */
     public operator fun component2(): Float = y
 
     /**

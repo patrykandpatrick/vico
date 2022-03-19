@@ -19,6 +19,15 @@ package pl.patrykgoworowski.vico.core.component
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
+/**
+ * A [Component] composed out of two [Component]s, with one drawn over the other.
+ * @property outer the outer (background) [Component].
+ * @property inner the inner (foreground) [Component].
+ * @property insidePaddingStartDp the start padding between the inner and outer components.
+ * @property insidePaddingTopDp the top padding between the inner and outer components.
+ * @property insidePaddingEndDp the end padding between the inner and outer components.
+ * @property insidePaddingBottomDp the bottom padding between the inner and outer components.
+ */
 public class OverlayingComponent(
     public val outer: Component,
     public val inner: Component,
