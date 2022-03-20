@@ -69,21 +69,6 @@ public fun RectF.clear() {
     set(0, 0, 0, 0)
 }
 
-public fun RectF.set(
-    isLtr: Boolean,
-    start: Number = this.left,
-    top: Number = this.top,
-    end: Number = this.right,
-    bottom: Number = this.bottom,
-) {
-    set(
-        if (isLtr) start.toFloat() else end.toFloat(),
-        top.toFloat(),
-        if (isLtr) end.toFloat() else start.toFloat(),
-        bottom.toFloat()
-    )
-}
-
 /**
  * Applies the provided coordinates to this [RectF] and rotates it by the given number of degrees.
  */
@@ -97,10 +82,6 @@ public fun RectF.setAndRotate(
     set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
     return rotate(rotationDegrees)
 }
-
-public fun RectF.start(isLtr: Boolean): Float = if (isLtr) left else right
-
-public fun RectF.end(isLtr: Boolean): Float = if (isLtr) right else left
 
 /**
  * Creates a new [RectF] with the same coordinates as this [RectF] without modifying this [RectF].
