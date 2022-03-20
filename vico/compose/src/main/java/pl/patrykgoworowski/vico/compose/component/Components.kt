@@ -136,6 +136,12 @@ public fun shapeComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates an [OverlayingComponent].
+ * @param outer the outer (background) [Component].
+ * @param inner the inner (foreground) [Component].
+ * @param innerPaddingAll the padding between the inner and outer components.
+ */
 public fun overlayingComponent(
     outer: Component,
     inner: Component,
@@ -146,6 +152,15 @@ public fun overlayingComponent(
     innerPaddingAllDp = innerPaddingAll.value,
 )
 
+/**
+ * Creates an [OverlayingComponent].
+ * @param outer the outer (background) [Component].
+ * @param inner the inner (foreground) [Component].
+ * @property innerPaddingStart the start padding between the inner and outer components.
+ * @property innerPaddingTop the top padding between the inner and outer components.
+ * @property innerPaddingEnd the end padding between the inner and outer components.
+ * @property innerPaddingBottom the bottom padding between the inner and outer components.
+ */
 public fun overlayingComponent(
     outer: Component,
     inner: Component,
