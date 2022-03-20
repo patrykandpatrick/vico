@@ -21,7 +21,7 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.extension.applyElevationOverlayToColor
 
 /**
- * Class storing shadow properties.
+ * A class that stores shadow properties.
  *
  * @property radius the blur radius.
  * @property dx the horizontal offset.
@@ -44,7 +44,7 @@ public data class ComponentShadow(
     private var laDensity: Float = 0f
 
     /**
-     * Checks whether applied shadow layer needs to be updated.
+     * Checks whether the applied shadow layer needs to be updated.
      */
     public fun maybeUpdateShadowLayer(
         context: DrawContext,
