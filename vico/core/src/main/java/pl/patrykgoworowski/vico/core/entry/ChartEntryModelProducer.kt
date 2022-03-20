@@ -23,6 +23,14 @@ import pl.patrykgoworowski.vico.core.entry.diff.DefaultDiffProcessor
 import pl.patrykgoworowski.vico.core.entry.diff.DiffProcessor
 import pl.patrykgoworowski.vico.core.extension.setAll
 
+/**
+ * A subclass of [ChartModelProducer] which generates the [ChartEntryModel].
+ *
+ * @param entryCollections a two-dimensional list of [ChartEntry] used to generate the [ChartEntryModel].
+ * @param backgroundExecutor [Executor] used to generate instances of the [ChartEntryModel] off the main thread.
+ *
+ * @see ChartModelProducer
+ */
 public class ChartEntryModelProducer(
     entryCollections: List<List<ChartEntry>>,
     backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
@@ -34,7 +42,10 @@ public class ChartEntryModelProducer(
 
     private val executor: Executor = backgroundExecutor
 
-    public val entries: ArrayList<List<ChartEntry>> = ArrayList()
+    /**
+     * The mutable two-dimensional list of [ChartEntry] used to generate the [ChartEntryModel].
+     */
+    private val entries: ArrayList<List<ChartEntry>> = ArrayList()
 
     public constructor(
         vararg entryCollections: List<ChartEntry>,
@@ -45,6 +56,12 @@ public class ChartEntryModelProducer(
         setEntries(entryCollections)
     }
 
+    /**
+     * Updates the two-dimensional list of [ChartEntry] and notifies listeners about the update.
+     *
+     * @see entries
+     * @see registerForUpdates
+     */
     public fun setEntries(entries: List<List<ChartEntry>>) {
         this.entries.setAll(entries)
         cachedModel = null
@@ -54,6 +71,16 @@ public class ChartEntryModelProducer(
                 diffProcessor.setEntries(old = oldModel?.entries.orEmpty(), new = entries)
             }
         }
+    }
+
+    /**
+     * Updates the two-dimensional list of [ChartEntry] and notifies listeners about the update.
+     *
+     * @see entries
+     * @see registerForUpdates
+     */
+    public fun setEntries(vararg entries: List<ChartEntry>) {
+        setEntries(entries.toList())
     }
 
     override fun getModel(): ChartEntryModel =
@@ -77,10 +104,6 @@ public class ChartEntryModelProducer(
             stackedYRange = diffProcessor.stackedYRangeProgressDiff(progress),
         )
         modelReceiver(model)
-    }
-
-    public fun setEntries(vararg entries: List<ChartEntry>) {
-        setEntries(entries.toList())
     }
 
     private fun getModel(
