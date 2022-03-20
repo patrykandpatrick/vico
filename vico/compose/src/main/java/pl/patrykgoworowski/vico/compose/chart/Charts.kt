@@ -64,18 +64,20 @@ import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 /**
  * Displays a chart.
  *
- * @param chart the chart displaying sets of entries e.g. [pl.patrykgoworowski.vico.core.chart.column.ColumnChart] for a
- * column chart, or [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart.
- * @param chartModelProducer produces [ChartEntryModel]s displayed by the [chart].
- * @param modifier the optional modifier.
+ * @param chart the chart used to display sets of entries (e.g., [pl.patrykgoworowski.vico.core.chart.column.ColumnChart]
+ * for a column chart or [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart).
+ * @param chartModelProducer produces the [ChartEntryModel]s displayed by the [chart].
+ * @param modifier an optional modifier.
  * @param startAxis an axis displayed on the start of the chart.
  * @param topAxis an axis displayed on the top of the chart.
  * @param endAxis an axis displayed on the end of the chart.
  * @param bottomAxis an axis displayed on the bottom of the chart.
- * @param marker optional marker appearing on physical touch. Indicates a nearest entry to the point of touch.
+ * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
+ * nearest to the touch point.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
- * @param isZoomEnabled whether zooming in & out is enabled.
- * @param diffAnimationSpec the animation spec used to animate changes in set of entries ([ChartEntryModel]).
+ * @param isZoomEnabled whether zooming in and out is enabled.
+ * @param diffAnimationSpec the animation spec used to animate differences between entry sets ([ChartEntryModel]
+ * instances).
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -115,20 +117,19 @@ public fun <Model : ChartEntryModel> Chart(
 /**
  * Displays a chart.
  *
- * This function accepts the [ChartEntryModel]. For regular usage it’s advised to use the function overload accepting
- * [ChartModelProducer]
+ * This function accepts a [ChartEntryModel]. For regular usage it’s advised to use the function overload that accepts a
+ * [ChartModelProducer] instance.
  *
- * @param chart the chart displaying sets of entries e.g. [pl.patrykgoworowski.vico.core.chart.column.ColumnChart] for a
- * column chart, or [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart.
+ * @param chart the chart used to display sets of entries (e.g., [pl.patrykgoworowski.vico.core.chart.column.ColumnChart]
+ * for a column chart or [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart).
  * @param model the [ChartEntryModel]s displayed by the [chart].
- * @param modifier the optional modifier.
+ * @param modifier an optional modifier.
  * @param startAxis an axis displayed on the start of the chart.
  * @param topAxis an axis displayed on the top of the chart.
  * @param endAxis an axis displayed on the end of the chart.
  * @param bottomAxis an axis displayed on the bottom of the chart.
- * @param marker optional marker appearing on physical touch. Indicates a nearest entry to the point of touch.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
- * @param isZoomEnabled whether zooming in & out is enabled.
+ * @param isZoomEnabled whether zooming in and out is enabled.
  */
 @Suppress("LongMethod")
 @Composable
