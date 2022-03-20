@@ -30,14 +30,21 @@ import android.util.LayoutDirection
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.draw.drawContext
 import pl.patrykgoworowski.vico.view.extension.density
-import pl.patrykgoworowski.vico.view.extension.fontScale
 import pl.patrykgoworowski.vico.view.extension.isLtr
 
+/**
+ * Creates a [Drawable] out of provided [shape].
+ *
+ * @param shape the [Shape] used as a [Drawable].
+ * @param isLtr whether device layout is left-to-right.
+ * @param density the device screen density.
+ * @param width the width of the [Drawable].
+ * @param height the height of the [Drawable].
+ */
 public class ShapeDrawable(
     private val shape: Shape,
     private val isLtr: Boolean,
     private val density: Float,
-    private val fontScale: Float,
     private val width: Int = 0,
     private val height: Int = 0,
 ) : Drawable() {
@@ -50,7 +57,6 @@ public class ShapeDrawable(
     ) : this(
         shape = shape,
         density = context.density,
-        fontScale = context.fontScale,
         isLtr = context.isLtr,
         width = width,
         height = height,
@@ -76,7 +82,7 @@ public class ShapeDrawable(
             drawContext(
                 canvas = canvas,
                 density = density,
-                fontScale = fontScale,
+                fontScale = 1f,
                 isLtr = isLtr(),
             ),
             paint = paint,
