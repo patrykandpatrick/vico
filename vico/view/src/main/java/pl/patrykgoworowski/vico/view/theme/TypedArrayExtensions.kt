@@ -42,6 +42,9 @@ public fun TypedArray.getColor(
     @ColorInt defaultColor: Int = Color.TRANSPARENT,
 ): Int = getColor(index, defaultColor)
 
+/**
+ * Returns a dimension converted from complex unit such as dp, or sp to pixels and divides it by the screen density.
+ */
 public fun TypedArray.getRawDimension(
     context: Context,
     @StyleableRes index: Int,
@@ -55,6 +58,9 @@ public fun TypedArray.getRawDimension(
     }
 }
 
+/**
+ * Returns a [TypedArray] nested inside the receiver [TypedArray].
+ */
 public fun TypedArray.getNestedTypedArray(
     context: Context,
     @StyleableRes resourceId: Int,
