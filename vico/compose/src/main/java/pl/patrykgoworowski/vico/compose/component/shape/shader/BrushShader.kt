@@ -54,4 +54,7 @@ public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
     }
 }
 
+/**
+ * Converts this [Brush] to a [DynamicShader] using [BrushShader].
+ */
 public fun Brush.toDynamicShader(): DynamicShader = BrushShader(this)
