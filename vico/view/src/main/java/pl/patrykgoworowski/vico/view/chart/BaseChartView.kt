@@ -65,8 +65,7 @@ import pl.patrykgoworowski.vico.view.layout.MutableMeasureContext
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
 /**
- * The base for [View]s displaying a chart.
- * Subclasses define actual [Model] they can handle.
+ * The base for [View]s that display a chart. Subclasses define a [Model] implementation they can handle.
  */
 public abstract class BaseChartView<Model : ChartEntryModel> internal constructor(
     context: Context,
