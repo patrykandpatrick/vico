@@ -20,6 +20,9 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import pl.patrykgoworowski.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
 
+/**
+ * Converts the receiver [TextUnit] to physical pixel size.
+ */
 public fun TextUnit.pixelSize(): Float =
     when (type) {
         TextUnitType.Sp -> value
