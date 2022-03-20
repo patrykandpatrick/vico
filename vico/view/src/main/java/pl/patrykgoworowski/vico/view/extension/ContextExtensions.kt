@@ -18,12 +18,7 @@ package pl.patrykgoworowski.vico.view.extension
 
 import android.content.Context
 import android.content.res.Configuration
-import android.content.res.TypedArray
 import android.os.Build
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
-import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import pl.patrykgoworowski.vico.core.DefaultColors
 
@@ -43,24 +38,3 @@ internal val Context.isDarkMode: Boolean
 
 internal val Context.defaultColors: DefaultColors
     get() = if (isDarkMode) DefaultColors.Dark else DefaultColors.Light
-
-@ColorInt
-public fun Context.getColorCompat(@ColorRes colorRes: Int): Int =
-    ContextCompat.getColor(this, colorRes)
-
-public fun Context.getThemeColor(@AttrRes attr: Int, @ColorRes defValueRes: Int? = null): Int {
-    val tempArray = IntArray(1)
-    tempArray[0] = attr
-    val a = obtainStyledAttributes(null, tempArray)
-    return try {
-        a.getColor(0, defValueRes?.let { ContextCompat.getColor(this, it) } ?: 0)
-    } finally {
-        a.recycle()
-    }
-}
-
-public fun Context.getThemeAttribute(@AttrRes attr: Int): TypedArray {
-    val tempArray = IntArray(1)
-    tempArray[0] = attr
-    return obtainStyledAttributes(null, tempArray)
-}
