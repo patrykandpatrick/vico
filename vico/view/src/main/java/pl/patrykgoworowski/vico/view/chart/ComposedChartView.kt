@@ -24,7 +24,7 @@ import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
 /**
- * The subclass of [BaseChartView] displaying charts that use [ComposedChartEntryModel].
+ * A subclass of [BaseChartView] that displays charts that use [ComposedChartEntryModel].
  */
 public class ComposedChartView @JvmOverloads constructor(
     context: Context,
