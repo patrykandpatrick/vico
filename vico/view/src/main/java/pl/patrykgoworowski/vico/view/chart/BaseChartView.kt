@@ -64,6 +64,10 @@ import pl.patrykgoworowski.vico.view.gestures.MotionEventHandler
 import pl.patrykgoworowski.vico.view.layout.MutableMeasureContext
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
+/**
+ * The base for [View]s displaying a chart.
+ * Subclasses define actual [Model] they can handle.
+ */
 public abstract class BaseChartView<Model : ChartEntryModel> internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -162,10 +166,16 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      */
     public var isZoomEnabled: Boolean = true
 
+    /**
+     * The chart displayed by this [View].
+     */
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
         tryInvalidate(chart, model)
     }
 
+    /**
+     * The [Model] used in the [chart] to render the data.
+     */
     public var model: Model? = null
         private set
 
