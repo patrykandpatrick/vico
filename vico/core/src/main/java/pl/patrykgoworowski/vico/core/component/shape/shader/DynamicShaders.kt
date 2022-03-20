@@ -22,12 +22,12 @@ import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
 /**
- * The object holding simple, anonymous implementations of [DynamicShader].
+ * An object that holds simple, anonymous implementations of [DynamicShader].
  */
 public object DynamicShaders {
 
     /**
-     * Creates a [DynamicShader] out of given [bitmap].
+     * Creates a [DynamicShader] out of the given [bitmap].
      */
     public fun fromBitmap(
         bitmap: Bitmap,
