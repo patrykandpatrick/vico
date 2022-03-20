@@ -85,7 +85,8 @@ public fun axisLabelComponent(
 }
 
 /**
- * Creates an axis line.
+ * Creates a [LineComponent] styled for axis line.
+ *
  * @param color the background color.
  * @param thickness the line thickness.
  * @param shape the [ChartShape] to use for the line.
@@ -113,6 +114,17 @@ public fun axisLineComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates a [LineComponent] styled for axis line.
+ *
+ * @param color the background color.
+ * @param thickness the thickness of the line.
+ * @param shape the [Shape] to use for the line.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param brush an optional [Brush] to apply to the line.
+ * @param margins the margins of the line.
+ */
 @Composable
 public fun axisLineComponent(
     color: Color,
@@ -133,7 +145,8 @@ public fun axisLineComponent(
 )
 
 /**
- * Creates an axis tick.
+ * Creates a [LineComponent] styled for tick line.
+ *
  * @param color the background color.
  * @param thickness the thickness of the tick.
  * @param shape the [ChartShape] to use for the tick.
@@ -158,6 +171,16 @@ public fun axisTickComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates a [LineComponent] styled for tick line.
+ *
+ * @param color the background color.
+ * @param thickness the thickness of the line.
+ * @param shape the [Shape] to use for the line.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param brush an optional [Brush] to apply to the line.
+ */
 @Composable
 public fun axisTickComponent(
     color: Color,
