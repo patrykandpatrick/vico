@@ -94,6 +94,16 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
     }
 }
 
+/**
+ * Adds a rounded rectangle to the receiver [Path].
+ *
+ * @param left the left edge of the rectangle.
+ * @param top the top edge of the rectangle.
+ * @param right the right edge of the rectangle.
+ * @param bottom the bottom edge of the rectangle.
+ * @param rect the source rect which values will be read.
+ * @param radii the mutable [FloatArray] storing the corner radius.
+ */
 @Suppress("MagicNumber")
 @LongParameterListDrawFunction
 public fun Path.addRoundRect(
@@ -171,10 +181,11 @@ public fun Shapes.cutCornerShape(
 
 /**
  * Creates a [MarkerCorneredShape].
- * @param topLeft the top-left corner.
- * @param topRight the top-right corner.
- * @param bottomRight the bottom-right corner.
- * @param bottomLeft the bottom-left corner.
+ *
+ * @param topLeft the size and look of the top-left corner.
+ * @param topRight the size and look of the top-right corner.
+ * @param bottomRight the size and look of the bottom-right corner.
+ * @param bottomLeft the size and look of the bottom-left corner.
  * @param tickSizeDp the tick size.
  */
 public fun Shapes.markerCorneredShape(
@@ -191,6 +202,12 @@ public fun Shapes.markerCorneredShape(
     tickSizeDp = tickSizeDp.value
 )
 
+/**
+ * Creates a [MarkerCorneredShape].
+ *
+ * @param all the size and look of all corners.
+ * @param tickSizeDp the tick size.
+ */
 public fun Shapes.markerCorneredShape(
     all: Corner,
     tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
@@ -202,6 +219,12 @@ public fun Shapes.markerCorneredShape(
     tickSizeDp = tickSizeDp.value
 )
 
+/**
+ * Creates a [MarkerCorneredShape] out of other [CorneredShape].
+ *
+ * @param corneredShape the source of each corner size and style.
+ * @param tickSizeDp the tick size.
+ */
 public fun Shapes.markerCorneredShape(
     corneredShape: CorneredShape,
     tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
