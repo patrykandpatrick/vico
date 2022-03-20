@@ -45,6 +45,9 @@ import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private const val RADII_ARRAY_SIZE = 8
 
+/**
+ * Converts [androidx.compose.ui.graphics.Shape] to [pl.patrykgoworowski.vico.core.component.shape.Shape].
+ */
 public fun ComposeShape.chartShape(): Shape = object : Shape {
     private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
     private val matrix: Matrix by lazy { Matrix() }
