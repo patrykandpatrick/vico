@@ -43,6 +43,9 @@ private fun getElevationOverlayColorWithCorrectAlpha(
     }
 }
 
+/**
+ * Overlays given [color] with [DrawContext.elevationOverlayColor] accordingly to [elevationDp] value.
+ */
 public fun DrawContext.applyElevationOverlayToColor(color: Int, elevationDp: Float): Int =
     color.overlayColor(
         getElevationOverlayColorWithCorrectAlpha(
