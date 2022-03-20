@@ -166,6 +166,14 @@ public fun Shapes.cutCornerShape(
     Corner.Absolute(bottomLeft.value, CutCornerTreatment),
 )
 
+/**
+ * Creates a [MarkerCorneredShape].
+ * @param topLeft the top-left corner.
+ * @param topRight the top-right corner.
+ * @param bottomRight the bottom-right corner.
+ * @param bottomLeft the bottom-left corner.
+ * @param tickSizeDp the tick size.
+ */
 public fun Shapes.markerCorneredShape(
     topLeft: Corner,
     topRight: Corner,
