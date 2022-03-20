@@ -230,7 +230,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val scaleHandled =
             if (isZoomEnabled && event.pointerCount > 1) scaleGestureDetector.onTouchEvent(event)
             else false
-        val touchHandled = motionEventHandler.handleTouchPoint(event)
+        val touchHandled = motionEventHandler.handleMotionEvent(event)
         return if (touchHandled || scaleHandled) {
             parent.requestDisallowInterceptTouchEvent(event.action == MotionEvent.ACTION_MOVE)
             true

@@ -48,7 +48,10 @@ public open class MotionEventHandler(
     private var velocityTracker = VelocityTrackerHelper()
     private var lastEventPointerCount = 0
 
-    public fun handleTouchPoint(motionEvent: MotionEvent): Boolean {
+    /**
+     * Called to handle the [MotionEvent], which may result in touch marker indication, scroll or zoom.
+     */
+    public fun handleMotionEvent(motionEvent: MotionEvent): Boolean {
         val ignoreEvent =
             motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
         lastEventPointerCount = motionEvent.pointerCount
