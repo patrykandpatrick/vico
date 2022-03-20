@@ -20,7 +20,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 
 /**
- * Clips given [rect] in the receiver [Canvas], runs the [block] and releases the clip.
+ * Clips the given [rect] in the receiver [Canvas], runs the [block], and releases the clip.
  *
  * @see [Canvas.clipRect]
  */
@@ -32,7 +32,7 @@ public inline fun Canvas.inClip(
 }
 
 /**
- * Clips given rectangle in the receiver [Canvas], runs the [block] and releases the clip.
+ * Clips the given rectangle in the receiver [Canvas], runs the [block], and releases the clip.
  *
  * @see [Canvas.clipRect]
  */
