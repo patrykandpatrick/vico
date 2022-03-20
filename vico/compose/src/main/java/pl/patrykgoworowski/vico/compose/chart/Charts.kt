@@ -154,7 +154,7 @@ public fun <Model : ChartEntryModel> Chart(
     val measureContext = getMeasureContext(
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
         horizontalScroll = horizontalScroll.value,
-        zoom = zoom.value,
+        chartScale = zoom.value,
         chartModel = chartModel,
         canvasBounds = bounds,
     )
