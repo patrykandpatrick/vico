@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.dimensions
 
 /**
- * A subclass of [Dimensions] which has all of its properties mutable.
+ * A subclass of [Dimensions] whose every property is mutable.
  */
 public class MutableDimensions(
     override var startDp: Float,
