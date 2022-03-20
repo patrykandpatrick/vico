@@ -22,7 +22,7 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.model.Point
 
 /**
- * The extension of [DrawContext] which holds additional data required to render the chart.
+ * An extension of [DrawContext] that holds additional data required to render the chart.
  */
 public interface ChartDrawContext : DrawContext {
 
