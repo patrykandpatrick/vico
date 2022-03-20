@@ -39,6 +39,12 @@ public interface Marker : ChartInsetter {
         markedEntries: List<EntryModel>,
     )
 
+    /**
+     * Contains information on a single chart entry to which a chart marker refers.
+     * @param location the coordinates of the indicator.
+     * @param entry the [ChartEntry].
+     * @param color the color associated with the [ChartEntry].
+     */
     public class EntryModel(
         public val location: Point,
         public val entry: ChartEntry,
