@@ -26,6 +26,11 @@ import pl.patrykgoworowski.vico.view.extension.fling
 import pl.patrykgoworowski.vico.view.extension.point
 import kotlin.math.abs
 
+/**
+ * Handles motion events.
+ * @param density the pixel density.
+ * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
+ */
 public open class MotionEventHandler(
     private val scroller: OverScroller,
     private val scrollHandler: ScrollHandler,
