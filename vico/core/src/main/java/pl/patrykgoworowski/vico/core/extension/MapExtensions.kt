@@ -22,14 +22,31 @@ import java.util.TreeMap
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
+/**
+ * Returns a [Marker.EntryModel] stored in the [Map] that has its x-axis map key closest to the [Point.x] value.
+ *
+ * @see Marker.EntryModel
+ */
 public fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
     touchPoint: Point,
 ): List<Marker.EntryModel>? = keys.findClosestPositiveValue(touchPoint.x)?.let(::get)
 
+/**
+ * Returns a list of [Marker.EntryModel]s stored in the [Map] where [Marker.EntryModel] list contains
+ * [pl.patrykgoworowski.vico.core.entry.ChartEntry.x] equal to the [xValue].
+ *
+ * @see Marker.EntryModel
+ */
 public fun Map<Float, List<Marker.EntryModel>>.getEntryModel(
     xValue: Float,
-): List<Marker.EntryModel>? = values.find { entries -> entries.firstOrNull()?.entry?.x == xValue }
+): List<Marker.EntryModel>? = values.mapNotNull { entries ->
+    if (entries.firstOrNull()?.entry?.x == xValue) entries else null
+}.flatten()
+    .takeIf { it.isNotEmpty() }
 
+/**
+ * Updates the receiver [TreeMap] with contents of other [Map].
+ */
 public fun <K, V> TreeMap<K, MutableList<V>>.updateAll(other: Map<K, List<V>>) {
     other.forEach { (key, value) ->
         put(key, get(key)?.apply { addAll(value) } ?: mutableListOf(value))
