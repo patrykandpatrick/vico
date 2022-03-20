@@ -134,7 +134,7 @@ public data class ChartStyle(
      * @property point an optional [Component] to display on lines for each x-axis value.
      * @property pointSize the size of points.
      * @property spacing the spacing between points.
-     * @property lineWidth the width of lines.
+     * @property lineThickness the width of lines.
      * @property lineColor the color of lines.
      * @property lineBackgroundShader a [DynamicShader] to apply to the areas between lines and bottom x-axes.
      */
@@ -142,7 +142,7 @@ public data class ChartStyle(
         val point: Component? = null,
         val pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
         val spacing: Dp = DefaultDimens.POINT_SPACING.dp,
-        val lineWidth: Dp = DefaultDimens.LINE_THICKNESS.dp,
+        val lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
         val lineColor: Color,
         val lineBackgroundShader: DynamicShader? = null,
     )
