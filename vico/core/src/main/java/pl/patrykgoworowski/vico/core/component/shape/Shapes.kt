@@ -62,7 +62,7 @@ public object Shapes {
     /**
      * Creates a [Shape] with all corners rounded.
      *
-     * @param allPercent the percent radius of all corners.
+     * @param allPercent the radius of each corner in percent.
      */
     public fun roundedCornerShape(allPercent: Int): CorneredShape =
         roundedCornerShape(allPercent, allPercent, allPercent, allPercent)
@@ -90,7 +90,7 @@ public object Shapes {
     /**
      * Creates a [Shape] with all corners cut.
      *
-     * @param allPercent the percent radius of all corners.
+     * @param allPercent the radius of each corner in percent.
      */
     public fun cutCornerShape(allPercent: Int): CorneredShape =
         cutCornerShape(allPercent, allPercent, allPercent, allPercent)
@@ -116,11 +116,11 @@ public object Shapes {
     )
 
     /**
-     * Creates a [Shape] out of the [Drawable].
+     * Creates a [Shape] out of a [Drawable].
      *
      * @param drawable the [Drawable] that will be used as a shape.
-     * @param keepAspectRatio Whether to keep drawable’s aspect ratio based on intrinsic size.
-     * @param otherShape If the [drawable] doesn't fill the whole bounds, it will be used to fill the remaining space.
+     * @param keepAspectRatio whether to keep the drawable’s aspect ratio, based on its intrinsic size.
+     * @param otherShape used to fill the remaining space if the [drawable] doesn’t fill the entire bounds.
      */
     public fun drawableShape(
         drawable: Drawable,
