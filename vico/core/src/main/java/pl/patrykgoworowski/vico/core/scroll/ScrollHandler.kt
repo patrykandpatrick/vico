@@ -38,8 +38,8 @@ public class ScrollHandler(
         minOf(scroll, maxScrollDistance).coerceAtLeast(0f)
 
     /**
-     * Updates the [currentScroll] value with given [delta], if the resulting scroll values fits within 0
-     * and the [maxScrollDistance].
+     * Updates the [currentScroll] value by the given [delta] if the resulting scroll value is between 0 and the
+     * [maxScrollDistance].
      */
     public fun handleScrollDelta(delta: Float): Float {
         val previousScroll = currentScroll
@@ -48,13 +48,13 @@ public class ScrollHandler(
     }
 
     /**
-     * Checks whether scroll by given [delta] values is possible.
+     * Checks whether a scroll by the given [delta] value is possible.
      */
     public fun canScrollBy(delta: Float): Boolean =
         currentScroll - getClampedScroll(currentScroll - delta) != 0f
 
     /**
-     * Scrolls to the [targetScroll] value that is clamped within 0 and the [maxScrollDistance].
+     * Scrolls to the [targetScroll] value, which is clamped to the range from 0 to the [maxScrollDistance].
      */
     public fun handleScroll(targetScroll: Float): Float =
         handleScrollDelta(currentScroll - targetScroll)
