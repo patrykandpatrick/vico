@@ -26,6 +26,16 @@ import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 
+/**
+ * A subclass of [ChartModelProducer] that generates [ComposedChartEntryModel].
+ *
+ * @property chartModelProducers the list of [ChartModelProducer]s that are composed by this
+ * [ComposedChartEntryModelProducer].
+ * @param backgroundExecutor [Executor] used to generate instances of the [ComposedChartEntryModel] off the main thread.
+ *
+ * @see ComposedChartEntryModel
+ * @see ChartModelProducer
+ */
 public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
     public val chartModelProducers: List<ChartModelProducer<Model>>,
     backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
