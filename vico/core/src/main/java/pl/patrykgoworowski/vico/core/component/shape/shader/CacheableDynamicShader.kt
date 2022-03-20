@@ -20,7 +20,7 @@ import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
 /**
- * [CacheableDynamicShader] can cache created [Shader] instances for reuse if given bounds are the same.
+ * [CacheableDynamicShader] can cache created [Shader] instances for reuse between identical sets of bounds.
  */
 public abstract class CacheableDynamicShader : DynamicShader {
 
@@ -41,8 +41,8 @@ public abstract class CacheableDynamicShader : DynamicShader {
     }
 
     /**
-     * Called when new instance of [Shader] must be created, as given [left], [top], [right] and [bottom] bounds
-     * have changed, or there is no cached [Shader].
+     * Called when new instance of [Shader] must be created, as the [left], [top], [right], and [bottom] bounds
+     * have changed or there is no cached [Shader].
      */
     public abstract fun createShader(
         context: DrawContext,
@@ -53,7 +53,7 @@ public abstract class CacheableDynamicShader : DynamicShader {
     ): Shader
 
     /**
-     * Creates a cache key with provided [left], [top], [right] and [bottom] bounds.
+     * Creates a cache key using the provided [left], [top], [right], and [bottom] bounds.
      */
     protected open fun createKey(
         left: Float,
