@@ -21,6 +21,9 @@ import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
+/**
+ * Updates the coordinates of this [RectF].
+ */
 public fun RectF.updateBounds(
     left: Float = this.left,
     top: Float = this.top,
