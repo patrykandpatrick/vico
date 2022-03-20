@@ -21,7 +21,7 @@ import android.graphics.Paint
 private val fm: Paint.FontMetrics = Paint.FontMetrics()
 
 /**
- * Returns a height of single line of the text.
+ * Returns the height of a single line of text.
  */
 public val Paint.lineHeight: Float
     get() {
@@ -30,7 +30,7 @@ public val Paint.lineHeight: Float
     }
 
 /**
- * Returns a height of the text.
+ * Returns the height of text.
  */
 public val Paint.textHeight: Float
     get() {

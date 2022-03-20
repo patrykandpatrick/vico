@@ -85,7 +85,7 @@ public fun axisLabelComponent(
 }
 
 /**
- * Creates a [LineComponent] styled for axis line.
+ * Creates a [LineComponent] styled as an axis line.
  *
  * @param color the background color.
  * @param thickness the line thickness.
@@ -115,7 +115,7 @@ public fun axisLineComponent(
 )
 
 /**
- * Creates a [LineComponent] styled for axis line.
+ * Creates a [LineComponent] styled as an axis line.
  *
  * @param color the background color.
  * @param thickness the thickness of the line.
@@ -145,7 +145,7 @@ public fun axisLineComponent(
 )
 
 /**
- * Creates a [LineComponent] styled for tick line.
+ * Creates a [LineComponent] styled as a tick line.
  *
  * @param color the background color.
  * @param thickness the thickness of the tick.
@@ -172,7 +172,7 @@ public fun axisTickComponent(
 )
 
 /**
- * Creates a [LineComponent] styled for tick line.
+ * Creates a [LineComponent] styled as a tick line.
  *
  * @param color the background color.
  * @param thickness the thickness of the line.

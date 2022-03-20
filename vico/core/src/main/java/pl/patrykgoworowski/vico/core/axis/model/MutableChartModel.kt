@@ -20,7 +20,7 @@ import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
 /**
- * A subclass of [ChartModel] which has all of its properties mutable.
+ * A subclass of [ChartModel] whose every property is mutable.
  */
 public class MutableChartModel(
     override var minX: Float = 0f,

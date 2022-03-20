@@ -49,7 +49,7 @@ public open class MotionEventHandler(
     private var lastEventPointerCount = 0
 
     /**
-     * Called to handle the [MotionEvent], which may result in touch marker indication, scroll or zoom.
+     * Called to handle the [MotionEvent], which may result in touch marker indication, scroll, or zoom.
      */
     public fun handleMotionEvent(motionEvent: MotionEvent): Boolean {
         val ignoreEvent =
