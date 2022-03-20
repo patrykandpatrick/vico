@@ -17,7 +17,7 @@
 package pl.patrykgoworowski.vico.core.component.text
 
 /**
- * Defines a vertical position of drawn object relative to given point.
+ * Defines the vertical position of a drawn object relative to a given point.
  */
 public enum class VerticalPosition {
     Top,
