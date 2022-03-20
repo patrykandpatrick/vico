@@ -23,6 +23,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import pl.patrykgoworowski.vico.core.component.dimension.Padding
 
+/**
+ * Sets padding for each individual rectangle edge.
+ */
 @Composable
 public fun <P : Padding> P.setPadding(
     start: Dp = 0.dp,
@@ -33,6 +36,9 @@ public fun <P : Padding> P.setPadding(
     padding.set(start.value, top.value, end.value, bottom.value)
 }
 
+/**
+ * Sets horizontal and vertical padding.
+ */
 @Composable
 public fun <P : Padding> P.setPadding(
     horizontal: Dp = 0.dp,
@@ -41,6 +47,9 @@ public fun <P : Padding> P.setPadding(
     padding.set(horizontal.value, vertical.value, horizontal.value, vertical.value)
 }
 
+/**
+ * Sets equal padding for each rectangle edge.
+ */
 @Composable
 public fun <P : Padding> P.setPadding(
     all: Dp = 0.dp,
