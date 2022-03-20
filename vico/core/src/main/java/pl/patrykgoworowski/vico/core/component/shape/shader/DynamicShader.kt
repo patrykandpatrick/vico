@@ -28,7 +28,7 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
 public fun interface DynamicShader {
 
     /**
-     * Creates a [Shader] by using provided [bounds].
+     * Creates a [Shader] by using the provided [bounds].
      */
     public fun provideShader(
         context: DrawContext,
@@ -42,7 +42,7 @@ public fun interface DynamicShader {
     )
 
     /**
-     * Creates a [Shader] by using provided [left], [top], [right] and [bottom] bounds.
+     * Creates a [Shader] by using the provided [left], [top], [right], and [bottom] bounds.
      */
     public fun provideShader(
         context: DrawContext,
