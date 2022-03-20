@@ -22,7 +22,7 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
 /**
  * Creates a [DynamicShader], which always provides the same [Shader] instance.
  *
- * @property shader the [Shader] that will always be provided regardless of [provideShader] function’s arguments.
+ * @property shader the [Shader] that will always be provided, regardless of the [provideShader] function’s arguments.
  */
 public class StaticShader(private val shader: Shader) : DynamicShader {
 
@@ -36,7 +36,7 @@ public class StaticShader(private val shader: Shader) : DynamicShader {
 }
 
 /**
- * Converts the [Shader] to [StaticShader] and returns it as the [DynamicShader].
+ * Converts this [Shader] to a [StaticShader] and returns it as a [DynamicShader].
  */
 public val Shader.dynamic: DynamicShader
     get() = StaticShader(this)
