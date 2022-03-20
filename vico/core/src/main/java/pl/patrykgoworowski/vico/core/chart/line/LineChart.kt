@@ -43,10 +43,10 @@ import kotlin.math.min
 /**
  * [LineChart] displays data as a continuous line.
  *
- * @param point the optional [Component] that can be drawn at given x,y coordinate above the line.
- * @param pointSizeDp the size in dp unit of the [point].
- * @param spacingDp the spacing in dp unit between each [point].
- * @param lineThicknessDp the thickness of the line in dp unit.
+ * @param point an optional [Component] that can be drawn at a given point above the line.
+ * @param pointSizeDp the size of the [point] in dp.
+ * @param spacingDp the spacing between each [point] in dp.
+ * @param lineThicknessDp the thickness of the line in dp.
  * @param lineColor the color of the line.
  */
 public open class LineChart(
@@ -81,7 +81,7 @@ public open class LineChart(
     public var lineWidth: Float by linePaint::strokeWidth
 
     /**
-     * The optional [DynamicShader] that can style a space between bottom of the line and bottom of the chart.
+     * An optional [DynamicShader] that can style the space between the line and the x-axis.
      */
     public var lineBackgroundShader: DynamicShader? = null
 
@@ -91,7 +91,7 @@ public open class LineChart(
     public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
 
     /**
-     * The strength of cubic bezier curve between each point of data entry.
+     * The strength of the cubic bezier curve between each key point on the line.
      */
     public var cubicStrength: Float = 1f
 
