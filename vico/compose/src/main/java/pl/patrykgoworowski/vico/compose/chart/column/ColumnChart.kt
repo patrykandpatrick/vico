@@ -35,10 +35,10 @@ import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
  * @param innerSpacing the spacing between the columns contained in chart segments. This has no effect on
  * segments that contain a single column only.
  * @param mergeMode defines the way multiple columns are rendered in the [ColumnChart].
- * @param minX The minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
- * @param maxX The maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
- * @param minY The minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
- * @param maxY The maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
+ * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
+ * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
+ * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
+ * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  *
  * @see pl.patrykgoworowski.vico.compose.chart.Chart
  * @see ColumnChart
@@ -65,13 +65,13 @@ public fun columnChart(
 }
 
 /**
- * Creates a [ColumnChart] with style provided by the [chartStyle].
+ * Creates a [ColumnChart] that uses the style provided by [chartStyle].
  *
  * @param chartStyle defines the style of this [ColumnChart].
- * @param minX The minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
- * @param maxX The maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
- * @param minY The minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
- * @param maxY The maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
+ * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
+ * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
+ * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
+ * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  *
  * @see pl.patrykgoworowski.vico.compose.chart.Chart
  * @see ColumnChart
