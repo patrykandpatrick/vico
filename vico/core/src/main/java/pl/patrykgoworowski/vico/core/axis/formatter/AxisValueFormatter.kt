@@ -25,15 +25,15 @@ import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 public fun interface AxisValueFormatter<Position : AxisPosition> {
 
     /**
-     * Called by [pl.patrykgoworowski.vico.core.axis.AxisRenderer] subclasses in order to format either y-axis,
+     * Called by [pl.patrykgoworowski.vico.core.axis.AxisRenderer] subclasses in order to format either y-axis
      * or x-axis values for display.
      *
-     * @param value The values to be formatted. It’s either a value on y-axis, or x-axis.
-     * @param chartModel The model used by the chart holding information about values on both y-axis and x-axis.
+     * @param value The value to be formatted. This is either an x-axis value or a y-axis value.
+     * @param chartModel The model used by the chart. This holds information on the values along the x-axis and y-axis.
      *
      * @see ChartModel
      *
-     * @return formatted value that will be displayed on the axis.
+     * @return a formatted value that will be displayed on the axis.
      */
     public fun formatValue(
         value: Float,
