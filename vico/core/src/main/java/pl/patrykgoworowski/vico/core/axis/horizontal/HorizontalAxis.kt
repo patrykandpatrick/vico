@@ -29,8 +29,8 @@ import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
 /**
- * A subclass of [pl.patrykgoworowski.vico.core.axis.AxisRenderer] used for horizontal axes, used either on the top,
- * or the bottom of the chart. It uses [Axis] as its base implementation.
+ * A subclass of [pl.patrykgoworowski.vico.core.axis.AxisRenderer] used for horizontal axes, used either at the top
+ * or at the bottom of a chart. It uses [Axis] as its base implementation.
  *
  * @see pl.patrykgoworowski.vico.core.axis.AxisRenderer
  * @see Axis
@@ -246,7 +246,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         public var tickType: TickType = TickType.Minor
 
         /**
-         * Creates an instance of [HorizontalAxis] using properties set in this [Builder].
+         * Creates an instance of [HorizontalAxis] using the properties set in this [Builder].
          */
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : Position> build(): HorizontalAxis<T> {
@@ -263,9 +263,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 }
 
 /**
- * A convenience function which creates an instance of [HorizontalAxis].
+ * A convenience function that creates an instance of [HorizontalAxis].
  *
- * @param block A lambda function yielding [HorizontalAxis.Builder] as its receiver.
+ * @param block a lambda function yielding [HorizontalAxis.Builder] as its receiver.
  */
 public inline fun <reified Position : AxisPosition.Horizontal> createHorizontalAxis(
     block: HorizontalAxis.Builder<Position>.() -> Unit = {},
