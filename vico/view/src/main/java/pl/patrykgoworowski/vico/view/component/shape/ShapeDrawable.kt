@@ -33,11 +33,11 @@ import pl.patrykgoworowski.vico.view.extension.density
 import pl.patrykgoworowski.vico.view.extension.isLtr
 
 /**
- * Creates a [Drawable] out of provided [shape].
+ * Creates a [Drawable] out of the provided [shape].
  *
  * @param shape the [Shape] used as a [Drawable].
- * @param isLtr whether device layout is left-to-right.
- * @param density the device screen density.
+ * @param isLtr whether the device layout is left-to-right.
+ * @param density the pixel density of the device screen.
  * @param width the width of the [Drawable].
  * @param height the height of the [Drawable].
  */
