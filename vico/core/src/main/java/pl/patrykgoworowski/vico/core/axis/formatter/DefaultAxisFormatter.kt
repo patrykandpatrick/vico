@@ -20,7 +20,7 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 
 /**
- * A default implementation of [AxisValueFormatter] which simply converts a [Float] to a [String].
+ * The default implementation of [AxisValueFormatter]. This converts [Float]s to [String]s.
  */
 public class DefaultAxisFormatter<Position : AxisPosition> : AxisValueFormatter<Position> {
     override fun formatValue(
