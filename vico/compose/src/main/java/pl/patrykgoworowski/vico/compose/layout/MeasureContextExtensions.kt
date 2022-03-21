@@ -31,10 +31,10 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
  * The anonymous implementation of the [MeasureContext].
  *
  * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
- * @param horizontalScroll the current amount of horizontal scroll.
+ * @param horizontalScroll the current horizontal scroll amount.
  * @param chartScale the scale of the chart. Used to handle zooming in and out.
- * @param chartModel holds information about values on both y-axis and x-axis.
- * @param canvasBounds the bounds of the canvas which will be used to draw the chart and its components.
+ * @param chartModel holds information about the values on both the x-axis and the y-axis.
+ * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
  */
 @Composable
 public fun getMeasureContext(
