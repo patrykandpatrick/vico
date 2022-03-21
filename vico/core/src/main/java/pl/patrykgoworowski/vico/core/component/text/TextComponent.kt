@@ -247,7 +247,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     }
 
     /**
-     * Returns a width of this [TextComponent] for given [text].
+     * Returns the width of this [TextComponent] for the given [text].
      */
     public fun getWidth(
         context: MeasureContext,
@@ -255,7 +255,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     ): Float = getTextBounds(context, text).width()
 
     /**
-     * Returns a height of this [TextComponent] for given [text] and available [width].
+     * Returns the height of this [TextComponent] for the given [text] and the available [width].
      */
     public fun getHeight(
         context: MeasureContext,
@@ -264,7 +264,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     ): Float = getTextBounds(context, text, width).height()
 
     /**
-     * Returns the bounds ([RectF]) of this [TextComponent] for given [text] and available [width].
+     * Returns the bounds ([RectF]) of this [TextComponent] for the given [text] and the available [width].
      */
     public fun getTextBounds(
         context: MeasureContext,
