@@ -101,8 +101,8 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
  * @param top the top edge of the rectangle.
  * @param right the right edge of the rectangle.
  * @param bottom the bottom edge of the rectangle.
- * @param rect the source rect which values will be read.
- * @param radii the mutable [FloatArray] storing the corner radius.
+ * @param rect the source rect whose values will be read.
+ * @param radii a mutable [FloatArray] that stores the corner radii.
  */
 @Suppress("MagicNumber")
 @LongParameterListDrawFunction
@@ -220,7 +220,7 @@ public fun Shapes.markerCorneredShape(
 )
 
 /**
- * Creates a [MarkerCorneredShape] out of other [CorneredShape].
+ * Creates a [MarkerCorneredShape] out of another [CorneredShape].
  *
  * @param corneredShape the source of each corner size and style.
  * @param tickSizeDp the tick size.
