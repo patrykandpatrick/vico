@@ -22,7 +22,7 @@ import java.text.DecimalFormat
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 
 /**
- * A subclass of [AxisValueFormatter] which formats values using [DecimalFormat] with given pattern under the hood.
+ * A subclass of [AxisValueFormatter] that formats values using a [DecimalFormat] with a given pattern.
  */
 public class DecimalFormatAxisValueFormatter<Position : AxisPosition>(
     private val decimalFormat: DecimalFormat,
@@ -34,7 +34,7 @@ public class DecimalFormatAxisValueFormatter<Position : AxisPosition>(
     public constructor() : this(DEF_FORMAT)
 
     /**
-     * Creates a [DecimalFormatAxisValueFormatter] which will format values based on given [pattern] and
+     * Creates a [DecimalFormatAxisValueFormatter] that will format values based on the given [pattern] and
      * [roundingMode].
      */
     public constructor(
