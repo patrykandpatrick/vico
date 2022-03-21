@@ -24,8 +24,8 @@ import pl.patrykgoworowski.vico.core.collections.cacheInList
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 /**
- * Class managing all axes that can be used in the chart.
- * It supports axes placed to start, top, end and bottom of the chart.
+ * A class that manages the axes used in a chart.
+ * It supports axes placed at the start, top, end, and bottom of the chart.
  * This class is responsible for setting bounds and drawing each axis.
  *
  * @see AxisRenderer
@@ -55,9 +55,9 @@ public open class AxisManager {
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by cacheInList()
 
     /**
-     * Adds axes ([AxisRenderer]s) to list of [ChartInsetter]s, that can influence the chart layout.
+     * Adds axes ([AxisRenderer]s) to the list of [ChartInsetter]s, which can influence the chart layout.
      *
-     * @param destination An output [MutableList] which stores [ChartInsetter]s.
+     * @param destination the output [MutableList] where the [ChartInsetter]s will be stored.
      *
      * @see ChartInsetter
      */
@@ -69,7 +69,7 @@ public open class AxisManager {
     }
 
     /**
-     * Sets axes managed by this [AxisManager].
+     * Sets the axes managed by this [AxisManager].
      */
     public fun setAxes(
         startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = this.startAxis,
@@ -84,12 +84,13 @@ public open class AxisManager {
     }
 
     /**
-     * Sets bounds of each axis.
+     * Sets the bounds of each axis.
      *
-     * @param measureContext the measuring context holding data used for component measurements.
+     * @param measureContext the measuring context that holds data used for component measurements.
      * @param contentBounds the bounds in which the chart contents must be drawn.
-     * @param insets the final insets storing the maximum insets for each side specified by all [ChartInsetter]s used
-     * in this Chart. Axes should take them into account while setting their bounds to avoid being drawn incorrectly.
+     * @param insets the final insets. These store the maximum insets for each side, as specified by the
+     * [ChartInsetter]s used by this chart. Axes should take them into account while setting their bounds to avoid being
+     * drawn incorrectly.
      */
     public fun setAxesBounds(
         measureContext: MeasureContext,
@@ -191,10 +192,10 @@ public open class AxisManager {
     }
 
     /**
-     * Called before [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
-     * It simply forwards a call for [Axis] subclasses to draw behind the chart.
+     * Called before the [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
+     * This forwards a call to all [Axis] subclasses that causes them to be drawn behind the chart.
      *
-     * @param context Drawing context holding information necessary to draw the axis.
+     * @param context a drawing context that holds the information necessary to draw the axes.
      *
      * @see Axis.drawBehindChart
      */
@@ -206,9 +207,9 @@ public open class AxisManager {
 
     /**
      * Called after [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
-     * It simply forwards a call for [Axis] subclasses to draw above the chart.
+     * This forwards a call to all [Axis] subclasses that causes them to be drawn above the chart.
      *
-     * @param context Drawing context holding information necessary to draw the axis.
+     * @param context the drawing context that holds the information necessary to draw the axes.
      *
      * @see Axis.drawAboveChart
      */
