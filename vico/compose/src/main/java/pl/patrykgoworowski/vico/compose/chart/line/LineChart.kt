@@ -35,15 +35,15 @@ import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 /**
  * Creates a [LineChart].
  *
- * @param point the optional [Component] that can be drawn at given x,y coordinate above the line.
+ * @param point an optional [Component] that can be drawn at a given point on the line.
  * @param pointSize the size of the [point].
  * @param spacing the spacing between each [point].
  * @param lineThickness the thickness of the line.
  * @param lineColor the color of the line.
- * @param minX The minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
- * @param maxX The maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
- * @param minY The minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
- * @param maxY The maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
+ * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
+ * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
+ * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
+ * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  *
  * @see pl.patrykgoworowski.vico.compose.chart.Chart
  * @see ColumnChart
@@ -78,13 +78,13 @@ public fun lineChart(
 }
 
 /**
- * Creates a [LineChart] with style provided by the [chartStyle].
+ * Creates a [LineChart] with the style provided by [chartStyle].
  *
  * @param chartStyle defines the style of this [ColumnChart].
- * @param minX The minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
- * @param maxX The maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
- * @param minY The minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
- * @param maxY The maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
+ * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
+ * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
+ * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
+ * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  *
  * @see pl.patrykgoworowski.vico.compose.chart.Chart
  * @see ColumnChart
