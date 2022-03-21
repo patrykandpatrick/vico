@@ -26,11 +26,11 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
 /**
- * Creates a [DynamicShader] in form of a horizontal gradient.
+ * Creates a [DynamicShader] in the form of a horizontal gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
- * @param positions May be null. The relative positions [0..1] of each corresponding color in the colors array.
- * If this is null, the the colors are distributed evenly along the gradient line.
+ * @param positions the relative positions ([0..1]) of each corresponding color in the color array. This may be null, in
+ * which case the colors will be distributed evenly along the gradient line.
  */
 public fun horizontalGradient(
     colors: Array<Color>,
@@ -56,11 +56,11 @@ public fun horizontalGradient(
 }
 
 /**
- * Creates a [DynamicShader] in form of a vertical gradient.
+ * Creates a [DynamicShader] in the form of a vertical gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
- * @param positions May be null. The relative positions [0..1] of each corresponding color in the colors array.
- * If this is null, the the colors are distributed evenly along the gradient line.
+ * @param positions the relative positions ([0..1]) of each corresponding color in the color array. This may be null, in
+ * which case the colors will be distributed evenly along the gradient line.
  */
 @Composable
 public fun verticalGradient(
