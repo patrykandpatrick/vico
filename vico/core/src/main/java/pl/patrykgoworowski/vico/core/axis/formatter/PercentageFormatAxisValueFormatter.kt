@@ -21,10 +21,10 @@ import java.text.DecimalFormat
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
 
 /**
- * A subclass of [AxisValueFormatter] which converts y-axis values into percents.
- * It uses [DecimalFormat] to format values under the hood.
+ * A subclass of [AxisValueFormatter] that converts y-axis values to percentages.
+ * It uses [DecimalFormat] to format values.
  *
- * @param pattern The pattern used by [DecimalFormat] to format percent values.
+ * @param pattern the pattern used by [DecimalFormat] to format values as percentages.
  */
 public class PercentageFormatAxisValueFormatter<Position : AxisPosition.Vertical>(
     pattern: String,
@@ -33,7 +33,7 @@ public class PercentageFormatAxisValueFormatter<Position : AxisPosition.Vertical
     private val decimalFormat = DecimalFormat(pattern)
 
     /**
-     * Creates a [PercentageFormatAxisValueFormatter] using default percentage pattern.
+     * Creates a [PercentageFormatAxisValueFormatter] using the default percentage pattern.
      */
     public constructor() : this(DEF_PATTERN)
 
