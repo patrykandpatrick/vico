@@ -19,13 +19,13 @@ package pl.patrykgoworowski.vico.core.context
 import android.graphics.Canvas
 
 /**
- * [DrawContext] is an extension of [MeasureContext] storing [Canvas] and other properties.
+ * [DrawContext] is an extension of [MeasureContext] that stores a [Canvas] and other properties.
  * It also defines helpful drawing functions.
  */
 public interface DrawContext : MeasureContext {
 
     /**
-     * The color of elevation overlay, used with shadow layer in
+     * The elevation overlay color, applied to components that cast shadows in
      * [pl.patrykgoworowski.vico.core.component.shape.ShapeComponent].
      */
     public val elevationOverlayColor: Long
@@ -43,7 +43,7 @@ public interface DrawContext : MeasureContext {
     public fun saveCanvas(): Int = canvas.save()
 
     /**
-     * Temporarily swaps the [Canvas] and yields [DrawContext] as [block]’s receiver.
+     * Temporarily swaps the [Canvas] and yields [DrawContext] as the [block]’s receiver.
      */
     public fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit)
 
@@ -66,7 +66,7 @@ public interface DrawContext : MeasureContext {
     }
 
     /**
-     * Restores the [Canvas] state to given [count].
+     * Restores the [Canvas] state to the given save level.
      *
      * @see Canvas.restoreToCount
      */
