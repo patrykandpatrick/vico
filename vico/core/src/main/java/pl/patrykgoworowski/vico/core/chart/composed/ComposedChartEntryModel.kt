@@ -19,13 +19,13 @@ package pl.patrykgoworowski.vico.core.chart.composed
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 
 /**
- * The extended [ChartEntryModel], which can compose multiple [ChartEntryModel]s.
+ * An extended [ChartEntryModel] that can compose multiple [ChartEntryModel]s.
  * It is used in [pl.patrykgoworowski.vico.core.chart.composed.ComposedChart].
  */
 public interface ComposedChartEntryModel<Model : ChartEntryModel> : ChartEntryModel {
 
     /**
-     * The list of [ChartEntryModel]s that make this model up.
+     * A list of the [ChartEntryModel]s that make up this model.
      */
     public val composedEntryCollections: List<Model>
 }
