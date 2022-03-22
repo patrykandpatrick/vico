@@ -226,7 +226,7 @@ public open class ColumnChart(
         Stack;
 
         /**
-         * Returns a maximum y-axis value depending on set [MergeMode].
+         * Returns the maximum y-axis value, taking into account the current [MergeMode].
          */
         public fun getMaxY(model: ChartEntryModel): Float = when (this) {
             Grouped -> model.maxY
