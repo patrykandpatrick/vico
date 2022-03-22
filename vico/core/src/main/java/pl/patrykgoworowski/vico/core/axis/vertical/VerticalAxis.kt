@@ -20,6 +20,7 @@ import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
 import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
+import pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.axis.setTo
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
@@ -39,8 +40,8 @@ import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 private const val LABELS_KEY = "labels"
 
 /**
- * A subclass of [pl.patrykgoworowski.vico.core.axis.AxisRenderer] used for vertical axes, used either on the start,
- * or the end of the chart. It uses [Axis] as its base implementation.
+ * A subclass of [pl.patrykgoworowski.vico.core.axis.AxisRenderer] used for vertical axes, used either at the start or
+ * at the end of end of a chart. It uses [Axis] as its base implementation.
  *
  * @see pl.patrykgoworowski.vico.core.axis.AxisRenderer
  * @see Axis
@@ -282,7 +283,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     /**
      * Defines a vertical label position relative to the tick line.
      *
-     * @param textPosition A vertical text position definition used internally by
+     * @param textPosition a vertical text position definition used internally by
      * [pl.patrykgoworowski.vico.core.component.text.TextComponent].
      *
      * @see VerticalPosition
@@ -320,7 +321,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         public var verticalLabelPosition: VerticalLabelPosition = Center
 
         /**
-         * Creates an instance of [VerticalAxis] using properties set in this [Builder].
+         * Creates an instance of [VerticalAxis] using the properties set in this [Builder].
          */
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : Position> build(): VerticalAxis<T> {
@@ -340,9 +341,9 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 }
 
 /**
- * A convenience function which creates an instance of [VerticalAxis].
+ * A convenience function that creates an instance of [VerticalAxis].
  *
- * @param block A lambda function yielding [VerticalAxis.Builder] as its receiver.
+ * @param block a lambda function yielding [VerticalAxis.Builder] as its receiver.
  */
 public inline fun <reified Position : AxisPosition.Vertical> createVerticalAxis(
     block: VerticalAxis.Builder<Position>.() -> Unit = {},
