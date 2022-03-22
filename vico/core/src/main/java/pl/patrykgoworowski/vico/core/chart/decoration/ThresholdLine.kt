@@ -32,13 +32,13 @@ import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.median
 
 /**
- * [ThresholdLine] is drawn on top of the chart and marks a certain range of y-axis values.
+ * [ThresholdLine] is drawn on top of charts and marks a certain range of y-axis values.
  *
- * @property thresholdRange the range of y-axis values which this [ThresholdLine] will cover.
+ * @property thresholdRange the range of y-axis values that this [ThresholdLine] will cover.
  * @property thresholdLabel the label of this [ThresholdLine].
  * @property lineComponent the [ShapeComponent] drawn as the threshold line.
- * @property minimumLineThicknessDp the minimal thickness of the threshold line. If [thresholdRange] covered in pixels
- * is smaller than this value, the [minimumLineThicknessDp] will be used as threshold line’s thickness.
+ * @property minimumLineThicknessDp the minimal thickness of the threshold line. If the [thresholdRange] implies
+ * a smaller thickness, the [minimumLineThicknessDp] will be used as the threshold line’s thickness.
  * @property labelComponent the [TextComponent] used to draw the [thresholdLabel] text.
  * @property labelHorizontalPosition defines the horizontal position of the label.
  * @property labelVerticalPosition defines the vertical position of the label.
@@ -59,13 +59,12 @@ public data class ThresholdLine(
 ) : Decoration {
 
     /**
-     * The alternative constructor allowing usage of single value on y-axis.
+     * An alternative constructor that accepts a single y-axis value as opposed to a range.
      *
-     * @property thresholdValue the single value on y-axis which this [ThresholdLine] will cover.
+     * @property thresholdValue the value on the y-axis that this [ThresholdLine] will cover.
      * @property thresholdLabel the label of this [ThresholdLine].
      * @property lineComponent the [ShapeComponent] drawn as the threshold line.
-     * @property minimumLineThicknessDp the minimal thickness of the threshold line. If [thresholdRange] covered
-     * in pixels is smaller than this value, the [minimumLineThicknessDp] will be used as threshold line’s thickness.
+     * @property minimumLineThicknessDp the minimal thickness of the threshold line.
      * @property labelComponent the [TextComponent] used to draw the [thresholdLabel] text.
      * @property labelHorizontalPosition defines the horizontal position of the label.
      * @property labelVerticalPosition defines the vertical position of the label.
@@ -148,7 +147,7 @@ public data class ThresholdLine(
     /**
      * Defines the horizontal position of the label.
      *
-     * @property position the [HorizontalPosition] used under the hood for drawing the label.
+     * @property position the [HorizontalPosition] used when drawing the label.
      */
     public enum class LabelHorizontalPosition(public val position: HorizontalPosition) {
         Start(HorizontalPosition.Start),
@@ -158,7 +157,7 @@ public data class ThresholdLine(
     /**
      * Defines the vertical position of the label.
      *
-     * @property position the [VerticalPosition] used under the hood for drawing the label.
+     * @property position the [VerticalPosition] used when drawing the label.
      */
     public enum class LabelVerticalPosition(public val position: VerticalPosition) {
         Top(VerticalPosition.Bottom),
