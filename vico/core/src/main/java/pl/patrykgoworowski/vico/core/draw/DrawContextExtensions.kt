@@ -36,10 +36,10 @@ public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
  * Creates an anonymous implementation of [DrawContext].
  *
  * @param canvas the canvas to draw the chart on.
- * @param density the density of the screen used in pixel size calculation.
+ * @param density the pixel density of the screen (used in pixel size calculation).
  * @param fontScale the scale of fonts.
- * @param isLtr whether device layout is left-to-right.
- * @param elevationOverlayColor the color of elevation overlay, used with shadow layer in
+ * @param isLtr whether the device layout is left-to-right.
+ * @param elevationOverlayColor the elevation overlay color. This is applied to components that cast shadows.
  */
 public fun drawContext(
     canvas: Canvas,
