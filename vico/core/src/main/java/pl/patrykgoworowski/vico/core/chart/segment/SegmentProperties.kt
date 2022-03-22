@@ -22,12 +22,12 @@ package pl.patrykgoworowski.vico.core.chart.segment
 public interface SegmentProperties {
 
     /**
-     * The width of individual cell, e.g. a column in the column chart, or a point in the line chart.
+     * The width of each cell (e.g., a column in a column chart or a point in a line chart).
      */
     public val cellWidth: Float
 
     /**
-     * The width of margin around given cell.
+     * The width of the margin around each cell.
      */
     public val marginWidth: Float
 
@@ -53,17 +53,17 @@ public interface SegmentProperties {
     public operator fun component3(): Float = segmentWidth
 
     /**
-     * Creates a new `SegmentProperties` implementation by multiplying the cell width
-     * and margin width from these `SegmentProperties` by the provided factor.
+     * Creates a new [SegmentProperties] implementation by multiplying the cell width
+     * and margin width from these [SegmentProperties] by the provided factor.
      */
     public fun scaled(scale: Float): SegmentProperties =
         SegmentProperties(cellWidth * scale, marginWidth * scale)
 }
 
 /**
- * A convenience function creating an anonymous implementation of the [SegmentProperties].
+ * A convenience function that creates an anonymous implementation the [SegmentProperties].
  *
- * @param cellWidth the width of individual cell, e.g. a column in the column chart, or a point in the line chart.
+ * @param cellWidth the width of each individual cell (e.g. a column in a column chart or a point in a line chart).
  * @param marginWidth the sum of the cell width and margin width.
  */
 public fun SegmentProperties(cellWidth: Float, marginWidth: Float): SegmentProperties = object : SegmentProperties {
