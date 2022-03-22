@@ -21,7 +21,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 
 /**
- * A SDK version-dependant compat function for appending text to [SpannableStringBuilder] and setting the span.
+ * An SDK version-dependant compat function for appending text to [SpannableStringBuilder] and setting the span.
  */
 public fun SpannableStringBuilder.appendCompat(
     text: CharSequence,
@@ -37,14 +37,14 @@ public fun SpannableStringBuilder.appendCompat(
     }
 
 /**
- * Converts the receiver [Iterable] to the [Spannable].
+ * Converts the receiver [Iterable] to a [Spannable].
  *
  * @param separator separates items.
  * @param prefix the prefix of the generated [Spannable].
  * @param postfix the postfix of the generated [Spannable].
- * @param limit of item count transformed to the [Spannable].
- * @param truncated the truncation added to the [Spannable] when the [limit] is reached.
- * @param transform the lambda function yielding [SpannableStringBuilder] as its receiver. It is called for each item.
+ * @param limit the maximum number of items transformed.
+ * @param truncated the truncation indicator added to the [Spannable] when the [limit] is reached.
+ * @param transform a lambda function yielding [SpannableStringBuilder] as its receiver. It is called for each item.
  * The caller function is responsible for adding the text to the builder.
  */
 public fun <T> Iterable<T>.transformToSpannable(
