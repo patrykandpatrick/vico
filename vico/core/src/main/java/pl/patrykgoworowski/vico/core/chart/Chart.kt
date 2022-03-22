@@ -1,4 +1,4 @@
-/*
+    /*
  * Copyright (c) 2021. Patryk Goworowski
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -121,18 +121,19 @@ public interface Chart<in Model> : BoundsAware {
     public fun removePersistentMarker(x: Float)
 
     /**
-     * Called to get the [SegmentProperties] of this chart, which influences the look of various parts of the chart.
+     * Called to get the [SegmentProperties] of this chart. The [SegmentProperties] influence the look of various
+     * parts of the chart.
      *
-     * @param context the measuring context holding data used for component measurements.
-     * @param model the model used to represent data rendered by this chart.
+     * @param context the measuring context that holds the data used for component measurements.
+     * @param model the model used to represent the data rendered by this chart.
      */
     public fun getSegmentProperties(context: MeasureContext, model: Model): SegmentProperties
 
     /**
-     * Called to update values stored in the [MutableChartModel] with values managed by this chart.
+     * Called to update the values stored in a [MutableChartModel] to the values managed by this chart.
      *
-     * @param chartModel the [MutableChartModel] which will have its properties updated.
-     * @param model the model used to represent data rendered by this chart.
+     * @param chartModel the [MutableChartModel] whose properties will be updated.
+     * @param model the model used to represent the data rendered by this chart.
      */
     public fun setToChartModel(chartModel: MutableChartModel, model: Model)
 }
