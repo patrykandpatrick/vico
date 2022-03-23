@@ -23,13 +23,13 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 
 /**
- * [MarkerCorneredShape] is an extension of [CorneredShape] which supports drawing a triangular tick at given point.
+ * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick at a given point.
  *
- * @param topLeft specifies a [Corner] at the top-left location of the [Shape].
- * @param topRight specifies a [Corner] at the top-right location of the [Shape].
- * @param bottomLeft specifies a [Corner] at the bottom-left location of the [Shape].
- * @param bottomRight specifies a [Corner] at the bottom-right location of the [Shape].
- * @param tickSizeDp the size of the tick in dp unit.
+ * @param topLeft specifies a [Corner] for the top left of the [Shape].
+ * @param topRight specifies a [Corner] for the top right of the [Shape].
+ * @param bottomLeft specifies a [Corner] for the bottom left of the [Shape].
+ * @param bottomRight specifies a [Corner] for the bottom right of the [Shape].
+ * @param tickSizeDp the size of the tick in the dp unit.
  */
 public open class MarkerCorneredShape(
     topLeft: Corner,
@@ -96,7 +96,7 @@ public open class MarkerCorneredShape(
 
     public companion object {
         /**
-         * A key used to store and retrieve the x coordinate of the tick from.
+         * A key used to store and retrieve the x coordinate of the tick.
          *
          * @see pl.patrykgoworowski.vico.core.context.Extras
          */
