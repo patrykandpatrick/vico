@@ -34,11 +34,11 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.marker.MarkerLabelFormatter
 
 /**
- * The default implementation of [Marker] interface.
+ * The default implementation of the [Marker] interface.
  *
  * @param label the [TextComponent] used to draw the label.
- * @param indicator is an optional indication drawn at given x,y point of the data entry.
- * @param guideline is an optional line drawn from the bottom of the chart to the bottom edge of the [label].
+ * @param indicator an optional indicator drawn at a given point belonging to the data entry.
+ * @param guideline an optional line drawn from the bottom of the chart to the bottom edge of the [label].
  */
 public open class MarkerComponent(
     public val label: TextComponent,
@@ -57,7 +57,7 @@ public open class MarkerComponent(
     public var indicatorSizeDp: Float = 0f
 
     /**
-     * The optional lambda function which allows to apply a color associated with given data entry to some [Component].
+     * An optional lambda function that allows for applying the color associated with a given data entry to a [Component].
      */
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
 
