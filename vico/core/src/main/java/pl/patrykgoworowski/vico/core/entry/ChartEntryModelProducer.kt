@@ -24,10 +24,10 @@ import pl.patrykgoworowski.vico.core.entry.diff.DiffProcessor
 import pl.patrykgoworowski.vico.core.extension.setAll
 
 /**
- * A subclass of [ChartModelProducer] which generates the [ChartEntryModel].
+ * A subclass of [ChartModelProducer] that generates [ChartEntryModel] instances.
  *
- * @param entryCollections a two-dimensional list of [ChartEntry] used to generate the [ChartEntryModel].
- * @param backgroundExecutor [Executor] used to generate instances of the [ChartEntryModel] off the main thread.
+ * @param entryCollections a two-dimensional list of [ChartEntry] instances used to generate the [ChartEntryModel].
+ * @param backgroundExecutor an [Executor] used to generate instances of the [ChartEntryModel] off the main thread.
  *
  * @see ChartModelProducer
  */
@@ -43,7 +43,7 @@ public class ChartEntryModelProducer(
     private val executor: Executor = backgroundExecutor
 
     /**
-     * The mutable two-dimensional list of [ChartEntry] used to generate the [ChartEntryModel].
+     * A mutable two-dimensional list of the [ChartEntry] instances used to generate the [ChartEntryModel].
      */
     private val entries: ArrayList<List<ChartEntry>> = ArrayList()
 
@@ -57,7 +57,7 @@ public class ChartEntryModelProducer(
     }
 
     /**
-     * Updates the two-dimensional list of [ChartEntry] and notifies listeners about the update.
+     * Updates the two-dimensional list of [ChartEntry] instances and notifies listeners about the update.
      *
      * @see entries
      * @see registerForUpdates
@@ -74,7 +74,7 @@ public class ChartEntryModelProducer(
     }
 
     /**
-     * Updates the two-dimensional list of [ChartEntry] and notifies listeners about the update.
+     * Updates the two-dimensional list of [ChartEntry] instances and notifies listeners about the update.
      *
      * @see entries
      * @see registerForUpdates
