@@ -28,7 +28,7 @@ import kotlin.math.max
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 
 /**
- * [VirtualLayout] measures and lays the chart, axes and other components like a marker out.
+ * [VirtualLayout] measures and lays out the chart, the axis, and other components (such as markers).
  */
 public open class VirtualLayout {
 
@@ -37,14 +37,15 @@ public open class VirtualLayout {
     private val tempInsets: Insets = Insets()
 
     /**
-     * Sets measured bounds for the chart and axes.
+     * Measures and sets the bounds for the chart, the axes, and other components.
      *
-     * @param context the measuring context holding data used for component measurements.
+     * @param context the measuring context that holds the data used for component measurements.
      * @param contentBounds the bounds in which the chart contents must be drawn.
      * @param chart the actual chart.
-     * @param chartModel the model used by the chart holding information about values on both y-axis and x-axis.
-     * @param axisManager the [AxisManager] managing axes.
-     * @param chartInsetter additional components that influence the chart layout such as a marker.
+     * @param chartModel the model used by the chart. This holds information about the values on both the y-axis and
+     * the x-axis.
+     * @param axisManager the [AxisManager] that manages this chart’s axes.
+     * @param chartInsetter additional components that influence the chart layout, such as markers.
      */
     @LongParameterListDrawFunction
     public open fun <Model : ChartEntryModel> setBounds(
