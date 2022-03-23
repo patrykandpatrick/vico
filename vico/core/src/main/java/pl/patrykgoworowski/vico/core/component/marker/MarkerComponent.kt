@@ -57,7 +57,8 @@ public open class MarkerComponent(
     public var indicatorSizeDp: Float = 0f
 
     /**
-     * An optional lambda function that allows for applying the color associated with a given data entry to a [Component].
+     * An optional lambda function that allows for applying the color associated with a given data entry to a
+     * [Component].
      */
     public var onApplyEntryColor: ((entryColor: Int) -> Unit)? = null
 

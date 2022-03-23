@@ -64,8 +64,9 @@ import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 /**
  * Displays a chart.
  *
- * @param chart the chart used to display sets of entries (e.g., [pl.patrykgoworowski.vico.core.chart.column.ColumnChart]
- * for a column chart or [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart).
+ * @param chart the chart used to display sets of entries (e.g.,
+ * [pl.patrykgoworowski.vico.core.chart.column.ColumnChart] for a column chart or
+ * [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart).
  * @param chartModelProducer produces the [ChartEntryModel]s displayed by the [chart].
  * @param modifier an optional modifier.
  * @param startAxis an axis displayed on the start of the chart.
@@ -120,8 +121,9 @@ public fun <Model : ChartEntryModel> Chart(
  * This function accepts a [ChartEntryModel]. For regular usage it’s advised to use the function overload that accepts a
  * [ChartModelProducer] instance.
  *
- * @param chart the chart used to display sets of entries (e.g., [pl.patrykgoworowski.vico.core.chart.column.ColumnChart]
- * for a column chart or [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart).
+ * @param chart the chart used to display sets of entries (e.g.,
+ * [pl.patrykgoworowski.vico.core.chart.column.ColumnChart] for a column chart or
+ * [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart).
  * @param model the [ChartEntryModel]s displayed by the [chart].
  * @param modifier an optional modifier.
  * @param startAxis an axis displayed on the start of the chart.

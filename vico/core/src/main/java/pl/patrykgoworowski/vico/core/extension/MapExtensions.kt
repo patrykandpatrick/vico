@@ -33,8 +33,8 @@ public fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
 ): List<Marker.EntryModel>? = keys.findClosestPositiveValue(touchPoint.x)?.let(::get)
 
 /**
- * Returns those of the [Marker.EntryModel]s stored in the [Map] whose [pl.patrykgoworowski.vico.core.entry.ChartEntry.x]
- * is equal to [xValue].
+ * Returns those of the [Marker.EntryModel]s stored in the [Map] whose
+ * [pl.patrykgoworowski.vico.core.entry.ChartEntry.x] is equal to [xValue].
  *
  * @see Marker.EntryModel
  */

@@ -31,7 +31,8 @@ import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
  *
  * @property chartModelProducers the list of [ChartModelProducer]s to be composed by this
  * [ComposedChartEntryModelProducer].
- * @param backgroundExecutor an [Executor] used to generate instances of the [ComposedChartEntryModel] off the main thread.
+ * @param backgroundExecutor an [Executor] used to generate instances of the [ComposedChartEntryModel] off the main
+ * thread.
  *
  * @see ComposedChartEntryModel
  * @see ChartModelProducer

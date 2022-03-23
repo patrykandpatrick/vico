@@ -20,7 +20,6 @@ import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
 import pl.patrykgoworowski.vico.core.axis.Axis
 import pl.patrykgoworowski.vico.core.axis.AxisPosition
-import pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import pl.patrykgoworowski.vico.core.axis.setTo
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
