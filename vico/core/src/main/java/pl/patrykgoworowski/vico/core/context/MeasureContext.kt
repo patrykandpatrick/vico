@@ -20,17 +20,17 @@ import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 
 /**
- * [MeasureContext] holds data used by various chart components during measure and draw phase.
+ * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
  */
 public interface MeasureContext : Extras {
 
     /**
-     * The bounds of the canvas which will be used to draw the chart and its components.
+     * The bounds of the canvas that will be used to draw the chart and its components.
      */
     public val canvasBounds: RectF
 
     /**
-     * Holds information about values on both y-axis and x-axis.
+     * Holds information about the values on both the y-axis and the x-axis.
      *
      * @see ChartModel
      */
@@ -79,12 +79,12 @@ public interface MeasureContext : Extras {
         get() = pixels.toInt()
 
     /**
-     * Converts given [dp] value to pixels.
+     * Converts the given [dp] value to pixels.
      */
     public fun toPixels(dp: Float): Float = dp * density
 
     /**
-     * Converts given [sp] value to the font size.
+     * Converts the given [sp] value to a font size in pixels.
      */
     public fun toFontSize(sp: Float): Float = sp * fontScale
 }
