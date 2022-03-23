@@ -68,7 +68,8 @@ public open class LineComponent(
     }
 
     /**
-     * Checks whether the [LineComponent] fits horizontally within given [boundingBox] with its current [thicknessDp].
+     * Checks whether the [LineComponent] fits horizontally within the given [boundingBox] with its current
+     * [thicknessDp].
      */
     public open fun fitsInHorizontal(
         context: DrawContext,
@@ -106,7 +107,7 @@ public open class LineComponent(
     }
 
     /**
-     * Checks whether the [LineComponent] fits vertically within given [boundingBox] with its current [thicknessDp].
+     * Checks whether the [LineComponent] fits vertically within the given [boundingBox] with its current [thicknessDp].
      */
     public open fun fitsInVertical(
         context: DrawContext,
@@ -125,7 +126,7 @@ public open class LineComponent(
     }
 
     /**
-     * Checks whether the [LineComponent] intersects vertically given [boundingBox] with its current [thicknessDp].
+     * Checks whether the [LineComponent] vertically intersects the given [boundingBox] with its current [thicknessDp].
      */
     public open fun intersectsVertical(
         context: DrawContext,
