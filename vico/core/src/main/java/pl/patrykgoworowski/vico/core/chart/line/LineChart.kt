@@ -19,26 +19,26 @@ package pl.patrykgoworowski.vico.core.chart.line
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import pl.patrykgoworowski.vico.core.DefaultDimens
-import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
-import pl.patrykgoworowski.vico.core.component.Component
-import pl.patrykgoworowski.vico.core.component.shape.extension.horizontalCubicTo
-import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
-import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
-import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
-import pl.patrykgoworowski.vico.core.chart.forEachIn
-import pl.patrykgoworowski.vico.core.chart.put
-import pl.patrykgoworowski.vico.core.chart.BaseChart
-import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
-import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
-import pl.patrykgoworowski.vico.core.entry.ChartEntry
-import pl.patrykgoworowski.vico.core.extension.half
-import pl.patrykgoworowski.vico.core.extension.orZero
-import pl.patrykgoworowski.vico.core.context.MeasureContext
-import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
+import pl.patrykgoworowski.vico.core.DefaultDimens
+import pl.patrykgoworowski.vico.core.axis.model.MutableChartModel
+import pl.patrykgoworowski.vico.core.chart.BaseChart
+import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
+import pl.patrykgoworowski.vico.core.chart.forEachIn
+import pl.patrykgoworowski.vico.core.chart.put
+import pl.patrykgoworowski.vico.core.chart.segment.MutableSegmentProperties
+import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
+import pl.patrykgoworowski.vico.core.component.Component
+import pl.patrykgoworowski.vico.core.component.shape.extension.horizontalCubicTo
+import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
+import pl.patrykgoworowski.vico.core.context.MeasureContext
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
+import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
+import pl.patrykgoworowski.vico.core.extension.half
+import pl.patrykgoworowski.vico.core.extension.orZero
+import pl.patrykgoworowski.vico.core.marker.Marker
 
 /**
  * [LineChart] displays data as a continuous line.
@@ -103,9 +103,6 @@ public open class LineChart(
         val lineBackgroundShader = lineBackgroundShader
         linePaint.strokeWidth = lineThicknessDp.pixels
 
-        val clipRestoreCount = saveCanvas()
-        setUpClipBounds()
-
         val (cellWidth, spacing, _) = segmentProperties
 
         var cubicCurvature: Float
@@ -114,7 +111,7 @@ public open class LineChart(
 
         val drawingStart = bounds.left + spacing.half - horizontalScroll + cellWidth.half
 
-        model.forEachPoint(segmentProperties, drawingStart) { entry, x, y ->
+        model.forEachPointWithinBounds(segmentProperties, drawingStart) { entry, x, y ->
             if (linePath.isEmpty) {
                 linePath.moveTo(x, y)
                 if (lineBackgroundShader != null) {
@@ -132,12 +129,14 @@ public open class LineChart(
             prevX = x
             prevY = y
 
-            entryLocationMap.put(
-                x = ceil(x),
-                y = y.coerceIn(bounds.top, bounds.bottom),
-                entry = entry,
-                color = lineColor
-            )
+            if (x in bounds.left..bounds.right) {
+                entryLocationMap.put(
+                    x = ceil(x),
+                    y = y.coerceIn(bounds.top, bounds.bottom),
+                    entry = entry,
+                    color = lineColor
+                )
+            }
         }
 
         if (lineBackgroundShader != null) {
@@ -150,20 +149,10 @@ public open class LineChart(
         canvas.drawPath(linePath, linePaint)
 
         point?.let { point ->
-            model.forEachPoint(segmentProperties, drawingStart) { _, x, y ->
+            model.forEachPointWithinBounds(segmentProperties, drawingStart) { _, x, y ->
                 point.drawPoint(context, x, y, pointSizeDp.pixels.half)
             }
         }
-        canvas.restoreToCount(clipRestoreCount)
-    }
-
-    private fun ChartDrawContext.setUpClipBounds() {
-        clipRect(
-            left = bounds.left,
-            top = bounds.top - pointSizeDp.pixels.half,
-            right = bounds.right,
-            bottom = bounds.bottom + pointSizeDp.pixels.half
-        )
     }
 
     private fun resetTempData() {
@@ -172,21 +161,48 @@ public open class LineChart(
         lineBackgroundPath.rewind()
     }
 
-    private inline fun ChartEntryModel.forEachPoint(
+    private fun ChartEntryModel.forEachPointWithinBounds(
         segment: SegmentProperties,
         drawingStart: Float,
         action: (entry: ChartEntry, x: Float, y: Float) -> Unit,
     ) {
         var x: Float
         var y: Float
+
+        var prevEntry: ChartEntry? = null
+        var lastEntry: ChartEntry? = null
+
+        val boundsStart = bounds.left
+        val boundsEnd = bounds.left + bounds.width()
+
         val heightMultiplier = bounds.height() / (drawMaxY - this@LineChart.minY.orZero)
+
+        fun getDrawX(entry: ChartEntry): Float =
+            drawingStart + (segment.cellWidth + segment.marginWidth) * (entry.x - drawMinX) / stepX
+
+        fun getDrawY(entry: ChartEntry): Float =
+            bounds.bottom - entry.y * heightMultiplier
 
         entries.forEach { collection ->
             collection.forEachIn((drawMinX - stepX)..(drawMaxX + stepX)) { entry ->
-                x = drawingStart + (segment.cellWidth + segment.marginWidth) *
-                    (entry.x - drawMinX) / stepX
-                y = bounds.bottom - entry.y * heightMultiplier
-                action(entry, x, y)
+                x = getDrawX(entry)
+                y = getDrawY(entry)
+                when {
+                    x < boundsStart -> {
+                        prevEntry = entry
+                    }
+                    x in boundsStart..boundsEnd -> {
+                        prevEntry?.also {
+                            action(it, getDrawX(it), getDrawY(it))
+                            prevEntry = null
+                        }
+                        action(entry, x, y)
+                    }
+                    x > boundsEnd && lastEntry == null -> {
+                        action(entry, x, y)
+                        lastEntry = entry
+                    }
+                }
             }
         }
     }

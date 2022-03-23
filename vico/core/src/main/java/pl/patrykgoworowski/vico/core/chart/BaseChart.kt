@@ -22,6 +22,7 @@ import pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext
 import pl.patrykgoworowski.vico.core.dimensions.BoundsAware
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.getEntryModel
+import pl.patrykgoworowski.vico.core.extension.inClip
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 /**
@@ -68,18 +69,20 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     override fun draw(
         context: ChartDrawContext,
         model: Model,
-    ) {
-        if (model.entries.isNotEmpty()) {
-            drawChart(context, model)
-        }
-        drawThresholdLines(context)
-        persistentMarkers.forEach { (x, marker) ->
-            entryLocationMap.getEntryModel(x)?.also { markerModel ->
-                marker.draw(
-                    context = context,
-                    bounds = bounds,
-                    markedEntries = markerModel,
-                )
+    ): Unit = with(context) {
+        canvas.inClip(bounds.left, 0f, bounds.right, context.canvas.height.toFloat()) {
+            if (model.entries.isNotEmpty()) {
+                drawChart(context, model)
+            }
+            drawThresholdLines(context)
+            persistentMarkers.forEach { (x, marker) ->
+                entryLocationMap.getEntryModel(x)?.also { markerModel ->
+                    marker.draw(
+                        context = context,
+                        bounds = bounds,
+                        markedEntries = markerModel,
+                    )
+                }
             }
         }
     }

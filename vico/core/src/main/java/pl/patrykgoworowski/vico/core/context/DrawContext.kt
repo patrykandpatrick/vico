@@ -17,6 +17,7 @@
 package pl.patrykgoworowski.vico.core.context
 
 import android.graphics.Canvas
+import android.graphics.RectF
 
 /**
  * [DrawContext] is an extension of [MeasureContext] that stores a [Canvas] and other properties.
@@ -54,6 +55,15 @@ public interface DrawContext : MeasureContext {
      */
     public fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
         canvas.clipRect(left, top, right, bottom)
+    }
+
+    /**
+     * Clips the [Canvas] to the specified [rectF].
+     *
+     * @see Canvas.clipRect
+     */
+    public fun clipRect(rectF: RectF) {
+        canvas.clipRect(rectF)
     }
 
     /**

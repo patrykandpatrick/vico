@@ -29,7 +29,6 @@ import pl.patrykgoworowski.vico.core.chart.segment.SegmentProperties
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.extension.getRepeating
 import pl.patrykgoworowski.vico.core.extension.half
-import pl.patrykgoworowski.vico.core.extension.inClip
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
@@ -70,15 +69,13 @@ public open class ColumnChart(
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
-        canvas.inClip(bounds) {
-            entryLocationMap.clear()
-            drawChartInternal(
-                model = model,
-                cellWidth = segmentProperties.cellWidth,
-                spacing = segmentProperties.marginWidth,
-            )
-            heightMap.clear()
-        }
+        entryLocationMap.clear()
+        drawChartInternal(
+            model = model,
+            cellWidth = segmentProperties.cellWidth,
+            spacing = segmentProperties.marginWidth,
+        )
+        heightMap.clear()
     }
 
     private fun ChartDrawContext.drawChartInternal(
