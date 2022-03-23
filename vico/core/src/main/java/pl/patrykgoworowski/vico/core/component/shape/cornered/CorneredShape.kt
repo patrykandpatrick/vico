@@ -27,10 +27,10 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
  * An implementation of generic [Shape] allowing to specify look and size of each corner
  * with [Corner]. It also allows to intercept drawing of each of [Shape]’s sides
  *
- * @param topLeft specifies a [Corner] at the top-left location of the [Shape].
- * @param topRight specifies a [Corner] at the top-right location of the [Shape].
- * @param bottomLeft specifies a [Corner] at the bottom-left location of the [Shape].
- * @param bottomRight specifies a [Corner] at the bottom-right location of the [Shape].
+ * @param topLeft specifies a [Corner] for the top left of the [Shape].
+ * @param topRight specifies a [Corner] for the top right of the [Shape].
+ * @param bottomLeft specifies a [Corner] for the bottom left of the [Shape].
+ * @param bottomRight specifies a [Corner] for the bottom right of the [Shape].
  */
 public open class CorneredShape(
     public val topLeft: Corner = Corner.Sharp,
@@ -40,12 +40,12 @@ public open class CorneredShape(
 ) : Shape {
 
     /**
-     * Returns a scale factor for corner size, which will prevent graphical glitches in case the size of corners
-     * is larger than given shape’s dimensions.
+     * Returns a scale factor for the corner size, which will prevent graphical glitches in case the size of the
+     * corners is larger than the shape’s dimensions.
      *
      * @param width the width of the [Shape].
      * @param height the height of the [Shape].
-     * @param density the density of the screen used in pixel size calculation.
+     * @param density the pixel density of the screen (used in pixel size calculation).
      */
     public fun getCornerScale(width: Float, height: Float, density: Float): Float {
         val availableSize = minOf(width, height)
