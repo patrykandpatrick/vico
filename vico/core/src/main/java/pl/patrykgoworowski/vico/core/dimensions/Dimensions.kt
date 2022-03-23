@@ -18,39 +18,39 @@ package pl.patrykgoworowski.vico.core.dimensions
 
 /**
  * Defines the size of each edge of a rectangle.
- * Used to store e.g. padding, or margin values.
+ * Used to store measurements such as padding or margin values.
  */
 public interface Dimensions {
 
     /**
-     * The value on the start edge in dp unit.
+     * The value for the start edge in the dp unit.
      */
     public val startDp: Float
 
     /**
-     * The value on the top edge in dp unit.
+     * The value for the top edge in the dp unit.
      */
     public val topDp: Float
 
     /**
-     * The value on the end edge in dp unit.
+     * The value for the end edge in the dp unit.
      */
     public val endDp: Float
 
     /**
-     * The value on the bottom edge in dp unit.
+     * The value for the bottom edge in the dp unit.
      */
     public val bottomDp: Float
 
     /**
-     * Returns a dimension of the left edge depending on layout orientation.
+     * Returns the dimension of the left edge depending on the layout orientation.
      *
      * @param isLtr whether the device layout is left-to-right.
      */
     public fun getLeftDp(isLtr: Boolean): Float = if (isLtr) startDp else endDp
 
     /**
-     * Returns a dimension of the right edge depending on layout orientation.
+     * Returns the dimension of the right edge depending on the layout orientation.
      *
      * @param isLtr whether the device layout is left-to-right.
      */
