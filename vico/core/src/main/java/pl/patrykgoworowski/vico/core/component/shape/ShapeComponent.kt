@@ -37,9 +37,9 @@ import pl.patrykgoworowski.vico.core.extension.half
  *
  * @param shape the [Shape] that will be drawn.
  * @param color the color of the shape.
- * @param dynamicShader the optional [android.graphics.Shader] provider used as shape’s background.
+ * @param dynamicShader an optional [android.graphics.Shader] provider used as the shape’s background.
  * @param margins the margins that will inset the shape.
- * @param strokeWidthDp the width of the shape’s stroke in dp unit.
+ * @param strokeWidthDp the width of the shape’s stroke in the dp unit.
  * @param strokeColor the color of the stroke.
  */
 public open class ShapeComponent(
