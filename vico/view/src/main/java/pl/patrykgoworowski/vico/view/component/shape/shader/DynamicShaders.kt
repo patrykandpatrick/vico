@@ -31,10 +31,10 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
  * Creates a [ComponentShader] out of given [component].
  *
  * @param component used as a pattern in the [Shader].
- * @param componentSizeDp the size of the [component] in dp unit.
- * @param checkeredArrangement whether the [component] will have checkered arrangement in the [Shader].
- * @param tileXMode The tiling mode for x to draw the [component] in.
- * @param tileYMode The tiling mode for y to draw the [component] in.
+ * @param componentSizeDp the size of the [component] in the dp unit.
+ * @param checkeredArrangement whether the [component] will be arranged in a checkered pattern.
+ * @param tileXMode the horizontal tiling mode for the [component].
+ * @param tileYMode the vertical tiling mode for the [component].
  */
 public fun DynamicShaders.fromComponent(
     component: Component,
@@ -51,7 +51,7 @@ public fun DynamicShaders.fromComponent(
 )
 
 /**
- * Creates a [DynamicShader] in form of a horizontal gradient.
+ * Creates a [DynamicShader] in the form of a horizontal gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
  */
@@ -60,11 +60,11 @@ public fun DynamicShaders.horizontalGradient(
 ): DynamicShader = horizontalGradient(colors)
 
 /**
- * Creates a [DynamicShader] in form of a horizontal gradient.
+ * Creates a [DynamicShader] in the form of a horizontal gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
- * @param positions May be null. The relative positions [0..1] of each corresponding color in the colors array.
- * If this is null, the the colors are distributed evenly along the gradient line.
+ * @param positions the relative positions ([0..1]) of each corresponding color in the color array.
+ * This may be null, in which case the colors will be distributed evenly along the gradient line.
  */
 public fun DynamicShaders.horizontalGradient(
     colors: IntArray,
@@ -93,7 +93,7 @@ public fun DynamicShaders.horizontalGradient(
 }
 
 /**
- * Creates a [DynamicShader] in form of a vertical gradient.
+ * Creates a [DynamicShader] in the form of a vertical gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
  */
@@ -102,11 +102,11 @@ public fun DynamicShaders.verticalGradient(
 ): DynamicShader = verticalGradient(colors)
 
 /**
- * Creates a [DynamicShader] in form of a vertical gradient.
+ * Creates a [DynamicShader] in the form of a vertical gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
- * @param positions May be null. The relative positions [0..1] of each corresponding color in the colors array.
- * If this is null, the the colors are distributed evenly along the gradient line.
+ * @param positions the relative positions ([0..1]) of each corresponding color in the color array.
+ * This may be null, in which case the colors will be distributed evenly along the gradient line.
  */
 public fun DynamicShaders.verticalGradient(
     colors: IntArray,
