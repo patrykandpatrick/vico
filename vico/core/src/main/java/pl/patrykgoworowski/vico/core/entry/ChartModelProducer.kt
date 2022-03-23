@@ -17,9 +17,9 @@
 package pl.patrykgoworowski.vico.core.entry
 
 /**
- * A declaration of [Model] producer, which may deliver generated [Model]s asynchronously.
- * It supports progressing a difference animations between previous and current list of entries.
- * The [Model] is used by the chart to render data.
+ * A declaration of a [Model] producer that may deliver generated [Model]s asynchronously.
+ * It supports animating the difference between the previous and current lists of entries.
+ * The [Model] is used by the chart to render the data.
  *
  * @see ChartEntryModel
  */
@@ -31,7 +31,8 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
     public fun getModel(): Model
 
     /**
-     * Performs a difference animation progress for associated [key] by given [progress] amount.
+     * Calculates an intermediate list of entries for difference animations for the associated [key], where [progress]
+     * is the balance between the previous and current lists of entries.
      */
     public fun progressModel(key: Any, progress: Float)
 
@@ -42,13 +43,13 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
      * [progressModel].
      * @param updateListener is called immediately in this function, and when the [ChartModelProducer] receives a new
      * list of entries. The [registerForUpdates] function caller may start an animator, which will order the
-     * [ChartModelProducer] to progress the difference animation with [progressModel] function.
+     * [ChartModelProducer] to handle the difference animation with [progressModel].
      * @param onModel called when the [ChartModelProducer] has generated the [Model].
      */
     public fun registerForUpdates(key: Any, updateListener: () -> Model?, onModel: (Model) -> Unit)
 
     /**
-     * Unregisters the update listener associated with the [key].
+     * Unregisters the update listener associated with the given [key].
      */
     public fun unregisterFromUpdates(key: Any)
 }
