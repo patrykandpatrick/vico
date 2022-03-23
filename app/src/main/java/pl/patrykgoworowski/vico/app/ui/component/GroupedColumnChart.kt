@@ -23,7 +23,7 @@ import pl.patrykgoworowski.vico.compose.axis.horizontal.bottomAxis
 import pl.patrykgoworowski.vico.compose.axis.vertical.startAxis
 import pl.patrykgoworowski.vico.compose.chart.Chart
 import pl.patrykgoworowski.vico.compose.chart.column.columnChart
-import pl.patrykgoworowski.vico.core.chart.column.MergeMode
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart.MergeMode
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
 
 @Composable

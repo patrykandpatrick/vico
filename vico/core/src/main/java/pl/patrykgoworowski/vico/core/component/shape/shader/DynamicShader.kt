@@ -20,8 +20,16 @@ import android.graphics.RectF
 import android.graphics.Shader
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
+/**
+ * [DynamicShader] creates [Shader] instances on demand.
+ *
+ * @see Shader
+ */
 public fun interface DynamicShader {
 
+    /**
+     * Creates a [Shader] by using the provided [bounds].
+     */
     public fun provideShader(
         context: DrawContext,
         bounds: RectF,
@@ -33,6 +41,9 @@ public fun interface DynamicShader {
         bottom = bounds.bottom
     )
 
+    /**
+     * Creates a [Shader] by using the provided [left], [top], [right], and [bottom] bounds.
+     */
     public fun provideShader(
         context: DrawContext,
         left: Float,

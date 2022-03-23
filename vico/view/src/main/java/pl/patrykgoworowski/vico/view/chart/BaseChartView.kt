@@ -64,6 +64,9 @@ import pl.patrykgoworowski.vico.view.gestures.MotionEventHandler
 import pl.patrykgoworowski.vico.view.layout.MutableMeasureContext
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
+/**
+ * The base for [View]s that display a chart. Subclasses define a [Model] implementation they can handle.
+ */
 public abstract class BaseChartView<Model : ChartEntryModel> internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -162,10 +165,16 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      */
     public var isZoomEnabled: Boolean = true
 
+    /**
+     * The chart displayed by this [View].
+     */
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
         tryInvalidate(chart, model)
     }
 
+    /**
+     * The [Model] used in the [chart] to render the data.
+     */
     public var model: Model? = null
         private set
 
@@ -208,7 +217,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
-            chart.setToAxisModel(chartModel, model)
+            chart.setToChartModel(chartModel, model)
             if (ViewCompat.isAttachedToWindow(this)) {
                 invalidate()
             }
@@ -220,7 +229,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val scaleHandled =
             if (isZoomEnabled && event.pointerCount > 1) scaleGestureDetector.onTouchEvent(event)
             else false
-        val touchHandled = motionEventHandler.handleTouchPoint(event)
+        val touchHandled = motionEventHandler.handleMotionEvent(event)
         return if (touchHandled || scaleHandled) {
             parent.requestDisallowInterceptTouchEvent(event.action == MotionEvent.ACTION_MOVE)
             true

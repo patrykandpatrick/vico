@@ -19,22 +19,31 @@ package pl.patrykgoworowski.vico.core.component.shape
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.RectF
 import kotlin.properties.Delegates
 import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.dimension.setMargins
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.component.shape.shadow.ComponentShadow
+import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.debug.DebugHelper
 import pl.patrykgoworowski.vico.core.dimensions.Dimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
-import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.extension.alpha
 import pl.patrykgoworowski.vico.core.extension.half
 
+/**
+ * [ShapeComponent] is a [Component] that draws a shape.
+ *
+ * @param shape the [Shape] that will be drawn.
+ * @param color the color of the shape.
+ * @param dynamicShader an optional [android.graphics.Shader] provider used as the shape’s background.
+ * @param margins the margins that will inset the shape.
+ * @param strokeWidthDp the width of the shape’s stroke in the dp unit.
+ * @param strokeColor the color of the stroke.
+ */
 public open class ShapeComponent(
-    public val shape: Shape,
+    public val shape: Shape = Shapes.rectShape,
     color: Int = Color.BLACK,
     public val dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
@@ -48,7 +57,14 @@ public open class ShapeComponent(
 
     protected val path: Path = Path()
 
+    /**
+     * The color of the shape.
+     */
     public var color: Int by Delegates.observable(color) { _, _, value -> paint.color = value }
+
+    /**
+     * The color of the stroke.
+     */
     public var strokeColor: Int by Delegates.observable(color) { _, _, value -> strokePaint.color = value }
 
     init {
@@ -108,29 +124,22 @@ public open class ShapeComponent(
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float
+        bottom: Float,
     ) {
         dynamicShader
             ?.provideShader(context, left, top, right, bottom)
             ?.let { shader -> paint.shader = shader }
     }
 
-    public open fun fitsIn(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        boundingBox: RectF
-    ): Boolean = boundingBox.contains(left, top, right, bottom)
-
-    public open fun intersects(
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        boundingBox: RectF
-    ): Boolean = boundingBox.intersects(left, top, right, bottom)
-
+    /**
+     * Sets a shadow layer.
+     *
+     * @param radius the blur radius.
+     * @param dx the horizontal offset.
+     * @param dy the vertical offset.
+     * @param color the shadow color.
+     * @param applyElevationOverlay whether to apply an elevation overlay to the component casting the shadow.
+     */
     public fun setShadow(
         radius: Float,
         dx: Float = 0f,
@@ -147,6 +156,9 @@ public open class ShapeComponent(
         }
     }
 
+    /**
+     * Removes the shadow layer from the [ShapeComponent].
+     */
     public fun clearShadow(): ShapeComponent = apply {
         shadowProperties.apply {
             this.radius = 0f

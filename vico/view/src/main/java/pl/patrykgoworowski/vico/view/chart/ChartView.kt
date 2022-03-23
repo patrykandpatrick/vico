@@ -22,6 +22,9 @@ import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.util.RandomEntriesGenerator
 import pl.patrykgoworowski.vico.view.theme.ThemeHandler
 
+/**
+ * A subclass of [BaseChartView] that displays charts that use [ChartEntryModel].
+ */
 public class ChartView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,

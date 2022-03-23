@@ -29,8 +29,10 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import pl.patrykgoworowski.vico.compose.component.ChartShape
 import pl.patrykgoworowski.vico.core.DEF_MARKER_TICK_SIZE
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
+import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
 import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
@@ -43,6 +45,9 @@ import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private const val RADII_ARRAY_SIZE = 8
 
+/**
+ * Converts [androidx.compose.ui.graphics.Shape] to [pl.patrykgoworowski.vico.core.component.shape.Shape].
+ */
 public fun ComposeShape.chartShape(): Shape = object : Shape {
     private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
     private val matrix: Matrix by lazy { Matrix() }
@@ -89,6 +94,16 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
     }
 }
 
+/**
+ * Adds a rounded rectangle to the receiver [Path].
+ *
+ * @param left the left edge of the rectangle.
+ * @param top the top edge of the rectangle.
+ * @param right the right edge of the rectangle.
+ * @param bottom the bottom edge of the rectangle.
+ * @param rect the source rect whose values will be read.
+ * @param radii a mutable [FloatArray] that stores the corner radii.
+ */
 @Suppress("MagicNumber")
 @LongParameterListDrawFunction
 public fun Path.addRoundRect(
@@ -164,6 +179,15 @@ public fun Shapes.cutCornerShape(
     Corner.Absolute(bottomLeft.value, CutCornerTreatment),
 )
 
+/**
+ * Creates a [MarkerCorneredShape].
+ *
+ * @param topLeft the size and look of the top-left corner.
+ * @param topRight the size and look of the top-right corner.
+ * @param bottomRight the size and look of the bottom-right corner.
+ * @param bottomLeft the size and look of the bottom-left corner.
+ * @param tickSizeDp the tick size.
+ */
 public fun Shapes.markerCorneredShape(
     topLeft: Corner,
     topRight: Corner,
@@ -178,6 +202,12 @@ public fun Shapes.markerCorneredShape(
     tickSizeDp = tickSizeDp.value
 )
 
+/**
+ * Creates a [MarkerCorneredShape].
+ *
+ * @param all the size and look of all corners.
+ * @param tickSizeDp the tick size.
+ */
 public fun Shapes.markerCorneredShape(
     all: Corner,
     tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
@@ -189,6 +219,12 @@ public fun Shapes.markerCorneredShape(
     tickSizeDp = tickSizeDp.value
 )
 
+/**
+ * Creates a [MarkerCorneredShape] out of another [CorneredShape].
+ *
+ * @param corneredShape the source of each corner size and style.
+ * @param tickSizeDp the tick size.
+ */
 public fun Shapes.markerCorneredShape(
     corneredShape: CorneredShape,
     tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
@@ -198,4 +234,42 @@ public fun Shapes.markerCorneredShape(
     bottomRight = corneredShape.bottomRight,
     bottomLeft = corneredShape.bottomLeft,
     tickSizeDp = tickSizeDp.value
+)
+
+/**
+ * Creates a [DashedShape].
+ * @param shape the base [Shape] from which to create the [DashedShape].
+ * @param dashLength the dash length.
+ * @param gapLength the gap length.
+ * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
+ */
+public fun Shapes.dashedShape(
+    shape: androidx.compose.ui.graphics.Shape,
+    dashLength: Dp,
+    gapLength: Dp,
+    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
+): DashedShape = DashedShape(
+    shape = shape.chartShape(),
+    dashLengthDp = dashLength.value,
+    gapLengthDp = gapLength.value,
+    fitStrategy = fitStrategy,
+)
+
+/**
+ * Creates a [DashedShape].
+ * @param shape the base [ChartShape] from which to create the [DashedShape].
+ * @param dashLength the dash length.
+ * @param gapLength the gap length.
+ * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
+ */
+public fun Shapes.dashedShape(
+    shape: ChartShape,
+    dashLength: Dp,
+    gapLength: Dp,
+    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
+): DashedShape = DashedShape(
+    shape = shape,
+    dashLengthDp = dashLength.value,
+    gapLengthDp = gapLength.value,
+    fitStrategy = fitStrategy,
 )

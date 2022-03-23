@@ -19,8 +19,19 @@ package pl.patrykgoworowski.vico.core
 import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 
+/**
+ * The default line count for [TextComponent].
+ */
 public const val DEF_LABEL_LINE_COUNT: Int = 1
+
+/**
+ * The default maximum label count for vertical axes.
+ */
 public const val DEF_LABEL_COUNT: Int = 99
+
+/**
+ * The default label spacing for vertical axes in dp.
+ */
 public const val DEF_LABEL_SPACING: Float = 16f
 
 /**
@@ -43,9 +54,18 @@ public const val DEF_MIN_ZOOM: Float = 0.1f
  */
 public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
 
-public const val THREAD_POOL_COUNT: Int = 4
+/**
+ * The default size of the thread pools used for difference animations.
+ */
+public const val DEF_THREAD_POOL_SIZE: Int = 4
 
+/**
+ * Defaults for animations.
+ */
 public object Animation {
+    /**
+     * The [Float] range of values used in difference animations.
+     */
     public val range: ClosedFloatingPointRange<Float> = 0f..1f
 
     /**
@@ -215,8 +235,19 @@ public interface DefaultColors {
      */
     public val axisLineColor: Long
 
+    /**
+     * The color for columns whose index in a segment is 3k (k ∈ N).
+     */
     public val column1Color: Long
+
+    /**
+     * The color for columns whose index in a segment is 1 + 3k (k ∈ N).
+     */
     public val column2Color: Long
+
+    /**
+     * The color for columns whose index in a segment is 2 + 3k (k ∈ N).
+     */
     public val column3Color: Long
 
     /**
@@ -261,7 +292,17 @@ public interface DefaultColors {
     }
 }
 
+/**
+ * Default alpha values.
+ */
 public object DefaultAlpha {
+    /**
+     * The default value for alpha on the start of line’s background gradient.
+     */
     public const val LINE_BACKGROUND_SHADER_START: Float = 0.5f
+
+    /**
+     * The default value for alpha on the end of line’s background gradient.
+     */
     public const val LINE_BACKGROUND_SHADER_END: Float = 0f
 }

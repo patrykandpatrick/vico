@@ -20,7 +20,17 @@ import android.graphics.Paint
 import android.graphics.Path
 import pl.patrykgoworowski.vico.core.DEF_MARKER_TICK_SIZE
 import pl.patrykgoworowski.vico.core.context.DrawContext
+import pl.patrykgoworowski.vico.core.component.shape.Shape
 
+/**
+ * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick at a given point.
+ *
+ * @param topLeft specifies a [Corner] for the top left of the [Shape].
+ * @param topRight specifies a [Corner] for the top right of the [Shape].
+ * @param bottomLeft specifies a [Corner] for the bottom left of the [Shape].
+ * @param bottomRight specifies a [Corner] for the bottom right of the [Shape].
+ * @param tickSizeDp the size of the tick in the dp unit.
+ */
 public open class MarkerCorneredShape(
     topLeft: Corner,
     topRight: Corner,
@@ -54,7 +64,7 @@ public open class MarkerCorneredShape(
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float
+        bottom: Float,
     ): Unit = with(context) {
         val tickX: Float? = context[tickXKey]
         if (tickX != null) {
@@ -85,6 +95,11 @@ public open class MarkerCorneredShape(
     }
 
     public companion object {
+        /**
+         * A key used to store and retrieve the x coordinate of the tick.
+         *
+         * @see pl.patrykgoworowski.vico.core.context.Extras
+         */
         public const val tickXKey: String = "tickX"
     }
 }

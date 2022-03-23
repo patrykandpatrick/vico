@@ -32,12 +32,20 @@ public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
     canvas.block()
 }
 
+/**
+ * Creates an anonymous implementation of [DrawContext].
+ *
+ * @param canvas the canvas to draw the chart on.
+ * @param density the pixel density of the screen (used in pixel size calculation).
+ * @param fontScale the scale of fonts.
+ * @param isLtr whether the device layout is left-to-right.
+ * @param elevationOverlayColor the elevation overlay color. This is applied to components that cast shadows.
+ */
 public fun drawContext(
     canvas: Canvas,
     density: Float,
     fontScale: Float,
     isLtr: Boolean,
-    zoom: Float = 1f,
     elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
     override val canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
@@ -49,7 +57,7 @@ public fun drawContext(
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
     override val horizontalScroll: Float = 0f
-    override val chartScale: Float = zoom
+    override val chartScale: Float = 1f
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
         val originalCanvas = this.canvas

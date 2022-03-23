@@ -18,12 +18,30 @@ package pl.patrykgoworowski.vico.core.component.shape.cornered
 
 import pl.patrykgoworowski.vico.core.throwable.IllegalPercentageException
 
+/**
+ * A class used to specify the size and look of a given shape corner.
+ *
+ * @param cornerTreatment affects the final appearance of the corner.
+ */
 public sealed class Corner(
     public val cornerTreatment: CornerTreatment,
 ) {
 
+    /**
+     * Calculates the size of the corner.
+     *
+     * @param availableCornerSize the available space that this corner can take.
+     * @param density the density of the screen (used in pixel size calculation).
+     *
+     * @return the size of the corner in pixels.
+     */
     public abstract fun getCornerSize(availableCornerSize: Float, density: Float): Float
 
+    /**
+     * Defines an absolute size for a corner in the dp unit.
+     *
+     * @param sizeDp the size of the corner in the dp unit.
+     */
     public class Absolute(
         public val sizeDp: Float,
         cornerTreatment: CornerTreatment,
@@ -33,6 +51,11 @@ public sealed class Corner(
             sizeDp * density
     }
 
+    /**
+     * Defines a relative size for a corner in percent.
+     *
+     * @param percentage the percentage of the space available for the corner that will be used as its size.
+     */
     public class Relative(
         public val percentage: Int,
         cornerTreatment: CornerTreatment,
@@ -49,7 +72,14 @@ public sealed class Corner(
     public companion object {
         private const val MAX_PERCENTAGE = 100
 
+        /**
+         * A [Corner] that is completely rounded.
+         */
         public val FullyRounded: Corner = Relative(MAX_PERCENTAGE, RoundedCornerTreatment)
+
+        /**
+         * A [Corner] that has sharp corners.
+         */
         public val Sharp: Corner = Relative(0, SharpCornerTreatment)
     }
 }

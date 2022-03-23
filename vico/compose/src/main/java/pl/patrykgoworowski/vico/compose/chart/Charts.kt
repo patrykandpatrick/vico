@@ -61,6 +61,25 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 
+/**
+ * Displays a chart.
+ *
+ * @param chart the chart used to display sets of entries (e.g.,
+ * [pl.patrykgoworowski.vico.core.chart.column.ColumnChart] for a column chart or
+ * [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart).
+ * @param chartModelProducer produces the [ChartEntryModel]s displayed by the [chart].
+ * @param modifier an optional modifier.
+ * @param startAxis an axis displayed on the start of the chart.
+ * @param topAxis an axis displayed on the top of the chart.
+ * @param endAxis an axis displayed on the end of the chart.
+ * @param bottomAxis an axis displayed on the bottom of the chart.
+ * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
+ * nearest to the touch point.
+ * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
+ * @param isZoomEnabled whether zooming in and out is enabled.
+ * @param diffAnimationSpec the animation spec used to animate differences between entry sets ([ChartEntryModel]
+ * instances).
+ */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
@@ -96,6 +115,24 @@ public fun <Model : ChartEntryModel> Chart(
     }
 }
 
+/**
+ * Displays a chart.
+ *
+ * This function accepts a [ChartEntryModel]. For regular usage it’s advised to use the function overload that accepts a
+ * [ChartModelProducer] instance.
+ *
+ * @param chart the chart used to display sets of entries (e.g.,
+ * [pl.patrykgoworowski.vico.core.chart.column.ColumnChart] for a column chart or
+ * [pl.patrykgoworowski.vico.core.chart.line.LineChart] for a line chart).
+ * @param model the [ChartEntryModel]s displayed by the [chart].
+ * @param modifier an optional modifier.
+ * @param startAxis an axis displayed on the start of the chart.
+ * @param topAxis an axis displayed on the top of the chart.
+ * @param endAxis an axis displayed on the end of the chart.
+ * @param bottomAxis an axis displayed on the bottom of the chart.
+ * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
+ * @param isZoomEnabled whether zooming in and out is enabled.
+ */
 @Suppress("LongMethod")
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -112,7 +149,7 @@ public fun <Model : ChartEntryModel> Chart(
 ) {
     val axisManager = remember { AxisManager() }
     val chartModel = remember { MutableChartModel() }
-    chart.setToAxisModel(chartModel, model)
+    chart.setToChartModel(chartModel, model)
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val horizontalScroll = remember { mutableStateOf(0f) }
@@ -120,7 +157,7 @@ public fun <Model : ChartEntryModel> Chart(
     val measureContext = getMeasureContext(
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
         horizontalScroll = horizontalScroll.value,
-        zoom = zoom.value,
+        chartScale = zoom.value,
         chartModel = chartModel,
         canvasBounds = bounds,
     )
@@ -192,7 +229,7 @@ public fun <Model : ChartEntryModel> Chart(
 }
 
 @Composable
-public fun rememberSetHorizontalScroll(
+internal fun rememberSetHorizontalScroll(
     scroll: MutableState<Float>,
     touchPoint: MutableState<Point?>,
     interaction: State<Interaction?>,
@@ -213,10 +250,10 @@ public fun rememberSetHorizontalScroll(
 }
 
 @Composable
-public fun rememberZoomState(
+internal fun rememberZoomState(
     zoom: MutableState<Float>,
     scrollHandler: ScrollHandler,
-    chartBounds: RectF
+    chartBounds: RectF,
 ): OnZoom = remember {
     onZoom@{ centroid, zoomChange ->
         val newZoom = zoom.value * zoomChange

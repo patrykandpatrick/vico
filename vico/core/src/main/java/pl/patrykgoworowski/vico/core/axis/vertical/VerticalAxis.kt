@@ -16,7 +16,6 @@
 
 package pl.patrykgoworowski.vico.core.axis.vertical
 
-import java.lang.IllegalStateException
 import pl.patrykgoworowski.vico.core.DEF_LABEL_COUNT
 import pl.patrykgoworowski.vico.core.DEF_LABEL_SPACING
 import pl.patrykgoworowski.vico.core.axis.Axis
@@ -39,6 +38,13 @@ import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
 private const val LABELS_KEY = "labels"
 
+/**
+ * A subclass of [pl.patrykgoworowski.vico.core.axis.AxisRenderer] used for vertical axes, used either at the start or
+ * at the end of end of a chart. It uses [Axis] as its base implementation.
+ *
+ * @see pl.patrykgoworowski.vico.core.axis.AxisRenderer
+ * @see Axis
+ */
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
 ) : Axis<Position>() {
@@ -62,7 +68,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public var labelSpacing: Float = DEF_LABEL_SPACING
 
+    /**
+     * Defines a horizontal label position relative to the axis line.
+     */
     public var horizontalLabelPosition: HorizontalLabelPosition = Outside
+
+    /**
+     * Defines a vertical label position relative to the tick line.
+     */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
     override fun drawBehindChart(
@@ -171,13 +184,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
         label?.let { label ->
 
-            fun getLabelHeight(value: Float, valueIndex: Int): Float =
-                label.getHeight(this, valueFormatter.formatValue(value, valueIndex, chartModel))
+            fun getLabelHeight(value: Float): Float =
+                label.getHeight(this, valueFormatter.formatValue(value, chartModel))
 
             val avgHeight = arrayOf(
-                getLabelHeight(chartModel.minY, 0),
-                getLabelHeight((chartModel.maxY + chartModel.minY) / 2, chartModel.lengthY.half.toInt()),
-                getLabelHeight(chartModel.maxY, chartModel.lengthY.toInt()),
+                getLabelHeight(chartModel.minY),
+                getLabelHeight((chartModel.maxY + chartModel.minY) / 2),
+                getLabelHeight(chartModel.maxY),
             ).maxOrNull().orZero
 
             var result = 0f
@@ -200,7 +213,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
             for (index in maxLabelCount downTo 0) {
                 val value = chartModel.maxY - step * index
-                labels += valueFormatter.formatValue(value, index, chartModel)
+                labels += valueFormatter.formatValue(value, chartModel)
             }
             putExtra(LABELS_KEY, labels)
             labels
@@ -210,7 +223,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
-        outInsets: HorizontalInsets
+        outInsets: HorizontalInsets,
     ): Unit = with(context) {
         val labels = getLabels(chartModel = chartModel, maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
 
@@ -224,7 +237,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun getInsets(
         context: MeasureContext,
-        outInsets: Insets
+        outInsets: Insets,
     ): Unit = with(context) {
         val halfLabelHeight = label?.getHeight(context = context)?.half.orZero
         outInsets.set(
@@ -248,7 +261,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             is SizeConstraint.Exact ->
                 constraint.sizeDp.pixels
             is SizeConstraint.Fraction ->
-                context.width * constraint.fraction
+                canvasBounds.width() * constraint.fraction
             is SizeConstraint.TextWidth ->
                 label?.getWidth(context = this, text = constraint.text).orZero + tickLength + axisThickness.half
         }
@@ -259,17 +272,33 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         Inside -> 0f
     }
 
+    /**
+     * Defines a horizontal label position relative to the axis line.
+     */
     public enum class HorizontalLabelPosition {
         Outside, Inside
     }
 
+    /**
+     * Defines a vertical label position relative to the tick line.
+     *
+     * @param textPosition a vertical text position definition used internally by
+     * [pl.patrykgoworowski.vico.core.component.text.TextComponent].
+     *
+     * @see VerticalPosition
+     */
     public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
         Center(VerticalPosition.Center),
         Top(VerticalPosition.Bottom),
         Bottom(VerticalPosition.Top),
     }
 
-    public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
+    /**
+     * A subclass of base [Axis.Builder] used to build instances of [VerticalAxis].
+     */
+    public class Builder<Position : AxisPosition.Vertical>(
+        builder: Axis.Builder<Position>? = null,
+    ) : Axis.Builder<Position>(builder) {
         /**
          * The maximum label count.
          */
@@ -279,17 +308,28 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
          * The label spacing in dp.
          */
         public var labelSpacing: Float = DEF_LABEL_SPACING
+
+        /**
+         * Defines a horizontal label position relative to the axis line.
+         */
         public var horizontalLabelPosition: HorizontalLabelPosition = Outside
+
+        /**
+         * Defines a vertical label position relative to the tick line.
+         */
         public var verticalLabelPosition: VerticalLabelPosition = Center
 
+        /**
+         * Creates an instance of [VerticalAxis] using the properties set in this [Builder].
+         */
         @Suppress("UNCHECKED_CAST")
-        public inline fun <reified T : AxisPosition.Vertical> build(): VerticalAxis<T> {
+        public inline fun <reified T : Position> build(): VerticalAxis<T> {
             val position = when (T::class.java) {
                 AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
                 AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
                 else -> throw UnknownAxisPositionException(T::class.java)
-            }
-            return setTo(VerticalAxis(position = position)).also { axis ->
+            } as Position
+            return setTo(VerticalAxis(position)).also { axis ->
                 axis.maxLabelCount = maxLabelCount
                 axis.labelSpacing = labelSpacing
                 axis.horizontalLabelPosition = horizontalLabelPosition
@@ -299,6 +339,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 }
 
-public inline fun <reified T : AxisPosition.Vertical> createVerticalAxis(
-    block: VerticalAxis.Builder.() -> Unit = {},
-): VerticalAxis<T> = VerticalAxis.Builder().apply(block).build()
+/**
+ * A convenience function that creates an instance of [VerticalAxis].
+ *
+ * @param block a lambda function yielding [VerticalAxis.Builder] as its receiver.
+ */
+public inline fun <reified Position : AxisPosition.Vertical> createVerticalAxis(
+    block: VerticalAxis.Builder<Position>.() -> Unit = {},
+): VerticalAxis<Position> = VerticalAxis.Builder<Position>().apply(block).build()

@@ -16,6 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.component.text
 
+/**
+ * Defines the horizontal position of a drawn object relative to a given point.
+ */
 public enum class HorizontalPosition {
     Start,
     Center,

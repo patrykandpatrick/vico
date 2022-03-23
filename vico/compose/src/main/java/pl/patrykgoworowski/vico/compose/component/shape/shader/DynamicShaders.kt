@@ -23,6 +23,15 @@ import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.shader.ComponentShader
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 
+/**
+ * Creates a [ComponentShader] out of the provided [component].
+ *
+ * @property component used as a pattern in the [Shader].
+ * @property componentSize the size of the [component].
+ * @property checkeredArrangement whether the [component] will be arranged in a checkered pattern.
+ * @property tileXMode the horizontal tiling mode for the [component].
+ * @property tileYMode the vertical tiling mode for the [component].
+ */
 public fun DynamicShaders.fromComponent(
     component: Component,
     componentSize: Dp,

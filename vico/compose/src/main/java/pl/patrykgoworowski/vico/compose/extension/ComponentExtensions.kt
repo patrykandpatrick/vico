@@ -26,6 +26,9 @@ import pl.patrykgoworowski.vico.core.DEF_SHADOW_COLOR
 import pl.patrykgoworowski.vico.core.component.marker.MarkerComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 
+/**
+ * The indicator size.
+ */
 public var MarkerComponent.indicatorSize: Dp
     get() = indicatorSizeDp.dp
     set(value) { indicatorSizeDp = value.value }

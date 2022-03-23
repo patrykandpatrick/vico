@@ -28,7 +28,6 @@ import pl.patrykgoworowski.vico.compose.component.shape.shader.toDynamicShader
 import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.OverlayingComponent
-import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.ShapeComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
@@ -137,6 +136,12 @@ public fun shapeComponent(
     strokeColor = strokeColor.toArgb(),
 )
 
+/**
+ * Creates an [OverlayingComponent].
+ * @param outer the outer (background) [Component].
+ * @param inner the inner (foreground) [Component].
+ * @param innerPaddingAll the padding between the inner and outer components.
+ */
 public fun overlayingComponent(
     outer: Component,
     inner: Component,
@@ -147,6 +152,15 @@ public fun overlayingComponent(
     innerPaddingAllDp = innerPaddingAll.value,
 )
 
+/**
+ * Creates an [OverlayingComponent].
+ * @param outer the outer (background) [Component].
+ * @param inner the inner (foreground) [Component].
+ * @property innerPaddingStart the start padding between the inner and outer components.
+ * @property innerPaddingTop the top padding between the inner and outer components.
+ * @property innerPaddingEnd the end padding between the inner and outer components.
+ * @property innerPaddingBottom the bottom padding between the inner and outer components.
+ */
 public fun overlayingComponent(
     outer: Component,
     inner: Component,
@@ -161,28 +175,4 @@ public fun overlayingComponent(
     insidePaddingTopDp = innerPaddingTop.value,
     insidePaddingBottomDp = innerPaddingBottom.value,
     insidePaddingEndDp = innerPaddingEnd.value,
-)
-
-public fun dashedShape(
-    shape: Shape,
-    dashLength: Dp,
-    gapLength: Dp,
-    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
-): DashedShape = DashedShape(
-    shape = shape.chartShape(),
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
-)
-
-public fun dashedShape(
-    shape: ChartShape,
-    dashLength: Dp,
-    gapLength: Dp,
-    fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
-): DashedShape = DashedShape(
-    shape = shape,
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
 )

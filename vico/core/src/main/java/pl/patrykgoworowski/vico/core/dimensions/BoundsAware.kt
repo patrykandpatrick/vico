@@ -19,10 +19,19 @@ package pl.patrykgoworowski.vico.core.dimensions
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.extension.set
 
+/**
+ * Defines an abstract component that has some physical bounds.
+ */
 public interface BoundsAware {
 
+    /**
+     * The bounds of the abstract component.
+     */
     public val bounds: RectF
 
+    /**
+     * Sets the coordinates of the bounds to the provided values.
+     */
     public fun setBounds(
         left: Number,
         top: Number,
@@ -31,12 +40,4 @@ public interface BoundsAware {
     ) {
         bounds.set(left, top, right, bottom)
     }
-
-    public fun setBounds(bounds: RectF): Unit =
-        setBounds(
-            bounds.left,
-            bounds.top,
-            bounds.right,
-            bounds.bottom
-        )
 }

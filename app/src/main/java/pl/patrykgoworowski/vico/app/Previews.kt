@@ -52,7 +52,7 @@ import pl.patrykgoworowski.vico.core.component.shape.Shapes.pillShape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes.rectShape
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShaders
 import pl.patrykgoworowski.vico.core.entry.entryModelOf
-import pl.patrykgoworowski.vico.view.component.shape.shader.fromComponent
+import pl.patrykgoworowski.vico.compose.component.shape.shader.fromComponent
 
 private val chartModifier = Modifier.height(100.dp)
 
@@ -113,7 +113,7 @@ public fun LineChartCard(): Unit = MainTheme {
                 point = null,
                 lineColor = colors.primary,
                 lineBackgroundShader = DynamicShaders.fromComponent(
-                    componentSize = 4.dp.value,
+                    componentSize = 4.dp,
                     component = shapeComponent(shape = pillShape, color = colors.primary).apply {
                         setMargins(0.5.dp.value)
                     },

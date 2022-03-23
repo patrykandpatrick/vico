@@ -23,6 +23,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 
+/**
+ * Creates a [ComposeShader] out of two [DynamicShader]s by using a [BlendMode].
+ */
 @RequiresApi(Build.VERSION_CODES.Q)
 public fun composeShader(
     first: DynamicShader,
@@ -36,6 +39,9 @@ public fun composeShader(
     )
 }
 
+/**
+ * Creates a [ComposeShader] out of two [DynamicShader]s by using a [PorterDuff.Mode].
+ */
 public fun composeShader(
     first: DynamicShader,
     second: DynamicShader,

@@ -19,6 +19,11 @@ package pl.patrykgoworowski.vico.core.extension
 import android.graphics.Canvas
 import android.graphics.RectF
 
+/**
+ * Clips the given [rect] in the receiver [Canvas], runs the [block], and releases the clip.
+ *
+ * @see [Canvas.clipRect]
+ */
 public inline fun Canvas.inClip(
     rect: RectF,
     block: () -> Unit,
@@ -26,6 +31,11 @@ public inline fun Canvas.inClip(
     inClip(rect.left, rect.top, rect.right, rect.bottom, block)
 }
 
+/**
+ * Clips the given rectangle in the receiver [Canvas], runs the [block], and releases the clip.
+ *
+ * @see [Canvas.clipRect]
+ */
 public inline fun Canvas.inClip(
     left: Float,
     top: Float,

@@ -74,5 +74,8 @@ internal fun OverScroller.fling(
     )
 }
 
+/**
+ * Returns the x and y coordinates of this event as a [Point] for the first pointer index.
+ */
 public val MotionEvent.point: Point
     get() = Point(x, y)

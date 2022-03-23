@@ -27,11 +27,20 @@ import pl.patrykgoworowski.vico.core.context.DefaultExtras
 import pl.patrykgoworowski.vico.core.context.Extras
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 
+/**
+ * The anonymous implementation of the [MeasureContext].
+ *
+ * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
+ * @param horizontalScroll the current horizontal scroll amount.
+ * @param chartScale the scale of the chart. Used to handle zooming in and out.
+ * @param chartModel holds information about the values on both the x-axis and the y-axis.
+ * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
+ */
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
     horizontalScroll: Float,
-    zoom: Float,
+    chartScale: Float,
     chartModel: ChartModel,
     canvasBounds: RectF,
 ): MeasureContext {
@@ -44,7 +53,7 @@ public fun getMeasureContext(
             override var isLtr: Boolean = true
             override var isHorizontalScrollEnabled: Boolean = isHorizontalScrollEnabled
             override var horizontalScroll: Float = horizontalScroll
-            override var chartScale: Float = zoom
+            override var chartScale: Float = chartScale
         }
     }
     context.density = LocalDensity.current.density
@@ -52,6 +61,6 @@ public fun getMeasureContext(
     context.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     context.isHorizontalScrollEnabled = isHorizontalScrollEnabled
     context.horizontalScroll = horizontalScroll
-    context.chartScale = zoom
+    context.chartScale = chartScale
     return context
 }

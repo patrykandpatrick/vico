@@ -22,14 +22,29 @@ import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.model.Point
 
+/**
+ * Highlights points on a chart and displays their corresponding values in a bubble.
+ */
 public interface Marker : ChartInsetter {
 
+    /**
+     * Draws the marker.
+     * @param context the [DrawContext] used to draw the marker.
+     * @param bounds the bounds in which the marker is drawn.
+     * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
+     */
     public fun draw(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<EntryModel>,
     )
 
+    /**
+     * Contains information on a single chart entry to which a chart marker refers.
+     * @param location the coordinates of the indicator.
+     * @param entry the [ChartEntry].
+     * @param color the color associated with the [ChartEntry].
+     */
     public class EntryModel(
         public val location: Point,
         public val entry: ChartEntry,

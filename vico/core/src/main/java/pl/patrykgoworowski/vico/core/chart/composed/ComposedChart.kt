@@ -29,6 +29,9 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.marker.Marker
 import java.util.TreeMap
 
+/**
+ * [ComposedChart] can compose multiple [Chart]s and overlay them.
+ */
 public class ComposedChart<Model : ChartEntryModel>(
     charts: List<Chart<Model>>
 ) : BaseChart<ComposedChartEntryModel<Model>>() {
@@ -76,17 +79,17 @@ public class ComposedChart<Model : ChartEntryModel>(
         return segmentProperties
     }
 
-    override fun setToAxisModel(axisModel: MutableChartModel, model: ComposedChartEntryModel<Model>) {
-        axisModel.clear()
+    override fun setToChartModel(chartModel: MutableChartModel, model: ComposedChartEntryModel<Model>) {
+        chartModel.clear()
         tempAxisModel.clear()
         model.forEachModelWithChart { index, item, chart ->
-            chart.setToAxisModel(tempAxisModel, item)
-            axisModel.apply {
+            chart.setToChartModel(tempAxisModel, item)
+            chartModel.apply {
                 minX = if (index == 0) tempAxisModel.minX else minOf(minX, tempAxisModel.minX)
                 maxX = if (index == 0) tempAxisModel.maxX else maxOf(maxX, tempAxisModel.maxX)
                 minY = if (index == 0) tempAxisModel.minY else minOf(minY, tempAxisModel.minY)
                 maxY = if (index == 0) tempAxisModel.maxY else maxOf(maxY, tempAxisModel.maxY)
-                axisModel.chartEntryModel = model
+                chartModel.chartEntryModel = model
             }
         }
     }

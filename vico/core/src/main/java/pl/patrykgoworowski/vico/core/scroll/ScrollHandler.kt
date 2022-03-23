@@ -16,11 +16,18 @@
 
 package pl.patrykgoworowski.vico.core.scroll
 
+/**
+ * Handles scroll events.
+ * @param maxScrollDistance the maximum scroll distance.
+ */
 public class ScrollHandler(
     private val setScrollAmount: (Float) -> Unit = {},
     public var maxScrollDistance: Float = 0f,
 ) {
 
+    /**
+     * The current scroll amount.
+     */
     public var currentScroll: Float = 0f
         set(value) {
             field = getClampedScroll(value)
@@ -30,15 +37,25 @@ public class ScrollHandler(
     private fun getClampedScroll(scroll: Float): Float =
         minOf(scroll, maxScrollDistance).coerceAtLeast(0f)
 
+    /**
+     * Updates the [currentScroll] value by the given [delta] if the resulting scroll value is between 0 and the
+     * [maxScrollDistance].
+     */
     public fun handleScrollDelta(delta: Float): Float {
         val previousScroll = currentScroll
         currentScroll = getClampedScroll(currentScroll - delta)
         return previousScroll - currentScroll
     }
 
+    /**
+     * Checks whether a scroll by the given [delta] value is possible.
+     */
     public fun canScrollBy(delta: Float): Boolean =
         currentScroll - getClampedScroll(currentScroll - delta) != 0f
 
+    /**
+     * Scrolls to the [targetScroll] value, which is clamped to the range from 0 to the [maxScrollDistance].
+     */
     public fun handleScroll(targetScroll: Float): Float =
         handleScrollDelta(currentScroll - targetScroll)
 }

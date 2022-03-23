@@ -24,6 +24,11 @@ import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.extension.getEntryModel
 import pl.patrykgoworowski.vico.core.marker.Marker
 
+/**
+ * A base implementation of [Chart].
+ *
+ * @see Chart
+ */
 public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
 
     private val decorations = ArrayList<Decoration>()
@@ -62,7 +67,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     override fun draw(
         context: ChartDrawContext,
-        model: Model
+        model: Model,
     ) {
         if (model.entries.isNotEmpty()) {
             drawChart(context, model)

@@ -28,6 +28,13 @@ import pl.patrykgoworowski.vico.core.extension.half
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.throwable.UnknownAxisPositionException
 
+/**
+ * A subclass of [pl.patrykgoworowski.vico.core.axis.AxisRenderer] used for horizontal axes, used either at the top
+ * or at the bottom of a chart. It uses [Axis] as its base implementation.
+ *
+ * @see pl.patrykgoworowski.vico.core.axis.AxisRenderer
+ * @see Axis
+ */
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
 ) : Axis<Position>() {
@@ -35,6 +42,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Top else VerticalPosition.Bottom
 
+    /**
+     * Defines the tick placement.
+     */
     public var tickType: TickType = TickType.Minor
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
@@ -122,7 +132,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             if (index < entryLength) {
                 label?.drawText(
                     context = context,
-                    text = valueFormatter.formatValue(valueIndex, index, context.chartModel),
+                    text = valueFormatter.formatValue(valueIndex, context.chartModel),
                     textX = textDrawCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -165,7 +175,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun getInsets(
         context: MeasureContext,
-        outInsets: Insets
+        outInsets: Insets,
     ): Unit = with(context) {
         with(outInsets) {
             setHorizontal(
@@ -186,7 +196,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 ).coerceAtLeast(constraint.minSizeDp.pixels)
                 .coerceAtMost(constraint.maxSizeDp.pixels)
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
-            is SizeConstraint.Fraction -> context.height * constraint.fraction
+            is SizeConstraint.Fraction -> canvasBounds.height() * constraint.fraction
             is SizeConstraint.TextWidth -> label?.getHeight(context = this, text = constraint.text).orZero
         }
     }
@@ -196,23 +206,55 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             chartModel.minX,
             (chartModel.maxX - chartModel.minX).half,
             chartModel.maxX,
-        ).mapIndexed { index, x -> valueFormatter.formatValue(value = x, index = index, chartModel = chartModel) }
+        ).map { x -> valueFormatter.formatValue(value = x, chartModel = chartModel) }
 
+    /**
+     * Defines the tick placement.
+     */
     public enum class TickType {
-        Minor, Major
+        /**
+         * The tick will be placed at the edges of each section on the horizontal axis.
+         *```
+         * —————————————
+         * |   |   |   |
+         *   1   2   3
+         * ```
+         */
+        Minor,
+
+        /**
+         * The tick will be placed at the center of each section on the horizontal axis.
+         *```
+         * —————————————
+         *   |   |   |
+         *   1   2   3
+         * ```
+         */
+        Major,
     }
 
-    public class Builder(builder: Axis.Builder? = null) : Axis.Builder(builder) {
+    /**
+     * A subclass of base [Axis.Builder] used to build instances of [HorizontalAxis].
+     */
+    public class Builder<Position : AxisPosition.Horizontal>(
+        builder: Axis.Builder<Position>? = null,
+    ) : Axis.Builder<Position>(builder) {
 
+        /**
+         * Defines the tick placement.
+         */
         public var tickType: TickType = TickType.Minor
 
+        /**
+         * Creates an instance of [HorizontalAxis] using the properties set in this [Builder].
+         */
         @Suppress("UNCHECKED_CAST")
-        public inline fun <reified T : AxisPosition.Horizontal> build(): HorizontalAxis<T> {
+        public inline fun <reified T : Position> build(): HorizontalAxis<T> {
             val position = when (T::class.java) {
                 AxisPosition.Horizontal.Top::class.java -> AxisPosition.Horizontal.Top
                 AxisPosition.Horizontal.Bottom::class.java -> AxisPosition.Horizontal.Bottom
                 else -> throw UnknownAxisPositionException(T::class.java)
-            }
+            } as Position
             return setTo(HorizontalAxis(position = position)).also { axis ->
                 axis.tickType = tickType
             } as HorizontalAxis<T>
@@ -220,6 +262,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 }
 
-public inline fun <reified T : AxisPosition.Horizontal> createHorizontalAxis(
-    block: HorizontalAxis.Builder.() -> Unit = {},
-): HorizontalAxis<T> = HorizontalAxis.Builder().apply(block).build()
+/**
+ * A convenience function that creates an instance of [HorizontalAxis].
+ *
+ * @param block a lambda function yielding [HorizontalAxis.Builder] as its receiver.
+ */
+public inline fun <reified Position : AxisPosition.Horizontal> createHorizontalAxis(
+    block: HorizontalAxis.Builder<Position>.() -> Unit = {},
+): HorizontalAxis<Position> = HorizontalAxis.Builder<Position>().apply(block).build()

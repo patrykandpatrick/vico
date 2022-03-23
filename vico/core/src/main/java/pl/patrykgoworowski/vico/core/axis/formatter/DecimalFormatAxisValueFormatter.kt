@@ -19,13 +19,24 @@ package pl.patrykgoworowski.vico.core.axis.formatter
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 
-public class DecimalFormatAxisValueFormatter(
+/**
+ * A subclass of [AxisValueFormatter] that formats values using a [DecimalFormat] with a given pattern.
+ */
+public class DecimalFormatAxisValueFormatter<Position : AxisPosition>(
     private val decimalFormat: DecimalFormat,
-) : AxisValueFormatter {
+) : AxisValueFormatter<Position> {
 
+    /**
+     * Creates a [DecimalFormatAxisValueFormatter] using the default pattern.
+     */
     public constructor() : this(DEF_FORMAT)
 
+    /**
+     * Creates a [DecimalFormatAxisValueFormatter] that will format values based on the given [pattern] and
+     * [roundingMode].
+     */
     public constructor(
         pattern: String,
         roundingMode: RoundingMode = RoundingMode.HALF_UP,
@@ -33,8 +44,7 @@ public class DecimalFormatAxisValueFormatter(
 
     override fun formatValue(
         value: Float,
-        index: Int,
-        chartModel: ChartModel
+        chartModel: ChartModel,
     ): String = decimalFormat.format(value)
 
     private companion object {

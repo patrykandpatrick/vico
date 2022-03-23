@@ -28,14 +28,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.compose.component.dashedShape
+import pl.patrykgoworowski.vico.compose.component.shape.dashedShape
 import pl.patrykgoworowski.vico.compose.component.shape.lineComponent
 import pl.patrykgoworowski.vico.compose.component.shape.shader.fromBrush
 import pl.patrykgoworowski.vico.core.DefaultAlpha
 import pl.patrykgoworowski.vico.core.DefaultColors
 import pl.patrykgoworowski.vico.core.DefaultDimens
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.formatter.AxisValueFormatter
 import pl.patrykgoworowski.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart.MergeMode
 import pl.patrykgoworowski.vico.core.component.Component
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
@@ -96,7 +98,7 @@ public data class ChartStyle(
         val axisLabelRotationDegrees: Float = DefaultDimens.AXIS_LABEL_ROTATION_DEGREES,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
-        val axisGuidelineShape: Shape = dashedShape(
+        val axisGuidelineShape: Shape = Shapes.dashedShape(
             shape = Shapes.rectShape,
             dashLength = DefaultDimens.DASH_LENGTH.dp,
             gapLength = DefaultDimens.DASH_GAP.dp,
@@ -108,7 +110,7 @@ public data class ChartStyle(
         val axisTickWidth: Dp = axisLineWidth,
         val axisTickShape: Shape = Shapes.rectShape,
         val axisTickLength: Dp = DefaultDimens.AXIS_TICK_LENGTH.dp,
-        val axisValueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+        val axisValueFormatter: AxisValueFormatter<AxisPosition> = DecimalFormatAxisValueFormatter(),
     )
 
     /**
@@ -118,11 +120,13 @@ public data class ChartStyle(
      * @property outsideSpacing the horizontal padding between the edges of chart segments and the columns they contain.
      * @property innerSpacing the spacing between the columns contained in chart segments. This has no effect on
      * segments that contain a single column only.
+     * @property mergeMode defines the way multiple columns are rendered in [ColumnChart]s.
      */
     public data class ColumnChart(
         val columns: List<LineComponent>,
         val outsideSpacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
         val innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
+        val mergeMode: MergeMode = MergeMode.Grouped,
     )
 
     /**
@@ -130,7 +134,7 @@ public data class ChartStyle(
      * @property point an optional [Component] to display on lines for each x-axis value.
      * @property pointSize the size of points.
      * @property spacing the spacing between points.
-     * @property lineWidth the width of lines.
+     * @property lineThickness the width of lines.
      * @property lineColor the color of lines.
      * @property lineBackgroundShader a [DynamicShader] to apply to the areas between lines and bottom x-axes.
      */
@@ -138,7 +142,7 @@ public data class ChartStyle(
         val point: Component? = null,
         val pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
         val spacing: Dp = DefaultDimens.POINT_SPACING.dp,
-        val lineWidth: Dp = DefaultDimens.LINE_THICKNESS.dp,
+        val lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
         val lineColor: Color,
         val lineBackgroundShader: DynamicShader? = null,
     )

@@ -51,6 +51,11 @@ public interface Margins {
     }
 }
 
+/**
+ * Sets the values of these [Margins] to those of the provided [Dimensions].
+ *
+ * @param margins the [Dimensions] whose values to assign to these [Margins].
+ */
 public fun Margins.setMargins(margins: Dimensions) {
     this.margins.set(margins)
 }

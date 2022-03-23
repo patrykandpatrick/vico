@@ -40,6 +40,15 @@ import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.min
 
+/**
+ * [LineChart] displays data as a continuous line.
+ *
+ * @param point an optional [Component] that can be drawn at a given point above the line.
+ * @param pointSizeDp the size of the [point] in dp.
+ * @param spacingDp the spacing between each [point] in dp.
+ * @param lineThicknessDp the thickness of the line in dp.
+ * @param lineColor the color of the line.
+ */
 public open class LineChart(
     public var point: Component? = null,
     public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
@@ -70,6 +79,10 @@ public open class LineChart(
      * The width of the line in dp.
      */
     public var lineWidth: Float by linePaint::strokeWidth
+
+    /**
+     * An optional [DynamicShader] that can style the space between the line and the x-axis.
+     */
     public var lineBackgroundShader: DynamicShader? = null
 
     /**
@@ -77,6 +90,9 @@ public open class LineChart(
      */
     public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
 
+    /**
+     * The strength of the cubic bezier curve between each key point on the line.
+     */
     public var cubicStrength: Float = 1f
 
     override fun drawChart(
@@ -182,12 +198,12 @@ public open class LineChart(
         segmentProperties.set(cellWidth = pointSizeDp.pixels, marginWidth = spacingDp.pixels)
     }
 
-    override fun setToAxisModel(axisModel: MutableChartModel, model: ChartEntryModel) {
-        axisModel.minY = minY ?: min(model.minY, 0f)
-        axisModel.maxY = maxY ?: model.maxY
-        axisModel.minX = minX ?: model.minX
-        axisModel.maxX = maxX ?: model.maxX
-        axisModel.chartEntryModel = model
+    override fun setToChartModel(chartModel: MutableChartModel, model: ChartEntryModel) {
+        chartModel.minY = minY ?: min(model.minY, 0f)
+        chartModel.maxY = maxY ?: model.maxY
+        chartModel.minX = minX ?: model.minX
+        chartModel.maxX = maxX ?: model.maxX
+        chartModel.chartEntryModel = model
     }
 
     private companion object {

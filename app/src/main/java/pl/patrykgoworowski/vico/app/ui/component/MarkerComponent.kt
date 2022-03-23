@@ -22,11 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import pl.patrykgoworowski.vico.compose.component.dashedShape
 import pl.patrykgoworowski.vico.compose.dimensions.dimensionsOf
 import pl.patrykgoworowski.vico.compose.component.lineComponent
 import pl.patrykgoworowski.vico.compose.component.marker.markerComponent
 import pl.patrykgoworowski.vico.compose.component.overlayingComponent
+import pl.patrykgoworowski.vico.compose.component.shape.dashedShape
 import pl.patrykgoworowski.vico.compose.component.shape.markerCorneredShape
 import pl.patrykgoworowski.vico.compose.component.shape.textComponent
 import pl.patrykgoworowski.vico.compose.component.shapeComponent
@@ -74,7 +74,7 @@ internal fun markerComponent(): Marker {
     val guideline = lineComponent(
         color = colors.onSurface.copy(alpha = 0.18f),
         thickness = 2f.dp,
-        shape = dashedShape(
+        shape = Shapes.dashedShape(
             shape = pillShape,
             dashLength = 8f.dp,
             gapLength = 4f.dp

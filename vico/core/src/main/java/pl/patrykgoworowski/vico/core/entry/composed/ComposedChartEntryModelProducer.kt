@@ -20,15 +20,26 @@ import java.util.SortedMap
 import java.util.TreeMap
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import pl.patrykgoworowski.vico.core.THREAD_POOL_COUNT
+import pl.patrykgoworowski.vico.core.DEF_THREAD_POOL_SIZE
 import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
-import pl.patrykgoworowski.vico.core.chart.composed.composedChartEntryModel
+import pl.patrykgoworowski.vico.core.entry.ChartEntry
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 
+/**
+ * A subclass of [ChartModelProducer] that generates [ComposedChartEntryModel] instances.
+ *
+ * @property chartModelProducers the list of [ChartModelProducer]s to be composed by this
+ * [ComposedChartEntryModelProducer].
+ * @param backgroundExecutor an [Executor] used to generate instances of the [ComposedChartEntryModel] off the main
+ * thread.
+ *
+ * @see ComposedChartEntryModel
+ * @see ChartModelProducer
+ */
 public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
     public val chartModelProducers: List<ChartModelProducer<Model>>,
-    backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
+    backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
 ) : ChartModelProducer<ComposedChartEntryModel<Model>> {
 
     private val compositeModelReceivers: HashMap<Any, CompositeModelReceiver<Model>> = HashMap()
@@ -39,7 +50,7 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
 
     public constructor(
         vararg chartModelProducers: ChartModelProducer<Model>,
-        backgroundExecutor: Executor = Executors.newFixedThreadPool(THREAD_POOL_COUNT),
+        backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
     ) : this(chartModelProducers.toList(), backgroundExecutor)
 
     override fun getModel(): ComposedChartEntryModel<Model> =
@@ -104,15 +115,15 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
     private companion object {
         private fun <Model : ChartEntryModel> getModel(
             models: List<Model>,
-        ): ComposedChartEntryModel<Model> = composedChartEntryModel(
-            composedEntryCollections = models,
-            entryCollections = models.map { it.entries }.flatten(),
-            minX = models.minOf { it.minX },
-            maxX = models.maxOf { it.maxX },
-            minY = models.minOf { it.minY },
-            maxY = models.maxOf { it.maxY },
-            composedMaxY = models.maxOf { it.stackedMaxY },
-            step = models.minOf { it.stepX }
-        )
+        ): ComposedChartEntryModel<Model> = object : ComposedChartEntryModel<Model> {
+            override val composedEntryCollections: List<Model> = models
+            override val entries: List<List<ChartEntry>> = models.map { it.entries }.flatten()
+            override val minX: Float = models.minOf { it.minX }
+            override val maxX: Float = models.maxOf { it.maxX }
+            override val minY: Float = models.minOf { it.minY }
+            override val maxY: Float = models.maxOf { it.maxY }
+            override val stackedMaxY: Float = models.maxOf { it.stackedMaxY }
+            override val stepX: Float = models.minOf { it.stepX }
+        }
     }
 }

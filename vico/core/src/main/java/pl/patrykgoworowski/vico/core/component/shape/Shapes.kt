@@ -19,7 +19,6 @@ package pl.patrykgoworowski.vico.core.component.shape
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.drawable.Drawable
-import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.component.shape.cornered.Corner
 import pl.patrykgoworowski.vico.core.component.shape.cornered.CorneredShape
 import pl.patrykgoworowski.vico.core.component.shape.cornered.CutCornerTreatment
@@ -27,10 +26,19 @@ import pl.patrykgoworowski.vico.core.component.shape.cornered.RoundedCornerTreat
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.extension.setBounds
 
+/**
+ * Houses utilities for creating [Shape]s.
+ */
 public object Shapes {
 
+    /**
+     * A shape whose each corner is fully rounded.
+     */
     public val pillShape: CorneredShape = roundedCornerShape(allPercent = 50)
 
+    /**
+     * A rectangle with sharp corners.
+     */
     public val rectShape: Shape = object : Shape {
 
         override fun drawShape(
@@ -51,9 +59,22 @@ public object Shapes {
         }
     }
 
+    /**
+     * Creates a [Shape] with all corners rounded.
+     *
+     * @param allPercent the radius of each corner in percent.
+     */
     public fun roundedCornerShape(allPercent: Int): CorneredShape =
         roundedCornerShape(allPercent, allPercent, allPercent, allPercent)
 
+    /**
+     * Creates a [Shape] with all corners rounded.
+     *
+     * @param topLeftPercent the top-left corner radius in percent.
+     * @param topRightPercent the top-right corner radius in percent.
+     * @param bottomRightPercent the bottom-right corner radius in percent.
+     * @param bottomLeftPercent the bottom-left corner radius in percent.
+     */
     public fun roundedCornerShape(
         topLeftPercent: Int = 0,
         topRightPercent: Int = 0,
@@ -66,9 +87,22 @@ public object Shapes {
         Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
     )
 
+    /**
+     * Creates a [Shape] with all corners cut.
+     *
+     * @param allPercent the radius of each corner in percent.
+     */
     public fun cutCornerShape(allPercent: Int): CorneredShape =
         cutCornerShape(allPercent, allPercent, allPercent, allPercent)
 
+    /**
+     * Creates a [Shape] with all corners cut.
+     *
+     * @param topLeftPercent the top-left corner radius in percent.
+     * @param topRightPercent the top-right corner radius in percent.
+     * @param bottomRightPercent the bottom-right corner radius in percent.
+     * @param bottomLeftPercent the bottom-left corner radius in percent.
+     */
     public fun cutCornerShape(
         topLeftPercent: Int = 0,
         topRightPercent: Int = 0,
@@ -81,10 +115,17 @@ public object Shapes {
         Corner.Relative(bottomLeftPercent, CutCornerTreatment),
     )
 
+    /**
+     * Creates a [Shape] out of a [Drawable].
+     *
+     * @param drawable the [Drawable] that will be used as a shape.
+     * @param keepAspectRatio whether to keep the drawable’s aspect ratio, based on its intrinsic size.
+     * @param otherShape used to fill the remaining space if the [drawable] doesn’t fill the entire bounds.
+     */
     public fun drawableShape(
         drawable: Drawable,
         keepAspectRatio: Boolean = false,
-        otherCreator: Shape? = rectShape
+        otherShape: Shape? = rectShape,
     ): Shape = object : Shape {
 
         private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
@@ -104,11 +145,11 @@ public object Shapes {
             val topWithoutClipping = minOf(top, bottom - drawableHeight)
             drawable.setBounds(left, topWithoutClipping, right, topWithoutClipping + drawableHeight)
             drawable.draw(context.canvas)
-            otherCreator ?: return
+            otherShape ?: return
 
             val drawableBottom = drawable.bounds.bottom.toFloat()
             if (bottom - drawableBottom > 0) {
-                otherCreator.drawShape(
+                otherShape.drawShape(
                     context = context,
                     paint = paint,
                     path = path,
@@ -120,14 +161,4 @@ public object Shapes {
             }
         }
     }
-
-    public fun dashedShape(
-        shape: Shape = rectShape,
-        dashLength: Float = DefaultDimens.DASH_LENGTH,
-        gapLength: Float = DefaultDimens.DASH_GAP,
-    ): Shape = DashedShape(
-        shape = shape,
-        dashLengthDp = dashLength,
-        gapLengthDp = gapLength,
-    )
 }

@@ -19,6 +19,9 @@ package pl.patrykgoworowski.vico.core.component.dimension
 import pl.patrykgoworowski.vico.core.dimensions.MutableDimensions
 import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 
+/**
+ * The default implementation of [Margins]. It holds empty margins by default.
+ */
 public open class DefaultMargins : Margins {
     override val margins: MutableDimensions = emptyDimensions()
 }

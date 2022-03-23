@@ -46,7 +46,7 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
      * Called after [pl.patrykgoworowski.vico.core.chart.Chart] is drawn.
      * Subclasses can use this function to draw in the chart’s bounds something that can’t be covered by the chart.
      *
-     * @param context Drawing context holding information necessary to draw axis.
+     * @param context Drawing context holding information necessary to draw the axis.
      */
     public fun drawAboveChart(context: ChartDrawContext)
 

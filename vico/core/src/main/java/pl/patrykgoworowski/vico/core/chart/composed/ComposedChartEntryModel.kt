@@ -17,28 +17,15 @@
 package pl.patrykgoworowski.vico.core.chart.composed
 
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
-import pl.patrykgoworowski.vico.core.entry.ChartEntry
 
+/**
+ * An extended [ChartEntryModel] that can compose multiple [ChartEntryModel]s.
+ * It is used in [pl.patrykgoworowski.vico.core.chart.composed.ComposedChart].
+ */
 public interface ComposedChartEntryModel<Model : ChartEntryModel> : ChartEntryModel {
-    public val composedEntryCollections: List<Model>
-}
 
-public fun <Model : ChartEntryModel> composedChartEntryModel(
-    composedEntryCollections: List<Model> = emptyList(),
-    entryCollections: List<List<ChartEntry>> = emptyList(),
-    minX: Float = 1f,
-    maxX: Float = 1f,
-    minY: Float = 1f,
-    maxY: Float = 1f,
-    composedMaxY: Float = 1f,
-    step: Float = 1f,
-): ComposedChartEntryModel<Model> = object : ComposedChartEntryModel<Model> {
-    override val composedEntryCollections: List<Model> = composedEntryCollections
-    override val entries: List<List<ChartEntry>> = entryCollections
-    override val minX: Float = minX
-    override val maxX: Float = maxX
-    override val minY: Float = minY
-    override val maxY: Float = maxY
-    override val stackedMaxY: Float = composedMaxY
-    override val stepX: Float = step
+    /**
+     * A list of the [ChartEntryModel]s that make up this model.
+     */
+    public val composedEntryCollections: List<Model>
 }

@@ -25,6 +25,16 @@ import pl.patrykgoworowski.vico.core.dimensions.emptyDimensions
 import pl.patrykgoworowski.vico.core.context.DrawContext
 import pl.patrykgoworowski.vico.core.context.MeasureContext
 
+/**
+ * Draws a line.
+ * @property color the background color.
+ * @property thicknessDp the thickness of the line.
+ * @property shape the [Shape] to use for the line.
+ * @property dynamicShader an optional [DynamicShader] to apply to the line.
+ * @property margins the margins of the line.
+ * @property strokeWidthDp the stroke width.
+ * @property strokeColor the stroke color.
+ */
 public open class LineComponent(
     color: Int,
     public var thicknessDp: Float = 2f,
@@ -38,12 +48,15 @@ public open class LineComponent(
     private val MeasureContext.thickness: Float
         get() = thicknessDp.pixels
 
+    /**
+     * A convenience function for [draw] that draws the [LineComponent] horizontally.
+     */
     public open fun drawHorizontal(
         context: DrawContext,
         left: Float,
         right: Float,
         centerY: Float,
-        thicknessScale: Float = 1f
+        thicknessScale: Float = 1f,
     ): Unit = with(context) {
         draw(
             context,
@@ -54,6 +67,10 @@ public open class LineComponent(
         )
     }
 
+    /**
+     * Checks whether the [LineComponent] fits horizontally within the given [boundingBox] with its current
+     * [thicknessDp].
+     */
     public open fun fitsInHorizontal(
         context: DrawContext,
         left: Float,
@@ -62,15 +79,17 @@ public open class LineComponent(
         boundingBox: RectF,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        fitsIn(
-            left = left,
-            top = centerY - thickness * thicknessScale / 2,
-            right = right,
-            bottom = centerY + thickness * thicknessScale / 2,
-            boundingBox = boundingBox,
+        boundingBox.contains(
+            left,
+            centerY - thickness * thicknessScale / 2,
+            right,
+            centerY + thickness * thicknessScale / 2,
         )
     }
 
+    /**
+     * A convenience function for [draw] that draws the [LineComponent] vertically.
+     */
     public open fun drawVertical(
         context: DrawContext,
         top: Float,
@@ -87,6 +106,9 @@ public open class LineComponent(
         )
     }
 
+    /**
+     * Checks whether the [LineComponent] fits vertically within the given [boundingBox] with its current [thicknessDp].
+     */
     public open fun fitsInVertical(
         context: DrawContext,
         top: Float,
@@ -95,15 +117,17 @@ public open class LineComponent(
         boundingBox: RectF,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        fitsIn(
-            left = centerX - thickness * thicknessScale / 2,
-            top = top,
-            right = centerX + thickness * thicknessScale / 2,
-            bottom = bottom,
-            boundingBox = boundingBox,
+        boundingBox.contains(
+            centerX - thickness * thicknessScale / 2,
+            top,
+            centerX + thickness * thicknessScale / 2,
+            bottom,
         )
     }
 
+    /**
+     * Checks whether the [LineComponent] vertically intersects the given [boundingBox] with its current [thicknessDp].
+     */
     public open fun intersectsVertical(
         context: DrawContext,
         top: Float,
@@ -112,12 +136,11 @@ public open class LineComponent(
         boundingBox: RectF,
         thicknessScale: Float = 1f,
     ): Boolean = with(context) {
-        intersects(
-            left = centerX - thickness * thicknessScale / 2,
-            top = top,
-            right = centerX + thickness * thicknessScale / 2,
-            bottom = bottom,
-            boundingBox = boundingBox,
+        boundingBox.intersects(
+            centerX - thickness * thicknessScale / 2,
+            top,
+            centerX + thickness * thicknessScale / 2,
+            bottom,
         )
     }
 }

@@ -18,13 +18,22 @@ package pl.patrykgoworowski.vico.core.component.shape
 
 import android.graphics.Paint
 import android.graphics.Path
+import pl.patrykgoworowski.vico.core.DefaultDimens
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
+/**
+ * [DashedShape] draws a dashed line by interchangeably drawing the provided [shape] and leaving a gap.
+ *
+ * @property shape the base [Shape] from which to create the [DashedShape].
+ * @property dashLengthDp the dash length in dp.
+ * @property gapLengthDp the gap length in dp.
+ * @property fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
+ */
 public class DashedShape(
-    public val shape: Shape,
-    public val dashLengthDp: Float,
-    public val gapLengthDp: Float,
+    public val shape: Shape = Shapes.rectShape,
+    public val dashLengthDp: Float = DefaultDimens.DASH_LENGTH,
+    public val gapLengthDp: Float = DefaultDimens.DASH_GAP,
     public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
 
@@ -145,8 +154,20 @@ public class DashedShape(
         }
     }
 
+    /**
+     * Defines a way to render the [DashedShape].
+     */
     public enum class FitStrategy {
+        /**
+         * The [DashedShape] will slightly increase or decrease the [DashedShape.dashLengthDp] and
+         * [DashedShape.gapLengthDp] values so that the dashes fit perfectly without being cut off.
+         */
         Resize,
-        Fixed
+
+        /**
+         * The [DashedShape] will use the exact [DashedShape.dashLengthDp] and [DashedShape.gapLengthDp] values
+         * provided. In effect the [DashedShape] may not fit within its bounds or be cut off.
+         */
+        Fixed,
     }
 }

@@ -26,6 +26,11 @@ import pl.patrykgoworowski.vico.view.extension.fling
 import pl.patrykgoworowski.vico.view.extension.point
 import kotlin.math.abs
 
+/**
+ * Handles motion events.
+ * @param density the pixel density.
+ * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
+ */
 public open class MotionEventHandler(
     private val scroller: OverScroller,
     private val scrollHandler: ScrollHandler,
@@ -43,7 +48,10 @@ public open class MotionEventHandler(
     private var velocityTracker = VelocityTrackerHelper()
     private var lastEventPointerCount = 0
 
-    public fun handleTouchPoint(motionEvent: MotionEvent): Boolean {
+    /**
+     * Called to handle the [MotionEvent], which may result in touch marker indication, scroll, or zoom.
+     */
+    public fun handleMotionEvent(motionEvent: MotionEvent): Boolean {
         val ignoreEvent =
             motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
         lastEventPointerCount = motionEvent.pointerCount

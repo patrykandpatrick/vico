@@ -26,6 +26,11 @@ import pl.patrykgoworowski.vico.core.component.shape.shader.CacheableDynamicShad
 import pl.patrykgoworowski.vico.core.component.shape.shader.DynamicShader
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
+/**
+ * Creates a [DynamicShader] out of [Brush].
+ *
+ * @property brush the source [Brush] that will be used as the [Shader].
+ */
 public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
 
     private val matrix = Matrix()
@@ -54,4 +59,7 @@ public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
     }
 }
 
+/**
+ * Converts this [Brush] to a [DynamicShader] using [BrushShader].
+ */
 public fun Brush.toDynamicShader(): DynamicShader = BrushShader(this)

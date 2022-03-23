@@ -19,36 +19,72 @@ package pl.patrykgoworowski.vico.core.context
 import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 
+/**
+ * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
+ */
 public interface MeasureContext : Extras {
+
+    /**
+     * The bounds of the canvas that will be used to draw the chart and its components.
+     */
     public val canvasBounds: RectF
+
+    /**
+     * Holds information about the values on both the y-axis and the x-axis.
+     *
+     * @see ChartModel
+     */
     public val chartModel: ChartModel
 
     /**
      * The pixel density.
      */
     public val density: Float
+
+    /**
+     * The scale of fonts.
+     */
     public val fontScale: Float
+
+    /**
+     * Whether the current device layout is left-to-right.
+     */
     public val isLtr: Boolean
 
     /**
      * Whether horizontal scrolling is enabled.
      */
     public val isHorizontalScrollEnabled: Boolean
+
+    /**
+     * The current amount of horizontal scroll.
+     */
     public val horizontalScroll: Float
+
+    /**
+     * The scale of the chart. Used to handle zooming in and out.
+     */
     public val chartScale: Float
 
+    /**
+     * Converts the receiver [Float] to pixels.
+     */
     public val Float.pixels: Float
         get() = this * density
 
+    /**
+     * Converts the receiver [Float] to pixels and discards decimal values.
+     */
     public val Float.wholePixels: Int
         get() = pixels.toInt()
 
-    public val width: Float
-        get() = canvasBounds.width()
-
-    public val height: Float
-        get() = canvasBounds.height()
-
+    /**
+     * Converts the given [dp] value to pixels.
+     */
     public fun toPixels(dp: Float): Float = dp * density
+
+    /**
+     * Converts the given [sp] value to a font size in pixels.
+     */
     public fun toFontSize(sp: Float): Float = sp * fontScale
 }

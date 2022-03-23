@@ -16,22 +16,43 @@
 
 package pl.patrykgoworowski.vico.core.dimensions
 
-import pl.patrykgoworowski.vico.core.context.MeasureContext
-
+/**
+ * Defines the size of each edge of a rectangle.
+ * Used to store measurements such as padding or margin values.
+ */
 public interface Dimensions {
 
+    /**
+     * The value for the start edge in the dp unit.
+     */
     public val startDp: Float
+
+    /**
+     * The value for the top edge in the dp unit.
+     */
     public val topDp: Float
+
+    /**
+     * The value for the end edge in the dp unit.
+     */
     public val endDp: Float
+
+    /**
+     * The value for the bottom edge in the dp unit.
+     */
     public val bottomDp: Float
 
-    public val MeasureContext.leftDp: Float
-        get() = getLeftDp(isLtr)
-
-    public val MeasureContext.rightDp: Float
-        get() = getRightDp(isLtr)
-
+    /**
+     * Returns the dimension of the left edge depending on the layout orientation.
+     *
+     * @param isLtr whether the device layout is left-to-right.
+     */
     public fun getLeftDp(isLtr: Boolean): Float = if (isLtr) startDp else endDp
 
+    /**
+     * Returns the dimension of the right edge depending on the layout orientation.
+     *
+     * @param isLtr whether the device layout is left-to-right.
+     */
     public fun getRightDp(isLtr: Boolean): Float = if (isLtr) endDp else startDp
 }

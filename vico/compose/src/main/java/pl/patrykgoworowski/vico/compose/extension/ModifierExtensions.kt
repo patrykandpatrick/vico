@@ -29,7 +29,7 @@ import pl.patrykgoworowski.vico.compose.gesture.OnZoom
 import pl.patrykgoworowski.vico.compose.gesture.zoomable
 import pl.patrykgoworowski.vico.core.model.Point
 
-public fun Modifier.chartTouchEvent(
+internal fun Modifier.chartTouchEvent(
     setTouchPoint: (Point?) -> Unit,
     scrollableState: ScrollableState?,
     onZoom: OnZoom?,

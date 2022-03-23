@@ -32,6 +32,16 @@ import pl.patrykgoworowski.vico.core.axis.horizontal.createHorizontalAxis
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 
+/**
+ * Creates a top axis.
+ * @param label the [TextComponent] to use for labels.
+ * @param axis the [LineComponent] to use for the axis line.
+ * @param tick the [LineComponent] to use for ticks.
+ * @param tickLength the length of ticks.
+ * @param guideline the [LineComponent] to use for guidelines.
+ * @param valueFormatter the [AxisValueFormatter] for the axis.
+ * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
+ */
 @Composable
 public fun topAxis(
     label: TextComponent? = axisLabelComponent(),
@@ -39,7 +49,7 @@ public fun topAxis(
     tick: LineComponent? = axisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
-    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Top> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
     this.label = label
@@ -51,6 +61,16 @@ public fun topAxis(
     this.sizeConstraint = sizeConstraint
 }
 
+/**
+ * Creates a bottom axis.
+ * @param label the [TextComponent] to use for labels.
+ * @param axis the [LineComponent] to use for the axis line.
+ * @param tick the [LineComponent] to use for ticks.
+ * @param tickLength the length of ticks.
+ * @param guideline the [LineComponent] to use for guidelines.
+ * @param valueFormatter the [AxisValueFormatter] for the axis.
+ * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
+ */
 @Composable
 public fun bottomAxis(
     label: TextComponent? = axisLabelComponent(),
@@ -58,7 +78,7 @@ public fun bottomAxis(
     tick: LineComponent? = axisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
     guideline: LineComponent? = axisGuidelineComponent(),
-    valueFormatter: AxisValueFormatter = DecimalFormatAxisValueFormatter(),
+    valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
     this.label = label

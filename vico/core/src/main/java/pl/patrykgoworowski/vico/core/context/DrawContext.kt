@@ -18,24 +18,58 @@ package pl.patrykgoworowski.vico.core.context
 
 import android.graphics.Canvas
 
+/**
+ * [DrawContext] is an extension of [MeasureContext] that stores a [Canvas] and other properties.
+ * It also defines helpful drawing functions.
+ */
 public interface DrawContext : MeasureContext {
 
+    /**
+     * The elevation overlay color, applied to components that cast shadows in
+     * [pl.patrykgoworowski.vico.core.component.shape.ShapeComponent].
+     */
     public val elevationOverlayColor: Long
 
+    /**
+     * The canvas to draw the chart on.
+     */
     public val canvas: Canvas
 
+    /**
+     * Saves the [Canvas] state.
+     *
+     * @see Canvas.save
+     */
     public fun saveCanvas(): Int = canvas.save()
 
+    /**
+     * Temporarily swaps the [Canvas] and yields [DrawContext] as the [block]’s receiver.
+     */
     public fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit)
 
+    /**
+     * Clips the [Canvas] to the specified rectangle.
+     *
+     * @see Canvas.clipRect
+     */
     public fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
         canvas.clipRect(left, top, right, bottom)
     }
 
+    /**
+     * Restores the [Canvas] state.
+     *
+     * @see Canvas.restore
+     */
     public fun restoreCanvas() {
         canvas.restore()
     }
 
+    /**
+     * Restores the [Canvas] state to the given save level.
+     *
+     * @see Canvas.restoreToCount
+     */
     public fun restoreCanvasToCount(count: Int) {
         canvas.restoreToCount(count)
     }

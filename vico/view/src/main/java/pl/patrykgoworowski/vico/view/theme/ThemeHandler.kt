@@ -26,15 +26,16 @@ import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.axisBuilder
 import pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
 import pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
+import pl.patrykgoworowski.vico.core.chart.Chart
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
+import pl.patrykgoworowski.vico.core.chart.column.ColumnChart.MergeMode
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChart
+import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
+import pl.patrykgoworowski.vico.core.component.shape.DashedShape
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.shape.Shape
 import pl.patrykgoworowski.vico.core.component.shape.Shapes
-import pl.patrykgoworowski.vico.core.chart.column.ColumnChart
-import pl.patrykgoworowski.vico.core.chart.composed.ComposedChart
-import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
-import pl.patrykgoworowski.vico.core.chart.Chart
-import pl.patrykgoworowski.vico.core.chart.column.MergeMode
 import pl.patrykgoworowski.vico.core.extension.hasAnyFlagOf
 import pl.patrykgoworowski.vico.core.extension.hasFlag
 import pl.patrykgoworowski.vico.view.R
@@ -42,7 +43,7 @@ import pl.patrykgoworowski.vico.view.R
 internal class ThemeHandler(
     private val context: Context,
     attrs: AttributeSet?,
-    chartType: ChartType
+    chartType: ChartType,
 ) {
 
     public var startAxis: VerticalAxis<AxisPosition.Vertical.Start>? = null
@@ -72,16 +73,16 @@ internal class ThemeHandler(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.BaseChartView).use { typedArray ->
             if (typedArray.getBoolean(R.styleable.BaseChartView_showStartAxis, false)) {
-                startAxis = VerticalAxis.Builder(typedArray.getAxis()).build()
+                startAxis = VerticalAxis.Builder<AxisPosition.Vertical.Start>(typedArray.getAxis()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showTopAxis, false)) {
-                topAxis = HorizontalAxis.Builder(typedArray.getAxis()).build()
+                topAxis = HorizontalAxis.Builder<AxisPosition.Horizontal.Top>(typedArray.getAxis()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showEndAxis, false)) {
-                endAxis = VerticalAxis.Builder(typedArray.getAxis()).build()
+                endAxis = VerticalAxis.Builder<AxisPosition.Vertical.End>(typedArray.getAxis()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showBottomAxis, false)) {
-                bottomAxis = HorizontalAxis.Builder(typedArray.getAxis()).build()
+                bottomAxis = HorizontalAxis.Builder<AxisPosition.Horizontal.Bottom>(typedArray.getAxis()).build()
             }
             isHorizontalScrollEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, false)
@@ -100,7 +101,7 @@ internal class ThemeHandler(
         }
     }
 
-    private fun TypedArray.getAxis(): Axis.Builder {
+    private fun <Position : AxisPosition> TypedArray.getAxis(): Axis.Builder<Position> {
 
         fun TypedArray.getLineComponent(
             @StyleableRes resourceId: Int,
@@ -135,7 +136,7 @@ internal class ThemeHandler(
                 guideline = axisStyle.getLineComponent(
                     resourceId = R.styleable.Axis_axisGuidelineStyle,
                     styleableResourceId = R.styleable.LineComponentStyle,
-                    defaultShape = Shapes.dashedShape(),
+                    defaultShape = DashedShape(),
                 )
                 label = axisStyle.getNestedTypedArray(
                     context = context,

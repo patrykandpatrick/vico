@@ -36,6 +36,17 @@ import pl.patrykgoworowski.vico.core.marker.Marker
 import kotlin.math.ceil
 import kotlin.math.min
 
+/**
+ * [ColumnChart] displays data in vertical columns.
+ * It supports rendering multiple columns for multiple sets of data.
+ *
+ * @property columns the [LineComponent] instances to use for columns. This list is iterated through as many times
+ * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
+ * @property spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
+ * @property innerSpacingDp the spacing between the columns contained in chart segments. This has no effect on
+ * segments that contain a single column only.
+ * @property mergeMode defines the way multiple columns are rendered in the [ColumnChart].
+ */
 public open class ColumnChart(
     public var columns: List<LineComponent>,
     public var spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
@@ -150,12 +161,12 @@ public open class ColumnChart(
         )
     }
 
-    override fun setToAxisModel(axisModel: MutableChartModel, model: ChartEntryModel) {
-        axisModel.minY = minY ?: min(model.minY, 0f)
-        axisModel.maxY = maxY ?: mergeMode.getMaxY(model)
-        axisModel.minX = minX ?: model.minX
-        axisModel.maxX = maxX ?: model.maxX
-        axisModel.chartEntryModel = model
+    override fun setToChartModel(chartModel: MutableChartModel, model: ChartEntryModel) {
+        chartModel.minY = minY ?: min(model.minY, 0f)
+        chartModel.maxY = maxY ?: mergeMode.getMaxY(model)
+        chartModel.minX = minX ?: model.minX
+        chartModel.maxX = maxX ?: model.maxX
+        chartModel.chartEntryModel = model
     }
 
     override fun getSegmentProperties(
@@ -197,5 +208,29 @@ public open class ColumnChart(
             thickness += columns.getRepeating(i).thicknessDp * density
         }
         return thickness
+    }
+
+    /**
+     * Defines the way multiple columns are rendered in the [ColumnChart].
+     */
+    public enum class MergeMode {
+
+        /**
+         * Columns with the same x-axis values will be placed next to each other in groups.
+         */
+        Grouped,
+
+        /**
+         * Columns with the same x-axis values will be placed on top of each other.
+         */
+        Stack;
+
+        /**
+         * Returns the maximum y-axis value, taking into account the current [MergeMode].
+         */
+        public fun getMaxY(model: ChartEntryModel): Float = when (this) {
+            Grouped -> model.maxY
+            Stack -> model.stackedMaxY
+        }
     }
 }

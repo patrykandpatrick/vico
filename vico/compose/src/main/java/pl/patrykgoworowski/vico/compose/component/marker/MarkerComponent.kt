@@ -22,6 +22,12 @@ import pl.patrykgoworowski.vico.core.component.marker.MarkerComponent
 import pl.patrykgoworowski.vico.core.component.shape.LineComponent
 import pl.patrykgoworowski.vico.core.component.text.TextComponent
 
+/**
+ * Creates a [MarkerComponent].
+ * @param label the [TextComponent] to use for the label.
+ * @param indicator the [Component] to use for the indicator.
+ * @param guideline the [LineComponent] to use for the guideline.
+ */
 @Composable
 public fun markerComponent(
     label: TextComponent,

@@ -16,12 +16,20 @@
 
 package pl.patrykgoworowski.vico.core.entry
 
+/**
+ * Creates a [ChartEntryModel] out of the given pairs of numbers, treating the first number in each pair as the x value,
+ * and the second one as the y value.
+ */
 public fun entryModelOf(vararg entries: Pair<Number, Number>): ChartEntryModel =
     entries
         .map { (x, y) -> entryOf(x.toFloat(), y.toFloat()) }
         .let { entryList -> ChartEntryModelProducer(listOf(entryList)) }
         .getModel()
 
+/**
+ * Creates a [ChartEntryModel] out of the provided array of numbers, treating each number’s index as the x value, and
+ * the number itself as the y value.
+ */
 public fun entryModelOf(vararg values: Number): ChartEntryModel =
     values
         .mapIndexed { index, value -> entryOf(index.toFloat(), value.toFloat()) }

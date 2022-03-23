@@ -28,6 +28,21 @@ import pl.patrykgoworowski.vico.core.model.Point
 
 private const val DEFAULT_SCALE = 1f
 
+/**
+ * The anonymous implementation of [ChartDrawContext].
+ *
+ * @param canvas the canvas to draw the chart on.
+ * @param elevationOverlayColor the color of elevation overlay, applied to components that cast shadows in
+ * [pl.patrykgoworowski.vico.core.component.shape.ShapeComponent].
+ * @param measureContext the measuring context that holds the data used for component measurements.
+ * @param markerTouchPoint the point inside the chart’s coordinates where physical touch is occurring.
+ * @param segmentProperties holds information about the width of each individual segment on the x-axis.
+ * @param chartModel the model used by the chart. This holds information about the values on both the y-axis and the
+ * x-axis.
+ * @param chartBounds the bounds in which the [pl.patrykgoworowski.vico.core.chart.Chart] will be drawn.
+ *
+ * @see [pl.patrykgoworowski.vico.core.component.shape.ShapeComponent.setShadow]
+ */
 @LongParameterListDrawFunction
 public fun chartDrawContext(
     canvas: Canvas,

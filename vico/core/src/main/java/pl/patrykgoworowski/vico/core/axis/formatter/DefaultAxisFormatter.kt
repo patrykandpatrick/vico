@@ -16,12 +16,15 @@
 
 package pl.patrykgoworowski.vico.core.axis.formatter
 
+import pl.patrykgoworowski.vico.core.axis.AxisPosition
 import pl.patrykgoworowski.vico.core.axis.model.ChartModel
 
-public object DefaultAxisFormatter : AxisValueFormatter {
+/**
+ * The default implementation of [AxisValueFormatter]. This converts [Float]s to [String]s.
+ */
+public class DefaultAxisFormatter<Position : AxisPosition> : AxisValueFormatter<Position> {
     override fun formatValue(
         value: Float,
-        index: Int,
         chartModel: ChartModel,
     ): String = value.toString()
 }

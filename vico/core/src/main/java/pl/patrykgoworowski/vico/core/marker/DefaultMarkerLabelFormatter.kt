@@ -22,6 +22,11 @@ import pl.patrykgoworowski.vico.core.extension.appendCompat
 import pl.patrykgoworowski.vico.core.extension.sumOf
 import pl.patrykgoworowski.vico.core.extension.transformToSpannable
 
+/**
+ * The default label formatter used for markers.
+ *
+ * @see MarkerLabelFormatter
+ */
 public object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
 
     private const val PATTERN = "%.02f"

@@ -27,6 +27,13 @@ import pl.patrykgoworowski.vico.core.context.MeasureContext
 import pl.patrykgoworowski.vico.core.extension.orZero
 import pl.patrykgoworowski.vico.core.extension.setAll
 
+/**
+ * A basic implementation of [AxisRenderer] used throughout the library.
+ *
+ * @see AxisRenderer
+ * @see pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis
+ * @see pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis
+ */
 public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     private val restrictedBounds: MutableList<RectF> = mutableListOf()
@@ -44,9 +51,12 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     protected val MeasureContext.guidelineThickness: Float
         get() = guideline?.thicknessDp.orZero.pixels
 
-    public val MeasureContext.tickLength: Float
+    protected val MeasureContext.tickLength: Float
         get() = if (tick != null) tickLengthDp.pixels else 0f
 
+    /**
+     * Whether the chart is drawn in the left-to-right layout system.
+     */
     public var isLtr: Boolean = true
 
     /**
@@ -74,12 +84,15 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
      */
     public var tickLengthDp: Float = 0f
 
+    /**
+     * The [SizeConstraint] used by [Axis] subclasses to lay themselves out.
+     */
     public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
     /**
      * The [AxisValueFormatter] for the axis.
      */
-    public var valueFormatter: AxisValueFormatter = DefaultAxisFormatter
+    public var valueFormatter: AxisValueFormatter<Position> = DefaultAxisFormatter()
 
     override fun setRestrictedBounds(vararg bounds: RectF?) {
         restrictedBounds.setAll(bounds.filterNotNull())
@@ -94,7 +107,10 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         it.contains(left, top, right, bottom) || it.intersects(left, top, right, bottom)
     }
 
-    public open class Builder(builder: Builder? = null) {
+    /**
+     * The base builder class for constructing [Axis] instances.
+     */
+    public open class Builder<Position : AxisPosition>(builder: Builder<Position>? = null) {
         /**
          * The [TextComponent] to use for labels.
          */
@@ -123,16 +139,19 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         /**
          * The [AxisValueFormatter] for the axis.
          */
-        public var valueFormatter: AxisValueFormatter =
+        public var valueFormatter: AxisValueFormatter<Position> =
             builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
 
+        /**
+         * The [SizeConstraint] used by [Axis] subclasses to lay themselves out.
+         */
         public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
     }
 
     /**
-     * Size constraint of [Axis]:
-     * - in [pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis] defines width.
-     * - in [pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis] defines height.
+     * The size constraint of an [Axis].
+     * - In [pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis], this defines the width.
+     * - In [pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis], this defines the height.
      *
      * @see [pl.patrykgoworowski.vico.core.axis.vertical.VerticalAxis]
      * @see [pl.patrykgoworowski.vico.core.axis.horizontal.HorizontalAxis]
@@ -185,10 +204,16 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
  * Provides a quick way to create an axis. Creates an [Axis.Builder] instance, calls the provided function block with
  * the [Axis.Builder] instance as its receiver, and returns the [Axis.Builder] instance.
  */
-public fun axisBuilder(block: Axis.Builder.() -> Unit = {}): Axis.Builder =
-    Axis.Builder().apply(block)
+public fun <Position : AxisPosition> axisBuilder(
+    block: Axis.Builder<Position>.() -> Unit = {},
+): Axis.Builder<Position> = Axis.Builder<Position>().apply(block)
 
-public fun <T : AxisPosition, A : Axis<T>> Axis.Builder.setTo(axis: A): A {
+/**
+ * A convenience function that allows for applying the properties from an [Axis.Builder] to an [Axis] subclass.
+ *
+ * @param axis the [Axis] whose properties will be updated to this [Axis.Builder]’s properties.
+ */
+public fun <Position : AxisPosition, A : Axis<Position>> Axis.Builder<Position>.setTo(axis: A): A {
     axis.axisLine = this.axis
     axis.tick = tick
     axis.guideline = guideline

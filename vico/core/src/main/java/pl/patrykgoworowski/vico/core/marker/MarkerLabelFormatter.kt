@@ -16,6 +16,9 @@
 
 package pl.patrykgoworowski.vico.core.marker
 
+/**
+ * Formats marker labels.
+ */
 public fun interface MarkerLabelFormatter {
 
     /**

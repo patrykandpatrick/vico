@@ -16,6 +16,10 @@
 
 package pl.patrykgoworowski.vico.core.throwable
 
+/**
+ * The [Exception] thrown when a function receives an unexpected [pl.patrykgoworowski.vico.core.axis.AxisPosition]
+ * subclass.
+ */
 public class UnknownAxisPositionException(
     receivedClass: Class<*>,
 ) : IllegalArgumentException("Got unknown AxisPosition class ${receivedClass.name}")

@@ -21,17 +21,22 @@ import android.graphics.Path
 import pl.patrykgoworowski.vico.core.annotation.LongParameterListDrawFunction
 import pl.patrykgoworowski.vico.core.context.DrawContext
 
-public typealias OnPathCreated = Shape.(
-    context: DrawContext,
-    path: Path,
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-) -> Unit
-
+/**
+ * Defines a shape that can be drawn on a canvas.
+ */
 public interface Shape {
 
+    /**
+     * Draws the [Shape] on the canvas.
+     *
+     * @param context holds data about the environment as well as the canvas to draw on.
+     * @param paint the [Paint] used to draw the shape.
+     * @param path the [Path] defining the shape.
+     * @param left the x coordinate of the left edge of the bounds in which the shape should be drawn.
+     * @param top the y coordinate of the top edge of the bounds in which the shape should be drawn.
+     * @param right the x coordinate of the right edge of the bounds in which the shape should be drawn.
+     * @param bottom the y coordinate of the bottom edge of the bounds in which the shape should be drawn.
+     */
     @LongParameterListDrawFunction
     public fun drawShape(
         context: DrawContext,
