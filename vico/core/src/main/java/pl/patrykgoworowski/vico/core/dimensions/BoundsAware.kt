@@ -20,7 +20,7 @@ import android.graphics.RectF
 import pl.patrykgoworowski.vico.core.extension.set
 
 /**
- * Defines an abstract component which has some physical bounds.
+ * Defines an abstract component that has some physical bounds.
  */
 public interface BoundsAware {
 
@@ -30,7 +30,7 @@ public interface BoundsAware {
     public val bounds: RectF
 
     /**
-     * Sets given rectangle to the [bounds].
+     * Sets the coordinates of the bounds to the provided values.
      */
     public fun setBounds(
         left: Number,
