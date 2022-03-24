@@ -12,5 +12,13 @@
 | `vico.view` | TBD |
 
 ## Jetpack Compose
+```kt
+Chart(
+    chart = columnChart(),
+    model = entryModelOf(5f, 15f, 10f, 20f, 10f),
+    startAxis = startAxis(),
+    bottomAxis = bottomAxis(),
+)
+```
 
 ## Views
