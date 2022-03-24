@@ -22,3 +22,15 @@ Chart(
 ```
 
 ## Views
+```xml
+<pl.patrykgoworowski.vico.view.chart.ChartView
+    android:id="@+id/chart"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:chartType="column"
+    app:showBottomAxis="true"
+    app:showStartAxis="true" />
+```
+```kt
+findViewById<ChartView>(R.id.chart).model = entryModelOf(5f, 15f, 10f, 20f, 10f)
+```
