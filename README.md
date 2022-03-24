@@ -1,8 +1,8 @@
 # Vico Chart
 
-# Getting started
+## Getting started
 
-# Modules
+## Modules
 | Group | Description |
 | --- | --- |
 | `vico.compose` | TBD |
@@ -11,6 +11,6 @@
 | `vico.core` | TBD |
 | `vico.view` | TBD |
 
-# Jetpack Compose
+## Jetpack Compose
 
-# Views
+## Views
