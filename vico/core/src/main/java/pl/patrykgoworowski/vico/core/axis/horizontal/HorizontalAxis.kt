@@ -48,57 +48,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     public var tickType: TickType = TickType.Minor
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
-        val scrollX = context.horizontalScroll
         val clipRestoreCount = canvas.save()
-
-        canvas.clipRect(
-            bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
-            minOf(bounds.top, chartBounds.top),
-            bounds.right + if (tickType == TickType.Minor) tickThickness.half else 0f,
-            maxOf(bounds.bottom, chartBounds.bottom)
-        )
-
-        val entryLength = getEntryLength(segmentProperties.segmentWidth)
-        val tickCount = tickType.getTickCount(entryLength)
-        val tickDrawStep = segmentProperties.segmentWidth
-        val scrollAdjustment = (scrollX / tickDrawStep).toInt()
-        var textDrawCenter =
-            bounds.left + tickDrawStep.half - scrollX + (tickDrawStep * scrollAdjustment)
-        var tickDrawCenter =
-            tickType.getTickDrawCenter(scrollX, tickDrawStep, scrollAdjustment, textDrawCenter)
-
-        val guidelineTop = chartBounds.top
-        val guidelineBottom = chartBounds.bottom
-
-        for (index in 0 until tickCount) {
-            guideline?.run {
-                takeIf {
-                    it.fitsInVertical(
-                        context = context,
-                        top = guidelineTop,
-                        bottom = guidelineBottom,
-                        centerX = tickDrawCenter,
-                        boundingBox = chartBounds,
-                    )
-                }?.drawVertical(
-                    context = context,
-                    top = guidelineTop,
-                    bottom = guidelineBottom,
-                    centerX = tickDrawCenter,
-                )
-            }
-
-            tickDrawCenter += tickDrawStep
-            textDrawCenter += tickDrawStep
-        }
-
-        if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
-    }
-
-    override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-        val clipRestoreCount = canvas.save()
         val step = chartModel.stepX
 
         canvas.clipRect(
@@ -112,28 +64,35 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val tickCount = tickType.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (horizontalScroll / tickDrawStep).toInt()
-        var textDrawCenter =
-            bounds.left + tickDrawStep.half - horizontalScroll + (tickDrawStep * scrollAdjustment)
-        var tickDrawCenter =
-            tickType.getTickDrawCenter(horizontalScroll, tickDrawStep, scrollAdjustment, textDrawCenter)
-
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
+        var textCenter = bounds.left + tickDrawStep.half - horizontalScroll + (tickDrawStep * scrollAdjustment)
+        var tickCenter = tickType.getTickDrawCenter(horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
 
         var valueIndex: Float = chartModel.minX + scrollAdjustment * step
 
         for (index in 0 until tickCount) {
-            tick?.drawVertical(
+            guideline?.takeIf {
+                it.fitsInVertical(
+                    context = context,
+                    top = chartBounds.top,
+                    bottom = chartBounds.bottom,
+                    centerX = tickCenter,
+                    boundingBox = chartBounds,
+                )
+            }?.drawVertical(
                 context = context,
-                top = tickMarkTop,
-                bottom = tickMarkBottom,
-                centerX = tickDrawCenter
+                top = chartBounds.top,
+                bottom = chartBounds.bottom,
+                centerX = tickCenter,
             )
+
+            tick?.drawVertical(context = context, top = tickMarkTop, bottom = tickMarkBottom, centerX = tickCenter)
 
             if (index < entryLength) {
                 label?.drawText(
                     context = context,
                     text = valueFormatter.formatValue(valueIndex, context.chartModel),
-                    textX = textDrawCenter,
+                    textX = textCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
                     maxTextWidth = tickDrawStep.toInt(),
@@ -141,8 +100,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
                 valueIndex += step
             }
-            tickDrawCenter += tickDrawStep
-            textDrawCenter += tickDrawStep
+
+            tickCenter += tickDrawStep
+            textCenter += tickDrawStep
         }
 
         axisLine?.drawHorizontal(
@@ -154,6 +114,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
+
+    override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
 
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width() / segmentWidth).toInt() + 1
