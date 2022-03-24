@@ -64,7 +64,7 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
     CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 @Composable
 public fun ThresholdLine() {
     ProvidePreviewChartStyle {
@@ -89,7 +89,7 @@ public fun ThresholdLine() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 @Composable
 public fun ThresholdLineWithCustomText() {
     ProvidePreviewChartStyle {
@@ -150,7 +150,7 @@ public fun ThresholdLineWithCustomText() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 @Composable
 public fun RangedThresholdLine() {
     ProvidePreviewChartStyle {
@@ -173,7 +173,7 @@ public fun RangedThresholdLine() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 @Composable
 public fun RangedThresholdLineWithBrushShader() {
     ProvidePreviewChartStyle {
@@ -204,7 +204,7 @@ public fun RangedThresholdLineWithBrushShader() {
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 250)
 @Composable
 public fun RangedThresholdLineWithComponentShader() {
     ProvidePreviewChartStyle {
