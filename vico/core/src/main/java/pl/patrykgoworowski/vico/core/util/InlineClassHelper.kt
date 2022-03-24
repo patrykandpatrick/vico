@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright 2021 by Patryk Goworowski
+ * Modifications copyright 2022 Patryk Goworowski and Patryk Michalik
  */
 @file:Suppress("NOTHING_TO_INLINE", "MagicNumber")
 package pl.patrykgoworowski.vico.core.util
