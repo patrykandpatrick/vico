@@ -30,7 +30,7 @@ import kotlin.math.abs
  * [Chart.maxX], [Chart.minY] and [Chart.maxY] are non-null.
  * Overridden values will be used in [ChartModel].
  *
- * It’s recommended to delegate creation of [ChartEntryModel] to [ChartEntryModelProducer], or
+ * It’s recommended to delegate creation of [ChartEntryModel] to [ChartEntryModelProducer] or
  * [ComposedChartEntryModelProducer].
  *
  * @see [ChartModel]

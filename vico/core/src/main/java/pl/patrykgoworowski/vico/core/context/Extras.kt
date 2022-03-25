@@ -21,7 +21,7 @@ package pl.patrykgoworowski.vico.core.context
  * - Measuring operation, used within [pl.patrykgoworowski.vico.core.context.MeasureContext].
  * - Draw operation, used within [pl.patrykgoworowski.vico.core.chart.draw.ChartDrawContext].
  *
- * Extras will be available downstream the measuring, or drawing operation. Once the operation is complete,
+ * Extras will be available downstream the measuring or drawing operation. Once the operation is complete,
  * the data will be lost.
  *
  * Once the data for given key is retrieved, it is being cleared from underlying map.
