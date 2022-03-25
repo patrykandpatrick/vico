@@ -21,6 +21,33 @@ Chart(
     bottomAxis = bottomAxis(),
 )
 ```
+For more complex datasets, use `ChartEntryModelProducer` (or `ComposedChartEntryModelProducer` for
+composed charts). The following example displays a line chart and a button that updates its data:
+```kt
+fun getRandomEntries() = List(size = 5) {
+    25f * Random.nextFloat()
+}.mapIndexed { x, y ->
+    FloatEntry(
+        x = x.toFloat(),
+        y = y,
+    )
+}
+
+val chartModelProducer = remember { ChartEntryModelProducer(getRandomEntries()) }
+
+Column {
+    Chart(
+        chart = lineChart(),
+        chartModelProducer = chartModelProducer,
+        startAxis = startAxis(),
+        bottomAxis = bottomAxis(),
+    )
+    Spacer(modifier = Modifier.height(16.dp))
+    Button(onClick = { chartModelProducer.setEntries(getRandomEntries()) }) {
+        Text(text = "Update entries")
+    }
+}
+```
 
 ## Views
 A basic column chart with two axes and five entries can be added as follows. First, add a
