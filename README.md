@@ -12,7 +12,11 @@
 | `vico.view` | TBD |
 
 ## Jetpack Compose
+
+### Basic example
+
 A basic column chart with two axes and five entries can be added as follows:
+
 ```kt
 Chart(
     chart = columnChart(),
@@ -21,8 +25,12 @@ Chart(
     bottomAxis = bottomAxis(),
 )
 ```
+
+### `ChartEntryModelProducer` & updating data
+
 For more complex datasets, use `ChartEntryModelProducer` (or `ComposedChartEntryModelProducer` for
 composed charts). The following example displays a line chart and a button that updates its data:
+
 ```kt
 fun getRandomEntries() = List(size = 5) {
     25f * Random.nextFloat()
@@ -48,6 +56,9 @@ Column {
     }
 }
 ```
+
+### Customization
+
 The easiest way to customize the appearance of charts is to provide a custom `ChartStyle`
 implementation via `ProvideChartStyle`. This enables you to customize the colors, dimensions,
 typography, and more. All charts and their components use the style provided by `ProvideChartStyle`
@@ -74,6 +85,7 @@ ProvideChartStyle(chartStyle = m3ChartStyle()) {
 ```
 
 ## Views
+
 A basic column chart with two axes and five entries can be added as follows. First, add a
 `ChartView` to your XML layout file:
 ```xml
@@ -85,7 +97,9 @@ A basic column chart with two axes and five entries can be added as follows. Fir
     app:showBottomAxis="true"
     app:showStartAxis="true" />
 ```
+
 Then, set the model for the chart:
+
 ```kt
 findViewById<ChartView>(R.id.chart).model = entryModelOf(5f, 15f, 10f, 20f, 10f)
 ```
