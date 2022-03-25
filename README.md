@@ -48,6 +48,30 @@ Column {
     }
 }
 ```
+The easiest way to customize the appearance of charts is to provide a custom `ChartStyle`
+implementation via `ProvideChartStyle`. This enables you to customize the colors, dimensions,
+typography, and more. All charts and their components use the style provided by `ProvideChartStyle`
+by default, but you can customize each chart individually if needed. For example, the `lineChart`
+function allows you to specify the line thickness, the line color, and so on. The default values
+for these parameters are `currentChartStyle.lineChart.lineThickness` and
+`currentChartStyle.lineChart.lineColor`. `ProvideChartStyle` is similar to `MaterialTheme` from
+`compose.material` and `compose.material3`. It can be used as follows:
+
+```kt
+ProvideChartStyle(chartStyle = ChartStyle(...)) {
+   ...
+}
+```
+
+If you use `compose.material` or `compose.material3` in your app, you can use the `m2ChartStyle`
+(`vico.compose-m2`) or `m3ChartStyle` (`vico.compose-m3`) function to create a `ChartStyle`
+implementation that uses the colors from your app’s Material Theme:
+
+```kt
+ProvideChartStyle(chartStyle = m3ChartStyle()) {
+    ...
+}
+```
 
 ## Views
 A basic column chart with two axes and five entries can be added as follows. First, add a
