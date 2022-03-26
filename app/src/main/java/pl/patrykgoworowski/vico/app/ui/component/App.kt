@@ -19,7 +19,6 @@ package pl.patrykgoworowski.vico.app.ui.component
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
-import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import pl.patrykgoworowski.vico.app.ui.theme.MainTheme
 import androidx.compose.material.MaterialTheme as Material2Theme
@@ -35,8 +34,6 @@ internal fun App() {
                 darkIcons = darkIcons,
             )
         }
-        ProvideWindowInsets {
-            Showcase()
-        }
+        Showcase()
     }
 }
