@@ -16,7 +16,12 @@
 
 package pl.patrykgoworowski.vico.app.ui.component
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -51,37 +56,46 @@ internal fun ShowcaseTabRow(
             pagerState.animateScrollToPage(page = index)
         }
     }
+    val surfaceColor = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation = 2.dp)
 
-    TabRow(
-        selectedTabIndex = pagerState.currentPage,
-        contentColor = MaterialTheme.colorScheme.primary,
-        containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation = 2.dp),
-        divider = {},
-        indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
-                modifier = Modifier
-                    .material3pagerTabIndicatorOffset(
-                        pagerState = pagerState,
-                        tabPositions = tabPositions,
-                    )
-                    .padding(horizontal = 20.dp)
-                    .clip(shape = indicatorShape),
-            )
-        }
-    ) {
-        showcasePages.mapIndexed { index, page ->
-            Tab(
-                selectedContentColor = MaterialTheme.colorScheme.primary,
-                unselectedContentColor = MaterialTheme.colorScheme.onSurface,
-                selected = pagerState.currentPage == index,
-                onClick = { scrollToPage(index) },
-                text = {
-                    Text(
-                        style = MaterialTheme.typography.bodyLarge,
-                        text = stringResource(id = page.labelRes),
-                    )
-                }
-            )
+    Column {
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = surfaceColor)
+                .statusBarsPadding(),
+        )
+        TabRow(
+            selectedTabIndex = pagerState.currentPage,
+            contentColor = MaterialTheme.colorScheme.primary,
+            containerColor = MaterialTheme.colorScheme.surfaceColorAtElevation(elevation = 2.dp),
+            divider = {},
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    modifier = Modifier
+                        .material3pagerTabIndicatorOffset(
+                            pagerState = pagerState,
+                            tabPositions = tabPositions,
+                        )
+                        .padding(horizontal = 20.dp)
+                        .clip(shape = indicatorShape),
+                )
+            }
+        ) {
+            showcasePages.mapIndexed { index, page ->
+                Tab(
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = MaterialTheme.colorScheme.onSurface,
+                    selected = pagerState.currentPage == index,
+                    onClick = { scrollToPage(index) },
+                    text = {
+                        Text(
+                            style = MaterialTheme.typography.bodyLarge,
+                            text = stringResource(id = page.labelRes),
+                        )
+                    }
+                )
+            }
         }
     }
 }

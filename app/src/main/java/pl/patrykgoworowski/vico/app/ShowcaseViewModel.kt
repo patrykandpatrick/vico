@@ -40,8 +40,6 @@ internal class ShowcaseViewModel : ViewModel() {
     internal val composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel> =
         multiChartEntryModelProducer + chartEntryModelProducer
 
-    internal var chartStyleOverrideManager: ChartStyleOverrideManager = ChartStyleOverrideManager()
-
     init {
         viewModelScope.launch {
             while (currentCoroutineContext().isActive) {
