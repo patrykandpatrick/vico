@@ -17,6 +17,7 @@
 package pl.patrykgoworowski.vico.app.ui.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -36,7 +37,11 @@ internal fun ViewShowcase(showcaseViewModel: ShowcaseViewModel) {
     val scrollState = rememberScrollState()
 
     Box(modifier = Modifier.verticalScroll(state = scrollState)) {
-        Box(modifier = Modifier.padding(20.dp)) {
+        Box(
+            modifier = Modifier
+                .padding(20.dp)
+                .navigationBarsPadding()
+        ) {
             AndroidViewBinding(FragmentViewBinding::inflate) {
                 with(showcaseViewModel) {
                     columnChart.setUpChart(chartEntryModelProducer, marker)

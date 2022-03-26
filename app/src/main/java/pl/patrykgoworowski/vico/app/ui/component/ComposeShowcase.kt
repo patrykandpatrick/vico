@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.app.ui.component
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -32,7 +33,9 @@ internal fun ComposeShowcase(showcaseViewModel: ShowcaseViewModel) {
     Box(modifier = Modifier.verticalScroll(state = rememberScrollState())) {
         Column(
             verticalArrangement = Arrangement.spacedBy(20.dp),
-            modifier = Modifier.padding(all = 20.dp),
+            modifier = Modifier
+                .padding(all = 20.dp)
+                .navigationBarsPadding(),
         ) {
             ColumnChart(chartEntryModelProducer = showcaseViewModel.chartEntryModelProducer)
             StackedColumnChart(chartEntryModelProducer = showcaseViewModel.multiChartEntryModelProducer)
