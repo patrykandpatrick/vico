@@ -59,6 +59,7 @@ tasks.register('detektFix', Detekt) {
 allprojects {
     repositories {
         google()
+        mavenLocal()
         mavenCentral()
     }
 }

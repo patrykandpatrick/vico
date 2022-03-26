@@ -16,4 +16,9 @@
 
 plugins {
     id "org.jetbrains.dokka"
+    id "maven-publish"
+}
+
+project.allprojects { project ->
+    project.version = library.version_name
 }

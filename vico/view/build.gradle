@@ -21,6 +21,45 @@ plugins {
 apply from: "$rootDir/commonScripts.gradle"
 apply from: "$rootDir/dokka-common.gradle"
 
+android {
+    namespace = getNamespace(project)
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            VicoView(MavenPublication) {
+                groupId = library.groupId
+                artifactId = getArtifactId(project)
+                version = project.version
+                from components.release
+
+                pom {
+                    licenses {
+                        license {
+                            name = 'The Apache License, Version 2.0'
+                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                        }
+                    }
+
+                    scm {
+                        connection = 'scm:git:git://github.com/VicoChart/VicoChart.git'
+                        developerConnection = 'scm:git:ssh://github.com/VicoChart/VicoChart.git'
+                        url = 'https://github.com/VicoChart/VicoChart'
+                    }
+                }
+            }
+        }
+    }
+}
+
 dependencies {
     vico_view_dependencies.each {
         add(it.configuration, it.dependency, it.options)
