@@ -29,7 +29,7 @@ Chart(
 ### `ChartEntryModelProducer` & updating data
 
 For more complex datasets, use `ChartEntryModelProducer` (or `ComposedChartEntryModelProducer` for
-composed charts). The following example displays a line chart and a button that updates its data:
+[composed charts](#composed-charts)). The following example displays a line chart and a button that updates its data:
 
 ```kt
 fun getRandomEntries() = List(size = 5) {
@@ -55,6 +55,36 @@ Column {
         Text(text = "Update entries")
     }
 }
+```
+
+### Composed charts
+
+You can combine multiple charts into one. The following example displays a composed chart that
+comprises a column chart and a line chart, each displaying a different randomized dataset:
+
+```kt
+fun getRandomEntries() = List(size = 5) {
+    25f * Random.nextFloat()
+}.mapIndexed { x, y ->
+    FloatEntry(
+        x = x.toFloat(),
+        y = y,
+    )
+}
+
+val firstChartModelProducer = remember { ChartEntryModelProducer(getRandomEntries()) }
+val secondChartModelProducer = remember { ChartEntryModelProducer(getRandomEntries()) }
+val composedChartModelProducer = remember(
+    firstChartModelProducer,
+    secondChartModelProducer,
+) { firstChartModelProducer + secondChartModelProducer }
+
+Chart(
+    chart = lineChart() + columnChart(),
+    chartModelProducer = chartModelProducer,
+    startAxis = startAxis(),
+    bottomAxis = bottomAxis(),
+)
 ```
 
 ### Customization
