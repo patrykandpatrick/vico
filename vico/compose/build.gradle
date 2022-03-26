@@ -62,6 +62,7 @@ afterEvaluate {
                 artifactId = getArtifactId(project)
                 version = project.version
                 from components.release
+                customizePom(pom)
             }
         }
     }

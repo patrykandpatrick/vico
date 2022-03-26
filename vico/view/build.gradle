@@ -40,21 +40,7 @@ afterEvaluate {
                 artifactId = getArtifactId(project)
                 version = project.version
                 from components.release
-
-                pom {
-                    licenses {
-                        license {
-                            name = 'The Apache License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                        }
-                    }
-
-                    scm {
-                        connection = 'scm:git:git://github.com/VicoChart/VicoChart.git'
-                        developerConnection = 'scm:git:ssh://github.com/VicoChart/VicoChart.git'
-                        url = 'https://github.com/VicoChart/VicoChart'
-                    }
-                }
+                customizePom(pom)
             }
         }
     }
