@@ -26,7 +26,7 @@
         android:id="@+id/column_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:chartType="column"
+        app:chart="column"
         app:showBottomAxis="true"
         app:showStartAxis="true" />
 
@@ -48,7 +48,7 @@
         android:id="@+id/line_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:chartType="line" />
+        app:chart="line" />
 
     <Space
         android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
         android:id="@+id/grouped_column_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:chartType="column"/>
+        app:chart="column"/>
 
     <Space
         android:layout_width="wrap_content"
@@ -68,6 +68,6 @@
         android:id="@+id/stacked_column_chart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:chartType="stackedColumn" />
+        app:chart="stackedColumn" />
 
 </LinearLayout>

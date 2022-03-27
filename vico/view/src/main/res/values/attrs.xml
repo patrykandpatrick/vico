@@ -15,18 +15,13 @@
   -->
 
 <resources>
-    <attr name="axisStyle" format="reference" />
-    <attr name="axisLineStyle" format="reference" />
-    <attr name="axisGuidelineStyle" format="reference" />
-    <attr name="axisTickStyle" format="reference" />
-    <attr name="shapeStyle" format="reference" />
-    <attr name="axisLabelStyle" format="reference" />
     <attr name="color" format="color" />
+    <attr name="shapeStyle" format="reference" />
     <attr name="strokeColor" format="color" />
     <attr name="strokeWidth" format="dimension" />
 
     <declare-styleable name="ChartView">
-        <attr name="chartType" format="enum">
+        <attr name="chart" format="enum">
             <enum name="column" value="1" />
             <enum name="stackedColumn" value="2" />
             <enum name="line" value="4" />
@@ -42,7 +37,7 @@
     </declare-styleable>
 
     <declare-styleable name="BaseChartView">
-        <attr name="axisStyle" />
+        <attr name="axisStyle" format="reference" />
         <attr name="columnChartStyle" />
         <attr name="lineChartStyle" />
         <attr name="showStartAxis" format="boolean" />
@@ -53,13 +48,14 @@
         <attr name="chartZoomEnabled" format="boolean" />
     </declare-styleable>
 
+    <!-- Defines the appearance of chart axes. -->
     <declare-styleable name="Axis">
-        <attr name="axisLineStyle" />
-        <attr name="axisGuidelineStyle" />
-        <attr name="axisTickStyle" />
+        <attr name="axisLineStyle" format="reference" />
+        <attr name="axisGuidelineStyle" format="reference" />
+        <attr name="axisTickStyle" format="reference" />
+        <attr name="axisLabelStyle" format="reference" />
         <attr name="axisTickLength" format="dimension" />
         <attr name="axisLabelBackground" format="color|reference" />
-        <attr name="axisLabelStyle" />
     </declare-styleable>
 
     <declare-styleable name="LineComponentStyle">

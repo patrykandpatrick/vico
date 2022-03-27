@@ -19,6 +19,7 @@ package pl.patrykgoworowski.vico.core.util
 import pl.patrykgoworowski.vico.core.chart.composed.ComposedChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModel
 import pl.patrykgoworowski.vico.core.entry.ChartEntryModelProducer
+import pl.patrykgoworowski.vico.core.entry.ChartModelProducer
 import pl.patrykgoworowski.vico.core.entry.FloatEntry
 import pl.patrykgoworowski.vico.core.entry.composed.ComposedChartEntryModelProducer
 import pl.patrykgoworowski.vico.core.entry.entryOf
@@ -30,7 +31,7 @@ import pl.patrykgoworowski.vico.core.entry.entryOf
  */
 public class RandomEntriesGenerator(
     private val xRange: IntRange = 0..X_RANGE_TOP,
-    private val yRange: IntRange = 0..Y_RANGE_TOP
+    private val yRange: IntRange = 0..Y_RANGE_TOP,
 ) {
     /**
      * Generates a [List] of [FloatEntry] instances with randomized y values.
@@ -50,7 +51,7 @@ public class RandomEntriesGenerator(
      * The size of the collection is equal to the number of values in [xRange].
      */
     public fun randomEntryModel(): ChartEntryModel =
-        ChartEntryModelProducer(generateRandomEntries()).getModel()
+        getChartEntryModelProducer().getModel()
 
     /**
      * Creates a [ComposedChartEntryModel] with three [ChartEntryModelProducer]s, each containing a collection of
@@ -59,13 +60,16 @@ public class RandomEntriesGenerator(
      */
     public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> =
         ComposedChartEntryModelProducer(
-            ChartEntryModelProducer(generateRandomEntries()),
-            ChartEntryModelProducer(generateRandomEntries()),
-            ChartEntryModelProducer(generateRandomEntries()),
+            getChartEntryModelProducer(),
+            getChartEntryModelProducer(),
+            getChartEntryModelProducer(),
         ).getModel()
 
     private companion object {
         const val X_RANGE_TOP = 10
         const val Y_RANGE_TOP = 20
+
+        fun RandomEntriesGenerator.getChartEntryModelProducer(): ChartModelProducer<ChartEntryModel> =
+            ChartEntryModelProducer(listOf(generateRandomEntries(), generateRandomEntries(), generateRandomEntries()))
     }
 }

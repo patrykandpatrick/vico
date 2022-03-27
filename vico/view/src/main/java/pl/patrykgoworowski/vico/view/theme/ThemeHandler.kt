@@ -148,7 +148,7 @@ internal class ThemeHandler(
     }
 
     private fun TypedArray.getChart(): Chart<ChartEntryModel>? =
-        when (getInt(R.styleable.ChartView_chartType, 0)) {
+        when (getInt(R.styleable.ChartView_chart, 0)) {
             COLUMN_CHART -> getColumnChart(context, mergeMode = MergeMode.Grouped)
             STACKED_COLUMN_CHART -> getColumnChart(context, mergeMode = MergeMode.Stack)
             LINE_CHART -> getLineChart(context)
@@ -183,7 +183,6 @@ internal class ThemeHandler(
     internal enum class ChartType {
         Single,
         Composed,
-        Unknown,
     }
 
     private companion object {

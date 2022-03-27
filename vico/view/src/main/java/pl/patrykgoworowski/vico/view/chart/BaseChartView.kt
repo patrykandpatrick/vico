@@ -74,12 +74,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     chartType: ThemeHandler.ChartType,
 ) : View(context, attrs, defStyleAttr) {
 
-    public constructor(
-        context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0,
-    ) : this(context, attrs, defStyleAttr, ThemeHandler.ChartType.Unknown)
-
     private val contentBounds = RectF()
     private val chartModel = MutableChartModel()
     private val scrollHandler = ScrollHandler()
