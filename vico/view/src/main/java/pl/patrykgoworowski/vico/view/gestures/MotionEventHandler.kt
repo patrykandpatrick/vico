@@ -20,11 +20,11 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
+import kotlin.math.abs
 import pl.patrykgoworowski.vico.core.model.Point
 import pl.patrykgoworowski.vico.core.scroll.ScrollHandler
 import pl.patrykgoworowski.vico.view.extension.fling
 import pl.patrykgoworowski.vico.view.extension.point
-import kotlin.math.abs
 
 /**
  * Handles motion events.
@@ -47,6 +47,7 @@ public open class MotionEventHandler(
     private var currentX = 0f
     private var velocityTracker = VelocityTrackerHelper()
     private var lastEventPointerCount = 0
+    private var totalDragAmount: Float = 0f
 
     /**
      * Called to handle the [MotionEvent], which may result in touch marker indication, scroll, or zoom.
@@ -71,15 +72,16 @@ public open class MotionEventHandler(
                 var scrollHandled = false
                 if (isHorizontalScrollEnabled) {
                     currentX = motionEvent.x
-                    if (abs(currentX - initialX) > dragThreshold && !ignoreEvent) {
+                    totalDragAmount += abs(lastX - currentX)
+                    val shouldPerformScroll = totalDragAmount > dragThreshold
+                    if (shouldPerformScroll && !ignoreEvent) {
                         velocityTracker.get().addMovement(motionEvent)
-                        scrollHandled = scrollHandler.handleScrollDelta(currentX - lastX) != 0f
+                        scrollHandler.handleScrollDelta(currentX - lastX)
                         onTouchPoint(motionEvent.point)
                         requestInvalidate()
                         initialX = -dragThreshold
-                    } else {
-                        scrollHandled = scrollHandler.canScrollBy(currentX - lastX)
                     }
+                    scrollHandled = shouldPerformScroll.not() || scrollHandler.canScrollBy(currentX - lastX)
                     lastX = motionEvent.x
                 } else {
                     onTouchPoint(motionEvent.point)
@@ -88,7 +90,9 @@ public open class MotionEventHandler(
                 scrollHandled
             }
             MotionEvent.ACTION_CANCEL,
-            MotionEvent.ACTION_UP -> {
+            MotionEvent.ACTION_UP,
+            -> {
+                totalDragAmount = 0f
                 onTouchPoint(null)
                 velocityTracker.get().apply {
                     computeCurrentVelocity(velocityUnits)

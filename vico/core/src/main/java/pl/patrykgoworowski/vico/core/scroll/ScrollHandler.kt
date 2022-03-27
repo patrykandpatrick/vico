@@ -51,7 +51,7 @@ public class ScrollHandler(
      * Checks whether a scroll by the given [delta] value is possible.
      */
     public fun canScrollBy(delta: Float): Boolean =
-        currentScroll - getClampedScroll(currentScroll - delta) != 0f
+        delta == 0f || currentScroll - getClampedScroll(currentScroll - delta) != 0f
 
     /**
      * Scrolls to the [targetScroll] value, which is clamped to the range from 0 to the [maxScrollDistance].
