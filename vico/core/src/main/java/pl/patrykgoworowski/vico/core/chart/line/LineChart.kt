@@ -183,25 +183,23 @@ public open class LineChart(
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - entry.y * heightMultiplier
 
-        entries.forEach { collection ->
-            collection.forEachIn((drawMinX - stepX)..(drawMaxX + stepX)) { entry ->
-                x = getDrawX(entry)
-                y = getDrawY(entry)
-                when {
-                    x < boundsStart -> {
-                        prevEntry = entry
+        entries.firstOrNull()?.forEachIn((drawMinX - stepX)..(drawMaxX + stepX)) { entry ->
+            x = getDrawX(entry)
+            y = getDrawY(entry)
+            when {
+                x < boundsStart -> {
+                    prevEntry = entry
+                }
+                x in boundsStart..boundsEnd -> {
+                    prevEntry?.also {
+                        action(it, getDrawX(it), getDrawY(it))
+                        prevEntry = null
                     }
-                    x in boundsStart..boundsEnd -> {
-                        prevEntry?.also {
-                            action(it, getDrawX(it), getDrawY(it))
-                            prevEntry = null
-                        }
-                        action(entry, x, y)
-                    }
-                    x > boundsEnd && lastEntry == null -> {
-                        action(entry, x, y)
-                        lastEntry = entry
-                    }
+                    action(entry, x, y)
+                }
+                x > boundsEnd && lastEntry == null -> {
+                    action(entry, x, y)
+                    lastEntry = entry
                 }
             }
         }
