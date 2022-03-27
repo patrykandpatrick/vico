@@ -241,4 +241,3 @@ def getProperVicoDependency(String name) {
         return project(":$name")
     }
 }
-

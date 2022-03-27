@@ -51,5 +51,3 @@ dependencies {
         add(it.configuration, it.dependency, it.options)
     }
 }
-
-

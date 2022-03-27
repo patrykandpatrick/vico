@@ -51,6 +51,7 @@ ext {
 String getNamespace(Project project) {
     return "${library.groupId}.${project.name.replace("-", ".")}"
 }
+
 String getArtifactId(Project project) {
     return "${project.parent.name}-${project.name}"
 }
