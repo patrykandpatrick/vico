@@ -149,7 +149,7 @@ ext {
             ]
     ]
 
-    app_dependencies = [
+    sample_dependencies = [
             [configuration: "implementation", dependency: project(':vico:view')],
             [configuration: "implementation", dependency: project(':vico:compose')],
             [configuration: "implementation", dependency: project(':vico:compose-m3')],
