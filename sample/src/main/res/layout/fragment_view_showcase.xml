@@ -16,7 +16,7 @@
   ~ limitations under the License.
   -->
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -28,8 +28,10 @@
         android:id="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:divider="@drawable/spacer"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="20dp"
+        android:showDividers="middle">
 
         <pl.patrykgoworowski.vico.view.chart.ChartView
             android:id="@+id/column_chart"
@@ -39,19 +41,11 @@
             app:showBottomAxis="true"
             app:showStartAxis="true" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="20dp" />
-
         <pl.patrykgoworowski.vico.view.chart.ComposedChartView
             android:id="@+id/composed_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:charts="column|line" />
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="20dp" />
 
         <pl.patrykgoworowski.vico.view.chart.ChartView
             android:id="@+id/line_chart"
@@ -59,19 +53,11 @@
             android:layout_height="wrap_content"
             app:chart="line" />
 
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="20dp" />
-
         <pl.patrykgoworowski.vico.view.chart.ChartView
             android:id="@+id/grouped_column_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:chart="column" />
-
-        <Space
-            android:layout_width="wrap_content"
-            android:layout_height="20dp" />
 
         <pl.patrykgoworowski.vico.view.chart.ChartView
             android:id="@+id/stacked_column_chart"
@@ -81,4 +67,4 @@
 
     </LinearLayout>
 
-</ScrollView>
+</androidx.core.widget.NestedScrollView>
