@@ -24,9 +24,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.VicoChart">
+        android:theme="@style/Theme.VicoChart"
+        android:name=".sample.SampleApplication">
         <activity
-            android:name=".sample.MainActivity"
+            android:name=".sample.activity.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -15,9 +15,10 @@
  */
 
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+    id "com.android.application"
+    id "kotlin-android"
 }
+
 apply from: "$rootDir/commonScripts.gradle"
 
 android {
@@ -35,23 +36,25 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+
     buildFeatures {
         viewBinding true
+        compose true
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
         useIR = true
     }
-    buildFeatures {
-        compose true
-    }
+
     composeOptions {
         kotlinCompilerExtensionVersion versions.compose
     }
