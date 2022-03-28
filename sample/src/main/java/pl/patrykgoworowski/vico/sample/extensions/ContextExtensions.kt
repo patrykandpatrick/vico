@@ -31,6 +31,7 @@ internal fun Context.resolveColorAttribute(resourceId: Int): Int {
 }
 
 internal fun Context.getMarker(): Marker = getMarker(
+    labelColor = resolveColorAttribute(resourceId = R.attr.colorOnSurface),
     bubbleColor = resolveColorAttribute(resourceId = R.attr.colorSurface),
     indicatorInnerColor = resolveColorAttribute(resourceId = R.attr.colorSurface),
     guidelineColor = resolveColorAttribute(resourceId = R.attr.colorOnBackground),

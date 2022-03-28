@@ -25,6 +25,7 @@ import pl.patrykgoworowski.vico.sample.component.getMarker
 @Composable
 internal fun marker(): Marker = with(MaterialTheme.colorScheme) {
     getMarker(
+        labelColor = onSurface.toArgb(),
         bubbleColor = surface.toArgb(),
         indicatorInnerColor = surface.toArgb(),
         guidelineColor = onSurface.toArgb(),

@@ -33,12 +33,14 @@ import pl.patrykgoworowski.vico.core.extension.copyColor
 import pl.patrykgoworowski.vico.core.marker.Marker
 
 internal fun getMarker(
+    @ColorInt labelColor: Int,
     @ColorInt bubbleColor: Int,
     @ColorInt indicatorInnerColor: Int,
     @ColorInt guidelineColor: Int,
 ): Marker {
 
     val label = buildTextComponent {
+        color = labelColor
         ellipsize = TextUtils.TruncateAt.END
         lineCount = 1
         padding = MutableDimensions(startDp = 8f, topDp = 4f, endDp = 8f, bottomDp = 4f)
