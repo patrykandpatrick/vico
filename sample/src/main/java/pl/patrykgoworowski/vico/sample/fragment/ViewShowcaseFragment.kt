@@ -31,9 +31,6 @@ import pl.patrykgoworowski.vico.sample.extensions.setUpChart
 
 internal class ViewShowcaseFragment : Fragment() {
 
-    private var _binding: FragmentViewShowcaseBinding? = null
-    private val binding get() = _binding!!
-
     private val showcaseViewModel: ShowcaseViewModel by lazy {
         ViewModelProvider(requireActivity()).get(ShowcaseViewModel::class.java)
     }
@@ -43,7 +40,7 @@ internal class ViewShowcaseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentViewShowcaseBinding.inflate(inflater, container, false)
+        val binding = FragmentViewShowcaseBinding.inflate(inflater, container, false)
         val marker = requireContext().getMarker()
         with(binding) {
             wrapper.setOnApplyWindowInsetsListener { view, insets ->
@@ -57,10 +54,5 @@ internal class ViewShowcaseFragment : Fragment() {
             stackedColumnChart.setUpChart(showcaseViewModel.multiChartEntryModelProducer, marker)
         }
         return binding.root
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

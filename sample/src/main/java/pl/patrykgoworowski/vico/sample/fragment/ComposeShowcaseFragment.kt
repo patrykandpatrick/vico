@@ -31,9 +31,6 @@ import pl.patrykgoworowski.vico.sample.extensions.navigationBarInsets
 
 internal class ComposeShowcaseFragment : Fragment() {
 
-    private var _binding: FragmentComposeShowcaseBinding? = null
-    private val binding get() = _binding!!
-
     private val showcaseViewModel: ShowcaseViewModel by lazy {
         ViewModelProvider(requireActivity()).get(ShowcaseViewModel::class.java)
     }
@@ -43,7 +40,7 @@ internal class ComposeShowcaseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        _binding = FragmentComposeShowcaseBinding.inflate(layoutInflater)
+        val binding = FragmentComposeShowcaseBinding.inflate(inflater, container, false)
         with(binding) {
             wrapper.setOnApplyWindowInsetsListener { view, insets ->
                 view.updatePadding(bottom = insets.navigationBarInsets.bottom)
