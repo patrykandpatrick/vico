@@ -16,6 +16,6 @@
   ~ limitations under the License.
   -->
 
-<resources>
-    <bool name="is_day">true</bool>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <size android:height="20dp" />
+</shape>

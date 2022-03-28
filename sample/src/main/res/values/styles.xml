@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
   ~ Copyright 2022 Patryk Goworowski and Patryk Michalik
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,6 +17,7 @@
   -->
 
 <resources>
+
     <style name="AxisStyle">
         <item name="axisLineStyle">@style/AxisLineStyle</item>
         <item name="axisGuidelineStyle">@style/AxisLineStyle</item>
@@ -55,14 +58,12 @@
 
     <style name="LineChartStyle">
         <item name="color">?colorPrimary</item>
-        <item name="gradientTopColor">@color/flickr_pink_300</item>
         <item name="pointStyle">@style/PointOuterStyle</item>
         <item name="pointSize">24dp</item>
         <item name="cubicStrength">100%</item>
     </style>
 
     <style name="PointOuterStyle">
-        <item name="color">@color/flickr_pink_100</item>
         <item name="overlayingComponentPadding">6dp</item>
         <item name="overlayingComponentStyle">@style/PointInnerStyle</item>
         <item name="shapeStyle">@style/CircleShape</item>

@@ -1,3 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+
 <!--
   ~ Copyright 2022 Patryk Goworowski and Patryk Michalik
   ~
@@ -15,26 +17,15 @@
   -->
 
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Theme.VicoChart" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/flickr_pink</item>
-        <item name="colorPrimaryVariant">@color/byzantine</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/purple</item>
-        <item name="colorSecondaryVariant">@color/trypan_purple</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <!-- Status bar color. -->
+
+    <style name="Theme.VicoChart" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">@bool/is_day</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightNavigationBar" tools:ignore="NewApi">@bool/is_day</item>
-        <!-- Customize your theme here. -->
         <item name="showStartAxis">true</item>
         <item name="showBottomAxis">true</item>
         <item name="chartHorizontalScrollingEnabled">true</item>
         <item name="chartZoomEnabled">true</item>
     </style>
-
 </resources>
