@@ -88,7 +88,7 @@ internal fun getMarker(
         indicator = indicator,
         guideline = guideline,
     ).apply {
-        indicatorSizeDp = 36f
+        indicatorSizeDp = INDICATOR_SIZE_DP
         onApplyEntryColor = { entryColor ->
             indicatorOuter.color = entryColor.copyColor(alpha = 32)
             with(indicatorCenter) {
@@ -103,3 +103,4 @@ internal fun getMarker(
 }
 
 private const val GUIDELINE_ALPHA = 0.2f
+private const val INDICATOR_SIZE_DP = 36f
