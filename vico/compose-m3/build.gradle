@@ -44,6 +44,29 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion versions.compose
     }
+
+    namespace = getNamespace(project)
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            VicoComposeM3(MavenPublication) {
+                groupId = library.groupId
+                artifactId = getArtifactId(project)
+                version = project.version
+                from components.release
+                customizePom(pom)
+            }
+        }
+    }
 }
 
 dependencies {

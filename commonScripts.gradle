@@ -41,3 +41,43 @@ android {
         jvmTarget = '1.8'
     }
 }
+
+ext {
+    getNamespace = this.&getNamespace
+    getArtifactId = this.&getArtifactId
+    customizePom = this.&customizePom
+}
+
+String getNamespace(Project project) {
+    return "${library.groupId}.${project.name.replace("-", ".")}"
+}
+
+String getArtifactId(Project project) {
+    return "${project.parent.name}-${project.name}"
+}
+
+void customizePom(MavenPom pom) {
+    pom.licenses {
+        license {
+            name = "The Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+    }
+    pom.scm {
+        connection = "scm:git:git://github.com/patrykandpatryk/vico.git"
+        developerConnection = "scm:git:ssh://github.com/patrykandpatryk/vico.git"
+        url = "https://github.com/patrykandpatryk/vico"
+    }
+    pom.developers {
+        developer {
+            id = "patrykgoworowski"
+            name = "Patryk Goworowski"
+            email = "patrykgoworowski@gmail.com"
+        }
+        developer {
+            id = "patrykmichalik"
+            name = "Patryk Michalik"
+            email = "contact@patrykmichalik.com"
+        }
+    }
+}

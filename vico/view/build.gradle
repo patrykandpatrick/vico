@@ -21,6 +21,31 @@ plugins {
 apply from: "$rootDir/commonScripts.gradle"
 apply from: "$rootDir/dokka-common.gradle"
 
+android {
+    namespace = getNamespace(project)
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            VicoView(MavenPublication) {
+                groupId = library.groupId
+                artifactId = getArtifactId(project)
+                version = project.version
+                from components.release
+                customizePom(pom)
+            }
+        }
+    }
+}
+
 dependencies {
     vico_view_dependencies.each {
         add(it.configuration, it.dependency, it.options)

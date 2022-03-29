@@ -35,11 +35,36 @@ android {
         jvmTarget = '1.8'
         useIR = true
     }
+
     buildFeatures {
         compose true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion versions.compose
+    }
+
+    namespace = getNamespace(project)
+
+    publishing {
+        singleVariant('release') {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            VicoCompose(MavenPublication) {
+                groupId = library.groupId
+                artifactId = getArtifactId(project)
+                version = project.version
+                from components.release
+                customizePom(pom)
+            }
+        }
     }
 }
 

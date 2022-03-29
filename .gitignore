@@ -10,6 +10,7 @@
 /.idea/deploymentTargetDropDown.xml
 /.idea/misc.xml
 /.idea/gradle.xml
+/.idea/jarRepositories.xml
 .DS_Store
 /build
 /captures
