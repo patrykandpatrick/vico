@@ -16,7 +16,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="pl.patrykgoworowski.vico">
+    package="com.patrykandpatryk.vico">
 
     <application
         android:allowBackup="true"
