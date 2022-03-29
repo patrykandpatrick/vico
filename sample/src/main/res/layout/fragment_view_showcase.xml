@@ -33,7 +33,7 @@
         android:padding="20dp"
         android:showDividers="middle">
 
-        <pl.patrykgoworowski.vico.view.chart.ChartView
+        <com.patrykandpatryk.vico.view.chart.ChartView
             android:id="@+id/column_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -41,25 +41,25 @@
             app:showBottomAxis="true"
             app:showStartAxis="true" />
 
-        <pl.patrykgoworowski.vico.view.chart.ComposedChartView
+        <com.patrykandpatryk.vico.view.chart.ComposedChartView
             android:id="@+id/composed_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:charts="column|line" />
 
-        <pl.patrykgoworowski.vico.view.chart.ChartView
+        <com.patrykandpatryk.vico.view.chart.ChartView
             android:id="@+id/line_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:chart="line" />
 
-        <pl.patrykgoworowski.vico.view.chart.ChartView
+        <com.patrykandpatryk.vico.view.chart.ChartView
             android:id="@+id/grouped_column_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:chart="column" />
 
-        <pl.patrykgoworowski.vico.view.chart.ChartView
+        <com.patrykandpatryk.vico.view.chart.ChartView
             android:id="@+id/stacked_column_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
