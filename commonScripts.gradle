@@ -64,9 +64,9 @@ void customizePom(MavenPom pom) {
         }
     }
     pom.scm {
-        connection = "scm:git:git://github.com/VicoChart/VicoChart.git"
-        developerConnection = "scm:git:ssh://github.com/VicoChart/VicoChart.git"
-        url = "https://github.com/VicoChart/VicoChart"
+        connection = "scm:git:git://github.com/patrykandpatryk/vico.git"
+        developerConnection = "scm:git:ssh://github.com/patrykandpatryk/vico.git"
+        url = "https://github.com/patrykandpatryk/vico"
     }
     pom.developers {
         developer {

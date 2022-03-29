@@ -33,5 +33,5 @@ jobs:
           git config --global user.name "Vico Chart Bot"
           git add docs
           git commit -m "Update docs" -m "[skip ci]"
-          git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/VicoChart/VicoChart.git
+          git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/vico.git
           git push origin
