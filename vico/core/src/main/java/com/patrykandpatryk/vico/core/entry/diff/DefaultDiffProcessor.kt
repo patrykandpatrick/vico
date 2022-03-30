@@ -67,11 +67,14 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
         }
     }
 
-    override fun yRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float> =
-        RangeProgressModel(
+    override fun yRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float> = when {
+        oldYRange == ZERO_TO_ZERO -> newYRange
+        newYRange == ZERO_TO_ZERO -> if (progress == 1f) newYRange else oldYRange
+        else -> RangeProgressModel(
             oldRange = oldYRange,
             newRange = newYRange,
         ).progressDiff(progress)
+    }
 
     override fun stackedYRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float> =
         RangeProgressModel(
@@ -138,5 +141,9 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
             val newY = newY ?: 0f
             return oldY + (newY - oldY) * progress
         }
+    }
+
+    private companion object {
+        val ZERO_TO_ZERO = 0f..0f
     }
 }
