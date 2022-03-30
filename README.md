@@ -3,13 +3,16 @@
 ## Getting started
 
 ## Modules
+
+The following table outlines the modules included in this library:
+
 | Group | Description |
 | --- | --- |
-| `vico.compose` | TBD |
-| `vico.compose-m2` | TBD |
-| `vico.compose-m3` | TBD |
-| `vico.core` | TBD |
-| `vico.view` | TBD |
+| `vico.compose` | Provides the utilities needed to use Vico in Jetpack Compose. |
+| `vico.compose-m2` | Helps create a `ChartStyle` based on an M2 Material Theme. |
+| `vico.compose-m3` | Helps create a `ChartStyle` based on an M3 Material Theme. |
+| `vico.core` | Includes the core logic for charts and other components. All modules depend on `vico.core`. |
+| `vico.view` | Provides the utilities needed to use Vico in the view system. |
 
 ## Jetpack Compose
 
