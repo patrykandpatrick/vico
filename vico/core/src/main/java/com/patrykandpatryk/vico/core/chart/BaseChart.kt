@@ -71,10 +71,11 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         model: Model,
     ): Unit = with(context) {
         canvas.inClip(bounds.left, 0f, bounds.right, context.canvas.height.toFloat()) {
+            drawDecorationBehindChart(context)
             if (model.entries.isNotEmpty()) {
                 drawChart(context, model)
             }
-            drawThresholdLines(context)
+            drawDecorationAboveChart(context)
             persistentMarkers.forEach { (x, marker) ->
                 entryLocationMap.getEntryModel(x)?.also { markerModel ->
                     marker.draw(
@@ -92,7 +93,11 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         model: Model,
     )
 
-    private fun drawThresholdLines(context: ChartDrawContext) {
-        decorations.forEach { line -> line.draw(context, bounds) }
+    private fun drawDecorationBehindChart(context: ChartDrawContext) {
+        decorations.forEach { line -> line.onDrawBehindChart(context, bounds) }
+    }
+
+    private fun drawDecorationAboveChart(context: ChartDrawContext) {
+        decorations.forEach { line -> line.onDrawAboveChart(context, bounds) }
     }
 }

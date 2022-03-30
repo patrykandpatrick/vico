@@ -32,10 +32,18 @@ import com.patrykandpatryk.vico.core.marker.Marker
 public interface Decoration {
 
     /**
+     * Called before the [Chart] starts drawing itself.
+     *
+     * @param [context] the drawing context containing the [Canvas] and other data.
+     * @param [bounds] the bounding box of the [Chart].
+     */
+    public fun onDrawBehindChart(context: ChartDrawContext, bounds: RectF): Unit = Unit
+
+    /**
      * Called immediately after the [Chart] finishes drawing itself.
      *
-     * @param [context] A drawing context containing a [Canvas] and other data.
-     * @param [bounds] A bounding box of the [Chart].
+     * @param [context] the drawing context containing the [Canvas] and other data.
+     * @param [bounds] the bounding box of the [Chart].
      */
-    public fun draw(context: ChartDrawContext, bounds: RectF)
+    public fun onDrawAboveChart(context: ChartDrawContext, bounds: RectF): Unit = Unit
 }

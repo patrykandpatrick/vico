@@ -88,7 +88,7 @@ public data class ThresholdLine(
         labelVerticalPosition = labelVerticalPosition,
     )
 
-    override fun draw(
+    override fun onDrawAboveChart(
         context: ChartDrawContext,
         bounds: RectF,
     ): Unit = with(context) {
