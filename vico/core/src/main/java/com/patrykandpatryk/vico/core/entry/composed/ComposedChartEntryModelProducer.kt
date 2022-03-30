@@ -73,7 +73,7 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
         chartModelProducers.forEachIndexed { index, producer ->
             producer.registerForUpdates(
                 key = key,
-                updateListener = { updateListener()?.composedEntryCollections?.get(index) },
+                updateListener = { updateListener()?.composedEntryCollections?.getOrNull(index) },
                 onModel = receiver.getModelReceiver(index),
             )
         }
