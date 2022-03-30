@@ -25,6 +25,7 @@ apply from: "$rootDir/dokka-common.gradle"
 android {
 
     defaultConfig {
+
         minSdkVersion library.compose_min_sdk
         targetSdkVersion library.target_sdk
 
@@ -48,7 +49,8 @@ android {
     namespace = getNamespace(project)
 
     publishing {
-        singleVariant('release') {
+
+        singleVariant("release") {
             withSourcesJar()
             withJavadocJar()
         }
@@ -56,9 +58,13 @@ android {
 }
 
 afterEvaluate {
+
     publishing {
+
         publications {
+
             VicoComposeM3(MavenPublication) {
+
                 groupId = library.groupId
                 artifactId = getArtifactId(project)
                 version = project.version
@@ -70,6 +76,7 @@ afterEvaluate {
 }
 
 dependencies {
+
     vico_compose_m3_dependencies.each {
         add(it.configuration, it.dependency, it.options)
     }

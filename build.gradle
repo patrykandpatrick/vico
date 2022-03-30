@@ -17,8 +17,9 @@
 import io.gitlab.arturbosch.detekt.Detekt
 
 buildscript {
-    apply from: 'versions.gradle'
-    apply from: 'dependencies.gradle'
+
+    apply from: "versions.gradle"
+    apply from: "dependencies.gradle"
 
     repositories {
         google()
@@ -27,6 +28,7 @@ buildscript {
     }
 
     dependencies {
+
         classpath "com.android.tools.build:gradle:$versions.gradle"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:$versions.dokka")
@@ -34,22 +36,26 @@ buildscript {
 }
 
 plugins {
-    id 'io.gitlab.arturbosch.detekt' version '1.19.0'
-    id 'org.jetbrains.dokka' version '1.6.0'
+
+    id "io.gitlab.arturbosch.detekt" version "1.19.0"
+    id "org.jetbrains.dokka" version "1.6.0"
 }
 
 dependencies {
+
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0"
 }
 
 detekt {
+
     allRules = true
     buildUponDefaultConfig = true
     source = files("sample", "vico/core", "vico/compose", "vico/view", "vico/compose-m3", "vico/compose-m2")
     config = files(".idea/detekt-config.yml")
 }
 
-tasks.register('detektFix', Detekt) {
+tasks.register("detektFix", Detekt) {
+
     autoCorrect = true
     allRules = true
     buildUponDefaultConfig = true
@@ -57,7 +63,9 @@ tasks.register('detektFix', Detekt) {
 }
 
 allprojects {
+
     repositories {
+
         google()
         mavenLocal()
         mavenCentral()
@@ -65,6 +73,7 @@ allprojects {
 }
 
 tasks.withType(Detekt).configureEach {
+
     jvmTarget = "1.8"
 
     reports {
@@ -76,9 +85,11 @@ tasks.withType(Detekt).configureEach {
 }
 
 tasks.dokkaHtmlMultiModule {
+
     outputDirectory.set(file("docs"))
 }
 
 task clean(type: Delete) {
+
     delete rootProject.buildDir
 }

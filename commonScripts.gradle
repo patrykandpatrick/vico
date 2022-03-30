@@ -17,9 +17,11 @@
 apply from: "$rootDir/compilerArgs.gradle"
 
 android {
+
     compileSdkVersion library.target_sdk
 
     defaultConfig {
+
         minSdkVersion library.min_sdk
         targetSdkVersion library.target_sdk
 
@@ -28,21 +30,25 @@ android {
     }
 
     buildTypes {
+
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
 }
 
 ext {
+
     getNamespace = this.&getNamespace
     getArtifactId = this.&getArtifactId
     customizePom = this.&customizePom
@@ -57,7 +63,9 @@ String getArtifactId(Project project) {
 }
 
 void customizePom(MavenPom pom) {
+
     pom.licenses {
+
         license {
             name = "The Apache License, Version 2.0"
             url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
@@ -68,12 +76,15 @@ void customizePom(MavenPom pom) {
         developerConnection = "scm:git:ssh://github.com/patrykandpatryk/vico.git"
         url = "https://github.com/patrykandpatryk/vico"
     }
+
     pom.developers {
+
         developer {
             id = "patrykgoworowski"
             name = "Patryk Goworowski"
             email = "patrykgoworowski@gmail.com"
         }
+
         developer {
             id = "patrykmichalik"
             name = "Patryk Michalik"
