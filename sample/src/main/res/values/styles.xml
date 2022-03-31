@@ -18,83 +18,25 @@
 
 <resources>
 
-    <style name="AxisStyle">
-        <item name="axisLineStyle">@style/AxisLineStyle</item>
-        <item name="axisGuidelineStyle">@style/AxisLineStyle</item>
-        <item name="axisTickStyle">@style/AxisLineStyle</item>
-        <item name="axisLabelStyle">@style/AxisLabelStyle</item>
-    </style>
-
-    <style name="AxisLineStyle">
-        <item name="color">#AAAACC</item>
-        <item name="thickness">2dp</item>
-        <item name="shapeStyle">@style/ShapeStyle</item>
-    </style>
-
-    <style name="ShapeStyle">
-        <item name="topStartCornerTreatment">rounded</item>
-        <item name="topStartCornerSize">100%</item>
-        <item name="topEndCornerSize">25%</item>
-        <item name="cornerSize">50%</item>
-        <item name="cornerTreatment">cut</item>
-        <item name="dashLength">8dp</item>
-        <item name="dashGapLength">2dp</item>
-    </style>
-
     <style name="ColumnChartStyle">
-        <item name="column1Style">@style/ColumnStyle</item>
+        <item name="column1Style">@style/Column1Style</item>
+        <item name="column2Style">@style/Column2Style</item>
+        <item name="column3Style">@style/Column3Style</item>
     </style>
 
-    <style name="ColumnStyle">
-        <item name="color">#666688</item>
-        <item name="thickness">8dp</item>
-        <item name="shapeStyle">@style/ColumnShapeStyle</item>
+    <style name="Column1Style">
+        <item name="color">?colorPrimary</item>
     </style>
 
-    <style name="ColumnShapeStyle">
-        <item name="topStartCornerTreatment">cut</item>
-        <item name="topStartCornerSize">50%</item>
+    <style name="Column2Style">
+        <item name="color">?colorSecondary</item>
+    </style>
+
+    <style name="Column3Style">
+        <item name="color">?colorTertiary</item>
     </style>
 
     <style name="LineChartStyle">
         <item name="color">?colorPrimary</item>
-        <item name="pointStyle">@style/PointOuterStyle</item>
-        <item name="pointSize">24dp</item>
-        <item name="cubicStrength">100%</item>
-    </style>
-
-    <style name="PointOuterStyle">
-        <item name="overlayingComponentPadding">6dp</item>
-        <item name="overlayingComponentStyle">@style/PointInnerStyle</item>
-        <item name="shapeStyle">@style/CircleShape</item>
-    </style>
-
-    <style name="PointInnerStyle">
-        <item name="color">?colorSurface</item>
-        <item name="shapeStyle">@style/DiamondShape</item>
-        <item name="overlayingComponentPadding">4dp</item>
-    </style>
-
-    <style name="CircleShape">
-        <item name="cornerSize">100sp</item>
-        <item name="cornerTreatment">rounded</item>
-    </style>
-
-    <style name="DiamondShape">
-        <item name="cornerSize">40%</item>
-        <item name="cornerTreatment">cut</item>
-    </style>
-
-    <style name="AxisLabelStyle">
-        <item name="labelColor">?colorOnPrimary</item>
-        <item name="backgroundStyle">@style/AxisLabelBackgroundStyle</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:paddingTop">2dp</item>
-        <item name="android:paddingBottom">2dp</item>
-    </style>
-
-    <style name="AxisLabelBackgroundStyle">
-        <item name="color">?colorPrimaryVariant</item>
-        <item name="shapeStyle">@style/CircleShape</item>
     </style>
 </resources>
