@@ -31,7 +31,7 @@ ext {
             androidx_appcompat: "1.4.0-alpha03",
             compose           : "1.2.0-alpha06",
             coroutines        : "1.5.2",
-            dokka             : "1.6.0",
+            dokka             : "1.6.10",
             gradle            : "7.2.0-beta04",
             junit             : "4.13.2",
             junitExt          : "1.1.2",
