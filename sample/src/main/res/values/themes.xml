@@ -27,5 +27,7 @@
         <item name="showBottomAxis">true</item>
         <item name="chartHorizontalScrollingEnabled">true</item>
         <item name="chartZoomEnabled">true</item>
+        <item name="lineChartStyle">@style/LineChartStyle</item>
+        <item name="columnChartStyle">@style/ColumnChartStyle</item>
     </style>
 </resources>
