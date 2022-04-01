@@ -16,7 +16,6 @@
 
 package com.patrykandpatryk.vico.compose.gesture
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.runtime.remember
@@ -39,7 +38,6 @@ public typealias OnZoom = (centroid: Offset, zoomChange: Float) -> Unit
  * @param onZoom called when a pinch gesture is detected.
  * @param enabled whether zooming is enabled.
  */
-@SuppressLint("UnnecessaryComposedModifier")
 public fun Modifier.zoomable(
     onZoom: OnZoom,
     enabled: Boolean = true,

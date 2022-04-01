@@ -23,18 +23,18 @@ import com.patrykandpatryk.vico.core.context.DrawContext
  * A [Component] composed out of two [Component]s, with one drawn over the other.
  * @property outer the outer (background) [Component].
  * @property inner the inner (foreground) [Component].
- * @property insidePaddingStartDp the start padding between the inner and outer components.
- * @property insidePaddingTopDp the top padding between the inner and outer components.
- * @property insidePaddingEndDp the end padding between the inner and outer components.
- * @property insidePaddingBottomDp the bottom padding between the inner and outer components.
+ * @property innerPaddingStartDp the start padding between the inner and outer components.
+ * @property innerPaddingTopDp the top padding between the inner and outer components.
+ * @property innerPaddingEndDp the end padding between the inner and outer components.
+ * @property innerPaddingBottomDp the bottom padding between the inner and outer components.
  */
 public class OverlayingComponent(
     public val outer: Component,
     public val inner: Component,
-    public val insidePaddingStartDp: Float = 0f,
-    public val insidePaddingTopDp: Float = 0f,
-    public val insidePaddingEndDp: Float = 0f,
-    public val insidePaddingBottomDp: Float = 0f,
+    public val innerPaddingStartDp: Float = 0f,
+    public val innerPaddingTopDp: Float = 0f,
+    public val innerPaddingEndDp: Float = 0f,
+    public val innerPaddingBottomDp: Float = 0f,
 ) : Component() {
 
     public constructor(
@@ -44,18 +44,18 @@ public class OverlayingComponent(
     ) : this(
         outer = outer,
         inner = inner,
-        insidePaddingStartDp = innerPaddingAllDp,
-        insidePaddingTopDp = innerPaddingAllDp,
-        insidePaddingEndDp = innerPaddingAllDp,
-        insidePaddingBottomDp = innerPaddingAllDp
+        innerPaddingStartDp = innerPaddingAllDp,
+        innerPaddingTopDp = innerPaddingAllDp,
+        innerPaddingEndDp = innerPaddingAllDp,
+        innerPaddingBottomDp = innerPaddingAllDp
     )
 
     init {
         inner.margins.set(
-            startDp = insidePaddingStartDp,
-            topDp = insidePaddingTopDp,
-            endDp = insidePaddingEndDp,
-            bottomDp = insidePaddingBottomDp,
+            startDp = innerPaddingStartDp,
+            topDp = innerPaddingTopDp,
+            endDp = innerPaddingEndDp,
+            bottomDp = innerPaddingBottomDp,
         )
     }
 

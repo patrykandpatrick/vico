@@ -171,8 +171,8 @@ public fun overlayingComponent(
 ): OverlayingComponent = OverlayingComponent(
     outer = outer,
     inner = inner,
-    insidePaddingStartDp = innerPaddingStart.value,
-    insidePaddingTopDp = innerPaddingTop.value,
-    insidePaddingBottomDp = innerPaddingBottom.value,
-    insidePaddingEndDp = innerPaddingEnd.value,
+    innerPaddingStartDp = innerPaddingStart.value,
+    innerPaddingTopDp = innerPaddingTop.value,
+    innerPaddingBottomDp = innerPaddingBottom.value,
+    innerPaddingEndDp = innerPaddingEnd.value,
 )
