@@ -18,7 +18,9 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.VicoChart" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.VicoChart" parent="Theme.Material3.DynamicColors.DayNight">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <item name="android:windowLightStatusBar" tools:ignore="NewApi">@bool/is_day</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
