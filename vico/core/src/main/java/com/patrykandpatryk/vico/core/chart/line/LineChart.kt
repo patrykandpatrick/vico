@@ -19,9 +19,6 @@ package com.patrykandpatryk.vico.core.chart.line
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import kotlin.math.abs
-import kotlin.math.ceil
-import kotlin.math.min
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.BaseChart
@@ -39,6 +36,9 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.marker.Marker
+import kotlin.math.abs
+import kotlin.math.ceil
+import kotlin.math.min
 
 /**
  * [LineChart] displays data as a continuous line.
@@ -74,11 +74,6 @@ public open class LineChart(
      * The color of the line.
      */
     public var lineColor: Int by linePaint::color
-
-    /**
-     * The width of the line in dp.
-     */
-    public var lineWidth: Float by linePaint::strokeWidth
 
     /**
      * An optional [DynamicShader] that can style the space between the line and the x-axis.
