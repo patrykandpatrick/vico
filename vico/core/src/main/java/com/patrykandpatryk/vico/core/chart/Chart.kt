@@ -98,6 +98,17 @@ public interface Chart<in Model> : BoundsAware {
     public fun addDecoration(decoration: Decoration): Boolean
 
     /**
+     * Adds each [Decoration] from [decorations] to this [Chart].
+     *
+     * @return true if all decorations were added successfully.
+     *
+     * @see addDecoration
+     * @see Decoration
+     */
+    public fun addDecorations(decorations: List<Decoration>): Boolean =
+        decorations.all(::addDecoration)
+
+    /**
      * Removes a [Decoration] from this [Chart].
      *
      * @return true if decoration was removed successfully.
@@ -105,6 +116,17 @@ public interface Chart<in Model> : BoundsAware {
      * @see Decoration
      */
     public fun removeDecoration(decoration: Decoration): Boolean
+
+    /**
+     * Removes each [Decoration] from [decorations] from this [Chart].
+     *
+     * @return true if all decorations were removed successfully.
+     *
+     * @see removeDecoration
+     * @see Decoration
+     */
+    public fun removeDecorations(decorations: List<Decoration>): Boolean =
+        decorations.all(::removeDecoration)
 
     /**
      * Adds a persistent [Marker] to this [Chart].

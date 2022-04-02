@@ -23,10 +23,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
-import com.patrykandpatryk.vico.compose.style.ChartStyle
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
+import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.chart.line.LineChart
@@ -44,6 +44,7 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
  * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
  * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
  * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
+ * @param decorations the list of [Decoration]s that will be added to the [LineChart].
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
@@ -62,49 +63,18 @@ public fun lineChart(
     maxX: Float? = null,
     minY: Float? = null,
     maxY: Float? = null,
-): LineChart = remember { LineChart() }.apply {
+    decorations: List<Decoration> = emptyList(),
+): LineChart = remember {
+    LineChart().apply {
+        addDecorations(decorations)
+    }
+}.apply {
     this.point = point
     this.pointSizeDp = pointSize.value
     this.spacingDp = spacing.value
-    this.lineWidth = lineThickness.value
+    this.lineThicknessDp = lineThickness.value
     this.lineColor = lineColor.toArgb()
     this.lineBackgroundShader = lineBackgroundShader
-    this.lineStrokeCap = lineStrokeCap.paintCap
-    this.cubicStrength = cubicStrength
-    this.minX = minX
-    this.maxX = maxX
-    this.minY = minY
-    this.maxY = maxY
-}
-
-/**
- * Creates a [LineChart] with the style provided by [chartStyle].
- *
- * @param chartStyle defines the style of this [ColumnChart].
- * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
- * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
- * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
- * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
- *
- * @see com.patrykandpatryk.vico.compose.chart.Chart
- * @see ColumnChart
- */
-public fun lineChart(
-    chartStyle: ChartStyle,
-    lineStrokeCap: StrokeCap = StrokeCap.Round,
-    cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
-    minX: Float? = null,
-    maxX: Float? = null,
-    minY: Float? = null,
-    maxY: Float? = null,
-): LineChart = LineChart(
-    point = chartStyle.lineChart.point,
-    pointSizeDp = chartStyle.lineChart.pointSize.value,
-    spacingDp = chartStyle.lineChart.spacing.value,
-    lineThicknessDp = chartStyle.lineChart.lineThickness.value,
-    lineColor = chartStyle.lineChart.lineColor.toArgb(),
-).apply {
-    this.lineBackgroundShader = chartStyle.lineChart.lineBackgroundShader
     this.lineStrokeCap = lineStrokeCap.paintCap
     this.cubicStrength = cubicStrength
     this.minX = minX

@@ -37,10 +37,11 @@ internal fun ComposedChart(
     model: ComposedChartEntryModelProducer<ChartEntryModel>,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
 ) {
-    val chartStyle = currentChartStyle
+    val columnChart = columnChart()
+    val lineChart = lineChart()
     Chart(
         modifier = modifier,
-        chart = remember { columnChart(chartStyle) + lineChart(chartStyle) },
+        chart = remember(currentChartStyle) { columnChart + lineChart },
         chartModelProducer = model,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
