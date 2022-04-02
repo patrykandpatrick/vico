@@ -93,3 +93,39 @@ task clean(type: Delete) {
 
     delete rootProject.buildDir
 }
+
+def assembleVico = tasks.register("assembleVico") { task ->
+    task.dependsOn "clean"
+    allprojects.forEach { project ->
+        if (project.parent != null && project.parent.name.contains("vico")) {
+            task.dependsOn "${project.parent.name}:${project.name}:assembleRelease"
+        }
+    }
+}
+
+project(":vico").tasks.configureEach { subtask ->
+
+    if (subtask.name == "publishVicoCorePublicationToMavenLocal") {
+        subtask.mustRunAfter(":assembleVico")
+    }
+
+    if (subtask.name == "publishVicoViewPublicationToMavenLocal"
+            || subtask.name == "publishVicoComposePublicationToMavenLocal") {
+        subtask.mustRunAfter(":vico:publishVicoCorePublicationToMavenLocal")
+    }
+
+    if (subtask.name == "publishVicoComposeM2PublicationToMavenLocal"
+            || subtask.name == "publishVicoComposeM3PublicationToMavenLocal") {
+        subtask.mustRunAfter([
+                ":vico:publishVicoCorePublicationToMavenLocal",
+                ":vico:publishVicoComposePublicationToMavenLocal",
+        ])
+    }
+}
+
+def publishVicoToMavenLocal = tasks.register("publishVicoToMavenLocal") { task ->
+
+    project(":vico") {
+        dependsOn ":vico:publishToMavenLocal"
+    }
+}
