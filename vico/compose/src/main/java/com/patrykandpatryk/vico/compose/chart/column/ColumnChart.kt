@@ -39,7 +39,7 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
  * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
  * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
  * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
- * @param decorations the list of [Decoration] that will be added to the [ColumnChart].
+ * @param decorations the list of [Decoration]s that will be added to the [ColumnChart].
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
