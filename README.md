@@ -4,35 +4,34 @@
 
 1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for`vico.compose`, `vico.compose-m2`, and `vico.compose-m3`).
 1. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` file:
-  ``groovy
-  buildscript {
-    repositories {
-      mavenCentral()
-      ...
+    ```groovy
+    buildscript {
+        repositories {
+            mavenCentral()
+            ...
+        }
     }
-    ...
-  }
-  ``
+    ```
 1. Declare the dependencies you need in the module-level `build.gradle` file. All modules depend on `vico.core`, so you don’t need to add it as a dependency.
-  ``groovy
-  dependencies {
-    implementation "com.patrykandpatryk.vico:vico-compose:1.0.0-alpha.1"
-    implementation "com.patrykandpatryk.vico:vico-compose-m3:1.0.0-alpha.1"
-    ...
-  }
-  ``
+    ```groovy
+    dependencies {
+        implementation "com.patrykandpatryk.vico:vico-compose:1.0.0-alpha.1"
+        implementation "com.patrykandpatryk.vico:vico-compose-m3:1.0.0-alpha.1"
+        ...
+    }
+    ```
 
 ## Modules
 
 The following table outlines the modules included in this library:
 
-| Group | Description |
-| --- | --- |
-| `vico.compose` | Provides the utilities needed to use Vico in Jetpack Compose. |
-| `vico.compose-m2` | Helps create a `ChartStyle` based on an M2 Material Theme. |
-| `vico.compose-m3` | Helps create a `ChartStyle` based on an M3 Material Theme. |
-| `vico.core` | Includes the core logic for charts and other components. All modules depend on `vico.core`. |
-| `vico.view` | Provides the utilities needed to use Vico in the view system. |
+| Group             | Description                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------- |
+| `vico.compose`    | Provides the utilities needed to use Vico in Jetpack Compose.                               |
+| `vico.compose-m2` | Helps create a `ChartStyle` based on an M2 Material Theme.                                  |
+| `vico.compose-m3` | Helps create a `ChartStyle` based on an M3 Material Theme.                                  |
+| `vico.core`       | Includes the core logic for charts and other components. All modules depend on `vico.core`. |
+| `vico.view`       | Provides the utilities needed to use Vico in the view system.                               |
 
 ## Jetpack Compose
 
@@ -141,6 +140,7 @@ ProvideChartStyle(chartStyle = m3ChartStyle()) {
 
 A basic column chart with two axes and five entries can be added as follows. First, add a
 `ChartView` to your XML layout file:
+
 ```xml
 <pl.patrykgoworowski.vico.view.chart.ChartView
     android:id="@+id/chart"
