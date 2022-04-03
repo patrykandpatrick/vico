@@ -2,7 +2,16 @@
 
 ## Getting started
 
-1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for`vico.compose`, `vico.compose-m2`, and `vico.compose-m3`).
+1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for`vico.compose`, `vico.compose-m2`, and `vico.compose-m3`). This is declared in the module-level `build.gradle` file.
+    ```groovy
+    android {
+        defaultConfig {
+            minSdkVersion 21
+            ...
+        }
+        ...
+    }
+    ```
 1. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` file:
     ```groovy
     buildscript {
@@ -10,6 +19,7 @@
             mavenCentral()
             ...
         }
+        ...
     }
     ```
 1. Declare the dependencies you need in the module-level `build.gradle` file. All modules depend on `vico.core`, so you don’t need to add it as a dependency.
