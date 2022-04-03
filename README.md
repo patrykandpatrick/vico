@@ -3,6 +3,7 @@
 ## Getting started
 
 1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for`vico.compose`, `vico.compose-m2`, and `vico.compose-m3`). This is declared in the module-level `build.gradle` file.
+
     ```groovy
     android {
         defaultConfig {
@@ -12,7 +13,9 @@
         ...
     }
     ```
+
 1. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` file:
+
     ```groovy
     buildscript {
         repositories {
@@ -22,7 +25,9 @@
         ...
     }
     ```
+
 1. Declare the dependencies you need in the module-level `build.gradle` file. All modules depend on `vico.core`, so you don’t need to add it as a dependency.
+
     ```groovy
     dependencies {
         implementation "com.patrykandpatryk.vico:vico-compose:1.0.0-alpha.1"
@@ -152,7 +157,7 @@ A basic column chart with two axes and five entries can be added as follows. Fir
 `ChartView` to your XML layout file:
 
 ```xml
-<pl.patrykgoworowski.vico.view.chart.ChartView
+<com.patrykandpatryk.vico.view.chart.ChartView
     android:id="@+id/chart"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
