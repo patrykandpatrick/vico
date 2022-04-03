@@ -112,8 +112,8 @@ void setUpSigning(SigningExtension signing, MavenPublication publication) {
         releaseVersion && gradle.taskGraph.allTasks.any { it.is(PublishToMavenRepository) }
     }
 
-    def signingPassword = findProperty("vico.signingPassword") ?: System.getenv("ORG_GRADLE_PROJECT_signingPassword")
-    def signingKey = findProperty("vico.signingKey") ?: System.getenv("ORG_GRADLE_PROJECT_signingKey")
+    def signingPassword = findProperty("vicoSigningPassword")
+    def signingKey = findProperty("vicoSigningKey")
 
     signing.useInMemoryPgpKeys(signingKey, signingPassword)
     signing.sign publication
