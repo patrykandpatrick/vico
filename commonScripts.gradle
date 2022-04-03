@@ -109,7 +109,7 @@ void setUpRepositories(RepositoryHandler handler) {
 
 void setUpSigning(SigningExtension signing, MavenPublication publication) {
     signing.setRequired {
-        releaseVersion && gradle.taskGraph.allTasks.any { it.is(PublishToMavenRepository) }
+        isReleaseVersion() && gradle.taskGraph.allTasks.any { it.is(PublishToMavenRepository) }
     }
 
     def signingPassword = findProperty("vicoSigningPassword")

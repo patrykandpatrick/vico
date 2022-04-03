@@ -94,7 +94,7 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-def assembleVico = tasks.register("assembleVico") { task ->
+tasks.register("assembleVico") { task ->
     task.dependsOn "clean"
     allprojects.forEach { project ->
         if (project.parent != null && project.parent.name.contains("vico")) {
