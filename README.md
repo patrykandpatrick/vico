@@ -1,52 +1,37 @@
 # Vico Chart
+The library displaying charts made for Jetpack Compose and views.  
+There are two main modules:
+- `vico-compose` for Jetpack Compose.
+- `vico-view` for Views.  
+
+Vico has very little number of dependecies, and these two modules dont’t depend on each other. [How?](#how-is-that)
+
+## A message from the founder
+Vico is a little bit unusual library for displaying charts. It was built for Jetpack Compose and good-old views.  
+Yes, I know that Jetpack Compose is interoperable with views and it’s not about that.  
+
+The shared, and main logic resides in the `vico.core` module and depends on Android SDK. It doesn’t know anything about views, nor Jetpack Compose.
+The same way, the `vico-view` (for views) doesn’t know anything about Jetpack Compose, and the `vico-compose` (for Jetpack Compose) doesn’t know anything about views.  
+### How is that?
+I was a little curious about Jetpack Compose’ internals and how it can be interoperable with Views.  
+
+*Can you, fairly easily, share the code used to draw on the `Canvas` between these two UI paradigms?* — I asked myself.  
+
+The answer is yes. The `vico.core` uses the `android.graphics.Canvas` (also used by Views) to draw charts, and the `androidx.compose.ui.graphics.drawscope.DrawScope` (used by Jetpack Compose) exposes the `android.graphics.Canvas` via the `DrawScope#canvas#nativeCanvas`. It's similar for other APIs like `Path`.
 
 ## Getting started
-
-1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for`vico.compose`, `vico.compose-m2`, and `vico.compose-m3`). This is declared in the module-level `build.gradle` file.
-
-    ```groovy
-    android {
-        defaultConfig {
-            minSdkVersion 21
-            ...
-        }
-        ...
-    }
-    ```
-
-1. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` file:
-
-    ```groovy
-    buildscript {
-        repositories {
-            mavenCentral()
-            ...
-        }
-        ...
-    }
-    ```
-
-1. Declare the dependencies you need in the module-level `build.gradle` file. All modules depend on `vico.core`, so you don’t need to add it as a dependency.
-
-    ```groovy
-    dependencies {
-        implementation "com.patrykandpatryk.vico:vico-compose:1.0.0-alpha.1"
-        implementation "com.patrykandpatryk.vico:vico-compose-m3:1.0.0-alpha.1"
-        ...
-    }
-    ```
 
 ## Modules
 
 The following table outlines the modules included in this library:
 
-| Group             | Description                                                                                 |
-| ----------------- | ------------------------------------------------------------------------------------------- |
-| `vico.compose`    | Provides the utilities needed to use Vico in Jetpack Compose.                               |
-| `vico.compose-m2` | Helps create a `ChartStyle` based on an M2 Material Theme.                                  |
-| `vico.compose-m3` | Helps create a `ChartStyle` based on an M3 Material Theme.                                  |
-| `vico.core`       | Includes the core logic for charts and other components. All modules depend on `vico.core`. |
-| `vico.view`       | Provides the utilities needed to use Vico in the view system.                               |
+| Group | Description |
+| --- | --- |
+| `vico.compose` | Provides the utilities needed to use Vico in Jetpack Compose. |
+| `vico.compose-m2` | Helps create a `ChartStyle` based on an M2 Material Theme. |
+| `vico.compose-m3` | Helps create a `ChartStyle` based on an M3 Material Theme. |
+| `vico.core` | Includes the core logic for charts and other components. All modules depend on `vico.core`. |
+| `vico.view` | Provides the utilities needed to use Vico in the view system. |
 
 ## Jetpack Compose
 
@@ -155,9 +140,8 @@ ProvideChartStyle(chartStyle = m3ChartStyle()) {
 
 A basic column chart with two axes and five entries can be added as follows. First, add a
 `ChartView` to your XML layout file:
-
 ```xml
-<com.patrykandpatryk.vico.view.chart.ChartView
+<pl.patrykgoworowski.vico.view.chart.ChartView
     android:id="@+id/chart"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
