@@ -1,23 +1,25 @@
 # Vico Chart
-The library displaying charts made for Jetpack Compose and views.  
-There are two main modules:
-- `vico-compose` for Jetpack Compose.
-- `vico-view` for Views.  
 
-Vico has very little number of dependecies, and these two modules dont’t depend on each other. [How?](#how-is-that)
+Vico is a chart library for Jetpack Compose and the view system. It comprises two main modules:
+
+-   `vico.compose` for Jetpack Compose
+-   `vico.view` for views
+
+Vico has a very low number of dependecies, and these two modules don’t depend on each other. [How?](#how-is-that)
 
 ## A message from the founder
-Vico is a little bit unusual library for displaying charts. It was built for Jetpack Compose and good-old views.  
-Yes, I know that Jetpack Compose is interoperable with views and it’s not about that.  
 
-The shared, and main logic resides in the `vico.core` module and depends on Android SDK. It doesn’t know anything about views, nor Jetpack Compose.
-The same way, the `vico-view` (for views) doesn’t know anything about Jetpack Compose, and the `vico-compose` (for Jetpack Compose) doesn’t know anything about views.  
+Vico is quite a unique library for displaying charts, built for Jetpack Compose and good old views. Yes, I know that Jetpack Compose is interoperable with views, but that isn’t how Vico works.
+
+The shared, main logic resides in the `vico.core` module and depends on the Android SDK. It doesn’t know anything about views or Jetpack Compose. Likewise, `vico.view` (for views) doesn’t know anything about Jetpack Compose, and `vico.compose` (for Jetpack Compose) doesn’t know anything about views.
+
 ### How is that?
-I was a little curious about Jetpack Compose’ internals and how it can be interoperable with Views.  
 
-*Can you, fairly easily, share the code used to draw on the `Canvas` between these two UI paradigms?* — I asked myself.  
+I was a little curious about Jetpack Compose’s internals and how come it is interoperable with views.
 
-The answer is yes. The `vico.core` uses the `android.graphics.Canvas` (also used by Views) to draw charts, and the `androidx.compose.ui.graphics.drawscope.DrawScope` (used by Jetpack Compose) exposes the `android.graphics.Canvas` via the `DrawScope#canvas#nativeCanvas`. It's similar for other APIs like `Path`.
+“Can you, fairly easily, share the code used to draw on the `Canvas` between these two UI paradigms?” I asked myself.
+
+The answer is yes. `vico.core` uses `android.graphics.Canvas` (also used by views) to draw charts, and `androidx.compose.ui.graphics.drawscope.DrawScope` (used by Jetpack Compose) exposes `android.graphics.Canvas` via `DrawScope#canvas#nativeCanvas`. It’s similar for other APIs, like `Path`.
 
 ## Getting started
 
