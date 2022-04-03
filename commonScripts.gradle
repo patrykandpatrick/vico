@@ -52,6 +52,8 @@ ext {
     getNamespace = this.&getNamespace
     getArtifactId = this.&getArtifactId
     customizePom = this.&customizePom
+    setUpRepositories = this.&setUpRepositories
+    setUpSigning = this.&setUpSigning
 }
 
 String getNamespace(Project project) {
@@ -82,7 +84,7 @@ void customizePom(MavenPom pom) {
         developer {
             id = "patrykgoworowski"
             name = "Patryk Goworowski"
-            email = "patrykgoworowski@gmail.com"
+            email = "contact@patrykgoworowski.pl"
         }
 
         developer {
@@ -91,4 +93,28 @@ void customizePom(MavenPom pom) {
             email = "contact@patrykmichalik.com"
         }
     }
+}
+
+boolean isReleaseVersion() {
+    return !project.version.endsWith("SNAPSHOT")
+}
+
+void setUpRepositories(RepositoryHandler handler) {
+    handler.maven {
+        def releaseUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+        def snapshotUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        url = isReleaseVersion() ? releaseUrl : snapshotUrl
+    }
+}
+
+void setUpSigning(SigningExtension signing, MavenPublication publication) {
+    signing.setRequired {
+        isReleaseVersion() && gradle.taskGraph.allTasks.any { it.is(PublishToMavenRepository) }
+    }
+
+    def signingPassword = findProperty("vicoSigningPassword")
+    def signingKey = findProperty("vicoSigningKey")
+
+    signing.useInMemoryPgpKeys(signingKey, signingPassword)
+    signing.sign publication
 }

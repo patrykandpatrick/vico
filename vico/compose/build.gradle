@@ -69,10 +69,14 @@ afterEvaluate {
                 artifactId = getArtifactId(project)
                 version = project.version
                 from components.release
+
                 customizePom(pom)
+                setUpRepositories(repositories)
             }
         }
     }
+
+    setUpSigning(signing, publishing.publications.VicoCompose)
 }
 
 dependencies {

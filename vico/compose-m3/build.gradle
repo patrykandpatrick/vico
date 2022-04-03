@@ -37,11 +37,11 @@ android {
         jvmTarget = "1.8"
         useIR = true
     }
-    
+
     buildFeatures {
         compose true
     }
-    
+
     composeOptions {
         kotlinCompilerExtensionVersion versions.compose
     }
@@ -69,10 +69,14 @@ afterEvaluate {
                 artifactId = getArtifactId(project)
                 version = project.version
                 from components.release
+
                 customizePom(pom)
+                setUpRepositories(repositories)
             }
         }
     }
+
+    setUpSigning(signing, publishing.publications.VicoComposeM3)
 }
 
 dependencies {
