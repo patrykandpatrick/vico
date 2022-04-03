@@ -2,6 +2,26 @@
 
 ## Getting started
 
+1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for`vico.compose`, `vico.compose-m2`, and `vico.compose-m3`).
+1. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` file:
+  ``groovy
+  buildscript {
+    repositories {
+      mavenCentral()
+      ...
+    }
+    ...
+  }
+  ``
+1. Declare the dependencies you need in the module-level `build.gradle` file. All modules depend on `vico.core`, so you don’t need to add it as a dependency.
+  ``groovy
+  dependencies {
+    implementation "com.patrykandpatryk.vico:vico-compose:1.0.0-alpha.1"
+    implementation "com.patrykandpatryk.vico:vico-compose-m3:1.0.0-alpha.1"
+    ...
+  }
+  ``
+
 ## Modules
 
 The following table outlines the modules included in this library:
