@@ -21,7 +21,7 @@ The answer is yes. The `vico.core` uses the `android.graphics.Canvas` (also used
 
 ## Getting started
 
-1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for`vico.compose`, `vico.compose-m2`, and `vico.compose-m3`). This is declared in the module-level `build.gradle` file.
+1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for `vico.compose`, `vico.compose-m2`, and `vico.compose-m3`). This is declared in the module-level `build.gradle` file.
 
     ```groovy
     android {
@@ -49,8 +49,19 @@ The answer is yes. The `vico.core` uses the `android.graphics.Canvas` (also used
 
     ```groovy
     dependencies {
+    
+        // For use with the view system.
+        implementation "com.patrykandpatryk.vico:vico-view:1.0.0-alpha.1"
+        
+        // For use with Jetpack Compose.
         implementation "com.patrykandpatryk.vico:vico-compose:1.0.0-alpha.1"
+        
+        // Optional addition for Jetpack Compose providing a style based on the Material 2 theme.
+        implementation "com.patrykandpatryk.vico:vico-compose-m2:1.0.0-alpha.1"
+        
+        // Optional addition for Jetpack Compose providing a style based on the Material 3 theme.
         implementation "com.patrykandpatryk.vico:vico-compose-m3:1.0.0-alpha.1"
+        
         ...
     }
     ```
