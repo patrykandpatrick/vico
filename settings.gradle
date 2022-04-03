@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-rootProject.name = "VicoChart"
+rootProject.name = "Vico"
 include ':app'
 include ':vico'
 include ':vico:view'
