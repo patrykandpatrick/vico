@@ -1,4 +1,4 @@
-# Vico Chart
+# Vico
 
 Vico is a chart library for Jetpack Compose and the view system. It comprises two main modules:
 
