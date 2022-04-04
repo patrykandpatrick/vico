@@ -104,6 +104,11 @@ void setUpRepositories(RepositoryHandler handler) {
         def releaseUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
         def snapshotUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
         url = isReleaseVersion() ? releaseUrl : snapshotUrl
+
+        credentials {
+            username = findProperty("vicoUserName")
+            password = findProperty("vicoUserPassword")
+        }
     }
 }
 
