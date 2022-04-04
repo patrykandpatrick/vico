@@ -67,6 +67,10 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         persistentMarkers[x] = marker
     }
 
+    override fun setPersistentMarkers(markers: Map<Float, Marker>) {
+        persistentMarkers.setAll(markers)
+    }
+
     override fun removePersistentMarker(x: Float) {
         persistentMarkers.remove(x) != null
     }

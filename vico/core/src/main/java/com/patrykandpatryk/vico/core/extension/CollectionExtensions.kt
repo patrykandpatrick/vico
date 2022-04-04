@@ -33,6 +33,14 @@ public fun <T> MutableList<T>.setAll(other: Collection<T>) {
 }
 
 /**
+ * Replaces all of the elements of this [MutableMap] with the elements of the provided map.
+ */
+public fun <K, V> MutableMap<K, V>.setAll(other: Map<K, V>) {
+    clear()
+    other.forEach { (key, value) -> set(key, value) }
+}
+
+/**
  * Replaces all of the elements of this [MutableList] with the elements of the provided array.
  */
 public fun <T> MutableList<T>.setAll(other: Array<out T>) {

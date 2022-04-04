@@ -31,6 +31,7 @@ import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.marker.Marker
 
 /**
  * Creates a [LineChart].
@@ -63,7 +64,8 @@ public fun lineChart(
     maxX: Float? = null,
     minY: Float? = null,
     maxY: Float? = null,
-    decorations: List<Decoration> = emptyList(),
+    decorations: List<Decoration>? = null,
+    persistentMarkers: Map<Float, Marker>? = null,
 ): LineChart = remember { LineChart() }.apply {
     this.point = point
     this.pointSizeDp = pointSize.value
@@ -77,7 +79,8 @@ public fun lineChart(
     this.maxX = maxX
     this.minY = minY
     this.maxY = maxY
-    setDecorations(decorations)
+    decorations?.also(::setDecorations)
+    persistentMarkers?.also(::setPersistentMarkers)
 }
 
 private val StrokeCap.paintCap: Paint.Cap

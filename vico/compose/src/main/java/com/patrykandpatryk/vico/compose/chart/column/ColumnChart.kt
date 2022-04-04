@@ -25,6 +25,7 @@ import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.marker.Marker
 
 /**
  * Creates a [ColumnChart].
@@ -54,7 +55,8 @@ public fun columnChart(
     maxX: Float? = null,
     minY: Float? = null,
     maxY: Float? = null,
-    decorations: List<Decoration> = emptyList(),
+    decorations: List<Decoration>? = null,
+    persistentMarkers: Map<Float, Marker>? = null,
 ): ColumnChart = remember { ColumnChart() }.apply {
     this.columns = columns
     this.spacingDp = spacing.value
@@ -64,5 +66,6 @@ public fun columnChart(
     this.maxX = maxX
     this.minY = minY
     this.maxY = maxY
-    setDecorations(decorations)
+    decorations?.also(::setDecorations)
+    persistentMarkers?.also(::setPersistentMarkers)
 }

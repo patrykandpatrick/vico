@@ -134,11 +134,19 @@ public interface Chart<in Model> : BoundsAware {
         decorations.all(::removeDecoration)
 
     /**
-     * Adds a persistent [Marker] to this [Chart].
+     * Adds a persistent [Marker] to this [Chart]. The [Marker] will be anchored to the given [x] value on the x-axis.
      *
      * @see Marker
      */
     public fun addPersistentMarker(x: Float, marker: Marker)
+
+    /**
+     * Replaces the current map of markers with the provided [markers].
+     *
+     * @see addPersistentMarker
+     * @see Marker
+     */
+    public fun setPersistentMarkers(markers: Map<Float, Marker>)
 
     /**
      * Removes a persistent [Marker] from this [Chart].
