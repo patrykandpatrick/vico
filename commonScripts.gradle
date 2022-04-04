@@ -66,6 +66,10 @@ String getArtifactId(Project project) {
 
 void customizePom(MavenPom pom) {
 
+    pom.name = "Vico"
+    pom.description = "A light and extensible chart library for Android."
+    pom.url = "https://github.com/patrykandpatryk/vico"
+
     pom.licenses {
 
         license {
