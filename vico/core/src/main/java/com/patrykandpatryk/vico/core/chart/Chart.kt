@@ -98,17 +98,6 @@ public interface Chart<in Model> : BoundsAware {
     public fun addDecoration(decoration: Decoration): Boolean
 
     /**
-     * Adds each [Decoration] from [decorations] to this [Chart].
-     *
-     * @return true if all decorations were added successfully.
-     *
-     * @see addDecoration
-     * @see Decoration
-     */
-    public fun addDecorations(decorations: List<Decoration>): Boolean =
-        decorations.all(::addDecoration)
-
-    /**
      * Replaces the current list of decorations with the provided [decorations].
      */
     public fun setDecorations(decorations: List<Decoration>)
@@ -172,3 +161,14 @@ public interface Chart<in Model> : BoundsAware {
      */
     public fun setToChartModel(chartModel: MutableChartModel, model: Model)
 }
+
+/**
+ * Adds each [Decoration] from [decorations] to this [Chart].
+ *
+ * @return true if all decorations were added successfully.
+ *
+ * @see addDecoration
+ * @see Decoration
+ */
+public fun <Model> Chart<Model>.addDecorations(decorations: List<Decoration>): Boolean =
+    decorations.all(::addDecoration)

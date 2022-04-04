@@ -20,7 +20,6 @@ import com.patrykandpatryk.vico.core.axis.model.ChartModel
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
-import kotlin.math.abs
 
 /**
  * The real source of data used by [Chart] to render itself.
