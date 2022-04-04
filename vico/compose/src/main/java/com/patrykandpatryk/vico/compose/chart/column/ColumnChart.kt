@@ -55,11 +55,7 @@ public fun columnChart(
     minY: Float? = null,
     maxY: Float? = null,
     decorations: List<Decoration> = emptyList(),
-): ColumnChart = remember {
-    ColumnChart().apply {
-        addDecorations(decorations)
-    }
-}.apply {
+): ColumnChart = remember { ColumnChart() }.apply {
     this.columns = columns
     this.spacingDp = spacing.value
     this.innerSpacingDp = innerSpacing.value
@@ -68,4 +64,5 @@ public fun columnChart(
     this.maxX = maxX
     this.minY = minY
     this.maxY = maxY
+    setDecorations(decorations)
 }

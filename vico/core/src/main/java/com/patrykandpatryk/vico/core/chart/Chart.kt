@@ -109,6 +109,11 @@ public interface Chart<in Model> : BoundsAware {
         decorations.all(::addDecoration)
 
     /**
+     * Replaces the current list of decorations with the provided [decorations].
+     */
+    public fun setDecorations(decorations: List<Decoration>)
+
+    /**
      * Removes a [Decoration] from this [Chart].
      *
      * @return true if decoration was removed successfully.

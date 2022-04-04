@@ -64,11 +64,7 @@ public fun lineChart(
     minY: Float? = null,
     maxY: Float? = null,
     decorations: List<Decoration> = emptyList(),
-): LineChart = remember {
-    LineChart().apply {
-        addDecorations(decorations)
-    }
-}.apply {
+): LineChart = remember { LineChart() }.apply {
     this.point = point
     this.pointSizeDp = pointSize.value
     this.spacingDp = spacing.value
@@ -81,6 +77,7 @@ public fun lineChart(
     this.maxX = maxX
     this.minY = minY
     this.maxY = maxY
+    setDecorations(decorations)
 }
 
 private val StrokeCap.paintCap: Paint.Cap

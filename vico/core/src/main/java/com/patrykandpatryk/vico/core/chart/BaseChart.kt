@@ -23,6 +23,7 @@ import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.getEntryModel
 import com.patrykandpatryk.vico.core.extension.inClip
+import com.patrykandpatryk.vico.core.extension.setAll
 import com.patrykandpatryk.vico.core.marker.Marker
 
 /**
@@ -55,6 +56,10 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     override var maxX: Float? = null
 
     override fun addDecoration(decoration: Decoration): Boolean = decorations.add(decoration)
+
+    override fun setDecorations(decorations: List<Decoration>) {
+        this.decorations.setAll(decorations)
+    }
 
     override fun removeDecoration(decoration: Decoration): Boolean = decorations.remove(decoration)
 
