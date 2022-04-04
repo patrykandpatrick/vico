@@ -275,7 +275,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
         updateMaxScrollDistance(
             segmentWidth = drawContext.segmentProperties.segmentWidth,
-            drawnEntryCount = model.getDrawnEntryCount(),
+            drawnEntryCount = chartModel.getDrawnEntryCount(),
             chartBounds = chart.bounds.width(),
         )
         if (animator.isRunning) {

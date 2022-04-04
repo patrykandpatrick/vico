@@ -70,11 +70,13 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
-        canvas.inClip(bounds.left, 0f, bounds.right, context.canvas.height.toFloat()) {
+        canvas.inClip(bounds) {
             drawDecorationBehindChart(context)
             if (model.entries.isNotEmpty()) {
                 drawChart(context, model)
             }
+        }
+        canvas.inClip(bounds.left, 0f, bounds.right, context.canvas.height.toFloat()) {
             drawDecorationAboveChart(context)
             persistentMarkers.forEach { (x, marker) ->
                 entryLocationMap.getEntryModel(x)?.also { markerModel ->

@@ -78,7 +78,7 @@ public fun chartDrawContext(
         if (isHorizontalScrollEnabled) {
             measureContext.chartScale
         } else {
-            (chartBounds.width() / (segmentProperties.segmentWidth * chartModel.chartEntryModel.getDrawnEntryCount()))
+            (chartBounds.width() / (segmentProperties.segmentWidth * chartModel.getDrawnEntryCount()))
                 .coerceAtMost(DEFAULT_SCALE)
         }
 }

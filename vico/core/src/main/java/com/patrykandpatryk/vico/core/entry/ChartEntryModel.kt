@@ -74,10 +74,4 @@ public interface ChartEntryModel {
      * The value at which [Chart] increments x-axis value between each [ChartEntry].
      */
     public val stepX: Float
-
-    /**
-     * Calculates entry count rendered on [Chart].
-     */
-    public fun getDrawnEntryCount(): Int =
-        (((abs(maxX) - abs(minX)) / stepX) + 1).toInt()
 }

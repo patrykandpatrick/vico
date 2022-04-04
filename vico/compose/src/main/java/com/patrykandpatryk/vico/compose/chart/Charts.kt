@@ -223,7 +223,7 @@ public fun <Model : ChartEntryModel> Chart(
             )
         }
         scrollHandler.maxScrollDistance =
-            chartDrawContext.segmentProperties.segmentWidth * model.getDrawnEntryCount() - chart.bounds.width()
+            chartDrawContext.segmentProperties.segmentWidth * chartModel.getDrawnEntryCount() - chart.bounds.width()
         measureContext.clearExtras()
     }
 }

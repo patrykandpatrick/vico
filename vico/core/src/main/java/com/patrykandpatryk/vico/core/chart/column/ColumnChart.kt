@@ -85,6 +85,7 @@ public open class ColumnChart(
     ) {
         val yRange = ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero).takeIf { it != 0f } ?: return
         val heightMultiplier = bounds.height() / yRange
+        val heightReduce = minY.orZero * heightMultiplier
 
         var drawingStart: Float
         var height: Float
@@ -107,9 +108,9 @@ public open class ColumnChart(
             ) - horizontalScroll
 
             entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
-                height = entry.y * heightMultiplier
+                height = entry.y * heightMultiplier - heightReduce
                 columnCenterX = drawingStart +
-                    (cellWidth + spacing) * (entry.x - model.minX) / model.stepX
+                    (cellWidth + spacing) * (entry.x - model.drawMinX) / model.stepX
 
                 when (mergeMode) {
                     MergeMode.Stack -> {

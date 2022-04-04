@@ -19,6 +19,7 @@ package com.patrykandpatryk.vico.core.axis.model
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import kotlin.math.abs
 
 /**
  * The actual source of data rendered by [Chart].
@@ -75,4 +76,10 @@ public interface ChartModel {
      */
     public val lengthY: Float
         get() = maxY - minY
+
+    /**
+     * Calculates entry count rendered on [Chart].
+     */
+    public fun getDrawnEntryCount(): Int =
+        (((abs(maxX) - abs(minX)) / stepX) + 1).toInt()
 }
