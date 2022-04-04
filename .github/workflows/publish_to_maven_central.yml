@@ -26,3 +26,5 @@ jobs:
         env:
           ORG_GRADLE_PROJECT_vicoSigningKey: ${{ secrets.VICO_SIGNING_KEY }}
           ORG_GRADLE_PROJECT_vicoSigningPassword: ${{ secrets.VICO_SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_vicoUserName: ${{ secrets.VICO_USER_NAME }}
+          ORG_GRADLE_PROJECT_vicoUserPassword: ${{ secrets.VICO_USER_PASSWORD }}
