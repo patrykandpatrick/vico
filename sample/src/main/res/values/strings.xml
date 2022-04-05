@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <string name="app_name">Vico Chart</string>
+    <string name="app_name">Vico</string>
     <string name="showcase_view_title">Views</string>
     <string name="showcase_compose_title">Jetpack Compose</string>
     <string name="axis_label_rotation_title">Axis Label Rotation</string>
