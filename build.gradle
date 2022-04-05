@@ -108,30 +108,4 @@ project(":vico").tasks.configureEach { subtask ->
     if (subtask.name.contains("publishVicoCorePublication")) {
         subtask.mustRunAfter(":assembleVico")
     }
-
-    if (subtask.name == "publishVicoViewPublicationToMavenLocal"
-            || subtask.name == "publishVicoComposePublicationToMavenLocal") {
-        subtask.mustRunAfter(":vico:publishVicoCorePublicationToMavenLocal")
-    }
-
-    if (subtask.name == "publishVicoComposeM2PublicationToMavenLocal"
-            || subtask.name == "publishVicoComposeM3PublicationToMavenLocal") {
-        subtask.mustRunAfter([
-                ":vico:publishVicoCorePublicationToMavenLocal",
-                ":vico:publishVicoComposePublicationToMavenLocal",
-        ])
-    }
-
-    if (subtask.name == "publishVicoViewPublicationToMaven2Repository"
-            || subtask.name == "publishVicoComposePublicationToMaven2Repository") {
-        subtask.mustRunAfter(":vico:publishVicoCorePublicationToMaven2Repository")
-    }
-
-    if (subtask.name == "publishVicoComposeM2PublicationToMaven2Repository"
-            || subtask.name == "publishVicoComposeM3PublicationToMaven2Repository") {
-        subtask.mustRunAfter([
-                ":vico:publishVicoCorePublicationToMaven2Repository",
-                ":vico:publishVicoComposePublicationToMaven2Repository",
-        ])
-    }
 }

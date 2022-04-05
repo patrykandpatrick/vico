@@ -47,6 +47,7 @@ android {
     }
 
     namespace = getNamespace(project)
+    group = library.groupId
 
     publishing {
 

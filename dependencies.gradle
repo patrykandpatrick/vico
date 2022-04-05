@@ -168,7 +168,7 @@ ext {
     ]
 
     vico_view_dependencies = [
-            [configuration: "api", dependency: getProperVicoDependency("vico:core")],
+            [configuration: "api", dependency: project("vico:core")],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
@@ -179,7 +179,7 @@ ext {
     ]
 
     vico_compose_dependencies = [
-            [configuration: "api", dependency: getProperVicoDependency("vico:core")],
+            [configuration: "api", dependency: project("vico:core")],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
@@ -192,15 +192,14 @@ ext {
     ]
 
     vico_compose_m2_dependencies = [
-            [configuration: "api", dependency: getProperVicoDependency("vico:compose")],
+            [configuration: "api", dependency: project("vico:compose")],
             [configuration: "implementation", dependency: jetpack_compose_libs.material],
     ]
 
     vico_compose_m3_dependencies = [
-            [configuration: "api", dependency: getProperVicoDependency("vico:compose")],
+            [configuration: "api", dependency: project("vico:compose")],
             [configuration: "implementation", dependency: jetpack_compose_libs.material3],
     ]
-    getProperVicoDependency = this.&getProperVicoDependency
 }
 
 boolean isRunningPublishTask() {
@@ -209,13 +208,5 @@ boolean isRunningPublishTask() {
         return false
     } else {
         return taskArgs[0].startsWith("publish")
-    }
-}
-
-def getProperVicoDependency(String name) {
-    if (isRunningPublishTask()) {
-        return [group: library.groupId, name: name.replace(":", "-"), version: library.version_name]
-    } else {
-        return project(":$name")
     }
 }

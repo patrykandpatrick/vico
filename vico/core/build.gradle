@@ -25,6 +25,7 @@ apply from: "$rootDir/dokka-common.gradle"
 android {
 
     namespace = getNamespace(project)
+    group = library.groupId
 
     publishing {
 

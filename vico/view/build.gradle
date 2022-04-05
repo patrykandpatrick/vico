@@ -25,6 +25,7 @@ apply from: "$rootDir/dokka-common.gradle"
 android {
 
     namespace = getNamespace(project)
+    group = library.groupId
 
     publishing {
         singleVariant("release") {
@@ -57,7 +58,7 @@ afterEvaluate {
 }
 
 dependencies {
-    
+
     vico_view_dependencies.each {
         add(it.configuration, it.dependency, it.options)
     }
