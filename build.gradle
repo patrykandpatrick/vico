@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2021. Patryk Goworowski
+ * Copyright 2022 Patryk Goworowski and Patryk Michalik
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,8 +17,9 @@
 import io.gitlab.arturbosch.detekt.Detekt
 
 buildscript {
-    apply from: 'versions.gradle'
-    apply from: 'dependencies.gradle'
+
+    apply from: "versions.gradle"
+    apply from: "dependencies.gradle"
 
     repositories {
         google()
@@ -27,6 +28,7 @@ buildscript {
     }
 
     dependencies {
+
         classpath "com.android.tools.build:gradle:$versions.gradle"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:$versions.dokka")
@@ -34,36 +36,44 @@ buildscript {
 }
 
 plugins {
-    id 'io.gitlab.arturbosch.detekt' version '1.19.0'
-    id 'org.jetbrains.dokka' version '1.6.0'
+
+    id "io.gitlab.arturbosch.detekt" version "1.19.0"
+    id "org.jetbrains.dokka" version "1.6.0"
 }
 
 dependencies {
+
     detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.19.0"
 }
 
 detekt {
+
     allRules = true
     buildUponDefaultConfig = true
-    source = files("app", "vico/core", "vico/compose", "vico/view", "vico/compose-m3", "vico/compose-m2")
+    source = files("sample", "vico/core", "vico/compose", "vico/view", "vico/compose-m3", "vico/compose-m2")
     config = files(".idea/detekt-config.yml")
 }
 
-tasks.register('detektFix', Detekt) {
+tasks.register("detektFix", Detekt) {
+
     autoCorrect = true
     allRules = true
     buildUponDefaultConfig = true
-    source = files("app", "vico/core", "vico/compose", "vico/view", "vico/compose-m3", "vico/compose-m2")
+    source = files("sample", "vico/core", "vico/compose", "vico/view", "vico/compose-m3", "vico/compose-m2")
 }
 
 allprojects {
+
     repositories {
+
         google()
+        mavenLocal()
         mavenCentral()
     }
 }
 
 tasks.withType(Detekt).configureEach {
+
     jvmTarget = "1.8"
 
     reports {
@@ -75,9 +85,27 @@ tasks.withType(Detekt).configureEach {
 }
 
 tasks.dokkaHtmlMultiModule {
+
     outputDirectory.set(file("docs"))
 }
 
 task clean(type: Delete) {
+
     delete rootProject.buildDir
+}
+
+tasks.register("assembleVico") { task ->
+    task.dependsOn "clean"
+    allprojects.forEach { project ->
+        if (project.parent != null && project.parent.name.contains("vico")) {
+            task.dependsOn "${project.parent.name}:${project.name}:assembleRelease"
+        }
+    }
+}
+
+project(":vico").tasks.configureEach { subtask ->
+
+    if (subtask.name.contains("publishVicoCorePublication")) {
+        subtask.mustRunAfter(":assembleVico")
+    }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2021. Patryk Goworowski
+ * Copyright 2022 Patryk Goworowski and Patryk Michalik
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,147 +17,129 @@
 ext {
 
     def androidx_libs = [
+
             appcompat: [
-                    group  : 'androidx.appcompat',
-                    name   : 'appcompat',
+                    group  : "androidx.appcompat",
+                    name   : "appcompat",
                     version: versions.androidx_appcompat
             ],
             core     : [
-                    group  : 'androidx.core',
-                    name   : 'core-ktx',
+                    group  : "androidx.core",
+                    name   : "core-ktx",
                     version: versions.androidx_core
             ],
             lifecycle: [
-                    group  : 'androidx.lifecycle',
-                    name   : 'lifecycle-runtime-ktx',
+                    group  : "androidx.lifecycle",
+                    name   : "lifecycle-runtime-ktx",
                     version: versions.lifecycle_runtime
             ],
     ]
 
     def jetpack_compose_libs = [
+
             ui         : [
-                    group  : 'androidx.compose.ui',
-                    name   : 'ui',
+                    group  : "androidx.compose.ui",
+                    name   : "ui",
                     version: versions.compose
             ],
             ui_tooling : [
-                    group  : 'androidx.compose.ui',
-                    name   : 'ui-tooling',
+                    group  : "androidx.compose.ui",
+                    name   : "ui-tooling",
                     version: versions.compose
             ],
             material   : [
-                    group  : 'androidx.compose.material',
-                    name   : 'material',
+                    group  : "androidx.compose.material",
+                    name   : "material",
                     version: versions.compose
             ],
             material3  : [
-                    group  : 'androidx.compose.material3',
-                    name   : 'material3',
+                    group  : "androidx.compose.material3",
+                    name   : "material3",
                     version: versions.compose_material3,
             ],
             activity   : [
-                    group  : 'androidx.activity',
-                    name   : 'activity-compose',
+                    group  : "androidx.activity",
+                    name   : "activity-compose",
                     version: versions.activity
             ],
             viewbinding: [
-                    group  : 'androidx.compose.ui',
-                    name   : 'ui-viewbinding',
+                    group  : "androidx.compose.ui",
+                    name   : "ui-viewbinding",
                     version: versions.compose
             ],
             foundation : [
-                    group  : 'androidx.compose.foundation',
-                    name   : 'foundation',
+                    group  : "androidx.compose.foundation",
+                    name   : "foundation",
                     version: versions.compose
             ],
             viewmodel  : [
-                    group  : 'androidx.lifecycle',
-                    name   : 'lifecycle-viewmodel-compose',
+                    group  : "androidx.lifecycle",
+                    name   : "lifecycle-viewmodel-compose",
                     version: versions.viewmodel
             ],
     ]
 
-    def accompanist_libs = [
-            pager               : [
-                    group  : 'com.google.accompanist',
-                    name   : 'accompanist-pager',
-                    version: versions.accompanist
-            ],
-            pager_indicators    : [
-                    group  : 'com.google.accompanist',
-                    name   : 'accompanist-pager-indicators',
-                    version: versions.accompanist
-            ],
-            insets              : [
-                    group  : 'com.google.accompanist',
-                    name   : 'accompanist-insets',
-                    version: versions.accompanist,
-            ],
-            system_ui_controller: [
-                    group  : 'com.google.accompanist',
-                    name   : 'accompanist-systemuicontroller',
-                    version: versions.accompanist,
-            ]
-    ]
-
     def kotlin_libs = [
+
             coroutines_android: [
-                    group  : 'org.jetbrains.kotlinx',
-                    name   : 'kotlinx-coroutines-android',
+                    group  : "org.jetbrains.kotlinx",
+                    name   : "kotlinx-coroutines-android",
                     version: versions.coroutines
             ],
             coroutines        : [
-                    group  : 'org.jetbrains.kotlinx',
-                    name   : 'kotlinx-coroutines-core',
+                    group  : "org.jetbrains.kotlinx",
+                    name   : "kotlinx-coroutines-core",
                     version: versions.coroutines
             ],
             std_lib           : [
-                    group  : 'org.jetbrains.kotlin',
-                    name   : 'kotlin-stdlib',
+                    group  : "org.jetbrains.kotlin",
+                    name   : "kotlin-stdlib",
                     version: versions.kotlin
             ],
             test              : [
-                    group  : 'org.jetbrains.kotlin',
-                    name   : 'kotlin-test',
+                    group  : "org.jetbrains.kotlin",
+                    name   : "kotlin-test",
                     version: versions.kotlin
             ],
     ]
 
     def material_libs = [
+
             main: [
-                    group  : 'com.google.android.material',
-                    name   : 'material',
+                    group  : "com.google.android.material",
+                    name   : "material",
                     version: versions.material
             ]
     ]
 
     def test_libs = [
+
             junit   : [
-                    group  : 'junit',
-                    name   : 'junit',
+                    group  : "junit",
+                    name   : "junit",
                     version: versions.junit
             ],
             junitExt: [
-                    group  : 'androidx.test.ext',
-                    name   : 'junit',
+                    group  : "androidx.test.ext",
+                    name   : "junit",
                     version: versions.junitExt
             ],
             mockk   : [
-                    group  : 'io.mockk',
-                    name   : 'mockk',
+                    group  : "io.mockk",
+                    name   : "mockk",
                     version: versions.mockk
             ],
             testCore: [
-                    group  : 'androidx.test',
-                    name   : 'core-ktx',
+                    group  : "androidx.test",
+                    name   : "core-ktx",
                     version: versions.testCore
             ]
     ]
 
-    app_dependencies = [
-            [configuration: "implementation", dependency: project(':vico:view')],
-            [configuration: "implementation", dependency: project(':vico:compose')],
-            [configuration: "implementation", dependency: project(':vico:compose-m3')],
+    sample_dependencies = [
+            [configuration: "implementation", dependency: project(":vico:view")],
+            [configuration: "implementation", dependency: project(":vico:compose")],
+            [configuration: "implementation", dependency: project(":vico:compose-m3")],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: androidx_libs.lifecycle],
@@ -173,11 +155,7 @@ ext {
             [configuration: "testImplementation", dependency: test_libs.junitExt],
             [configuration: "implementation", dependency: jetpack_compose_libs.activity],
             [configuration: "implementation", dependency: jetpack_compose_libs.viewbinding],
-            [configuration: "implementation", dependency: accompanist_libs.pager],
-            [configuration: "implementation", dependency: accompanist_libs.pager_indicators],
             [configuration: "implementation", dependency: jetpack_compose_libs.material3],
-            [configuration: "implementation", dependency: accompanist_libs.system_ui_controller],
-            [configuration: "implementation", dependency: accompanist_libs.insets],
     ]
 
     vico_core_dependencies = [
@@ -190,7 +168,7 @@ ext {
     ]
 
     vico_view_dependencies = [
-            [configuration: "api", dependency: project(':vico:core')],
+            [configuration: "api", dependency: project("vico:core")],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
@@ -201,7 +179,7 @@ ext {
     ]
 
     vico_compose_dependencies = [
-            [configuration: "api", dependency: project(':vico:core')],
+            [configuration: "api", dependency: project("vico:core")],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
@@ -214,12 +192,21 @@ ext {
     ]
 
     vico_compose_m2_dependencies = [
-            [configuration: "api", dependency: project(":vico:compose")],
+            [configuration: "api", dependency: project("vico:compose")],
             [configuration: "implementation", dependency: jetpack_compose_libs.material],
     ]
 
     vico_compose_m3_dependencies = [
-            [configuration: "api", dependency: project(":vico:compose")],
+            [configuration: "api", dependency: project("vico:compose")],
             [configuration: "implementation", dependency: jetpack_compose_libs.material3],
     ]
+}
+
+boolean isRunningPublishTask() {
+    List<String> taskArgs = gradle.getStartParameter().getTaskRequests().get(0).getArgs()
+    if (taskArgs.isEmpty()) {
+        return false
+    } else {
+        return taskArgs[0].startsWith("publish")
+    }
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2021. Patryk Goworowski
+ * Copyright 2022 Patryk Goworowski and Patryk Michalik
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,8 @@
 ext {
 
     library = [
-            version_name   : "1.0",
+            groupId        : "com.patrykandpatryk.vico",
+            version_name   : "1.0.0-alpha.1",
             version_code   : 1,
             target_sdk     : 31,
             min_sdk        : 16,
@@ -25,22 +26,21 @@ ext {
     ]
 
     versions = [
-            accompanist       : '0.24.4-alpha',
-            activity          : '1.3.1',
-            androidx_core     : '1.7.0-alpha02',
-            androidx_appcompat: '1.4.0-alpha03',
-            compose           : '1.2.0-alpha05',
-            coroutines        : '1.5.2',
-            dokka             : '1.6.0',
-            gradle            : '7.2.0-beta03',
-            junit             : '4.13.2',
-            junitExt          : '1.1.2',
-            kotlin            : '1.6.10',
-            lifecycle_runtime : '2.4.0',
-            material          : '1.5.0-beta01',
-            mockk             : '1.12.2',
-            viewmodel         : '2.4.0',
-            testCore          : '1.3.0',
-            compose_material3 : '1.0.0-alpha06'
+            activity          : "1.3.1",
+            androidx_core     : "1.7.0-alpha02",
+            androidx_appcompat: "1.4.0-alpha03",
+            compose           : "1.2.0-alpha06",
+            coroutines        : "1.5.2",
+            dokka             : "1.6.10",
+            gradle            : "7.2.0-beta04",
+            junit             : "4.13.2",
+            junitExt          : "1.1.2",
+            kotlin            : "1.6.10",
+            lifecycle_runtime : "2.4.0",
+            material          : "1.5.0-beta01",
+            mockk             : "1.12.2",
+            viewmodel         : "2.4.0",
+            testCore          : "1.3.0",
+            compose_material3 : "1.0.0-alpha08"
     ]
 }

@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2021. Patryk Goworowski
+ * Copyright 2022 Patryk Goworowski and Patryk Michalik
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     https://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,11 @@
 apply from: "$rootDir/compilerArgs.gradle"
 
 android {
+
     compileSdkVersion library.target_sdk
 
     defaultConfig {
+
         minSdkVersion library.min_sdk
         targetSdkVersion library.target_sdk
 
@@ -28,16 +30,101 @@ android {
     }
 
     buildTypes {
+
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
+}
+
+ext {
+
+    getNamespace = this.&getNamespace
+    getArtifactId = this.&getArtifactId
+    customizePom = this.&customizePom
+    setUpRepositories = this.&setUpRepositories
+    setUpSigning = this.&setUpSigning
+}
+
+String getNamespace(Project project) {
+    return "${library.groupId}.${project.name.replace("-", ".")}"
+}
+
+String getArtifactId(Project project) {
+    return project.name
+}
+
+void customizePom(MavenPom pom) {
+
+    pom.name = "Vico"
+    pom.description = "A light and extensible chart library for Android."
+    pom.url = "https://github.com/patrykandpatryk/vico"
+
+    pom.licenses {
+
+        license {
+            name = "The Apache License, Version 2.0"
+            url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+    }
+
+    pom.scm {
+        connection = "scm:git:git://github.com/patrykandpatryk/vico.git"
+        developerConnection = "scm:git:ssh://github.com/patrykandpatryk/vico.git"
+        url = "https://github.com/patrykandpatryk/vico"
+    }
+
+    pom.developers {
+
+        developer {
+            id = "patrykgoworowski"
+            name = "Patryk Goworowski"
+            email = "contact@patrykgoworowski.pl"
+        }
+
+        developer {
+            id = "patrykmichalik"
+            name = "Patryk Michalik"
+            email = "contact@patrykmichalik.com"
+        }
+    }
+}
+
+boolean isReleaseVersion() {
+    return !project.version.endsWith("SNAPSHOT")
+}
+
+void setUpRepositories(RepositoryHandler handler) {
+    handler.maven {
+        def releaseUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+        def snapshotUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+        url = isReleaseVersion() ? releaseUrl : snapshotUrl
+
+        credentials {
+            username = findProperty("vicoUserName")
+            password = findProperty("vicoUserPassword")
+        }
+    }
+}
+
+void setUpSigning(SigningExtension signing, MavenPublication publication) {
+    signing.setRequired {
+        isReleaseVersion() && gradle.taskGraph.allTasks.any { it.is(PublishToMavenRepository) }
+    }
+
+    def signingPassword = findProperty("vicoSigningPassword")
+    def signingKey = findProperty("vicoSigningKey")
+
+    signing.useInMemoryPgpKeys(signingKey, signingPassword)
+    signing.sign publication
 }

@@ -1,6 +1,7 @@
-apply plugin: 'org.jetbrains.dokka'
+apply plugin: "org.jetbrains.dokka"
 
 tasks.dokkaHtmlPartial.configure {
+
     failOnWarning.set(true)
 
     dokkaSourceSets {
@@ -11,9 +12,12 @@ tasks.dokkaHtmlPartial.configure {
 }
 
 tasks.configureEach { task ->
+
     def name = task.name.toLowerCase()
+
     if (name.contains("dokka") && name.contains("partial")) {
         task.configure {
+
             failOnWarning.set(true)
 
             suppressInheritedMembers.set(true)
