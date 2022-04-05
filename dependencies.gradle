@@ -201,12 +201,3 @@ ext {
             [configuration: "implementation", dependency: jetpack_compose_libs.material3],
     ]
 }
-
-boolean isRunningPublishTask() {
-    List<String> taskArgs = gradle.getStartParameter().getTaskRequests().get(0).getArgs()
-    if (taskArgs.isEmpty()) {
-        return false
-    } else {
-        return taskArgs[0].startsWith("publish")
-    }
-}
