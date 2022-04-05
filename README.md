@@ -1,3 +1,5 @@
+*Note: While Vico is already available, the README and wiki are under construction.*
+
 # Vico
 
 Vico is a light and extensible chart library for Jetpack Compose and the view system. It comprises two main modules:
@@ -74,13 +76,13 @@ This approach encourages a greater level of abstraction and promotes separation 
 
 The following table outlines the modules included in this library:
 
-| Artifact     | Description                                                                                        |
-| ------------ | -------------------------------------------------------------------------------------------------- |
-| `core`       | Includes the core logic for charts and other components. All modules depend on `vico.core`.        |
-| `view`       | Provides the utilities needed to use Vico in the view system.                                      |
-| `compose`    | Provides the utilities needed to use Vico in Jetpack Compose.                                      |
-| `compose-m2` | An optional addition for `vico.compose` that creates a `ChartStyle` based on an M2 Material Theme. |
-| `compose-m3` | An optional addition for `vico.compose` that creates a `ChartStyle` based on an M3 Material Theme. |
+| Artifact     | Description                                                                                   |
+| ------------ | --------------------------------------------------------------------------------------------- |
+| `core`       | Includes the core logic for charts and other components. All modules depend on `core`.        |
+| `view`       | Provides the utilities needed to use Vico in the view system.                                 |
+| `compose`    | Provides the utilities needed to use Vico in Jetpack Compose.                                 |
+| `compose-m2` | An optional addition for `compose` that creates a `ChartStyle` based on an M2 Material Theme. |
+| `compose-m3` | An optional addition for `compose` that creates a `ChartStyle` based on an M3 Material Theme. |
 
 ## Jetpack Compose
 
@@ -121,7 +123,9 @@ Column {
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
     )
+    
     Spacer(modifier = Modifier.height(16.dp))
+    
     Button(onClick = { chartModelProducer.setEntries(getRandomEntries()) }) {
         Text(text = "Update entries")
     }
