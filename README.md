@@ -1,15 +1,15 @@
 # Vico
 
-Vico is a chart library for Jetpack Compose and the view system. It comprises two main modules:
+Vico is a light and extensible chart library for Jetpack Compose and the view system. It comprises two main modules:
 
--   `vico.compose` for Jetpack Compose
--   `vico.view` for views
+-   `vico.compose` (for Jetpack Compose)
+-   `vico.view` (for views)
 
-Vico has a very low number of dependecies, and these two modules don’t depend on each other. [How?](#how-is-that)
+Vico has a very low number of dependecies, and these two modules don’t depend on each other. [Find out how.](#how-is-that)
 
 ## A message from the founder
 
-Vico is quite a unique library for displaying charts, built for Jetpack Compose and good old views. Yes, I know that Jetpack Compose is interoperable with views, but that isn’t how Vico works.
+As a library compatible with both Compose and views, Vico is quite unique. It doesn’t depend on the interoperability between the two UI systems.
 
 The shared, main logic resides in the `vico.core` module and depends on the Android SDK. It doesn’t know anything about views or Jetpack Compose. Likewise, `vico.view` (for views) doesn’t know anything about Jetpack Compose, and `vico.compose` (for Jetpack Compose) doesn’t know anything about views.
 
@@ -20,6 +20,8 @@ I was a little curious about Jetpack Compose’s internals and how come it is in
 “Can you, fairly easily, share the code used to draw on the `Canvas` between these two UI paradigms?” I asked myself.
 
 The answer is yes. `vico.core` uses `android.graphics.Canvas` (also used by views) to draw charts, and `androidx.compose.ui.graphics.drawscope.DrawScope` (used by Jetpack Compose) exposes `android.graphics.Canvas` via `DrawScope#canvas#nativeCanvas`. It’s similar for other APIs, like `Path`.
+
+This approach encourages a greater level of abstraction and promotes separation of concerns. It also helped make the API highly extensible.
 
 ## Getting started
 
@@ -51,19 +53,19 @@ The answer is yes. `vico.core` uses `android.graphics.Canvas` (also used by view
 
     ```groovy
     dependencies {
-    
-        // For use with the view system.
-        implementation "com.patrykandpatryk.vico:vico-view:1.0.0-alpha.1"
-        
-        // For use with Jetpack Compose.
-        implementation "com.patrykandpatryk.vico:vico-compose:1.0.0-alpha.1"
-        
-        // Optional addition for Jetpack Compose providing a style based on the Material 2 theme.
-        implementation "com.patrykandpatryk.vico:vico-compose-m2:1.0.0-alpha.1"
-        
-        // Optional addition for Jetpack Compose providing a style based on the Material 3 theme.
-        implementation "com.patrykandpatryk.vico:vico-compose-m3:1.0.0-alpha.1"
-        
+
+        // Provides the utilities needed to use Vico in the view system.
+        implementation "com.patrykandpatryk.vico:view:1.0.0-alpha.1"
+
+        // Provides the utilities needed to use Vico in Jetpack Compose.
+        implementation "com.patrykandpatryk.vico:compose:1.0.0-alpha.1"
+
+        // An optional addition for `vico.compose` that creates a `ChartStyle` based on an M2 Material Theme.
+        implementation "com.patrykandpatryk.vico:compose-m2:1.0.0-alpha.1"
+
+        // An optional addition for `vico.compose` that creates a `ChartStyle` based on an M3 Material Theme.
+        implementation "com.patrykandpatryk.vico:compose-m3:1.0.0-alpha.1"
+
         ...
     }
     ```
@@ -72,13 +74,13 @@ The answer is yes. `vico.core` uses `android.graphics.Canvas` (also used by view
 
 The following table outlines the modules included in this library:
 
-| Group             | Description                                                                                 |
-| ----------------- | ------------------------------------------------------------------------------------------- |
-| `vico.compose`    | Provides the utilities needed to use Vico in Jetpack Compose.                               |
-| `vico.compose-m2` | Helps create a `ChartStyle` based on an M2 Material Theme.                                  |
-| `vico.compose-m3` | Helps create a `ChartStyle` based on an M3 Material Theme.                                  |
-| `vico.core`       | Includes the core logic for charts and other components. All modules depend on `vico.core`. |
-| `vico.view`       | Provides the utilities needed to use Vico in the view system.                               |
+| Artifact     | Description                                                                                        |
+| ------------ | -------------------------------------------------------------------------------------------------- |
+| `core`       | Includes the core logic for charts and other components. All modules depend on `vico.core`.        |
+| `view`       | Provides the utilities needed to use Vico in the view system.                                      |
+| `compose`    | Provides the utilities needed to use Vico in Jetpack Compose.                                      |
+| `compose-m2` | An optional addition for `vico.compose` that creates a `ChartStyle` based on an M2 Material Theme. |
+| `compose-m3` | An optional addition for `vico.compose` that creates a `ChartStyle` based on an M3 Material Theme. |
 
 ## Jetpack Compose
 
