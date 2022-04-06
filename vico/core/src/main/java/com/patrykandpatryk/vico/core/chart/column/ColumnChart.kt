@@ -180,7 +180,7 @@ public open class ColumnChart(
         MergeMode.Stack ->
             columns.maxOf { it.thicknessDp.pixels }
         MergeMode.Grouped ->
-            getCumulatedThickness(entryCollectionSize) + (innerSpacingDp.pixels * (entryCollectionSize - 1))
+            getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
     private fun MeasureContext.getDrawingStart(

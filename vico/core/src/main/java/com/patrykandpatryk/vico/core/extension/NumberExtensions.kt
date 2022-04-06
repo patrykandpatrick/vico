@@ -100,7 +100,7 @@ public inline val ClosedFloatingPointRange<Float>.median: Float
 /**
  * Whether this value contains the provided bit flag.
  */
-public fun Int.hasFlag(flag: Int): Boolean = (this and flag) == flag
+public fun Int.hasFlag(flag: Int): Boolean = this and flag == flag
 
 /**
  * Whether this value contains any of the provided bit flags.

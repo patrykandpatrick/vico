@@ -178,7 +178,7 @@ public open class LineChart(
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - entry.y * heightMultiplier
 
-        entries.firstOrNull()?.forEachIn((drawMinX - stepX)..(drawMaxX + stepX)) { entry ->
+        entries.firstOrNull()?.forEachIn(drawMinX - stepX..drawMaxX + stepX) { entry ->
             x = getDrawX(entry)
             y = getDrawY(entry)
             when {

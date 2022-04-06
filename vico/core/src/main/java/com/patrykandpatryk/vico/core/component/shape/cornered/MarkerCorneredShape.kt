@@ -86,7 +86,7 @@ public open class MarkerCorneredShape(
             val tickTopLeft = (tickX - tickSize).coerceIn(minLeft, maxLeft)
             path.moveTo(tickTopLeft, bottom)
             path.lineTo(tickX, bottom + tickSize)
-            path.lineTo(tickTopLeft + (tickSize * 2), bottom)
+            path.lineTo(tickTopLeft + tickSize * 2, bottom)
             path.close()
             context.canvas.drawPath(path, paint)
         } else {

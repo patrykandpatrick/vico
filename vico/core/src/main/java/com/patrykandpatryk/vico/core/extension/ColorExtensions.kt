@@ -31,7 +31,7 @@ public fun Int.copyColor(
     red: Int = this.extractColorChannel(RED_BIT_SHIFT),
     green: Int = this.extractColorChannel(GREEN_BIT_SHIFT),
     blue: Int = this.extractColorChannel(BLUE_BIT_SHIFT),
-): Int = (alpha shl ALPHA_BIT_SHIFT) or
+): Int = alpha shl ALPHA_BIT_SHIFT or
     (red shl RED_BIT_SHIFT) or
     (green shl GREEN_BIT_SHIFT) or
     (blue shl BLUE_BIT_SHIFT)

@@ -60,7 +60,7 @@ public data class ComponentShadow(
         paint: Paint,
         backgroundColor: Int,
     ) {
-        if (color == 0 || (radius == 0f && dx == 0f && dy == 0f)) {
+        if (color == 0 || radius == 0f && dx == 0f && dy == 0f) {
             paint.clearShadowLayer()
         } else {
             paint.color = if (applyElevationOverlay) {

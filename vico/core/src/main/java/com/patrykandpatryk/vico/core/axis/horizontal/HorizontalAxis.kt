@@ -65,7 +65,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (horizontalScroll / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
-        var textCenter = bounds.left + tickDrawStep.half - horizontalScroll + (tickDrawStep * scrollAdjustment)
+        var textCenter = bounds.left + tickDrawStep.half - horizontalScroll + tickDrawStep * scrollAdjustment
         var tickCenter = tickType.getTickDrawCenter(horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
 
         var valueIndex: Float = chartModel.minX + scrollAdjustment * step
@@ -131,7 +131,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         scrollAdjustment: Int,
         textDrawCenter: Float,
     ) = when (this) {
-        TickType.Minor -> bounds.left - scrollX + (tickDrawStep * scrollAdjustment)
+        TickType.Minor -> bounds.left - scrollX + tickDrawStep * scrollAdjustment
         TickType.Major -> textDrawCenter
     }
 

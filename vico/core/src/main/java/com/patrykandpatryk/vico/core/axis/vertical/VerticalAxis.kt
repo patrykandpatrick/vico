@@ -52,8 +52,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     private val isLeft = position.isLeft(isLtr)
 
     private val isLabelOutsideOnLeftOrInsideOnRight: Boolean
-        get() = (horizontalLabelPosition == Outside && isLeft) ||
-            (horizontalLabelPosition == Inside && !isLeft)
+        get() = horizontalLabelPosition == Outside && isLeft ||
+            horizontalLabelPosition == Inside && !isLeft
 
     private val textHorizontalPosition: HorizontalPosition
         get() = if (isLabelOutsideOnLeftOrInsideOnRight) HorizontalPosition.End else HorizontalPosition.Start
@@ -88,7 +88,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         var centerY: Float
 
         for (index in 0..drawLabelCount) {
-            centerY = bounds.bottom - (axisStep * index) + guidelineThickness.half
+            centerY = bounds.bottom - axisStep * index + guidelineThickness.half
 
             guideline?.takeIf {
                 isNotInRestrictedBounds(
@@ -129,7 +129,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         (0..labelCount).forEach { index ->
             tickCenterY =
-                bounds.bottom - ((bounds.height() / labelCount) * index) + tickThickness.half
+                bounds.bottom - bounds.height() / labelCount * index + tickThickness.half
 
             tick?.drawHorizontal(
                 context = context,

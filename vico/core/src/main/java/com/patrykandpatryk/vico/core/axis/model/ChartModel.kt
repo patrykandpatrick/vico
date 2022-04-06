@@ -81,5 +81,5 @@ public interface ChartModel {
      * Calculates entry count rendered on [Chart].
      */
     public fun getDrawnEntryCount(): Int =
-        (((abs(maxX) - abs(minX)) / stepX) + 1).toInt()
+        ((abs(maxX) - abs(minX)) / stepX + 1).toInt()
 }

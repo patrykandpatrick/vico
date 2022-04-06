@@ -774,7 +774,7 @@ style:
   UnnecessaryLet:
     active: false
   UnnecessaryParentheses:
-    active: false
+    active: true
   UntilInsteadOfRangeTo:
     active: false
   UnusedImports:

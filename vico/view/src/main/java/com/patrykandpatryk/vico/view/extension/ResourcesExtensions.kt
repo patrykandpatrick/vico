@@ -22,7 +22,7 @@ internal inline val Float.dp: Float
     get() = this * Resources.getSystem().displayMetrics.density
 
 internal inline val Int.dp: Float
-    get() = (this * Resources.getSystem().displayMetrics.density)
+    get() = this * Resources.getSystem().displayMetrics.density
 
 internal inline val Float.sp: Float
     get() = this * Resources.getSystem().displayMetrics.scaledDensity
