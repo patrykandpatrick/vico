@@ -1,5 +1,7 @@
 _Note: While Vico is already available, the README and wiki are under construction._
 
+![](/cover.png)
+
 # Vico
 
 ![](https://img.shields.io/maven-central/v/com.patrykandpatryk.vico/core)
