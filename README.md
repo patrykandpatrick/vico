@@ -6,6 +6,7 @@ _Note: While Vico is already available, the README and wiki are under constructi
 
 ![](https://img.shields.io/maven-central/v/com.patrykandpatryk.vico/core)
 ![](https://img.shields.io/github/workflow/status/patrykandpatryk/vico/Build%20debug%20APK)
+![](https://www.codefactor.io/repository/github/patrykandpatryk/vico/badge)
 
 Vico is a light and extensible chart library for Jetpack Compose and the view system. It comprises two main modules:
 
