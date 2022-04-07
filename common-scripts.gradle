@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-apply from: "$rootDir/compilerArgs.gradle"
+apply from: "$rootDir/compiler-args.gradle"
 
 android {
 

@@ -19,7 +19,7 @@ plugins {
     id "kotlin-android"
 }
 
-apply from: "$rootDir/commonScripts.gradle"
+apply from: "$rootDir/common-scripts.gradle"
 
 android {
 
