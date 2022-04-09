@@ -29,19 +29,21 @@ import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.sample.util.Tokens
 
 @Composable
 internal fun GroupedColumnChart(
     modifier: Modifier = Modifier,
     chartEntryModelProducer: ChartEntryModelProducer,
 ) {
+    val tokens = Tokens.GroupedColumnChart
     val decorations = listOf(
         ThresholdLine(
-            thresholdRange = THRESHOLD_START..THRESHOLD_END,
+            thresholdRange = tokens.THRESHOLD_START..tokens.THRESHOLD_END,
             lineComponent = ShapeComponent(
-                color = MaterialTheme.colorScheme.primary.copy(
-                    alpha = THRESHOLD_LINE_BACKGROUND_ALPHA,
-                ).toArgb(),
+                color = MaterialTheme.colorScheme.primary
+                    .copy(alpha = tokens.THRESHOLD_LINE_BACKGROUND_ALPHA)
+                    .toArgb(),
             ),
             labelComponent = thresholdLineLabel(
                 color = MaterialTheme.colorScheme.onPrimary,
@@ -66,7 +68,3 @@ internal fun GroupedColumnChart(
         marker = marker(),
     )
 }
-
-private const val THRESHOLD_START = 7f
-private const val THRESHOLD_END = 12f
-private const val THRESHOLD_LINE_BACKGROUND_ALPHA = 0.16f

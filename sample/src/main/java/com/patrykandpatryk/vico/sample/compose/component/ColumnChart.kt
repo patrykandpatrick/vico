@@ -23,13 +23,14 @@ import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.sample.util.Tokens
 
 @Composable
 internal fun ColumnChart(
     modifier: Modifier = Modifier,
     chartEntryModelProducer: ChartEntryModelProducer,
 ) {
-    val persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker())
+    val persistentMarkers = mapOf(Tokens.ColumnChart.PERSISTENT_MARKER_X to marker())
 
     Chart(
         modifier = modifier,
@@ -40,5 +41,3 @@ internal fun ColumnChart(
         marker = marker(),
     )
 }
-
-private const val PERSISTENT_MARKER_X = 5f

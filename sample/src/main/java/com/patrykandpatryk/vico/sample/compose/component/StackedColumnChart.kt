@@ -28,6 +28,7 @@ import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.sample.util.Tokens
 
 @Composable
 internal fun StackedColumnChart(
@@ -37,7 +38,7 @@ internal fun StackedColumnChart(
     val axisGuideline = axisGuidelineComponent(shape = Shapes.rectShape)
 
     val startAxis = startAxis(
-        label = axisLabelComponent(rotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
+        label = axisLabelComponent(rotationDegrees = Tokens.StackedColumnChart.AXIS_LABEL_ROTATION_DEGREES),
         guideline = axisGuideline,
     )
 
@@ -56,5 +57,3 @@ internal fun StackedColumnChart(
         marker = marker(),
     )
 }
-
-private const val AXIS_LABEL_ROTATION_DEGREES = 45f

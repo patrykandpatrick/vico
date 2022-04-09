@@ -37,15 +37,7 @@
             android:id="@+id/column_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:chart="column"
-            app:showBottomAxis="true"
-            app:showStartAxis="true" />
-
-        <com.patrykandpatryk.vico.view.chart.ComposedChartView
-            android:id="@+id/composed_chart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:charts="column|line" />
+            app:chart="column" />
 
         <com.patrykandpatryk.vico.view.chart.ChartView
             android:id="@+id/line_chart"
@@ -54,16 +46,34 @@
             app:chart="line" />
 
         <com.patrykandpatryk.vico.view.chart.ChartView
+            android:id="@+id/stacked_column_chart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:chart="stackedColumn"
+            app:axisStyle="@style/StackedColumnChartAxisStyle" />
+
+        <com.patrykandpatryk.vico.view.chart.ComposedChartView
+            android:id="@+id/composed_chart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:charts="column|line"
+            app:showTopAxis="true"
+            app:showBottomAxis="false"
+            app:showStartAxis="false"
+            app:showEndAxis="true"
+            app:columnChartStyle="@style/ComposedColumnChartStyle" />
+
+        <com.patrykandpatryk.vico.view.chart.ChartView
             android:id="@+id/grouped_column_chart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:chart="column" />
 
         <com.patrykandpatryk.vico.view.chart.ChartView
-            android:id="@+id/stacked_column_chart"
+            android:id="@+id/line_chart_with_labels_inside"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:chart="stackedColumn" />
+            app:chart="line" />
 
     </LinearLayout>
 

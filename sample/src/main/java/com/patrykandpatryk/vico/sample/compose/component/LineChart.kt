@@ -27,6 +27,7 @@ import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.sample.util.Tokens
 
 @Composable
 internal fun LineChart(
@@ -35,14 +36,14 @@ internal fun LineChart(
 ) {
     val decorations = listOf(
         ThresholdLine(
-            thresholdValue = THRESHOLD_VALUE,
+            thresholdValue = Tokens.LineChart.THRESHOLD_VALUE,
             textComponent = thresholdLineLabel(
                 color = MaterialTheme.colorScheme.onSecondary,
                 backgroundColor = MaterialTheme.colorScheme.secondary,
             ),
             lineComponent = ShapeComponent(
                 strokeColor = MaterialTheme.colorScheme.secondary.toArgb(),
-                strokeWidthDp = THRESHOLD_LINE_STROKE_WIDTH_DP,
+                strokeWidthDp = Tokens.LineChart.THRESHOLD_LINE_STROKE_WIDTH_DP,
             )
         )
     )
@@ -56,6 +57,3 @@ internal fun LineChart(
         startAxis = startAxis(),
     )
 }
-
-private const val THRESHOLD_VALUE = 7f
-private const val THRESHOLD_LINE_STROKE_WIDTH_DP = 2f

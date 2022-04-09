@@ -29,6 +29,7 @@ import com.patrykandpatryk.vico.compose.component.shapeComponent
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.sample.util.Tokens
 
 @Composable
 internal fun LineChartWithLabelsInside(
@@ -38,7 +39,7 @@ internal fun LineChartWithLabelsInside(
     val startAxis = startAxis(
         horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
         label = axisLabelComponent(
-            verticalMargin = AXIS_LABEL_VERTICAL_MARGIN_DP.dp,
+            verticalMargin = Tokens.LineChartWithLabelsInside.LABEL_VERTICAL_MARGIN_DP.dp,
             color = MaterialTheme.colorScheme.onSecondary,
             background = shapeComponent(
                 shape = Shapes.pillShape,
@@ -56,5 +57,3 @@ internal fun LineChartWithLabelsInside(
         bottomAxis = bottomAxis(),
     )
 }
-
-private const val AXIS_LABEL_VERTICAL_MARGIN_DP = 4

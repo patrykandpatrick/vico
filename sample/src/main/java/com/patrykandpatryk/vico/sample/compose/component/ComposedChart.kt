@@ -35,6 +35,7 @@ import com.patrykandpatryk.vico.core.chart.composed.plus
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
+import com.patrykandpatryk.vico.sample.util.Tokens
 
 @Composable
 internal fun ComposedChart(
@@ -44,7 +45,7 @@ internal fun ComposedChart(
 ) {
     val lineBackgroundShader = dottedShader(
         dotColor = MaterialTheme.colorScheme.secondary.copy(
-            alpha = LINE_BACKGROUND_SHADER_ALPHA,
+            alpha = Tokens.ComposedChart.SHADER_ALPHA,
         ),
     )
 
@@ -73,5 +74,3 @@ internal fun ComposedChart(
         diffAnimationSpec = diffAnimationSpec,
     )
 }
-
-private const val LINE_BACKGROUND_SHADER_ALPHA = 0.16f

@@ -23,13 +23,32 @@ import android.view.ViewGroup
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.patrykandpatryk.vico.R
+import com.patrykandpatryk.vico.core.axis.Axis
+import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
+import com.patrykandpatryk.vico.core.chart.composed.ComposedChart
+import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
+import com.patrykandpatryk.vico.core.chart.line.LineChart
+import com.patrykandpatryk.vico.core.component.dimension.setMargins
+import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
+import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.extension.copyColor
+import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.databinding.FragmentViewShowcaseBinding
+import com.patrykandpatryk.vico.sample.component.getDottedShader
+import com.patrykandpatryk.vico.sample.component.getThresholdLineLabel
 import com.patrykandpatryk.vico.sample.extensions.getMarker
 import com.patrykandpatryk.vico.sample.extensions.navigationBarInsets
+import com.patrykandpatryk.vico.sample.extensions.resolveColorAttribute
 import com.patrykandpatryk.vico.sample.extensions.setUpChart
+import com.patrykandpatryk.vico.sample.util.Tokens
 import com.patrykandpatryk.vico.sample.viewmodel.ShowcaseViewModel
+import com.patrykandpatryk.vico.view.dimensions.dimensionsOf
 
 internal class ViewShowcaseFragment : Fragment() {
+
+    private var _binding: FragmentViewShowcaseBinding? = null
+    private val binding get() = _binding!!
 
     private val showcaseViewModel: ShowcaseViewModel by lazy {
         ViewModelProvider(requireActivity()).get(ShowcaseViewModel::class.java)
@@ -40,19 +59,132 @@ internal class ViewShowcaseFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View {
-        val binding = FragmentViewShowcaseBinding.inflate(inflater, container, false)
-        val marker = requireContext().getMarker()
+        _binding = FragmentViewShowcaseBinding.inflate(
+            inflater,
+            container,
+            false,
+        )
+
         with(binding) {
             wrapper.setOnApplyWindowInsetsListener { view, insets ->
                 view.updatePadding(bottom = view.paddingBottom + insets.navigationBarInsets.bottom)
                 insets
             }
-            columnChart.setUpChart(showcaseViewModel.chartEntryModelProducer, marker)
-            lineChart.setUpChart(showcaseViewModel.chartEntryModelProducer, marker)
-            composedChart.setUpChart(showcaseViewModel.composedChartEntryModelProducer, marker)
-            groupedColumnChart.setUpChart(showcaseViewModel.multiChartEntryModelProducer, marker)
-            stackedColumnChart.setUpChart(showcaseViewModel.multiChartEntryModelProducer, marker)
         }
+
+        with(requireContext().getMarker()) {
+            setUpColumnChart(marker = this)
+            setUpLineChart(marker = this)
+            setUpStackedColumnChart(marker = this)
+            setUpComposedChart(marker = this)
+            setUpGroupedColumnChart(marker = this)
+            setUpLineChartWithLabelsInside(marker = this)
+        }
+
         return binding.root
+    }
+
+    private fun setUpColumnChart(marker: Marker) {
+        binding.columnChart.setUpChart(
+            entries = showcaseViewModel.chartEntryModelProducer,
+            marker = marker,
+        ) {
+            chart?.addPersistentMarker(
+                x = Tokens.ColumnChart.PERSISTENT_MARKER_X,
+                marker = marker,
+            )
+        }
+    }
+
+    private fun setUpLineChart(marker: Marker) {
+        binding.lineChart.setUpChart(
+            entries = showcaseViewModel.chartEntryModelProducer,
+            marker = marker,
+        ) {
+            chart?.addDecoration(
+                decoration = ThresholdLine(
+                    thresholdValue = Tokens.LineChart.THRESHOLD_VALUE,
+                    textComponent = getThresholdLineLabel(
+                        color = context.resolveColorAttribute(R.attr.colorOnSecondary),
+                        backgroundColor = context.resolveColorAttribute(R.attr.colorSecondary),
+                    ),
+                    lineComponent = ShapeComponent(
+                        strokeColor = context.resolveColorAttribute(R.attr.colorSecondary),
+                        strokeWidthDp = Tokens.LineChart.THRESHOLD_LINE_STROKE_WIDTH_DP,
+                    )
+                )
+            )
+        }
+    }
+
+    private fun setUpStackedColumnChart(marker: Marker) {
+        binding.stackedColumnChart.setUpChart(
+            entries = showcaseViewModel.multiChartEntryModelProducer,
+            marker = marker,
+        ) {
+            (startAxis as Axis).label?.rotationDegrees = Tokens.StackedColumnChart.AXIS_LABEL_ROTATION_DEGREES
+        }
+    }
+
+    private fun setUpComposedChart(marker: Marker) {
+        binding.composedChart.setUpChart(
+            entries = showcaseViewModel.composedChartEntryModelProducer,
+            marker = marker,
+        ) {
+            val secondaryColor = context.resolveColorAttribute(R.attr.colorSecondary)
+            val lineChart = (chart as ComposedChart).charts[1] as LineChart
+
+            with(lineChart) {
+                lineColor = secondaryColor
+                lineBackgroundShader = getDottedShader(
+                    dotColor = secondaryColor.copyColor(alpha = Tokens.ComposedChart.SHADER_ALPHA),
+                )
+            }
+        }
+    }
+
+    private fun setUpGroupedColumnChart(marker: Marker) {
+        binding.groupedColumnChart.setUpChart(
+            entries = showcaseViewModel.multiChartEntryModelProducer,
+            marker = marker,
+        ) {
+            val primaryColor = context.resolveColorAttribute(R.attr.colorPrimary)
+            val tokens = Tokens.GroupedColumnChart
+
+            chart?.addDecoration(
+                decoration = ThresholdLine(
+                    thresholdRange = tokens.THRESHOLD_START..tokens.THRESHOLD_END,
+                    labelComponent = getThresholdLineLabel(
+                        color = context.resolveColorAttribute(R.attr.colorOnPrimary),
+                        backgroundColor = primaryColor,
+                    ),
+                    lineComponent = ShapeComponent(
+                        color = primaryColor.copyColor(alpha = tokens.THRESHOLD_LINE_BACKGROUND_ALPHA),
+                    ),
+                )
+            )
+        }
+    }
+
+    private fun setUpLineChartWithLabelsInside(marker: Marker) {
+        binding.lineChartWithLabelsInside.setUpChart(
+            entries = showcaseViewModel.chartEntryModelProducer,
+            marker = marker,
+        ) {
+            val tokens = Tokens.LineChartWithLabelsInside
+
+            (chart as LineChart).lineBackgroundShader = null
+            with(startAxis as VerticalAxis) {
+                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
+                label?.apply {
+                    color = context.resolveColorAttribute(R.attr.colorOnSecondary)
+                    setMargins(margins = dimensionsOf(verticalDp = tokens.LABEL_VERTICAL_MARGIN_DP))
+                    background = ShapeComponent(
+                        shape = Shapes.pillShape,
+                        color = context.resolveColorAttribute(R.attr.colorSecondary),
+                    )
+                }
+            }
+        }
     }
 }
