@@ -18,7 +18,10 @@ package com.patrykandpatryk.vico.core.component.shape
 
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
+import android.os.Build
 import com.patrykandpatryk.vico.core.component.shape.cornered.Corner
 import com.patrykandpatryk.vico.core.component.shape.cornered.CorneredShape
 import com.patrykandpatryk.vico.core.component.shape.cornered.CutCornerTreatment
@@ -124,6 +127,7 @@ public object Shapes {
      */
     public fun drawableShape(
         drawable: Drawable,
+        tintDrawable: Boolean = true,
         keepAspectRatio: Boolean = false,
         otherShape: Shape? = rectShape,
     ): Shape = object : Shape {
@@ -146,6 +150,8 @@ public object Shapes {
 
             var otherComponentLeft = left
             var otherComponentTop = top
+
+            if (tintDrawable) drawable.setTintCompat(paint.color)
 
             if (height > width) {
                 val drawableHeight = if (keepAspectRatio) width / ratio else height
@@ -186,5 +192,13 @@ public object Shapes {
                 )
             }
         }
+    }
+}
+
+private fun Drawable.setTintCompat(tint: Int) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        setTint(tint)
+    } else {
+        colorFilter = PorterDuffColorFilter(tint, PorterDuff.Mode.SRC_IN)
     }
 }
