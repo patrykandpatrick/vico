@@ -24,7 +24,6 @@ import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.patrykandpatryk.vico.R
-import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.chart.composed.ComposedChart
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
