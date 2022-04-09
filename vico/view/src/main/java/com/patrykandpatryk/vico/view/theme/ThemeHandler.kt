@@ -23,7 +23,6 @@ import androidx.annotation.StyleableRes
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.axis.axisBuilder
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.chart.Chart
@@ -46,16 +45,16 @@ internal class ThemeHandler(
     chartType: ChartType,
 ) {
 
-    public var startAxis: VerticalAxis<AxisPosition.Vertical.Start>? = null
+    public var startAxis: Axis<AxisPosition.Vertical.Start>? = null
         private set
 
-    public var topAxis: HorizontalAxis<AxisPosition.Horizontal.Top>? = null
+    public var topAxis: Axis<AxisPosition.Horizontal.Top>? = null
         private set
 
-    public var endAxis: VerticalAxis<AxisPosition.Vertical.End>? = null
+    public var endAxis: Axis<AxisPosition.Vertical.End>? = null
         private set
 
-    public var bottomAxis: HorizontalAxis<AxisPosition.Horizontal.Bottom>? = null
+    public var bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null
         private set
 
     public var isHorizontalScrollEnabled: Boolean = false
@@ -73,16 +72,16 @@ internal class ThemeHandler(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.BaseChartView).use { typedArray ->
             if (typedArray.getBoolean(R.styleable.BaseChartView_showStartAxis, false)) {
-                startAxis = VerticalAxis.Builder<AxisPosition.Vertical.Start>(typedArray.getAxis()).build()
+                startAxis = typedArray.getAxisBuilder(VerticalAxis.Builder()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showTopAxis, false)) {
-                topAxis = HorizontalAxis.Builder<AxisPosition.Horizontal.Top>(typedArray.getAxis()).build()
+                topAxis = typedArray.getAxisBuilder(HorizontalAxis.Builder()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showEndAxis, false)) {
-                endAxis = VerticalAxis.Builder<AxisPosition.Vertical.End>(typedArray.getAxis()).build()
+                endAxis = typedArray.getAxisBuilder(VerticalAxis.Builder()).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showBottomAxis, false)) {
-                bottomAxis = HorizontalAxis.Builder<AxisPosition.Horizontal.Bottom>(typedArray.getAxis()).build()
+                bottomAxis = typedArray.getAxisBuilder(HorizontalAxis.Builder()).build()
             }
             isHorizontalScrollEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, false)
@@ -101,7 +100,9 @@ internal class ThemeHandler(
         }
     }
 
-    private fun <Position : AxisPosition> TypedArray.getAxis(): Axis.Builder<Position> {
+    private fun <Position : AxisPosition, Builder : Axis.Builder<Position>> TypedArray.getAxisBuilder(
+        builder: Builder,
+    ): Builder {
 
         fun TypedArray.getLineComponent(
             @StyleableRes resourceId: Int,
@@ -114,37 +115,53 @@ internal class ThemeHandler(
                 styleableResourceId = styleableResourceId,
             ).getLineComponent(context = context, defaultShape = defaultShape)
 
-        return getNestedTypedArray(
+        val axisStyle = getNestedTypedArray(
             context = context,
             resourceId = R.styleable.BaseChartView_axisStyle,
             styleableResourceId = R.styleable.Axis,
-        ).use { axisStyle ->
-            axisBuilder {
-                axis = axisStyle.getLineComponent(
-                    resourceId = R.styleable.Axis_axisLineStyle,
-                    styleableResourceId = R.styleable.LineComponentStyle
-                )
-                tick = axisStyle.getLineComponent(
-                    resourceId = R.styleable.Axis_axisTickStyle,
-                    styleableResourceId = R.styleable.LineComponentStyle
-                )
-                tickLengthDp = axisStyle.getRawDimension(
-                    context = context,
-                    R.styleable.Axis_axisTickLength,
-                    defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
-                )
-                guideline = axisStyle.getLineComponent(
-                    resourceId = R.styleable.Axis_axisGuidelineStyle,
-                    styleableResourceId = R.styleable.LineComponentStyle,
-                    defaultShape = DashedShape(),
-                )
-                label = axisStyle.getNestedTypedArray(
-                    context = context,
-                    resourceId = R.styleable.Axis_axisLabelStyle,
-                    styleableResourceId = R.styleable.LabelStyle
-                ).getTextComponent(context = context)
+        )
+
+        return builder.apply {
+            axis = axisStyle.getLineComponent(
+                resourceId = R.styleable.Axis_axisLineStyle,
+                styleableResourceId = R.styleable.LineComponentStyle
+            )
+            tick = axisStyle.getLineComponent(
+                resourceId = R.styleable.Axis_axisTickStyle,
+                styleableResourceId = R.styleable.LineComponentStyle
+            )
+            tickLengthDp = axisStyle.getRawDimension(
+                context = context,
+                R.styleable.Axis_axisTickLength,
+                defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
+            )
+            guideline = axisStyle.getLineComponent(
+                resourceId = R.styleable.Axis_axisGuidelineStyle,
+                styleableResourceId = R.styleable.LineComponentStyle,
+                defaultShape = DashedShape(),
+            )
+            label = axisStyle.getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.Axis_axisLabelStyle,
+                styleableResourceId = R.styleable.LabelStyle
+            ).getTextComponent(context = context)
+
+            if (this is VerticalAxis.Builder<*>) {
+                horizontalLabelPosition = axisStyle
+                    .getInteger(R.styleable.Axis_verticalAxisHorizontalLabelPosition, 0)
+                    .let { value ->
+                        val values = VerticalAxis.HorizontalLabelPosition.values()
+                        values[value % values.size]
+                    }
+
+                verticalLabelPosition = axisStyle
+                    .getInteger(R.styleable.Axis_verticalAxisVerticalLabelPosition, 0)
+                    .let { value ->
+                        val values = VerticalAxis.VerticalLabelPosition.values()
+                        values[value % values.size]
+                    }
             }
-        }
+        }.also { axisStyle.recycle() }
     }
 
     private fun TypedArray.getChart(): Chart<ChartEntryModel>? =
