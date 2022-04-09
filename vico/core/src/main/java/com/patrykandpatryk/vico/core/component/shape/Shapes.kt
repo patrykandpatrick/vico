@@ -140,21 +140,47 @@ public object Shapes {
             right: Float,
             bottom: Float,
         ) {
-            if (bottom - top == 0f) return
-            val drawableHeight = if (keepAspectRatio) (right - left) / ratio else bottom - top
-            val topWithoutClipping = minOf(top, bottom - drawableHeight)
-            drawable.setBounds(left, topWithoutClipping, right, topWithoutClipping + drawableHeight)
+            if (bottom - top == 0f || left - right == 0f) return
+            val width = right - left
+            val height = bottom - top
+
+            var otherComponentLeft = left
+            var otherComponentTop = top
+
+            if (height > width) {
+                val drawableHeight = if (keepAspectRatio) width / ratio else height
+                val topWithoutClipping = minOf(top, bottom - drawableHeight)
+                drawable.setBounds(
+                    left = left,
+                    top = topWithoutClipping,
+                    right = right,
+                    bottom = topWithoutClipping + drawableHeight,
+                )
+
+                otherComponentTop = topWithoutClipping + drawableHeight
+            } else {
+                val drawableWidth = if (keepAspectRatio) height * ratio else width
+                val leftWithoutClipping = minOf(left, right - drawableWidth)
+                drawable.setBounds(
+                    left = leftWithoutClipping,
+                    top = top,
+                    right = leftWithoutClipping + drawableWidth,
+                    bottom = bottom,
+                )
+
+                otherComponentLeft = leftWithoutClipping + drawableWidth
+            }
+
             drawable.draw(context.canvas)
             otherShape ?: return
 
-            val drawableBottom = drawable.bounds.bottom.toFloat()
-            if (bottom - drawableBottom > 0) {
+            if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
                 otherShape.drawShape(
                     context = context,
                     paint = paint,
                     path = path,
-                    left = left,
-                    top = drawableBottom,
+                    left = otherComponentLeft,
+                    top = otherComponentTop,
                     right = right,
                     bottom = bottom,
                 )

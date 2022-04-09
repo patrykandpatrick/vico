@@ -30,6 +30,8 @@ import com.patrykandpatryk.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.buildTextComponent
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
+import com.patrykandpatryk.vico.core.extension.PI_RAD
+import com.patrykandpatryk.vico.core.extension.doubled
 import com.patrykandpatryk.vico.core.extension.firstNonNegativeOf
 import com.patrykandpatryk.vico.view.R
 import com.patrykandpatryk.vico.view.extension.defaultColors
@@ -57,6 +59,7 @@ internal fun TypedArray.getTextComponent(
         )
         this.lineCount = getInteger(R.styleable.LabelStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
         this.ellipsize = getLabelTruncateAt()
+        this.rotationDegrees = getInteger(R.styleable.LabelStyle_labelRotation, 0) % PI_RAD.doubled
         getLabelTypeface(context)?.let { this.typeface = it }
     }
 }

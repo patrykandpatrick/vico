@@ -56,6 +56,15 @@
         <attr name="axisLabelStyle" format="reference" />
         <attr name="axisTickLength" format="dimension" />
         <attr name="axisLabelBackground" format="color|reference" />
+        <attr name="verticalAxisHorizontalLabelPosition" format="enum">
+            <enum name="outside" value="0" />
+            <enum name="inside" value="1" />
+        </attr>
+        <attr name="verticalAxisVerticalLabelPosition" format="enum">
+            <enum name="center" value="0" />
+            <enum name="top" value="1" />
+            <enum name="bottom" value="2" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="LineComponentStyle">
