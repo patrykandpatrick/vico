@@ -23,6 +23,7 @@ import com.patrykandpatryk.vico.compose.axis.axisLabelComponent
 import com.patrykandpatryk.vico.compose.axis.axisLineComponent
 import com.patrykandpatryk.vico.compose.axis.axisTickComponent
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
+import com.patrykandpatryk.vico.core.DEF_LABEL_COUNT
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.formatter.AxisValueFormatter
@@ -43,6 +44,7 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
  * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its width.
  * @param horizontalLabelPosition the horizontal position of the labels along the axis.
  * @param verticalLabelPosition the vertical position of the labels along the axis.
+ * @param maxLabelCount the maximum label count.
  */
 @Composable
 public fun startAxis(
@@ -55,6 +57,7 @@ public fun startAxis(
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
     horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
+    maxLabelCount: Int = DEF_LABEL_COUNT,
 ): VerticalAxis<AxisPosition.Vertical.Start> = createVerticalAxis {
     this.label = label
     this.axis = axis
@@ -65,6 +68,7 @@ public fun startAxis(
     this.sizeConstraint = sizeConstraint
     this.horizontalLabelPosition = horizontalLabelPosition
     this.verticalLabelPosition = verticalLabelPosition
+    this.maxLabelCount = maxLabelCount
 }
 
 /**
@@ -78,6 +82,7 @@ public fun startAxis(
  * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its width.
  * @param horizontalLabelPosition the horizontal position of the labels along the axis.
  * @param verticalLabelPosition the vertical position of the labels along the axis.
+ * @param maxLabelCount the maximum label count.
  */
 @Composable
 public fun endAxis(
@@ -90,6 +95,7 @@ public fun endAxis(
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
     horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
+    maxLabelCount: Int = DEF_LABEL_COUNT,
 ): VerticalAxis<AxisPosition.Vertical.End> = createVerticalAxis {
     this.label = label
     this.axis = axis
@@ -100,4 +106,5 @@ public fun endAxis(
     this.sizeConstraint = sizeConstraint
     this.horizontalLabelPosition = horizontalLabelPosition
     this.verticalLabelPosition = verticalLabelPosition
+    this.maxLabelCount = maxLabelCount
 }
