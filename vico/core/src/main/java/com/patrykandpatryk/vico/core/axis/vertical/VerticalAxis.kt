@@ -239,11 +239,22 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         context: MeasureContext,
         outInsets: Insets,
     ): Unit = with(context) {
-        val halfLabelHeight = label?.getHeight(context = context)?.half.orZero
-        outInsets.set(
-            top = halfLabelHeight - axisThickness,
-            bottom = halfLabelHeight
-        )
+        val labelHeight = label?.getHeight(context = context).orZero
+        val lineThickness = maxOf(axisThickness, tickThickness)
+        when (verticalLabelPosition) {
+            Center -> outInsets.set(
+                top = labelHeight.half - lineThickness,
+                bottom = labelHeight.half
+            )
+            VerticalLabelPosition.Top -> outInsets.set(
+                top = labelHeight - lineThickness,
+                bottom = lineThickness
+            )
+            VerticalLabelPosition.Bottom -> outInsets.set(
+                top = lineThickness.half,
+                bottom = labelHeight
+            )
+        }
     }
 
     /**
