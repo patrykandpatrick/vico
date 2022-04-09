@@ -83,6 +83,19 @@ internal class ViewShowcaseFragment : Fragment() {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        with(binding) {
+            columnChart.entryProducer = null
+            lineChart.entryProducer = null
+            stackedColumnChart.entryProducer = null
+            composedChart.entryProducer = null
+            groupedColumnChart.entryProducer = null
+            lineChartWithLabelsInside.entryProducer = null
+        }
+        _binding = null
+    }
+
     private fun setUpColumnChart(marker: Marker) {
         binding.columnChart.setUpChart(
             entries = showcaseViewModel.chartEntryModelProducer,
