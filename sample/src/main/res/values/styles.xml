@@ -42,6 +42,11 @@
 
     <style name="StackedColumnChartAxisStyle">
         <item name="axisGuidelineStyle">@style/SolidAxisGuidelineStyle</item>
+        <item name="axisLabelStyle">@style/RotatedLabelStyle</item>
+    </style>
+
+    <style name="RotatedLabelStyle">
+        <item name="labelRotation">45</item>
     </style>
 
     <style name="SolidAxisGuidelineStyle">
@@ -67,5 +72,9 @@
     <style name="CutShapeStyle">
         <item name="topStartCornerSize">50%</item>
         <item name="topStartCornerTreatment">cut</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideAxisStyle">
+        <item name="verticalAxisHorizontalLabelPosition">inside</item>
     </style>
 </resources>

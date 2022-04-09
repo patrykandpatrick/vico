@@ -40,8 +40,4 @@ internal object Tokens {
     object LineChartWithLabelsInside {
         const val LABEL_VERTICAL_MARGIN_DP = 4f
     }
-
-    object StackedColumnChart {
-        const val AXIS_LABEL_ROTATION_DEGREES = 45f
-    }
 }

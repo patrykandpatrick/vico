@@ -121,9 +121,7 @@ internal class ViewShowcaseFragment : Fragment() {
         binding.stackedColumnChart.setUpChart(
             entries = showcaseViewModel.multiChartEntryModelProducer,
             marker = marker,
-        ) {
-            (startAxis as Axis).label?.rotationDegrees = Tokens.StackedColumnChart.AXIS_LABEL_ROTATION_DEGREES
-        }
+        )
     }
 
     private fun setUpComposedChart(marker: Marker) {
@@ -175,7 +173,6 @@ internal class ViewShowcaseFragment : Fragment() {
 
             (chart as LineChart).lineBackgroundShader = null
             with(startAxis as VerticalAxis) {
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
                 label?.apply {
                     color = context.resolveColorAttribute(R.attr.colorOnSecondary)
                     setMargins(margins = dimensionsOf(verticalDp = tokens.LABEL_VERTICAL_MARGIN_DP))

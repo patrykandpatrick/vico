@@ -73,7 +73,8 @@
             android:id="@+id/line_chart_with_labels_inside"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:chart="line" />
+            app:chart="line"
+            app:axisStyle="@style/LineChartWithLabelsInsideAxisStyle" />
 
     </LinearLayout>
 
