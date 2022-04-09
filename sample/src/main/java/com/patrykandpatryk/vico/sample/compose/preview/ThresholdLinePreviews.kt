@@ -75,7 +75,7 @@ public fun ThresholdLine() {
                     ThresholdLine(
                         thresholdValue = 2f,
                         lineComponent = shapeComponent(color = Color.Black),
-                        textComponent = textComponent(Color.Black).apply {
+                        labelComponent = textComponent(Color.Black).apply {
                             setPadding(horizontal = 8.dp)
                         },
                     )
@@ -101,7 +101,7 @@ public fun ThresholdLineWithCustomText() {
                         thresholdValue = 2f,
                         thresholdLabel = "Threshold line 1 📐",
                         lineComponent = shapeComponent(color = Color.Black),
-                        textComponent = textComponent(
+                        labelComponent = textComponent(
                             color = Color.White,
                             lineCount = 3,
                             background = shapeComponent(
@@ -124,7 +124,7 @@ public fun ThresholdLineWithCustomText() {
                         thresholdValue = 3f,
                         thresholdLabel = "Threshold line 2 📐",
                         lineComponent = shapeComponent(color = Color.DarkGray),
-                        textComponent = textComponent(
+                        labelComponent = textComponent(
                             color = Color.White,
                             lineCount = 3,
                             background = shapeComponent(

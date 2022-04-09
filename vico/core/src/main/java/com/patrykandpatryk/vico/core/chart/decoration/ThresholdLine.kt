@@ -75,7 +75,7 @@ public data class ThresholdLine(
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = ShapeComponent(),
         minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
-        textComponent: TextComponent = buildTextComponent(),
+        labelComponent: TextComponent = buildTextComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
     ) : this(
@@ -83,7 +83,7 @@ public data class ThresholdLine(
         thresholdLabel = thresholdLabel,
         lineComponent = lineComponent,
         minimumLineThicknessDp = minimumLineThicknessDp,
-        labelComponent = textComponent,
+        labelComponent = labelComponent,
         labelHorizontalPosition = labelHorizontalPosition,
         labelVerticalPosition = labelVerticalPosition,
     )

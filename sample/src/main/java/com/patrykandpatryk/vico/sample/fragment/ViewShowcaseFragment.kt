@@ -116,7 +116,7 @@ internal class ViewShowcaseFragment : Fragment() {
             chart?.addDecoration(
                 decoration = ThresholdLine(
                     thresholdValue = Tokens.LineChart.THRESHOLD_VALUE,
-                    textComponent = getThresholdLineLabel(
+                    labelComponent = getThresholdLineLabel(
                         color = context.resolveColorAttribute(R.attr.colorOnSecondary),
                         backgroundColor = context.resolveColorAttribute(R.attr.colorSecondary),
                     ),

@@ -37,7 +37,7 @@ internal fun LineChart(
     val decorations = listOf(
         ThresholdLine(
             thresholdValue = Tokens.LineChart.THRESHOLD_VALUE,
-            textComponent = thresholdLineLabel(
+            labelComponent = thresholdLineLabel(
                 color = MaterialTheme.colorScheme.onSecondary,
                 backgroundColor = MaterialTheme.colorScheme.secondary,
             ),
