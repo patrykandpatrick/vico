@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.compose.axis
 
+import android.graphics.Typeface
 import android.text.TextUtils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
@@ -67,6 +68,7 @@ public fun axisLabelComponent(
     verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
     horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
     rotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
 ): TextComponent = buildTextComponent {
     this.color = color.toArgb()
     this.textSizeSp = textSize.pixelSize()
@@ -82,6 +84,7 @@ public fun axisLabelComponent(
         horizontal = horizontalMargin,
     )
     this.rotationDegrees = rotationDegrees
+    this.typeface = typeface
 }
 
 /**
