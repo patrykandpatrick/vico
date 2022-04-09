@@ -19,11 +19,14 @@ package com.patrykandpatryk.vico.sample.compose.component
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.vico.compose.axis.axisGuidelineComponent
+import com.patrykandpatryk.vico.compose.axis.axisLabelComponent
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
+import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 
 @Composable
@@ -31,16 +34,33 @@ internal fun StackedColumnChart(
     modifier: Modifier = Modifier,
     chartEntryModelProducer: ChartEntryModelProducer,
 ) {
+    val axisGuideline = axisGuidelineComponent(shape = Shapes.rectShape)
+    val axisLabel = axisLabelComponent(rotationDegrees = AXIS_LABEL_ROTATION_DEGREES)
+
+    val startAxis = startAxis(
+        label = axisLabel,
+        guideline = axisGuideline,
+    )
+
+    val bottomAxis = bottomAxis(
+        label = axisLabel,
+        guideline = axisGuideline,
+    )
+
+    val chart = columnChart(
+        innerSpacing = 4.dp,
+        spacing = 24.dp,
+        mergeMode = MergeMode.Stack,
+    )
+
     Chart(
         modifier = modifier,
-        chart = columnChart(
-            innerSpacing = 4.dp,
-            spacing = 24.dp,
-            mergeMode = MergeMode.Stack,
-        ),
+        chart = chart,
         chartModelProducer = chartEntryModelProducer,
-        startAxis = startAxis(),
-        bottomAxis = bottomAxis(),
+        startAxis = startAxis,
+        bottomAxis = bottomAxis,
         marker = marker(),
     )
 }
+
+private const val AXIS_LABEL_ROTATION_DEGREES = 45f

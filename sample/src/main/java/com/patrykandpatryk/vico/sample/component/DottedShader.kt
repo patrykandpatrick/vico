@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.extensions
+package com.patrykandpatryk.vico.sample.component
 
-import com.patrykandpatryk.vico.core.entry.ChartEntryModel
-import com.patrykandpatryk.vico.core.entry.ChartModelProducer
-import com.patrykandpatryk.vico.core.marker.Marker
-import com.patrykandpatryk.vico.view.chart.BaseChartView
+import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
+import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.shape.shader.ComponentShader
+import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 
-internal fun <T : ChartEntryModel> BaseChartView<T>.setUpChart(
-    entries: ChartModelProducer<T>,
-    marker: Marker,
-    block: (BaseChartView<T>.() -> Unit)? = null,
-) {
-    this.marker = marker
-    this.entryProducer = entries
-    block?.invoke(this)
-}
+internal fun getDottedShader(dotColor: Int): DynamicShader = ComponentShader(
+    componentSizeDp = DOT_SIZE_DP,
+    component = ShapeComponent(
+        shape = Shapes.pillShape,
+        color = dotColor,
+    ),
+)
+
+private const val DOT_SIZE_DP = 4f

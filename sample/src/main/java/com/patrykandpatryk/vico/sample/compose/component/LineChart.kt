@@ -16,25 +16,44 @@
 
 package com.patrykandpatryk.vico.sample.compose.component
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
+import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
+import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.sample.util.Tokens
 
 @Composable
 internal fun LineChart(
     modifier: Modifier = Modifier,
     chartEntryModelProducer: ChartEntryModelProducer,
 ) {
+    val decorations = listOf(
+        ThresholdLine(
+            thresholdValue = Tokens.LineChart.THRESHOLD_VALUE,
+            textComponent = thresholdLineLabel(
+                color = MaterialTheme.colorScheme.onSecondary,
+                backgroundColor = MaterialTheme.colorScheme.secondary,
+            ),
+            lineComponent = ShapeComponent(
+                strokeColor = MaterialTheme.colorScheme.secondary.toArgb(),
+                strokeWidthDp = Tokens.LineChart.THRESHOLD_LINE_STROKE_WIDTH_DP,
+            )
+        )
+    )
+
     Chart(
         modifier = modifier,
-        chart = lineChart(),
+        chart = lineChart(decorations = decorations),
         chartModelProducer = chartEntryModelProducer,
         marker = marker(),
-        startAxis = startAxis(),
         bottomAxis = bottomAxis(),
+        startAxis = startAxis(),
     )
 }

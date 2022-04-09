@@ -14,19 +14,30 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.extensions
+package com.patrykandpatryk.vico.sample.util
 
-import com.patrykandpatryk.vico.core.entry.ChartEntryModel
-import com.patrykandpatryk.vico.core.entry.ChartModelProducer
-import com.patrykandpatryk.vico.core.marker.Marker
-import com.patrykandpatryk.vico.view.chart.BaseChartView
+internal object Tokens {
 
-internal fun <T : ChartEntryModel> BaseChartView<T>.setUpChart(
-    entries: ChartModelProducer<T>,
-    marker: Marker,
-    block: (BaseChartView<T>.() -> Unit)? = null,
-) {
-    this.marker = marker
-    this.entryProducer = entries
-    block?.invoke(this)
+    object ColumnChart {
+        const val PERSISTENT_MARKER_X = 5f
+    }
+
+    object LineChart {
+        const val THRESHOLD_VALUE = 7f
+        const val THRESHOLD_LINE_STROKE_WIDTH_DP = 2f
+    }
+
+    object ComposedChart {
+        const val SHADER_ALPHA = 0.16f
+    }
+
+    object GroupedColumnChart {
+        const val THRESHOLD_START = 7f
+        const val THRESHOLD_END = 12f
+        const val THRESHOLD_LINE_BACKGROUND_ALPHA = 0.16f
+    }
+
+    object LineChartWithLabelsInside {
+        const val LABEL_VERTICAL_MARGIN_DP = 4f
+    }
 }

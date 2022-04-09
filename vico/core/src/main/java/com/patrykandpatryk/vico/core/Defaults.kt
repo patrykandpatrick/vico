@@ -263,8 +263,8 @@ public interface DefaultColors {
         override val elevationOverlayColor: Long = 0x00000000
 
         override val axisLabelColor: Long = 0xDE000000
-        override val axisGuidelineColor: Long = 0xFFAAAAAA
-        override val axisLineColor: Long = 0xFF8A8A8A
+        override val axisGuidelineColor: Long = 0x47000000
+        override val axisLineColor: Long = 0x47000000
 
         override val column1Color: Long = 0xFF787878
         override val column2Color: Long = 0xFF5A5A5A

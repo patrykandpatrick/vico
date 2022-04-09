@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.extensions
+package com.patrykandpatryk.vico.sample.compose.component
 
-import com.patrykandpatryk.vico.core.entry.ChartEntryModel
-import com.patrykandpatryk.vico.core.entry.ChartModelProducer
-import com.patrykandpatryk.vico.core.marker.Marker
-import com.patrykandpatryk.vico.view.chart.BaseChartView
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import com.patrykandpatryk.vico.core.component.text.TextComponent
+import com.patrykandpatryk.vico.sample.component.getThresholdLineLabel
 
-internal fun <T : ChartEntryModel> BaseChartView<T>.setUpChart(
-    entries: ChartModelProducer<T>,
-    marker: Marker,
-    block: (BaseChartView<T>.() -> Unit)? = null,
-) {
-    this.marker = marker
-    this.entryProducer = entries
-    block?.invoke(this)
-}
+@Composable
+internal fun thresholdLineLabel(
+    color: Color,
+    backgroundColor: Color,
+): TextComponent = getThresholdLineLabel(
+    color = color.toArgb(),
+    backgroundColor = backgroundColor.toArgb(),
+)

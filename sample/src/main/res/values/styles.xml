@@ -39,4 +39,42 @@
     <style name="LineChartStyle">
         <item name="color">?colorPrimary</item>
     </style>
+
+    <style name="StackedColumnChartAxisStyle">
+        <item name="axisGuidelineStyle">@style/SolidAxisGuidelineStyle</item>
+        <item name="axisLabelStyle">@style/RotatedLabelStyle</item>
+    </style>
+
+    <style name="RotatedLabelStyle">
+        <item name="labelRotation">45</item>
+    </style>
+
+    <style name="SolidAxisGuidelineStyle">
+        <item name="shapeStyle">@style/SolidShapeStyle</item>
+    </style>
+
+    <style name="SolidShapeStyle">
+        <item name="dashLength">0dp</item>
+        <item name="dashGapLength">0dp</item>
+    </style>
+
+    <style name="ComposedColumnChartStyle">
+        <item name="column1Style">@style/CutColumnStyle</item>
+        <item name="column2Style">@style/CutColumnStyle</item>
+        <item name="column3Style">@style/CutColumnStyle</item>
+    </style>
+
+    <style name="CutColumnStyle">
+        <item name="color">?colorPrimary</item>
+        <item name="shapeStyle">@style/CutShapeStyle</item>
+    </style>
+
+    <style name="CutShapeStyle">
+        <item name="topStartCornerSize">50%</item>
+        <item name="topStartCornerTreatment">cut</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideAxisStyle">
+        <item name="verticalAxisHorizontalLabelPosition">inside</item>
+    </style>
 </resources>
