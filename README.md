@@ -1,6 +1,6 @@
 _Note: While Vico is already available, the README and wiki are under construction._
 
-![](/cover.png)
+![](/images/cover.png)
 
 # Vico
 
