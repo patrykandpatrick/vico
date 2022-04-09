@@ -15,7 +15,7 @@ Vico is a light and extensible chart library for Jetpack Compose and the view sy
 
 Vico has a very low number of dependecies, and these two modules don’t depend on each other. [Find out how.](#how-is-that)
 
-## A message from the founder
+## A foreword by the founder
 
 As a library compatible with both Compose and views, Vico is quite unique. It doesn’t depend on the interoperability between the two UI systems.
 
