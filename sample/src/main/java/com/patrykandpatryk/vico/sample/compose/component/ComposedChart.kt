@@ -17,17 +17,22 @@
 package com.patrykandpatryk.vico.sample.compose.component
 
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
+import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.vico.compose.axis.horizontal.topAxis
+import com.patrykandpatryk.vico.compose.axis.vertical.endAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.entry.defaultDiffAnimationSpec
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
+import com.patrykandpatryk.vico.compose.component.shape.lineComponent
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
+import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.chart.composed.plus
+import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
 
@@ -37,15 +42,36 @@ internal fun ComposedChart(
     model: ComposedChartEntryModelProducer<ChartEntryModel>,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
 ) {
-    val columnChart = columnChart()
-    val lineChart = lineChart()
+    val lineBackgroundShader = dottedShader(
+        dotColor = MaterialTheme.colorScheme.secondary.copy(
+            alpha = LINE_BACKGROUND_SHADER_ALPHA,
+        ),
+    )
+
+    val lineChart = lineChart(
+        lineBackgroundShader = lineBackgroundShader,
+        lineColor = MaterialTheme.colorScheme.secondary,
+    )
+
+    val columnChart = columnChart(
+        columns = listOf(
+            lineComponent(
+                color = MaterialTheme.colorScheme.primary,
+                thickness = DefaultDimens.COLUMN_WIDTH.dp,
+                shape = Shapes.cutCornerShape(topLeftPercent = 50),
+            ),
+        ),
+    )
+
     Chart(
         modifier = modifier,
         chart = remember(currentChartStyle) { columnChart + lineChart },
         chartModelProducer = model,
-        startAxis = startAxis(),
-        bottomAxis = bottomAxis(),
+        topAxis = topAxis(),
+        endAxis = endAxis(),
         marker = marker(),
         diffAnimationSpec = diffAnimationSpec,
     )
 }
+
+private const val LINE_BACKGROUND_SHADER_ALPHA = 0.16f

@@ -16,29 +16,45 @@
 
 package com.patrykandpatryk.vico.sample.compose.component
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.vico.compose.axis.axisLabelComponent
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
-import com.patrykandpatryk.vico.compose.chart.column.columnChart
+import com.patrykandpatryk.vico.compose.chart.line.lineChart
+import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
+import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 
 @Composable
-internal fun ColumnChart(
+internal fun LineChartWithLabelsInside(
     modifier: Modifier = Modifier,
     chartEntryModelProducer: ChartEntryModelProducer,
 ) {
-    val persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker())
+    val startAxis = startAxis(
+        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+        label = axisLabelComponent(
+            verticalMargin = AXIS_LABEL_VERTICAL_MARGIN_DP.dp,
+            color = MaterialTheme.colorScheme.onSecondary,
+            background = shapeComponent(
+                shape = Shapes.pillShape,
+                color = MaterialTheme.colorScheme.secondary,
+            ),
+        ),
+    )
 
     Chart(
         modifier = modifier,
-        chart = columnChart(persistentMarkers = persistentMarkers),
+        chart = lineChart(lineBackgroundShader = null),
         chartModelProducer = chartEntryModelProducer,
-        startAxis = startAxis(),
-        bottomAxis = bottomAxis(),
         marker = marker(),
+        startAxis = startAxis,
+        bottomAxis = bottomAxis(),
     )
 }
 
-private const val PERSISTENT_MARKER_X = 5f
+private const val AXIS_LABEL_VERTICAL_MARGIN_DP = 4

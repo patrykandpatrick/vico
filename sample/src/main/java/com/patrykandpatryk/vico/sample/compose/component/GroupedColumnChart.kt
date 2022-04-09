@@ -16,14 +16,18 @@
 
 package com.patrykandpatryk.vico.sample.compose.component
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
+import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
+import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 
 @Composable
@@ -31,16 +35,38 @@ internal fun GroupedColumnChart(
     modifier: Modifier = Modifier,
     chartEntryModelProducer: ChartEntryModelProducer,
 ) {
+    val decorations = listOf(
+        ThresholdLine(
+            thresholdRange = THRESHOLD_START..THRESHOLD_END,
+            lineComponent = ShapeComponent(
+                color = MaterialTheme.colorScheme.primary.copy(
+                    alpha = THRESHOLD_LINE_BACKGROUND_ALPHA,
+                ).toArgb(),
+            ),
+            labelComponent = thresholdLineLabel(
+                color = MaterialTheme.colorScheme.onPrimary,
+                backgroundColor = MaterialTheme.colorScheme.primary,
+            ),
+        )
+    )
+
+    val chart = columnChart(
+        innerSpacing = 8.dp,
+        spacing = 24.dp,
+        mergeMode = MergeMode.Grouped,
+        decorations = decorations,
+    )
+
     Chart(
         modifier = modifier,
-        chart = columnChart(
-            innerSpacing = 4.dp,
-            spacing = 24.dp,
-            mergeMode = MergeMode.Grouped,
-        ),
+        chart = chart,
         chartModelProducer = chartEntryModelProducer,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(),
         marker = marker(),
     )
 }
+
+private const val THRESHOLD_START = 7f
+private const val THRESHOLD_END = 12f
+private const val THRESHOLD_LINE_BACKGROUND_ALPHA = 0.16f

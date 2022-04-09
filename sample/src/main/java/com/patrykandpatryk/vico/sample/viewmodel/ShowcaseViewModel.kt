@@ -30,8 +30,15 @@ import com.patrykandpatryk.vico.core.util.RandomEntriesGenerator
 
 internal class ShowcaseViewModel : ViewModel() {
 
-    private val generator = RandomEntriesGenerator(0..GENERATOR_X_RANGE_TOP)
-    private val multiGenerator = RandomEntriesGenerator(0..MULTI_GENERATOR_X_RANGE_TOP)
+    private val generator = RandomEntriesGenerator(
+        xRange = 0..GENERATOR_X_RANGE_TOP,
+        yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
+    )
+
+    private val multiGenerator = RandomEntriesGenerator(
+        xRange = 0..MULTI_GENERATOR_X_RANGE_TOP,
+        yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
+    )
 
     internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
@@ -55,6 +62,8 @@ internal class ShowcaseViewModel : ViewModel() {
     private companion object {
         const val MULTI_ENTRIES_COMBINED = 3
         const val GENERATOR_X_RANGE_TOP = 96
+        const val GENERATOR_Y_RANGE_BOTTOM = 2
+        const val GENERATOR_Y_RANGE_TOP = 20
         const val MULTI_GENERATOR_X_RANGE_TOP = GENERATOR_X_RANGE_TOP / MULTI_ENTRIES_COMBINED
         const val UPDATE_FREQUENCY = 2000L
     }
