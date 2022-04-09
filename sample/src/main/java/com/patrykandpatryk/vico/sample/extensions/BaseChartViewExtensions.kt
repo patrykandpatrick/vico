@@ -24,7 +24,9 @@ import com.patrykandpatryk.vico.view.chart.BaseChartView
 internal fun <T : ChartEntryModel> BaseChartView<T>.setUpChart(
     entries: ChartModelProducer<T>,
     marker: Marker,
+    block: (BaseChartView<T>.() -> Unit)? = null,
 ) {
     this.marker = marker
     this.entryProducer = entries
+    block?.invoke(this)
 }
