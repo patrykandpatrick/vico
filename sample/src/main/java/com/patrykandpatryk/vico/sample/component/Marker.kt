@@ -17,6 +17,7 @@
 package com.patrykandpatryk.vico.sample.component
 
 import android.graphics.Color
+import android.graphics.Typeface
 import android.text.TextUtils
 import androidx.annotation.ColorInt
 import com.patrykandpatryk.vico.core.component.OverlayingComponent
@@ -44,6 +45,7 @@ internal fun getMarker(
         ellipsize = TextUtils.TruncateAt.END
         lineCount = 1
         padding = MutableDimensions(startDp = 8f, topDp = 4f, endDp = 8f, bottomDp = 4f)
+        typeface = Typeface.MONOSPACE
         background = ShapeComponent(
             shape = MarkerCorneredShape(all = Corner.FullyRounded),
             color = bubbleColor,

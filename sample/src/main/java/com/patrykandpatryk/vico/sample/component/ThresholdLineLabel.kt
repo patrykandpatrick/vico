@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.sample.component
 
+import android.graphics.Typeface
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
@@ -28,6 +29,7 @@ internal fun getThresholdLineLabel(
     backgroundColor: Int,
 ) = buildTextComponent {
     this.color = color
+    typeface = Typeface.MONOSPACE
     margins = MutableDimensions(
         startDp = START_MARGIN_DP,
         topDp = 0f,
