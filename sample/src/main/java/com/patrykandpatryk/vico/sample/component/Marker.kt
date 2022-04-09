@@ -97,10 +97,7 @@ internal fun getMarker(
             indicatorOuter.color = entryColor.copyColor(alpha = 32)
             with(indicatorCenter) {
                 color = entryColor
-                setShadow(
-                    radius = 12f,
-                    color = entryColor,
-                )
+                setShadow(radius = 12f, color = entryColor)
             }
         }
     }
