@@ -109,7 +109,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             context = context,
             left = chartBounds.left,
             right = chartBounds.right,
-            centerY = if (position.isBottom) bounds.top + axisThickness.half else bounds.bottom - axisThickness.half
+            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half
         )
 
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)

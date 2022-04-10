@@ -95,7 +95,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     left = chartBounds.left,
                     top = centerY - guidelineThickness.half,
                     right = chartBounds.right,
-                    bottom = centerY + guidelineThickness.half,
+                    bottom = centerY - guidelineThickness.half,
                 )
             }?.drawHorizontal(
                 context = context,
