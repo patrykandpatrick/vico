@@ -38,6 +38,7 @@ import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
  * @param lineCount the line count.
  * @param padding the padding between the text and the background.
  * @param margins the margins around the background.
+ * @param rotationDegrees the clockwise rotation of this text relative to its center. [1f] is equal to 1° of rotation.
  */
 @Composable
 public fun textComponent(
@@ -48,6 +49,7 @@ public fun textComponent(
     lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
+    rotationDegrees: Float = 0f,
 ): TextComponent = buildTextComponent {
     this.color = color.toArgb()
     this.textSizeSp = textSize.pixelSize()
@@ -56,4 +58,5 @@ public fun textComponent(
     this.background = background
     this.padding = padding
     this.margins = margins
+    this.rotationDegrees = rotationDegrees
 }

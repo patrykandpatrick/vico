@@ -74,8 +74,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     public var typeface: Typeface? by textPaint::typeface
 
     /**
-     * The clockwise rotation of this text relatively to its center.
-     * [1f] equals to 1° of rotation.
+     * The clockwise rotation of this text relative to its center. [1f] is equal to 1° of rotation.
      */
     public var rotationDegrees: Float = 0f
 
