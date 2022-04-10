@@ -22,7 +22,7 @@ import com.patrykandpatryk.vico.core.axis.model.ChartModel
 /**
  * The default implementation of [AxisValueFormatter]. This converts [Float]s to [String]s.
  */
-public class DefaultAxisFormatter<Position : AxisPosition> : AxisValueFormatter<Position> {
+public class DefaultAxisValueFormatter<Position : AxisPosition> : AxisValueFormatter<Position> {
     override fun formatValue(
         value: Float,
         chartModel: ChartModel,

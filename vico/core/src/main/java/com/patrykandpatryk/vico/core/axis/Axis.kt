@@ -20,7 +20,7 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatryk.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
-import com.patrykandpatryk.vico.core.axis.formatter.DefaultAxisFormatter
+import com.patrykandpatryk.vico.core.axis.formatter.DefaultAxisValueFormatter
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.context.MeasureContext
@@ -92,7 +92,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     /**
      * The [AxisValueFormatter] for the axis.
      */
-    public var valueFormatter: AxisValueFormatter<Position> = DefaultAxisFormatter()
+    public var valueFormatter: AxisValueFormatter<Position> = DefaultAxisValueFormatter()
 
     override fun setRestrictedBounds(vararg bounds: RectF?) {
         restrictedBounds.setAll(bounds.filterNotNull())
