@@ -211,8 +211,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         } else {
             labels.clear()
             val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
-            for (index in maxLabelCount downTo 0) {
-                val value = chartModel.maxY - step * index
+            for (index in 0..maxLabelCount) {
+                val value = chartModel.minY + step * index
                 labels += valueFormatter.formatValue(value, chartModel)
             }
             putExtra(LABELS_KEY, labels)
