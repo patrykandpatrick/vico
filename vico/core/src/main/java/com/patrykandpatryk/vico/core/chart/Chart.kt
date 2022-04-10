@@ -38,8 +38,8 @@ public interface Chart<in Model> : BoundsAware {
     public val entryLocationMap: Map<Float, MutableList<Marker.EntryModel>>
 
     /**
-     * A [Collection] of [ChartInsetter] this [Chart] holds. Each [ChartInsetter] can influence a final layout of
-     * the Chart and its components.
+     * A [Collection] of the [ChartInsetter]s held by this [Chart]. Each [ChartInsetter] can influence the
+     * final layout of the chart and its components.
      *
      * @see ChartInsetter
      */
