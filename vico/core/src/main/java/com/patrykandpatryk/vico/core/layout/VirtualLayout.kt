@@ -61,6 +61,7 @@ public open class VirtualLayout {
         tempInsets.clear()
         axisManager.addInsetters(tempInsetters)
         chartInsetter.filterNotNull().forEach(tempInsetters::add)
+        tempInsetters.addAll(chart.chartInsetters)
 
         tempInsetters.forEach { insetter ->
             insetter.getInsets(context, tempInsets)

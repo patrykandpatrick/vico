@@ -19,6 +19,7 @@ package com.patrykandpatryk.vico.core.chart
 import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.context.MeasureContext
@@ -35,6 +36,14 @@ public interface Chart<in Model> : BoundsAware {
      * to draw a [Marker].
      */
     public val entryLocationMap: Map<Float, MutableList<Marker.EntryModel>>
+
+    /**
+     * A [Collection] of [ChartInsetter] this [Chart] holds. Each [ChartInsetter] can influence a final layout of
+     * the Chart and its components.
+     *
+     * @see ChartInsetter
+     */
+    public val chartInsetters: Collection<ChartInsetter>
 
     /**
      * The minimum value shown on the y-axis.

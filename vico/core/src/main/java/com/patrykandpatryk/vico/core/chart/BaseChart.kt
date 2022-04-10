@@ -19,6 +19,7 @@ package com.patrykandpatryk.vico.core.chart
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.getEntryModel
@@ -49,6 +50,8 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         get() = this@BaseChart.maxX ?: maxX
 
     override val bounds: RectF = RectF()
+
+    override val chartInsetters: Collection<ChartInsetter> = persistentMarkers.values
 
     override var minY: Float? = null
     override var maxY: Float? = null

@@ -20,6 +20,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.TextUtils
 import androidx.annotation.ColorInt
+import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.component.OverlayingComponent
 import com.patrykandpatryk.vico.core.component.marker.MarkerComponent
 import com.patrykandpatryk.vico.core.component.shape.DashedShape
@@ -29,6 +30,7 @@ import com.patrykandpatryk.vico.core.component.shape.Shapes.pillShape
 import com.patrykandpatryk.vico.core.component.shape.cornered.Corner
 import com.patrykandpatryk.vico.core.component.shape.cornered.MarkerCorneredShape
 import com.patrykandpatryk.vico.core.component.text.buildTextComponent
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.core.marker.Marker
@@ -40,32 +42,22 @@ internal fun getMarker(
     @ColorInt guidelineColor: Int,
 ): Marker {
 
+    val labelBackgroundShape = MarkerCorneredShape(all = Corner.FullyRounded)
     val label = buildTextComponent {
         color = labelColor
         ellipsize = TextUtils.TruncateAt.END
         lineCount = 1
         padding = MutableDimensions(startDp = 8f, topDp = 4f, endDp = 8f, bottomDp = 4f)
         typeface = Typeface.MONOSPACE
-        background = ShapeComponent(
-            shape = MarkerCorneredShape(all = Corner.FullyRounded),
-            color = bubbleColor,
-        ).setShadow(radius = 4f, dy = 2f, applyElevationOverlay = true)
+        background = ShapeComponent(shape = labelBackgroundShape, color = bubbleColor)
+            .setShadow(radius = SHADOW_RADIUS, dy = SHADOW_DY, applyElevationOverlay = true)
     }
 
-    val indicatorInner = ShapeComponent(
-        shape = pillShape,
-        color = indicatorInnerColor,
-    )
+    val indicatorInner = ShapeComponent(shape = pillShape, color = indicatorInnerColor)
 
-    val indicatorCenter = ShapeComponent(
-        shape = pillShape,
-        color = Color.WHITE,
-    )
+    val indicatorCenter = ShapeComponent(shape = pillShape, color = Color.WHITE)
 
-    val indicatorOuter = ShapeComponent(
-        shape = pillShape,
-        color = Color.WHITE,
-    )
+    val indicatorOuter = ShapeComponent(shape = pillShape, color = Color.WHITE)
 
     val indicator = OverlayingComponent(
         outer = indicatorOuter,
@@ -87,21 +79,31 @@ internal fun getMarker(
         )
     )
 
-    return MarkerComponent(
+    return object : MarkerComponent(
         label = label,
         indicator = indicator,
         guideline = guideline,
-    ).apply {
-        indicatorSizeDp = INDICATOR_SIZE_DP
-        onApplyEntryColor = { entryColor ->
-            indicatorOuter.color = entryColor.copyColor(alpha = 32)
-            with(indicatorCenter) {
-                color = entryColor
-                setShadow(radius = 12f, color = entryColor)
+    ) {
+        init {
+            indicatorSizeDp = INDICATOR_SIZE_DP
+            onApplyEntryColor = { entryColor ->
+                indicatorOuter.color = entryColor.copyColor(alpha = 32)
+                with(indicatorCenter) {
+                    color = entryColor
+                    setShadow(radius = 12f, color = entryColor)
+                }
             }
+        }
+
+        override fun getInsets(context: MeasureContext, outInsets: Insets) = with(context) {
+            outInsets.top = label.getHeight(context) + labelBackgroundShape.tickSizeDp.pixels +
+                SHADOW_RADIUS.pixels * SHADOW_RADIUS_TO_PX_MULTIPLIER - SHADOW_DY.pixels
         }
     }
 }
 
+private const val SHADOW_RADIUS = 4f
+private const val SHADOW_RADIUS_TO_PX_MULTIPLIER = 1.3f
+private const val SHADOW_DY = 2f
 private const val GUIDELINE_ALPHA = 0.2f
 private const val INDICATOR_SIZE_DP = 36f
