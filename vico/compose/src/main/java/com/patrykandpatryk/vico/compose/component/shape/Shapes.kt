@@ -75,7 +75,7 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
                 top,
                 right,
                 bottom,
-                Path.Direction.CCW
+                Path.Direction.CCW,
             )
             is Outline.Rounded -> path.addRoundRect(
                 left = left,
@@ -83,7 +83,7 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
                 right = right,
                 bottom = bottom,
                 rect = outline.roundRect,
-                radii = radii
+                radii = radii,
             )
             is Outline.Generic -> {
                 matrix.setTranslate(left, top)
