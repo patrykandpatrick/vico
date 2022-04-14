@@ -1,5 +1,3 @@
-_Note: While Vico is already available, the README and wiki are under construction._
-
 ![](/cover.png)
 
 # Vico
@@ -10,8 +8,8 @@ _Note: While Vico is already available, the README and wiki are under constructi
 
 Vico is a light and extensible chart library for Jetpack Compose and the view system. It comprises two main modules:
 
--   `vico.compose` (for Jetpack Compose)
--   `vico.view` (for views)
+-   `compose` (for Jetpack Compose)
+-   `view` (for views)
 
 Vico has a very low number of dependecies, and these two modules don’t depend on each other. [Find out how.](#how-is-that)
 
@@ -19,21 +17,21 @@ Vico has a very low number of dependecies, and these two modules don’t depend 
 
 As a library compatible with both Compose and views, Vico is quite unique. It doesn’t depend on the interoperability between the two UI systems.
 
-The shared, main logic resides in the `vico.core` module and depends on the Android SDK. It doesn’t know anything about views or Jetpack Compose. Likewise, `vico.view` (for views) doesn’t know anything about Jetpack Compose, and `vico.compose` (for Jetpack Compose) doesn’t know anything about views.
+The shared, main logic resides in the `core` module and depends on the Android SDK. It doesn’t know anything about views or Jetpack Compose. Likewise, `view` (for views) doesn’t know anything about Jetpack Compose, and `compose` (for Jetpack Compose) doesn’t know anything about views.
 
-### How is that?
+### Achieving module independence
 
 I was a little curious about Jetpack Compose’s internals and how come it is interoperable with views.
 
 “Can you, fairly easily, share the code used to draw on the `Canvas` between these two UI paradigms?” I asked myself.
 
-The answer is yes. `vico.core` uses `android.graphics.Canvas` (also used by views) to draw charts, and `androidx.compose.ui.graphics.drawscope.DrawScope` (used by Jetpack Compose) exposes `android.graphics.Canvas` via `DrawScope#canvas#nativeCanvas`. It’s similar for other APIs, like `Path`.
+The answer is yes. `core` uses `android.graphics.Canvas` (also used by views) to draw charts, and `androidx.compose.ui.graphics.drawscope.DrawScope` (used by Jetpack Compose) exposes `android.graphics.Canvas` via `DrawScope#canvas#nativeCanvas`. It’s similar for other APIs, like `Path`.
 
 This approach encourages a greater level of abstraction and promotes separation of concerns. It also helped make the API highly extensible.
 
 ## Getting started
 
-1. Ensure your app’s minimum SDK version is 16 (for `vico.core` and `vico.view`) or 21 (for `vico.compose`, `vico.compose-m2`, and `vico.compose-m3`). This is declared in the module-level `build.gradle` file.
+1. Ensure your app’s minimum SDK version is 16 (for `core` and `view`) or 21 (for `compose`, `compose-m2`, and `compose-m3`). This is declared in the module-level `build.gradle` file.
 
     ```groovy
     android {
@@ -90,114 +88,28 @@ The following table outlines the modules included in this library:
 | `compose-m2` | An optional addition for `compose` that creates a `ChartStyle` based on an M2 Material Theme. |
 | `compose-m3` | An optional addition for `compose` that creates a `ChartStyle` based on an M3 Material Theme. |
 
-## Jetpack Compose
+## Basic example
 
-### Basic example
+Chart data in Vico is stored in [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s. For a static chart, you can create a [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/) instance via the [`entryModelOf`](<https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/entry-model-of?query=fun%20entryModelOf(vararg%20entries:%20Pair%3CNumber,%20Number%3E):%20ChartEntryModel>) helper function:
 
-A basic column chart with two axes and five entries can be added as follows:
+```kt
+val entryModel = entryModelOf(5f, 15f, 10f, 20f, 10f)
+```
+
+This creates a [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/) that can be used in, for example, a column chart. The chart will have five columns.
+
+In Jetpack Compose, use the [`Chart`](https://vico.patrykandpatryk.com/vico/compose/com.patrykandpatryk.vico.compose.chart/-chart) composable:
 
 ```kt
 Chart(
     chart = columnChart(),
-    model = entryModelOf(5f, 15f, 10f, 20f, 10f),
+    model = entryModel,
     startAxis = startAxis(),
     bottomAxis = bottomAxis(),
 )
 ```
 
-### `ChartEntryModelProducer` & updating data
-
-For more complex datasets, use `ChartEntryModelProducer` (or `ComposedChartEntryModelProducer` for
-[composed charts](#composed-charts)). The following example displays a line chart and a button that updates its data:
-
-```kt
-fun getRandomEntries() = List(size = 5) {
-    25f * Random.nextFloat()
-}.mapIndexed { x, y ->
-    FloatEntry(
-        x = x.toFloat(),
-        y = y,
-    )
-}
-
-val chartModelProducer = remember { ChartEntryModelProducer(getRandomEntries()) }
-
-Column {
-    Chart(
-        chart = lineChart(),
-        chartModelProducer = chartModelProducer,
-        startAxis = startAxis(),
-        bottomAxis = bottomAxis(),
-    )
-
-    Spacer(modifier = Modifier.height(16.dp))
-
-    Button(onClick = { chartModelProducer.setEntries(getRandomEntries()) }) {
-        Text(text = "Update entries")
-    }
-}
-```
-
-### Composed charts
-
-You can combine multiple charts into one. The following example displays a composed chart that
-comprises a column chart and a line chart, each displaying a different randomized dataset:
-
-```kt
-fun getRandomEntries() = List(size = 5) {
-    25f * Random.nextFloat()
-}.mapIndexed { x, y ->
-    FloatEntry(
-        x = x.toFloat(),
-        y = y,
-    )
-}
-
-val firstChartModelProducer = remember { ChartEntryModelProducer(getRandomEntries()) }
-val secondChartModelProducer = remember { ChartEntryModelProducer(getRandomEntries()) }
-val composedChartModelProducer = remember(
-    firstChartModelProducer,
-    secondChartModelProducer,
-) { firstChartModelProducer + secondChartModelProducer }
-
-Chart(
-    chart = lineChart() + columnChart(),
-    chartModelProducer = chartModelProducer,
-    startAxis = startAxis(),
-    bottomAxis = bottomAxis(),
-)
-```
-
-### Customization
-
-The easiest way to customize the appearance of charts is to provide a custom `ChartStyle`
-implementation via `ProvideChartStyle`. This enables you to customize the colors, dimensions,
-typography, and more. All charts and their components use the style provided by `ProvideChartStyle`
-by default, but you can customize each chart individually if needed. For example, the `lineChart`
-function allows you to specify the line thickness, the line color, and so on. The default values
-for these parameters are `currentChartStyle.lineChart.lineThickness` and
-`currentChartStyle.lineChart.lineColor`. `ProvideChartStyle` is similar to `MaterialTheme` from
-`compose.material` and `compose.material3`. It can be used as follows:
-
-```kt
-ProvideChartStyle(chartStyle = ChartStyle(...)) {
-   ...
-}
-```
-
-If you use `compose.material` or `compose.material3` in your app, you can use the `m2ChartStyle`
-(`vico.compose-m2`) or `m3ChartStyle` (`vico.compose-m3`) function to create a `ChartStyle`
-implementation that uses the colors from your app’s Material Theme:
-
-```kt
-ProvideChartStyle(chartStyle = m3ChartStyle()) {
-    ...
-}
-```
-
-## Views
-
-A basic column chart with two axes and five entries can be added as follows. First, add a `ChartView` to your XML layout file:
+In the view system, use [`ChartView`](https://vico.patrykandpatryk.com/vico/view/com.patrykandpatryk.vico.view.chart/-chart-view/):
 
 ```xml
 <com.patrykandpatryk.vico.view.chart.ChartView
@@ -209,8 +121,109 @@ A basic column chart with two axes and five entries can be added as follows. Fir
     app:showStartAxis="true" />
 ```
 
-Then, set the model for the chart:
+```kt
+findViewById<ChartView>(R.id.chart).model = entryModel
+```
+
+## Dynamic data & data updates
+
+For dynamic data sets, use [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer) (or [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer) for
+[composed charts](#composed-charts)).
+
+For this example, we’ll use a function that generates a random list of [`FloatEntry`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-float-entry/) instances. A [`FloatEntry`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-float-entry/) describes a single chart entry (e.g., a column).
 
 ```kt
-findViewById<ChartView>(R.id.chart).model = entryModelOf(5f, 15f, 10f, 20f, 10f)
+fun getRandomEntries() = List(size = 5) {
+    25f * Random.nextFloat()
+}.mapIndexed { x, y ->
+    FloatEntry(
+        x = x.toFloat(),
+        y = y,
+    )
+}
 ```
+
+A list returned by this function can be used to initialize a [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer/), which should happen in the viewmodel:
+
+```kt
+val producer = ChartEntryModelProducer(getRandomEntries())
+```
+
+In Compose, you can once again use the [`Chart`](https://vico.patrykandpatryk.com/vico/compose/com.patrykandpatryk.vico.compose.chart/-chart) composable, but this time the overload with a `chartModelProducer` parameter:
+
+```kt
+Chart(
+    chart = lineChart(),
+    chartModelProducer = producer,
+    startAxis = startAxis(),
+    bottomAxis = bottomAxis(),
+)
+```
+
+In the view system, you can connect a chart to a [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer) as follows:
+
+```xml
+<com.patrykandpatryk.vico.view.chart.ChartView
+    android:id="@+id/chart"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:chartType="column"
+    app:showBottomAxis="true"
+    app:showStartAxis="true" />
+```
+
+```kt
+findViewById<ChartView>(R.id.chart).entryProducer = producer
+```
+
+With [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer), you can update the data displayed by a chart. For the above example, this would be done as follows:
+
+```kt
+chartModelProducer.setEntries(getRandomEntries()
+```
+
+Differences are animated by default.
+
+## Composed charts
+
+You can combine multiple charts into one. This example uses the `getRandomEntries` function from above.
+
+A composed chart requires a [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer), which can be created from two regular [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer)s:
+
+```kt
+val firstProducer = ChartEntryModelProducer(getRandomEntries())
+val secondProducer = ChartEntryModelProducer(getRandomEntries())
+val composedProducer = firstProducer + secondProducer
+```
+
+A composed chart can be created in Jetpack Compose as follows:
+
+```kt
+Chart(
+    chart = lineChart() + columnChart(),
+    chartModelProducer = composedProducer,
+    startAxis = startAxis(),
+    bottomAxis = bottomAxis(),
+)
+```
+
+And here’s the same chart in the view system. Note that we’re now using [`ComposedChartView`](https://vico.patrykandpatryk.com/vico/view/com.patrykandpatryk.vico.view.chart/-composed-chart-view/):
+
+```xml
+<com.patrykandpatryk.vico.view.chart.ComposedChartView
+    android:id="@+id/chart"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    app:chartType="column"
+    app:showBottomAxis="true"
+    app:showStartAxis="true"
+    app:charts="line|column" />
+```
+
+```kt
+findViewById<ComposedChartView>(R.id.chart).entryProducer = composedProducer
+```
+
+## Further reading
+
+Vico offers rich options for customization and an extensible API. These topics are covered in [the wiki](https://github.com/patrykandpatryk/vico/wiki). Additionally, [the API reference](https://vico.patrykandpatryk.com/) describes every public class, function, and field.
