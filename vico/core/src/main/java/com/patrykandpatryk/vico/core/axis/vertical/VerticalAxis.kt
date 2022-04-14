@@ -140,7 +140,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
             label ?: return@forEach
             val labelText = labels.getOrNull(index) ?: return@forEach
-            val textBounds = label.getTextBounds(context, labelText).translate(labelX, tickCenterY)
+            val textBounds = label.getTextBounds(context, labelText).apply {
+                translate(
+                    x = labelX,
+                    y = tickCenterY - centerY(),
+                )
+            }
+
             if (
                 horizontalLabelPosition == Outside ||
                 isNotInRestrictedBounds(
