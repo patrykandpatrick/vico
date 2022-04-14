@@ -88,6 +88,10 @@ The following table outlines the modules included in this library:
 | `compose-m2` | An optional addition for `compose` that creates a `ChartStyle` based on an M2 Material Theme. |
 | `compose-m3` | An optional addition for `compose` that creates a `ChartStyle` based on an M3 Material Theme. |
 
+## Sample app
+
+Included in this repository is [a sample app](https://github.com/patrykandpatryk/vico/tree/master/sample) with multiple charts and two tabs—one for Jetpack Compose, and the other one for the view system. Studying the source code of the app will give you a deep understanding of how to use Vico, including topics such as updating data and customizing charts. All of the charts included in the graphic at the top of this README are implemented in the sample app.
+
 ## Basic example
 
 Chart data in Vico is stored in [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s. For a static chart, you can create a [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/) instance via the [`entryModelOf`](<https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/entry-model-of?query=fun%20entryModelOf(vararg%20entries:%20Pair%3CNumber,%20Number%3E):%20ChartEntryModel>) helper function:
@@ -226,4 +230,8 @@ findViewById<ComposedChartView>(R.id.chart).entryProducer = composedProducer
 
 ## Further reading
 
-Vico offers rich options for customization and an extensible API. These topics are covered in [the wiki](https://github.com/patrykandpatryk/vico/wiki). Additionally, [the API reference](https://vico.patrykandpatryk.com/) describes every public class, function, and field.
+Vico offers rich options for customization and an extensible API. The following resources are available to help you learn about it:
+
+- [The sample app](https://github.com/patrykandpatryk/vico/tree/master/sample) contains a full implementation of Vico.
+- [The wiki](https://github.com/patrykandpatryk/vico/wiki) describes core topics and includes a detailed customization guide.
+- [The API reference](https://vico.patrykandpatryk.com) describes every public class, function, and field.
