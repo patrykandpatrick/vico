@@ -89,9 +89,7 @@ public fun ThresholdLine() {
                     ThresholdLine(
                         thresholdValue = 2f,
                         lineComponent = shapeComponent(color = Color.Black),
-                        labelComponent = textComponent(Color.Black).apply {
-                            setPadding(horizontal = 8.dp)
-                        },
+                        labelComponent = textComponent(Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
                     )
                 )
             },
