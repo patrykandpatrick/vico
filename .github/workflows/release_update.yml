@@ -35,14 +35,11 @@ jobs:
           sed -i "s/$OLD_VERSION_NAME/$NEW_VERSION_NAME/g" README.md
           git add README.md
           git commit -m "Update README" -m "[skip ci]"
-          git push origin
       - name: Determine tag name
         run: |
           echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
       - name: Create tag
-        run: |
-          git tag ${{ env.TAG_NAME }}
-          git push origin --tags
+        run: git tag ${{ env.TAG_NAME }}
       - name: Create `IS_PRERELEASE` environment variable
         run: |
           IS_PRERELEASE=false
@@ -56,6 +53,15 @@ jobs:
           token: ${{ secrets.VICO_CHART_BOT_PAT }}
           body_path: ${{ github.workspace }}/CHANGELOG.txt
           prerelease: ${{ env.IS_PRERELEASE }}
+      - name: Update docs
+        run: |
+          ./gradlew dokkaHtmlMultiModule
+          git add docs
+          git commit -m "Update docs" -m "[skip ci]"
+      - name: Push local changes to remote repository
+        run: |
+          git push origin
+          git push origin --tags
       - name: Publish to Maven Central
         run: ./gradlew publish
         env:
