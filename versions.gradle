@@ -41,6 +41,6 @@ ext {
             mockk             : "1.12.3",
             viewmodel         : "2.4.1",
             testCore          : "1.3.0",
-            compose_material3 : "1.0.0-alpha09"
+            compose_material3 : "1.0.0-alpha09",
     ]
 }
