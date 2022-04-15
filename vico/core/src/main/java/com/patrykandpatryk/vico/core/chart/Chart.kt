@@ -26,14 +26,13 @@ import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.marker.Marker
 
 /**
- * The interface defining minimal set of properties and functions required by other parts of the library to draw
- * a chart.
+ * Defines the minimal set of properties and functions required by other parts of the library to draw a chart.
  */
 public interface Chart<in Model> : BoundsAware {
 
     /**
-     * A [Map] holding x-axis values as keys to their corresponding [Marker.EntryModel] holding data necessary
-     * to draw a [Marker].
+     * A [Map] that links each x-axis value to its corresponding [Marker.EntryModel], which holds the data
+     * needed to draw a [Marker].
      */
     public val entryLocationMap: Map<Float, MutableList<Marker.EntryModel>>
 
@@ -47,8 +46,8 @@ public interface Chart<in Model> : BoundsAware {
 
     /**
      * The minimum value shown on the y-axis.
-     * In case [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and the [minY]
-     * is not null, it overrides the minimal y-axis value defined in
+     * If [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and [minY]
+     * is not null, this overrides the minimal y-axis value defined in
      * [com.patrykandpatryk.vico.core.entry.ChartEntryModel.minY].
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.minY
@@ -57,8 +56,8 @@ public interface Chart<in Model> : BoundsAware {
 
     /**
      * The maximum value shown on the y-axis.
-     * In case [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and the [maxY]
-     * is not null, it overrides the maximal y-axis value defined in
+     * If [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and [maxY]
+     * is not null, this overrides the maximum y-axis value defined in
      * [com.patrykandpatryk.vico.core.entry.ChartEntryModel.maxY].
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.maxY
@@ -67,8 +66,8 @@ public interface Chart<in Model> : BoundsAware {
 
     /**
      * The minimum value shown on the x-axis.
-     * In case [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and the [minX]
-     * is not null, it overrides the minimal x-axis value defined in
+     * If [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and [minX]
+     * is not null, this overrides the minimal x-axis value defined in
      * [com.patrykandpatryk.vico.core.entry.ChartEntryModel.minX].
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.minX
@@ -77,8 +76,8 @@ public interface Chart<in Model> : BoundsAware {
 
     /**
      * The maximum value shown on the x-axis.
-     * In case [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and the [maxX]
-     * is not null, it overrides the maximal x-axis value defined in
+     * If [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and [maxX]
+     * is not null, this overrides the maximum x-axis value defined in
      * [com.patrykandpatryk.vico.core.entry.ChartEntryModel.maxX].
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.maxX
@@ -87,8 +86,8 @@ public interface Chart<in Model> : BoundsAware {
 
     /**
      * The function responsible for drawing the chart itself.
-     * @param context The drawing context holding data about environment, as well as Canvas to draw on.
-     * @param model The model holding data about entries that are meant to be drawn.
+     * @param context a drawing context that holds data about the environment as well as the [Canvas] to draw on.
+     * @param model holds data about the entries that are supposed to be drawn.
      *
      * @see ChartDrawContext
      */
@@ -100,7 +99,7 @@ public interface Chart<in Model> : BoundsAware {
     /**
      * Adds a [Decoration] to this [Chart].
      *
-     * @return true if decoration was added successfully.
+     * @return `true` if the decoration was added successfully.
      *
      * @see Decoration
      */
@@ -114,7 +113,7 @@ public interface Chart<in Model> : BoundsAware {
     /**
      * Removes a [Decoration] from this [Chart].
      *
-     * @return true if decoration was removed successfully.
+     * @return `true` if the decoration was removed successfully.
      *
      * @see Decoration
      */
@@ -123,7 +122,7 @@ public interface Chart<in Model> : BoundsAware {
     /**
      * Removes each [Decoration] from [decorations] from this [Chart].
      *
-     * @return true if all decorations were removed successfully.
+     * @return `true` if all decorations were removed successfully.
      *
      * @see removeDecoration
      * @see Decoration
