@@ -16,6 +16,10 @@
 
 package com.patrykandpatryk.vico.sample.compose.preview
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
@@ -27,12 +31,11 @@ import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
-import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatryk.vico.compose.component.dimension.setPadding
 import com.patrykandpatryk.vico.compose.component.lineComponent
-import com.patrykandpatryk.vico.compose.component.shapeComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatryk.vico.compose.component.shape.textComponent
+import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.compose.style.LocalChartStyle
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatryk.vico.core.component.shape.Shapes
@@ -41,18 +44,22 @@ import com.patrykandpatryk.vico.core.entry.entryModelOf
 
 private val model = entryModelOf(1, 2, 3, 4)
 
+public val Color.Companion.DimmedGray: Color
+    get() = Color(0xFFAAAAAA)
+
 @Composable
 private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
     val chartStyle = LocalChartStyle.current.copy(
         axis = LocalChartStyle.current.axis.copy(
-            axisLabelColor = Color.Gray,
-            axisLineColor = Color.Gray,
-            axisGuidelineColor = Color.LightGray,
+            axisLabelColor = Color.DimmedGray,
+            axisLineColor = Color.DimmedGray,
+            axisTickColor = Color.DimmedGray,
+            axisGuidelineColor = Color.DimmedGray,
         ),
         columnChart = LocalChartStyle.current.columnChart.copy(
             columns = LocalChartStyle.current.columnChart.columns.map {
                 lineComponent(
-                    color = Color.Gray,
+                    color = Color.DimmedGray,
                     thickness = it.thicknessDp.dp,
                     shape = it.shape,
                     dynamicShader = it.dynamicShader,
@@ -61,10 +68,17 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
             }
         )
     )
-    CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
+    Surface(
+        color = Color.Transparent,
+        modifier = Modifier
+            .background(color = Color.LightGray, shape = RoundedCornerShape(size = 4.dp))
+            .padding(8.dp)
+    ) {
+        CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
+    }
 }
 
-@Preview(showBackground = true, widthDp = 250)
+@Preview(widthDp = 250)
 @Composable
 public fun ThresholdLine() {
     ProvidePreviewChartStyle {
@@ -89,7 +103,7 @@ public fun ThresholdLine() {
     }
 }
 
-@Preview(showBackground = true, widthDp = 250)
+@Preview(widthDp = 250)
 @Composable
 public fun ThresholdLineWithCustomText() {
     ProvidePreviewChartStyle {
@@ -150,7 +164,7 @@ public fun ThresholdLineWithCustomText() {
     }
 }
 
-@Preview(showBackground = true, widthDp = 250)
+@Preview(widthDp = 250)
 @Composable
 public fun RangedThresholdLine() {
     ProvidePreviewChartStyle {
@@ -173,7 +187,7 @@ public fun RangedThresholdLine() {
     }
 }
 
-@Preview(showBackground = true, widthDp = 250)
+@Preview(widthDp = 250)
 @Composable
 public fun RangedThresholdLineWithBrushShader() {
     ProvidePreviewChartStyle {
@@ -204,7 +218,7 @@ public fun RangedThresholdLineWithBrushShader() {
     }
 }
 
-@Preview(showBackground = true, widthDp = 250)
+@Preview(widthDp = 250)
 @Composable
 public fun RangedThresholdLineWithComponentShader() {
     ProvidePreviewChartStyle {
