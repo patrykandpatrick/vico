@@ -33,5 +33,5 @@ internal enum class Tab(
     ViewShowcase(
         labelResourceId = R.string.showcase_view_title,
         createFragment = ::ViewShowcaseFragment,
-    )
+    ),
 }
