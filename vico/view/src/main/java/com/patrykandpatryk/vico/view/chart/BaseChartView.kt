@@ -193,7 +193,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var marker: Marker? = null
 
     /**
-     * The color of elevation overlay, applied to components that cast shadows in
+     * The color of elevation overlays, which are applied to components that cast shadows in
      * [com.patrykandpatryk.vico.core.component.shape.ShapeComponent].
      */
     public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
