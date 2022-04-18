@@ -113,12 +113,15 @@ internal class ViewShowcaseFragment : Fragment() {
             chartModelProducer = showcaseViewModel.chartEntryModelProducer,
             marker = marker,
         ) {
+            val secondaryColor = context.resolveColorAttribute(R.attr.colorSecondary)
+
             chart?.addDecoration(
                 decoration = ThresholdLine(
                     thresholdValue = Tokens.LineChart.THRESHOLD_VALUE,
                     labelComponent = getThresholdLineLabel(
-                        color = context.resolveColorAttribute(R.attr.colorOnSecondary),
-                        backgroundColor = context.resolveColorAttribute(R.attr.colorSecondary),
+                        color = secondaryColor,
+                        backgroundColor = context.resolveColorAttribute(R.attr.colorSurface),
+                        strokeColor = secondaryColor,
                     ),
                     lineComponent = ShapeComponent(
                         strokeColor = context.resolveColorAttribute(R.attr.colorSecondary),
@@ -165,8 +168,9 @@ internal class ViewShowcaseFragment : Fragment() {
                 decoration = ThresholdLine(
                     thresholdRange = tokens.THRESHOLD_START..tokens.THRESHOLD_END,
                     labelComponent = getThresholdLineLabel(
-                        color = context.resolveColorAttribute(R.attr.colorOnPrimary),
-                        backgroundColor = primaryColor,
+                        color = primaryColor,
+                        backgroundColor = context.resolveColorAttribute(R.attr.colorSurface),
+                        strokeColor = primaryColor,
                     ),
                     lineComponent = ShapeComponent(
                         color = primaryColor.copyColor(alpha = tokens.THRESHOLD_LINE_BACKGROUND_ALPHA),
@@ -188,6 +192,10 @@ internal class ViewShowcaseFragment : Fragment() {
                 label?.apply {
                     color = context.resolveColorAttribute(R.attr.colorOnSecondary)
                     setMargins(margins = dimensionsOf(verticalDp = tokens.LABEL_VERTICAL_MARGIN_DP))
+                    padding = dimensionsOf(
+                        horizontalDp = tokens.LABEL_HORIZONTAL_PADDING_DP,
+                        verticalDp = tokens.LABEL_VERTICAL_PADDING_DP,
+                    )
                     background = ShapeComponent(
                         shape = Shapes.pillShape,
                         color = context.resolveColorAttribute(R.attr.colorSecondary),

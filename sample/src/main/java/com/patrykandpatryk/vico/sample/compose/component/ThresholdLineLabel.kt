@@ -26,7 +26,9 @@ import com.patrykandpatryk.vico.sample.component.getThresholdLineLabel
 internal fun thresholdLineLabel(
     color: Color,
     backgroundColor: Color,
+    strokeColor: Color,
 ): TextComponent = getThresholdLineLabel(
     color = color.toArgb(),
     backgroundColor = backgroundColor.toArgb(),
+    strokeColor = strokeColor.toArgb(),
 )

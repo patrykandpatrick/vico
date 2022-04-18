@@ -38,8 +38,9 @@ internal fun LineChart(
         ThresholdLine(
             thresholdValue = Tokens.LineChart.THRESHOLD_VALUE,
             labelComponent = thresholdLineLabel(
-                color = MaterialTheme.colorScheme.onSecondary,
-                backgroundColor = MaterialTheme.colorScheme.secondary,
+                color = MaterialTheme.colorScheme.secondary,
+                backgroundColor = MaterialTheme.colorScheme.background,
+                strokeColor = MaterialTheme.colorScheme.secondary,
             ),
             lineComponent = ShapeComponent(
                 strokeColor = MaterialTheme.colorScheme.secondary.toArgb(),

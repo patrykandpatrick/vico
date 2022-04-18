@@ -39,5 +39,7 @@ internal object Tokens {
 
     object LineChartWithLabelsInside {
         const val LABEL_VERTICAL_MARGIN_DP = 4f
+        const val LABEL_HORIZONTAL_PADDING_DP = 8f
+        const val LABEL_VERTICAL_PADDING_DP = 4f
     }
 }

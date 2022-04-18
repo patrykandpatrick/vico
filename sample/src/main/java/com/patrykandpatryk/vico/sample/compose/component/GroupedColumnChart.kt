@@ -46,8 +46,9 @@ internal fun GroupedColumnChart(
                     .toArgb(),
             ),
             labelComponent = thresholdLineLabel(
-                color = MaterialTheme.colorScheme.onPrimary,
-                backgroundColor = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.primary,
+                backgroundColor = MaterialTheme.colorScheme.background,
+                strokeColor = MaterialTheme.colorScheme.primary,
             ),
         )
     )

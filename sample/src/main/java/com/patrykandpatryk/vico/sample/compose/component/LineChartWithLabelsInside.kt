@@ -40,6 +40,8 @@ internal fun LineChartWithLabelsInside(
         horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
         label = axisLabelComponent(
             verticalMargin = Tokens.LineChartWithLabelsInside.LABEL_VERTICAL_MARGIN_DP.dp,
+            verticalPadding = Tokens.LineChartWithLabelsInside.LABEL_VERTICAL_PADDING_DP.dp,
+            horizontalPadding = Tokens.LineChartWithLabelsInside.LABEL_HORIZONTAL_PADDING_DP.dp,
             color = MaterialTheme.colorScheme.onSecondary,
             background = shapeComponent(
                 shape = Shapes.pillShape,
