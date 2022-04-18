@@ -36,7 +36,7 @@ This approach encourages a greater level of abstraction and promotes separation 
     ```groovy
     android {
         defaultConfig {
-            minSdkVersion 16 // or 21 for Jetpack Compose
+            minSdkVersion 16 // Or 21 for Jetpack Compose.
             ...
         }
         ...
