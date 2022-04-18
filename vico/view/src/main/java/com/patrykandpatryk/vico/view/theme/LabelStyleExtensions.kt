@@ -28,7 +28,7 @@ import com.patrykandpatryk.vico.core.DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING
 import com.patrykandpatryk.vico.core.DefaultDimens.AXIS_LABEL_VERTICAL_PADDING
 import com.patrykandpatryk.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatryk.vico.core.component.text.TextComponent
-import com.patrykandpatryk.vico.core.component.text.buildTextComponent
+import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.extension.PI_RAD
 import com.patrykandpatryk.vico.core.extension.doubled
@@ -48,7 +48,7 @@ internal fun TypedArray.getTextComponent(
         styleableResourceId = R.styleable.ComponentStyle,
     ).getComponent(context)
 
-    buildTextComponent {
+    textComponent {
         this.color = color
         this.background = background
         this.padding = getLabelPadding(context)

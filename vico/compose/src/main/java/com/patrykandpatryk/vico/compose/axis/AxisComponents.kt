@@ -36,7 +36,7 @@ import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.component.text.TextComponent
-import com.patrykandpatryk.vico.core.component.text.buildTextComponent
+import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.dimensions.Dimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 
@@ -70,7 +70,7 @@ public fun axisLabelComponent(
     horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
     rotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
-): TextComponent = buildTextComponent {
+): TextComponent = textComponent {
     this.color = color.toArgb()
     this.textSizeSp = textSize.pixelSize()
     this.ellipsize = ellipsize

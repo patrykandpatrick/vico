@@ -29,7 +29,7 @@ import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes.pillShape
 import com.patrykandpatryk.vico.core.component.shape.cornered.Corner
 import com.patrykandpatryk.vico.core.component.shape.cornered.MarkerCorneredShape
-import com.patrykandpatryk.vico.core.component.text.buildTextComponent
+import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.extension.copyColor
@@ -43,7 +43,7 @@ internal fun getMarker(
 ): Marker {
 
     val labelBackgroundShape = MarkerCorneredShape(all = Corner.FullyRounded)
-    val label = buildTextComponent {
+    val label = textComponent {
         color = labelColor
         ellipsize = TextUtils.TruncateAt.END
         lineCount = 1

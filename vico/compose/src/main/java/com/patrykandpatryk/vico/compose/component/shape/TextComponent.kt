@@ -25,7 +25,7 @@ import com.patrykandpatryk.vico.compose.extension.pixelSize
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.text.TextComponent
-import com.patrykandpatryk.vico.core.component.text.buildTextComponent
+import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 
@@ -50,9 +50,9 @@ public fun textComponent(
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
     rotationDegrees: Float = 0f,
-): TextComponent = buildTextComponent {
+): TextComponent = textComponent {
     this.color = color.toArgb()
-    this.textSizeSp = textSize.pixelSize()
+    textSizeSp = textSize.pixelSize()
     this.ellipsize = ellipsize
     this.lineCount = lineCount
     this.background = background

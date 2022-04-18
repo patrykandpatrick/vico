@@ -21,13 +21,13 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
-import com.patrykandpatryk.vico.core.component.text.buildTextComponent
+import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 
 internal fun getThresholdLineLabel(
     color: Int,
     backgroundColor: Int,
-) = buildTextComponent {
+) = textComponent {
     this.color = color
     typeface = Typeface.MONOSPACE
     margins = MutableDimensions(

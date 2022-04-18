@@ -56,7 +56,7 @@ private const val LAYOUT_KEY_PREFIX = "layout_"
  * - Text background with padding. Any [Component] can be used as text’s background.
  * - Text margins.
  *
- * @see [buildTextComponent]
+ * @see [textComponent]
  */
 public open class TextComponent protected constructor() : Padding, Margins {
 
@@ -295,7 +295,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
 
     /**
      * The builder for [TextComponent].
-     * @see buildTextComponent
+     * @see textComponent
      */
     public class Builder {
 
@@ -366,12 +366,12 @@ public open class TextComponent protected constructor() : Padding, Margins {
  *
  * Example usage:
  * ```
- * buildTextComponent {
+ * textComponent {
  *    this.color = 0xFF000000 // Black color
  *    this.textSizeSp = 12f
  *    this.typeface = Typeface.MONOSPACE
  * }
  *```
  */
-public fun buildTextComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
+public fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
     TextComponent.Builder().apply(block).build()

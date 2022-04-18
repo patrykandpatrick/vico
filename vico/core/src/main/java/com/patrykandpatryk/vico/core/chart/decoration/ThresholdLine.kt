@@ -24,7 +24,7 @@ import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
-import com.patrykandpatryk.vico.core.component.text.buildTextComponent
+import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.extension.ceil
 import com.patrykandpatryk.vico.core.extension.floor
@@ -53,7 +53,7 @@ public data class ThresholdLine(
     ),
     val lineComponent: ShapeComponent = ShapeComponent(),
     val minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
-    val labelComponent: TextComponent = buildTextComponent(),
+    val labelComponent: TextComponent = textComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
 ) : Decoration {
@@ -75,7 +75,7 @@ public data class ThresholdLine(
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = ShapeComponent(),
         minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
-        labelComponent: TextComponent = buildTextComponent(),
+        labelComponent: TextComponent = textComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
     ) : this(
