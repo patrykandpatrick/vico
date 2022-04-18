@@ -176,7 +176,7 @@ public fun <Model : ChartEntryModel> Chart(
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
     val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
     val virtualLayout = remember { VirtualLayout() }
-    val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb().toLong()
+    val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
 
     Canvas(
         modifier = modifier

@@ -192,6 +192,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      */
     public var marker: Marker? = null
 
+    /**
+     * The color of elevation overlay, applied to components that cast shadows in
+     * [com.patrykandpatryk.vico.core.component.shape.ShapeComponent].
+     */
+    public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
+
     init {
         startAxis = themeHandler.startAxis
         topAxis = themeHandler.topAxis
@@ -251,7 +257,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         measureContext.horizontalScroll = scrollHandler.currentScroll
         val drawContext = chartDrawContext(
             canvas = canvas,
-            elevationOverlayColor = context.defaultColors.elevationOverlayColor,
+            elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint,
             segmentProperties = chart.getSegmentProperties(measureContext, model),

@@ -98,7 +98,7 @@ internal class ViewShowcaseFragment : Fragment() {
 
     private fun setUpColumnChart(marker: Marker) {
         binding.columnChart.setUpChart(
-            entries = showcaseViewModel.chartEntryModelProducer,
+            chartModelProducer = showcaseViewModel.chartEntryModelProducer,
             marker = marker,
         ) {
             chart?.addPersistentMarker(
@@ -110,7 +110,7 @@ internal class ViewShowcaseFragment : Fragment() {
 
     private fun setUpLineChart(marker: Marker) {
         binding.lineChart.setUpChart(
-            entries = showcaseViewModel.chartEntryModelProducer,
+            chartModelProducer = showcaseViewModel.chartEntryModelProducer,
             marker = marker,
         ) {
             chart?.addDecoration(
@@ -131,14 +131,14 @@ internal class ViewShowcaseFragment : Fragment() {
 
     private fun setUpStackedColumnChart(marker: Marker) {
         binding.stackedColumnChart.setUpChart(
-            entries = showcaseViewModel.multiChartEntryModelProducer,
+            chartModelProducer = showcaseViewModel.multiChartEntryModelProducer,
             marker = marker,
         )
     }
 
     private fun setUpComposedChart(marker: Marker) {
         binding.composedChart.setUpChart(
-            entries = showcaseViewModel.composedChartEntryModelProducer,
+            chartModelProducer = showcaseViewModel.composedChartEntryModelProducer,
             marker = marker,
         ) {
             val secondaryColor = context.resolveColorAttribute(R.attr.colorSecondary)
@@ -155,7 +155,7 @@ internal class ViewShowcaseFragment : Fragment() {
 
     private fun setUpGroupedColumnChart(marker: Marker) {
         binding.groupedColumnChart.setUpChart(
-            entries = showcaseViewModel.multiChartEntryModelProducer,
+            chartModelProducer = showcaseViewModel.multiChartEntryModelProducer,
             marker = marker,
         ) {
             val primaryColor = context.resolveColorAttribute(R.attr.colorPrimary)
@@ -178,7 +178,7 @@ internal class ViewShowcaseFragment : Fragment() {
 
     private fun setUpLineChartWithLabelsInside(marker: Marker) {
         binding.lineChartWithLabelsInside.setUpChart(
-            entries = showcaseViewModel.chartEntryModelProducer,
+            chartModelProducer = showcaseViewModel.chartEntryModelProducer,
             marker = marker,
         ) {
             val tokens = Tokens.LineChartWithLabelsInside

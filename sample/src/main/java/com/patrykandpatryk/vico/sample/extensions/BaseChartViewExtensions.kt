@@ -16,17 +16,23 @@
 
 package com.patrykandpatryk.vico.sample.extensions
 
+import android.content.Context
+import com.patrykandpatryk.vico.R
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.view.chart.BaseChartView
 
+private val Context.m3ElevationOverlayColor: Int
+    get() = resolveColorAttribute(R.attr.colorPrimary)
+
 internal fun <T : ChartEntryModel> BaseChartView<T>.setUpChart(
-    entries: ChartModelProducer<T>,
+    chartModelProducer: ChartModelProducer<T>,
     marker: Marker,
     block: (BaseChartView<T>.() -> Unit)? = null,
 ) {
     this.marker = marker
-    this.entryProducer = entries
+    entryProducer = chartModelProducer
+    elevationOverlayColor = context.m3ElevationOverlayColor
     block?.invoke(this)
 }

@@ -46,7 +46,7 @@ private const val DEFAULT_SCALE = 1f
 @LongParameterListDrawFunction
 public fun chartDrawContext(
     canvas: Canvas,
-    elevationOverlayColor: Long,
+    elevationOverlayColor: Int,
     measureContext: MeasureContext,
     markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
@@ -56,7 +56,7 @@ public fun chartDrawContext(
     override val canvasBounds: RectF = measureContext.canvasBounds
     override val chartBounds: RectF = chartBounds
     override var canvas: Canvas = canvas
-    override val elevationOverlayColor: Long = elevationOverlayColor
+    override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
     override val chartModel: ChartModel = chartModel
     override val markerTouchPoint: Point? = markerTouchPoint
     override val horizontalScroll: Float = measureContext.horizontalScroll
