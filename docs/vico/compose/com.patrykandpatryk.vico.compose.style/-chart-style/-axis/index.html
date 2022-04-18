@@ -1,382 +1,401 @@
+<!doctype html>
 <html>
-  <head>
+<head>
     <meta name="viewport" content="width=device-width, initial-scale=1" charset="UTF-8">
     <title>Axis</title>
-</head><body><link href="../../../../../images/logo-icon.svg" rel="icon" type="image/svg"><script>var pathToRoot = "../../../../../";</script>
-    <script type="text/javascript" src="../../../../../scripts/sourceset_dependencies.js" async></script><link href="../../../../../styles/style.css" rel="Stylesheet"><link href="../../../../../styles/jetbrains-mono.css" rel="Stylesheet"><link href="../../../../../styles/main.css" rel="Stylesheet"><link href="../../../../../styles/prism.css" rel="Stylesheet"><link href="../../../../../styles/logo-styles.css" rel="Stylesheet"><script type="text/javascript" src="../../../../../scripts/clipboard.js" async></script><script type="text/javascript" src="../../../../../scripts/navigation-loader.js" async></script><script type="text/javascript" src="../../../../../scripts/platform-content-handler.js" async></script><script type="text/javascript" src="../../../../../scripts/main.js" defer></script><script type="text/javascript" src="../../../../../scripts/prism.js" async></script><script>const storage = localStorage.getItem("dokka-dark-mode")
+<link href="../../../../../images/logo-icon.svg" rel="icon" type="image/svg">
+    <script>var pathToRoot = "../../../../../";</script>    <script>const storage = localStorage.getItem("dokka-dark-mode")
 const savedDarkMode = storage ? JSON.parse(storage) : false
 if(savedDarkMode === true){
     document.getElementsByTagName("html")[0].classList.add("theme-dark")
 }</script>
-
-  
-    <div class="navigation-wrapper" id="navigation-wrapper">
-      <div id="leftToggler"><span class="icon-toggler"></span></div>
-      <div class="library-name"><a href="../../../../../index.html"><span>Vico</span></a></div>
-      <div></div>
-      <div class="pull-right d-flex"><button id="theme-toggle-button"><span id="theme-toggle"></span></button>
-        <div id="searchBar"></div>
-      </div>
+<script type="text/javascript" src="../../../../../scripts/sourceset_dependencies.js" async></script>
+<link href="../../../../../styles/style.css" rel="Stylesheet">
+<link href="../../../../../styles/jetbrains-mono.css" rel="Stylesheet">
+<link href="../../../../../styles/main.css" rel="Stylesheet">
+<link href="../../../../../styles/prism.css" rel="Stylesheet">
+<link href="../../../../../styles/logo-styles.css" rel="Stylesheet">
+<script type="text/javascript" src="../../../../../scripts/clipboard.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/navigation-loader.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/platform-content-handler.js" async></script>
+<script type="text/javascript" src="../../../../../scripts/main.js" defer></script>
+<script type="text/javascript" src="../../../../../scripts/prism.js" async></script></head>
+<body>
+<div class="navigation-wrapper" id="navigation-wrapper">
+    <div id="leftToggler"><span class="icon-toggler"></span></div>
+    <div class="library-name">
+<a href="../../../../../index.html">
+<span>Vico</span>            </a>    </div>
+    <div>
     </div>
-    <div id="container">
-      <div id="leftColumn">
+    <div class="pull-right d-flex">
+        <button id="theme-toggle-button"><span id="theme-toggle"></span></button>
+        <div id="searchBar"></div>
+    </div>
+</div>
+<div id="container">
+    <div id="leftColumn">
         <div id="sideMenu"></div>
-      </div>
-      <div id="main">
-        <div class="main-content" id="content" pageids="compose::com.patrykandpatryk.vico.compose.style/ChartStyle.Axis///PointingToDeclaration//1473837692">
-          <div class="breadcrumbs"><a href="../../../index.html">compose</a>/<a href="../../index.html">com.patrykandpatryk.vico.compose.style</a>/<a href="../index.html">ChartStyle</a>/<a href="index.html">Axis</a></div>
-          <div class="cover ">
-            <h1 class="cover"><span><span>Axis</span></span></h1>
-            <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">Axis</a><span class="token punctuation">(</span>axisLabelBackground<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape-component/index.html">ShapeComponent</a><span class="token operator">?</span><span class="token punctuation">, </span>axisLabelColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span>axisLabelTextSize<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/TextUnit///PointingToDeclaration/">TextUnit</span><span class="token punctuation">, </span>axisLabelLineCount<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token punctuation">, </span>axisLabelVerticalPadding<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token punctuation">, </span>axisLabelHorizontalPadding<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token punctuation">, </span>axisLabelVerticalMargin<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token punctuation">, </span>axisLabelHorizontalMargin<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token punctuation">, </span>axisLabelRotationDegrees<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token punctuation">, </span>axisLabelTypeface<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Typeface.html">Typeface</a><span class="token punctuation">, </span>axisGuidelineColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span>axisGuidelineWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token punctuation">, </span>axisGuidelineShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token punctuation">, </span>axisLineColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span>axisLineWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token punctuation">, </span>axisLineShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token punctuation">, </span>axisTickColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span>axisTickWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token punctuation">, </span>axisTickShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token punctuation">, </span>axisTickLength<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token punctuation">, </span>axisValueFormatter<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/index.html">AxisValueFormatter</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis/-axis-position/index.html">AxisPosition</a><span class="token operator">&gt;</span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">Defines the appearance of chart axes.</p></div></div>
-          </div>
-          <div class="tabbedcontent">
-            <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
-            <div class="tabs-section-body">
-              <h2 class="tabbedcontent">Constructors</h2>
-              <div class="table" data-togglable="Constructors"><a data-name="1257486904%2FConstructors%2F1473837692" anchor-label="Axis" id="1257486904%2FConstructors%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue TabbedContent">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="-axis.html"><span><span>Axis</span></span></a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1257486904%2FConstructors%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-axis.html"><span class="token function">Axis</span></a><span class="token punctuation">(</span>axisLabelBackground<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape-component/index.html">ShapeComponent</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span>axisLabelColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span>axisLabelTextSize<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/TextUnit///PointingToDeclaration/">TextUnit</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_SIZE.sp<span class="token punctuation">, </span>axisLabelLineCount<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_MAX_LINES<span class="token punctuation">, </span>axisLabelVerticalPadding<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp<span class="token punctuation">, </span>axisLabelHorizontalPadding<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp<span class="token punctuation">, </span>axisLabelVerticalMargin<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_VERTICAL_MARGIN.dp<span class="token punctuation">, </span>axisLabelHorizontalMargin<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp<span class="token punctuation">, </span>axisLabelRotationDegrees<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_ROTATION_DEGREES<span class="token punctuation">, </span>axisLabelTypeface<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Typeface.html">Typeface</a><span class="token operator"> = </span>Typeface.MONOSPACE<span class="token punctuation">, </span>axisGuidelineColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span>axisGuidelineWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_GUIDELINE_WIDTH.dp<span class="token punctuation">, </span>axisGuidelineShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.dashedShape(
+    </div>
+    <div id="main">
+<div class="main-content" id="content" pageids="compose::com.patrykandpatryk.vico.compose.style/ChartStyle.Axis///PointingToDeclaration//1473837692">
+  <div class="breadcrumbs"><a href="../../../index.html">compose</a><span class="delimiter">/</span><a href="../../index.html">com.patrykandpatryk.vico.compose.style</a><span class="delimiter">/</span><a href="../index.html">ChartStyle</a><span class="delimiter">/</span><a href="index.html">Axis</a></div>
+  <div class="cover ">
+    <h1 class="cover"><span><span>Axis</span></span></h1>
+    <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword">data </span><span class="token keyword">class </span><a href="index.html">Axis</a><span class="token punctuation">(</span><span class="parameters wrapped"><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelBackground<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape-component/index.html">ShapeComponent</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelTextSize<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/TextUnit///PointingToDeclaration/">TextUnit</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_SIZE.sp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelLineCount<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_MAX_LINES<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelVerticalPadding<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelHorizontalPadding<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelVerticalMargin<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_VERTICAL_MARGIN.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelHorizontalMargin<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelRotationDegrees<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_ROTATION_DEGREES<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLabelTypeface<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Typeface.html">Typeface</a><span class="token operator"> = </span>Typeface.MONOSPACE<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisGuidelineColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisGuidelineWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_GUIDELINE_WIDTH.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisGuidelineShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.dashedShape(
             shape = Shapes.rectShape,
             dashLength = DefaultDimens.DASH_LENGTH.dp,
             gapLength = DefaultDimens.DASH_GAP.dp,
-        )<span class="token punctuation">, </span>axisLineColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span>axisLineWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LINE_WIDTH.dp<span class="token punctuation">, </span>axisLineShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.rectShape<span class="token punctuation">, </span>axisTickColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token operator"> = </span>axisLineColor<span class="token punctuation">, </span>axisTickWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>axisLineWidth<span class="token punctuation">, </span>axisTickShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.rectShape<span class="token punctuation">, </span>axisTickLength<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_TICK_LENGTH.dp<span class="token punctuation">, </span>axisValueFormatter<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/index.html">AxisValueFormatter</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis/-axis-position/index.html">AxisPosition</a><span class="token operator">&gt;</span><span class="token operator"> = </span>DecimalFormatAxisValueFormatter()<span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <h2 class="">Properties</h2>
-              <div class="table" data-togglable="Properties"><a data-name="-136660943%2FProperties%2F1473837692" anchor-label="axisGuidelineColor" id="-136660943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-guideline-color.html">axisGuidelineColor</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-136660943%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-136660943%2FProperties%2F1473837692" anchor-label="axisGuidelineColor" id="-136660943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-guideline-color.html">axisGuidelineColor</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-136660943%2FProperties%2F1473837692" anchor-label="axisGuidelineColor" id="-136660943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the color of axis guidelines.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-1446856269%2FProperties%2F1473837692" anchor-label="axisGuidelineShape" id="-1446856269%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-guideline-shape.html">axisGuidelineShape</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1446856269%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1446856269%2FProperties%2F1473837692" anchor-label="axisGuidelineShape" id="-1446856269%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-guideline-shape.html">axisGuidelineShape</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1446856269%2FProperties%2F1473837692" anchor-label="axisGuidelineShape" id="-1446856269%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a> used for axis guidelines.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-1828151506%2FProperties%2F1473837692" anchor-label="axisGuidelineWidth" id="-1828151506%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-guideline-width.html">axisGuidelineWidth</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1828151506%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1828151506%2FProperties%2F1473837692" anchor-label="axisGuidelineWidth" id="-1828151506%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-guideline-width.html">axisGuidelineWidth</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1828151506%2FProperties%2F1473837692" anchor-label="axisGuidelineWidth" id="-1828151506%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the width of axis guidelines.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="190883380%2FProperties%2F1473837692" anchor-label="axisLabelBackground" id="190883380%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-background.html">axisLabelBackground</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="190883380%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="190883380%2FProperties%2F1473837692" anchor-label="axisLabelBackground" id="190883380%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-background.html">axisLabelBackground</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape-component/index.html">ShapeComponent</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="190883380%2FProperties%2F1473837692" anchor-label="axisLabelBackground" id="190883380%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">an optional <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape-component/index.html">ShapeComponent</a> to display behind the text of axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="2118489781%2FProperties%2F1473837692" anchor-label="axisLabelColor" id="2118489781%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-color.html">axisLabelColor</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2118489781%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="2118489781%2FProperties%2F1473837692" anchor-label="axisLabelColor" id="2118489781%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-color.html">axisLabelColor</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="2118489781%2FProperties%2F1473837692" anchor-label="axisLabelColor" id="2118489781%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the text color for axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-319378128%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalMargin" id="-319378128%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-horizontal-margin.html">axisLabelHorizontalMargin</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-319378128%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-319378128%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalMargin" id="-319378128%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-horizontal-margin.html">axisLabelHorizontalMargin</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-319378128%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalMargin" id="-319378128%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the horizontal margin around the backgrounds of axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="205121931%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalPadding" id="205121931%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-horizontal-padding.html">axisLabelHorizontalPadding</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="205121931%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="205121931%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalPadding" id="205121931%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-horizontal-padding.html">axisLabelHorizontalPadding</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="205121931%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalPadding" id="205121931%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the amount of horizontal padding between the background and the text of axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-1564257763%2FProperties%2F1473837692" anchor-label="axisLabelLineCount" id="-1564257763%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-line-count.html">axisLabelLineCount</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1564257763%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1564257763%2FProperties%2F1473837692" anchor-label="axisLabelLineCount" id="-1564257763%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-line-count.html">axisLabelLineCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1564257763%2FProperties%2F1473837692" anchor-label="axisLabelLineCount" id="-1564257763%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the line count for axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="1364933967%2FProperties%2F1473837692" anchor-label="axisLabelRotationDegrees" id="1364933967%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-rotation-degrees.html">axisLabelRotationDegrees</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1364933967%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="1364933967%2FProperties%2F1473837692" anchor-label="axisLabelRotationDegrees" id="1364933967%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-rotation-degrees.html">axisLabelRotationDegrees</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1364933967%2FProperties%2F1473837692" anchor-label="axisLabelRotationDegrees" id="1364933967%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the number of degrees by which axis labels are rotated.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-1729754668%2FProperties%2F1473837692" anchor-label="axisLabelTextSize" id="-1729754668%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-text-size.html">axisLabelTextSize</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1729754668%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1729754668%2FProperties%2F1473837692" anchor-label="axisLabelTextSize" id="-1729754668%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-text-size.html">axisLabelTextSize</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/TextUnit///PointingToDeclaration/">TextUnit</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1729754668%2FProperties%2F1473837692" anchor-label="axisLabelTextSize" id="-1729754668%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the text size for axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-278663125%2FProperties%2F1473837692" anchor-label="axisLabelTypeface" id="-278663125%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-typeface.html">axisLabelTypeface</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-278663125%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-278663125%2FProperties%2F1473837692" anchor-label="axisLabelTypeface" id="-278663125%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-typeface.html">axisLabelTypeface</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Typeface.html">Typeface</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-278663125%2FProperties%2F1473837692" anchor-label="axisLabelTypeface" id="-278663125%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the typeface used for axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="682011870%2FProperties%2F1473837692" anchor-label="axisLabelVerticalMargin" id="682011870%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-vertical-margin.html">axisLabelVerticalMargin</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="682011870%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="682011870%2FProperties%2F1473837692" anchor-label="axisLabelVerticalMargin" id="682011870%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-vertical-margin.html">axisLabelVerticalMargin</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="682011870%2FProperties%2F1473837692" anchor-label="axisLabelVerticalMargin" id="682011870%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the vertical margin around the backgrounds of axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="1183440797%2FProperties%2F1473837692" anchor-label="axisLabelVerticalPadding" id="1183440797%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-label-vertical-padding.html">axisLabelVerticalPadding</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1183440797%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="1183440797%2FProperties%2F1473837692" anchor-label="axisLabelVerticalPadding" id="1183440797%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-vertical-padding.html">axisLabelVerticalPadding</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1183440797%2FProperties%2F1473837692" anchor-label="axisLabelVerticalPadding" id="1183440797%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the amount of vertical padding between the background and the text of axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="931259655%2FProperties%2F1473837692" anchor-label="axisLineColor" id="931259655%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-line-color.html">axisLineColor</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="931259655%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="931259655%2FProperties%2F1473837692" anchor-label="axisLineColor" id="931259655%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-line-color.html">axisLineColor</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="931259655%2FProperties%2F1473837692" anchor-label="axisLineColor" id="931259655%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the color of axis lines.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-378935671%2FProperties%2F1473837692" anchor-label="axisLineShape" id="-378935671%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-line-shape.html">axisLineShape</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-378935671%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-378935671%2FProperties%2F1473837692" anchor-label="axisLineShape" id="-378935671%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-line-shape.html">axisLineShape</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-378935671%2FProperties%2F1473837692" anchor-label="axisLineShape" id="-378935671%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a> used for axis lines.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-760230908%2FProperties%2F1473837692" anchor-label="axisLineWidth" id="-760230908%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-line-width.html">axisLineWidth</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-760230908%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-760230908%2FProperties%2F1473837692" anchor-label="axisLineWidth" id="-760230908%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-line-width.html">axisLineWidth</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-760230908%2FProperties%2F1473837692" anchor-label="axisLineWidth" id="-760230908%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the width of axis lines.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-1008600848%2FProperties%2F1473837692" anchor-label="axisTickColor" id="-1008600848%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-tick-color.html">axisTickColor</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1008600848%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1008600848%2FProperties%2F1473837692" anchor-label="axisTickColor" id="-1008600848%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-tick-color.html">axisTickColor</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1008600848%2FProperties%2F1473837692" anchor-label="axisTickColor" id="-1008600848%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the color of axis ticks.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-175390943%2FProperties%2F1473837692" anchor-label="axisTickLength" id="-175390943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-tick-length.html">axisTickLength</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-175390943%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-175390943%2FProperties%2F1473837692" anchor-label="axisTickLength" id="-175390943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-tick-length.html">axisTickLength</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-175390943%2FProperties%2F1473837692" anchor-label="axisTickLength" id="-175390943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the length of axis ticks.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="1976171122%2FProperties%2F1473837692" anchor-label="axisTickShape" id="1976171122%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-tick-shape.html">axisTickShape</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1976171122%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="1976171122%2FProperties%2F1473837692" anchor-label="axisTickShape" id="1976171122%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-tick-shape.html">axisTickShape</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1976171122%2FProperties%2F1473837692" anchor-label="axisTickShape" id="1976171122%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a> used for axis ticks.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="1594875885%2FProperties%2F1473837692" anchor-label="axisTickWidth" id="1594875885%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-tick-width.html">axisTickWidth</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1594875885%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="1594875885%2FProperties%2F1473837692" anchor-label="axisTickWidth" id="1594875885%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-tick-width.html">axisTickWidth</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1594875885%2FProperties%2F1473837692" anchor-label="axisTickWidth" id="1594875885%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the width of axis ticks.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-<a data-name="-332995349%2FProperties%2F1473837692" anchor-label="axisValueFormatter" id="-332995349%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
-                <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
-                  <div class="main-subrow keyValue ">
-                    <div class=""><span class="inline-flex">
-                        <div><a href="axis-value-formatter.html">axisValueFormatter</a></div>
-<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-332995349%2FProperties%2F1473837692"></span>
-                          <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
-                        </span></span></div>
-                    <div>
-                      <div class="title">
-                        <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-332995349%2FProperties%2F1473837692" anchor-label="axisValueFormatter" id="-332995349%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-value-formatter.html">axisValueFormatter</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/index.html">AxisValueFormatter</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis/-axis-position/index.html">AxisPosition</a><span class="token operator">&gt;</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-332995349%2FProperties%2F1473837692" anchor-label="axisValueFormatter" id="-332995349%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/index.html">AxisValueFormatter</a> to use for axis labels.</p></div></div></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+        )<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLineColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLineWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LINE_WIDTH.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisLineShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.rectShape<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisTickColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token operator"> = </span>axisLineColor<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisTickWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>axisLineWidth<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisTickShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.rectShape<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisTickLength<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_TICK_LENGTH.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;<span class="token keyword">val </span>axisValueFormatter<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/index.html">AxisValueFormatter</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis/-axis-position/index.html">AxisPosition</a><span class="token operator">&gt;</span><span class="token operator"> = </span>DecimalFormatAxisValueFormatter()</span></span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><p class="paragraph">Defines the appearance of chart axes.</p></div></div>
+  </div>
+  <div class="tabbedcontent">
+    <div class="tabs-section" tabs-section="tabs-section"><button class="section-tab" data-active="" data-togglable="Constructors">Constructors</button><button class="section-tab" data-togglable="Properties">Properties</button></div>
+    <div class="tabs-section-body">
+      <h2 class="tabbedcontent">Constructors</h2>
+      <div class="table" data-togglable="Constructors"><a data-name="1257486904%2FConstructors%2F1473837692" anchor-label="Axis" id="1257486904%2FConstructors%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue TabbedContent">
+            <div class=""><span class="inline-flex">
+                <div><a href="-axis.html"><span><span>Axis</span></span></a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1257486904%2FConstructors%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">fun </span><a href="-axis.html"><span class="token function">Axis</span></a><span class="token punctuation">(</span><span class="parameters wrapped"><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelBackground<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape-component/index.html">ShapeComponent</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelTextSize<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/TextUnit///PointingToDeclaration/">TextUnit</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_SIZE.sp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelLineCount<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_MAX_LINES<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelVerticalPadding<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelHorizontalPadding<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelVerticalMargin<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_VERTICAL_MARGIN.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelHorizontalMargin<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelRotationDegrees<span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="token operator"> = </span>DefaultDimens.AXIS_LABEL_ROTATION_DEGREES<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLabelTypeface<span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Typeface.html">Typeface</a><span class="token operator"> = </span>Typeface.MONOSPACE<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisGuidelineColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisGuidelineWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_GUIDELINE_WIDTH.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisGuidelineShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.dashedShape(
+            shape = Shapes.rectShape,
+            dashLength = DefaultDimens.DASH_LENGTH.dp,
+            gapLength = DefaultDimens.DASH_GAP.dp,
+        )<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLineColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLineWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_LINE_WIDTH.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisLineShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.rectShape<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisTickColor<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="token operator"> = </span>axisLineColor<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisTickWidth<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>axisLineWidth<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisTickShape<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="token operator"> = </span>Shapes.rectShape<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisTickLength<span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="token operator"> = </span>DefaultDimens.AXIS_TICK_LENGTH.dp<span class="token punctuation">, </span></span><span class="parameter indented">&nbsp;&nbsp;&nbsp;&nbsp;axisValueFormatter<span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/index.html">AxisValueFormatter</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis/-axis-position/index.html">AxisPosition</a><span class="token operator">&gt;</span><span class="token operator"> = </span>DecimalFormatAxisValueFormatter()</span></span><span class="token punctuation">)</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div></div></div>
               </div>
             </div>
           </div>
         </div>
-        <div class="footer"><span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2022 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span></div>
+      </div>
+      <h2 class="">Properties</h2>
+      <div class="table" data-togglable="Properties"><a data-name="-136660943%2FProperties%2F1473837692" anchor-label="axisGuidelineColor" id="-136660943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-guideline-color.html">axisGuidelineColor</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-136660943%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-136660943%2FProperties%2F1473837692" anchor-label="axisGuidelineColor" id="-136660943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-guideline-color.html">axisGuidelineColor</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-136660943%2FProperties%2F1473837692" anchor-label="axisGuidelineColor" id="-136660943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the color of axis guidelines.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1446856269%2FProperties%2F1473837692" anchor-label="axisGuidelineShape" id="-1446856269%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-guideline-shape.html">axisGuidelineShape</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1446856269%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1446856269%2FProperties%2F1473837692" anchor-label="axisGuidelineShape" id="-1446856269%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-guideline-shape.html">axisGuidelineShape</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1446856269%2FProperties%2F1473837692" anchor-label="axisGuidelineShape" id="-1446856269%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a> used for axis guidelines.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1828151506%2FProperties%2F1473837692" anchor-label="axisGuidelineWidth" id="-1828151506%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-guideline-width.html">axisGuidelineWidth</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1828151506%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1828151506%2FProperties%2F1473837692" anchor-label="axisGuidelineWidth" id="-1828151506%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-guideline-width.html">axisGuidelineWidth</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1828151506%2FProperties%2F1473837692" anchor-label="axisGuidelineWidth" id="-1828151506%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the width of axis guidelines.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="190883380%2FProperties%2F1473837692" anchor-label="axisLabelBackground" id="190883380%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-background.html">axisLabelBackground</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="190883380%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="190883380%2FProperties%2F1473837692" anchor-label="axisLabelBackground" id="190883380%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-background.html">axisLabelBackground</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape-component/index.html">ShapeComponent</a><span class="token operator">?</span><span class="token operator"> = </span>null<span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="190883380%2FProperties%2F1473837692" anchor-label="axisLabelBackground" id="190883380%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">an optional <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape-component/index.html">ShapeComponent</a> to display behind the text of axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="2118489781%2FProperties%2F1473837692" anchor-label="axisLabelColor" id="2118489781%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-color.html">axisLabelColor</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="2118489781%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="2118489781%2FProperties%2F1473837692" anchor-label="axisLabelColor" id="2118489781%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-color.html">axisLabelColor</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="2118489781%2FProperties%2F1473837692" anchor-label="axisLabelColor" id="2118489781%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the text color for axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-319378128%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalMargin" id="-319378128%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-horizontal-margin.html">axisLabelHorizontalMargin</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-319378128%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-319378128%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalMargin" id="-319378128%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-horizontal-margin.html">axisLabelHorizontalMargin</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-319378128%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalMargin" id="-319378128%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the horizontal margin around the backgrounds of axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="205121931%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalPadding" id="205121931%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-horizontal-padding.html">axisLabelHorizontalPadding</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="205121931%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="205121931%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalPadding" id="205121931%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-horizontal-padding.html">axisLabelHorizontalPadding</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="205121931%2FProperties%2F1473837692" anchor-label="axisLabelHorizontalPadding" id="205121931%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the amount of horizontal padding between the background and the text of axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1564257763%2FProperties%2F1473837692" anchor-label="axisLabelLineCount" id="-1564257763%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-line-count.html">axisLabelLineCount</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1564257763%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1564257763%2FProperties%2F1473837692" anchor-label="axisLabelLineCount" id="-1564257763%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-line-count.html">axisLabelLineCount</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-int/index.html">Int</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1564257763%2FProperties%2F1473837692" anchor-label="axisLabelLineCount" id="-1564257763%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the line count for axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1364933967%2FProperties%2F1473837692" anchor-label="axisLabelRotationDegrees" id="1364933967%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-rotation-degrees.html">axisLabelRotationDegrees</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1364933967%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="1364933967%2FProperties%2F1473837692" anchor-label="axisLabelRotationDegrees" id="1364933967%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-rotation-degrees.html">axisLabelRotationDegrees</a><span class="token operator">: </span><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-float/index.html">Float</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1364933967%2FProperties%2F1473837692" anchor-label="axisLabelRotationDegrees" id="1364933967%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the number of degrees by which axis labels are rotated.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1729754668%2FProperties%2F1473837692" anchor-label="axisLabelTextSize" id="-1729754668%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-text-size.html">axisLabelTextSize</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1729754668%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1729754668%2FProperties%2F1473837692" anchor-label="axisLabelTextSize" id="-1729754668%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-text-size.html">axisLabelTextSize</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/TextUnit///PointingToDeclaration/">TextUnit</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1729754668%2FProperties%2F1473837692" anchor-label="axisLabelTextSize" id="-1729754668%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the text size for axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-278663125%2FProperties%2F1473837692" anchor-label="axisLabelTypeface" id="-278663125%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-typeface.html">axisLabelTypeface</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-278663125%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-278663125%2FProperties%2F1473837692" anchor-label="axisLabelTypeface" id="-278663125%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-typeface.html">axisLabelTypeface</a><span class="token operator">: </span><a href="https://developer.android.com/reference/kotlin/android/graphics/Typeface.html">Typeface</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-278663125%2FProperties%2F1473837692" anchor-label="axisLabelTypeface" id="-278663125%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the typeface used for axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="682011870%2FProperties%2F1473837692" anchor-label="axisLabelVerticalMargin" id="682011870%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-vertical-margin.html">axisLabelVerticalMargin</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="682011870%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="682011870%2FProperties%2F1473837692" anchor-label="axisLabelVerticalMargin" id="682011870%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-vertical-margin.html">axisLabelVerticalMargin</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="682011870%2FProperties%2F1473837692" anchor-label="axisLabelVerticalMargin" id="682011870%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the vertical margin around the backgrounds of axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1183440797%2FProperties%2F1473837692" anchor-label="axisLabelVerticalPadding" id="1183440797%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-label-vertical-padding.html">axisLabelVerticalPadding</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1183440797%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="1183440797%2FProperties%2F1473837692" anchor-label="axisLabelVerticalPadding" id="1183440797%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-label-vertical-padding.html">axisLabelVerticalPadding</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1183440797%2FProperties%2F1473837692" anchor-label="axisLabelVerticalPadding" id="1183440797%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the amount of vertical padding between the background and the text of axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="931259655%2FProperties%2F1473837692" anchor-label="axisLineColor" id="931259655%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-line-color.html">axisLineColor</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="931259655%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="931259655%2FProperties%2F1473837692" anchor-label="axisLineColor" id="931259655%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-line-color.html">axisLineColor</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="931259655%2FProperties%2F1473837692" anchor-label="axisLineColor" id="931259655%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the color of axis lines.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-378935671%2FProperties%2F1473837692" anchor-label="axisLineShape" id="-378935671%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-line-shape.html">axisLineShape</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-378935671%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-378935671%2FProperties%2F1473837692" anchor-label="axisLineShape" id="-378935671%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-line-shape.html">axisLineShape</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-378935671%2FProperties%2F1473837692" anchor-label="axisLineShape" id="-378935671%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a> used for axis lines.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-760230908%2FProperties%2F1473837692" anchor-label="axisLineWidth" id="-760230908%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-line-width.html">axisLineWidth</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-760230908%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-760230908%2FProperties%2F1473837692" anchor-label="axisLineWidth" id="-760230908%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-line-width.html">axisLineWidth</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-760230908%2FProperties%2F1473837692" anchor-label="axisLineWidth" id="-760230908%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the width of axis lines.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-1008600848%2FProperties%2F1473837692" anchor-label="axisTickColor" id="-1008600848%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-tick-color.html">axisTickColor</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-1008600848%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-1008600848%2FProperties%2F1473837692" anchor-label="axisTickColor" id="-1008600848%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-tick-color.html">axisTickColor</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.graphics/Color///PointingToDeclaration/">Color</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-1008600848%2FProperties%2F1473837692" anchor-label="axisTickColor" id="-1008600848%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the color of axis ticks.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-175390943%2FProperties%2F1473837692" anchor-label="axisTickLength" id="-175390943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-tick-length.html">axisTickLength</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-175390943%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-175390943%2FProperties%2F1473837692" anchor-label="axisTickLength" id="-175390943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-tick-length.html">axisTickLength</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-175390943%2FProperties%2F1473837692" anchor-label="axisTickLength" id="-175390943%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the length of axis ticks.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1976171122%2FProperties%2F1473837692" anchor-label="axisTickShape" id="1976171122%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-tick-shape.html">axisTickShape</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1976171122%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="1976171122%2FProperties%2F1473837692" anchor-label="axisTickShape" id="1976171122%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-tick-shape.html">axisTickShape</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1976171122%2FProperties%2F1473837692" anchor-label="axisTickShape" id="1976171122%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.component.shape/-shape/index.html">Shape</a> used for axis ticks.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="1594875885%2FProperties%2F1473837692" anchor-label="axisTickWidth" id="1594875885%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-tick-width.html">axisTickWidth</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="1594875885%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="1594875885%2FProperties%2F1473837692" anchor-label="axisTickWidth" id="1594875885%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-tick-width.html">axisTickWidth</a><span class="token operator">: </span><span data-unresolved-link="androidx.compose.ui.unit/Dp///PointingToDeclaration/">Dp</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="1594875885%2FProperties%2F1473837692" anchor-label="axisTickWidth" id="1594875885%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the width of axis ticks.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+<a data-name="-332995349%2FProperties%2F1473837692" anchor-label="axisValueFormatter" id="-332995349%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a>
+        <div class="table-row" data-filterable-current=":vico:compose:dokkaHtmlPartial/release" data-filterable-set=":vico:compose:dokkaHtmlPartial/release">
+          <div class="main-subrow keyValue ">
+            <div class=""><span class="inline-flex">
+                <div><a href="axis-value-formatter.html">axisValueFormatter</a></div>
+<span class="anchor-wrapper"><span class="anchor-icon" pointing-to="-332995349%2FProperties%2F1473837692"></span>
+                  <div class="copy-popup-wrapper "><span class="copy-popup-icon"></span><span>Link copied to clipboard</span></div>
+                </span></span></div>
+            <div>
+              <div class="title">
+                <div class="platform-hinted " data-platform-hinted="data-platform-hinted" data-togglable="Properties"><div class="content sourceset-depenent-content" data-active="" data-togglable=":vico:compose:dokkaHtmlPartial/release"><a data-name="-332995349%2FProperties%2F1473837692" anchor-label="axisValueFormatter" id="-332995349%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><div class="symbol monospace"><span class="token keyword"></span><span class="token keyword">val </span><a href="axis-value-formatter.html">axisValueFormatter</a><span class="token operator">: </span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/index.html">AxisValueFormatter</a><span class="token operator">&lt;</span><span class="token keyword"></span><a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis/-axis-position/index.html">AxisPosition</a><span class="token operator">&gt;</span><span class="top-right-position"><span class="copy-icon"></span><div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div></span></div><div class="brief "><a data-name="-332995349%2FProperties%2F1473837692" anchor-label="axisValueFormatter" id="-332995349%2FProperties%2F1473837692" data-filterable-set=":vico:compose:dokkaHtmlPartial/release"></a><p class="paragraph">the <a href="../../../../../vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/index.html">AxisValueFormatter</a> to use for axis labels.</p></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  
-</body></html>
+  </div>
+</div>
+        <div class="footer"><span class="go-to-top-icon"><a href="#content" id="go-to-top-link"></a></span><span>© 2022 Copyright</span><span class="pull-right"><span>Generated by </span><a href="https://github.com/Kotlin/dokka"><span>dokka</span><span class="padded-icon"></span></a></span>
+        </div>
+    </div>
+</div>
 
+</body></html>
 
