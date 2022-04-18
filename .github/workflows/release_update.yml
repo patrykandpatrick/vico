@@ -30,6 +30,8 @@ jobs:
         run: |
           OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatryk\.vico:view:).*(?=\")" README.md)
           NEW_VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
+          "OLD_VERSION_NAME=$OLD_VERSION_NAME" >> $GITHUB_ENV
+          "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
       - name: Update README
         run: |
           sed -i "s/$OLD_VERSION_NAME/$NEW_VERSION_NAME/g" README.md
