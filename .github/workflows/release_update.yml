@@ -4,6 +4,8 @@ on:
 jobs:
   release_update:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out repository
         uses: actions/checkout@v2.3.4
