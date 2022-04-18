@@ -54,7 +54,6 @@ jobs:
         with:
           draft: true
           tag_name: ${{ env.TAG_NAME }}
-          token: ${{ secrets.VICO_CHART_BOT_PAT }}
           body_path: ${{ github.workspace }}/CHANGELOG.txt
           prerelease: ${{ env.IS_PRERELEASE }}
       - name: Update docs
