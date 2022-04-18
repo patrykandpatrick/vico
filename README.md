@@ -61,16 +61,16 @@ This approach encourages a greater level of abstraction and promotes separation 
     dependencies {
 
         // Provides the utilities needed to use Vico in the view system.
-        implementation "com.patrykandpatryk.vico:view:1.0.0-alpha.2"
+        implementation "com.patrykandpatryk.vico:view:1.0.0-alpha.1"
 
         // Provides the utilities needed to use Vico in Jetpack Compose.
-        implementation "com.patrykandpatryk.vico:compose:1.0.0-alpha.2"
+        implementation "com.patrykandpatryk.vico:compose:1.0.0-alpha.1"
 
         // An optional addition for `vico.compose` that creates a `ChartStyle` based on an M2 Material Theme.
-        implementation "com.patrykandpatryk.vico:compose-m2:1.0.0-alpha.2"
+        implementation "com.patrykandpatryk.vico:compose-m2:1.0.0-alpha.1"
 
         // An optional addition for `vico.compose` that creates a `ChartStyle` based on an M3 Material Theme.
-        implementation "com.patrykandpatryk.vico:compose-m3:1.0.0-alpha.2"
+        implementation "com.patrykandpatryk.vico:compose-m3:1.0.0-alpha.1"
 
         ...
     }
