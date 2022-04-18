@@ -42,8 +42,6 @@ jobs:
       - name: Determine tag name
         run: |
           echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
-      - name: Create tag
-        run: git tag ${{ env.TAG_NAME }}
       - name: Create `IS_PRERELEASE` environment variable
         run: |
           IS_PRERELEASE=false
@@ -54,6 +52,7 @@ jobs:
         with:
           draft: true
           tag_name: ${{ env.TAG_NAME }}
+          token: ${{ secrets.VICO_CHART_BOT_PAT }}
           body_path: ${{ github.workspace }}/CHANGELOG.txt
           prerelease: ${{ env.IS_PRERELEASE }}
       - name: Update docs
@@ -64,7 +63,6 @@ jobs:
       - name: Push local changes to remote repository
         run: |
           git push origin
-          git push origin --tags
       - name: Publish to Maven Central
         run: ./gradlew publish
         env:
