@@ -1,6 +1,10 @@
 name: Release update
 on:
   workflow_dispatch:
+    inputs:
+      skipToPublishing:
+        required: false
+        default: ""
 jobs:
   release_update:
     runs-on: ubuntu-latest
@@ -24,30 +28,36 @@ jobs:
       - name: Grant execution permission to Gradle Wrapper
         run: chmod +x gradlew
       - name: Configure Git
+        if: ${{ github.events.inputs.skipToPublishing }} != "true"
         run: |
           git config --global user.email "96002241+vicochartbot@users.noreply.github.com"
           git config --global user.name "Vico Chart Bot"
           git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/vico.git
       - name: Read new & old version names
+        if: ${{ github.events.inputs.skipToPublishing }} != "true"
         run: |
           OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatryk\.vico:view:).*(?=\")" README.md)
           NEW_VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
           echo "OLD_VERSION_NAME=$OLD_VERSION_NAME" >> $GITHUB_ENV
           echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
       - name: Update README
+        if: ${{ github.events.inputs.skipToPublishing }} != "true"
         run: |
           sed -i "s/$OLD_VERSION_NAME/$NEW_VERSION_NAME/g" README.md
           git add README.md
           git commit -m "Update README" -m "[skip ci]"
       - name: Determine tag name
+        if: ${{ github.events.inputs.skipToPublishing }} != "true"
         run: |
           echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
       - name: Create `IS_PRERELEASE` environment variable
+        if: ${{ github.events.inputs.skipToPublishing }} != "true"
         run: |
           IS_PRERELEASE=false
           echo $NEW_VERSION_NAME | grep -q "alpha\|beta" && IS_PRERELEASE=true
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
       - name: Draft GitHub release
+        if: ${{ github.events.inputs.skipToPublishing }} != "true"
         uses: softprops/action-gh-release@v1
         with:
           draft: true
@@ -56,11 +66,13 @@ jobs:
           body_path: ${{ github.workspace }}/CHANGELOG.txt
           prerelease: ${{ env.IS_PRERELEASE }}
       - name: Update docs
+        if: ${{ github.events.inputs.skipToPublishing }} != "true"
         run: |
           ./gradlew dokkaHtmlMultiModule
           git add docs
           git commit -m "Update docs" -m "[skip ci]"
       - name: Push local changes to remote repository
+        if: ${{ github.events.inputs.skipToPublishing }} != "true"
         run: |
           git push origin
       - name: Publish to Maven Central
