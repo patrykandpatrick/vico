@@ -152,7 +152,7 @@ public open class ColumnChart(
         column: LineComponent,
     ) {
         entryLocationMap.put(
-            x = ceil(columnCenterX),
+            x = columnCenterX,
             y = columnTop.coerceIn(bounds.top, bounds.bottom),
             entry = entry,
             color = column.color
