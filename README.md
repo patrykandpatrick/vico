@@ -1,4 +1,9 @@
-![](/cover.png)
+<figure>
+    <img src="./cover.png" />
+    <p align="center">
+        These charts are implemented in <a href="https://github.com/patrykandpatryk/vico/tree/master/sample">the sample app</a>.
+    </p>
+</figure>
 
 # Vico
 
