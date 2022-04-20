@@ -64,14 +64,14 @@ jobs:
           draft: true
           tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.VICO_CHART_BOT_PAT }}
-          body_path: ${{ github.workspace }}/CHANGELOG.txt
+          body_path: ${{ github.workspace }}/CHANGELOG.md
           prerelease: ${{ env.IS_PRERELEASE }}
-      - name: Empty `CHANGELOG.txt`
+      - name: Empty `CHANGELOG.md`
         if: github.event.inputs.skipToPublishing == false
         run: |
-          true > "CHANGELOG.txt"
-          git add CHANGELOG.txt
-          git commit -m "Empty \`CHANGELOG.txt\`" -m "[skip ci]"
+          true > "CHANGELOG.md"
+          git add CHANGELOG.md
+          git commit -m "Empty \`CHANGELOG.md\`" -m "[skip ci]"
       - name: Update docs
         if: github.event.inputs.skipToPublishing == false
         run: |
