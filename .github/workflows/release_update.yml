@@ -66,6 +66,12 @@ jobs:
           token: ${{ secrets.VICO_CHART_BOT_PAT }}
           body_path: ${{ github.workspace }}/CHANGELOG.txt
           prerelease: ${{ env.IS_PRERELEASE }}
+      - name: Empty `CHANGELOG.txt`
+        if: github.event.inputs.skipToPublishing == false
+        run: |
+          true > "CHANGELOG.txt"
+          git add CHANGELOG.txt
+          git commit -m "Empty \`CHANGELOG.txt\`" -m "[skip ci]"
       - name: Update docs
         if: github.event.inputs.skipToPublishing == false
         run: |
