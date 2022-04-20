@@ -88,8 +88,8 @@ public open class ShapeComponent(
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         path.rewind()
         applyShader(context, left, top, right, bottom)
-        val centerX = left + (right - left) / 2
-        val centerY = top + (bottom - top) / 2
+        val centerX = (left + right).half
+        val centerY = (top + bottom).half
         shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
 
         val strokeWidth = strokeWidthDp.pixels
