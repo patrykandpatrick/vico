@@ -65,7 +65,7 @@ public open class ShapeComponent(
     /**
      * The color of the stroke.
      */
-    public var strokeColor: Int by Delegates.observable(color) { _, _, value -> strokePaint.color = value }
+    public var strokeColor: Int by Delegates.observable(strokeColor) { _, _, value -> strokePaint.color = value }
 
     init {
         paint.color = color
