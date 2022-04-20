@@ -103,6 +103,7 @@ public open class AxisManager {
             insets = insets,
         )
         topAxis?.setTopAxisBounds(
+            context = measureContext,
             contentBounds = contentBounds,
             insets = insets,
         )
@@ -112,6 +113,7 @@ public open class AxisManager {
             insets = insets,
         )
         bottomAxis?.setBottomAxisBounds(
+            context = measureContext,
             contentBounds = contentBounds,
             insets = insets,
         )
@@ -122,66 +124,60 @@ public open class AxisManager {
         context: MeasureContext,
         contentBounds: RectF,
         insets: Insets,
-    ): Unit = with(context) {
-        setBounds(
-            left = if (isLtr) {
-                contentBounds.left
-            } else {
-                contentBounds.right - insets.end
-            },
-            top = contentBounds.top + insets.top,
-            right = if (isLtr) {
-                contentBounds.left + insets.start
-            } else {
-                contentBounds.right
-            },
-            bottom = contentBounds.bottom - insets.bottom
-        )
+    ) {
+        with(context) {
+            setBounds(
+                left = if (isLtr) contentBounds.left else contentBounds.right - insets.start,
+                top = contentBounds.top + insets.top,
+                right = if (isLtr) contentBounds.left + insets.start else contentBounds.right,
+                bottom = contentBounds.bottom - insets.bottom,
+            )
+        }
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Top>.setTopAxisBounds(
+        context: MeasureContext,
         contentBounds: RectF,
         insets: Insets,
     ) {
-        setBounds(
-            left = contentBounds.left + insets.start,
-            top = contentBounds.top,
-            right = contentBounds.right - insets.end,
-            bottom = contentBounds.top + insets.top
-        )
+        with(context) {
+            setBounds(
+                left = contentBounds.left + if (isLtr) insets.start else insets.end,
+                top = contentBounds.top,
+                right = contentBounds.right - if (isLtr) insets.end else insets.start,
+                bottom = contentBounds.top + insets.top,
+            )
+        }
     }
 
     private fun AxisRenderer<AxisPosition.Vertical.End>.setEndAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
         insets: Insets,
-    ): Unit = with(context) {
-        setBounds(
-            left = if (isLtr) {
-                contentBounds.right - insets.end
-            } else {
-                contentBounds.left
-            },
-            top = contentBounds.top + insets.top,
-            right = if (isLtr) {
-                contentBounds.right
-            } else {
-                contentBounds.left + insets.end
-            },
-            bottom = contentBounds.bottom - insets.bottom
-        )
+    ) {
+        with(context) {
+            setBounds(
+                left = if (isLtr) contentBounds.right - insets.end else contentBounds.left,
+                top = contentBounds.top + insets.top,
+                right = if (isLtr) contentBounds.right else contentBounds.left + insets.end,
+                bottom = contentBounds.bottom - insets.bottom,
+            )
+        }
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
+        context: MeasureContext,
         contentBounds: RectF,
         insets: Insets,
     ) {
-        setBounds(
-            left = contentBounds.left + insets.start,
-            top = contentBounds.bottom - insets.bottom,
-            right = contentBounds.right - insets.end,
-            bottom = contentBounds.bottom
-        )
+        with(context) {
+            setBounds(
+                left = contentBounds.left + if (isLtr) insets.start else insets.end,
+                top = contentBounds.bottom - insets.bottom,
+                right = contentBounds.right - if (isLtr) insets.end else insets.start,
+                bottom = contentBounds.bottom,
+            )
+        }
     }
 
     private fun setRestrictedBounds() {
