@@ -55,11 +55,6 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         get() = if (tick != null) tickLengthDp.pixels else 0f
 
     /**
-     * Whether the chart is drawn in the left-to-right layout system.
-     */
-    public var isLtr: Boolean = true
-
-    /**
      * The [TextComponent] to use for labels.
      */
     public var label: TextComponent? = null

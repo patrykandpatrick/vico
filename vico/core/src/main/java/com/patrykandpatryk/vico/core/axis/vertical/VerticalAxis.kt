@@ -49,14 +49,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
 ) : Axis<Position>() {
 
-    private val isLeft = position.isLeft(isLtr)
-
-    private val isLabelOutsideOnLeftOrInsideOnRight: Boolean
-        get() = horizontalLabelPosition == Outside && isLeft ||
-            horizontalLabelPosition == Inside && !isLeft
+    private val areLabelsOutsideAtStartOrInsideAtEnd
+        get() = horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
+            horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
 
     private val textHorizontalPosition: HorizontalPosition
-        get() = if (isLabelOutsideOnLeftOrInsideOnRight) HorizontalPosition.End else HorizontalPosition.Start
+        get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.End else HorizontalPosition.Start
 
     /**
      * The maximum label count.
@@ -108,8 +106,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             context = context,
             top = bounds.top,
             bottom = bounds.bottom + axisThickness,
-            centerX =
-            if (isLeft) bounds.right else bounds.left
+            centerX = if (position.isLeft(isLtr = isLtr)) bounds.right else bounds.left,
         )
     }
 
@@ -123,7 +120,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         val tickRightX = tickLeftX + axisThickness.half + tickLength
 
-        val labelX = if (isLabelOutsideOnLeftOrInsideOnRight) tickLeftX else tickRightX
+        val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
 
         var tickCenterY: Float
 
