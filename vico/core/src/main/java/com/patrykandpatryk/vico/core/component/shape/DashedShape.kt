@@ -132,25 +132,31 @@ public class DashedShape(
         dashLength: Float,
         gapLength: Float,
         length: Float,
-    ) = when (fitStrategy) {
-        FitStrategy.Resize -> when {
-            length < dashLength + gapLength -> {
-                drawDashLength = length
-                drawGapLength = 0f
-            }
-            else -> {
-                var fitWidth = dashLength
-                while (length > fitWidth) {
-                    fitWidth += gapLength + dashLength
-                }
-                val ratio = length / fitWidth
-                drawDashLength = dashLength * ratio
-                drawGapLength = gapLength * ratio
-            }
+    ) {
+        if (dashLength == 0f && gapLength == 0f) {
+            drawDashLength = length
+            return
         }
-        FitStrategy.Fixed -> {
-            drawDashLength = dashLength
-            drawGapLength = gapLength
+        when (fitStrategy) {
+            FitStrategy.Resize -> when {
+                length < dashLength + gapLength -> {
+                    drawDashLength = length
+                    drawGapLength = 0f
+                }
+                else -> {
+                    var fitWidth = dashLength
+                    while (length > fitWidth) {
+                        fitWidth += gapLength + dashLength
+                    }
+                    val ratio = length / fitWidth
+                    drawDashLength = dashLength * ratio
+                    drawGapLength = gapLength * ratio
+                }
+            }
+            FitStrategy.Fixed -> {
+                drawDashLength = dashLength
+                drawGapLength = gapLength
+            }
         }
     }
 
