@@ -37,14 +37,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.compose.chart.entry.collect
 import com.patrykandpatryk.vico.compose.chart.entry.defaultDiffAnimationSpec
-import com.patrykandpatryk.vico.compose.extension.addIf
 import com.patrykandpatryk.vico.compose.extension.chartTouchEvent
 import com.patrykandpatryk.vico.compose.gesture.OnZoom
 import com.patrykandpatryk.vico.compose.layout.getMeasureContext
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
-import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatryk.vico.core.DEF_MIN_ZOOM
+import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
@@ -182,14 +181,12 @@ public fun <Model : ChartEntryModel> Chart(
         modifier = modifier
             .height(DefaultDimens.CHART_HEIGHT.dp)
             .fillMaxWidth()
-            .addIf(marker != null) {
-                chartTouchEvent(
-                    setTouchPoint = markerTouchPoint.component2(),
-                    scrollableState = if (isHorizontalScrollEnabled) scrollableState else null,
-                    onZoom = if (isZoomEnabled) onZoom else null,
-                    interactionSource = interactionSource,
-                )
-            }
+            .chartTouchEvent(
+                setTouchPoint = if (marker != null) markerTouchPoint.component2() else null,
+                scrollableState = if (isHorizontalScrollEnabled) scrollableState else null,
+                onZoom = if (isZoomEnabled) onZoom else null,
+                interactionSource = interactionSource,
+            ),
     ) {
         bounds.set(0, 0, size.width, size.height)
         virtualLayout.setBounds(

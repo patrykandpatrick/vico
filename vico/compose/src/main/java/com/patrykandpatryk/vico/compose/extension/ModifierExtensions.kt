@@ -30,34 +30,45 @@ import com.patrykandpatryk.vico.compose.gesture.zoomable
 import com.patrykandpatryk.vico.core.model.Point
 
 internal fun Modifier.chartTouchEvent(
-    setTouchPoint: (Point?) -> Unit,
+    setTouchPoint: ((Point?) -> Unit)?,
     scrollableState: ScrollableState?,
     onZoom: OnZoom?,
     interactionSource: MutableInteractionSource,
-): Modifier = pointerInput(Unit, Unit) {
-    detectTapGestures(
-        onPress = {
-            setTouchPoint(it.point)
-            awaitRelease()
-            setTouchPoint(null)
-        }
-    )
+): Modifier = addIfNotNull(setTouchPoint) { setPoint ->
+    pointerInput(Unit, Unit) {
+        detectTapGestures(
+            onPress = {
+                setPoint(it.point)
+                awaitRelease()
+                setPoint(null)
+            },
+        )
+    }
 }
-    .then(onZoom?.let(Modifier::zoomable) ?: Modifier)
+    .addIfNotNull(
+        value = onZoom,
+        factory = Modifier::zoomable,
+    )
     .then(
-        scrollableState?.let { state ->
-            scrollable(
-                state = state,
-                orientation = Orientation.Horizontal,
-                interactionSource = interactionSource,
-            )
-        } ?: pointerInput(Unit, Unit) {
-            detectDragGestures(
-                onDragEnd = { setTouchPoint(null) },
-                onDragCancel = { setTouchPoint(null) },
-                onDrag = { change, _ -> setTouchPoint(change.position.point) }
-            )
-        }
+        other = when {
+            scrollableState != null -> {
+                scrollable(
+                    state = scrollableState,
+                    orientation = Orientation.Horizontal,
+                    interactionSource = interactionSource,
+                )
+            }
+            setTouchPoint != null -> {
+                pointerInput(Unit, Unit) {
+                    detectDragGestures(
+                        onDragEnd = { setTouchPoint(null) },
+                        onDragCancel = { setTouchPoint(null) },
+                        onDrag = { change, _ -> setTouchPoint(change.position.point) },
+                    )
+                }
+            }
+            else -> Modifier
+        },
     )
 
 private val Offset.point: Point
@@ -70,3 +81,11 @@ public inline fun Modifier.addIf(
     condition: Boolean,
     crossinline factory: Modifier.() -> Modifier,
 ): Modifier = if (condition) factory() else this
+
+/**
+ * Adds the provided modifier elements to this modifier chain if [value] is not null.
+ */
+public inline fun <T> Modifier.addIfNotNull(
+    value: T?,
+    crossinline factory: Modifier.(T) -> Modifier,
+): Modifier = if (value != null) factory(value) else this
