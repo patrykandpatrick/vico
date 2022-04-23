@@ -24,6 +24,7 @@ import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.forEachIn
+import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
@@ -214,6 +215,10 @@ public open class LineChart(
         chartModel.minX = minX ?: model.minX
         chartModel.maxX = maxX ?: model.maxX
         chartModel.chartEntryModel = model
+    }
+
+    override fun getInsets(context: MeasureContext, outInsets: Insets): Unit = with(context) {
+        outInsets.setVertical(lineThicknessDp.pixels)
     }
 
     private companion object {
