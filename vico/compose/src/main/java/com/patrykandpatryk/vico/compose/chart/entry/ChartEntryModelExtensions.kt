@@ -85,7 +85,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
 /**
  * Creates a [ComposedChartEntryModel] instance with two [ChartEntryModel]s.
  *
- * @param other A [ChartEntryModel] that will be composed with receiver [ChartEntryModel].
+ * @param other the [ChartEntryModel] that will be composed with the receiver [ChartEntryModel].
  */
 public operator fun <Model : ChartEntryModel> Model.plus(other: Model): ComposedChartEntryModel<Model> =
     ComposedChartEntryModelProducer.composedChartEntryModelOf(listOf(this, other))
