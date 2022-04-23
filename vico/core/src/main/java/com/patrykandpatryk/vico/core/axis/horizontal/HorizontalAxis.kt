@@ -71,14 +71,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         var textCenter = bounds.getStart(isLtr = isLtr) +
             layoutDirectionMultiplier *
             (tickDrawStep.half - horizontalScroll + tickDrawStep * scrollAdjustment)
-        var tickCenter = getTickDrawCenter(
-            tickType = tickType,
-            scrollX = horizontalScroll,
-            tickDrawStep = tickDrawStep,
-            scrollAdjustment = scrollAdjustment,
-            textDrawCenter = textCenter,
-        )
 
+        var tickCenter = getTickDrawCenter(tickType, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
         var valueIndex: Float = chartModel.minX + scrollAdjustment * step
 
         for (index in 0 until tickCount) {
