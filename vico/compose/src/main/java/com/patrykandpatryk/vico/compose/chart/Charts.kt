@@ -164,18 +164,20 @@ public fun <Model : ChartEntryModel> Chart(
     )
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
+    val layoutDirection = LocalLayoutDirection.current
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
 
     val setHorizontalScroll = rememberSetHorizontalScroll(
         scroll = horizontalScroll,
         touchPoint = markerTouchPoint,
-        interaction = interaction
+        interaction = interaction,
+        layoutDirection = layoutDirection,
     )
 
     val scrollHandler = rememberScrollHandler(
         setScrollAmount = setHorizontalScroll,
-        layoutDirection = LocalLayoutDirection.current,
+        layoutDirection = layoutDirection,
     )
 
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
@@ -247,15 +249,17 @@ internal fun rememberSetHorizontalScroll(
     scroll: MutableState<Float>,
     touchPoint: MutableState<Point?>,
     interaction: State<Interaction?>,
-): (Float) -> Unit = remember {
+    layoutDirection: LayoutDirection,
+): (Float) -> Unit = remember(key1 = layoutDirection) {
     var canClearTouchPoint = false
+    val layoutDirectionMultiplier = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f
     return@remember { newScroll: Float ->
         touchPoint.value?.let { point ->
             if (interaction.value is DragInteraction.Stop && canClearTouchPoint) {
                 touchPoint.value = null
                 canClearTouchPoint = false
             } else {
-                touchPoint.value = point.copy(x = point.x + scroll.value - newScroll)
+                touchPoint.value = point.copy(x = point.x + layoutDirectionMultiplier * (scroll.value - newScroll))
                 canClearTouchPoint = true
             }
         }
