@@ -26,11 +26,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import com.patrykandpatryk.vico.core.Animation
+import com.patrykandpatryk.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
+import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 
 /**
  * The default [AnimationSpec] used the animation run on each [ChartEntryModel] update.
@@ -79,3 +81,11 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
     }
     return model
 }
+
+/**
+ * Creates a [ComposedChartEntryModel] instance with two [ChartEntryModel]s.
+ *
+ * @param other A [ChartEntryModel] that will be composed with receiver [ChartEntryModel].
+ */
+public operator fun <Model : ChartEntryModel> Model.plus(other: Model): ComposedChartEntryModel<Model> =
+    ComposedChartEntryModelProducer.composedChartEntryModelOf(listOf(this, other))
