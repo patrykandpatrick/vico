@@ -126,7 +126,7 @@ public open class LineChart(
 
             if (x in bounds.left..bounds.right) {
                 entryLocationMap.put(
-                    x = ceil(x),
+                    x = x,
                     y = y.coerceIn(bounds.top, bounds.bottom),
                     entry = entry,
                     color = lineColor
