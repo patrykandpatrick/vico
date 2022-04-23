@@ -23,7 +23,10 @@ import com.patrykandpatryk.vico.core.axis.setTo
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
+import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.draw.layoutDirectionMultiplier
+import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.throwable.UnknownAxisPositionException
@@ -65,8 +68,16 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (horizontalScroll / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
-        var textCenter = bounds.left + tickDrawStep.half - horizontalScroll + tickDrawStep * scrollAdjustment
-        var tickCenter = tickType.getTickDrawCenter(horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
+        var textCenter = bounds.getStart(isLtr = isLtr) +
+            layoutDirectionMultiplier *
+            (tickDrawStep.half - horizontalScroll + tickDrawStep * scrollAdjustment)
+        var tickCenter = getTickDrawCenter(
+            tickType = tickType,
+            scrollX = horizontalScroll,
+            tickDrawStep = tickDrawStep,
+            scrollAdjustment = scrollAdjustment,
+            textDrawCenter = textCenter,
+        )
 
         var valueIndex: Float = chartModel.minX + scrollAdjustment * step
 
@@ -101,8 +112,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 valueIndex += step
             }
 
-            tickCenter += tickDrawStep
-            textCenter += tickDrawStep
+            tickCenter += layoutDirectionMultiplier * tickDrawStep
+            textCenter += layoutDirectionMultiplier * tickDrawStep
         }
 
         axisLine?.drawHorizontal(
@@ -125,13 +136,15 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         TickType.Major -> entryLength
     }
 
-    private fun TickType.getTickDrawCenter(
+    private fun DrawContext.getTickDrawCenter(
+        tickType: TickType,
         scrollX: Float,
         tickDrawStep: Float,
         scrollAdjustment: Int,
         textDrawCenter: Float,
-    ) = when (this) {
-        TickType.Minor -> bounds.left - scrollX + tickDrawStep * scrollAdjustment
+    ) = when (tickType) {
+        TickType.Minor -> bounds.getStart(isLtr = isLtr) +
+            layoutDirectionMultiplier * (tickDrawStep * scrollAdjustment - scrollX)
         TickType.Major -> textDrawCenter
     }
 
