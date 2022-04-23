@@ -34,7 +34,6 @@ import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.half
-import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.abs
 import kotlin.math.ceil
