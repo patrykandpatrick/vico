@@ -111,3 +111,10 @@ public fun Int.hasAnyFlagOf(vararg flags: Int): Boolean = flags.any { this.hasFl
  * The first non-negative value of the values provided, or null if none of the values is non-negative.
  */
 public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull { it >= 0f }
+
+/**
+ * Creates a range from this value to the provided value or from the
+ * provided value to this value, depending on which value is larger.
+ */
+public fun Float.rangeWith(other: Float): ClosedFloatingPointRange<Float> =
+    if (other > this) this..other else other..this
