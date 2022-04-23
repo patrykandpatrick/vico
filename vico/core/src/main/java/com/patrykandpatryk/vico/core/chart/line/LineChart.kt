@@ -170,13 +170,13 @@ public open class LineChart(
         val boundsStart = bounds.left
         val boundsEnd = bounds.left + bounds.width()
 
-        val heightMultiplier = bounds.height() / (drawMaxY - this@LineChart.minY.orZero)
+        val heightMultiplier = bounds.height() / (drawMaxY - drawMinY)
 
         fun getDrawX(entry: ChartEntry): Float =
             drawingStart + (segment.cellWidth + segment.marginWidth) * (entry.x - drawMinX) / stepX
 
         fun getDrawY(entry: ChartEntry): Float =
-            bounds.bottom - entry.y * heightMultiplier
+            bounds.bottom - (minY - drawMinY + entry.y) * heightMultiplier
 
         entries.firstOrNull()?.forEachIn(drawMinX - stepX..drawMaxX + stepX) { entry ->
             x = getDrawX(entry)
