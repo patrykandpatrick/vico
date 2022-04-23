@@ -31,8 +31,10 @@ import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.extension.horizontalCubicTo
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.draw.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.marker.Marker
@@ -101,10 +103,11 @@ public open class LineChart(
         val (cellWidth, spacing, _) = segmentProperties
 
         var cubicCurvature: Float
-        var prevX = bounds.left
+        var prevX = bounds.getStart(isLtr = isLtr)
         var prevY = bounds.bottom
 
-        val drawingStart = bounds.left + spacing.half - horizontalScroll + cellWidth.half
+        val drawingStart = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier *
+            (spacing.half - horizontalScroll + cellWidth.half)
 
         model.forEachPointWithinBounds(segmentProperties, drawingStart) { entry, x, y ->
             if (linePath.isEmpty) {
