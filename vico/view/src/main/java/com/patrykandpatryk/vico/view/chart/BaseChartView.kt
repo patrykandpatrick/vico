@@ -76,7 +76,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private val contentBounds = RectF()
     private val chartModel = MutableChartModel()
-    private val scrollHandler = ScrollHandler()
+    private val scrollHandler = ScrollHandler(isLtr = isLtr)
 
     private val scroller = OverScroller(context)
     private val virtualLayout = VirtualLayout()

@@ -34,6 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.compose.chart.entry.collect
 import com.patrykandpatryk.vico.compose.chart.entry.defaultDiffAnimationSpec
@@ -171,7 +173,11 @@ public fun <Model : ChartEntryModel> Chart(
         interaction = interaction
     )
 
-    val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
+    val scrollHandler = rememberScrollHandler(
+        setScrollAmount = setHorizontalScroll,
+        layoutDirection = LocalLayoutDirection.current,
+    )
+
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
     val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
     val virtualLayout = remember { VirtualLayout() }
@@ -223,6 +229,17 @@ public fun <Model : ChartEntryModel> Chart(
             chartDrawContext.segmentProperties.segmentWidth * chartModel.getDrawnEntryCount() - chart.bounds.width()
         measureContext.clearExtras()
     }
+}
+
+@Composable
+internal fun rememberScrollHandler(
+    setScrollAmount: (Float) -> Unit,
+    layoutDirection: LayoutDirection,
+): ScrollHandler = remember(key1 = layoutDirection) {
+    ScrollHandler(
+        setScrollAmount = setScrollAmount,
+        isLtr = layoutDirection == LayoutDirection.Ltr,
+    )
 }
 
 @Composable
