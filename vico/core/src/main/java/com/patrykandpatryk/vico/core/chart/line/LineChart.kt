@@ -41,7 +41,6 @@ import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.extension.rangeWith
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.abs
-import kotlin.math.ceil
 import kotlin.math.min
 
 /**
@@ -131,7 +130,7 @@ public open class LineChart(
 
             if (x in bounds.left..bounds.right) {
                 entryLocationMap.put(
-                    x = ceil(x),
+                    x = x,
                     y = y.coerceIn(bounds.top, bounds.bottom),
                     entry = entry,
                     color = lineColor
