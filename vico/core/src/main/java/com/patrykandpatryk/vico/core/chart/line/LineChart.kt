@@ -172,7 +172,7 @@ public open class LineChart(
 
         var prevEntry: ChartEntry? = null
         var lastEntry: ChartEntry? = null
-      
+
         val chartMinY = this@LineChart.minY.orZero
         val boundsStart = bounds.getStart(isLtr = context.isLtr)
         val boundsEnd = boundsStart + context.layoutDirectionMultiplier * bounds.width()
