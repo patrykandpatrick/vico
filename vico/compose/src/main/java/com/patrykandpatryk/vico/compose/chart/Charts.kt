@@ -164,22 +164,18 @@ public fun <Model : ChartEntryModel> Chart(
     )
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
-    val layoutDirection = LocalLayoutDirection.current
+    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    val layoutDirectionMultiplier = if (isLtr) 1f else -1f
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
 
     val setHorizontalScroll = rememberSetHorizontalScroll(
         scroll = horizontalScroll,
         touchPoint = markerTouchPoint,
-        interaction = interaction,
-        layoutDirection = layoutDirection,
+        interaction = interaction
     )
 
-    val scrollHandler = rememberScrollHandler(
-        setScrollAmount = setHorizontalScroll,
-        layoutDirection = layoutDirection,
-    )
-
+    val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
     val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
     val virtualLayout = remember { VirtualLayout() }
@@ -227,21 +223,10 @@ public fun <Model : ChartEntryModel> Chart(
                 markedEntries = markerModel,
             )
         }
-        scrollHandler.maxScrollDistance =
-            chartDrawContext.segmentProperties.segmentWidth * chartModel.getDrawnEntryCount() - chart.bounds.width()
+        scrollHandler.maxScrollDistance = layoutDirectionMultiplier *
+            (chartDrawContext.segmentProperties.segmentWidth * chartModel.getDrawnEntryCount() - chart.bounds.width())
         measureContext.clearExtras()
     }
-}
-
-@Composable
-internal fun rememberScrollHandler(
-    setScrollAmount: (Float) -> Unit,
-    layoutDirection: LayoutDirection,
-): ScrollHandler = remember(key1 = layoutDirection) {
-    ScrollHandler(
-        setScrollAmount = setScrollAmount,
-        isLtr = layoutDirection == LayoutDirection.Ltr,
-    )
 }
 
 @Composable
@@ -249,17 +234,15 @@ internal fun rememberSetHorizontalScroll(
     scroll: MutableState<Float>,
     touchPoint: MutableState<Point?>,
     interaction: State<Interaction?>,
-    layoutDirection: LayoutDirection,
-): (Float) -> Unit = remember(key1 = layoutDirection) {
+): (Float) -> Unit = remember {
     var canClearTouchPoint = false
-    val layoutDirectionMultiplier = if (layoutDirection == LayoutDirection.Ltr) 1f else -1f
     return@remember { newScroll: Float ->
         touchPoint.value?.let { point ->
             if (interaction.value is DragInteraction.Stop && canClearTouchPoint) {
                 touchPoint.value = null
                 canClearTouchPoint = false
             } else {
-                touchPoint.value = point.copy(x = point.x + layoutDirectionMultiplier * (scroll.value - newScroll))
+                touchPoint.value = point.copy(x = point.x + scroll.value - newScroll)
                 canClearTouchPoint = true
             }
         }

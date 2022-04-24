@@ -106,7 +106,7 @@ public open class ColumnChart(
                 segmentCompensation = (cellWidth - defCellWidth) / 2,
                 spacing = spacing,
                 columnWidth = column.thicknessDp.pixels * chartScale,
-            ) - layoutDirectionMultiplier * horizontalScroll
+            ) - horizontalScroll
 
             entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
                 height = entry.y * heightMultiplier - heightReduce

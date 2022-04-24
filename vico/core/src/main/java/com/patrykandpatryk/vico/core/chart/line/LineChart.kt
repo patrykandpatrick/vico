@@ -108,8 +108,8 @@ public open class LineChart(
         var prevX = bounds.getStart(isLtr = isLtr)
         var prevY = bounds.bottom
 
-        val drawingStart = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier *
-            (spacing.half - horizontalScroll + cellWidth.half)
+        val drawingStart = bounds.getStart(isLtr = isLtr) +
+            layoutDirectionMultiplier * (spacing.half + cellWidth.half) - horizontalScroll
 
         model.forEachPointWithinBounds(segmentProperties, drawingStart, this) { entry, x, y ->
             if (linePath.isEmpty) {

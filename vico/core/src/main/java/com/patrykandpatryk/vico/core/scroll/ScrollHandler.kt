@@ -16,6 +16,8 @@
 
 package com.patrykandpatryk.vico.core.scroll
 
+import com.patrykandpatryk.vico.core.extension.rangeWith
+
 /**
  * Handles scroll events.
  * @param maxScrollDistance the maximum scroll distance.
@@ -23,10 +25,7 @@ package com.patrykandpatryk.vico.core.scroll
 public class ScrollHandler(
     private val setScrollAmount: (Float) -> Unit = {},
     public var maxScrollDistance: Float = 0f,
-    isLtr: Boolean,
 ) {
-
-    private val layoutDirectionMultiplier = if (isLtr) 1f else -1f
 
     /**
      * The current scroll amount.
@@ -37,10 +36,8 @@ public class ScrollHandler(
             setScrollAmount(value)
         }
 
-    private fun getClampedScroll(scroll: Float): Float = scroll.coerceIn(
-        minimumValue = 0f,
-        maximumValue = maxScrollDistance,
-    )
+    private fun getClampedScroll(scroll: Float): Float =
+        scroll.coerceIn(range = 0f.rangeWith(other = maxScrollDistance))
 
     /**
      * Updates the [currentScroll] value by the given [delta] if the resulting scroll value is between 0 and the
@@ -48,19 +45,19 @@ public class ScrollHandler(
      */
     public fun handleScrollDelta(delta: Float): Float {
         val previousScroll = currentScroll
-        currentScroll = getClampedScroll(scroll = currentScroll - layoutDirectionMultiplier * delta)
-        return layoutDirectionMultiplier * (previousScroll - currentScroll)
+        currentScroll = getClampedScroll(currentScroll - delta)
+        return previousScroll - currentScroll
     }
 
     /**
      * Checks whether a scroll by the given [delta] value is possible.
      */
     public fun canScrollBy(delta: Float): Boolean =
-        delta == 0f || currentScroll - getClampedScroll(scroll = currentScroll - delta) != 0f
+        delta == 0f || currentScroll - getClampedScroll(currentScroll - delta) != 0f
 
     /**
      * Scrolls to the [targetScroll] value, which is clamped to the range from 0 to the [maxScrollDistance].
      */
     public fun handleScroll(targetScroll: Float): Float =
-        handleScrollDelta(delta = currentScroll - targetScroll)
+        handleScrollDelta(currentScroll - targetScroll)
 }
