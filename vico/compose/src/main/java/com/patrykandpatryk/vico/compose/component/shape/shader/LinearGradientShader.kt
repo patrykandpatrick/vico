@@ -18,7 +18,6 @@ package com.patrykandpatryk.vico.compose.component.shape.shader
 
 import android.graphics.LinearGradient
 import android.graphics.Shader
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.patrykandpatryk.vico.core.component.shape.shader.CacheableDynamicShader
@@ -62,7 +61,6 @@ public fun horizontalGradient(
  * @param positions the relative positions ([0..1]) of each corresponding color in the color array. This may be null, in
  * which case the colors will be distributed evenly along the gradient line.
  */
-@Composable
 public fun verticalGradient(
     colors: Array<Color>,
     positions: FloatArray? = null,
