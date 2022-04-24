@@ -117,7 +117,8 @@ public class Insets(
     }
 
     /**
-     * Updates each of [Insets] values with values from [other] if latter values are greater.
+     * For each of these [Insets]ʼ four values, updates the value to the corresponding value
+     * from [other] if the value from [other] is greater than the current value.
      */
     public fun setValuesIfGreater(other: Insets) {
         start = max(start, other.start)
@@ -127,7 +128,8 @@ public class Insets(
     }
 
     /**
-     * Updates each of [Insets] values with provided values if they are greater.
+     * For each of these [Insets]ʼ four values, updates the value to the corresponding provided
+     * value if the provided value is greater than the current value.
      */
     public fun setAllIfGreater(
         start: Float = this.start,

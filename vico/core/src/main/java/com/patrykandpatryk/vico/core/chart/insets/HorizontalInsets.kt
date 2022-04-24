@@ -30,7 +30,8 @@ public interface HorizontalInsets {
     public fun set(start: Float, end: Float)
 
     /**
-     * Called to update start and end insets with [start] and [end] insets if they are greater.
+     * For the start and end insets, updates the value of the inset to the corresponding
+     * provided value if the provided value is greater than the current value.
      */
     public fun setValuesIfGreater(start: Float, end: Float)
 }

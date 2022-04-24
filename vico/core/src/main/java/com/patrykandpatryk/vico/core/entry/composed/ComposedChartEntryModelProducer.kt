@@ -115,7 +115,7 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
     public companion object {
 
         /**
-         * Creates a [ComposedChartEntryModel] instance with provided [List] of [Model]s.
+         * Creates a [ComposedChartEntryModel] instance comprising the provided [Model]s.
          */
         public fun <Model : ChartEntryModel> composedChartEntryModelOf(
             models: List<Model>,
