@@ -16,6 +16,8 @@
 
 package com.patrykandpatryk.vico.core.scroll
 
+import com.patrykandpatryk.vico.core.extension.rangeWith
+
 /**
  * Handles scroll events.
  * @param maxScrollDistance the maximum scroll distance.
@@ -35,7 +37,7 @@ public class ScrollHandler(
         }
 
     private fun getClampedScroll(scroll: Float): Float =
-        minOf(scroll, maxScrollDistance).coerceAtLeast(0f)
+        scroll.coerceIn(range = 0f.rangeWith(other = maxScrollDistance))
 
     /**
      * Updates the [currentScroll] value by the given [delta] if the resulting scroll value is between 0 and the

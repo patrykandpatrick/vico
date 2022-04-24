@@ -31,6 +31,8 @@ import com.patrykandpatryk.vico.core.extension.getRepeating
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
+import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.min
 
@@ -108,7 +110,7 @@ public open class ColumnChart(
 
             entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
                 height = entry.y * heightMultiplier - heightReduce
-                columnCenterX = drawingStart +
+                columnCenterX = drawingStart + layoutDirectionMultiplier *
                     (cellWidth + spacing) * (entry.x - model.drawMinX) / model.stepX
 
                 when (mergeMode) {
@@ -117,14 +119,14 @@ public open class ColumnChart(
                         columnBottom = (bounds.bottom + bottomCompensation - cumulatedHeight)
                             .coerceIn(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        columnCenterX += cellWidth.half
+                        columnCenterX += layoutDirectionMultiplier * cellWidth.half
                         heightMap[entry.x] = cumulatedHeight + height
                     }
                     MergeMode.Grouped -> {
                         columnBottom = (bounds.bottom + bottomCompensation)
                             .coerceIn(bounds.top, bounds.bottom)
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        columnCenterX += column.thicknessDp.pixels * chartScale
+                        columnCenterX += layoutDirectionMultiplier * column.thicknessDp.pixels * chartScale
                     }
                 }
 
@@ -188,14 +190,15 @@ public open class ColumnChart(
         columnWidth: Float,
         spacing: Float,
     ): Float {
-        val baseLeft = bounds.left + spacing.half
+        val baseStart = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier * spacing.half
         return when (mergeMode) {
-            MergeMode.Stack ->
-                baseLeft
-            MergeMode.Grouped ->
-                baseLeft + segmentCompensation - columnWidth.half +
+            MergeMode.Stack -> baseStart
+            MergeMode.Grouped -> {
+                val offset = segmentCompensation - columnWidth.half +
                     getCumulatedThickness(entryCollectionIndex) * chartScale +
                     innerSpacingDp.pixels * chartScale * entryCollectionIndex
+                baseStart + layoutDirectionMultiplier * offset
+            }
         }
     }
 

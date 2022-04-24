@@ -34,6 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.compose.chart.entry.collect
 import com.patrykandpatryk.vico.compose.chart.entry.defaultDiffAnimationSpec
@@ -162,6 +164,8 @@ public fun <Model : ChartEntryModel> Chart(
     )
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
+    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    val layoutDirectionMultiplier = if (isLtr) 1f else -1f
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
 
@@ -219,8 +223,8 @@ public fun <Model : ChartEntryModel> Chart(
                 markedEntries = markerModel,
             )
         }
-        scrollHandler.maxScrollDistance =
-            chartDrawContext.segmentProperties.segmentWidth * chartModel.getDrawnEntryCount() - chart.bounds.width()
+        scrollHandler.maxScrollDistance = layoutDirectionMultiplier *
+            (chartDrawContext.segmentProperties.segmentWidth * chartModel.getDrawnEntryCount() - chart.bounds.width())
         measureContext.clearExtras()
     }
 }

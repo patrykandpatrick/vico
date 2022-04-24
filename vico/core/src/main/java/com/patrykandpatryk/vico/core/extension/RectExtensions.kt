@@ -134,3 +134,13 @@ public fun RectF.translate(x: Float, y: Float): RectF = apply {
     right += x
     bottom += y
 }
+
+/**
+ * Returns [RectF.left] if [isLtr] is true, and [RectF.right] otherwise.
+ */
+public fun RectF.getStart(isLtr: Boolean): Float = if (isLtr) left else right
+
+/**
+ * Returns [RectF.right] if [isLtr] is true, and [RectF.left] otherwise.
+ */
+public fun RectF.getEnd(isLtr: Boolean): Float = if (isLtr) right else left

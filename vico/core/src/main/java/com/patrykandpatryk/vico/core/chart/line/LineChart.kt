@@ -31,11 +31,15 @@ import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.extension.horizontalCubicTo
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
+import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
+import com.patrykandpatryk.vico.core.extension.rangeWith
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.abs
 import kotlin.math.min
@@ -101,12 +105,13 @@ public open class LineChart(
         val (cellWidth, spacing, _) = segmentProperties
 
         var cubicCurvature: Float
-        var prevX = bounds.left
+        var prevX = bounds.getStart(isLtr = isLtr)
         var prevY = bounds.bottom
 
-        val drawingStart = bounds.left + spacing.half - horizontalScroll + cellWidth.half
+        val drawingStart = bounds.getStart(isLtr = isLtr) +
+            layoutDirectionMultiplier * (spacing.half + cellWidth.half) - horizontalScroll
 
-        model.forEachPointWithinBounds(segmentProperties, drawingStart) { entry, x, y ->
+        model.forEachPointWithinBounds(segmentProperties, drawingStart, this) { entry, x, y ->
             if (linePath.isEmpty) {
                 linePath.moveTo(x, y)
                 if (lineBackgroundShader != null) {
@@ -116,9 +121,9 @@ public open class LineChart(
             } else {
                 cubicCurvature = spacing * cubicStrength *
                     min(1f, abs((y - prevY) / bounds.bottom) * CUBIC_Y_MULTIPLIER)
-                linePath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature)
+                linePath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature, isLtr)
                 if (lineBackgroundShader != null) {
-                    lineBackgroundPath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature)
+                    lineBackgroundPath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature, isLtr)
                 }
             }
             prevX = x
@@ -144,7 +149,7 @@ public open class LineChart(
         canvas.drawPath(linePath, linePaint)
 
         point?.let { point ->
-            model.forEachPointWithinBounds(segmentProperties, drawingStart) { _, x, y ->
+            model.forEachPointWithinBounds(segmentProperties, drawingStart, this) { _, x, y ->
                 point.drawPoint(context, x, y, pointSizeDp.pixels.half)
             }
         }
@@ -159,6 +164,7 @@ public open class LineChart(
     private fun ChartEntryModel.forEachPointWithinBounds(
         segment: SegmentProperties,
         drawingStart: Float,
+        context: DrawContext,
         action: (entry: ChartEntry, x: Float, y: Float) -> Unit,
     ) {
         var x: Float
@@ -168,14 +174,13 @@ public open class LineChart(
         var lastEntry: ChartEntry? = null
 
         val chartMinY = this@LineChart.minY.orZero
-
-        val boundsStart = bounds.left
-        val boundsEnd = bounds.left + bounds.width()
+        val boundsStart = bounds.getStart(isLtr = context.isLtr)
+        val boundsEnd = boundsStart + context.layoutDirectionMultiplier * bounds.width()
 
         val heightMultiplier = bounds.height() / (drawMaxY - chartMinY)
 
-        fun getDrawX(entry: ChartEntry): Float =
-            drawingStart + (segment.cellWidth + segment.marginWidth) * (entry.x - drawMinX) / stepX
+        fun getDrawX(entry: ChartEntry): Float = drawingStart + context.layoutDirectionMultiplier *
+            (segment.cellWidth + segment.marginWidth) * (entry.x - drawMinX) / stepX
 
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (entry.y - chartMinY) * heightMultiplier
@@ -184,17 +189,17 @@ public open class LineChart(
             x = getDrawX(entry)
             y = getDrawY(entry)
             when {
-                x < boundsStart -> {
+                context.isLtr && x < boundsStart || context.isLtr.not() && x > boundsStart -> {
                     prevEntry = entry
                 }
-                x in boundsStart..boundsEnd -> {
+                x in boundsStart.rangeWith(other = boundsEnd) -> {
                     prevEntry?.also {
                         action(it, getDrawX(it), getDrawY(it))
                         prevEntry = null
                     }
                     action(entry, x, y)
                 }
-                x > boundsEnd && lastEntry == null -> {
+                (context.isLtr && x > boundsEnd || context.isLtr.not() && x < boundsEnd) && lastEntry == null -> {
                     action(entry, x, y)
                     lastEntry = entry
                 }

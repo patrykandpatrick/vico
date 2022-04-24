@@ -42,6 +42,7 @@ import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
@@ -283,6 +284,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             segmentWidth = drawContext.segmentProperties.segmentWidth,
             drawnEntryCount = chartModel.getDrawnEntryCount(),
             chartBounds = chart.bounds.width(),
+            layoutDirectionMultiplier = measureContext.layoutDirectionMultiplier,
         )
         if (animator.isRunning) {
             progressModelOnAnimationProgress(animator.animatedValue as Float)
@@ -293,8 +295,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         entryProducer?.progressModel(this, progress)
     }
 
-    private fun updateMaxScrollDistance(segmentWidth: Float, drawnEntryCount: Int, chartBounds: Float) {
-        scrollHandler.maxScrollDistance = segmentWidth * drawnEntryCount - chartBounds
+    private fun updateMaxScrollDistance(
+        segmentWidth: Float,
+        drawnEntryCount: Int,
+        chartBounds: Float,
+        layoutDirectionMultiplier: Float,
+    ) {
+        scrollHandler.maxScrollDistance = layoutDirectionMultiplier *
+            (segmentWidth * drawnEntryCount - chartBounds)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

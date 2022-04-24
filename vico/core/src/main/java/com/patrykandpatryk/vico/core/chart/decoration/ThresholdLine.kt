@@ -28,6 +28,8 @@ import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.extension.ceil
 import com.patrykandpatryk.vico.core.extension.floor
+import com.patrykandpatryk.vico.core.extension.getEnd
+import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.median
 
@@ -121,8 +123,8 @@ public data class ThresholdLine(
             text = thresholdLabel,
             maxTextWidth = bounds.width().toInt(),
             textX = when (labelHorizontalPosition) {
-                LabelHorizontalPosition.Start -> bounds.left
-                LabelHorizontalPosition.End -> bounds.right
+                LabelHorizontalPosition.Start -> bounds.getStart(isLtr = isLtr)
+                LabelHorizontalPosition.End -> bounds.getEnd(isLtr = isLtr)
             },
             textY = textY,
             horizontalPosition = labelHorizontalPosition.position,
