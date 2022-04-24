@@ -66,9 +66,3 @@ public fun drawContext(
         this.canvas = originalCanvas
     }
 }
-
-/**
- * `1f` if [DrawContext.isLtr] is true, and `-1f` otherwise.
- */
-public val DrawContext.layoutDirectionMultiplier: Float
-    get() = if (isLtr) 1f else -1f
