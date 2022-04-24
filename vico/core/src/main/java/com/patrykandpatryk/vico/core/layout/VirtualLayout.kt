@@ -20,12 +20,11 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.axis.model.ChartModel
-import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
-import com.patrykandpatryk.vico.core.chart.Chart
-import kotlin.math.max
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 
 /**
  * [VirtualLayout] measures and lays out the chart, the axis, and other components (such as markers).
@@ -62,17 +61,18 @@ public open class VirtualLayout {
         axisManager.addInsetters(tempInsetters)
         chartInsetter.filterNotNull().forEach(tempInsetters::add)
         tempInsetters.addAll(chart.chartInsetters)
+        tempInsetters.add(chart)
 
         tempInsetters.forEach { insetter ->
             insetter.getInsets(context, tempInsets)
-            finalInsets.setAllGreater(tempInsets)
+            finalInsets.setValuesIfGreater(tempInsets)
         }
 
         val availableHeight = contentBounds.height() - finalInsets.vertical
 
         tempInsetters.forEach { insetter ->
             insetter.getHorizontalInsets(context, availableHeight, tempInsets)
-            finalInsets.setAllGreater(tempInsets)
+            finalInsets.setValuesIfGreater(tempInsets)
         }
 
         chart.setBounds(
@@ -82,13 +82,6 @@ public open class VirtualLayout {
             bottom = contentBounds.bottom - finalInsets.bottom
         )
         axisManager.setAxesBounds(context, contentBounds, finalInsets)
-    }
-
-    private fun Insets.setAllGreater(other: Insets) {
-        start = max(start, other.start)
-        top = max(top, other.top)
-        end = max(end, other.end)
-        bottom = max(bottom, other.bottom)
     }
 
     private companion object {

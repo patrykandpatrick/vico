@@ -24,6 +24,7 @@ import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.forEachIn
+import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
@@ -171,17 +172,18 @@ public open class LineChart(
 
         var prevEntry: ChartEntry? = null
         var lastEntry: ChartEntry? = null
-
+      
+        val chartMinY = this@LineChart.minY.orZero
         val boundsStart = bounds.getStart(isLtr = context.isLtr)
         val boundsEnd = boundsStart + context.layoutDirectionMultiplier * bounds.width()
 
-        val heightMultiplier = bounds.height() / (drawMaxY - this@LineChart.minY.orZero)
+        val heightMultiplier = bounds.height() / (drawMaxY - chartMinY)
 
         fun getDrawX(entry: ChartEntry): Float = drawingStart + context.layoutDirectionMultiplier *
             (segment.cellWidth + segment.marginWidth) * (entry.x - drawMinX) / stepX
 
         fun getDrawY(entry: ChartEntry): Float =
-            bounds.bottom - (minY - drawMinY + entry.y) * heightMultiplier
+            bounds.bottom - (entry.y - chartMinY) * heightMultiplier
 
         entries.firstOrNull()?.forEachIn(drawMinX - stepX..drawMaxX + stepX) { entry ->
             x = getDrawX(entry)
@@ -218,6 +220,10 @@ public open class LineChart(
         chartModel.minX = minX ?: model.minX
         chartModel.maxX = maxX ?: model.maxX
         chartModel.chartEntryModel = model
+    }
+
+    override fun getInsets(context: MeasureContext, outInsets: Insets): Unit = with(context) {
+        outInsets.setVertical(lineThicknessDp.pixels)
     }
 
     private companion object {

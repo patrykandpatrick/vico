@@ -20,6 +20,7 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
+import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.getEntryModel
@@ -35,7 +36,10 @@ import com.patrykandpatryk.vico.core.marker.Marker
 public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
 
     private val decorations = ArrayList<Decoration>()
+
     private val persistentMarkers = HashMap<Float, Marker>()
+
+    private val insets: Insets = Insets()
 
     protected val Model.drawMinY: Float
         get() = this@BaseChart.minY ?: minY
@@ -82,13 +86,29 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
-        canvas.inClip(bounds) {
+
+        insets.clear()
+        getInsets(this, insets)
+
+        canvas.inClip(
+            left = bounds.left - insets.getLeft(isLtr),
+            top = bounds.top - insets.top,
+            right = bounds.right + insets.getRight(isLtr),
+            bottom = bounds.bottom + insets.bottom,
+        ) {
             drawDecorationBehindChart(context)
             if (model.entries.isNotEmpty()) {
                 drawChart(context, model)
             }
         }
-        canvas.inClip(bounds.left, 0f, bounds.right, context.canvas.height.toFloat()) {
+
+        canvas.inClip(
+            left = bounds.left,
+            top = 0f,
+            right = bounds.right,
+            bottom = context.canvas.height.toFloat(),
+        ) {
+
             drawDecorationAboveChart(context)
             persistentMarkers.forEach { (x, marker) ->
                 entryLocationMap.getEntryModel(x)?.also { markerModel ->

@@ -28,7 +28,7 @@ import com.patrykandpatryk.vico.core.marker.Marker
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to draw a chart.
  */
-public interface Chart<in Model> : BoundsAware {
+public interface Chart<in Model> : BoundsAware, ChartInsetter {
 
     /**
      * A [Map] that links each x-axis value to its corresponding [Marker.EntryModel], which holds the data

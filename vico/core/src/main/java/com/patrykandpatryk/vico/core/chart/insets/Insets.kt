@@ -17,6 +17,7 @@
 package com.patrykandpatryk.vico.core.chart.insets
 
 import com.patrykandpatryk.vico.core.extension.half
+import kotlin.math.max
 
 /**
  * The class used to store insets specified by [ChartInsetter].
@@ -108,6 +109,36 @@ public class Insets(
     public fun setVertical(value: Float): Insets = apply {
         top = value.half
         bottom = value.half
+    }
+
+    override fun setValuesIfGreater(start: Float, end: Float) {
+        this.start = max(start, this.start)
+        this.end = max(end, this.end)
+    }
+
+    /**
+     * Updates each of [Insets] values with values from [other] if latter values are greater.
+     */
+    public fun setValuesIfGreater(other: Insets) {
+        start = max(start, other.start)
+        top = max(top, other.top)
+        end = max(end, other.end)
+        bottom = max(bottom, other.bottom)
+    }
+
+    /**
+     * Updates each of [Insets] values with provided values if they are greater.
+     */
+    public fun setAllIfGreater(
+        start: Float = this.start,
+        top: Float = this.top,
+        end: Float = this.end,
+        bottom: Float = this.bottom,
+    ) {
+        this.start = max(start, this.start)
+        this.top = max(top, this.top)
+        this.end = max(end, this.end)
+        this.bottom = max(bottom, this.bottom)
     }
 
     /**

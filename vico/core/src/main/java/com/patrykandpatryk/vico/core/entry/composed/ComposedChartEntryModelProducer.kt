@@ -54,7 +54,7 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
     ) : this(chartModelProducers.toList(), backgroundExecutor)
 
     override fun getModel(): ComposedChartEntryModel<Model> =
-        cachedModel ?: getModel(chartModelProducers.map { it.getModel() })
+        cachedModel ?: composedChartEntryModelOf(chartModelProducers.map { it.getModel() })
             .also { cachedModel = it }
 
     override fun progressModel(key: Any, progress: Float) {
@@ -99,7 +99,7 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
             val models = modelReceivers.values.mapNotNull { it }
             if (modelReceivers.values.size == models.size) {
                 executor.execute {
-                    onModel(getModel(models))
+                    onModel(composedChartEntryModelOf(models))
                 }
             }
         }
@@ -112,8 +112,12 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
         }
     }
 
-    private companion object {
-        private fun <Model : ChartEntryModel> getModel(
+    public companion object {
+
+        /**
+         * Creates a [ComposedChartEntryModel] instance with provided [List] of [Model]s.
+         */
+        public fun <Model : ChartEntryModel> composedChartEntryModelOf(
             models: List<Model>,
         ): ComposedChartEntryModel<Model> = object : ComposedChartEntryModel<Model> {
             override val composedEntryCollections: List<Model> = models
