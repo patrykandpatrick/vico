@@ -99,7 +99,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 context = context,
                 left = chartBounds.left,
                 right = chartBounds.right,
-                centerY = centerY
+                centerY = centerY,
             )
         }
         axisLine?.drawVertical(
@@ -132,7 +132,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 context = context,
                 left = tickLeftX,
                 right = tickRightX,
-                tickCenterY
+                centerY = tickCenterY,
             )
 
             label ?: return@forEach
@@ -150,7 +150,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     left = textBounds.left,
                     top = textBounds.top,
                     right = textBounds.right,
-                    bottom = textBounds.bottom
+                    bottom = textBounds.bottom,
                 )
             ) {
                 label.drawText(
@@ -247,15 +247,15 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         when (verticalLabelPosition) {
             Center -> outInsets.set(
                 top = labelHeight.half - lineThickness,
-                bottom = labelHeight.half
+                bottom = labelHeight.half,
             )
             VerticalLabelPosition.Top -> outInsets.set(
                 top = labelHeight - lineThickness,
-                bottom = lineThickness
+                bottom = lineThickness,
             )
             VerticalLabelPosition.Bottom -> outInsets.set(
                 top = lineThickness.half,
-                bottom = labelHeight
+                bottom = labelHeight,
             )
         }
     }
@@ -268,16 +268,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         labels: List<String>,
     ): Float = with(context) {
         when (val constraint = sizeConstraint) {
-            is SizeConstraint.Auto ->
-                (getMaxLabelWidth(labels) + axisThickness.half + tickLength)
-                    .coerceAtLeast(constraint.minSizeDp.pixels)
-                    .coerceAtMost(constraint.maxSizeDp.pixels)
-            is SizeConstraint.Exact ->
-                constraint.sizeDp.pixels
-            is SizeConstraint.Fraction ->
-                canvasBounds.width() * constraint.fraction
-            is SizeConstraint.TextWidth ->
-                label?.getWidth(context = this, text = constraint.text).orZero + tickLength + axisThickness.half
+            is SizeConstraint.Auto -> (getMaxLabelWidth(labels) + axisThickness.half + tickLength)
+                .coerceIn(constraint.minSizeDp.pixels, constraint.maxSizeDp.pixels)
+            is SizeConstraint.Exact -> constraint.sizeDp.pixels
+            is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
+            is SizeConstraint.TextWidth -> label?.getWidth(
+                context = this,
+                text = constraint.text,
+            ).orZero + tickLength + axisThickness.half
         }
     }
 
