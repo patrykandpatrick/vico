@@ -61,7 +61,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
             minOf(bounds.top, chartBounds.top),
             bounds.right + if (tickType == TickType.Minor) tickThickness.half else 0f,
-            maxOf(bounds.bottom, chartBounds.bottom)
+            maxOf(bounds.bottom, chartBounds.bottom),
         )
 
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
@@ -114,7 +114,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             context = context,
             left = chartBounds.left,
             right = chartBounds.right,
-            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half
+            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half,
         )
 
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
@@ -162,8 +162,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 label?.let { label ->
                     getLabelsToMeasure().maxOf { labelText -> label.getHeight(context = this, text = labelText).orZero }
                 }.orZero + (if (position.isBottom) axisThickness else 0f) + tickLength
-                ).coerceAtLeast(constraint.minSizeDp.pixels)
-                .coerceAtMost(constraint.maxSizeDp.pixels)
+                ).coerceIn(constraint.minSizeDp.pixels, constraint.maxSizeDp.pixels)
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> canvasBounds.height() * constraint.fraction
             is SizeConstraint.TextWidth -> label?.getHeight(context = this, text = constraint.text).orZero
