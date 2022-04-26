@@ -79,7 +79,7 @@ public open class VirtualLayout {
             left = contentBounds.left + finalInsets.getLeft(isLtr),
             top = contentBounds.top + finalInsets.top,
             right = contentBounds.right - finalInsets.getRight(isLtr),
-            bottom = contentBounds.bottom - finalInsets.bottom
+            bottom = contentBounds.bottom - finalInsets.bottom,
         )
         axisManager.setAxesBounds(context, contentBounds, finalInsets)
     }

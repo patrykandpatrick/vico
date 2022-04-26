@@ -36,7 +36,7 @@ public interface BoundsAware {
         left: Number,
         top: Number,
         right: Number,
-        bottom: Number
+        bottom: Number,
     ) {
         bounds.set(left, top, right, bottom)
     }

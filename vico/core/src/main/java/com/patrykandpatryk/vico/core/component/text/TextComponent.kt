@@ -235,13 +235,10 @@ public open class TextComponent protected constructor() : Padding, Margins {
         textY: Float,
         layoutHeight: Float,
     ): Float = with(context) {
-        when (this@getTextTopPosition) {
-            VerticalPosition.Top ->
-                textY + padding.topDp.pixels + margins.topDp.pixels
-            VerticalPosition.Center ->
-                textY - layoutHeight.half
-            VerticalPosition.Bottom ->
-                textY - layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
+        textY + when (this@getTextTopPosition) {
+            VerticalPosition.Top -> padding.topDp.pixels + margins.topDp.pixels
+            VerticalPosition.Center -> -layoutHeight.half
+            VerticalPosition.Bottom -> -layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
         }
     }
 
