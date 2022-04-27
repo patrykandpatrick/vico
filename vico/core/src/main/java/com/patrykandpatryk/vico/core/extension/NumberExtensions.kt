@@ -105,7 +105,7 @@ public fun Int.hasFlag(flag: Int): Boolean = this and flag == flag
 /**
  * Whether this value contains any of the provided bit flags.
  */
-public fun Int.hasAnyFlagOf(vararg flags: Int): Boolean = flags.any { this.hasFlag(it) }
+public fun Int.hasAnyFlagOf(vararg flags: Int): Boolean = flags.any(::hasFlag)
 
 /**
  * The first non-negative value of the values provided, or null if none of the values is non-negative.

@@ -216,7 +216,7 @@ public data class ChartStyle(
                 defaultColors.column1Color,
                 defaultColors.column2Color,
                 defaultColors.column3Color,
-            ).map { Color(it) },
+            ).map(::Color),
             lineColor = Color(defaultColors.lineColor),
             elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
         )

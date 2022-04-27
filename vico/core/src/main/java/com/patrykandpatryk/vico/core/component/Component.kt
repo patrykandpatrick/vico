@@ -34,6 +34,6 @@ public abstract class Component : Margins by DefaultMargins() {
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float
+        bottom: Float,
     )
 }

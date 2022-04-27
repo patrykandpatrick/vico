@@ -47,7 +47,7 @@ public class OverlayingComponent(
         innerPaddingStartDp = innerPaddingAllDp,
         innerPaddingTopDp = innerPaddingAllDp,
         innerPaddingEndDp = innerPaddingAllDp,
-        innerPaddingBottomDp = innerPaddingAllDp
+        innerPaddingBottomDp = innerPaddingAllDp,
     )
 
     init {
@@ -79,7 +79,7 @@ public class OverlayingComponent(
             left = left,
             top = top,
             right = right,
-            bottom = bottom
+            bottom = bottom,
         )
     }
 }
