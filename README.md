@@ -197,7 +197,12 @@ Differences are animated by default.
 
 You can combine multiple charts into one. This example uses the `getRandomEntries` function from above.
 
-A composed chart requires a [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer), which can be created from two regular [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer)s:
+A composed chart requires a [`ComposedChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel).
+In the case of static charts, you can directly create a [`ComposedChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel) instance via the [`composedChartEntryModelOf`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer/-companion/composed-chart-entry-model-of) helper function.
+You can also use the [`+`](https://vico.patrykandpatryk.com/vico/compose/com.patrykandpatryk.vico.compose.chart.entry/plus?query=operator%20fun%20%3CModel%20:%20ChartEntryModel%3E%20Model.plus(other:%20Model):%20ComposedChartEntryModel%3CModel%3E) operator to create a [`ComposedChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel) out of two [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s.
+For dynamic composed charts, use [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer).
+
+For this example, weʼll use a [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer). You can create a [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer) out of two regular [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer)s:
 
 ```kt
 val firstProducer = ChartEntryModelProducer(getRandomEntries())
