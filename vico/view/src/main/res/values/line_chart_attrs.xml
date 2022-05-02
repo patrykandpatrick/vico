@@ -16,11 +16,14 @@
 
 <resources>
     <attr name="lineChartStyle" format="reference" />
+    <attr name="line1spec" format="reference" />
+    <attr name="line2spec" format="reference" />
+    <attr name="line3spec" format="reference" />
 
     <declare-styleable name="LineChartStyle">
-        <attr name="line1spec" format="reference" />
-        <attr name="line2spec" format="reference" />
-        <attr name="line3spec" format="reference" />
+        <attr name="line1spec" />
+        <attr name="line2spec" />
+        <attr name="line3spec" />
         <attr name="spacing" format="dimension" />
     </declare-styleable>
 
