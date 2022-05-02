@@ -28,6 +28,7 @@ import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.entry.defaultDiffAnimationSpec
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
+import com.patrykandpatryk.vico.compose.chart.line.lineSpec
 import com.patrykandpatryk.vico.compose.component.shape.lineComponent
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.DefaultDimens
@@ -50,8 +51,13 @@ internal fun ComposedChart(
     )
 
     val lineChart = lineChart(
-        lineBackgroundShader = lineBackgroundShader,
-        lineColor = MaterialTheme.colorScheme.secondary,
+        lines = listOf(
+            lineSpec(
+                lineBackgroundShader = lineBackgroundShader,
+                lineColor = MaterialTheme.colorScheme.secondary,
+            )
+        )
+
     )
 
     val columnChart = columnChart(

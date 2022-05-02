@@ -148,9 +148,13 @@ internal class ViewShowcaseFragment : Fragment() {
             val lineChart = (chart as ComposedChart).charts[1] as LineChart
 
             with(lineChart) {
-                lineColor = secondaryColor
-                lineBackgroundShader = getDottedShader(
-                    dotColor = secondaryColor.copyColor(alpha = Tokens.ComposedChart.SHADER_ALPHA),
+                lines = listOf(
+                    LineChart.LineSpec(
+                        lineColor = secondaryColor,
+                        lineBackgroundShader = getDottedShader(
+                            dotColor = secondaryColor.copyColor(alpha = Tokens.ComposedChart.SHADER_ALPHA),
+                        )
+                    )
                 )
             }
         }
@@ -187,7 +191,9 @@ internal class ViewShowcaseFragment : Fragment() {
         ) {
             val tokens = Tokens.LineChartWithLabelsInside
 
-            (chart as LineChart).lineBackgroundShader = null
+            (chart as LineChart).lines = listOf(
+                LineChart.LineSpec(lineBackgroundShader = null)
+            )
             with(startAxis as VerticalAxis) {
                 label?.apply {
                     color = context.resolveColorAttribute(R.attr.colorOnSecondary)

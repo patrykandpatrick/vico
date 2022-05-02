@@ -19,12 +19,14 @@ package com.patrykandpatryk.vico.core.chart.line
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.forEachIn
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
@@ -36,6 +38,7 @@ import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.extension.getRepeating
 import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
@@ -47,26 +50,95 @@ import kotlin.math.min
 /**
  * [LineChart] displays data as a continuous line.
  *
- * @param point an optional [Component] that can be drawn at a given point above the line.
- * @param pointSizeDp the size of the [point] in dp.
- * @param spacingDp the spacing between each [point] in dp.
- * @param lineThicknessDp the thickness of the line in dp.
- * @param lineColor the color of the line.
+ * @param lines the [List] of [LineSpec] defining the style of each line.
+ * @param spacingDp the spacing between each [LineSpec.point] in dp.
  */
 public open class LineChart(
-    public var point: Component? = null,
-    public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+    public var lines: List<LineSpec> = listOf(LineSpec()),
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
-    public var lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
-    lineColor: Int = Color.LTGRAY,
 ) : BaseChart<ChartEntryModel>() {
 
-    private val linePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        color = lineColor
-        strokeCap = Paint.Cap.ROUND
+    /**
+     * @param lineColor the color of the line.
+     * @param lineThicknessDp the thickness of the line in dp.
+     * @param lineBackgroundShader an optional [DynamicShader] that can style the space between the line and the x-axis.
+     * @param lineCap the stroke cap for the line.
+     * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
+     * @param point an optional [LineSpec] that can be drawn at a given point above the line.
+     * @param pointSizeDp the size of the [point] in dp.
+     */
+    public open class LineSpec(
+        lineColor: Int = Color.LTGRAY,
+        public var lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
+        public var lineBackgroundShader: DynamicShader? = null,
+        public var lineCap: Paint.Cap = Paint.Cap.ROUND,
+        public var cubicStrength: Float = 1f,
+        public var point: Component? = null,
+        public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+    ) {
+
+        /**
+         * Returns true if the [lineBackgroundShader] is not null and false otherwise.
+         */
+        public val hasLineBackgroundShader: Boolean
+            get() = lineBackgroundShader != null
+
+        protected val linePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            color = lineColor
+            strokeCap = lineCap
+        }
+
+        protected val lineBackgroundPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
+
+        /**
+         * The color of the line.
+         */
+        public var lineColor: Int by linePaint::color
+
+        /**
+         * The stroke cap for the line.
+         */
+        public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
+
+        /**
+         * Draws a [point] using the given [context] at [x] and [y] coordinates.
+         *
+         * @see Component
+         */
+        public fun drawPoint(
+            context: DrawContext,
+            x: Float,
+            y: Float,
+        ): Unit = with(context) {
+            point?.drawPoint(context, x, y, pointSizeDp.pixels.half)
+        }
+
+        /**
+         * Draws the chart line using the given [context] and the [path].
+         */
+        public fun drawLine(context: DrawContext, path: Path): Unit = with(context) {
+            linePaint.strokeWidth = lineThicknessDp.pixels
+            canvas.drawPath(path, linePaint)
+        }
+
+        /**
+         * Draws a background of the chart line using the given [context] and the [path].
+         */
+        public fun drawBackgroundLine(context: DrawContext, bounds: RectF, path: Path): Unit = with(context) {
+            lineBackgroundPaint.shader = lineBackgroundShader
+                ?.provideShader(
+                    context = context,
+                    left = bounds.left,
+                    top = bounds.top,
+                    right = bounds.right,
+                    bottom = bounds.bottom,
+                )
+
+            canvas.drawPath(path, lineBackgroundPaint)
+        }
     }
-    private val lineBackgroundPaint = Paint(Paint.ANTI_ALIAS_FLAG)
+
     private val linePath = Path()
     private val lineBackgroundPath = Path()
 
@@ -74,83 +146,66 @@ public open class LineChart(
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
-    /**
-     * The color of the line.
-     */
-    public var lineColor: Int by linePaint::color
-
-    /**
-     * An optional [DynamicShader] that can style the space between the line and the x-axis.
-     */
-    public var lineBackgroundShader: DynamicShader? = null
-
-    /**
-     * The stroke cap for the line.
-     */
-    public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
-
-    /**
-     * The strength of the cubic bezier curve between each key point on the line.
-     */
-    public var cubicStrength: Float = 1f
-
     override fun drawChart(
         context: ChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
         resetTempData()
-        val lineBackgroundShader = lineBackgroundShader
-        linePaint.strokeWidth = lineThicknessDp.pixels
 
         val (cellWidth, spacing, _) = segmentProperties
 
-        var cubicCurvature: Float
-        var prevX = bounds.getStart(isLtr = isLtr)
-        var prevY = bounds.bottom
+        model.entries.forEachIndexed { index, entries ->
 
-        val drawingStart = bounds.getStart(isLtr = isLtr) +
-            layoutDirectionMultiplier * (spacing.half + cellWidth.half) - horizontalScroll
+            linePath.rewind()
+            lineBackgroundPath.rewind()
+            val component = lines.getRepeating(index)
 
-        model.forEachPointWithinBounds(segmentProperties, drawingStart, this) { entry, x, y ->
-            if (linePath.isEmpty) {
-                linePath.moveTo(x, y)
-                if (lineBackgroundShader != null) {
-                    lineBackgroundPath.moveTo(x, bounds.bottom)
-                    lineBackgroundPath.lineTo(x, y)
+            var cubicCurvature: Float
+            var prevX = bounds.getStart(isLtr = isLtr)
+            var prevY = bounds.bottom
+
+            val drawingStart = bounds.getStart(isLtr = isLtr) +
+                layoutDirectionMultiplier * (spacing.half + cellWidth.half) - horizontalScroll
+
+            model.forEachPointWithinBounds(entries, segmentProperties, drawingStart, this) { entry, x, y ->
+                if (linePath.isEmpty) {
+                    linePath.moveTo(x, y)
+                    if (component.hasLineBackgroundShader) {
+                        lineBackgroundPath.moveTo(x, bounds.bottom)
+                        lineBackgroundPath.lineTo(x, y)
+                    }
+                } else {
+                    cubicCurvature = spacing * component.cubicStrength *
+                        min(1f, abs((y - prevY) / bounds.bottom) * CUBIC_Y_MULTIPLIER)
+                    linePath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature, isLtr)
+                    if (component.hasLineBackgroundShader) {
+                        lineBackgroundPath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature, isLtr)
+                    }
                 }
-            } else {
-                cubicCurvature = spacing * cubicStrength *
-                    min(1f, abs((y - prevY) / bounds.bottom) * CUBIC_Y_MULTIPLIER)
-                linePath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature, isLtr)
-                if (lineBackgroundShader != null) {
-                    lineBackgroundPath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature, isLtr)
+                prevX = x
+                prevY = y
+
+                if (x in bounds.left..bounds.right) {
+                    entryLocationMap.put(
+                        x = x,
+                        y = y.coerceIn(bounds.top, bounds.bottom),
+                        entry = entry,
+                        color = component.lineColor
+                    )
                 }
             }
-            prevX = x
-            prevY = y
 
-            if (x in bounds.left..bounds.right) {
-                entryLocationMap.put(
-                    x = x,
-                    y = y.coerceIn(bounds.top, bounds.bottom),
-                    entry = entry,
-                    color = lineColor
-                )
+            if (component.hasLineBackgroundShader) {
+                lineBackgroundPath.lineTo(prevX, bounds.bottom)
+                lineBackgroundPath.close()
+                component.drawBackgroundLine(context, bounds, lineBackgroundPath)
             }
-        }
+            component.drawLine(context, linePath)
 
-        if (lineBackgroundShader != null) {
-            lineBackgroundPaint.shader = lineBackgroundShader
-                .provideShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
-            lineBackgroundPath.lineTo(prevX, bounds.bottom)
-            lineBackgroundPath.close()
-            canvas.drawPath(lineBackgroundPath, lineBackgroundPaint)
-        }
-        canvas.drawPath(linePath, linePaint)
-
-        point?.let { point ->
-            model.forEachPointWithinBounds(segmentProperties, drawingStart, this) { _, x, y ->
-                point.drawPoint(context, x, y, pointSizeDp.pixels.half)
+            if (component.point != null) {
+                model.forEachPointWithinBounds(entries, segmentProperties, drawingStart, this) { _, x, y ->
+                    component.drawPoint(context, x, y)
+                }
             }
         }
     }
@@ -162,6 +217,7 @@ public open class LineChart(
     }
 
     private fun ChartEntryModel.forEachPointWithinBounds(
+        entries: List<ChartEntry>,
         segment: SegmentProperties,
         drawingStart: Float,
         context: DrawContext,
@@ -185,7 +241,7 @@ public open class LineChart(
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (entry.y - chartMinY) * heightMultiplier
 
-        entries.firstOrNull()?.forEachIn(drawMinX - stepX..drawMaxX + stepX) { entry ->
+        entries.forEachIn(drawMinX - stepX..drawMaxX + stepX) { entry ->
             x = getDrawX(entry)
             y = getDrawY(entry)
             when {
@@ -211,7 +267,10 @@ public open class LineChart(
         context: MeasureContext,
         model: ChartEntryModel,
     ): SegmentProperties = with(context) {
-        segmentProperties.set(cellWidth = pointSizeDp.pixels, marginWidth = spacingDp.pixels)
+        segmentProperties.set(
+            cellWidth = lines.maxOf { it.pointSizeDp.pixels },
+            marginWidth = spacingDp.pixels,
+        )
     }
 
     override fun setToChartModel(chartModel: MutableChartModel, model: ChartEntryModel) {
@@ -223,7 +282,7 @@ public open class LineChart(
     }
 
     override fun getInsets(context: MeasureContext, outInsets: Insets): Unit = with(context) {
-        outInsets.setVertical(lineThicknessDp.pixels)
+        outInsets.setVertical(lines.maxOf { it.lineThicknessDp.pixels })
     }
 
     private companion object {
