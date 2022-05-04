@@ -34,7 +34,8 @@ import com.patrykandpatryk.vico.view.theme.use
  * @param themeAttrRes a theme attributes resource identifier used to retrieve the [LineChart.LineSpec]’s style.
  * Can be [R.attr.line1spec], [R.attr.line2spec], [R.attr.line3spec], or [0].
  * @param styleResId used to retrieve the style information if the provided [themeAttrRes] cannot be resolved.
- * The [styleResId] must define the style of at least one of the following: [R.attr.line1spec], [R.attr.line2spec], and [R.attr.line3spec].
+ * The [styleResId] must define the style of at least one of the following: [R.attr.line1spec], [R.attr.line2spec],
+ * and [R.attr.line3spec].
  *
  * @see R.styleable.LineSpec
  */
@@ -64,7 +65,8 @@ public fun lineSpec(
  * @param themeAttrRes a [List] of theme attribute resource identifiers used to retrieve [LineChart.LineSpec] styles.
  * By default it is a list of [R.attr.line1spec], [R.attr.line2spec], and [R.attr.line3spec].
  * @param styleResId used to retrieve the style information if the provided [themeAttrRes] cannot be resolved.
- * The [styleResId] must define the style of at least one of the following: [R.attr.line1spec], [R.attr.line2spec], and [R.attr.line3spec].
+ * The [styleResId] must define the style of at least one of the following: [R.attr.line1spec], [R.attr.line2spec],
+ * and [R.attr.line3spec].
  *
  * @see lineSpec
  */
