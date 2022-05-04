@@ -16,13 +16,22 @@
 
 <resources>
     <attr name="lineChartStyle" format="reference" />
+    <attr name="line1spec" format="reference" />
+    <attr name="line2spec" format="reference" />
+    <attr name="line3spec" format="reference" />
 
     <declare-styleable name="LineChartStyle">
+        <attr name="line1spec" />
+        <attr name="line2spec" />
+        <attr name="line3spec" />
+        <attr name="spacing" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="LineSpec">
         <attr name="color" />
         <attr name="gradientTopColor" format="color" />
         <attr name="gradientBottomColor" format="color" />
         <attr name="pointSize" format="dimension" />
-        <attr name="spacing" format="dimension" />
         <attr name="lineThickness" format="dimension" />
         <attr name="pointStyle" format="reference" />
         <attr name="cubicStrength" format="fraction"/>

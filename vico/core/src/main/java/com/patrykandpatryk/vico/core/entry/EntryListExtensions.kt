@@ -35,3 +35,12 @@ public fun entryModelOf(vararg values: Number): ChartEntryModel =
         .mapIndexed { index, value -> entryOf(index.toFloat(), value.toFloat()) }
         .let { entryList -> ChartEntryModelProducer(listOf(entryList)) }
         .getModel()
+
+/**
+ * Creates a [ChartEntryModel] out of the provided list of list of [FloatEntry] instances.
+ *
+ * Can be used to create a [com.patrykandpatryk.vico.core.chart.line.LineChart]s with multiple lines and
+ * [com.patrykandpatryk.vico.core.chart.column.ColumnChart]s with multiple columns.
+ */
+public fun entryModelOf(vararg values: List<FloatEntry>): ChartEntryModel =
+    ChartEntryModelProducer(values.toList()).getModel()

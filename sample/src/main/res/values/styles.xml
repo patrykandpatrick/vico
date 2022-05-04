@@ -37,7 +37,21 @@
     </style>
 
     <style name="LineChartStyle">
+        <item name="line1spec">@style/Line1SpecStyle</item>
+        <item name="line2spec">@style/Line2SpecStyle</item>
+        <item name="line3spec">@style/Line3SpecStyle</item>
+    </style>
+
+    <style name="Line1SpecStyle">
         <item name="color">?colorPrimary</item>
+    </style>
+
+    <style name="Line2SpecStyle">
+        <item name="color">?colorSecondary</item>
+    </style>
+
+    <style name="Line3SpecStyle">
+        <item name="color">?colorTertiary</item>
     </style>
 
     <style name="StackedColumnChartAxisStyle">

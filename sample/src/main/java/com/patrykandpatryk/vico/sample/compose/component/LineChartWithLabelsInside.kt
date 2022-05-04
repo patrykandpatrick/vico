@@ -25,6 +25,7 @@ import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
+import com.patrykandpatryk.vico.compose.chart.line.lineSpec
 import com.patrykandpatryk.vico.compose.component.shapeComponent
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.component.shape.Shapes
@@ -52,7 +53,11 @@ internal fun LineChartWithLabelsInside(
 
     Chart(
         modifier = modifier,
-        chart = lineChart(lineBackgroundShader = null),
+        chart = lineChart(
+            lines = listOf(
+                lineSpec(lineBackgroundShader = null),
+            ),
+        ),
         chartModelProducer = chartEntryModelProducer,
         marker = marker(),
         startAxis = startAxis,

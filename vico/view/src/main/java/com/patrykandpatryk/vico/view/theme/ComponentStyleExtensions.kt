@@ -19,14 +19,19 @@ package com.patrykandpatryk.vico.view.theme
 import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
+import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.OverlayingComponent
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.view.R
+import com.patrykandpatryk.vico.view.component.shape.shader.verticalGradient
 import com.patrykandpatryk.vico.view.extension.defaultColors
 
 internal fun TypedArray.getLineComponent(
@@ -117,4 +122,53 @@ internal fun TypedArray.getComponent(
     } else {
         baseComponent
     }
+}
+
+internal fun TypedArray.getLineSpec(
+    context: Context,
+): LineChart.LineSpec {
+
+    val lineColor = getColor(
+        index = R.styleable.LineSpec_color,
+        defaultColor = context.defaultColors.lineColor.toInt(),
+    )
+
+    val shader = if (
+        hasValue(R.styleable.LineSpec_gradientTopColor) ||
+        hasValue(R.styleable.LineSpec_gradientBottomColor)
+    ) {
+        val gradientTopColor = getColor(R.styleable.LineSpec_gradientTopColor)
+        val gradientBottomColor = getColor(R.styleable.LineSpec_gradientBottomColor)
+
+        DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
+    } else {
+        DynamicShaders.verticalGradient(
+            lineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+            lineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+        )
+    }
+
+    return LineChart.LineSpec(
+        lineColor = lineColor,
+        point = getNestedTypedArray(
+            context = context,
+            resourceId = R.styleable.LineSpec_pointStyle,
+            styleableResourceId = R.styleable.ComponentStyle,
+        ).getComponent(context),
+        pointSizeDp = getRawDimension(
+            context = context,
+            index = R.styleable.LineSpec_pointSize,
+            defaultValue = DefaultDimens.POINT_SIZE,
+        ),
+        lineThicknessDp = getRawDimension(
+            context = context,
+            index = R.styleable.LineSpec_lineThickness,
+            defaultValue = DefaultDimens.LINE_THICKNESS,
+        ),
+        cubicStrength = getFraction(
+            index = R.styleable.LineSpec_cubicStrength,
+            defaultValue = DefaultDimens.CUBIC_STRENGTH,
+        ),
+        lineBackgroundShader = shader,
+    )
 }
