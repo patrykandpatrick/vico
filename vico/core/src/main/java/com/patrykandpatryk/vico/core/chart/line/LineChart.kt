@@ -50,7 +50,7 @@ import kotlin.math.min
 /**
  * [LineChart] displays data as a continuous line.
  *
- * @param lines the [List] of [LineSpec] defining the style of each line.
+ * @param lines a [List] of [LineSpec]s defining the style of each line.
  * @param spacingDp the spacing between each [LineSpec.point] in dp.
  */
 public open class LineChart(
@@ -78,7 +78,7 @@ public open class LineChart(
     ) {
 
         /**
-         * Returns true if the [lineBackgroundShader] is not null and false otherwise.
+         * Returns true if the [lineBackgroundShader] is not null, and false otherwise.
          */
         public val hasLineBackgroundShader: Boolean
             get() = lineBackgroundShader != null
@@ -102,7 +102,7 @@ public open class LineChart(
         public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
 
         /**
-         * Draws a [point] using the given [context] at [x] and [y] coordinates.
+         * Draws a [point] at the given [x] and [y] coordinates, using the provided [context].
          *
          * @see Component
          */
@@ -190,7 +190,7 @@ public open class LineChart(
                         x = x,
                         y = y.coerceIn(bounds.top, bounds.bottom),
                         entry = entry,
-                        color = component.lineColor
+                        color = component.lineColor,
                     )
                 }
             }

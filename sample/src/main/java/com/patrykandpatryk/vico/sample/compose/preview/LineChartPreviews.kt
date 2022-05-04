@@ -56,14 +56,14 @@ public fun LineChartDark() {
                         lineColor = yellow,
                         lineBackgroundShader = verticalGradient(
                             arrayOf(yellow.copy(0.5f), yellow.copy(alpha = 0f))
-                        )
+                        ),
                     ),
                     lineSpec(
                         lineColor = pink,
                         lineBackgroundShader = verticalGradient(
                             arrayOf(pink.copy(0.5f), pink.copy(alpha = 0f))
-                        )
-                    )
+                        ),
+                    ),
                 ),
                 maxY = 4f,
             ),
@@ -91,7 +91,7 @@ public fun RegularLineChartExpanded() {
             maxY = 5f,
         ),
         model = model1,
-        startAxis = startAxis()
+        startAxis = startAxis(),
     )
 }
 

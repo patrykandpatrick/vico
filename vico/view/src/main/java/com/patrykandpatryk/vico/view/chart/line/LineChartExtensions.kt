@@ -28,13 +28,13 @@ import com.patrykandpatryk.vico.view.theme.getRawDimension
 import com.patrykandpatryk.vico.view.theme.use
 
 /**
- * Creates a [LineChart.LineSpec] using provided [themeAttrRes] and [styleResId].
+ * Creates a [LineChart.LineSpec] using the provided [themeAttrRes] and [styleResId].
  *
- * @param context a Context used to retrieve the style information.
- * @param themeAttrRes a theme attributes resource identifier used to retrieve [LineChart.LineSpec]’s style.
+ * @param context the context used to retrieve the style information.
+ * @param themeAttrRes a theme attributes resource identifier used to retrieve the [LineChart.LineSpec]’s style.
  * Can be [R.attr.line1spec], [R.attr.line2spec], [R.attr.line3spec], or [0].
  * @param styleResId used to retrieve the style information if the provided [themeAttrRes] cannot be resolved.
- * The [styleResId] must define the style of at least one of [R.attr.line1spec], [R.attr.line2spec], [R.attr.line3spec].
+ * The [styleResId] must define the style of at least one of the following: [R.attr.line1spec], [R.attr.line2spec], and [R.attr.line3spec].
  *
  * @see R.styleable.LineSpec
  */
@@ -52,19 +52,19 @@ public fun lineSpec(
             typedArray.getNestedTypedArray(
                 context = context,
                 resourceId = 0,
-                styleableResourceId = R.styleable.LineSpec
+                styleableResourceId = R.styleable.LineSpec,
             ).getLineSpec(context)
         }
 }
 
 /**
- * Creates a [LineChart] using provided [List] of [themeAttrRes] and [styleResId].
+ * Creates a [LineChart] using the provided [List] of theme attribute resource identifiers and the given [styleResId].
  *
- * @param context a Context used to retrieve the style information.
- * @param themeAttrRes a [List] of theme attributes resource identifiers used to retrieve [LineChart.LineSpec] styles.
+ * @param context the context used to retrieve the style information.
+ * @param themeAttrRes a [List] of theme attribute resource identifiers used to retrieve [LineChart.LineSpec] styles.
  * By default it is a list of [R.attr.line1spec], [R.attr.line2spec], and [R.attr.line3spec].
  * @param styleResId used to retrieve the style information if the provided [themeAttrRes] cannot be resolved.
- * The [styleResId] must define the style of at least one of [R.attr.line1spec], [R.attr.line2spec], [R.attr.line3spec].
+ * The [styleResId] must define the style of at least one of the following: [R.attr.line1spec], [R.attr.line2spec], and [R.attr.line3spec].
  *
  * @see lineSpec
  */
@@ -83,7 +83,7 @@ public fun lineChart(
                 typedArray.getNestedTypedArray(
                     context = context,
                     resourceId = 0,
-                    styleableResourceId = R.styleable.LineSpec
+                    styleableResourceId = R.styleable.LineSpec,
                 ).getLineSpec(context)
             }
     }

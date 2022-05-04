@@ -153,8 +153,8 @@ internal class ViewShowcaseFragment : Fragment() {
                         lineColor = secondaryColor,
                         lineBackgroundShader = getDottedShader(
                             dotColor = secondaryColor.copyColor(alpha = Tokens.ComposedChart.SHADER_ALPHA),
-                        )
-                    )
+                        ),
+                    ),
                 )
             }
         }

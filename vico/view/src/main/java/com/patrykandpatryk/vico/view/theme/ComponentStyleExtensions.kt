@@ -167,7 +167,7 @@ internal fun TypedArray.getLineSpec(
         ),
         cubicStrength = getFraction(
             index = R.styleable.LineSpec_cubicStrength,
-            defaultValue = DefaultDimens.CUBIC_STRENGTH
+            defaultValue = DefaultDimens.CUBIC_STRENGTH,
         ),
         lineBackgroundShader = shader,
     )

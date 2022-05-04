@@ -55,9 +55,8 @@ internal fun ComposedChart(
             lineSpec(
                 lineBackgroundShader = lineBackgroundShader,
                 lineColor = MaterialTheme.colorScheme.secondary,
-            )
-        )
-
+            ),
+        ),
     )
 
     val columnChart = columnChart(

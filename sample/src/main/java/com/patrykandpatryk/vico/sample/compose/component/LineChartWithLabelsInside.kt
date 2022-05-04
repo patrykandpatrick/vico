@@ -55,8 +55,8 @@ internal fun LineChartWithLabelsInside(
         modifier = modifier,
         chart = lineChart(
             lines = listOf(
-                lineSpec(lineBackgroundShader = null)
-            )
+                lineSpec(lineBackgroundShader = null),
+            ),
         ),
         chartModelProducer = chartEntryModelProducer,
         marker = marker(),
