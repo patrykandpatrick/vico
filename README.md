@@ -125,7 +125,7 @@ In the view system, use [`ChartView`](https://vico.patrykandpatryk.com/vico/view
     android:id="@+id/chart"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    app:chartType="column"
+    app:chart="column"
     app:showBottomAxis="true"
     app:showStartAxis="true" />
 ```
