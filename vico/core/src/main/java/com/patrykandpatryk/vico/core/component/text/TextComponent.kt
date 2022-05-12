@@ -84,7 +84,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     public var textSizeSp: Float = 0f
 
     /**
-     * The type of text truncation used when text’s width outranges available space.
+     * The type of text truncation used when the text’s width exceeds the amount of available space.
      * By default text will be truncated at the end with “…”.
      */
     public var ellipsize: TextUtils.TruncateAt? = TextUtils.TruncateAt.END
