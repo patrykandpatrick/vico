@@ -30,7 +30,7 @@ buildscript {
 
     dependencies {
 
-        classpath "com.android.tools.build:gradle:$versions.gradle"
+        classpath "com.android.tools.build:gradle:$versions.agp"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
         classpath("org.jetbrains.dokka:dokka-gradle-plugin:$versions.dokka")
         classpath("org.jetbrains.dokka:dokka-base:$versions.dokka")

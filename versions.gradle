@@ -32,7 +32,7 @@ ext {
             compose           : "1.2.0-beta01",
             coroutines        : "1.6.1",
             dokka             : "1.6.10",
-            gradle            : "7.2.0",
+            agp               : "7.2.0",
             junit             : "4.13.2",
             junitExt          : "1.1.2",
             kotlin            : "1.6.21",
