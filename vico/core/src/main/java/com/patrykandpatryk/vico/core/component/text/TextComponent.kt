@@ -36,6 +36,7 @@ import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 import com.patrykandpatryk.vico.core.draw.withCanvas
 import com.patrykandpatryk.vico.core.extension.copy
 import com.patrykandpatryk.vico.core.extension.half
+import com.patrykandpatryk.vico.core.extension.lineHeight
 import com.patrykandpatryk.vico.core.extension.piRad
 import com.patrykandpatryk.vico.core.extension.rotate
 import com.patrykandpatryk.vico.core.extension.translate
@@ -280,13 +281,27 @@ public open class TextComponent protected constructor() : Padding, Margins {
         fontScale: Float,
         width: Int = Int.MAX_VALUE,
     ): StaticLayout {
-        val key = LAYOUT_KEY_PREFIX + text + width + rotationDegrees
-        return if (hasExtra(key)) {
-            getExtra(key)
-        } else {
+        val correctedWidth = when {
+            rotationDegrees % 1f.piRad == 0f -> width
+            rotationDegrees % .5f.piRad == 0f -> Int.MAX_VALUE
+            else -> {
+                val cumulatedHeight = lineCount * textPaint.lineHeight
+                tempMeasureBounds.set(0f, 0f, 100f, cumulatedHeight)
+                var widthDelta = tempMeasureBounds.width()
+                tempMeasureBounds.rotate(degrees = rotationDegrees).also { widthDelta = it.width() / widthDelta }
+                (width / widthDelta).toInt()
+            }
+        }
+        val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees
+        return if (hasExtra(key)) getExtra(key) else {
             textPaint.textSize = textSizeSp * fontScale
-            staticLayout(text, textPaint, width, maxLines = lineCount, ellipsize = ellipsize)
-                .also { putExtra(key, it) }
+            staticLayout(
+                source = text,
+                paint = textPaint,
+                width = correctedWidth,
+                maxLines = lineCount,
+                ellipsize = ellipsize,
+            ).also { putExtra(key, it) }
         }
     }
 

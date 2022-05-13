@@ -193,14 +193,6 @@ public fun <Model : ChartEntryModel> Chart(
             ),
     ) {
         bounds.set(0, 0, size.width, size.height)
-        virtualLayout.setBounds(
-            context = measureContext,
-            contentBounds = bounds,
-            chart = chart,
-            chartModel = chartModel,
-            axisManager = axisManager,
-            marker,
-        )
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
             elevationOverlayColor = elevationOverlayColor,
@@ -209,6 +201,14 @@ public fun <Model : ChartEntryModel> Chart(
             segmentProperties = chart.getSegmentProperties(measureContext, model),
             chartModel = chartModel,
             chartBounds = chart.bounds,
+        )
+        virtualLayout.setBounds(
+            context = chartDrawContext,
+            contentBounds = bounds,
+            chart = chart,
+            chartModel = chartModel,
+            axisManager = axisManager,
+            marker,
         )
         axisManager.drawBehindChart(chartDrawContext)
         chart.draw(chartDrawContext, model)

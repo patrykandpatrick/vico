@@ -41,6 +41,7 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.Chart
+import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -249,13 +250,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
-        updateBounds()
-        motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
-        if (scroller.computeScrollOffset()) {
-            scrollHandler.handleScroll(scroller.currX.toFloat())
-            ViewCompat.postInvalidateOnAnimation(this)
-        }
-        measureContext.horizontalScroll = scrollHandler.currentScroll
         val drawContext = chartDrawContext(
             canvas = canvas,
             elevationOverlayColor = elevationOverlayColor,
@@ -265,6 +259,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             chartModel = chartModel,
             chartBounds = chart.bounds,
         )
+        updateBounds(context = drawContext)
+        motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+        if (scroller.computeScrollOffset()) {
+            scrollHandler.handleScroll(scroller.currX.toFloat())
+            ViewCompat.postInvalidateOnAnimation(this)
+        }
+        measureContext.horizontalScroll = scrollHandler.currentScroll
         axisManager.drawBehindChart(drawContext)
         chart.draw(drawContext, model)
         axisManager.drawAboveChart(drawContext)
@@ -326,10 +327,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         )
     }
 
-    private fun updateBounds() = withChartAndModel { chart, _ ->
+    private fun updateBounds(context: ChartDrawContext) = withChartAndModel { chart, _ ->
         measureContext.clearExtras()
         virtualLayout.setBounds(
-            context = measureContext,
+            context = context,
             contentBounds = contentBounds,
             chart = chart,
             chartModel = chartModel,

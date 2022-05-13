@@ -21,9 +21,9 @@ import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.axis.model.ChartModel
 import com.patrykandpatryk.vico.core.chart.Chart
+import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
-import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 
 /**
@@ -38,7 +38,7 @@ public open class VirtualLayout {
     /**
      * Measures and sets the bounds for the chart, the axes, and other components.
      *
-     * @param context the measuring context that holds the data used for component measurements.
+     * @param context the [ChartDrawContext] that holds the data used for component drawing.
      * @param contentBounds the bounds in which the chart contents must be drawn.
      * @param chart the actual chart.
      * @param chartModel the model used by the chart. This holds information about the values on both the y-axis and
@@ -48,7 +48,7 @@ public open class VirtualLayout {
      */
     @LongParameterListDrawFunction
     public open fun <Model : ChartEntryModel> setBounds(
-        context: MeasureContext,
+        context: ChartDrawContext,
         contentBounds: RectF,
         chart: Chart<Model>,
         chartModel: ChartModel,
