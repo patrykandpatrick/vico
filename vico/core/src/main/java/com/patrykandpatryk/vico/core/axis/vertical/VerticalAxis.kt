@@ -172,16 +172,10 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun MeasureContext.getTickLeftX(): Float = when {
-        position.isLeft(isLtr) && horizontalLabelPosition == Outside ->
-            bounds.right - (axisThickness.half + tickLength)
-        position.isLeft(isLtr) && horizontalLabelPosition == Inside ->
-            bounds.right
-        position.isRight(isLtr) && horizontalLabelPosition == Outside ->
-            bounds.left
-        position.isRight(isLtr) && horizontalLabelPosition == Inside ->
-            bounds.left - (axisThickness.half + tickLength)
-        else -> throw IllegalStateException("Unexpected case while determining tick left X position.")
+    private fun MeasureContext.getTickLeftX(): Float {
+        val onLeft = position.isLeft(isLtr = isLtr)
+        val base = if (onLeft) bounds.right else bounds.left
+        return if (onLeft == (horizontalLabelPosition == Outside)) base - axisThickness.half - tickLength else base
     }
 
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
