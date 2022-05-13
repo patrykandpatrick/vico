@@ -143,7 +143,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun getInsets(
-        context: MeasureContext,
+        context: ChartDrawContext,
         outInsets: Insets,
     ): Unit = with(context) {
         with(outInsets) {
@@ -156,16 +156,27 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    private fun getDesiredHeight(context: MeasureContext): Float = with(context) {
+    private fun getDesiredHeight(context: ChartDrawContext): Float = with(context) {
+        val labelWidth by lazy { segmentProperties.segmentWidth.toInt() }
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> (
                 label?.let { label ->
-                    getLabelsToMeasure().maxOf { labelText -> label.getHeight(context = this, text = labelText).orZero }
+                    getLabelsToMeasure().maxOf { labelText ->
+                        label.getHeight(
+                            context = this,
+                            text = labelText,
+                            width = labelWidth,
+                        ).orZero
+                    }
                 }.orZero + (if (position.isBottom) axisThickness else 0f) + tickLength
                 ).coerceIn(constraint.minSizeDp.pixels, constraint.maxSizeDp.pixels)
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> canvasBounds.height() * constraint.fraction
-            is SizeConstraint.TextWidth -> label?.getHeight(context = this, text = constraint.text).orZero
+            is SizeConstraint.TextWidth -> label?.getHeight(
+                context = this,
+                text = constraint.text,
+                width = labelWidth,
+            ).orZero
         }
     }
 

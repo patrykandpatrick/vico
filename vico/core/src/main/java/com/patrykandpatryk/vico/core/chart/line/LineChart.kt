@@ -281,7 +281,10 @@ public open class LineChart(
         chartModel.chartEntryModel = model
     }
 
-    override fun getInsets(context: MeasureContext, outInsets: Insets): Unit = with(context) {
+    override fun getInsets(
+        context: ChartDrawContext,
+        outInsets: Insets,
+    ): Unit = with(context) {
         outInsets.setVertical(lines.maxOf { it.lineThicknessDp.pixels })
     }
 

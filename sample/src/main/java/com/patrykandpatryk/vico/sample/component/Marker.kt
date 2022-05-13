@@ -20,6 +20,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.TextUtils
 import androidx.annotation.ColorInt
+import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.component.OverlayingComponent
 import com.patrykandpatryk.vico.core.component.marker.MarkerComponent
@@ -30,7 +31,6 @@ import com.patrykandpatryk.vico.core.component.shape.Shapes.pillShape
 import com.patrykandpatryk.vico.core.component.shape.cornered.Corner
 import com.patrykandpatryk.vico.core.component.shape.cornered.MarkerCorneredShape
 import com.patrykandpatryk.vico.core.component.text.textComponent
-import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.core.marker.Marker
@@ -95,7 +95,10 @@ internal fun getMarker(
             }
         }
 
-        override fun getInsets(context: MeasureContext, outInsets: Insets) = with(context) {
+        override fun getInsets(
+            context: ChartDrawContext,
+            outInsets: Insets,
+        ) = with(context) {
             outInsets.top = label.getHeight(context) + labelBackgroundShape.tickSizeDp.pixels +
                 SHADOW_RADIUS.pixels * SHADOW_RADIUS_TO_PX_MULTIPLIER - SHADOW_DY.pixels
         }
