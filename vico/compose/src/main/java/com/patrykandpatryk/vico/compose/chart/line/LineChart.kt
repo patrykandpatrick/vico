@@ -91,7 +91,8 @@ public fun lineChart(
 /**
  * Creates a [LineChart].
  *
- * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there are lines.
+ * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
+ * are lines.
  * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
  * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
  * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
