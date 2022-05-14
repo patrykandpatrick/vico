@@ -272,7 +272,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
         ifNotNull(
             t1 = marker,
-            t2 = markerTouchPoint?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
+            t2 = markerTouchPoint?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
         ) { marker, markerModel ->
             marker.draw(
                 context = drawContext,
