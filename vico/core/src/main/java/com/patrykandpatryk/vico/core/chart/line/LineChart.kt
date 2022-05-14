@@ -59,12 +59,14 @@ public open class LineChart(
 ) : BaseChart<ChartEntryModel>() {
 
     /**
+     * Defines the appearance of a line in a line chart.
+     *
      * @param lineColor the color of the line.
      * @param lineThicknessDp the thickness of the line in dp.
-     * @param lineBackgroundShader an optional [DynamicShader] that can style the space between the line and the x-axis.
+     * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
      * @param lineCap the stroke cap for the line.
      * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
-     * @param point an optional [LineSpec] that can be drawn at a given point above the line.
+     * @param point an optional [Component] that can be drawn at a given point on the line.
      * @param pointSizeDp the size of the [point] in dp.
      */
     public open class LineSpec(

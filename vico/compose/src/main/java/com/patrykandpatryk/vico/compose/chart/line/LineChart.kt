@@ -28,6 +28,7 @@ import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.line.LineChart
+import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -90,23 +91,20 @@ public fun lineChart(
 /**
  * Creates a [LineChart].
  *
- * @param point an optional [Component] that can be drawn at a given point on the line.
- * @param pointSize the size of the [point].
- * @param spacing the spacing between each [point].
- * @param lineThickness the thickness of the line.
- * @param lineColor the color of the line.
+ * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there are lines.
  * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
  * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
  * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
  * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  * @param decorations the list of [Decoration]s that will be added to the [LineChart].
+ * @param persistentMarkers maps x-axis values to persistent [Marker]s.
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
  */
 @Composable
 public fun lineChart(
-    lines: List<LineChart.LineSpec> = listOf(lineSpec()),
+    lines: List<LineSpec> = listOf(lineSpec()),
     spacing: Dp = currentChartStyle.lineChart.spacing,
     minX: Float? = null,
     maxX: Float? = null,
@@ -126,17 +124,15 @@ public fun lineChart(
 }
 
 /**
- * Creates a [LineChart.LineSpec] used by [LineChart].
+ * Creates a [LineChart.LineSpec] for use in [LineChart]s.
  *
+ * @param lineColor the color of the line.
+ * @param lineThickness the thickness of the line.
+ * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
+ * @param lineCap the stroke cap for the line.
+ * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
  * @param point an optional [Component] that can be drawn at a given point on the line.
  * @param pointSize the size of the [point].
- * @param spacing the spacing between each [point].
- * @param lineThickness the thickness of the line.
- * @param lineColor the color of the line.
- * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
- * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
- * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
- * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  *
  * @see LineChart
  * @see LineChart.LineSpec
@@ -150,9 +146,9 @@ public fun lineSpec(
     cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
     point: Component? = currentChartStyle.lineChart.point,
     pointSize: Dp = currentChartStyle.lineChart.pointSize,
-): LineChart.LineSpec =
+): LineSpec =
     remember {
-        LineChart.LineSpec()
+        LineSpec()
     }.apply {
         this.lineColor = lineColor.toArgb()
         this.lineThicknessDp = lineThickness.value
