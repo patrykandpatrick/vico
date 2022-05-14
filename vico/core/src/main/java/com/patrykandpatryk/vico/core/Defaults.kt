@@ -236,19 +236,22 @@ public interface DefaultColors {
     public val axisLineColor: Long
 
     /**
-     * The color for columns whose index in a segment is 3k (k ∈ N).
+     * The color for columns whose index in a segment is 3k (k ∈ N)
+     * and for lines whose index in the list of lines in a line chart is 3k (k ∈ N).
      */
-    public val column1Color: Long
+    public val entity1Color: Long
 
     /**
-     * The color for columns whose index in a segment is 1 + 3k (k ∈ N).
+     * The color for columns whose index in a segment is 1 + 3k (k ∈ N)
+     * and for lines whose index in the list of lines in a line chart is 1 + 3k (k ∈ N).
      */
-    public val column2Color: Long
+    public val entity2Color: Long
 
     /**
-     * The color for columns whose index in a segment is 2 + 3k (k ∈ N).
+     * The color for columns whose index in a segment is 2 + 3k (k ∈ N)
+     * and for lines whose index in the list of lines in a line chart is 2 + 3k (k ∈ N).
      */
-    public val column3Color: Long
+    public val entity3Color: Long
 
     /**
      * The default line color for line charts.
@@ -266,9 +269,9 @@ public interface DefaultColors {
         override val axisGuidelineColor: Long = 0x47000000
         override val axisLineColor: Long = 0x47000000
 
-        override val column1Color: Long = 0xFF787878
-        override val column2Color: Long = 0xFF5A5A5A
-        override val column3Color: Long = 0xFF383838
+        override val entity1Color: Long = 0xFF787878
+        override val entity2Color: Long = 0xFF5A5A5A
+        override val entity3Color: Long = 0xFF383838
 
         override val lineColor: Long = 0xFF1A1A1A
     }
@@ -284,9 +287,9 @@ public interface DefaultColors {
         override val axisGuidelineColor: Long = 0xFF424242
         override val axisLineColor: Long = 0xFF555555
 
-        override val column1Color: Long = 0xFFCACACA
-        override val column2Color: Long = 0xFFA8A8A8
-        override val column3Color: Long = 0xFF888888
+        override val entity1Color: Long = 0xFFCACACA
+        override val entity2Color: Long = 0xFFA8A8A8
+        override val entity3Color: Long = 0xFF888888
 
         override val lineColor: Long = 0xFFEFEFEF
     }

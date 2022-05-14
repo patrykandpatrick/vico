@@ -31,18 +31,16 @@ public fun m2ChartStyle(
     axisLabelColor: Color = MaterialTheme.colors.onBackground,
     axisGuidelineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = LINE_ALPHA),
     axisLineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = LINE_ALPHA),
-    columnColors: List<Color> = listOf(
+    entityColors: List<Color> = listOf(
         MaterialTheme.colors.primary,
         MaterialTheme.colors.secondary,
     ),
-    lineColor: Color = MaterialTheme.colors.primary,
     elevationOverlayColor: Color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
 ): ChartStyle = ChartStyle.fromColors(
     axisLabelColor = axisLabelColor,
     axisGuidelineColor = axisGuidelineColor,
     axisLineColor = axisLineColor,
-    columnColors = columnColors,
-    lineColor = lineColor,
+    entityColors = entityColors,
     elevationOverlayColor = elevationOverlayColor,
 )
 

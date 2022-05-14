@@ -42,7 +42,7 @@ internal fun TypedArray.getColumnChart(
                 styleableResourceId = R.styleable.LineComponentStyle,
             ).getLineComponent(
                 context = context,
-                defaultColor = context.defaultColors.column1Color.toInt(),
+                defaultColor = context.defaultColors.entity1Color.toInt(),
                 defaultThickness = DefaultDimens.COLUMN_WIDTH,
                 defaultShape = defaultShape,
             ),
@@ -52,7 +52,7 @@ internal fun TypedArray.getColumnChart(
                 styleableResourceId = R.styleable.LineComponentStyle,
             ).getLineComponent(
                 context = context,
-                defaultColor = context.defaultColors.column2Color.toInt(),
+                defaultColor = context.defaultColors.entity2Color.toInt(),
                 defaultThickness = DefaultDimens.COLUMN_WIDTH,
                 defaultShape = defaultShape,
             ),
@@ -62,7 +62,7 @@ internal fun TypedArray.getColumnChart(
                 styleableResourceId = R.styleable.LineComponentStyle,
             ).getLineComponent(
                 context = context,
-                defaultColor = context.defaultColors.column3Color.toInt(),
+                defaultColor = context.defaultColors.entity3Color.toInt(),
                 defaultThickness = DefaultDimens.COLUMN_WIDTH,
                 defaultShape = defaultShape,
             ),
@@ -70,14 +70,14 @@ internal fun TypedArray.getColumnChart(
         spacingDp = getRawDimension(
             context = context,
             index = R.styleable.ColumnChartStyle_columnOuterSpacing,
-            defaultValue = DefaultDimens.COLUMN_OUTSIDE_SPACING
+            defaultValue = DefaultDimens.COLUMN_OUTSIDE_SPACING,
         ),
         innerSpacingDp = getRawDimension(
             context = context,
             index = R.styleable.ColumnChartStyle_columnInnerSpacing,
-            defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING
+            defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING,
         ),
-        mergeMode = mergeMode
+        mergeMode = mergeMode,
     )
 }
 
@@ -93,17 +93,26 @@ internal fun TypedArray.getLineChart(
                 context = context,
                 resourceId = R.styleable.LineChartStyle_line1spec,
                 styleableResourceId = R.styleable.LineSpec,
-            ).getLineSpec(context),
+            ).getLineSpec(
+                context = context,
+                defaultColor = context.defaultColors.entity1Color.toInt(),
+            ),
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.LineChartStyle_line2spec,
                 styleableResourceId = R.styleable.LineSpec,
-            ).getLineSpec(context),
+            ).getLineSpec(
+                context = context,
+                defaultColor = context.defaultColors.entity2Color.toInt(),
+            ),
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.LineChartStyle_line3spec,
                 styleableResourceId = R.styleable.LineSpec,
-            ).getLineSpec(context),
+            ).getLineSpec(
+                context = context,
+                defaultColor = context.defaultColors.entity3Color.toInt(),
+            ),
         ),
         spacingDp = getRawDimension(
             context = context,

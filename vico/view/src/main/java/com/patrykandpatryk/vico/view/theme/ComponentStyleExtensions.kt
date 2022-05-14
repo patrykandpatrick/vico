@@ -126,11 +126,12 @@ internal fun TypedArray.getComponent(
 
 internal fun TypedArray.getLineSpec(
     context: Context,
+    defaultColor: Int = context.defaultColors.entity1Color.toInt(),
 ): LineChart.LineSpec {
 
     val lineColor = getColor(
         index = R.styleable.LineSpec_color,
-        defaultColor = context.defaultColors.lineColor.toInt(),
+        defaultColor = defaultColor,
     )
 
     val shader = if (

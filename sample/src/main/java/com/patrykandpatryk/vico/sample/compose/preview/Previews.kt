@@ -38,6 +38,7 @@ import com.patrykandpatryk.vico.sample.compose.theme.MainTheme
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
+import com.patrykandpatryk.vico.compose.chart.line.lineSpec
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.compose.component.shapeComponent
 import com.patrykandpatryk.vico.compose.component.shape.lineComponent
@@ -110,13 +111,17 @@ public fun LineChartCard(): Unit = MainTheme {
         Chart(
             modifier = Modifier.height(100.dp),
             chart = lineChart(
-                point = null,
-                lineColor = colors.primary,
-                lineBackgroundShader = DynamicShaders.fromComponent(
-                    componentSize = 4.dp,
-                    component = shapeComponent(shape = pillShape, color = colors.primary).apply {
-                        setMargins(0.5.dp.value)
-                    },
+                lines = listOf(
+                    lineSpec(
+                        point = null,
+                        lineColor = colors.primary,
+                        lineBackgroundShader = DynamicShaders.fromComponent(
+                            componentSize = 4.dp,
+                            component = shapeComponent(shape = pillShape, color = colors.primary).apply {
+                                setMargins(0.5.dp.value)
+                            },
+                        ),
+                    ),
                 ),
                 minX = 0f,
                 maxY = 3f,

@@ -30,18 +30,16 @@ public fun m3ChartStyle(
     axisLabelColor: Color = MaterialTheme.colorScheme.onBackground,
     axisGuidelineColor: Color = MaterialTheme.colorScheme.outline,
     axisLineColor: Color = MaterialTheme.colorScheme.outline,
-    columnColors: List<Color> = listOf(
+    entityColors: List<Color> = listOf(
         MaterialTheme.colorScheme.primary,
         MaterialTheme.colorScheme.secondary,
         MaterialTheme.colorScheme.tertiary,
     ),
-    lineColor: Color = MaterialTheme.colorScheme.primary,
     elevationOverlayColor: Color = MaterialTheme.colorScheme.primary,
 ): ChartStyle = ChartStyle.fromColors(
     axisLabelColor = axisLabelColor,
     axisGuidelineColor = axisGuidelineColor,
     axisLineColor = axisLineColor,
-    columnColors = columnColors,
-    lineColor = lineColor,
+    entityColors = entityColors,
     elevationOverlayColor = elevationOverlayColor,
 )
