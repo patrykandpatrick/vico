@@ -113,13 +113,17 @@ public fun RegularLineChartCollapsed() {
 public fun ComposedLineChart() {
     Chart(
         chart = lineChart() + lineChart(
-            lineColor = Color.Blue,
-            lineBackgroundShader = verticalGradient(
-                colors = arrayOf(
-                    Color.Blue.copy(alpha = 0.4f),
-                    Color.Blue.copy(alpha = 0f),
-                )
-            )
+            lines = listOf(
+                lineSpec(
+                    lineColor = Color.Blue,
+                    lineBackgroundShader = verticalGradient(
+                        colors = arrayOf(
+                            Color.Blue.copy(alpha = 0.4f),
+                            Color.Blue.copy(alpha = 0f),
+                        ),
+                    ),
+                ),
+            ),
         ),
         model = model1 + model2,
         startAxis = startAxis(),

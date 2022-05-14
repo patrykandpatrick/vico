@@ -23,29 +23,25 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.compositionLocalOf
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.patrykandpatryk.vico.compose.chart.line.lineSpec
 import com.patrykandpatryk.vico.compose.component.shape.dashedShape
 import com.patrykandpatryk.vico.compose.component.shape.lineComponent
-import com.patrykandpatryk.vico.compose.component.shape.shader.fromBrush
-import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultColors
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatryk.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
-import com.patrykandpatryk.vico.core.component.Component
+import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
-import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
-import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
 
 /**
  * Defines the appearance of charts.
@@ -134,20 +130,13 @@ public data class ChartStyle(
 
     /**
      * Defines the appearance of line charts.
-     * @property point an optional [Component] to display on lines for each x-axis value.
-     * @property pointSize the size of points.
+     * @param lines the [LineSpec]s to use for the lines. This list is iterated through as many times as there are
+     * lines.
      * @property spacing the spacing between points.
-     * @property lineThickness the width of lines.
-     * @property lineColor the color of lines.
-     * @property lineBackgroundShader a [DynamicShader] to apply to the areas between lines and bottom x-axes.
      */
     public data class LineChart(
-        val point: Component? = null,
-        val pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
+        val lines: List<LineSpec>,
         val spacing: Dp = DefaultDimens.POINT_SPACING.dp,
-        val lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
-        val lineColor: Color,
-        val lineBackgroundShader: DynamicShader? = null,
     )
 
     /**
@@ -173,8 +162,7 @@ public data class ChartStyle(
             axisLabelColor: Color,
             axisGuidelineColor: Color,
             axisLineColor: Color,
-            columnColors: List<Color>,
-            lineColor: Color,
+            entityColors: List<Color>,
             elevationOverlayColor: Color,
         ): ChartStyle = ChartStyle(
             axis = Axis(
@@ -183,26 +171,18 @@ public data class ChartStyle(
                 axisLineColor = axisLineColor,
             ),
             columnChart = ColumnChart(
-                columns = columnColors.map { columnColor ->
+                columns = entityColors.map { entityColor ->
                     lineComponent(
-                        color = columnColor,
+                        color = entityColor,
                         thickness = DefaultDimens.COLUMN_WIDTH.dp,
-                        shape = Shapes.roundedCornerShape(
-                            allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT,
-                        ),
+                        shape = Shapes.roundedCornerShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
                     )
                 },
             ),
             lineChart = LineChart(
-                lineColor = lineColor,
-                lineBackgroundShader = DynamicShaders.fromBrush(
-                    brush = Brush.verticalGradient(
-                        listOf(
-                            lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                            lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                        ),
-                    ),
-                ),
+                lines = entityColors.map { entityColor ->
+                    lineSpec(lineColor = entityColor)
+                },
             ),
             marker = Marker(),
             elevationOverlayColor = elevationOverlayColor,
@@ -212,12 +192,11 @@ public data class ChartStyle(
             axisLabelColor = Color(defaultColors.axisLabelColor),
             axisGuidelineColor = Color(defaultColors.axisGuidelineColor),
             axisLineColor = Color(defaultColors.axisLineColor),
-            columnColors = listOf(
-                defaultColors.column1Color,
-                defaultColors.column2Color,
-                defaultColors.column3Color,
+            entityColors = listOf(
+                defaultColors.entity1Color,
+                defaultColors.entity2Color,
+                defaultColors.entity3Color,
             ).map(::Color),
-            lineColor = Color(defaultColors.lineColor),
             elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
         )
     }
