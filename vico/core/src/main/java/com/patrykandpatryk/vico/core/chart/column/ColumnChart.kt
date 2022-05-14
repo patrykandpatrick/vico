@@ -156,7 +156,7 @@ public open class ColumnChart(
             x = columnCenterX,
             y = columnTop.coerceIn(bounds.top, bounds.bottom),
             entry = entry,
-            color = column.color
+            color = column.color,
         )
     }
 
