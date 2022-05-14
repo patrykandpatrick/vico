@@ -17,7 +17,7 @@
 package com.patrykandpatryk.vico.core.dimensions
 
 /**
- * A subclass of [Dimensions] whose every property is mutable.
+ * An implementation of [Dimensions] whose every property is mutable.
  */
 public class MutableDimensions(
     override var startDp: Float,
@@ -25,6 +25,16 @@ public class MutableDimensions(
     override var endDp: Float,
     override var bottomDp: Float,
 ) : Dimensions {
+
+    public constructor(
+        horizontalDp: Float,
+        verticalDp: Float,
+    ) : this(
+        startDp = horizontalDp,
+        topDp = verticalDp,
+        endDp = horizontalDp,
+        bottomDp = verticalDp,
+    )
 
     /**
      * The sum of [startDp] and [endDp].

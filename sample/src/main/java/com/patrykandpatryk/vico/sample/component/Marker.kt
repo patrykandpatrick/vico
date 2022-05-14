@@ -47,7 +47,7 @@ internal fun getMarker(
         color = labelColor
         ellipsize = TextUtils.TruncateAt.END
         lineCount = 1
-        padding = MutableDimensions(startDp = 8f, topDp = 4f, endDp = 8f, bottomDp = 4f)
+        padding = MutableDimensions(horizontalDp = 8f, verticalDp = 4f)
         typeface = Typeface.MONOSPACE
         background = ShapeComponent(shape = labelBackgroundShape, color = bubbleColor)
             .setShadow(radius = SHADOW_RADIUS, dy = SHADOW_DY, applyElevationOverlay = true)
