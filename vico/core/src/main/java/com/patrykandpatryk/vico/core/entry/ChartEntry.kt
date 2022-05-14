@@ -19,18 +19,18 @@ package com.patrykandpatryk.vico.core.entry
 import com.patrykandpatryk.vico.core.chart.Chart
 
 /**
- * The base for single chart entry rendered by [Chart] subclasses.
- * It holds information about x-axis and y-axis location.
+ * The base for a single chart entry rendered by [Chart] subclasses.
+ * It holds information about the location of the chart entry on the x-axis and y-axis.
  */
 public interface ChartEntry {
 
     /**
-     * The position on x-axis of this [ChartEntry].
+     * The position of this [ChartEntry] on the x-axis.
      */
     public val x: Float
 
     /**
-     * The position on y-axis of this [ChartEntry].
+     * The position of this [ChartEntry] on the y-axis.
      */
     public val y: Float
 

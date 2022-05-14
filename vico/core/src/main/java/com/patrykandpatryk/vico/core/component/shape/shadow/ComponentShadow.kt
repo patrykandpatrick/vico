@@ -77,8 +77,8 @@ public data class ComponentShadow(
         }
     }
 
-    private fun DrawContext.shouldUpdateShadowLayer(): Boolean {
-        return if (
+    private fun DrawContext.shouldUpdateShadowLayer(): Boolean =
+        if (
             radius != laRadius ||
             dx != laDx ||
             dy != laDy ||
@@ -94,5 +94,4 @@ public data class ComponentShadow(
         } else {
             false
         }
-    }
 }
