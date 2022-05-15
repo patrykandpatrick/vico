@@ -179,9 +179,9 @@ public open class LineChart(
                 } else {
                     cubicCurvature = spacing * component.cubicStrength *
                         min(1f, abs((y - prevY) / bounds.bottom) * CUBIC_Y_MULTIPLIER)
-                    linePath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature, isLtr)
+                    linePath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature)
                     if (component.hasLineBackgroundShader) {
-                        lineBackgroundPath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature, isLtr)
+                        lineBackgroundPath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature)
                     }
                 }
                 prevX = x

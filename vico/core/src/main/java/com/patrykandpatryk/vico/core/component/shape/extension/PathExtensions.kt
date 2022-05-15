@@ -17,24 +17,21 @@
 package com.patrykandpatryk.vico.core.component.shape.extension
 
 import android.graphics.Path
-import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 
 /**
  * A convenience function for [Path.cubicTo] that helps with adding a cubic curve with a certain [curvature].
  */
-@LongParameterListDrawFunction
 public fun Path.horizontalCubicTo(
     prevX: Float,
     prevY: Float,
     x: Float,
     y: Float,
     curvature: Float,
-    isLtr: Boolean,
 ) {
-    val layoutDirectionMultiplier = if (isLtr) 1f else -1f
+    val directionMultiplier = if (x >= prevX) 1f else -1f
     cubicTo(
-        prevX + layoutDirectionMultiplier * curvature, prevY,
-        x - layoutDirectionMultiplier * curvature, y,
+        prevX + directionMultiplier * curvature, prevY,
+        x - directionMultiplier * curvature, y,
         x, y,
     )
 }
