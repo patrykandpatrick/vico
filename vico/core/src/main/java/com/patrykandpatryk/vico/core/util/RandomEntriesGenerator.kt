@@ -23,6 +23,7 @@ import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 import com.patrykandpatryk.vico.core.entry.FloatEntry
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatryk.vico.core.entry.entryOf
+import kotlin.random.Random
 
 /**
  * Generates randomized chart entries.
@@ -41,7 +42,7 @@ public class RandomEntriesGenerator(
         val result = ArrayList<FloatEntry>()
         val yLength = yRange.last - yRange.first
         for (x in xRange) {
-            result += entryOf(x.toFloat(), yRange.first + (Math.random() * yLength).toFloat())
+            result += entryOf(x.toFloat(), yRange.first + Random.nextFloat() * yLength)
         }
         return result
     }
