@@ -34,8 +34,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.compose.chart.entry.collect
 import com.patrykandpatryk.vico.compose.chart.entry.defaultDiffAnimationSpec
@@ -49,7 +47,6 @@ import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
-import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -149,8 +146,6 @@ public fun <Model : ChartEntryModel> Chart(
     isZoomEnabled: Boolean = true,
 ) {
     val axisManager = remember { AxisManager() }
-    val chartModel = remember { MutableChartModel() }
-    chart.setToChartModel(chartModel, model)
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val horizontalScroll = remember { mutableStateOf(0f) }
@@ -159,13 +154,10 @@ public fun <Model : ChartEntryModel> Chart(
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
         horizontalScroll = horizontalScroll.value,
         chartScale = zoom.value,
-        chartModel = chartModel,
         canvasBounds = bounds,
     )
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
-    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-    val layoutDirectionMultiplier = if (isLtr) 1f else -1f
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
 
@@ -193,23 +185,26 @@ public fun <Model : ChartEntryModel> Chart(
             ),
     ) {
         bounds.set(0, 0, size.width, size.height)
+
+        chart.updateChartValues(measureContext.chartValuesManager, model)
+
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint.value,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
-            chartModel = chartModel,
             chartBounds = chart.bounds,
         )
+
         virtualLayout.setBounds(
             context = chartDrawContext,
             contentBounds = bounds,
             chart = chart,
-            chartModel = chartModel,
             axisManager = axisManager,
             marker,
         )
+
         axisManager.drawBehindChart(chartDrawContext)
         chart.draw(chartDrawContext, model)
         axisManager.drawAboveChart(chartDrawContext)
@@ -223,8 +218,8 @@ public fun <Model : ChartEntryModel> Chart(
                 markedEntries = markerModel,
             )
         }
-        scrollHandler.maxScrollDistance = layoutDirectionMultiplier *
-            (chartDrawContext.segmentProperties.segmentWidth * chartModel.getDrawnEntryCount() - chart.bounds.width())
+        scrollHandler.maxScrollDistance = chartDrawContext.maxScrollDistance
+        measureContext.chartValuesManager.resetChartValues()
         measureContext.clearExtras()
     }
 }

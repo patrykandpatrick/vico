@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.core.axis.model
+package com.patrykandpatryk.vico.core.chart.values
 
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.entry.ChartEntry
@@ -29,7 +29,7 @@ import kotlin.math.abs
  * but they will be replaced with [Chart.minX], [Chart.maxX], [Chart.minY] and [Chart.maxY]
  * respectively when they are non-null.
  */
-public interface ChartModel {
+public interface ChartValues {
 
     /**
      * The minimum value on the x-axis. It is equal to [ChartEntryModel.minX] from [chartEntryModel] by default

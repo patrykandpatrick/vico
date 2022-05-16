@@ -20,7 +20,6 @@ import com.patrykandpatryk.vico.core.DEF_LABEL_COUNT
 import com.patrykandpatryk.vico.core.DEF_LABEL_SPACING
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
 import com.patrykandpatryk.vico.core.axis.setTo
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
@@ -114,7 +113,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val label = label
         val labelCount = getDrawLabelCount(bounds.height().toInt())
 
-        val labels = getLabels(chartModel, labelCount)
+        val labels = getLabels(labelCount)
 
         val tickLeftX = getTickLeftX()
 
@@ -181,13 +180,15 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
         label?.let { label ->
 
+            val chartValues = chartValuesManager.getChartValues(position)
+
             fun getLabelHeight(value: Float): Float =
-                label.getHeight(this, valueFormatter.formatValue(value, chartModel))
+                label.getHeight(this, valueFormatter.formatValue(value, chartValues))
 
             val avgHeight = arrayOf(
-                getLabelHeight(chartModel.minY),
-                getLabelHeight((chartModel.maxY + chartModel.minY) / 2),
-                getLabelHeight(chartModel.maxY),
+                getLabelHeight(chartValues.minY),
+                getLabelHeight((chartValues.maxY + chartValues.minY) / 2),
+                getLabelHeight(chartValues.maxY),
             ).maxOrNull().orZero
 
             var result = 0f
@@ -200,19 +201,20 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     private fun MeasureContext.getLabels(
-        chartModel: ChartModel,
         maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
     ): List<String> {
-        return if (hasExtra(LABELS_KEY)) {
-            getExtra(LABELS_KEY)
+        val chartValues = chartValuesManager.getChartValues(position)
+        val cacheKey = LABELS_KEY + position
+        return if (hasExtra(cacheKey)) {
+            getExtra(cacheKey)
         } else {
             labels.clear()
-            val step = (chartModel.maxY - chartModel.minY) / maxLabelCount
+            val step = (chartValues.maxY - chartValues.minY) / maxLabelCount
             for (index in 0..maxLabelCount) {
-                val value = chartModel.minY + step * index
-                labels += valueFormatter.formatValue(value, chartModel)
+                val value = chartValues.minY + step * index
+                labels += valueFormatter.formatValue(value, chartValues)
             }
-            putExtra(LABELS_KEY, labels)
+            putExtra(cacheKey, labels)
             labels
         }
     }
@@ -222,7 +224,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         availableHeight: Float,
         outInsets: HorizontalInsets,
     ): Unit = with(context) {
-        val labels = getLabels(chartModel = chartModel, maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
+        val labels = getLabels(maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
 
         val desiredWidth = getDesiredWidth(context, labels)
 

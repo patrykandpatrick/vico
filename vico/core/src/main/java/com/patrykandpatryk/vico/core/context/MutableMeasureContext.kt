@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.view.layout
+package com.patrykandpatryk.vico.core.context
 
 import android.graphics.RectF
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
-import com.patrykandpatryk.vico.core.context.DefaultExtras
-import com.patrykandpatryk.vico.core.context.Extras
-import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 
-internal data class MutableMeasureContext(
+/**
+ * A subclass of [MeasureContext] that allows mutating some of its properties.
+ */
+public data class MutableMeasureContext(
     override val canvasBounds: RectF,
     override var density: Float,
     override var fontScale: Float,
@@ -30,5 +30,7 @@ internal data class MutableMeasureContext(
     override var isHorizontalScrollEnabled: Boolean,
     override var horizontalScroll: Float,
     override var chartScale: Float,
-    override val chartModel: ChartModel,
-) : MeasureContext, Extras by DefaultExtras()
+) : MeasureContext, Extras by DefaultExtras() {
+
+    override val chartValuesManager: ChartValuesManager = ChartValuesManager()
+}

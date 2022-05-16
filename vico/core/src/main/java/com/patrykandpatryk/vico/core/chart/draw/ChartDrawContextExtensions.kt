@@ -19,10 +19,8 @@ package com.patrykandpatryk.vico.core.chart.draw
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.DrawContext
-import com.patrykandpatryk.vico.core.context.Extras
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.model.Point
 
@@ -37,8 +35,6 @@ private const val DEFAULT_SCALE = 1f
  * @param measureContext the measuring context that holds the data used for component measurements.
  * @param markerTouchPoint the point inside the chart’s coordinates where physical touch is occurring.
  * @param segmentProperties holds information about the width of each individual segment on the x-axis.
- * @param chartModel the model used by the chart. This holds information about the values on both the y-axis and the
- * x-axis.
  * @param chartBounds the bounds in which the [com.patrykandpatryk.vico.core.chart.Chart] will be drawn.
  *
  * @see [com.patrykandpatryk.vico.core.component.shape.ShapeComponent.setShadow]
@@ -50,21 +46,19 @@ public fun chartDrawContext(
     measureContext: MeasureContext,
     markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
-    chartModel: ChartModel,
     chartBounds: RectF,
-): ChartDrawContext = object : ChartDrawContext, Extras by measureContext {
-    override val canvasBounds: RectF = measureContext.canvasBounds
+): ChartDrawContext = object : ChartDrawContext, MeasureContext by measureContext {
+
     override val chartBounds: RectF = chartBounds
+
     override var canvas: Canvas = canvas
+
     override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
-    override val chartModel: ChartModel = chartModel
+
     override val markerTouchPoint: Point? = markerTouchPoint
-    override val horizontalScroll: Float = measureContext.horizontalScroll
-    override val density: Float = measureContext.density
-    override val fontScale: Float = measureContext.fontScale
-    override val isLtr: Boolean = measureContext.isLtr
-    override val isHorizontalScrollEnabled: Boolean = measureContext.isHorizontalScrollEnabled
+
     override val chartScale: Float = calculateDrawScale()
+
     override val segmentProperties: SegmentProperties = segmentProperties.scaled(chartScale)
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
@@ -78,7 +72,9 @@ public fun chartDrawContext(
         if (isHorizontalScrollEnabled) {
             measureContext.chartScale
         } else {
-            (chartBounds.width() / (segmentProperties.segmentWidth * chartModel.getDrawnEntryCount()))
-                .coerceAtMost(DEFAULT_SCALE)
+            (
+                chartBounds.width() /
+                    (segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount())
+                ).coerceAtMost(DEFAULT_SCALE)
         }
 }

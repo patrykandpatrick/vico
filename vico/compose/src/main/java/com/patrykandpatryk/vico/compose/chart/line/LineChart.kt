@@ -29,10 +29,12 @@ import com.patrykandpatryk.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
@@ -50,6 +52,9 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  * @param decorations the list of [Decoration]s that will be added to the [LineChart].
  * @param persistentMarkers maps x-axis values to persistent [Marker]s.
+ * @param targetVerticalAxisPosition if set, an [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an [AxisPosition]
+ * equal to the [targetVerticalAxisPosition] will use [ChartValues] provided by this chart.
+ * It’s meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
@@ -64,6 +69,7 @@ public fun lineChart(
     maxY: Float? = null,
     decorations: List<Decoration>? = null,
     persistentMarkers: Map<Float, Marker>? = null,
+    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
 ): LineChart = remember { LineChart() }.apply {
     this.lines = lines
     this.spacingDp = spacing.value
@@ -71,6 +77,7 @@ public fun lineChart(
     this.maxX = maxX
     this.minY = minY
     this.maxY = maxY
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }

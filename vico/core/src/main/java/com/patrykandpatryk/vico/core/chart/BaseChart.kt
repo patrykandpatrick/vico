@@ -37,21 +37,12 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     private val decorations = ArrayList<Decoration>()
 
-    private val persistentMarkers = HashMap<Float, Marker>()
-
     private val insets: Insets = Insets()
 
-    protected val Model.drawMinY: Float
-        get() = this@BaseChart.minY ?: minY
-
-    protected val Model.drawMaxY: Float
-        get() = this@BaseChart.maxY ?: maxY
-
-    protected val Model.drawMinX: Float
-        get() = this@BaseChart.minX ?: minX
-
-    protected val Model.drawMaxX: Float
-        get() = this@BaseChart.maxX ?: maxX
+    /**
+     * A [HashMap] holding x-axis values used as keys, and [Marker]s associated with x-axis values.
+     */
+    protected val persistentMarkers: HashMap<Float, Marker> = HashMap()
 
     override val bounds: RectF = RectF()
 
@@ -90,17 +81,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         insets.clear()
         getInsets(this, insets)
 
-        canvas.inClip(
-            left = bounds.left - insets.getLeft(isLtr),
-            top = bounds.top - insets.top,
-            right = bounds.right + insets.getRight(isLtr),
-            bottom = bounds.bottom + insets.bottom,
-        ) {
-            drawDecorationBehindChart(context)
-            if (model.entries.isNotEmpty()) {
-                drawChart(context, model)
-            }
-        }
+        drawChartInternal(context, model)
 
         canvas.inClip(
             left = bounds.left,
@@ -122,16 +103,36 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         }
     }
 
+    /**
+     * An internal function drawing the both the [Decoration] behind the chart and the chart in the clip bounds.
+     */
+    protected open fun drawChartInternal(
+        context: ChartDrawContext,
+        model: Model,
+    ): Unit = with(context) {
+        canvas.inClip(
+            left = bounds.left - insets.getLeft(isLtr),
+            top = bounds.top - insets.top,
+            right = bounds.right + insets.getRight(isLtr),
+            bottom = bounds.bottom + insets.bottom,
+        ) {
+            drawDecorationBehindChart(context)
+            if (model.entries.isNotEmpty()) {
+                drawChart(context, model)
+            }
+        }
+    }
+
     protected abstract fun drawChart(
         context: ChartDrawContext,
         model: Model,
     )
 
-    private fun drawDecorationBehindChart(context: ChartDrawContext) {
+    protected fun drawDecorationBehindChart(context: ChartDrawContext) {
         decorations.forEach { line -> line.onDrawBehindChart(context, bounds) }
     }
 
-    private fun drawDecorationAboveChart(context: ChartDrawContext) {
+    protected fun drawDecorationAboveChart(context: ChartDrawContext) {
         decorations.forEach { line -> line.onDrawAboveChart(context, bounds) }
     }
 }

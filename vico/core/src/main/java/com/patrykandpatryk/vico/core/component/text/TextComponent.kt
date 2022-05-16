@@ -292,7 +292,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 (width / widthDelta).toInt()
             }
         }
-        val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees
+        val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode()
         return if (hasExtra(key)) getExtra(key) else {
             textPaint.textSize = textSizeSp * fontScale
             staticLayout(

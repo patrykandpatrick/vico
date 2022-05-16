@@ -16,14 +16,15 @@
 
 package com.patrykandpatryk.vico.core.chart.composed
 
-import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.set
@@ -45,15 +46,16 @@ public class ComposedChart<Model : ChartEntryModel>(
     /**
      * The [Chart]s that make up this [ComposedChart].
      */
-    public val charts: ArrayList<Chart<Model>> = ArrayList(charts)
-
-    private val tempChartModel = MutableChartModel()
+    public val charts: List<Chart<Model>> = ArrayList(charts)
 
     private val tempInsets = Insets()
 
     private val segmentProperties = MutableSegmentProperties()
 
     override val entryLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
+
+    override val chartInsetters: Collection<ChartInsetter>
+        get() = charts.map { it.chartInsetters }.flatten() + persistentMarkers.values
 
     override var minY: Float? by childChartsValue { minY = it }
 
@@ -73,9 +75,16 @@ public class ComposedChart<Model : ChartEntryModel>(
         model: ComposedChartEntryModel<Model>,
     ) {
         entryLocationMap.clear()
-        model.forEachModelWithChart { _, item, chart ->
+        model.forEachModelWithChart { item, chart ->
             chart.draw(context, item)
             entryLocationMap.updateAll(chart.entryLocationMap)
+        }
+    }
+
+    override fun drawChartInternal(context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
+        drawDecorationBehindChart(context)
+        if (model.entries.isNotEmpty()) {
+            drawChart(context, model)
         }
     }
 
@@ -84,7 +93,7 @@ public class ComposedChart<Model : ChartEntryModel>(
         model: ComposedChartEntryModel<Model>,
     ): SegmentProperties {
         segmentProperties.clear()
-        model.forEachModelWithChart { _, item, chart ->
+        model.forEachModelWithChart { item, chart ->
             val chartSegmentProperties = chart.getSegmentProperties(context, item)
             segmentProperties.apply {
                 cellWidth = maxOf(cellWidth, chartSegmentProperties.cellWidth)
@@ -94,18 +103,12 @@ public class ComposedChart<Model : ChartEntryModel>(
         return segmentProperties
     }
 
-    override fun setToChartModel(chartModel: MutableChartModel, model: ComposedChartEntryModel<Model>) {
-        chartModel.clear()
-        tempChartModel.clear()
-        model.forEachModelWithChart { index, item, chart ->
-            chart.setToChartModel(tempChartModel, item)
-            chartModel.apply {
-                minX = if (index == 0) tempChartModel.minX else minOf(minX, tempChartModel.minX)
-                maxX = if (index == 0) tempChartModel.maxX else maxOf(maxX, tempChartModel.maxX)
-                minY = if (index == 0) tempChartModel.minY else minOf(minY, tempChartModel.minY)
-                maxY = if (index == 0) tempChartModel.maxY else maxOf(maxY, tempChartModel.maxY)
-                chartModel.chartEntryModel = model
-            }
+    override fun updateChartValues(
+        chartValuesManager: ChartValuesManager,
+        model: ComposedChartEntryModel<Model>,
+    ) {
+        model.forEachModelWithChart { item, chart ->
+            chart.updateChartValues(chartValuesManager, item)
         }
     }
 
@@ -127,11 +130,14 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     private inline fun ComposedChartEntryModel<Model>.forEachModelWithChart(
-        action: (index: Int, item: Model, chart: Chart<Model>) -> Unit,
+        action: (item: Model, chart: Chart<Model>) -> Unit,
     ) {
         val minSize = minOf(composedEntryCollections.size, charts.size)
         for (index in 0 until minSize) {
-            action(index, composedEntryCollections[index], charts[index])
+            action(
+                composedEntryCollections[index],
+                charts[index],
+            )
         }
     }
 }

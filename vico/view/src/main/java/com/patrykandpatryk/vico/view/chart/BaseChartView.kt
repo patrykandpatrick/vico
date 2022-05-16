@@ -39,11 +39,9 @@ import com.patrykandpatryk.vico.core.DEF_MIN_ZOOM
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
-import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
-import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
@@ -63,7 +61,7 @@ import com.patrykandpatryk.vico.view.extension.specSize
 import com.patrykandpatryk.vico.view.extension.verticalPadding
 import com.patrykandpatryk.vico.view.gestures.ChartScaleGestureListener
 import com.patrykandpatryk.vico.view.gestures.MotionEventHandler
-import com.patrykandpatryk.vico.view.layout.MutableMeasureContext
+import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.view.theme.ThemeHandler
 
 /**
@@ -77,7 +75,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 ) : View(context, attrs, defStyleAttr) {
 
     private val contentBounds = RectF()
-    private val chartModel = MutableChartModel()
     private val scrollHandler = ScrollHandler()
 
     private val scroller = OverScroller(context)
@@ -99,7 +96,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         isHorizontalScrollEnabled = false,
         horizontalScroll = scrollHandler.currentScroll,
         chartScale = 1f,
-        chartModel = chartModel,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -219,7 +215,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
-            chart.setToChartModel(chartModel, model)
+            measureContext.chartValuesManager.resetChartValues()
+            chart.updateChartValues(measureContext.chartValuesManager, model)
             if (ViewCompat.isAttachedToWindow(this)) {
                 invalidate()
             }
@@ -256,7 +253,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint,
             segmentProperties = chart.getSegmentProperties(measureContext, model),
-            chartModel = chartModel,
             chartBounds = chart.bounds,
         )
         updateBounds(context = drawContext)
@@ -281,12 +277,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             )
         }
 
-        updateMaxScrollDistance(
-            segmentWidth = drawContext.segmentProperties.segmentWidth,
-            drawnEntryCount = chartModel.getDrawnEntryCount(),
-            chartBounds = chart.bounds.width(),
-            layoutDirectionMultiplier = measureContext.layoutDirectionMultiplier,
-        )
+        scrollHandler.maxScrollDistance = drawContext.maxScrollDistance
+
         if (animator.isRunning) {
             progressModelOnAnimationProgress(animator.animatedValue as Float)
         }
@@ -294,16 +286,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun progressModelOnAnimationProgress(progress: Float) {
         entryProducer?.progressModel(this, progress)
-    }
-
-    private fun updateMaxScrollDistance(
-        segmentWidth: Float,
-        drawnEntryCount: Int,
-        chartBounds: Float,
-        layoutDirectionMultiplier: Float,
-    ) {
-        scrollHandler.maxScrollDistance = layoutDirectionMultiplier *
-            (segmentWidth * drawnEntryCount - chartBounds)
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
@@ -333,7 +315,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             context = context,
             contentBounds = contentBounds,
             chart = chart,
-            chartModel = chartModel,
             axisManager = axisManager,
             marker
         )

@@ -16,7 +16,7 @@
 
 package com.patrykandpatryk.vico.core.entry
 
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
@@ -27,12 +27,12 @@ import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProdu
  *
  * The [Chart] may override [minX], [maxX], [minY] and [maxY] when respectively [Chart.minX],
  * [Chart.maxX], [Chart.minY] and [Chart.maxY] are non-null.
- * Overridden values will be used in [ChartModel].
+ * Overridden values will be used in [ChartValues].
  *
  * It’s recommended to delegate creation of [ChartEntryModel] to [ChartEntryModelProducer] or
  * [ComposedChartEntryModelProducer].
  *
- * @see [ChartModel]
+ * @see [ChartValues]
  * @see [ChartEntryModelProducer]
  * @see [ComposedChartEntryModelProducer].
  */

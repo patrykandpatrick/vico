@@ -19,8 +19,7 @@ package com.patrykandpatryk.vico.core.draw
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultColors
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
-import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
+import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.context.DefaultExtras
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.Extras
@@ -49,7 +48,6 @@ public fun drawContext(
     elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
     override val canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
-    override val chartModel: ChartModel = MutableChartModel()
     override val elevationOverlayColor: Long = elevationOverlayColor
     override var canvas: Canvas = canvas
     override val density: Float = density
@@ -58,6 +56,7 @@ public fun drawContext(
     override val isHorizontalScrollEnabled: Boolean = false
     override val horizontalScroll: Float = 0f
     override val chartScale: Float = 1f
+    override val chartValuesManager: ChartValuesManager = ChartValuesManager()
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
         val originalCanvas = this.canvas
