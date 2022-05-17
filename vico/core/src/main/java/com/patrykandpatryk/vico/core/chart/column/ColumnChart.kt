@@ -47,9 +47,9 @@ import kotlin.math.min
  * @param innerSpacingDp the spacing between the columns contained in chart segments. This has no effect on
  * segments that contain a single column only.
  * @param mergeMode defines the way multiple columns are rendered in the [ColumnChart].
- * @param targetVerticalAxisPosition if set, an [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an [AxisPosition]
- * equal to the [targetVerticalAxisPosition] will use [ChartValues] provided by this chart.
- * It’s meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+ * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+ * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
  */
 public open class ColumnChart(
     public var columns: List<LineComponent>,
@@ -60,13 +60,13 @@ public open class ColumnChart(
 ) : BaseChart<ChartEntryModel>() {
 
     /**
-     * Creates a [ColumnChart] with one column style.
+     * Creates a [ColumnChart] with a common style for all columns.
      *
-     * @param column a [LineComponent] defining a look of the column.
+     * @param column a [LineComponent] defining the appearance of the columns.
      * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
-     * @param targetVerticalAxisPosition if set, an [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
-     * [AxisPosition] equal to the [targetVerticalAxisPosition] will use [ChartValues] provided by this chart.
-     * It’s meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+     * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+     * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+     * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
      */
     public constructor(
         column: LineComponent,
@@ -76,7 +76,7 @@ public open class ColumnChart(
 
     /**
      * Creates [ColumnChart] without any [columns]. At least one [LineComponent] must be added to [columns] before
-     * rendering the chart.
+     * the chart is rendered.
      */
     public constructor() : this(emptyList())
 

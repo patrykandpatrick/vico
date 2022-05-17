@@ -53,9 +53,9 @@ import kotlin.math.min
  *
  * @param lines a [List] of [LineSpec]s defining the style of each line.
  * @param spacingDp the spacing between each [LineSpec.point] in dp.
- * @param targetVerticalAxisPosition if set, an [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an [AxisPosition]
- * equal to the [targetVerticalAxisPosition] will use [ChartValues] provided by this chart.
- * It’s meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+ * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+ * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
  */
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),

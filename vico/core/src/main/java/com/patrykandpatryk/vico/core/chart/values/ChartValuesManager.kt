@@ -22,14 +22,14 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.chart.Chart
 
 /**
- * Manages [ChartValues] used in the chart. There may be many [ChartValues], but all of them have the same
- * [ChartValues.minX] and [ChartValues.maxX] values. There is:
- * - Main [ChartValues] used by all components by default. It’s accessible with a null key and always available in
- * drawing phase.
- * - [ChartValues] for [AxisRenderer] at [AxisPosition.Vertical.Start]. It’s available when [Chart] is configured to use
- * [AxisPosition.Vertical.Start] as a key to update and retrieve the [ChartValues].
- * - [ChartValues] for [AxisRenderer] at [AxisPosition.Vertical.End]. It’s available when [Chart] is configured to use
- * [AxisPosition.Vertical.End] as a key to update and retrieve the [ChartValues].
+ * Manages the [ChartValues] used by a chart. There may be many [ChartValues], but all of them have the same
+ * [ChartValues.minX] and [ChartValues.maxX] values. The following [ChartValues] instances exist in a chart:
+ * - A main [ChartValues] instance, which is used by all components by default. It’s accessible with a null key and
+ * always available in the drawing phase.
+ * - A [ChartValues] instance for [AxisRenderer]s with [AxisPosition.Vertical.Start]. It’s available when the [Chart]
+ * is configured to use [AxisPosition.Vertical.Start] as a key to update and retrieve its [ChartValues].
+ * - A [ChartValues] instance for [AxisRenderer]s with [AxisPosition.Vertical.End]. It’s available when the [Chart]
+ * is configured to use [AxisPosition.Vertical.End] as a key to update and retrieve its [ChartValues].
  *
  * @see com.patrykandpatryk.vico.core.chart.column.ColumnChart.targetVerticalAxisPosition
  * @see com.patrykandpatryk.vico.core.chart.line.LineChart.targetVerticalAxisPosition
@@ -39,9 +39,9 @@ public class ChartValuesManager {
     private val chartValues: MutableMap<AxisPosition.Vertical?, MutableChartValues> = mutableMapOf()
 
     /**
-     * Returns [ChartValues] associated with given [axisPosition].
-     * @param axisPosition if null, the main [ChartValues] is returned. If not null, [ChartValues] associated with
-     * given [AxisPosition.Vertical] is returned.
+     * Returns the [ChartValues] associated with the given [axisPosition].
+     * @param axisPosition if this is null, the main [ChartValues] instance is returned. Otherwise, the [ChartValues]
+     * instance associated with the given [AxisPosition.Vertical] is returned.
      */
     public fun getChartValues(axisPosition: AxisPosition.Vertical? = null): MutableChartValues =
         chartValues[axisPosition]
@@ -49,12 +49,12 @@ public class ChartValuesManager {
             ?: chartValues.getOrPut(null) { MutableChartValues() }
 
     /**
-     * Attempts to update stored values by provided params.
-     * The [minX] and the [minY] can be updated by a smaller value.
-     * The [maxX] and the [maxY] can be updated by a higher value.
+     * Attempts to update the stored values to the provided params.
+     * [minX] and [minY] can be updated to a lower value.
+     * [maxX] and [maxY] can be updated to a higher value.
      * The [chartEntryModel] is always be updated.
-     * If [axisPosition] is null, only the main [ChartValues] are updated. In other case both main [ChartValues]
-     * and [ChartValues] associated with given [axisPosition] are updated.
+     * If [axisPosition] is null, only the main [ChartValues] are updated. Otherwise, both the main [ChartValues]
+     * and the [ChartValues] associated with the given [axisPosition] are updated.
      */
     public fun updateBy(
         minX: Float,
@@ -86,7 +86,7 @@ public class ChartValuesManager {
     }
 
     /**
-     * Resets values stored in all [ChartValues] in the [chartValues] map.
+     * Resets the values stored in all the [ChartValues] instances in the [chartValues] map.
      */
     public fun resetChartValues() {
         chartValues.values.forEach { it.reset() }

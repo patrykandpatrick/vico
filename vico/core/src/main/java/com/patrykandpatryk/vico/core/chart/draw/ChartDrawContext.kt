@@ -42,7 +42,7 @@ public interface ChartDrawContext : DrawContext {
     public val markerTouchPoint: Point?
 
     /**
-     * Returns a maximum value of horizontal scroll.
+     * Returns the maximum horizontal scroll value.
      */
     public val maxScrollDistance: Float
         get() {

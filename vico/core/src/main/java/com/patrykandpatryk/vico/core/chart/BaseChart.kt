@@ -40,7 +40,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     private val insets: Insets = Insets()
 
     /**
-     * A [HashMap] holding x-axis values used as keys, and [Marker]s associated with x-axis values.
+     * A [HashMap] that links x-axis values to [Marker]s.
      */
     protected val persistentMarkers: HashMap<Float, Marker> = HashMap()
 
@@ -104,7 +104,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     }
 
     /**
-     * An internal function drawing the both the [Decoration] behind the chart and the chart in the clip bounds.
+     * An internal function that draws both [Decoration]s behind the chart and the chart itself in the clip bounds.
      */
     protected open fun drawChartInternal(
         context: ChartDrawContext,

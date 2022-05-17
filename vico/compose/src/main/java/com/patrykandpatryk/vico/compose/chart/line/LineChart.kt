@@ -52,9 +52,9 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  * @param decorations the list of [Decoration]s that will be added to the [LineChart].
  * @param persistentMarkers maps x-axis values to persistent [Marker]s.
- * @param targetVerticalAxisPosition if set, an [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an [AxisPosition]
- * equal to the [targetVerticalAxisPosition] will use [ChartValues] provided by this chart.
- * It’s meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+ * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+ * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
