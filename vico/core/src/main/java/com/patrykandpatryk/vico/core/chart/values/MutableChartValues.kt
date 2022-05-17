@@ -42,7 +42,7 @@ public class MutableChartValues : ChartValues {
         get() = chartEntryModel.stepX
 
     /**
-     * Returns `true` if all values have been set and at least one call to [updateBy] or [set] has been made.
+     * Returns `true` if all values have been set and at least one call to [tryUpdate] or [set] has been made.
      */
     public var hasValuesSet: Boolean = false
         private set
@@ -53,7 +53,7 @@ public class MutableChartValues : ChartValues {
      * [maxX] and [maxY] can be updated to a higher value.
      * The [chartEntryModel] is always be updated.
      */
-    public fun updateBy(
+    public fun tryUpdate(
         minX: Float = this.minX,
         maxX: Float = this.maxX,
         minY: Float = this.minY,

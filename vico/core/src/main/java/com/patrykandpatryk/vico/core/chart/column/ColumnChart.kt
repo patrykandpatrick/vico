@@ -183,7 +183,7 @@ public open class ColumnChart(
     }
 
     override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel) {
-        chartValuesManager.updateBy(
+        chartValuesManager.tryUpdate(
             minX = minX ?: model.minX,
             maxX = maxX ?: model.maxX,
             minY = minY ?: min(model.minY, 0f),

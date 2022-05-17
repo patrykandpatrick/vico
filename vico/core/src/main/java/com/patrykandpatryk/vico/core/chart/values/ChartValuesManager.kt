@@ -56,7 +56,7 @@ public class ChartValuesManager {
      * If [axisPosition] is null, only the main [ChartValues] are updated. Otherwise, both the main [ChartValues]
      * and the [ChartValues] associated with the given [axisPosition] are updated.
      */
-    public fun updateBy(
+    public fun tryUpdate(
         minX: Float,
         maxX: Float,
         minY: Float,
@@ -65,7 +65,7 @@ public class ChartValuesManager {
         axisPosition: AxisPosition.Vertical? = null,
     ) {
         chartValues.getOrPut(axisPosition) { MutableChartValues() }
-            .updateBy(
+            .tryUpdate(
                 minX = minX,
                 maxX = maxX,
                 minY = minY,
@@ -74,12 +74,12 @@ public class ChartValuesManager {
             )
 
         if (axisPosition != null) {
-            updateBy(minX, maxX, minY, maxY, chartEntryModel)
+            tryUpdate(minX, maxX, minY, maxY, chartEntryModel)
         } else {
             val mainValues = getChartValues(null)
             chartValues.forEach { (key, values) ->
                 if (key != null) {
-                    values.updateBy(minX = mainValues.minX, maxX = mainValues.maxX)
+                    values.tryUpdate(minX = mainValues.minX, maxX = mainValues.maxX)
                 }
             }
         }
