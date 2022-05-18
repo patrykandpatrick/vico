@@ -16,11 +16,12 @@
 
 package com.patrykandpatryk.vico.core.chart
 
-import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.marker.Marker
@@ -162,12 +163,12 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
     public fun getSegmentProperties(context: MeasureContext, model: Model): SegmentProperties
 
     /**
-     * Called to update the values stored in a [MutableChartModel] to the values managed by this chart.
+     * Called to update the [ChartValues] stored in [ChartValuesManager] to the values managed by this chart.
      *
-     * @param chartModel the [MutableChartModel] whose properties will be updated.
+     * @param chartValuesManager the [ChartValuesManager] whose properties will be updated.
      * @param model the model used to represent the data rendered by this chart.
      */
-    public fun setToChartModel(chartModel: MutableChartModel, model: Model)
+    public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model)
 }
 
 /**
@@ -175,7 +176,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
  *
  * @return true if all decorations were added successfully.
  *
- * @see addDecoration
+ * @see Chart.addDecoration
  * @see Decoration
  */
 public fun <Model> Chart<Model>.addDecorations(decorations: List<Decoration>): Boolean =

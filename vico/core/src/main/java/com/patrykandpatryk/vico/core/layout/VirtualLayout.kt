@@ -19,7 +19,6 @@ package com.patrykandpatryk.vico.core.layout
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisManager
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
@@ -41,8 +40,6 @@ public open class VirtualLayout {
      * @param context the [ChartDrawContext] that holds the data used for component drawing.
      * @param contentBounds the bounds in which the chart contents must be drawn.
      * @param chart the actual chart.
-     * @param chartModel the model used by the chart. This holds information about the values on both the y-axis and
-     * the x-axis.
      * @param axisManager the [AxisManager] that manages this chart’s axes.
      * @param chartInsetter additional components that influence the chart layout, such as markers.
      */
@@ -51,7 +48,6 @@ public open class VirtualLayout {
         context: ChartDrawContext,
         contentBounds: RectF,
         chart: Chart<Model>,
-        chartModel: ChartModel,
         axisManager: AxisManager,
         vararg chartInsetter: ChartInsetter?,
     ): Unit = with(context) {

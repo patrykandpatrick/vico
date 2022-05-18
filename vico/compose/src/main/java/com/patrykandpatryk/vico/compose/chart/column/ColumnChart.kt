@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
+import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
@@ -57,6 +58,7 @@ public fun columnChart(
     maxY: Float? = null,
     decorations: List<Decoration>? = null,
     persistentMarkers: Map<Float, Marker>? = null,
+    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
 ): ColumnChart = remember { ColumnChart() }.apply {
     this.columns = columns
     this.spacingDp = spacing.value
@@ -66,6 +68,7 @@ public fun columnChart(
     this.maxX = maxX
     this.minY = minY
     this.maxY = maxY
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }

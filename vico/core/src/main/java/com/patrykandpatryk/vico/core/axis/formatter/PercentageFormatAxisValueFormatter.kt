@@ -16,7 +16,7 @@
 
 package com.patrykandpatryk.vico.core.axis.formatter
 
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import java.text.DecimalFormat
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 
@@ -39,9 +39,9 @@ public class PercentageFormatAxisValueFormatter<Position : AxisPosition.Vertical
 
     override fun formatValue(
         value: Float,
-        chartModel: ChartModel,
+        chartValues: ChartValues,
     ): String {
-        val percentage = value / chartModel.maxY
+        val percentage = value / chartValues.maxY
         return decimalFormat.format(percentage)
     }
 

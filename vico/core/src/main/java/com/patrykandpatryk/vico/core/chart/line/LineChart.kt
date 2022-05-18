@@ -21,7 +21,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultDimens
-import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
+import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.forEachIn
@@ -30,6 +30,8 @@ import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
+import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.extension.horizontalCubicTo
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
@@ -41,7 +43,6 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.getRepeating
 import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
-import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.extension.rangeWith
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.abs
@@ -52,10 +53,14 @@ import kotlin.math.min
  *
  * @param lines a [List] of [LineSpec]s defining the style of each line.
  * @param spacingDp the spacing between each [LineSpec.point] in dp.
+ * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+ * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+ * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
  */
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
+    public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -169,7 +174,11 @@ public open class LineChart(
             val drawingStart = bounds.getStart(isLtr = isLtr) +
                 layoutDirectionMultiplier * (spacing.half + cellWidth.half) - horizontalScroll
 
-            model.forEachPointWithinBounds(entries, segmentProperties, drawingStart, this) { entry, x, y ->
+            forEachPointWithinBounds(
+                entries = entries,
+                segment = segmentProperties,
+                drawingStart = drawingStart,
+            ) { entry, x, y ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
                     if (component.hasLineBackgroundShader) {
@@ -205,9 +214,11 @@ public open class LineChart(
             component.drawLine(context, linePath)
 
             if (component.point != null) {
-                model.forEachPointWithinBounds(entries, segmentProperties, drawingStart, this) { _, x, y ->
-                    component.drawPoint(context, x, y)
-                }
+                forEachPointWithinBounds(
+                    entries = entries,
+                    segment = segmentProperties,
+                    drawingStart = drawingStart,
+                ) { _, x, y -> component.drawPoint(context, x, y) }
             }
         }
     }
@@ -218,36 +229,45 @@ public open class LineChart(
         lineBackgroundPath.rewind()
     }
 
-    private fun ChartEntryModel.forEachPointWithinBounds(
+    private fun DrawContext.forEachPointWithinBounds(
         entries: List<ChartEntry>,
         segment: SegmentProperties,
         drawingStart: Float,
-        context: DrawContext,
         action: (entry: ChartEntry, x: Float, y: Float) -> Unit,
     ) {
+
+        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
+
+        val minX = chartValues.minX
+        val maxX = chartValues.maxX
+        val minY = chartValues.minY
+        val maxY = chartValues.maxY
+        val stepX = chartValues.stepX
+
         var x: Float
         var y: Float
 
         var prevEntry: ChartEntry? = null
         var lastEntry: ChartEntry? = null
 
-        val chartMinY = this@LineChart.minY.orZero
-        val boundsStart = bounds.getStart(isLtr = context.isLtr)
-        val boundsEnd = boundsStart + context.layoutDirectionMultiplier * bounds.width()
+        val heightMultiplier = bounds.height() / (maxY - minY)
 
-        val heightMultiplier = bounds.height() / (drawMaxY - chartMinY)
+        val boundsStart = bounds.getStart(isLtr = isLtr)
+        val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
 
-        fun getDrawX(entry: ChartEntry): Float = drawingStart + context.layoutDirectionMultiplier *
-            (segment.cellWidth + segment.marginWidth) * (entry.x - drawMinX) / stepX
+        fun getDrawX(entry: ChartEntry): Float = drawingStart + layoutDirectionMultiplier *
+            (segment.cellWidth + segment.marginWidth) * (entry.x - minX) / stepX
 
         fun getDrawY(entry: ChartEntry): Float =
-            bounds.bottom - (entry.y - chartMinY) * heightMultiplier
+            bounds.bottom - (entry.y - minY) * heightMultiplier
 
-        entries.forEachIn(drawMinX - stepX..drawMaxX + stepX) { entry ->
+        entries.forEachIn(minX - stepX..maxX + stepX) { entry ->
+
             x = getDrawX(entry)
             y = getDrawY(entry)
+
             when {
-                context.isLtr && x < boundsStart || context.isLtr.not() && x > boundsStart -> {
+                isLtr && x < boundsStart || isLtr.not() && x > boundsStart -> {
                     prevEntry = entry
                 }
                 x in boundsStart.rangeWith(other = boundsEnd) -> {
@@ -257,7 +277,7 @@ public open class LineChart(
                     }
                     action(entry, x, y)
                 }
-                (context.isLtr && x > boundsEnd || context.isLtr.not() && x < boundsEnd) && lastEntry == null -> {
+                (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
                     action(entry, x, y)
                     lastEntry = entry
                 }
@@ -275,12 +295,18 @@ public open class LineChart(
         )
     }
 
-    override fun setToChartModel(chartModel: MutableChartModel, model: ChartEntryModel) {
-        chartModel.minY = minY ?: min(model.minY, 0f)
-        chartModel.maxY = maxY ?: model.maxY
-        chartModel.minX = minX ?: model.minX
-        chartModel.maxX = maxX ?: model.maxX
-        chartModel.chartEntryModel = model
+    override fun updateChartValues(
+        chartValuesManager: ChartValuesManager,
+        model: ChartEntryModel,
+    ) {
+        chartValuesManager.tryUpdate(
+            minX = minX ?: model.minX,
+            maxX = maxX ?: model.maxX,
+            minY = minY ?: min(model.minY, 0f),
+            maxY = maxY ?: model.maxY,
+            chartEntryModel = model,
+            axisPosition = targetVerticalAxisPosition,
+        )
     }
 
     override fun getInsets(

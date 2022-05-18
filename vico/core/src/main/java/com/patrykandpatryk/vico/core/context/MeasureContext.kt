@@ -17,7 +17,8 @@
 package com.patrykandpatryk.vico.core.context
 
 import android.graphics.RectF
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
+import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 
 /**
  * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
@@ -30,11 +31,11 @@ public interface MeasureContext : Extras {
     public val canvasBounds: RectF
 
     /**
-     * Holds information about the values on both the y-axis and the x-axis.
+     * Manages [ChartValues] used in the chart.
      *
-     * @see ChartModel
+     * @see [ChartValuesManager]
      */
-    public val chartModel: ChartModel
+    public val chartValuesManager: ChartValuesManager
 
     /**
      * The pixel density.

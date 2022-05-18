@@ -17,7 +17,7 @@
 package com.patrykandpatryk.vico.core.axis.formatter
 
 import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.axis.model.ChartModel
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 
 /**
  * The default implementation of [AxisValueFormatter]. This converts [Float]s to [String]s.
@@ -25,6 +25,6 @@ import com.patrykandpatryk.vico.core.axis.model.ChartModel
 public class DefaultAxisValueFormatter<Position : AxisPosition> : AxisValueFormatter<Position> {
     override fun formatValue(
         value: Float,
-        chartModel: ChartModel,
+        chartValues: ChartValues,
     ): String = value.toString()
 }

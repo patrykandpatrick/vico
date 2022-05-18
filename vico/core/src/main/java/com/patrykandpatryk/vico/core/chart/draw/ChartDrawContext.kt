@@ -40,4 +40,18 @@ public interface ChartDrawContext : DrawContext {
      * The point inside the chart’s coordinates where physical touch is occurring.
      */
     public val markerTouchPoint: Point?
+
+    /**
+     * Returns the maximum horizontal scroll value.
+     */
+    public val maxScrollDistance: Float
+        get() {
+            val layoutDirectionMultiplier = if (isLtr) 1f else -1f
+            return layoutDirectionMultiplier *
+                (
+                    segmentProperties.segmentWidth *
+                        chartValuesManager.getChartValues().getDrawnEntryCount() -
+                        chartBounds.width()
+                    )
+        }
 }

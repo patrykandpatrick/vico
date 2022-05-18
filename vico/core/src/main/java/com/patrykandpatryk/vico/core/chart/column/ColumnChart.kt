@@ -17,7 +17,8 @@
 package com.patrykandpatryk.vico.core.chart.column
 
 import com.patrykandpatryk.vico.core.DefaultDimens
-import com.patrykandpatryk.vico.core.axis.model.MutableChartModel
+import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -26,10 +27,10 @@ import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.extension.getRepeating
 import com.patrykandpatryk.vico.core.extension.half
-import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.extension.getStart
@@ -40,25 +41,43 @@ import kotlin.math.min
  * [ColumnChart] displays data in vertical columns.
  * It supports rendering multiple columns for multiple sets of data.
  *
- * @property columns the [LineComponent] instances to use for columns. This list is iterated through as many times
+ * @param columns the [LineComponent] instances to use for columns. This list is iterated through as many times
  * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
- * @property spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
- * @property innerSpacingDp the spacing between the columns contained in chart segments. This has no effect on
+ * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
+ * @param innerSpacingDp the spacing between the columns contained in chart segments. This has no effect on
  * segments that contain a single column only.
- * @property mergeMode defines the way multiple columns are rendered in the [ColumnChart].
+ * @param mergeMode defines the way multiple columns are rendered in the [ColumnChart].
+ * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+ * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+ * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
  */
 public open class ColumnChart(
     public var columns: List<LineComponent>,
     public var spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
     public var innerSpacingDp: Float = DefaultDimens.COLUMN_INSIDE_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped,
+    public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
 ) : BaseChart<ChartEntryModel>() {
 
+    /**
+     * Creates a [ColumnChart] with a common style for all columns.
+     *
+     * @param column a [LineComponent] defining the appearance of the columns.
+     * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
+     * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+     * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+     * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+     */
     public constructor(
         column: LineComponent,
         spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
-    ) : this(columns = listOf(column), spacingDp = spacingDp)
+        targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    ) : this(columns = listOf(column), spacingDp = spacingDp, targetVerticalAxisPosition = targetVerticalAxisPosition)
 
+    /**
+     * Creates [ColumnChart] without any [columns]. At least one [LineComponent] must be added to [columns] before
+     * the chart is rendered.
+     */
     public constructor() : this(emptyList())
 
     private val heightMap = HashMap<Float, Float>()
@@ -72,6 +91,7 @@ public open class ColumnChart(
     ): Unit = with(context) {
         entryLocationMap.clear()
         drawChartInternal(
+            chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
             model = model,
             cellWidth = segmentProperties.cellWidth,
             spacing = segmentProperties.marginWidth,
@@ -80,13 +100,15 @@ public open class ColumnChart(
     }
 
     private fun ChartDrawContext.drawChartInternal(
+        chartValues: ChartValues,
         model: ChartEntryModel,
         cellWidth: Float,
         spacing: Float,
     ) {
-        val yRange = ((maxY ?: mergeMode.getMaxY(model)) - minY.orZero).takeIf { it != 0f } ?: return
+
+        val yRange = (chartValues.maxY - chartValues.minY).takeIf { it != 0f } ?: return
         val heightMultiplier = bounds.height() / yRange
-        val heightReduce = minY.orZero * heightMultiplier
+        val heightReduce = chartValues.minY * heightMultiplier
 
         var drawingStart: Float
         var height: Float
@@ -94,7 +116,7 @@ public open class ColumnChart(
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
-        val bottomCompensation = if (minY.orZero < 0f) minY.orZero * heightMultiplier else 0f
+        val bottomCompensation = if (chartValues.minY < 0f) chartValues.minY * heightMultiplier else 0f
 
         val defCellWidth = getCellWidth(model.entries.size) * chartScale
 
@@ -108,10 +130,10 @@ public open class ColumnChart(
                 columnWidth = column.thicknessDp.pixels * chartScale,
             ) - horizontalScroll
 
-            entryCollection.forEachIn(model.drawMinX..model.drawMaxX) { entry ->
+            entryCollection.forEachIn(chartValues.minX..chartValues.maxX) { entry ->
                 height = entry.y * heightMultiplier - heightReduce
                 columnCenterX = drawingStart + layoutDirectionMultiplier *
-                    (cellWidth + spacing) * (entry.x - model.drawMinX) / model.stepX
+                    (cellWidth + spacing) * (entry.x - chartValues.minX) / model.stepX
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -160,12 +182,15 @@ public open class ColumnChart(
         )
     }
 
-    override fun setToChartModel(chartModel: MutableChartModel, model: ChartEntryModel) {
-        chartModel.minY = minY ?: min(model.minY, 0f)
-        chartModel.maxY = maxY ?: mergeMode.getMaxY(model)
-        chartModel.minX = minX ?: model.minX
-        chartModel.maxX = maxX ?: model.maxX
-        chartModel.chartEntryModel = model
+    override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel) {
+        chartValuesManager.tryUpdate(
+            minX = minX ?: model.minX,
+            maxX = maxX ?: model.maxX,
+            minY = minY ?: min(model.minY, 0f),
+            maxY = maxY ?: mergeMode.getMaxY(model),
+            chartEntryModel = model,
+            axisPosition = targetVerticalAxisPosition,
+        )
     }
 
     override fun getSegmentProperties(

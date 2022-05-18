@@ -55,7 +55,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val clipRestoreCount = canvas.save()
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-        val step = chartModel.stepX
+        val chartValues = chartValuesManager.getChartValues()
+        val step = chartValues.stepX
 
         canvas.clipRect(
             bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
@@ -73,7 +74,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             (tickDrawStep.half + tickDrawStep * scrollAdjustment) - horizontalScroll
 
         var tickCenter = getTickDrawCenter(tickType, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
-        var valueIndex: Float = chartModel.minX + scrollAdjustment * step
+        var valueIndex: Float = chartValues.minX + scrollAdjustment * step
 
         for (index in 0 until tickCount) {
             guideline?.takeIf {
@@ -96,7 +97,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             if (index < entryLength) {
                 label?.drawText(
                     context = context,
-                    text = valueFormatter.formatValue(valueIndex, context.chartModel),
+                    text = valueFormatter.formatValue(valueIndex, chartValues),
                     textX = textCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -180,12 +181,16 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    private fun MeasureContext.getLabelsToMeasure(): List<String> =
-        listOf(
-            chartModel.minX,
-            (chartModel.maxX - chartModel.minX).half,
-            chartModel.maxX,
-        ).map { x -> valueFormatter.formatValue(value = x, chartModel = chartModel) }
+    private fun MeasureContext.getLabelsToMeasure(): List<String> {
+
+        val chartValues = chartValuesManager.getChartValues()
+
+        return listOf(
+            chartValues.minX,
+            (chartValues.maxX - chartValues.minX).half,
+            chartValues.maxX,
+        ).map { x -> valueFormatter.formatValue(value = x, chartValues = chartValues) }
+    }
 
     /**
      * Defines the tick placement.

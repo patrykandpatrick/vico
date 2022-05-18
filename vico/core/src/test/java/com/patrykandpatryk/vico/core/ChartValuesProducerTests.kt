@@ -22,7 +22,7 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.core.entry.diff.DefaultDiffProcessor
 import com.patrykandpatryk.vico.core.entry.entriesOf
 
-public class ChartModelProducerTests {
+public class ChartValuesProducerTests {
 
     private val minX = 0f
     private val maxX = 3f
