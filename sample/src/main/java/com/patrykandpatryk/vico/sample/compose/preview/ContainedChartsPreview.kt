@@ -77,7 +77,7 @@ private fun getLineChart(
             lineBackgroundShader = verticalGradient(
                 arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f))
             ),
-        )
+        ),
     ),
     persistentMarkers = markerMap,
     targetVerticalAxisPosition = targetVerticalAxisPosition,
@@ -133,7 +133,7 @@ public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
 }
 
 @Composable
-@Preview("Column Chart", widthDp = 350)
+@Preview("Column chart", widthDp = 350)
 public fun ColumnChart(modifier: Modifier = Modifier) {
 
     Chart(
@@ -146,7 +146,7 @@ public fun ColumnChart(modifier: Modifier = Modifier) {
 }
 
 @Composable
-@Preview("Line Chart", widthDp = 350)
+@Preview("Line chart", widthDp = 350)
 public fun LineChart(modifier: Modifier = Modifier) {
 
     Chart(
