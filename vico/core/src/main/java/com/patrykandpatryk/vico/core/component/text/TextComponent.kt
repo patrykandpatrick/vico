@@ -31,6 +31,7 @@ import com.patrykandpatryk.vico.core.component.dimension.Margins
 import com.patrykandpatryk.vico.core.component.dimension.Padding
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.context.getOrPutExtra
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 import com.patrykandpatryk.vico.core.draw.withCanvas
@@ -293,7 +294,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             }
         }
         val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode()
-        return if (hasExtra(key)) getExtra(key) else {
+        return getOrPutExtra(key = key) {
             textPaint.textSize = textSizeSp * fontScale
             staticLayout(
                 source = text,
@@ -301,7 +302,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 width = correctedWidth,
                 maxLines = lineCount,
                 ellipsize = ellipsize,
-            ).also { putExtra(key, it) }
+            )
         }
     }
 

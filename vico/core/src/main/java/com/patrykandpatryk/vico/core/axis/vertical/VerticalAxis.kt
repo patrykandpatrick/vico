@@ -30,6 +30,7 @@ import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.context.getOrPutExtra
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.extension.translate
@@ -205,16 +206,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     ): List<String> {
         val chartValues = chartValuesManager.getChartValues(position)
         val cacheKey = LABELS_KEY + position
-        return if (hasExtra(cacheKey)) {
-            getExtra(cacheKey)
-        } else {
+        return getOrPutExtra(key = cacheKey) {
             labels.clear()
             val step = (chartValues.maxY - chartValues.minY) / maxLabelCount
             for (index in 0..maxLabelCount) {
                 val value = chartValues.minY + step * index
                 labels += valueFormatter.formatValue(value, chartValues)
             }
-            putExtra(cacheKey, labels)
             labels
         }
     }
