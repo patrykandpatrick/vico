@@ -23,7 +23,7 @@ package com.patrykandpatryk.vico.core.context
 public fun <T : Any> Extras.getExtraOr(
     key: Any,
     block: () -> T,
-): T = if (hasExtra(key = key)) getExtra<T>(key = key) else block()
+): T = if (hasExtra(key = key)) getExtra(key = key) else block()
 
 /**
  * Returns the extra with the given [key] if such an extra exists.
