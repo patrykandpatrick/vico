@@ -46,12 +46,13 @@ public interface ChartDrawContext : DrawContext {
      */
     public val maxScrollDistance: Float
         get() {
+            val chartWidth = chartBounds.width()
             val layoutDirectionMultiplier = if (isLtr) 1f else -1f
-            return layoutDirectionMultiplier *
-                (
-                    segmentProperties.segmentWidth *
-                        chartValuesManager.getChartValues().getDrawnEntryCount() -
-                        chartBounds.width()
-                    )
+            val cumulatedSegmentWidth = segmentProperties.segmentWidth *
+                chartValuesManager.getChartValues().getDrawnEntryCount()
+
+            return (layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
+                if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
+            }
         }
 }
