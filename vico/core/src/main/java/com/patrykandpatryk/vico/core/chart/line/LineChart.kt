@@ -64,6 +64,21 @@ public open class LineChart(
 ) : BaseChart<ChartEntryModel>() {
 
     /**
+     * Creates a [LineChart] with a common style for all lines.
+     *
+     * @param line a [LineSpec] defining the style of each line.
+     * @param spacingDp the spacing between each [LineSpec.point] in dp.
+     * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+     * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+     * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+     */
+    public constructor(
+        line: LineSpec,
+        spacingDp: Float,
+        targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    ) : this(listOf(line), spacingDp, targetVerticalAxisPosition)
+
+    /**
      * Defines the appearance of a line in a line chart.
      *
      * @param lineColor the color of the line.
