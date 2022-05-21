@@ -29,7 +29,7 @@ ext {
             activity          : "1.4.0",
             androidx_core     : "1.7.0",
             androidx_appcompat: "1.4.1",
-            compose           : "1.2.0-beta01",
+            compose           : "1.2.0-beta02",
             coroutines        : "1.6.1",
             dokka             : "1.6.10",
             agp               : "7.2.0",
@@ -37,10 +37,10 @@ ext {
             junitExt          : "1.1.2",
             kotlin            : "1.6.21",
             lifecycle_runtime : "2.4.1",
-            material          : "1.5.0",
+            material          : "1.6.0",
             mockk             : "1.12.3",
             viewmodel         : "2.4.1",
             testCore          : "1.3.0",
-            compose_material3 : "1.0.0-alpha11",
+            compose_material3 : "1.0.0-alpha12",
     ]
 }
