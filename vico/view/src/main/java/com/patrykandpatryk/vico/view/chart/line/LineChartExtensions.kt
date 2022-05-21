@@ -28,26 +28,25 @@ import com.patrykandpatryk.vico.view.theme.getRawDimension
 import com.patrykandpatryk.vico.view.theme.use
 
 /**
- * Creates a [LineChart.LineSpec] using the provided [themeAttrRes] and [styleResId].
+ * Creates a [LineChart.LineSpec] using the provided [attrRes] and [styleResId].
  *
  * @param context the context used to retrieve the style information.
- * @param themeAttrRes a theme attributes resource identifier used to retrieve the [LineChart.LineSpec]’s style.
- * Can be [R.attr.line1spec], [R.attr.line2spec], [R.attr.line3spec], or [0].
- * @param styleResId used to retrieve the style information if the provided [themeAttrRes] cannot be resolved.
- * The [styleResId] must define the style of at least one of the following: [R.attr.line1spec], [R.attr.line2spec],
- * and [R.attr.line3spec].
+ * @param attrRes a theme attributes resource identifier used to retrieve the [LineChart.LineSpec]’s style.
+ * Can be [R.attr.line1spec], [R.attr.line2spec], or [R.attr.line3spec].
+ * @param styleResId if not 0, used to retrieve the style information from the provided style resource.
+ * The provided style must define the [attrRes]. If 0, the [attrRes] is retrieved from [Context]’s theme.
  *
  * @see R.styleable.LineSpec
  */
 public fun lineSpec(
     context: Context,
-    @AttrRes themeAttrRes: Int = R.attr.line1spec,
+    @AttrRes attrRes: Int = R.attr.line1spec,
     @StyleRes styleResId: Int = 0,
 ): LineChart.LineSpec {
 
     val tempArray = IntArray(1)
 
-    tempArray[0] = themeAttrRes
+    tempArray[0] = attrRes
     return context.obtainStyledAttributes(null, tempArray, 0, styleResId)
         .use { typedArray ->
             typedArray.getNestedTypedArray(
@@ -62,25 +61,21 @@ public fun lineSpec(
  * Creates a [LineChart] using the provided [List] of theme attribute resource identifiers and the given [styleResId].
  *
  * @param context the context used to retrieve the style information.
- * @param themeAttrRes a [List] of theme attribute resource identifiers used to retrieve [LineChart.LineSpec] styles.
- * By default it is a list of [R.attr.line1spec], [R.attr.line2spec], and [R.attr.line3spec].
- * @param styleResId used to retrieve the style information if the provided [themeAttrRes] cannot be resolved.
- * The [styleResId] must define the style of at least one of the following: [R.attr.line1spec], [R.attr.line2spec],
- * and [R.attr.line3spec].
+ * @param styleResId if not 0, used to retrieve the style information from the provided style resource.
+ * The [styleResId] should define the style of all of the following: [R.attr.line1spec], [R.attr.line2spec],
+ * and [R.attr.line3spec]. If 0, the style attributes are retrieved from [Context]’s theme.
  *
  * @see lineSpec
  */
 public fun lineChart(
     context: Context,
-    @AttrRes themeAttrRes: List<Int> = listOf(R.attr.line1spec, R.attr.line2spec, R.attr.line3spec),
     @StyleRes styleResId: Int = 0,
 ): LineChart {
 
     val tempArray = IntArray(1)
 
-    val lineSpecs = themeAttrRes.map { themeAttrResItem ->
-        lineSpec(context, themeAttrResItem, styleResId)
-    }
+    val lineSpecs = listOf(R.attr.line1spec, R.attr.line2spec, R.attr.line3spec)
+        .map { themeAttrResItem -> lineSpec(context, themeAttrResItem, styleResId) }
 
     tempArray[0] = R.styleable.LineChartStyle_spacing
     val spacingDp = context.obtainStyledAttributes(null, tempArray)
