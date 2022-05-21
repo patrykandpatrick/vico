@@ -31,10 +31,10 @@ import com.patrykandpatryk.vico.view.theme.use
  * Creates a [LineChart.LineSpec] using the provided [attrRes] and [styleResId].
  *
  * @param context the context used to retrieve the style information.
- * @param attrRes a theme attributes resource identifier used to retrieve the [LineChart.LineSpec]’s style.
- * Can be [R.attr.line1spec], [R.attr.line2spec], or [R.attr.line3spec].
+ * @param attrRes a theme attribute resource identifier used to retrieve the [LineChart.LineSpec]’s style.
+ * This can be [R.attr.line1spec], [R.attr.line2spec], or [R.attr.line3spec].
  * @param styleResId if not 0, used to retrieve the style information from the provided style resource.
- * The provided style must define the [attrRes]. If 0, the [attrRes] is retrieved from [Context]’s theme.
+ * The provided style must define the [attrRes]. If [styleResId] is 0, the [attrRes] is retrieved from [Context]’s theme.
  *
  * @see R.styleable.LineSpec
  */
@@ -63,7 +63,7 @@ public fun lineSpec(
  * @param context the context used to retrieve the style information.
  * @param styleResId if not 0, used to retrieve the style information from the provided style resource.
  * The [styleResId] should define the style of all of the following: [R.attr.line1spec], [R.attr.line2spec],
- * and [R.attr.line3spec]. If 0, the style attributes are retrieved from [Context]’s theme.
+ * and [R.attr.line3spec]. If [styleResId] is 0, the style attributes are retrieved from [Context]’s theme.
  *
  * @see lineSpec
  */
