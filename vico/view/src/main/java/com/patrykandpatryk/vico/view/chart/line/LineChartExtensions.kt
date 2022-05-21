@@ -79,15 +79,7 @@ public fun lineChart(
     val tempArray = IntArray(1)
 
     val lineSpecs = themeAttrRes.map { themeAttrResItem ->
-        tempArray[0] = themeAttrResItem
-        context.obtainStyledAttributes(null, tempArray, 0, styleResId)
-            .use { typedArray ->
-                typedArray.getNestedTypedArray(
-                    context = context,
-                    resourceId = 0,
-                    styleableResourceId = R.styleable.LineSpec,
-                ).getLineSpec(context)
-            }
+        lineSpec(context, themeAttrResItem, styleResId)
     }
 
     tempArray[0] = R.styleable.LineChartStyle_spacing
