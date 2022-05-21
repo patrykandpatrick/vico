@@ -191,9 +191,11 @@ internal class ViewShowcaseFragment : Fragment() {
         ) {
             val tokens = Tokens.LineChartWithLabelsInside
 
-            (chart as LineChart).lines = listOf(
-                LineChart.LineSpec(lineBackgroundShader = null)
-            )
+            val lineSpec =  lineSpec(requireContext())
+            lineSpec.lineBackgroundShader = null
+
+            (chart as LineChart).lines = listOf(lineSpec)
+
             with(startAxis as VerticalAxis) {
                 label?.apply {
                     color = context.resolveColorAttribute(R.attr.colorOnSecondary)
