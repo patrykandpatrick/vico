@@ -191,7 +191,7 @@ internal class ViewShowcaseFragment : Fragment() {
         ) {
             val tokens = Tokens.LineChartWithLabelsInside
 
-            val lineSpec =  lineSpec(requireContext())
+            val lineSpec = lineSpec(requireContext())
             lineSpec.lineBackgroundShader = null
 
             (chart as LineChart).lines = listOf(lineSpec)
