@@ -34,7 +34,8 @@ import com.patrykandpatryk.vico.view.theme.use
  * @param attrRes a theme attribute resource identifier used to retrieve the [LineChart.LineSpec]’s style.
  * This can be [R.attr.line1spec], [R.attr.line2spec], or [R.attr.line3spec].
  * @param styleResId if not 0, used to retrieve the style information from the provided style resource.
- * The provided style must define the [attrRes]. If [styleResId] is 0, the [attrRes] is retrieved from [Context]’s theme.
+ * The provided style must define the [attrRes]. If [styleResId] is 0, the [attrRes] is retrieved from [Context]’s
+ * theme.
  *
  * @see R.styleable.LineSpec
  */
