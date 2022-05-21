@@ -42,6 +42,7 @@ import com.patrykandpatryk.vico.sample.extensions.resolveColorAttribute
 import com.patrykandpatryk.vico.sample.extensions.setUpChart
 import com.patrykandpatryk.vico.sample.util.Tokens
 import com.patrykandpatryk.vico.sample.viewmodel.ShowcaseViewModel
+import com.patrykandpatryk.vico.view.chart.line.lineSpec
 import com.patrykandpatryk.vico.view.dimensions.dimensionsOf
 
 internal class ViewShowcaseFragment : Fragment() {
