@@ -42,18 +42,18 @@ internal fun TypedArray.getLineComponent(
 ): LineComponent = use { array ->
     LineComponent(
         color = array.getColor(
-            index = R.styleable.LineComponentStyle_color,
+            index = R.styleable.LineComponent_color,
             defaultColor = defaultColor,
         ),
         thicknessDp = array.getRawDimension(
             context = context,
-            index = R.styleable.LineComponentStyle_thickness,
+            index = R.styleable.LineComponent_thickness,
             defaultValue = defaultThickness,
         ),
-        shape = if (hasValue(R.styleable.LineComponentStyle_shapeStyle)) {
+        shape = if (hasValue(R.styleable.LineComponent_shapeStyle)) {
             getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.LineComponentStyle_shapeStyle,
+                resourceId = R.styleable.LineComponent_shapeStyle,
                 styleableResourceId = R.styleable.Shape,
             ).getShape(
                 context = context,
@@ -62,12 +62,12 @@ internal fun TypedArray.getLineComponent(
             defaultShape
         },
         strokeColor = array.getColor(
-            index = R.styleable.LineComponentStyle_strokeColor,
+            index = R.styleable.LineComponent_strokeColor,
             defaultColor = Color.TRANSPARENT,
         ),
         strokeWidthDp = array.getRawDimension(
             context = context,
-            index = R.styleable.LineComponentStyle_strokeWidth,
+            index = R.styleable.LineComponent_strokeWidth,
             defaultValue = 0f,
         ),
     )

@@ -38,8 +38,8 @@ internal fun TypedArray.getColumnChart(
         columns = listOf(
             getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.ColumnChartStyle_column1Style,
-                styleableResourceId = R.styleable.LineComponentStyle,
+                resourceId = R.styleable.ColumnChartStyle_column1,
+                styleableResourceId = R.styleable.LineComponent,
             ).getLineComponent(
                 context = context,
                 defaultColor = context.defaultColors.entity1Color.toInt(),
@@ -48,8 +48,8 @@ internal fun TypedArray.getColumnChart(
             ),
             getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.ColumnChartStyle_column2Style,
-                styleableResourceId = R.styleable.LineComponentStyle,
+                resourceId = R.styleable.ColumnChartStyle_column2,
+                styleableResourceId = R.styleable.LineComponent,
             ).getLineComponent(
                 context = context,
                 defaultColor = context.defaultColors.entity2Color.toInt(),
@@ -58,8 +58,8 @@ internal fun TypedArray.getColumnChart(
             ),
             getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.ColumnChartStyle_column3Style,
-                styleableResourceId = R.styleable.LineComponentStyle,
+                resourceId = R.styleable.ColumnChartStyle_column3,
+                styleableResourceId = R.styleable.LineComponent,
             ).getLineComponent(
                 context = context,
                 defaultColor = context.defaultColors.entity3Color.toInt(),

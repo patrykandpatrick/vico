@@ -124,11 +124,11 @@ internal class ThemeHandler(
         return builder.apply {
             axis = axisStyle.getLineComponent(
                 resourceId = R.styleable.Axis_axisLineStyle,
-                styleableResourceId = R.styleable.LineComponentStyle
+                styleableResourceId = R.styleable.LineComponent
             )
             tick = axisStyle.getLineComponent(
                 resourceId = R.styleable.Axis_axisTickStyle,
-                styleableResourceId = R.styleable.LineComponentStyle
+                styleableResourceId = R.styleable.LineComponent
             )
             tickLengthDp = axisStyle.getRawDimension(
                 context = context,
@@ -137,7 +137,7 @@ internal class ThemeHandler(
             )
             guideline = axisStyle.getLineComponent(
                 resourceId = R.styleable.Axis_axisGuidelineStyle,
-                styleableResourceId = R.styleable.LineComponentStyle,
+                styleableResourceId = R.styleable.LineComponent,
                 defaultShape = DashedShape(),
             )
             label = axisStyle.getNestedTypedArray(

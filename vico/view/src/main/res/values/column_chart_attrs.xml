@@ -18,9 +18,9 @@
     <attr name="columnChartStyle" format="reference" />
 
     <declare-styleable name="ColumnChartStyle">
-        <attr name="column1Style" format="reference" />
-        <attr name="column2Style" format="reference" />
-        <attr name="column3Style" format="reference" />
+        <attr name="column1" format="reference" />
+        <attr name="column2" format="reference" />
+        <attr name="column3" format="reference" />
         <attr name="columnOuterSpacing" format="dimension" />
         <attr name="columnInnerSpacing" format="dimension" />
     </declare-styleable>

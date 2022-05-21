@@ -67,7 +67,7 @@
         </attr>
     </declare-styleable>
 
-    <declare-styleable name="LineComponentStyle">
+    <declare-styleable name="LineComponent">
         <attr name="color" />
         <attr name="thickness" format="dimension" />
         <attr name="shapeStyle" />
