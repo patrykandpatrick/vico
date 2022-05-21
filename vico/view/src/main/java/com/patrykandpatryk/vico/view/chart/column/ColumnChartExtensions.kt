@@ -33,8 +33,8 @@ import com.patrykandpatryk.vico.view.theme.use
  * Creates a [LineComponent] using the provided [attrRes] and [styleResId].
  *
  * @param context the context used to retrieve the style information.
- * @param attrRes a theme attributes resource identifier used to retrieve the [LineComponent]’s style.
- * Can be [R.attr.column1], [R.attr.column2], or [R.attr.column3].
+ * @param attrRes a theme attribute resource identifier used to retrieve the [LineComponent]’s style.
+ * This can be [R.attr.column1], [R.attr.column2], or [R.attr.column3].
  * @param styleResId used to retrieve the style information if the provided [attrRes] cannot be resolved.
  * The [styleResId] must define the style of at least one of the following: [R.attr.column1], [R.attr.column2],
  * and [R.attr.column3].
@@ -66,7 +66,7 @@ public fun columnLineComponent(
  * @param context the context used to retrieve the style information.
  * @param styleResId if not 0, used to retrieve the style information from the provided style resource.
  * The [styleResId] should define the style of all of the following: [R.attr.column1], [R.attr.column2],
- * and [R.attr.column3]. If 0, the style attributes are retrieved from [Context]’s theme.
+ * and [R.attr.column3]. If [styleResId] is 0, the style attributes are retrieved from [Context]’s theme.
  *
  * @see lineSpec
  */
