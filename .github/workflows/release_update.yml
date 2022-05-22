@@ -46,7 +46,7 @@ jobs:
         run: |
           sed -i "s/$OLD_VERSION_NAME/$NEW_VERSION_NAME/g" README.md
           git add README.md
-          git commit -m "Update README" -m "[skip ci]"
+          git commit -m "Update README"
       - name: Determine tag name
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: |
@@ -71,13 +71,13 @@ jobs:
         run: |
           true > "CHANGELOG.md"
           git add CHANGELOG.md
-          git commit -m "Empty \`CHANGELOG.md\`" -m "[skip ci]"
+          git commit -m "Empty \`CHANGELOG.md\`"
       - name: Update docs
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: |
           ./gradlew dokkaHtmlMultiModule
           git add docs
-          git commit -m "Update docs" -m "[skip ci]"
+          git commit -m "Update docs"
       - name: Push local changes to remote repository
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: |
