@@ -82,24 +82,27 @@ internal fun ViewGroupedColumnChart(
 }
 
 @Composable
-internal fun rememberGroupedColumnChartThresholdLine() = remember(MaterialTheme.colorScheme) {
-    ThresholdLine(
-        thresholdRange = THRESHOLD_RANGE_START..THRESHOLD_RANGE_END,
-        labelComponent = textComponent(
-            color = MaterialTheme.colorScheme.surface,
-            padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
-            margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
-            background = ShapeComponent(
-                shape = Shapes.roundedCornerShape(all = 4.dp),
-                color = THRESHOLD_LINE_COLOR.toInt(),
-                strokeWidthDp = 0f,
+internal fun rememberGroupedColumnChartThresholdLine() {
+    val colorScheme = MaterialTheme.colorScheme
+    remember(colorScheme) {
+        ThresholdLine(
+            thresholdRange = THRESHOLD_RANGE_START..THRESHOLD_RANGE_END,
+            labelComponent = textComponent(
+                color = colorScheme.surface,
+                padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
+                margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
+                background = ShapeComponent(
+                    shape = Shapes.roundedCornerShape(all = 4.dp),
+                    color = THRESHOLD_LINE_COLOR.toInt(),
+                    strokeWidthDp = 0f,
+                ),
             ),
-        ),
-        lineComponent = ShapeComponent(
-            color = THRESHOLD_LINE_COLOR.toInt()
-                .copyColor(alpha = THRESHOLD_LINE_ALPHA),
-        ),
-    )
+            lineComponent = ShapeComponent(
+                color = THRESHOLD_LINE_COLOR.toInt()
+                    .copyColor(alpha = THRESHOLD_LINE_ALPHA),
+            ),
+        )
+    }
 }
 
 @Suppress("MagicNumber")
