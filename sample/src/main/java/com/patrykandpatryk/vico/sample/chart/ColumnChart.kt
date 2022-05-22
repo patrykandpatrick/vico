@@ -39,6 +39,7 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.databinding.ColumnChartBinding
 import com.patrykandpatryk.vico.sample.extension.fromEntityColors
 import com.patrykandpatryk.vico.sample.util.marker
+import androidx.compose.runtime.remember
 
 @Composable
 internal fun ComposeColumnChart(
@@ -50,7 +51,7 @@ internal fun ComposeColumnChart(
         valueFormatter = PercentageFormatAxisValueFormatter(),
     )
     val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
-    val decorations = listOf(lineChartThresholdLine())
+    val decorations = listOf(rememberLineChartThresholdLine())
     ProvideChartStyle(chartStyle = chartStyle) {
         val columnChart = columnChart(decorations = decorations)
         Chart(
@@ -70,15 +71,15 @@ internal fun ViewColumnChart(
     modifier: Modifier = Modifier,
 ) {
     val marker = marker()
-    val thresholdLine = lineChartThresholdLine()
+    val thresholdLine = rememberLineChartThresholdLine()
     AndroidViewBinding(
         factory = ColumnChartBinding::inflate,
         modifier = modifier,
     ) {
-        chart.entryProducer = chartEntryModelProducer
-        chart.marker = marker
-        chart.chart?.addDecoration(decoration = thresholdLine)
-        with(chart.startAxis as VerticalAxis) {
+        chartView.entryProducer = chartEntryModelProducer
+        chartView.marker = marker
+        chartView.chart?.addDecoration(decoration = thresholdLine)
+        with(chartView.startAxis as VerticalAxis) {
             this.maxLabelCount = MAX_LABEL_COUNT
             this.valueFormatter = PercentageFormatAxisValueFormatter()
         }
@@ -86,22 +87,24 @@ internal fun ViewColumnChart(
 }
 
 @Composable
-private fun lineChartThresholdLine() = ThresholdLine(
-    thresholdValue = THRESHOLD_VALUE,
-    labelComponent = textComponent(
-        color = MaterialTheme.colorScheme.surface,
-        padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
-        margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
-        background = ShapeComponent(
-            shape = Shapes.roundedCornerShape(all = THRESHOLD_LINE_CORNER_RADIUS_DP.dp),
-            color = THRESHOLD_LINE_COLOR.toInt(),
+private fun rememberLineChartThresholdLine() = remember(MaterialTheme.colorScheme) {
+    ThresholdLine(
+        thresholdValue = THRESHOLD_VALUE,
+        labelComponent = textComponent(
+            color = MaterialTheme.colorScheme.surface,
+            padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
+            margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
+            background = ShapeComponent(
+                shape = Shapes.roundedCornerShape(all = THRESHOLD_LINE_CORNER_RADIUS_DP.dp),
+                color = THRESHOLD_LINE_COLOR.toInt(),
+            ),
         ),
-    ),
-    lineComponent = ShapeComponent(
-        strokeColor = THRESHOLD_LINE_COLOR.toInt(),
-        strokeWidthDp = THRESHOLD_LINE_STROKE_WIDTH_DP,
-    ),
-)
+        lineComponent = ShapeComponent(
+            strokeColor = THRESHOLD_LINE_COLOR.toInt(),
+            strokeWidthDp = THRESHOLD_LINE_STROKE_WIDTH_DP,
+        ),
+    )
+}
 
 @Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFFFF6F3C)

@@ -39,6 +39,7 @@ import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.databinding.GroupedColumnChartBinding
 import com.patrykandpatryk.vico.sample.extension.fromEntityColors
 import com.patrykandpatryk.vico.sample.util.marker
+import androidx.compose.runtime.remember
 
 @Composable
 internal fun ComposeGroupedColumnChart(
@@ -46,7 +47,7 @@ internal fun ComposeGroupedColumnChart(
     modifier: Modifier = Modifier,
 ) {
     val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
-    val decorations = listOf(groupedColumnChartThresholdLine())
+    val decorations = listOf(rememberGroupedColumnChartThresholdLine())
     ProvideChartStyle(chartStyle = chartStyle) {
         val columnChart = columnChart(
             mergeMode = ColumnChart.MergeMode.Grouped,
@@ -69,35 +70,37 @@ internal fun ViewGroupedColumnChart(
     modifier: Modifier = Modifier,
 ) {
     val marker = marker()
-    val thresholdLine = groupedColumnChartThresholdLine()
+    val thresholdLine = rememberGroupedColumnChartThresholdLine()
     AndroidViewBinding(
         factory = GroupedColumnChartBinding::inflate,
         modifier = modifier,
     ) {
-        chart.entryProducer = chartEntryModelProducer
-        chart.marker = marker
-        chart.chart?.addDecoration(decoration = thresholdLine)
+        chartView.entryProducer = chartEntryModelProducer
+        chartView.marker = marker
+        chartView.chart?.addDecoration(decoration = thresholdLine)
     }
 }
 
 @Composable
-internal fun groupedColumnChartThresholdLine() = ThresholdLine(
-    thresholdRange = THRESHOLD_RANGE_START..THRESHOLD_RANGE_END,
-    labelComponent = textComponent(
-        color = MaterialTheme.colorScheme.surface,
-        padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
-        margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
-        background = ShapeComponent(
-            shape = Shapes.roundedCornerShape(all = 4.dp),
-            color = THRESHOLD_LINE_COLOR.toInt(),
-            strokeWidthDp = 0f,
+internal fun rememberGroupedColumnChartThresholdLine() = remember(MaterialTheme.colorScheme) {
+    ThresholdLine(
+        thresholdRange = THRESHOLD_RANGE_START..THRESHOLD_RANGE_END,
+        labelComponent = textComponent(
+            color = MaterialTheme.colorScheme.surface,
+            padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
+            margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
+            background = ShapeComponent(
+                shape = Shapes.roundedCornerShape(all = 4.dp),
+                color = THRESHOLD_LINE_COLOR.toInt(),
+                strokeWidthDp = 0f,
+            ),
         ),
-    ),
-    lineComponent = ShapeComponent(
-        color = THRESHOLD_LINE_COLOR.toInt()
-            .copyColor(alpha = THRESHOLD_LINE_ALPHA),
-    ),
-)
+        lineComponent = ShapeComponent(
+            color = THRESHOLD_LINE_COLOR.toInt()
+                .copyColor(alpha = THRESHOLD_LINE_ALPHA),
+        ),
+    )
+}
 
 @Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFF68A7AD, 0xFF99C4C8, 0xFFE5CB9F)

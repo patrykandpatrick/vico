@@ -22,7 +22,7 @@
     android:layout_height="wrap_content">
 
     <com.patrykandpatryk.vico.view.chart.ChartView
-        android:id="@+id/chart"
+        android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:chart="column"

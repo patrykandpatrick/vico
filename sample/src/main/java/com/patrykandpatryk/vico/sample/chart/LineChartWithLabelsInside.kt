@@ -72,9 +72,9 @@ internal fun ViewLineChartWithLabelsInside(
         factory = LineChartWithLabelsInsideBinding::inflate,
         modifier = modifier,
     ) {
-        chart.entryProducer = chartEntryModelProducer
-        chart.marker = marker
-        with(chart.startAxis as VerticalAxis) {
+        chartView.entryProducer = chartEntryModelProducer
+        chartView.marker = marker
+        with(chartView.startAxis as VerticalAxis) {
             horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
             label = axisLabel
         }

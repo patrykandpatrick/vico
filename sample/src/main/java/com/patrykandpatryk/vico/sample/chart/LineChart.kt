@@ -62,10 +62,10 @@ internal fun ViewLineChart(
         factory = LineChartBinding::inflate,
         modifier = modifier,
     ) {
-        chart.entryProducer = chartEntryModelProducer
-        chart.marker = marker
-        (chart.bottomAxis as Axis).guideline = null
-        chart.chart?.addPersistentMarker(
+        chartView.entryProducer = chartEntryModelProducer
+        chartView.marker = marker
+        (chartView.bottomAxis as Axis).guideline = null
+        chartView.chart?.addPersistentMarker(
             x = PERSISTENT_MARKER_X,
             marker = marker,
         )

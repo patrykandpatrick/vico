@@ -61,8 +61,8 @@ internal fun ViewComposedChart(
         factory = ComposedChartBinding::inflate,
         modifier = modifier,
     ) {
-        chart.entryProducer = composedChartEntryModelProducer
-        chart.marker = marker
+        chartView.entryProducer = composedChartEntryModelProducer
+        chartView.marker = marker
     }
 }
 

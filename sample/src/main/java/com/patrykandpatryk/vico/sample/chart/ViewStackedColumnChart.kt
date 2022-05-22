@@ -65,10 +65,10 @@ internal fun ViewStackedColumnChart(
         factory = StackedColumnChartBinding::inflate,
         modifier = modifier,
     ) {
-        chart.entryProducer = chartEntryModelProducer
-        chart.marker = marker
-        (chart.chart as ColumnChart).mergeMode = ColumnChart.MergeMode.Stack
-        (chart.startAxis as VerticalAxis).maxLabelCount = MAX_LABEL_COUNT
+        chartView.entryProducer = chartEntryModelProducer
+        chartView.marker = marker
+        (chartView.chart as ColumnChart).mergeMode = ColumnChart.MergeMode.Stack
+        (chartView.startAxis as VerticalAxis).maxLabelCount = MAX_LABEL_COUNT
     }
 }
 
