@@ -36,7 +36,6 @@ import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.sample.extension.fromEntityColors
-import com.patrykandpatryk.vico.sample.util.SampleChartTokens
 import com.patrykandpatryk.vico.sample.util.marker
 
 @Composable
@@ -44,25 +43,23 @@ internal fun ComposeGroupedColumnChart(
     chartEntryModelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-    val tokens = SampleChartTokens.GroupedColumnChart
-    val chartStyle = ChartStyle.fromEntityColors(entityColors = tokens.entityColors)
+    val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
     val decorations = listOf(
         ThresholdLine(
-            thresholdRange = tokens.THRESHOLD_RANGE_START..tokens.THRESHOLD_RANGE_END,
+            thresholdRange = THRESHOLD_RANGE_START..THRESHOLD_RANGE_END,
             labelComponent = textComponent(
                 color = MaterialTheme.colorScheme.surface,
-                padding = dimensionsOf(all = tokens.THRESHOLD_LINE_PADDING_DP.dp),
-                margins = dimensionsOf(all = tokens.THRESHOLD_LINE_MARGINS_DP.dp),
+                padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
+                margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
                 background = ShapeComponent(
                     shape = Shapes.roundedCornerShape(all = 4.dp),
-                    color = tokens.THRESHOLD_LINE_COLOR.toInt(),
+                    color = THRESHOLD_LINE_COLOR.toInt(),
                     strokeWidthDp = 0f,
                 ),
             ),
             lineComponent = ShapeComponent(
-                color = tokens.THRESHOLD_LINE_COLOR
-                    .toInt()
-                    .copyColor(alpha = tokens.THRESHOLD_LINE_ALPHA),
+                color = THRESHOLD_LINE_COLOR.toInt()
+                    .copyColor(alpha = THRESHOLD_LINE_ALPHA),
             ),
         )
     )
@@ -81,3 +78,11 @@ internal fun ComposeGroupedColumnChart(
         )
     }
 }
+
+private val entityColors = longArrayOf(0xFF68A7AD, 0xFF99C4C8, 0xFFE5CB9F)
+private const val THRESHOLD_RANGE_START = 7f
+private const val THRESHOLD_RANGE_END = 14f
+private const val THRESHOLD_LINE_COLOR = 0xFF68A7AD
+private const val THRESHOLD_LINE_ALPHA = 0.16f
+private const val THRESHOLD_LINE_PADDING_DP = 4f
+private const val THRESHOLD_LINE_MARGINS_DP = 4f

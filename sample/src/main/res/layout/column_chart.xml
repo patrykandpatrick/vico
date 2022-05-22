@@ -16,22 +16,18 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <style name="LineChartLineChartStyle">
-        <item name="line1spec">@style/LineChartLine1Spec</item>
-    </style>
+    <com.patrykandpatryk.vico.view.chart.ChartView
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:chart="column"
+        app:showBottomAxis="true"
+        app:showStartAxis="true"
+        app:columnChartStyle="@style/ColumnChartColumnChartStyle" />
 
-    <style name="LineChartLine1Spec">
-        <item name="color">#FFAA96DA</item>
-    </style>
-
-    <style name="ColumnChartColumnChartStyle">
-        <item name="column1">@style/ColumnChartColumn1</item>
-    </style>
-
-    <style name="ColumnChartColumn1">
-        <item name="color">#FF6F3C</item>
-    </style>
-
-</resources>
+</FrameLayout>

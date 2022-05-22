@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.chart.compose
+package com.patrykandpatryk.vico.sample.chart
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
+import com.patrykandpatryk.vico.compose.axis.horizontal.topAxis
+import com.patrykandpatryk.vico.compose.axis.vertical.endAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
+import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.style.ChartStyle
 import com.patrykandpatryk.vico.compose.style.ProvideChartStyle
-import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.core.chart.composed.plus
+import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatryk.vico.sample.util.marker
 import com.patrykandpatryk.vico.sample.extension.fromEntityColors
-import com.patrykandpatryk.vico.sample.util.SampleChartTokens
 
 @Composable
-internal fun ComposeLineChart(
-    chartEntryModelProducer: ChartEntryModelProducer,
+internal fun ComposeComposedChart(
+    composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
     modifier: Modifier = Modifier,
 ) {
-    val tokens = SampleChartTokens.LineChart
-    val startAxis = startAxis()
-    val bottomAxis = bottomAxis(guideline = null)
-    val chartStyle = ChartStyle.fromEntityColors(entityColors = tokens.entityColors)
+    val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
     ProvideChartStyle(chartStyle = chartStyle) {
-        val lineChart = lineChart(persistentMarkers = mapOf(tokens.PERSISTENT_MARKER_X to marker()))
         Chart(
+            chart = columnChart() + lineChart(),
+            chartModelProducer = composedChartEntryModelProducer,
+            topAxis = topAxis(),
+            endAxis = endAxis(),
             modifier = modifier,
-            chart = lineChart,
-            chartModelProducer = chartEntryModelProducer,
-            startAxis = startAxis,
-            bottomAxis = bottomAxis,
             marker = marker(),
         )
     }
 }
+
+private val entityColors = longArrayOf(0xFF3D84A8, 0xFF46CDCF, 0xFFABEDD8)

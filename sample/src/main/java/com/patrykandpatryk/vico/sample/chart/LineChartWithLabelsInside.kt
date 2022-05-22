@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.chart.compose
+package com.patrykandpatryk.vico.sample.chart
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,36 +31,34 @@ import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.sample.util.marker
-import com.patrykandpatryk.vico.sample.util.SampleChartTokens
 
 @Composable
 internal fun ComposeLineChartWithLabelsInside(
     chartEntryModelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-    val tokens = SampleChartTokens.LineChartWithLabelsInside
     val axisLabel = axisLabelComponent(
-        horizontalPadding = tokens.LABEL_PADDING_HORIZONTAL_DP.dp,
-        verticalPadding = tokens.LABEL_PADDING_VERTICAL_DP.dp,
-        horizontalMargin = tokens.LABEL_MARGIN_DP.dp,
-        verticalMargin = tokens.LABEL_MARGIN_DP.dp,
+        horizontalPadding = LABEL_PADDING_HORIZONTAL_DP.dp,
+        verticalPadding = LABEL_PADDING_VERTICAL_DP.dp,
+        horizontalMargin = LABEL_MARGIN_DP.dp,
+        verticalMargin = LABEL_MARGIN_DP.dp,
         background = ShapeComponent(
             shape = Shapes.pillShape,
-            color = tokens.LABEL_BACKGROUND_COLOR.toInt(),
+            color = LABEL_BACKGROUND_COLOR.toInt(),
         ),
     )
     val lineChart = lineChart(
         lines = listOf(
             lineSpec(
-                lineColor = Color(tokens.entityColors[0]),
+                lineColor = Color(entityColors[0]),
                 lineBackgroundShader = null,
             ),
             lineSpec(
-                lineColor = Color(tokens.entityColors[1]),
+                lineColor = Color(entityColors[1]),
                 lineBackgroundShader = null,
             ),
             lineSpec(
-                lineColor = Color(tokens.entityColors[2]),
+                lineColor = Color(entityColors[2]),
                 lineBackgroundShader = null,
             ),
         ),
@@ -78,3 +76,9 @@ internal fun ComposeLineChartWithLabelsInside(
         marker = marker(),
     )
 }
+
+private val entityColors = longArrayOf(0xFFB983FF, 0xFF94B3FD, 0xFF94DAFF)
+private const val LABEL_BACKGROUND_COLOR = 0xFFFABB51
+private const val LABEL_PADDING_VERTICAL_DP = 4f
+private const val LABEL_PADDING_HORIZONTAL_DP = 8f
+private const val LABEL_MARGIN_DP = 4f

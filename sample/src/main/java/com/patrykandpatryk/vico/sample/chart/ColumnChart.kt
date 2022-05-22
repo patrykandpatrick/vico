@@ -14,56 +14,40 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.chart.compose
+package com.patrykandpatryk.vico.sample.chart
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.component.shape.roundedCornerShape
+import com.patrykandpatryk.vico.compose.component.shape.textComponent
+import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.compose.style.ChartStyle
 import com.patrykandpatryk.vico.compose.style.ProvideChartStyle
 import com.patrykandpatryk.vico.core.axis.formatter.PercentageFormatAxisValueFormatter
+import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
-import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatryk.vico.sample.extension.fromEntityColors
-import com.patrykandpatryk.vico.sample.util.SampleChartTokens
-import com.patrykandpatryk.vico.sample.util.marker
-import com.patrykandpatryk.vico.compose.component.shape.textComponent
-import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.databinding.ColumnChartBinding
+import com.patrykandpatryk.vico.sample.extension.fromEntityColors
+import com.patrykandpatryk.vico.sample.util.marker
 
 @Composable
 internal fun ComposeColumnChart(
     chartEntryModelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-    val tokens = SampleChartTokens.ColumnChart
     val startAxis = startAxis(maxLabelCount = 5, valueFormatter = PercentageFormatAxisValueFormatter())
-    val chartStyle = ChartStyle.fromEntityColors(entityColors = tokens.entityColors)
-    val decorations = listOf(
-        ThresholdLine(
-            thresholdValue = tokens.THRESHOLD_VALUE,
-            labelComponent = textComponent(
-                color = MaterialTheme.colorScheme.surface,
-                padding = dimensionsOf(all = tokens.THRESHOLD_LINE_PADDING_DP.dp),
-                margins = dimensionsOf(all = tokens.THRESHOLD_LINE_MARGINS_DP.dp),
-                background = ShapeComponent(
-                    shape = Shapes.roundedCornerShape(all = 4.dp),
-                    color = tokens.THRESHOLD_LINE_COLOR.toInt(),
-                ),
-            ),
-            lineComponent = ShapeComponent(
-                strokeColor = tokens.THRESHOLD_LINE_COLOR.toInt(),
-                strokeWidthDp = tokens.THRESHOLD_LINE_STROKE_WIDTH_DP,
-            )
-        )
-    )
+    val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
+    val decorations = listOf(lineChartThresholdLine())
     ProvideChartStyle(chartStyle = chartStyle) {
         val columnChart = columnChart(decorations = decorations)
         Chart(
@@ -76,3 +60,50 @@ internal fun ComposeColumnChart(
         )
     }
 }
+
+@Composable
+internal fun ViewColumnChart(
+    chartEntryModelProducer: ChartEntryModelProducer,
+    modifier: Modifier = Modifier,
+) {
+    val marker = marker()
+    val thresholdLine = lineChartThresholdLine()
+    AndroidViewBinding(
+        factory = ColumnChartBinding::inflate,
+        modifier = modifier,
+    ) {
+        chart.entryProducer = chartEntryModelProducer
+        chart.marker = marker
+        chart.chart?.addDecoration(decoration = thresholdLine)
+        with (chart.startAxis as VerticalAxis) {
+            this.maxLabelCount = MAX_LABEL_COUNT
+            this.valueFormatter = PercentageFormatAxisValueFormatter()
+        }
+    }
+}
+
+@Composable
+private fun lineChartThresholdLine() = ThresholdLine(
+    thresholdValue = THRESHOLD_VALUE,
+    labelComponent = textComponent(
+        color = MaterialTheme.colorScheme.surface,
+        padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
+        margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
+        background = ShapeComponent(
+            shape = Shapes.roundedCornerShape(all = 4.dp),
+            color = THRESHOLD_LINE_COLOR.toInt(),
+        ),
+    ),
+    lineComponent = ShapeComponent(
+        strokeColor = THRESHOLD_LINE_COLOR.toInt(),
+        strokeWidthDp = THRESHOLD_LINE_STROKE_WIDTH_DP,
+    ),
+)
+
+private val entityColors = longArrayOf(0xFFFF6F3C)
+private const val THRESHOLD_VALUE = 13f
+private const val THRESHOLD_LINE_COLOR = 0xFF3EC1D3
+private const val THRESHOLD_LINE_STROKE_WIDTH_DP = 2f
+private const val THRESHOLD_LINE_PADDING_DP = 4f
+private const val THRESHOLD_LINE_MARGINS_DP = 4f
+private const val MAX_LABEL_COUNT = 5

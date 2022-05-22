@@ -14,16 +14,43 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.chart.views
+package com.patrykandpatryk.vico.sample.chart.compose
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
+import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
+import com.patrykandpatryk.vico.compose.chart.Chart
+import com.patrykandpatryk.vico.compose.chart.line.lineChart
+import com.patrykandpatryk.vico.compose.style.ChartStyle
+import com.patrykandpatryk.vico.compose.style.ProvideChartStyle
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.databinding.LineChartBinding
-import com.patrykandpatryk.vico.sample.util.SampleChartTokens
+import com.patrykandpatryk.vico.sample.extension.fromEntityColors
 import com.patrykandpatryk.vico.sample.util.marker
+
+@Composable
+internal fun ComposeLineChart(
+    chartEntryModelProducer: ChartEntryModelProducer,
+    modifier: Modifier = Modifier,
+) {
+    val startAxis = startAxis()
+    val bottomAxis = bottomAxis(guideline = null)
+    val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
+    ProvideChartStyle(chartStyle = chartStyle) {
+        val lineChart = lineChart(persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker()))
+        Chart(
+            modifier = modifier,
+            chart = lineChart,
+            chartModelProducer = chartEntryModelProducer,
+            startAxis = startAxis,
+            bottomAxis = bottomAxis,
+            marker = marker(),
+        )
+    }
+}
 
 @Composable
 internal fun ViewLineChart(
@@ -31,7 +58,6 @@ internal fun ViewLineChart(
     modifier: Modifier = Modifier,
 ) {
     val marker = marker()
-    val tokens = SampleChartTokens.LineChart
     AndroidViewBinding(
         factory = LineChartBinding::inflate,
         modifier = modifier,
@@ -40,8 +66,11 @@ internal fun ViewLineChart(
         chart.marker = marker
         (chart.bottomAxis as Axis).guideline = null
         chart.chart?.addPersistentMarker(
-            x = tokens.PERSISTENT_MARKER_X,
+            x = PERSISTENT_MARKER_X,
             marker = marker,
         )
     }
 }
+
+private val entityColors = longArrayOf(0xFFAA96DA)
+private const val PERSISTENT_MARKER_X = 6f

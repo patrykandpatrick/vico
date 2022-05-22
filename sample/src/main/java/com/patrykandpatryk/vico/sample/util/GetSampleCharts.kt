@@ -20,13 +20,14 @@ import com.patrykandpatryk.vico.R
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
-import com.patrykandpatryk.vico.sample.chart.compose.ComposeColumnChart
-import com.patrykandpatryk.vico.sample.chart.compose.ComposeComposedChart
-import com.patrykandpatryk.vico.sample.chart.compose.ComposeLineChart
+import com.patrykandpatryk.vico.sample.chart.ComposeColumnChart
+import com.patrykandpatryk.vico.sample.chart.ComposeComposedChart
+import com.patrykandpatryk.vico.sample.chart.ComposeLineChartWithLabelsInside
+import com.patrykandpatryk.vico.sample.chart.ComposeStackedColumnChart
+import com.patrykandpatryk.vico.sample.chart.ViewColumnChart
 import com.patrykandpatryk.vico.sample.chart.compose.ComposeGroupedColumnChart
-import com.patrykandpatryk.vico.sample.chart.compose.ComposeLineChartWithLabelsInside
-import com.patrykandpatryk.vico.sample.chart.compose.ComposeStackedColumnChart
-import com.patrykandpatryk.vico.sample.chart.views.ViewLineChart
+import com.patrykandpatryk.vico.sample.chart.compose.ComposeLineChart
+import com.patrykandpatryk.vico.sample.chart.compose.ViewLineChart
 
 internal fun getSampleCharts(
     chartEntryModelProducer: ChartEntryModelProducer,
@@ -43,7 +44,7 @@ internal fun getSampleCharts(
         labelResourceId = R.string.column_chart_label,
         descriptionResourceId = R.string.column_chart_description,
         composeBased = { ComposeColumnChart(chartEntryModelProducer = chartEntryModelProducer) },
-        viewBased = {},
+        viewBased = { ViewColumnChart(chartEntryModelProducer = chartEntryModelProducer) },
     ),
     SampleChart(
         labelResourceId = R.string.composed_chart_label,

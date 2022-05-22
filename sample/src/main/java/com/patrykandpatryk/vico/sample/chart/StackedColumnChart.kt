@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.chart.compose
+package com.patrykandpatryk.vico.sample.chart
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,7 +28,6 @@ import com.patrykandpatryk.vico.compose.style.ProvideChartStyle
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.sample.extension.fromEntityColors
-import com.patrykandpatryk.vico.sample.util.SampleChartTokens
 import com.patrykandpatryk.vico.sample.util.marker
 
 @Composable
@@ -36,10 +35,9 @@ internal fun ComposeStackedColumnChart(
     chartEntryModelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-    val tokens = SampleChartTokens.StackedColumnChart
-    val chartStyle = ChartStyle.fromEntityColors(entityColors = tokens.entityColors)
-    val axisLabel = axisLabelComponent(rotationDegrees = tokens.AXIS_LABEL_ROTATION_DEGREES)
-    val startAxis = startAxis(label = axisLabel, maxLabelCount = tokens.MAX_LABEL_COUNT)
+    val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
+    val axisLabel = axisLabelComponent(rotationDegrees = AXIS_LABEL_ROTATION_DEGREES)
+    val startAxis = startAxis(label = axisLabel, maxLabelCount = MAX_LABEL_COUNT)
     val bottomAxis = bottomAxis(label = axisLabel)
     ProvideChartStyle(chartStyle = chartStyle) {
         val columnChart = columnChart(mergeMode = ColumnChart.MergeMode.Stack)
@@ -53,3 +51,7 @@ internal fun ComposeStackedColumnChart(
         )
     }
 }
+
+private val entityColors = longArrayOf(0xFF6639A6, 0xFF3490DE, 0xFF6FE7DD)
+private const val AXIS_LABEL_ROTATION_DEGREES = 45f
+private const val MAX_LABEL_COUNT = 2
