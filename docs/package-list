@@ -29,7 +29,6 @@ com.patrykandpatryk.vico.core.annotation
 com.patrykandpatryk.vico.core.axis
 com.patrykandpatryk.vico.core.axis.formatter
 com.patrykandpatryk.vico.core.axis.horizontal
-com.patrykandpatryk.vico.core.axis.model
 com.patrykandpatryk.vico.core.axis.vertical
 com.patrykandpatryk.vico.core.chart
 com.patrykandpatryk.vico.core.chart.column
@@ -39,6 +38,7 @@ com.patrykandpatryk.vico.core.chart.draw
 com.patrykandpatryk.vico.core.chart.insets
 com.patrykandpatryk.vico.core.chart.line
 com.patrykandpatryk.vico.core.chart.segment
+com.patrykandpatryk.vico.core.chart.values
 com.patrykandpatryk.vico.core.component
 com.patrykandpatryk.vico.core.component.dimension
 com.patrykandpatryk.vico.core.component.marker
@@ -63,6 +63,8 @@ com.patrykandpatryk.vico.core.throwable
 com.patrykandpatryk.vico.core.util
 module:view
 com.patrykandpatryk.vico.view.chart
+com.patrykandpatryk.vico.view.chart.column
+com.patrykandpatryk.vico.view.chart.line
 com.patrykandpatryk.vico.view.component.shape
 com.patrykandpatryk.vico.view.component.shape.shader
 com.patrykandpatryk.vico.view.dimensions
