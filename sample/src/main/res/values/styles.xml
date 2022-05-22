@@ -34,4 +34,30 @@
         <item name="color">#FF6F3C</item>
     </style>
 
+    <style name="ComposedChartColumnChartStyle">
+        <item name="column1">@style/ComposedChartColumn1</item>
+        <item name="column2">@style/ComposedChartColumn2</item>
+        <item name="column3">@style/ComposedChartColumn3</item>
+    </style>
+
+    <style name="ComposedChartColumn1">
+        <item name="color">#3D84A8</item>
+    </style>
+
+    <style name="ComposedChartColumn2">
+        <item name="color">#46CDCF</item>
+    </style>
+
+    <style name="ComposedChartColumn3">
+        <item name="color">#ABEDD8</item>
+    </style>
+
+    <style name="ComposedChartLineChartStyle">
+        <item name="line1spec">@style/ComposedChartLine1Spec</item>
+    </style>
+
+    <style name="ComposedChartLine1Spec">
+        <item name="color">#3D84A8</item>
+    </style>
+
 </resources>

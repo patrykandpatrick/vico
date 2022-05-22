@@ -25,6 +25,7 @@ import com.patrykandpatryk.vico.sample.chart.ComposeComposedChart
 import com.patrykandpatryk.vico.sample.chart.ComposeLineChartWithLabelsInside
 import com.patrykandpatryk.vico.sample.chart.ComposeStackedColumnChart
 import com.patrykandpatryk.vico.sample.chart.ViewColumnChart
+import com.patrykandpatryk.vico.sample.chart.ViewComposedChart
 import com.patrykandpatryk.vico.sample.chart.compose.ComposeGroupedColumnChart
 import com.patrykandpatryk.vico.sample.chart.compose.ComposeLineChart
 import com.patrykandpatryk.vico.sample.chart.compose.ViewLineChart
@@ -50,7 +51,7 @@ internal fun getSampleCharts(
         labelResourceId = R.string.composed_chart_label,
         descriptionResourceId = R.string.composed_chart_description,
         composeBased = { ComposeComposedChart(composedChartEntryModelProducer = composedChartEntryModelProducer) },
-        viewBased = {},
+        viewBased = { ViewComposedChart(composedChartEntryModelProducer = composedChartEntryModelProducer) },
     ),
     SampleChart(
         labelResourceId = R.string.stacked_column_chart_label,
