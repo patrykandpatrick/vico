@@ -31,7 +31,6 @@ import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatryk.vico.databinding.LineChartBinding
 import com.patrykandpatryk.vico.databinding.LineChartWithLabelsInsideBinding
 import com.patrykandpatryk.vico.sample.util.marker
 
