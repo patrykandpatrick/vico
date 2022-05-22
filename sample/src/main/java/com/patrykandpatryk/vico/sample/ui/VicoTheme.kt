@@ -26,10 +26,13 @@ import androidx.compose.ui.graphics.Color
 
 @Composable
 internal fun VicoTheme(content: @Composable () -> Unit) {
-    val darkColorScheme = darkColorScheme()
+    val darkColorScheme = darkColorScheme(
+        surface = Color(color = DARK_SURFACE),
+        background = Color.Black,
+    )
     val lightColorScheme = lightColorScheme(
         surface = Color.White,
-        background = Color(color = BLUE_GRAY),
+        background = Color(color = LIGHT_BACKGROUND),
     )
     MaterialTheme(
         colorScheme = if (isSystemInDarkTheme()) darkColorScheme else lightColorScheme,
@@ -38,4 +41,5 @@ internal fun VicoTheme(content: @Composable () -> Unit) {
     )
 }
 
-private const val BLUE_GRAY = 0xFFF5F5F7
+private const val LIGHT_BACKGROUND = 0xFFF5F5F7
+private const val DARK_SURFACE = 0xFF1C1E21
