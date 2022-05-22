@@ -40,20 +40,12 @@ internal fun ComposeLineChartWithLabelsInside(
     modifier: Modifier = Modifier,
 ) {
     val lineChart = lineChart(
-        lines = listOf(
+        lines = entityColors.map {
             lineSpec(
-                lineColor = Color(entityColors[0]),
+                lineColor = Color(it),
                 lineBackgroundShader = null,
-            ),
-            lineSpec(
-                lineColor = Color(entityColors[1]),
-                lineBackgroundShader = null,
-            ),
-            lineSpec(
-                lineColor = Color(entityColors[2]),
-                lineBackgroundShader = null,
-            ),
-        ),
+            )
+        }
     )
     val startAxis = startAxis(
         horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
