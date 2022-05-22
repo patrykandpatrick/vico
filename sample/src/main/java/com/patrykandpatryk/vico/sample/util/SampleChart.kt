@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.activity
+package com.patrykandpatryk.vico.sample.util
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.core.view.WindowCompat
-import com.patrykandpatryk.vico.sample.ui.VicoApp
+import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
 
-internal class MainActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContent { VicoApp() }
-    }
-}
+internal data class SampleChart(
+    @StringRes val labelResourceId: Int,
+    @StringRes val descriptionResourceId: Int,
+    val composeBased: @Composable () -> Unit,
+    val viewBased: @Composable () -> Unit,
+)

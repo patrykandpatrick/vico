@@ -57,26 +57,31 @@ ext {
                     name   : "material3",
                     version: versions.compose_material3,
             ],
-            activity   : [
+            activity          : [
                     group  : "androidx.activity",
                     name   : "activity-compose",
                     version: versions.activity
             ],
-            viewbinding: [
+            viewbinding       : [
                     group  : "androidx.compose.ui",
                     name   : "ui-viewbinding",
                     version: versions.compose
             ],
-            foundation : [
+            foundation        : [
                     group  : "androidx.compose.foundation",
                     name   : "foundation",
                     version: versions.compose
             ],
-            viewmodel  : [
+            viewmodel         : [
                     group  : "androidx.lifecycle",
                     name   : "lifecycle-viewmodel-compose",
                     version: versions.viewmodel
             ],
+            systemuicontroller: [
+                    group  : "com.google.accompanist",
+                    name   : "accompanist-systemuicontroller",
+                    version: versions.accompanist,
+            ]
     ]
 
     def kotlin_libs = [
@@ -146,7 +151,6 @@ ext {
             [configuration: "implementation", dependency: jetpack_compose_libs.viewmodel],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui],
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
-            [configuration: "implementation", dependency: jetpack_compose_libs.material],
             [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
@@ -156,6 +160,8 @@ ext {
             [configuration: "implementation", dependency: jetpack_compose_libs.activity],
             [configuration: "implementation", dependency: jetpack_compose_libs.viewbinding],
             [configuration: "implementation", dependency: jetpack_compose_libs.material3],
+            [configuration: "implementation", dependency: jetpack_compose_libs.material],
+            [configuration: "implementation", dependency: jetpack_compose_libs.systemuicontroller],
     ]
 
     vico_core_dependencies = [

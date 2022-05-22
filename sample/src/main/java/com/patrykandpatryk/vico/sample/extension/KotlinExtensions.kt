@@ -14,19 +14,9 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.activity
+package com.patrykandpatryk.vico.sample.extension
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.core.view.WindowCompat
-import com.patrykandpatryk.vico.sample.ui.VicoApp
+import androidx.compose.runtime.Composable
 
-internal class MainActivity : ComponentActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        setContent { VicoApp() }
-    }
-}
+@Composable
+internal fun <T> T.remember(): T = androidx.compose.runtime.remember { this }

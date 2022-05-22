@@ -16,22 +16,20 @@
 
 package com.patrykandpatryk.vico.sample.util
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.fragment.app.Fragment
 import com.patrykandpatryk.vico.R
-import com.patrykandpatryk.vico.sample.fragment.ComposeShowcaseFragment
-import com.patrykandpatryk.vico.sample.fragment.ViewShowcaseFragment
 
 internal enum class Tab(
     @StringRes val labelResourceId: Int,
-    val createFragment: () -> Fragment,
+    @DrawableRes val iconResourceId: Int,
 ) {
-    ComposeShowcase(
-        labelResourceId = R.string.showcase_compose_title,
-        createFragment = ::ComposeShowcaseFragment,
+    Compose(
+        labelResourceId = R.string.compose,
+        iconResourceId = R.drawable.ic_compose,
     ),
-    ViewShowcase(
-        labelResourceId = R.string.showcase_view_title,
-        createFragment = ::ViewShowcaseFragment,
-    ),
+    Views(
+        labelResourceId = R.string.views,
+        iconResourceId = R.drawable.ic_views,
+    )
 }

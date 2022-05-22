@@ -1,0 +1,83 @@
+/*
+ * Copyright 2022 Patryk Goworowski and Patryk Michalik
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatryk.vico.sample.chart.compose
+
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
+import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
+import com.patrykandpatryk.vico.compose.chart.Chart
+import com.patrykandpatryk.vico.compose.chart.column.columnChart
+import com.patrykandpatryk.vico.compose.component.shape.roundedCornerShape
+import com.patrykandpatryk.vico.compose.component.shape.textComponent
+import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
+import com.patrykandpatryk.vico.compose.style.ChartStyle
+import com.patrykandpatryk.vico.compose.style.ProvideChartStyle
+import com.patrykandpatryk.vico.core.chart.column.ColumnChart
+import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
+import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
+import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.core.extension.copyColor
+import com.patrykandpatryk.vico.sample.extension.fromEntityColors
+import com.patrykandpatryk.vico.sample.util.SampleChartTokens
+import com.patrykandpatryk.vico.sample.util.marker
+
+@Composable
+internal fun ComposeGroupedColumnChart(
+    chartEntryModelProducer: ChartEntryModelProducer,
+    modifier: Modifier = Modifier,
+) {
+    val tokens = SampleChartTokens.GroupedColumnChart
+    val chartStyle = ChartStyle.fromEntityColors(entityColors = tokens.entityColors)
+    val decorations = listOf(
+        ThresholdLine(
+            thresholdRange = tokens.THRESHOLD_RANGE_START..tokens.THRESHOLD_RANGE_END,
+            labelComponent = textComponent(
+                color = MaterialTheme.colorScheme.surface,
+                padding = dimensionsOf(all = tokens.THRESHOLD_LINE_PADDING_DP.dp),
+                margins = dimensionsOf(all = tokens.THRESHOLD_LINE_MARGINS_DP.dp),
+                background = ShapeComponent(
+                    shape = Shapes.roundedCornerShape(all = 4.dp),
+                    color = tokens.THRESHOLD_LINE_COLOR.toInt(),
+                    strokeWidthDp = 0f,
+                ),
+            ),
+            lineComponent = ShapeComponent(
+                color = tokens.THRESHOLD_LINE_COLOR
+                    .toInt()
+                    .copyColor(alpha = tokens.THRESHOLD_LINE_ALPHA),
+            ),
+        )
+    )
+    ProvideChartStyle(chartStyle = chartStyle) {
+        val columnChart = columnChart(
+            mergeMode = ColumnChart.MergeMode.Grouped,
+            decorations = decorations,
+        )
+        Chart(
+            chart = columnChart,
+            chartModelProducer = chartEntryModelProducer,
+            modifier = modifier,
+            startAxis = startAxis(),
+            bottomAxis = bottomAxis(),
+            marker = marker(),
+        )
+    }
+}
