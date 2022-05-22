@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.chart.compose
+package com.patrykandpatryk.vico.sample.chart
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
@@ -35,6 +36,7 @@ import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.core.extension.copyColor
+import com.patrykandpatryk.vico.databinding.GroupedColumnChartBinding
 import com.patrykandpatryk.vico.sample.extension.fromEntityColors
 import com.patrykandpatryk.vico.sample.util.marker
 
@@ -44,25 +46,7 @@ internal fun ComposeGroupedColumnChart(
     modifier: Modifier = Modifier,
 ) {
     val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
-    val decorations = listOf(
-        ThresholdLine(
-            thresholdRange = THRESHOLD_RANGE_START..THRESHOLD_RANGE_END,
-            labelComponent = textComponent(
-                color = MaterialTheme.colorScheme.surface,
-                padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
-                margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
-                background = ShapeComponent(
-                    shape = Shapes.roundedCornerShape(all = 4.dp),
-                    color = THRESHOLD_LINE_COLOR.toInt(),
-                    strokeWidthDp = 0f,
-                ),
-            ),
-            lineComponent = ShapeComponent(
-                color = THRESHOLD_LINE_COLOR.toInt()
-                    .copyColor(alpha = THRESHOLD_LINE_ALPHA),
-            ),
-        )
-    )
+    val decorations = listOf(groupedColumnChartThresholdLine())
     ProvideChartStyle(chartStyle = chartStyle) {
         val columnChart = columnChart(
             mergeMode = ColumnChart.MergeMode.Grouped,
@@ -78,6 +62,42 @@ internal fun ComposeGroupedColumnChart(
         )
     }
 }
+
+@Composable
+internal fun ViewGroupedColumnChart(
+    chartEntryModelProducer: ChartEntryModelProducer,
+    modifier: Modifier = Modifier,
+) {
+    val marker = marker()
+    val thresholdLine = groupedColumnChartThresholdLine()
+    AndroidViewBinding(
+        factory = GroupedColumnChartBinding::inflate,
+        modifier = modifier,
+    ) {
+        chart.entryProducer = chartEntryModelProducer
+        chart.marker = marker
+        chart.chart?.addDecoration(decoration = thresholdLine)
+    }
+}
+
+@Composable
+internal fun groupedColumnChartThresholdLine() = ThresholdLine(
+    thresholdRange = THRESHOLD_RANGE_START..THRESHOLD_RANGE_END,
+    labelComponent = textComponent(
+        color = MaterialTheme.colorScheme.surface,
+        padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
+        margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
+        background = ShapeComponent(
+            shape = Shapes.roundedCornerShape(all = 4.dp),
+            color = THRESHOLD_LINE_COLOR.toInt(),
+            strokeWidthDp = 0f,
+        ),
+    ),
+    lineComponent = ShapeComponent(
+        color = THRESHOLD_LINE_COLOR.toInt()
+            .copyColor(alpha = THRESHOLD_LINE_ALPHA),
+    ),
+)
 
 @Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFF68A7AD, 0xFF99C4C8, 0xFFE5CB9F)

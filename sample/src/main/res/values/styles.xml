@@ -86,4 +86,22 @@
         <item name="color">#6FE7DD</item>
     </style>
 
+    <style name="GroupedColumnChartColumnChartStyle">
+        <item name="column1">@style/GroupedColumnChartColumn1</item>
+        <item name="column2">@style/GroupedColumnChartColumn2</item>
+        <item name="column3">@style/GroupedColumnChartColumn3</item>
+    </style>
+
+    <style name="GroupedColumnChartColumn1">
+        <item name="color">#68A7AD</item>
+    </style>
+
+    <style name="GroupedColumnChartColumn2">
+        <item name="color">#99C4C8</item>
+    </style>
+
+    <style name="GroupedColumnChartColumn3">
+        <item name="color">#E5CB9F</item>
+    </style>
+
 </resources>
