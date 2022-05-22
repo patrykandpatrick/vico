@@ -45,7 +45,7 @@ internal fun ComposeLineChartWithLabelsInside(
                 lineColor = Color(it),
                 lineBackgroundShader = null,
             )
-        }
+        },
     )
     val startAxis = startAxis(
         horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
