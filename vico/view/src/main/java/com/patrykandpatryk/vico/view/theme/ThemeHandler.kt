@@ -84,9 +84,9 @@ internal class ThemeHandler(
                 bottomAxis = typedArray.getAxisBuilder(HorizontalAxis.Builder()).build()
             }
             isHorizontalScrollEnabled = typedArray
-                .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, false)
+                .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, true)
             isChartZoomEnabled = typedArray
-                .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, false)
+                .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, true)
         }
         when (chartType) {
             ChartType.Single ->
