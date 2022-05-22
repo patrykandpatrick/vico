@@ -45,7 +45,10 @@ internal fun ComposeColumnChart(
     chartEntryModelProducer: ChartEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-    val startAxis = startAxis(maxLabelCount = 5, valueFormatter = PercentageFormatAxisValueFormatter())
+    val startAxis = startAxis(
+        maxLabelCount = MAX_LABEL_COUNT,
+        valueFormatter = PercentageFormatAxisValueFormatter(),
+    )
     val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
     val decorations = listOf(lineChartThresholdLine())
     ProvideChartStyle(chartStyle = chartStyle) {
@@ -90,7 +93,7 @@ private fun lineChartThresholdLine() = ThresholdLine(
         padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
         margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
         background = ShapeComponent(
-            shape = Shapes.roundedCornerShape(all = 4.dp),
+            shape = Shapes.roundedCornerShape(all = THRESHOLD_LINE_CORNER_RADIUS_DP.dp),
             color = THRESHOLD_LINE_COLOR.toInt(),
         ),
     ),
@@ -108,3 +111,4 @@ private const val THRESHOLD_LINE_STROKE_WIDTH_DP = 2f
 private const val THRESHOLD_LINE_PADDING_DP = 4f
 private const val THRESHOLD_LINE_MARGINS_DP = 4f
 private const val MAX_LABEL_COUNT = 5
+private const val THRESHOLD_LINE_CORNER_RADIUS_DP = 4f
