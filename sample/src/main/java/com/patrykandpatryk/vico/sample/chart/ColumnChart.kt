@@ -88,7 +88,7 @@ internal fun ViewColumnChart(
 
 @Composable
 private fun rememberLineChartThresholdLine() {
-    val colorScheme = MaterialTheme.colorsScheme
+    val colorScheme = MaterialTheme.colorScheme
     return remember(colorScheme) {
         ThresholdLine(
             thresholdValue = THRESHOLD_VALUE,
