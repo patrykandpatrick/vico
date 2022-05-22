@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.chart.compose
+package com.patrykandpatryk.vico.sample.chart
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

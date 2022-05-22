@@ -23,7 +23,7 @@
     </style>
 
     <style name="LineChartLine1Spec">
-        <item name="color">#FFAA96DA</item>
+        <item name="color">#AA96DA</item>
     </style>
 
     <style name="ColumnChartColumnChartStyle">
@@ -102,6 +102,29 @@
 
     <style name="GroupedColumnChartColumn3">
         <item name="color">#E5CB9F</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLineChartStyle">
+        <item name="line1spec">@style/LineChartWithLabelsInsideLine1Spec</item>
+        <item name="line2spec">@style/LineChartWithLabelsInsideLine2Spec</item>
+        <item name="line3spec">@style/LineChartWithLabelsInsideLine3Spec</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLine1Spec" parent="@style/LineChartWithLabelsInsideLineSpec">
+        <item name="color">#B983FF</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLine2Spec" parent="@style/LineChartWithLabelsInsideLineSpec">
+        <item name="color">#94B3FD</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLine3Spec" parent="@style/LineChartWithLabelsInsideLineSpec">
+        <item name="color">#94DAFF</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLineSpec">
+        <item name="gradientTopColor">@android:color/transparent</item>
+        <item name="gradientBottomColor">@android:color/transparent</item>
     </style>
 
 </resources>
