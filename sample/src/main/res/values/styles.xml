@@ -60,4 +60,30 @@
         <item name="color">#3D84A8</item>
     </style>
 
+    <style name="StackedColumnChartAxisStyle">
+        <item name="axisLabelStyle">@style/StackedColumnChartAxisLabelStyle</item>
+    </style>
+
+    <style name="StackedColumnChartAxisLabelStyle">
+        <item name="labelRotation">45</item>
+    </style>
+
+    <style name="StackedColumnChartColumnChartStyle">
+        <item name="column1">@style/StackedColumnChartColumn1</item>
+        <item name="column2">@style/StackedColumnChartColumn2</item>
+        <item name="column3">@style/StackedColumnChartColumn3</item>
+    </style>
+
+    <style name="StackedColumnChartColumn1">
+        <item name="color">#6639A6</item>
+    </style>
+
+    <style name="StackedColumnChartColumn2">
+        <item name="color">#3490DE</item>
+    </style>
+
+    <style name="StackedColumnChartColumn3">
+        <item name="color">#6FE7DD</item>
+    </style>
+
 </resources>
