@@ -75,7 +75,7 @@ internal fun ViewColumnChart(
         chart.entryProducer = chartEntryModelProducer
         chart.marker = marker
         chart.chart?.addDecoration(decoration = thresholdLine)
-        with (chart.startAxis as VerticalAxis) {
+        with(chart.startAxis as VerticalAxis) {
             this.maxLabelCount = MAX_LABEL_COUNT
             this.valueFormatter = PercentageFormatAxisValueFormatter()
         }
@@ -100,6 +100,7 @@ private fun lineChartThresholdLine() = ThresholdLine(
     ),
 )
 
+@Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFFFF6F3C)
 private const val THRESHOLD_VALUE = 13f
 private const val THRESHOLD_LINE_COLOR = 0xFF3EC1D3

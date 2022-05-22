@@ -77,6 +77,7 @@ internal fun ComposeLineChartWithLabelsInside(
     )
 }
 
+@Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFFB983FF, 0xFF94B3FD, 0xFF94DAFF)
 private const val LABEL_BACKGROUND_COLOR = 0xFFFABB51
 private const val LABEL_PADDING_VERTICAL_DP = 4f

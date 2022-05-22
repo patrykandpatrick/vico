@@ -52,6 +52,7 @@ internal fun ComposeStackedColumnChart(
     }
 }
 
+@Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFF6639A6, 0xFF3490DE, 0xFF6FE7DD)
 private const val AXIS_LABEL_ROTATION_DEGREES = 45f
 private const val MAX_LABEL_COUNT = 2

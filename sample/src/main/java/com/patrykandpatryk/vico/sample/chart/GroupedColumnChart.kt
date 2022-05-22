@@ -79,6 +79,7 @@ internal fun ComposeGroupedColumnChart(
     }
 }
 
+@Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFF68A7AD, 0xFF99C4C8, 0xFFE5CB9F)
 private const val THRESHOLD_RANGE_START = 7f
 private const val THRESHOLD_RANGE_END = 14f

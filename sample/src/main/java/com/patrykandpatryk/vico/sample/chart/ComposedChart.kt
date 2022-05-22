@@ -66,4 +66,5 @@ internal fun ViewComposedChart(
     }
 }
 
+@Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFF3D84A8, 0xFF46CDCF, 0xFFABEDD8)

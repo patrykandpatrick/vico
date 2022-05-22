@@ -72,5 +72,6 @@ internal fun ViewLineChart(
     }
 }
 
+@Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFFAA96DA)
 private const val PERSISTENT_MARKER_X = 6f
