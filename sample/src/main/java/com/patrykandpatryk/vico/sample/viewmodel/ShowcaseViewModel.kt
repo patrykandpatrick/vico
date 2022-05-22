@@ -52,7 +52,9 @@ internal class ShowcaseViewModel : ViewModel() {
             while (currentCoroutineContext().isActive) {
                 chartEntryModelProducer.setEntries(generator.generateRandomEntries())
                 multiChartEntryModelProducer.setEntries(
-                    List(size = MULTI_ENTRIES_COMBINED) { multiGenerator.generateRandomEntries() }
+                    entries = List(size = MULTI_ENTRIES_COMBINED) {
+                        multiGenerator.generateRandomEntries()
+                    },
                 )
                 delay(UPDATE_FREQUENCY)
             }

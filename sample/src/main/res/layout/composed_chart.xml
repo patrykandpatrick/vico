@@ -16,7 +16,19 @@
   ~ limitations under the License.
   -->
 
-<resources>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <style name="Theme.Vico" parent="android:Theme.Material.Light.NoActionBar" />
-</resources>
+    <com.patrykandpatryk.vico.view.chart.ComposedChartView
+        android:id="@+id/chart_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:charts="line|column"
+        app:showTopAxis="true"
+        app:showEndAxis="true"
+        app:columnChartStyle="@style/ComposedChartColumnChartStyle"
+        app:lineChartStyle="@style/ComposedChartLineChartStyle" />
+
+</FrameLayout>

@@ -18,77 +18,113 @@
 
 <resources>
 
-    <style name="ColumnChartStyle">
-        <item name="column1">@style/Column1Style</item>
-        <item name="column2">@style/Column2Style</item>
-        <item name="column3">@style/Column3Style</item>
+    <style name="LineChartLineChartStyle">
+        <item name="line1spec">@style/LineChartLine1Spec</item>
     </style>
 
-    <style name="Column1Style">
-        <item name="color">?colorPrimary</item>
+    <style name="LineChartLine1Spec">
+        <item name="color">#AA96DA</item>
     </style>
 
-    <style name="Column2Style">
-        <item name="color">?colorSecondary</item>
+    <style name="ColumnChartColumnChartStyle">
+        <item name="column1">@style/ColumnChartColumn1</item>
     </style>
 
-    <style name="Column3Style">
-        <item name="color">?colorTertiary</item>
+    <style name="ColumnChartColumn1">
+        <item name="color">#FF6F3C</item>
     </style>
 
-    <style name="LineChartStyle">
-        <item name="line1spec">@style/Line1SpecStyle</item>
-        <item name="line2spec">@style/Line2SpecStyle</item>
-        <item name="line3spec">@style/Line3SpecStyle</item>
+    <style name="ComposedChartColumnChartStyle">
+        <item name="column1">@style/ComposedChartColumn1</item>
+        <item name="column2">@style/ComposedChartColumn2</item>
+        <item name="column3">@style/ComposedChartColumn3</item>
     </style>
 
-    <style name="Line1SpecStyle">
-        <item name="color">?colorPrimary</item>
+    <style name="ComposedChartColumn1">
+        <item name="color">#3D84A8</item>
     </style>
 
-    <style name="Line2SpecStyle">
-        <item name="color">?colorSecondary</item>
+    <style name="ComposedChartColumn2">
+        <item name="color">#46CDCF</item>
     </style>
 
-    <style name="Line3SpecStyle">
-        <item name="color">?colorTertiary</item>
+    <style name="ComposedChartColumn3">
+        <item name="color">#ABEDD8</item>
+    </style>
+
+    <style name="ComposedChartLineChartStyle">
+        <item name="line1spec">@style/ComposedChartLine1Spec</item>
+    </style>
+
+    <style name="ComposedChartLine1Spec">
+        <item name="color">#3D84A8</item>
     </style>
 
     <style name="StackedColumnChartAxisStyle">
-        <item name="axisGuidelineStyle">@style/SolidAxisGuidelineStyle</item>
-        <item name="axisLabelStyle">@style/RotatedLabelStyle</item>
+        <item name="axisLabelStyle">@style/StackedColumnChartAxisLabelStyle</item>
     </style>
 
-    <style name="RotatedLabelStyle">
+    <style name="StackedColumnChartAxisLabelStyle">
         <item name="labelRotation">45</item>
     </style>
 
-    <style name="SolidAxisGuidelineStyle">
-        <item name="shapeStyle">@style/SolidShapeStyle</item>
+    <style name="StackedColumnChartColumnChartStyle">
+        <item name="column1">@style/StackedColumnChartColumn1</item>
+        <item name="column2">@style/StackedColumnChartColumn2</item>
+        <item name="column3">@style/StackedColumnChartColumn3</item>
     </style>
 
-    <style name="SolidShapeStyle">
-        <item name="dashLength">0dp</item>
-        <item name="dashGapLength">0dp</item>
+    <style name="StackedColumnChartColumn1">
+        <item name="color">#6639A6</item>
     </style>
 
-    <style name="ComposedColumnChartStyle">
-        <item name="column1">@style/CutColumnStyle</item>
-        <item name="column2">@style/CutColumnStyle</item>
-        <item name="column3">@style/CutColumnStyle</item>
+    <style name="StackedColumnChartColumn2">
+        <item name="color">#3490DE</item>
     </style>
 
-    <style name="CutColumnStyle">
-        <item name="color">?colorPrimary</item>
-        <item name="shapeStyle">@style/CutShapeStyle</item>
+    <style name="StackedColumnChartColumn3">
+        <item name="color">#6FE7DD</item>
     </style>
 
-    <style name="CutShapeStyle">
-        <item name="topStartCornerSize">50%</item>
-        <item name="topStartCornerTreatment">cut</item>
+    <style name="GroupedColumnChartColumnChartStyle">
+        <item name="column1">@style/GroupedColumnChartColumn1</item>
+        <item name="column2">@style/GroupedColumnChartColumn2</item>
+        <item name="column3">@style/GroupedColumnChartColumn3</item>
     </style>
 
-    <style name="LineChartWithLabelsInsideAxisStyle">
-        <item name="verticalAxisHorizontalLabelPosition">inside</item>
+    <style name="GroupedColumnChartColumn1">
+        <item name="color">#68A7AD</item>
     </style>
+
+    <style name="GroupedColumnChartColumn2">
+        <item name="color">#99C4C8</item>
+    </style>
+
+    <style name="GroupedColumnChartColumn3">
+        <item name="color">#E5CB9F</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLineChartStyle">
+        <item name="line1spec">@style/LineChartWithLabelsInsideLine1Spec</item>
+        <item name="line2spec">@style/LineChartWithLabelsInsideLine2Spec</item>
+        <item name="line3spec">@style/LineChartWithLabelsInsideLine3Spec</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLine1Spec" parent="@style/LineChartWithLabelsInsideLineSpec">
+        <item name="color">#B983FF</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLine2Spec" parent="@style/LineChartWithLabelsInsideLineSpec">
+        <item name="color">#94B3FD</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLine3Spec" parent="@style/LineChartWithLabelsInsideLineSpec">
+        <item name="color">#94DAFF</item>
+    </style>
+
+    <style name="LineChartWithLabelsInsideLineSpec">
+        <item name="gradientTopColor">@android:color/transparent</item>
+        <item name="gradientBottomColor">@android:color/transparent</item>
+    </style>
+
 </resources>

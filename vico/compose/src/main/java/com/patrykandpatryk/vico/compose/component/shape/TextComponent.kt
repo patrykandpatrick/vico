@@ -18,6 +18,7 @@ package com.patrykandpatryk.vico.compose.component.shape
 
 import android.text.TextUtils
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.TextUnit
@@ -50,13 +51,24 @@ public fun textComponent(
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
     rotationDegrees: Float = 0f,
-): TextComponent = textComponent {
-    this.color = color.toArgb()
-    textSizeSp = textSize.pixelSize()
-    this.ellipsize = ellipsize
-    this.lineCount = lineCount
-    this.background = background
-    this.padding = padding
-    this.margins = margins
-    this.rotationDegrees = rotationDegrees
+): TextComponent = remember(
+    color,
+    textSize,
+    background,
+    ellipsize,
+    lineCount,
+    padding,
+    margins,
+    rotationDegrees,
+) {
+    textComponent {
+        this.color = color.toArgb()
+        textSizeSp = textSize.pixelSize()
+        this.ellipsize = ellipsize
+        this.lineCount = lineCount
+        this.background = background
+        this.padding = padding
+        this.margins = margins
+        this.rotationDegrees = rotationDegrees
+    }
 }
