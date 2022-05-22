@@ -87,20 +87,20 @@ internal fun ViewColumnChart(
 }
 
 @Composable
-private fun rememberLineChartThresholdLine() {
-    val colorScheme = MaterialTheme.colorScheme
-    return remember(colorScheme) {
+private fun rememberLineChartThresholdLine(): ThresholdLine {
+    val labelComponent = textComponent(
+        color = MaterialTheme.colorScheme.surface,
+        padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
+        margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
+        background = ShapeComponent(
+            shape = Shapes.roundedCornerShape(all = THRESHOLD_LINE_CORNER_RADIUS_DP.dp),
+            color = THRESHOLD_LINE_COLOR.toInt(),
+        ),
+    )
+    return remember(labelComponent) {
         ThresholdLine(
             thresholdValue = THRESHOLD_VALUE,
-            labelComponent = textComponent(
-                color = colorScheme.surface,
-                padding = dimensionsOf(all = THRESHOLD_LINE_PADDING_DP.dp),
-                margins = dimensionsOf(all = THRESHOLD_LINE_MARGINS_DP.dp),
-                background = ShapeComponent(
-                    shape = Shapes.roundedCornerShape(all = THRESHOLD_LINE_CORNER_RADIUS_DP.dp),
-                    color = THRESHOLD_LINE_COLOR.toInt(),
-                ),
-            ),
+            labelComponent = labelComponent,
             lineComponent = ShapeComponent(
                 strokeColor = THRESHOLD_LINE_COLOR.toInt(),
                 strokeWidthDp = THRESHOLD_LINE_STROKE_WIDTH_DP,
