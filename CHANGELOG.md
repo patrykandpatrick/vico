@@ -17,6 +17,10 @@
 - `LineChart`’s constructors now accept a single `LineChart.LineSpec` or a `List` of `LineChart.LineSpec`s. `LineChart.LineSpec` defines the style of a single line in a line chart. See also the second point in “Additions.”
 - Changes have been made to how line charts are customized via `ChartStyle` to account for the addition of the ability to display multiple lines in a single `LineChart`. See also the second point in “API changes” and the second point in “Additions.”
 
+## Improvements
+
+- In the view system, charts are now scrollable and zoomable by default.
+
 ## Dependency updates
 
 - All modules use Kotlin 1.6.21.
