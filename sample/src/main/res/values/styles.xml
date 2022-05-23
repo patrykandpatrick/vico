@@ -129,7 +129,7 @@
     </style>
 
     <style name="ComplexComposedChartLineChartStyle">
-        <item name="line1spec">@style/ComplexComposedChartLine1Spec</item>
+        <item name="line1Spec">@style/ComplexComposedChartLine1Spec</item>
     </style>
 
     <style name="ComplexComposedChartLine1Spec">
