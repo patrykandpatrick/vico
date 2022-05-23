@@ -1,6 +1,6 @@
 This version includes the following changes.
 
-## API Changes
+## API changes
 
 - In the `view` module, the `line*spec` attributes of `LineChartStyle` have been renamed to `line*Spec` (note the capitalization).
 
