@@ -91,7 +91,7 @@ internal fun TypedArray.getLineChart(
         lines = listOf(
             getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.LineChartStyle_line1spec,
+                resourceId = R.styleable.LineChartStyle_line1Spec,
                 styleableResourceId = R.styleable.LineSpec,
             ).getLineSpec(
                 context = context,
@@ -99,7 +99,7 @@ internal fun TypedArray.getLineChart(
             ),
             getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.LineChartStyle_line2spec,
+                resourceId = R.styleable.LineChartStyle_line2Spec,
                 styleableResourceId = R.styleable.LineSpec,
             ).getLineSpec(
                 context = context,
@@ -107,7 +107,7 @@ internal fun TypedArray.getLineChart(
             ),
             getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.LineChartStyle_line3spec,
+                resourceId = R.styleable.LineChartStyle_line3Spec,
                 styleableResourceId = R.styleable.LineSpec,
             ).getLineSpec(
                 context = context,
