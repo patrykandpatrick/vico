@@ -32,6 +32,7 @@
 
     <style name="ColumnChartColumn1">
         <item name="color">#FF6F3C</item>
+        <item name="thickness">16dp</item>
     </style>
 
     <style name="ComposedChartColumnChartStyle">
@@ -125,6 +126,32 @@
     <style name="LineChartWithLabelsInsideLineSpec">
         <item name="gradientTopColor">@android:color/transparent</item>
         <item name="gradientBottomColor">@android:color/transparent</item>
+    </style>
+
+    <style name="ComplexComposedChartLineChartStyle">
+        <item name="line1spec">@style/ComplexComposedChartLine1Spec</item>
+    </style>
+
+    <style name="ComplexComposedChartLine1Spec">
+        <item name="color">#68A7AD</item>
+    </style>
+
+    <style name="ComplexComposedChartColumnChartStyle">
+        <item name="column1">@style/ComplexComposedChartColumn1</item>
+        <item name="column2">@style/ComplexComposedChartColumn2</item>
+        <item name="column3">@style/ComplexComposedChartColumn3</item>
+    </style>
+
+    <style name="ComplexComposedChartColumn1">
+        <item name="color">#68A7AD</item>
+    </style>
+
+    <style name="ComplexComposedChartColumn2">
+        <item name="color">#99C4C8</item>
+    </style>
+
+    <style name="ComplexComposedChartColumn3">
+        <item name="color">#E5CB9F</item>
     </style>
 
 </resources>
