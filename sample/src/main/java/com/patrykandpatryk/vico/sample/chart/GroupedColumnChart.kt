@@ -77,7 +77,7 @@ internal fun ViewGroupedColumnChart(
     ) {
         chartView.entryProducer = chartEntryModelProducer
         chartView.marker = marker
-        chartView.chart?.addDecoration(decoration = thresholdLine)
+        chartView.chart?.setDecorations(decorations = listOf(thresholdLine))
     }
 }
 
