@@ -46,6 +46,7 @@ import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.rangeWith
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.math.min
 
 /**
@@ -328,7 +329,12 @@ public open class LineChart(
         context: ChartDrawContext,
         outInsets: Insets,
     ): Unit = with(context) {
-        outInsets.setVertical(lines.maxOf { it.lineThicknessDp.pixels })
+        outInsets.setVertical(
+            value = lines.maxOf {
+                if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp)
+                else it.lineThicknessDp
+            }.pixels
+        )
     }
 
     private companion object {
