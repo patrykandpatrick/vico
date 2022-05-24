@@ -156,8 +156,8 @@ public data class ThresholdLine(
      * @property position the [HorizontalPosition] used when drawing the label.
      */
     public enum class LabelHorizontalPosition(public val position: HorizontalPosition) {
-        Start(HorizontalPosition.Start),
-        End(HorizontalPosition.End),
+        Start(HorizontalPosition.End),
+        End(HorizontalPosition.Start),
     }
 
     /**
@@ -166,8 +166,8 @@ public data class ThresholdLine(
      * @property position the [VerticalPosition] used when drawing the label.
      */
     public enum class LabelVerticalPosition(public val position: VerticalPosition) {
-        Top(VerticalPosition.Bottom),
-        Bottom(VerticalPosition.Top),
+        Top(VerticalPosition.Top),
+        Bottom(VerticalPosition.Bottom),
     }
 
     private companion object {

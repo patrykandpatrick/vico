@@ -105,7 +105,7 @@ public open class MarkerComponent(
             text = text,
             textX = x,
             textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
-            verticalPosition = VerticalPosition.Top,
+            verticalPosition = VerticalPosition.Bottom,
         )
     }
 

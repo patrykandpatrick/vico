@@ -54,7 +54,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
 
     private val textHorizontalPosition: HorizontalPosition
-        get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.End else HorizontalPosition.Start
+        get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
 
     /**
      * The maximum label count.
@@ -295,8 +295,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
         Center(VerticalPosition.Center),
-        Top(VerticalPosition.Bottom),
-        Bottom(VerticalPosition.Top),
+        Top(VerticalPosition.Top),
+        Bottom(VerticalPosition.Bottom),
     }
 
     /**

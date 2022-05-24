@@ -44,7 +44,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 ) : Axis<Position>() {
 
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
-        get() = if (isBottom) VerticalPosition.Top else VerticalPosition.Bottom
+        get() = if (isBottom) VerticalPosition.Bottom else VerticalPosition.Top
 
     /**
      * Defines the tick placement.

@@ -170,13 +170,13 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 val widthDelta = bounds.width() - boundsPostRotation.width()
 
                 xCorrection = when (horizontalPosition) {
-                    HorizontalPosition.Start -> -widthDelta.half
-                    HorizontalPosition.End -> widthDelta.half
+                    HorizontalPosition.Start -> widthDelta.half
+                    HorizontalPosition.End -> -widthDelta.half
                     else -> 0f
                 }
                 yCorrection = when (verticalPosition) {
-                    VerticalPosition.Top -> -heightDelta.half
-                    VerticalPosition.Bottom -> heightDelta.half
+                    VerticalPosition.Top -> heightDelta.half
+                    VerticalPosition.Bottom -> -heightDelta.half
                     else -> 0f
                 }
             }
@@ -215,13 +215,13 @@ public open class TextComponent protected constructor() : Padding, Margins {
     ): Float = with(context) {
         when (this@getTextStartPosition) {
             HorizontalPosition.Start ->
-                if (isLtr) getTextLeftPosition(baseXPosition)
-                else getTextRightPosition(baseXPosition, width)
+                if (isLtr) getTextRightPosition(baseXPosition, width)
+                else getTextLeftPosition(baseXPosition)
             HorizontalPosition.Center ->
                 baseXPosition - width.half
             HorizontalPosition.End ->
-                if (isLtr) getTextRightPosition(baseXPosition, width)
-                else getTextLeftPosition(baseXPosition)
+                if (isLtr) getTextLeftPosition(baseXPosition)
+                else getTextRightPosition(baseXPosition, width)
         }
     }
 
@@ -238,9 +238,9 @@ public open class TextComponent protected constructor() : Padding, Margins {
         layoutHeight: Float,
     ): Float = with(context) {
         textY + when (this@getTextTopPosition) {
-            VerticalPosition.Top -> padding.topDp.pixels + margins.topDp.pixels
+            VerticalPosition.Top -> -layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
             VerticalPosition.Center -> -layoutHeight.half
-            VerticalPosition.Bottom -> -layoutHeight - padding.bottomDp.pixels - margins.bottomDp.pixels
+            VerticalPosition.Bottom -> padding.topDp.pixels + margins.topDp.pixels
         }
     }
 
