@@ -43,10 +43,17 @@ public open class DecimalFormatValueFormatter(private val decimalFormat: Decimal
         chartValues: ChartValues,
     ): String = decimalFormat.format(value)
 
-    internal companion object {
-        internal const val DEF_FORMAT = "#.##"
+    public companion object {
 
-        internal fun getDecimalFormat(
+        /**
+         * The default pattern for the [DecimalFormat].
+         */
+        public const val DEF_FORMAT: String = "#.##"
+
+        /**
+         * Creates a [DecimalFormat] using the provided pattern and rounding mode.
+         */
+        public fun getDecimalFormat(
             pattern: String,
             roundingMode: RoundingMode,
         ): DecimalFormat = DecimalFormat(pattern).apply {
