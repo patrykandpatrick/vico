@@ -181,7 +181,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    private fun MeasureContext.getLabelsToMeasure(): List<String> {
+    private fun MeasureContext.getLabelsToMeasure(): List<CharSequence> {
 
         val chartValues = chartValuesManager.getChartValues()
 

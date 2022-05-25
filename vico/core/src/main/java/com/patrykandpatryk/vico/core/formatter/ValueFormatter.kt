@@ -36,5 +36,5 @@ public interface ValueFormatter {
     public fun formatValue(
         value: Float,
         chartValues: ChartValues,
-    ): String
+    ): CharSequence
 }

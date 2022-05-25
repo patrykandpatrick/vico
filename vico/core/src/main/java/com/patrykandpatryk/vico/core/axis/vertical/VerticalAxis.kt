@@ -203,7 +203,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     private fun MeasureContext.getLabels(
         maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
-    ): List<String> {
+    ): List<CharSequence> {
         val chartValues = chartValuesManager.getChartValues(position)
         val cacheKey = LABELS_KEY + position
         return getOrPutExtra(key = cacheKey) {
@@ -259,7 +259,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     private fun getDesiredWidth(
         context: MeasureContext,
-        labels: List<String>,
+        labels: List<CharSequence>,
     ): Float = with(context) {
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> (getMaxLabelWidth(labels) + axisThickness.half + tickLength)
@@ -273,7 +273,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun MeasureContext.getMaxLabelWidth(labels: List<String>): Float = when (horizontalLabelPosition) {
+    private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
         Outside -> label?.let { label -> labels.maxOf { label.getWidth(this, it) } }.orZero
         Inside -> 0f
     }
