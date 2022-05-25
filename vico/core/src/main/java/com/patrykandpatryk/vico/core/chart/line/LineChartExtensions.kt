@@ -33,3 +33,6 @@ internal fun Component.drawPoint(
         bottom = y + halfPointSize,
     )
 }
+
+internal inline val LineChart.LineSpec.pointSizeDpOrZero: Float
+    get() = if (point != null) pointSizeDp else 0f
