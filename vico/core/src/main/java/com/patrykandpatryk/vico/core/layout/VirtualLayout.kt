@@ -24,14 +24,21 @@ import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.legend.Legend
 
 /**
  * [VirtualLayout] measures and lays out the chart, the axis, and other components (such as markers).
+ *
+ * @param axisManager the [AxisManager] that manages this chart’s axes.
  */
-public open class VirtualLayout {
+public open class VirtualLayout(
+    private val axisManager: AxisManager,
+) {
 
     private val tempInsetters = ArrayList<ChartInsetter>(TEMP_INSETTERS_INITIAL_SIZE)
+
     private val finalInsets: Insets = Insets()
+
     private val tempInsets: Insets = Insets()
 
     /**
@@ -40,7 +47,7 @@ public open class VirtualLayout {
      * @param context the [ChartDrawContext] that holds the data used for component drawing.
      * @param contentBounds the bounds in which the chart contents must be drawn.
      * @param chart the actual chart.
-     * @param axisManager the [AxisManager] that manages this chart’s axes.
+     * @param legend TODO
      * @param chartInsetter additional components that influence the chart layout, such as markers.
      */
     @LongParameterListDrawFunction
@@ -48,12 +55,16 @@ public open class VirtualLayout {
         context: ChartDrawContext,
         contentBounds: RectF,
         chart: Chart<Model>,
-        axisManager: AxisManager,
+        legend: Legend?,
         vararg chartInsetter: ChartInsetter?,
     ): Unit = with(context) {
+
         tempInsetters.clear()
         finalInsets.clear()
         tempInsets.clear()
+
+        val legendHeight = legend?.getHeight(context, contentBounds.width()) ?: 0f
+
         axisManager.addInsetters(tempInsetters)
         chartInsetter.filterNotNull().forEach(tempInsetters::add)
         tempInsetters.addAll(chart.chartInsetters)
@@ -75,9 +86,17 @@ public open class VirtualLayout {
             left = contentBounds.left + finalInsets.getLeft(isLtr),
             top = contentBounds.top + finalInsets.top,
             right = contentBounds.right - finalInsets.getRight(isLtr),
-            bottom = contentBounds.bottom - finalInsets.bottom,
+            bottom = contentBounds.bottom - finalInsets.bottom - legendHeight,
         )
-        axisManager.setAxesBounds(context, contentBounds, finalInsets)
+
+        axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)
+
+        legend?.setBounds(
+            left = contentBounds.left,
+            top = chart.bounds.bottom + finalInsets.bottom,
+            right = contentBounds.right,
+            bottom = chart.bounds.bottom + finalInsets.bottom + legendHeight,
+        )
     }
 
     private companion object {

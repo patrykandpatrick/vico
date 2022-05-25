@@ -42,12 +42,17 @@ public interface ChartDrawContext : DrawContext {
     public val markerTouchPoint: Point?
 
     /**
+     * TODO
+     */
+    public val layoutDirectionMultiplier: Float
+        get() = if (isLtr) 1f else -1f
+
+    /**
      * Returns the maximum horizontal scroll value.
      */
     public val maxScrollDistance: Float
         get() {
             val chartWidth = chartBounds.width()
-            val layoutDirectionMultiplier = if (isLtr) 1f else -1f
             val cumulatedSegmentWidth = segmentProperties.segmentWidth *
                 chartValuesManager.getChartValues().getDrawnEntryCount()
 
