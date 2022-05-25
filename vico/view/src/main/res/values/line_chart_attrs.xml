@@ -35,6 +35,12 @@
         <attr name="lineThickness" format="dimension" />
         <attr name="pointStyle" format="reference" />
         <attr name="cubicStrength" format="fraction"/>
+        <attr name="dataLabelStyle" format="reference" />
+        <attr name="dataLabelVerticalPosition" format="enum">
+            <enum name="top" value="0" />
+            <enum name="center" value="1" />
+            <enum name="bottom" value="2" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="ComponentStyle">

@@ -38,7 +38,11 @@ import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatryk.vico.core.component.text.TextComponent
+import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
+import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 import com.patrykandpatryk.vico.core.marker.Marker
 
 /**
@@ -92,6 +96,9 @@ public fun lineChart(
  * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
  * @param point an optional [Component] that can be drawn at a given point on the line.
  * @param pointSize the size of the [point].
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  *
  * @see LineChart
  * @see LineChart.LineSpec
@@ -111,6 +118,9 @@ public fun lineSpec(
     cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
     point: Component? = null,
     pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
+    dataLabel: TextComponent? = null,
+    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
 ): LineSpec = LineSpec(
     lineColor = lineColor.toArgb(),
     lineThicknessDp = lineThickness.value,
@@ -119,6 +129,9 @@ public fun lineSpec(
     cubicStrength = cubicStrength,
     point = point,
     pointSizeDp = pointSize.value,
+    dataLabel = dataLabel,
+    dataLabelVerticalPosition = dataLabelVerticalPosition,
+    dataLabelValueFormatter = dataLabelValueFormatter,
 )
 
 private val StrokeCap.paintCap: Paint.Cap

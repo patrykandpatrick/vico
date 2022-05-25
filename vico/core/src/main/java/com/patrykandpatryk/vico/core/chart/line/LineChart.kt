@@ -35,6 +35,8 @@ import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.extension.horizontalCubicTo
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
+import com.patrykandpatryk.vico.core.component.text.TextComponent
+import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
@@ -44,6 +46,8 @@ import com.patrykandpatryk.vico.core.extension.getRepeating
 import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.rangeWith
+import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
+import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.abs
 import kotlin.math.max
@@ -89,6 +93,9 @@ public open class LineChart(
      * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
      * @param point an optional [Component] that can be drawn at a given point on the line.
      * @param pointSizeDp the size of the [point] in dp.
+     * @param dataLabel an optional [TextComponent] to use for data labels.
+     * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
+     * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
      */
     public open class LineSpec(
         lineColor: Int = Color.LTGRAY,
@@ -98,6 +105,9 @@ public open class LineChart(
         public var cubicStrength: Float = 1f,
         public var point: Component? = null,
         public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+        public var dataLabel: TextComponent? = null,
+        public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+        public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     ) {
 
         /**
@@ -229,12 +239,84 @@ public open class LineChart(
             }
             component.drawLine(context, linePath)
 
-            if (component.point != null) {
-                forEachPointWithinBounds(
-                    entries = entries,
-                    segment = segmentProperties,
-                    drawingStart = drawingStart,
-                ) { _, x, y -> component.drawPoint(context, x, y) }
+            drawPointsAndDataLabels(
+                lineSpec = component,
+                entries = entries,
+                drawingStart = drawingStart,
+            )
+        }
+    }
+
+    private fun DrawContext.drawPointsAndDataLabels(
+        lineSpec: LineSpec,
+        entries: List<ChartEntry>,
+        drawingStart: Float,
+    ) {
+        if (lineSpec.point == null && lineSpec.dataLabel == null) return
+        val segmentWidth = segmentProperties.segmentWidth.pixels.toInt()
+
+        forEachPointWithinBounds(
+            entries = entries,
+            segment = segmentProperties,
+            drawingStart = drawingStart,
+        ) { chartEntry, x, y ->
+
+            if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
+
+            lineSpec.dataLabel?.let { textComponent ->
+
+                val distanceFromLine = maxOf(
+                    a = lineSpec.lineThicknessDp,
+                    b = lineSpec.pointSizeDpOrZero,
+                ).half.pixels
+
+                val text = lineSpec.dataLabelValueFormatter.formatValue(
+                    value = chartEntry.y,
+                    chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
+                )
+                val verticalPosition = getDataLabelVerticalPositionInBounds(
+                    bounds = bounds,
+                    distanceFromLine = distanceFromLine,
+                    textComponentHeight = textComponent.getHeight(context = this, text = text, width = segmentWidth),
+                    verticalPosition = lineSpec.dataLabelVerticalPosition,
+                    y = y,
+                )
+                val dataLabelY = y + when (verticalPosition) {
+                    VerticalPosition.Top -> -distanceFromLine
+                    VerticalPosition.Center -> 0f
+                    VerticalPosition.Bottom -> distanceFromLine
+                }
+                textComponent.drawText(
+                    context = this,
+                    textX = x,
+                    textY = dataLabelY,
+                    text = text,
+                    verticalPosition = verticalPosition,
+                    maxTextWidth = segmentWidth,
+                )
+            }
+        }
+    }
+
+    private fun getDataLabelVerticalPositionInBounds(
+        bounds: RectF,
+        distanceFromLine: Float,
+        textComponentHeight: Float,
+        verticalPosition: VerticalPosition,
+        y: Float,
+    ): VerticalPosition {
+
+        val topFits = y - distanceFromLine - textComponentHeight >= bounds.top
+        val centerFits = y - textComponentHeight.half >= bounds.top && y + textComponentHeight.half <= bounds.bottom
+        val bottomFits = y + distanceFromLine + textComponentHeight <= bounds.bottom
+
+        return when (verticalPosition) {
+            VerticalPosition.Top -> if (topFits) verticalPosition else VerticalPosition.Bottom
+            VerticalPosition.Bottom -> if (bottomFits) verticalPosition else VerticalPosition.Top
+            VerticalPosition.Center -> when {
+                centerFits -> verticalPosition
+                topFits -> VerticalPosition.Top
+                else -> VerticalPosition.Bottom
             }
         }
     }
