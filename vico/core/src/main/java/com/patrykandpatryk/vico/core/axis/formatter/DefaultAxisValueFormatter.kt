@@ -17,14 +17,10 @@
 package com.patrykandpatryk.vico.core.axis.formatter
 
 import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.chart.values.ChartValues
+import com.patrykandpatryk.vico.core.formatter.DefaultValueFormatter
 
 /**
  * The default implementation of [AxisValueFormatter]. This converts [Float]s to [String]s.
  */
-public class DefaultAxisValueFormatter<Position : AxisPosition> : AxisValueFormatter<Position> {
-    override fun formatValue(
-        value: Float,
-        chartValues: ChartValues,
-    ): String = value.toString()
-}
+public class DefaultAxisValueFormatter<Position : AxisPosition> :
+    AxisValueFormatter<Position>, DefaultValueFormatter()

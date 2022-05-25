@@ -14,12 +14,27 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.core.axis.formatter
+package com.patrykandpatryk.vico.core.formatter
 
-import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.formatter.ValueFormatter
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 
 /**
- * Formats the values displayed along chart axes.
+ * Formats values for display.
  */
-public fun interface AxisValueFormatter<Position : AxisPosition> : ValueFormatter
+public interface ValueFormatter {
+
+    /**
+     * Called to format axis labels and data labels.
+     *
+     * @param value the value to be formatted.
+     * @param chartValues the [ChartValues] used by the chart.
+     *
+     * @see ChartValues
+     *
+     * @return a formatted value.
+     */
+    public fun formatValue(
+        value: Float,
+        chartValues: ChartValues,
+    ): String
+}

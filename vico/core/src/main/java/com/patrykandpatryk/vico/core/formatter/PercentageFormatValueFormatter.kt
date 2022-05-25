@@ -14,23 +14,39 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.core.axis.formatter
+package com.patrykandpatryk.vico.core.formatter
 
-import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.formatter.PercentageFormatValueFormatter
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import java.text.DecimalFormat
 
 /**
- * An implementation of [AxisValueFormatter] that converts y-axis values to percentages.
+ * A [ValueFormatter] implementation that converts y-axis values to percentages.
  * It uses [DecimalFormat] to format values.
  *
  * @param pattern the pattern used by [DecimalFormat] to format values as percentages.
  */
-public class PercentageFormatAxisValueFormatter<Position : AxisPosition.Vertical>(pattern: String) :
-    AxisValueFormatter<Position>, PercentageFormatValueFormatter(pattern = pattern) {
+public open class PercentageFormatValueFormatter(pattern: String) : ValueFormatter {
+
+    private val decimalFormat = DecimalFormat(pattern)
 
     /**
-     * Creates a [PercentageFormatAxisValueFormatter] using the default percentage pattern.
+     * Creates a [PercentageFormatValueFormatter] using the default percentage pattern.
      */
     public constructor() : this(DEF_PATTERN)
+
+    override fun formatValue(
+        value: Float,
+        chartValues: ChartValues,
+    ): String {
+        val percentage = value / chartValues.maxY
+        return decimalFormat.format(percentage)
+    }
+
+    public companion object {
+
+        /**
+         * The default percentage pattern.
+         */
+        public const val DEF_PATTERN: String = "#.##%"
+    }
 }

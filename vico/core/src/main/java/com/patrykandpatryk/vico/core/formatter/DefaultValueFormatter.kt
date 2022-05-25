@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.core.axis.formatter
+package com.patrykandpatryk.vico.core.formatter
 
-import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.formatter.ValueFormatter
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 
 /**
- * Formats the values displayed along chart axes.
+ * The default implementation of [ValueFormatter]. This converts [Float]s to [String]s.
  */
-public fun interface AxisValueFormatter<Position : AxisPosition> : ValueFormatter
+public open class DefaultValueFormatter : ValueFormatter {
+    override fun formatValue(
+        value: Float,
+        chartValues: ChartValues,
+    ): String = value.toString()
+}
