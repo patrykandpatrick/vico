@@ -11,6 +11,7 @@ jobs:
       - uses: actions/checkout@v3
         with:
           path: patrykandpatryk.com
+          repository: patrykandpatryk/patrykandpatryk.com
       - uses: actions/setup-java@v3.3.0
         with:
           java-version: 11
@@ -30,8 +31,4 @@ jobs:
           git remote set-url origin https://patrykandpatrykbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
           git add vico/wiki
           git commit -m "Update Vico wiki"
-          git config --get user.email
-          git config --get user.name
-          pwd
-          ls
           git push origin
