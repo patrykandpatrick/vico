@@ -1,0 +1,8 @@
+site_name: Vico wiki
+theme: material
+markdown_extensions:
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
