@@ -29,10 +29,10 @@ import com.patrykandpatryk.vico.core.extension.half
 /**
  * [VerticalLegend] displays legend items in a vertical list.
  *
- * @param items a [Collection] of [Item]s displayed by this [VerticalLegend].
+ * @param items a [Collection] of [Item]s to be displayed by this [VerticalLegend].
  * @param iconSizeDp defines the size of all [Item.icon]s.
- * @param iconPaddingDp defines the padding between all of [Item.icon]s and [Item.label]s.
- * @param spacingDp defines a vertical padding between each [Item].
+ * @param iconPaddingDp defines the padding between each [Item.icon] and its corresponding [Item.label].
+ * @param spacingDp defines the vertical spacing between each [Item].
  */
 public open class VerticalLegend(
     public var items: Collection<Item>,
@@ -109,11 +109,11 @@ public open class VerticalLegend(
     }
 
     /**
-     * Defines an appearance of an item of the [Legend].
+     * Defines the appearance of an item of a [Legend].
      *
-     * @param icon the [Component] used as item’s icon.
-     * @param label the [TextComponent] used to style the label.
-     * @param labelText the text naming this [Item].
+     * @param icon the [Component] used as the item’s icon.
+     * @param label the [TextComponent] used for the label.
+     * @param labelText the text content of the label.
      */
     public class Item(
         public val icon: Component,
