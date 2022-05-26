@@ -42,7 +42,9 @@ public interface ChartDrawContext : DrawContext {
     public val markerTouchPoint: Point?
 
     /**
-     * TODO
+     * A multiplier used to ensure support for both left-to-right and right-to-left layouts.
+     * Values such as translation deltas are multiplied by this value.
+     * [layoutDirectionMultiplier] is equal to `1f` if [isLtr] is `true`, and `-1f` otherwise.
      */
     public val layoutDirectionMultiplier: Float
         get() = if (isLtr) 1f else -1f

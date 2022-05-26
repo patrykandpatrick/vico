@@ -20,17 +20,17 @@ import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 
 /**
- * TODO
+ * Defines the functions required by the library to draw a chart legend.
  */
 public interface Legend : BoundsAware {
 
     /**
-     * TODO
+     * Returns the height of the legend.
      */
     public fun getHeight(context: ChartDrawContext, availableWidth: Float): Float
 
     /**
-     * TODO
+     * Draws the legend.
      */
     public fun draw(context: ChartDrawContext)
 }

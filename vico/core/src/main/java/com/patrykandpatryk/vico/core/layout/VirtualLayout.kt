@@ -47,7 +47,7 @@ public open class VirtualLayout(
      * @param context the [ChartDrawContext] that holds the data used for component drawing.
      * @param contentBounds the bounds in which the chart contents must be drawn.
      * @param chart the actual chart.
-     * @param legend TODO
+     * @param legend the legend for the chart.
      * @param chartInsetter additional components that influence the chart layout, such as markers.
      */
     @LongParameterListDrawFunction

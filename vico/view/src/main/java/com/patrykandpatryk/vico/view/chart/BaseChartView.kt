@@ -196,7 +196,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var marker: Marker? = null
 
     /**
-     * TODO
+     * The legend for this chart.
      */
     public var legend: Legend? = null
 
