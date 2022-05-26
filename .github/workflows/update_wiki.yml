@@ -5,13 +5,8 @@ jobs:
   update_wiki:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-        with:
-          path: vico
-      - uses: actions/checkout@v3
-        with:
-          path: patrykandpatryk.com
-          repository: patrykandpatryk/patrykandpatryk.com
+      - run: git clone https://github.com/patrykandpatryk/vico
+      - run: git clone https://github.com/patrykandpatryk/patrykandpatryk.com
       - uses: actions/setup-java@v3.3.0
         with:
           java-version: 11
