@@ -1,5 +1,14 @@
-site_name: Vico wiki
-theme: material
+site_name: Vico
+theme:
+  name: material
+  logo: images/vico.png
+  favicon: images/vico.png
+  font:
+    text: Source Sans Pro
+    code: Source Code Pro
+repo_url: https://github.com/patrykandpatryk/vico
+edit_uri: edit/master/wiki/
+repo_name: patrykandpatryk/vico
 markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
