@@ -243,5 +243,5 @@ findViewById<ComposedChartView>(R.id.chart).entryProducer = composedProducer
 Vico offers rich options for customization and an extensible API. The following resources are available to help you learn about it:
 
 - [The sample app](https://github.com/patrykandpatryk/vico/tree/master/sample) contains a full implementation of Vico.
-- [The wiki](https://patrykandpatryk/vico/wiki) describes core topics and includes a detailed customization guide.
+- [The wiki](https://patrykandpatryk.com/vico/wiki) describes core topics and includes a detailed customization guide.
 - [The API reference](https://patrykandpatryk.com/vico/api) describes every public class, function, and field.
