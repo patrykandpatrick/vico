@@ -1,0 +1,33 @@
+name: Update wiki
+on:
+  workflow_dispatch:
+jobs:
+  update_wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: vico
+      - uses: actions/checkout@v3
+        with:
+          path: patrykandpatryk.com
+      - uses: actions/setup-java@v1.4.3
+        with:
+          java-version: 11
+          distribution: adopt
+      - uses: actions/setup-python@v3
+        with:
+          python-version: 3.x
+      - run: |
+          git config --global user.email "96002241+vicochartbot@users.noreply.github.com"
+          git config --global user.name "Vico Chart Bot"
+          pip install --upgrade pip
+          pip install mkdocs mkdocs-material
+          cd ${{ github.workspace }}/vico/wiki
+          mkdocs build
+          cp -R ${{ github.workspace }}/vico/wiki/site ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
+          cd ${{ github.workspace }}/patrykandpatryk.com
+          git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
+          git add vico/wiki
+          git commit -m "Update Vico wiki"
+          git push origin
