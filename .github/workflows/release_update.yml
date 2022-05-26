@@ -44,6 +44,16 @@ jobs:
           git config --global user.email "96002241+vicochartbot@users.noreply.github.com"
           git config --global user.name "Vico Chart Bot"
           git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/vico.git
+      - name: Install Python
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.x
+      - name: Install required Python packages
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        run: |
+          pip install --upgrade pip
+          pip install mkdocs mkdocs-material
       - name: Read new & old version names
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: |
@@ -87,18 +97,33 @@ jobs:
       - name: Generate docs
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: ./gradlew dokkaHtmlMultiModule
+      - name: Build wiki
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        run: |
+          cd wiki
+          mkdocs build
+          cd ..
       - name: Copy docs to clone of website repository
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: cp -R ${{ github.workspace }}/vico/docs ${{ github.workspace }}/patrykandpatryk.com/vico/api
+      - name: Copy wiki to clone of website repository
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        run: cp -R ${{ github.workspace }}/vico/wiki/site ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
       - name: Move to clone of website repository
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: cd ${{ github.workspace }}/patrykandpatryk.com
       - name: Push local changes to remote website repository
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: |
-          git add vico/docs
-          git commit -m "Update Vico docs"
+          git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
+          git add vico/api
+          git commit -m "Update Vico API reference"
+          git add vico/wiki
+          git commit -m "Update Vico wiki"
           git push origin
+      - name: Move to clone of Vico repository
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        run: cd ${{ github.workspace }}/vico
       - name: Publish to Maven Central
         run: ./gradlew publish
         env:
