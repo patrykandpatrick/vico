@@ -1,131 +1,69 @@
 name: Release update
 on:
   workflow_dispatch:
-    inputs:
-      skipToPublishing:
-        description: Skip to publishing
-        required: true
-        type: boolean
-        default: false
 jobs:
   release_update:
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
-      - name: Check out Vico repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           path: vico
-      - name: Check out website repository
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           path: patrykandpatryk.com
-      - name: Move to clone of Vico repository
-        run: cd ${{ github.workspace }}/vico
-      - name: Restore Gradle cache
-        uses: actions/cache@v2.1.4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-          restore-keys: ${{ runner.os }}-gradle-
-      - name: Set up Java 11
-        uses: actions/setup-java@v1.4.3
+      - uses: actions/setup-java@v1.4.3
         with:
           java-version: 11
-      - name: Grant execution permission to Gradle Wrapper
-        run: chmod +x gradlew
-      - name: Configure Git
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
-          git config --global user.email "96002241+vicochartbot@users.noreply.github.com"
-          git config --global user.name "Vico Chart Bot"
-          git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/vico.git
-      - name: Install Python
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        uses: actions/setup-python@v3
+      - uses: actions/setup-python@v3
         with:
           python-version: 3.x
-      - name: Install required Python packages
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
+      - run: |
+          git config --global user.email "96002241+vicochartbot@users.noreply.github.com"
+          git config --global user.name "Vico Chart Bot"
           pip install --upgrade pip
           pip install mkdocs mkdocs-material
-      - name: Read new & old version names
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
+          cd ${{ github.workspace }}/vico
+          chmod +x gradlew
           OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatryk\.vico:view:).*(?=\")" README.md)
           NEW_VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
           echo "OLD_VERSION_NAME=$OLD_VERSION_NAME" >> $GITHUB_ENV
           echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
-      - name: Update README
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
           sed -i "s/$OLD_VERSION_NAME/$NEW_VERSION_NAME/g" README.md
           git add README.md
           git commit -m "Update README"
-      - name: Determine tag name
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
-      - name: Create `IS_PRERELEASE` environment variable
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
+          echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
           IS_PRERELEASE=false
           echo $NEW_VERSION_NAME | grep -q "alpha\|beta" && IS_PRERELEASE=true
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
-      - name: Draft GitHub release
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v1
         with:
           draft: true
           tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.VICO_CHART_BOT_PAT }}
           body_path: ${{ github.workspace }}/vico/CHANGELOG.md
           prerelease: ${{ env.IS_PRERELEASE }}
-      - name: Empty `CHANGELOG.md`
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
+      - run: |
           true > "CHANGELOG.md"
           git add CHANGELOG.md
           git commit -m "Empty \`CHANGELOG.md\`"
-      - name: Push local changes to remote Vico repository
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: git push origin
-      - name: Generate docs
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: ./gradlew dokkaHtmlMultiModule
-      - name: Build wiki
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
+          git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/vico.git
+          ./gradlew dokkaHtmlMultiModule
           cd wiki
           mkdocs build
-          cd ..
-      - name: Copy docs to clone of website repository
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: cp -R ${{ github.workspace }}/vico/docs ${{ github.workspace }}/patrykandpatryk.com/vico/api
-      - name: Copy wiki to clone of website repository
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: cp -R ${{ github.workspace }}/vico/wiki/site ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
-      - name: Move to clone of website repository
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: cd ${{ github.workspace }}/patrykandpatryk.com
-      - name: Push local changes to remote website repository
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
+          cp -R ${{ github.workspace }}/vico/docs ${{ github.workspace }}/patrykandpatryk.com/vico/api
+          cp -R ${{ github.workspace }}/vico/wiki/site ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
+          cd ${{ github.workspace }}/patrykandpatryk.com
           git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
           git add vico/api
           git commit -m "Update Vico API reference"
           git add vico/wiki
           git commit -m "Update Vico wiki"
           git push origin
-      - name: Move to clone of Vico repository
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: cd ${{ github.workspace }}/vico
-      - name: Publish to Maven Central
-        run: ./gradlew publish
+          cd ${{ github.workspace }}/vico
+          git push origin
+          ./gradlew publish
         env:
           ORG_GRADLE_PROJECT_vicoSigningKey: ${{ secrets.VICO_SIGNING_KEY }}
           ORG_GRADLE_PROJECT_vicoSigningPassword: ${{ secrets.VICO_SIGNING_PASSWORD }}
