@@ -99,15 +99,15 @@ Included in this repository is [a sample app](https://github.com/patrykandpatryk
 
 ## Basic example
 
-Chart data in Vico is stored in [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s. For a static chart, you can create a [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/) instance via the [`entryModelOf`](<https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/entry-model-of?query=fun%20entryModelOf(vararg%20entries:%20Pair%3CNumber,%20Number%3E):%20ChartEntryModel>) helper function:
+Chart data in Vico is stored in [`ChartEntryModel`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s. For a static chart, you can create a [`ChartEntryModel`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/) instance via the [`entryModelOf`](<https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/entry-model-of?query=fun%20entryModelOf(vararg%20entries:%20Pair%3CNumber,%20Number%3E):%20ChartEntryModel>) helper function:
 
 ```kt
 val entryModel = entryModelOf(5f, 15f, 10f, 20f, 10f)
 ```
 
-This creates a [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/) that can be used in, for example, a column chart. The chart will have five columns.
+This creates a [`ChartEntryModel`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/) that can be used in, for example, a column chart. The chart will have five columns.
 
-In Jetpack Compose, use the [`Chart`](https://vico.patrykandpatryk.com/vico/compose/com.patrykandpatryk.vico.compose.chart/-chart) composable:
+In Jetpack Compose, use the [`Chart`](https://patrykandpatryk.com/vico/api//vico/compose/com.patrykandpatryk.vico.compose.chart/-chart) composable:
 
 ```kt
 Chart(
@@ -118,7 +118,7 @@ Chart(
 )
 ```
 
-In the view system, use [`ChartView`](https://vico.patrykandpatryk.com/vico/view/com.patrykandpatryk.vico.view.chart/-chart-view/):
+In the view system, use [`ChartView`](https://patrykandpatryk.com/vico/api//vico/view/com.patrykandpatryk.vico.view.chart/-chart-view/):
 
 ```xml
 <com.patrykandpatryk.vico.view.chart.ChartView
@@ -136,10 +136,10 @@ findViewById<ChartView>(R.id.chart).model = entryModel
 
 ## Dynamic data & data updates
 
-For dynamic data sets, use [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer) (or [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer) for
+For dynamic data sets, use [`ChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer) (or [`ComposedChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer) for
 [composed charts](#composed-charts)).
 
-For this example, we’ll use a function that generates a random list of [`FloatEntry`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-float-entry/) instances. A [`FloatEntry`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-float-entry/) describes a single chart entry (e.g., a column).
+For this example, we’ll use a function that generates a random list of [`FloatEntry`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-float-entry/) instances. A [`FloatEntry`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-float-entry/) describes a single chart entry (e.g., a column).
 
 ```kt
 fun getRandomEntries() = List(size = 5) {
@@ -152,13 +152,13 @@ fun getRandomEntries() = List(size = 5) {
 }
 ```
 
-A list returned by this function can be used to initialize a [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer/), which should happen in the viewmodel:
+A list returned by this function can be used to initialize a [`ChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer/), which should happen in the viewmodel:
 
 ```kt
 val producer = ChartEntryModelProducer(getRandomEntries())
 ```
 
-In Compose, you can once again use the [`Chart`](https://vico.patrykandpatryk.com/vico/compose/com.patrykandpatryk.vico.compose.chart/-chart) composable, but this time the overload with a `chartModelProducer` parameter:
+In Compose, you can once again use the [`Chart`](https://patrykandpatryk.com/vico/api//vico/compose/com.patrykandpatryk.vico.compose.chart/-chart) composable, but this time the overload with a `chartModelProducer` parameter:
 
 ```kt
 Chart(
@@ -169,7 +169,7 @@ Chart(
 )
 ```
 
-In the view system, you can connect a chart to a [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer) as follows:
+In the view system, you can connect a chart to a [`ChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer) as follows:
 
 ```xml
 <com.patrykandpatryk.vico.view.chart.ChartView
@@ -185,7 +185,7 @@ In the view system, you can connect a chart to a [`ChartEntryModelProducer`](htt
 findViewById<ChartView>(R.id.chart).entryProducer = producer
 ```
 
-With [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer), you can update the data displayed by a chart. For the above example, this would be done as follows:
+With [`ChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer), you can update the data displayed by a chart. For the above example, this would be done as follows:
 
 ```kt
 chartModelProducer.setEntries(getRandomEntries()
@@ -197,12 +197,12 @@ Differences are animated by default.
 
 You can combine multiple charts into one. This example uses the `getRandomEntries` function from above.
 
-A composed chart requires a [`ComposedChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel).
-In the case of static charts, you can directly create a [`ComposedChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel) instance via the [`composedChartEntryModelOf`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer/-companion/composed-chart-entry-model-of) helper function.
-You can also use the [`+`](https://vico.patrykandpatryk.com/vico/compose/com.patrykandpatryk.vico.compose.chart.entry/plus?query=operator%20fun%20%3CModel%20:%20ChartEntryModel%3E%20Model.plus(other:%20Model):%20ComposedChartEntryModel%3CModel%3E) operator to create a [`ComposedChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel) out of two [`ChartEntryModel`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s.
-For dynamic composed charts, use [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer).
+A composed chart requires a [`ComposedChartEntryModel`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel).
+In the case of static charts, you can directly create a [`ComposedChartEntryModel`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel) instance via the [`composedChartEntryModelOf`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer/-companion/composed-chart-entry-model-of) helper function.
+You can also use the [`+`](https://patrykandpatryk.com/vico/api//vico/compose/com.patrykandpatryk.vico.compose.chart.entry/plus?query=operator%20fun%20%3CModel%20:%20ChartEntryModel%3E%20Model.plus(other:%20Model):%20ComposedChartEntryModel%3CModel%3E) operator to create a [`ComposedChartEntryModel`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.chart.composed/-composed-chart-entry-model/?query=interface%20ComposedChartEntryModel%3CModel%20:%20ChartEntryModel%3E%20:%20ChartEntryModel) out of two [`ChartEntryModel`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s.
+For dynamic composed charts, use [`ComposedChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer).
 
-For this example, weʼll use a [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer). You can create a [`ComposedChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer) out of two regular [`ChartEntryModelProducer`](https://vico.patrykandpatryk.com/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer)s:
+For this example, weʼll use a [`ComposedChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer). You can create a [`ComposedChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry.composed/-composed-chart-entry-model-producer) out of two regular [`ChartEntryModelProducer`](https://patrykandpatryk.com/vico/api//vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer)s:
 
 ```kt
 val firstProducer = ChartEntryModelProducer(getRandomEntries())
@@ -221,7 +221,7 @@ Chart(
 )
 ```
 
-And here’s the same chart in the view system. Note that we’re now using [`ComposedChartView`](https://vico.patrykandpatryk.com/vico/view/com.patrykandpatryk.vico.view.chart/-composed-chart-view/):
+And here’s the same chart in the view system. Note that we’re now using [`ComposedChartView`](https://patrykandpatryk.com/vico/api//vico/view/com.patrykandpatryk.vico.view.chart/-composed-chart-view/):
 
 ```xml
 <com.patrykandpatryk.vico.view.chart.ComposedChartView
@@ -243,5 +243,5 @@ findViewById<ComposedChartView>(R.id.chart).entryProducer = composedProducer
 Vico offers rich options for customization and an extensible API. The following resources are available to help you learn about it:
 
 - [The sample app](https://github.com/patrykandpatryk/vico/tree/master/sample) contains a full implementation of Vico.
-- [The wiki](https://github.com/patrykandpatryk/vico/wiki) describes core topics and includes a detailed customization guide.
-- [The API reference](https://vico.patrykandpatryk.com) describes every public class, function, and field.
+- [The wiki](https://patrykandpatryk/vico/wiki) describes core topics and includes a detailed customization guide.
+- [The API reference](https://patrykandpatryk.com/vico/api) describes every public class, function, and field.
