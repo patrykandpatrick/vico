@@ -89,7 +89,7 @@ jobs:
         run: ./gradlew dokkaHtmlMultiModule
       - name: Copy docs to clone of website repository
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: cp -R ${{ github.workspace }}/vico/docs ${{ github.workspace }}/patrykandpatryk.com/vico
+        run: cp -R ${{ github.workspace }}/vico/docs ${{ github.workspace }}/patrykandpatryk.com/vico/api
       - name: Move to clone of website repository
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: cd ${{ github.workspace }}/patrykandpatryk.com
