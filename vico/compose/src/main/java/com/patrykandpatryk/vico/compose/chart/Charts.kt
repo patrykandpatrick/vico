@@ -134,7 +134,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param bottomAxis an axis displayed on the bottom of the chart.
  * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
  * nearest to the touch point.
- * @param legend an optional legend for this chart.
+ * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
  */
