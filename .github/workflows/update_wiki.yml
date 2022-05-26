@@ -24,7 +24,7 @@ jobs:
           git checkout ${GITHUB_REF##*/}
           cd wiki
           mkdocs build
-          cp -R ${{ github.workspace }}/vico/wiki/site ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
+          cp -a ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
           cd ${{ github.workspace }}/patrykandpatryk.com
           git remote set-url origin https://patrykandpatrykbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
           git add vico/wiki
