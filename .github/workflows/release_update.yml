@@ -12,6 +12,7 @@ jobs:
           path: vico
       - uses: actions/checkout@v3
         with:
+          repository: patrykandpatryk/patrykandpatryk.com
           path: patrykandpatryk.com
       - uses: actions/setup-java@v1.4.3
         with:
@@ -21,7 +22,7 @@ jobs:
         with:
           python-version: 3.x
       - run: |
-          git config --global user.email "96002241+vicochartbot@users.noreply.github.com"
+          git config --global user.email "96002241+patrykandpatrykbot@users.noreply.github.com"
           git config --global user.name "Vico Chart Bot"
           pip install --upgrade pip
           pip install mkdocs mkdocs-material
@@ -49,14 +50,14 @@ jobs:
           true > "CHANGELOG.md"
           git add CHANGELOG.md
           git commit -m "Empty \`CHANGELOG.md\`"
-          git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/vico.git
+          git remote set-url origin https://patrykandpatrykbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/vico.git
           ./gradlew dokkaHtmlMultiModule
           cd wiki
           mkdocs build
           cp -R ${{ github.workspace }}/vico/docs ${{ github.workspace }}/patrykandpatryk.com/vico/api
           cp -R ${{ github.workspace }}/vico/wiki/site ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
           cd ${{ github.workspace }}/patrykandpatryk.com
-          git remote set-url origin https://vicochartbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
+          git remote set-url origin https://patrykandpatrykbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
           git add vico/api
           git commit -m "Update Vico API reference"
           git add vico/wiki
