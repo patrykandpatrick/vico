@@ -10,10 +10,6 @@ jobs:
       - uses: actions/checkout@v3
         with:
           path: vico
-      - uses: actions/checkout@v3
-        with:
-          repository: patrykandpatryk/patrykandpatryk.com
-          path: patrykandpatryk.com
       - uses: actions/setup-java@v1.4.3
         with:
           java-version: 11
@@ -26,6 +22,7 @@ jobs:
           git config --global user.name "Vico Chart Bot"
           pip install --upgrade pip
           pip install mkdocs mkdocs-material
+          git clone https://github.com/patrykandpatryk/patrykandpatryk.com
           cd ${{ github.workspace }}/vico
           chmod +x gradlew
           OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatryk\.vico:view:).*(?=\")" README.md)
