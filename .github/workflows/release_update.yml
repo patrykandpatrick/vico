@@ -3,6 +3,7 @@ on:
   workflow_dispatch:
     inputs:
       skipToPublishing:
+        description: Skip to publishing
         required: true
         type: boolean
         default: false
@@ -12,8 +13,17 @@ jobs:
     permissions:
       contents: write
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2.3.4
+      - name: Check out Vico repository
+        uses: actions/checkout@v3
+        with:
+          path: vico
+      - name: Check out website repository
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        uses: actions/checkout@v3
+        with:
+          path: patrykandpatryk.com
+      - name: Move to clone of Vico repository
+        run: cd ${{ github.workspace }}/vico
       - name: Restore Gradle cache
         uses: actions/cache@v2.1.4
         with:
@@ -49,8 +59,7 @@ jobs:
           git commit -m "Update README"
       - name: Determine tag name
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
-          echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
+        run: echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
       - name: Create `IS_PRERELEASE` environment variable
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: |
@@ -64,7 +73,7 @@ jobs:
           draft: true
           tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.VICO_CHART_BOT_PAT }}
-          body_path: ${{ github.workspace }}/CHANGELOG.md
+          body_path: ${{ github.workspace }}/vico/CHANGELOG.md
           prerelease: ${{ env.IS_PRERELEASE }}
       - name: Empty `CHANGELOG.md`
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
@@ -72,15 +81,23 @@ jobs:
           true > "CHANGELOG.md"
           git add CHANGELOG.md
           git commit -m "Empty \`CHANGELOG.md\`"
-      - name: Update docs
+      - name: Push local changes to remote Vico repository
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        run: git push origin
+      - name: Generate docs
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        run: ./gradlew dokkaHtmlMultiModule
+      - name: Copy docs to clone of website repository
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        run: cp -R ${{ github.workspace }}/vico/docs ${{ github.workspace }}/patrykandpatryk.com/vico
+      - name: Move to clone of website repository
+        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
+        run: cd ${{ github.workspace }}/patrykandpatryk.com
+      - name: Push local changes to remote website repository
         if: ${{ github.event.inputs.skipToPublishing == 'false' }}
         run: |
-          ./gradlew dokkaHtmlMultiModule
-          git add docs
-          git commit -m "Update docs"
-      - name: Push local changes to remote repository
-        if: ${{ github.event.inputs.skipToPublishing == 'false' }}
-        run: |
+          git add vico/docs
+          git commit -m "Update Vico docs"
           git push origin
       - name: Publish to Maven Central
         run: ./gradlew publish
