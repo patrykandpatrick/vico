@@ -1,22 +1,26 @@
-Chart types define how data is presented on a chart.
+Chart types define how data is presented on a chart. All chart types offer customization options, which are described later on in this wiki.
+You can create your own chart types by extending [`BaseChart`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart/-base-chart/?query=abstract%20class%20BaseChart%3Cin%20Model%20:%20ChartEntryModel%3E%20:%20Chart%3CModel%3E%20,%20BoundsAware) or [`Chart`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart/-chart/).
+Note that the way data is represented on a chart depends on the chart type, but the chart type doesn’t control elements such as markers and axes.
 
-## Overview
+## Line charts
 
-Vico offers three chart types:
+Line charts display data as a continuous line or, in the case of [`ChartEntryModel`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s
+containing multiple datasets, multiple lines. Each line in a line chart can be individually customized (see [`LineSpec`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart.line/-line-chart/-line-spec/)).
 
-- _Line charts_ display data as a continuous line (or multiple lines).
-    
-    ![image](../images/line-chart.png)
+![](../images/line-chart.png)
 
-- _Column charts_ display data in the form of columns. It is possible to display multiple columns per chart segment, in which case they can be grouped (displayed next to each other) or stacked (placed on top of one another).  
+## Column charts
 
-    ![image](../images/column-chart.png)
+Column charts display data in the form of columns. For [`ChartEntryModel`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s
+containing multiple datasets, multiple columns are displayed per chart segment, in which case they can be grouped (displayed next to each other) or stacked (placed on top of one another).
 
-- _Composed charts_ comprise two or more charts. The charts can be of the same type or of different types. The charts in a composed chart can be independently scaled, which can be configured via the `targetVerticalAxisPosition` parameter of [`LineChart`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart.line/-line-chart/) and [`ColumnChart`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart.column/-column-chart/).
+![](../images/column-chart.png)
 
-    ![Group 14](../images/composed-chart.png)
+## Composed charts
 
-All chart types offer customization options, which are described later on in this wiki. You can create your own chart types by extending [`BaseChart`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart/-base-chart/?query=abstract%20class%20BaseChart%3Cin%20Model%20:%20ChartEntryModel%3E%20:%20Chart%3CModel%3E%20,%20BoundsAware) or [`Chart`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart/-chart/).
+Composed charts comprise any number of charts. These can be of different types. The charts in a composed chart can be independently scaled, which can be configured via `targetVerticalAxisPosition` parameter of [`LineChart`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart.line/-line-chart/) and [`ColumnChart`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart.column/-column-chart/).
+
+![](../images/composed-chart.png)
 
 ## Setting the type of a chart
 
