@@ -33,6 +33,7 @@ import com.patrykandpatryk.vico.core.extension.half
  * @param iconSizeDp defines the size of all [Item.icon]s.
  * @param iconPaddingDp defines the padding between each [Item.icon] and its corresponding [Item.label].
  * @param spacingDp defines the vertical spacing between each [Item].
+ * @param padding defines the padding of the content.
  */
 public open class VerticalLegend(
     public var items: Collection<Item>,
@@ -88,7 +89,7 @@ public open class VerticalLegend(
                 text = item.labelText,
                 textX = startX,
                 textY = centerY,
-                horizontalPosition = HorizontalPosition.Start,
+                horizontalPosition = HorizontalPosition.End,
                 maxTextWidth = (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
                     .toInt()
             )
