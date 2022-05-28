@@ -19,18 +19,25 @@ package com.patrykandpatryk.vico.sample.chart
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import com.patrykandpatryk.vico.R
 import com.patrykandpatryk.vico.compose.axis.axisLabelComponent
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.line.lineSpec
+import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
+import com.patrykandpatryk.vico.compose.legend.verticalLegend
+import com.patrykandpatryk.vico.compose.legend.verticalLegendItem
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatryk.vico.core.legend.VerticalLegend
 import com.patrykandpatryk.vico.databinding.LineChartWithLabelsInsideBinding
 import com.patrykandpatryk.vico.sample.util.marker
 
@@ -40,9 +47,9 @@ internal fun ComposeLineChartWithLabelsInside(
     modifier: Modifier = Modifier,
 ) {
     val lineChart = lineChart(
-        lines = entityColors.map {
+        lines = entityColors.map { color ->
             lineSpec(
-                lineColor = Color(it),
+                lineColor = Color(color),
                 lineBackgroundShader = null,
             )
         },
@@ -58,6 +65,7 @@ internal fun ComposeLineChartWithLabelsInside(
         startAxis = startAxis,
         bottomAxis = bottomAxis(),
         marker = marker(),
+        legend = legend(),
     )
 }
 
@@ -68,12 +76,15 @@ internal fun ViewLineChartWithLabelsInside(
 ) {
     val marker = marker()
     val axisLabel = lineChartWithLabelsInsideAxisLabel()
+    val legend = legend()
     AndroidViewBinding(
         factory = LineChartWithLabelsInsideBinding::inflate,
         modifier = modifier,
     ) {
         chartView.entryProducer = chartEntryModelProducer
         chartView.marker = marker
+        chartView.legend = legend
+
         with(chartView.startAxis as VerticalAxis) {
             horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
             label = axisLabel
@@ -87,10 +98,27 @@ private fun lineChartWithLabelsInsideAxisLabel() = axisLabelComponent(
     verticalPadding = LABEL_PADDING_VERTICAL_DP.dp,
     horizontalMargin = LABEL_MARGIN_DP.dp,
     verticalMargin = LABEL_MARGIN_DP.dp,
-    background = ShapeComponent(
+    background = shapeComponent(
         shape = Shapes.pillShape,
-        color = LABEL_BACKGROUND_COLOR.toInt(),
+        color = Color(LABEL_BACKGROUND_COLOR),
     ),
+)
+
+@Composable
+private fun legend(): VerticalLegend = verticalLegend(
+    items = entityColors.mapIndexed { index, color ->
+        verticalLegendItem(
+            icon = shapeComponent(shape = Shapes.pillShape, color = Color(color)),
+            label = textComponent {
+                textSizeSp = LEGEND_LABEL_SIZE_SP
+            },
+            labelText = LocalContext.current.getString(R.string.line_chart_with_labels_inside_label_legend, index),
+        )
+    },
+    iconSize = 8.dp,
+    iconPadding = 10.dp,
+    spacing = 4.dp,
+    padding = dimensionsOf(top = 8.dp),
 )
 
 @Suppress("MagicNumber")
@@ -99,3 +127,4 @@ private const val LABEL_BACKGROUND_COLOR = 0xFFFABB51
 private const val LABEL_PADDING_VERTICAL_DP = 4f
 private const val LABEL_PADDING_HORIZONTAL_DP = 8f
 private const val LABEL_MARGIN_DP = 4f
+private const val LEGEND_LABEL_SIZE_SP = 12f

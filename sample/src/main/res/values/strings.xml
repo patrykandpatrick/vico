@@ -31,7 +31,8 @@
     <string name="grouped_column_chart_label">Grouped column chart</string>
     <string name="grouped_column_chart_description">Threshold line for range</string>
     <string name="line_chart_with_labels_inside_label">Complex line chart</string>
-    <string name="line_chart_with_labels_inside_description">Axis labels on inside</string>
+    <string name="line_chart_with_labels_inside_description">Axis labels on inside &amp; vertical legend</string>
+    <string name="line_chart_with_labels_inside_label_legend">Data set %d</string>
     <string name="complex_composed_chart_label">Complex composed chart</string>
     <string name="complex_composed_chart_description">Independent charts &amp; vertical axes</string>
 </resources>

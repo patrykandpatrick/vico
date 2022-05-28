@@ -55,6 +55,7 @@ import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
 import com.patrykandpatryk.vico.core.extension.ifNotNull
 import com.patrykandpatryk.vico.core.extension.set
 import com.patrykandpatryk.vico.core.layout.VirtualLayout
+import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.model.Point
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
@@ -73,6 +74,7 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * @param bottomAxis an axis displayed on the bottom of the chart.
  * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
  * nearest to the touch point.
+ * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param diffAnimationSpec the animation spec used to animate differences between entry sets ([ChartEntryModel]
@@ -88,6 +90,7 @@ public fun <Model : ChartEntryModel> Chart(
     endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
     bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
     marker: Marker? = null,
+    legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
@@ -107,6 +110,7 @@ public fun <Model : ChartEntryModel> Chart(
             endAxis = endAxis,
             bottomAxis = bottomAxis,
             marker = marker,
+            legend = legend,
             isHorizontalScrollEnabled = isHorizontalScrollEnabled,
             isZoomEnabled = isZoomEnabled,
         )
@@ -128,6 +132,9 @@ public fun <Model : ChartEntryModel> Chart(
  * @param topAxis an axis displayed on the top of the chart.
  * @param endAxis an axis displayed on the end of the chart.
  * @param bottomAxis an axis displayed on the bottom of the chart.
+ * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
+ * nearest to the touch point.
+ * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
  */
@@ -142,6 +149,7 @@ public fun <Model : ChartEntryModel> Chart(
     endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
     bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
     marker: Marker? = null,
+    legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
 ) {
@@ -170,7 +178,7 @@ public fun <Model : ChartEntryModel> Chart(
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
     val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
-    val virtualLayout = remember { VirtualLayout() }
+    val virtualLayout = remember { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
 
     Canvas(
@@ -201,13 +209,14 @@ public fun <Model : ChartEntryModel> Chart(
             context = chartDrawContext,
             contentBounds = bounds,
             chart = chart,
-            axisManager = axisManager,
+            legend = legend,
             marker,
         )
 
         axisManager.drawBehindChart(chartDrawContext)
         chart.draw(chartDrawContext, model)
         axisManager.drawAboveChart(chartDrawContext)
+        legend?.draw(chartDrawContext)
         ifNotNull(
             t1 = marker,
             t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel)

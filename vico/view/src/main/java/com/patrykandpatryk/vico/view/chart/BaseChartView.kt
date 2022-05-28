@@ -62,6 +62,7 @@ import com.patrykandpatryk.vico.view.extension.verticalPadding
 import com.patrykandpatryk.vico.view.gestures.ChartScaleGestureListener
 import com.patrykandpatryk.vico.view.gestures.MotionEventHandler
 import com.patrykandpatryk.vico.core.context.MutableMeasureContext
+import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.view.theme.ThemeHandler
 
 /**
@@ -75,10 +76,15 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 ) : View(context, attrs, defStyleAttr) {
 
     private val contentBounds = RectF()
+
     private val scrollHandler = ScrollHandler()
 
     private val scroller = OverScroller(context)
-    private val virtualLayout = VirtualLayout()
+
+    private val axisManager = AxisManager()
+
+    private val virtualLayout = VirtualLayout(axisManager)
+
     private val motionEventHandler = MotionEventHandler(
         scroller = scroller,
         scrollHandler = scrollHandler,
@@ -87,7 +93,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         requestInvalidate = ::invalidate
     )
 
-    private val axisManager = AxisManager()
     private val measureContext = MutableMeasureContext(
         canvasBounds = contentBounds,
         density = context.density,
@@ -191,6 +196,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var marker: Marker? = null
 
     /**
+     * The legend for this chart.
+     */
+    public var legend: Legend? = null
+
+    /**
      * The color of elevation overlays, which are applied to components that cast shadows in
      * [com.patrykandpatryk.vico.core.component.shape.ShapeComponent].
      */
@@ -266,6 +276,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         chart.draw(drawContext, model)
         axisManager.drawAboveChart(drawContext)
 
+        legend?.draw(drawContext)
+
         ifNotNull(
             t1 = marker,
             t2 = markerTouchPoint?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
@@ -315,7 +327,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             context = context,
             contentBounds = contentBounds,
             chart = chart,
-            axisManager = axisManager,
+            legend = legend,
             marker
         )
     }
