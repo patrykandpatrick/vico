@@ -34,7 +34,8 @@
         <attr name="pointSize" format="dimension" />
         <attr name="lineThickness" format="dimension" />
         <attr name="pointStyle" format="reference" />
-        <attr name="cubicStrength" format="fraction"/>
+        <attr name="cubicStrength" format="fraction" />
+        <attr name="showDataLabels" format="boolean" />
         <attr name="dataLabelStyle" format="reference" />
         <attr name="dataLabelVerticalPosition" format="enum">
             <enum name="top" value="0" />
