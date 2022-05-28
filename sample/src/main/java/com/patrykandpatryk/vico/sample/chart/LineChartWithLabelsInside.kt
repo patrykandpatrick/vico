@@ -112,13 +112,13 @@ private fun legend(): VerticalLegend = verticalLegend(
             label = textComponent {
                 textSizeSp = LEGEND_LABEL_SIZE_SP
             },
-            labelText = LocalContext.current.getString(R.string.line_chart_with_labels_inside_label_legend, index)
+            labelText = LocalContext.current.getString(R.string.line_chart_with_labels_inside_label_legend, index),
         )
     },
     iconSize = 8.dp,
     iconPadding = 10.dp,
     spacing = 4.dp,
-    padding = dimensionsOf(top = 8.dp)
+    padding = dimensionsOf(top = 8.dp),
 )
 
 @Suppress("MagicNumber")

@@ -25,6 +25,7 @@ import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.legend.Legend
+import com.patrykandpatryk.vico.core.extension.orZero
 
 /**
  * [VirtualLayout] measures and lays out the chart, the axis, and other components (such as markers).
@@ -63,7 +64,7 @@ public open class VirtualLayout(
         finalInsets.clear()
         tempInsets.clear()
 
-        val legendHeight = legend?.getHeight(context, contentBounds.width()) ?: 0f
+        val legendHeight = legend?.getHeight(context, contentBounds.width()).orZero
 
         axisManager.addInsetters(tempInsetters)
         chartInsetter.filterNotNull().forEach(tempInsetters::add)
