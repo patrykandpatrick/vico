@@ -16,6 +16,10 @@
 
 package com.patrykandpatryk.vico.sample.util
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatryk.vico.R
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
@@ -74,6 +78,18 @@ internal fun getSampleCharts(
         labelResourceId = R.string.line_chart_with_labels_inside_label,
         descriptionResourceId = R.string.line_chart_with_labels_inside_description,
         composeBased = { ComposeLineChartWithLabelsInside(chartEntryModelProducer = multiChartEntryModelProducer) },
+        viewBased = { ViewLineChartWithLabelsInside(chartEntryModelProducer = multiChartEntryModelProducer) },
+    ),
+    SampleChart(
+        labelResourceId = R.string.line_chart_with_labels_inside_label,
+        descriptionResourceId = R.string.line_chart_with_labels_inside_description,
+        composeBased = {
+            Column {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    ComposeLineChartWithLabelsInside(chartEntryModelProducer = multiChartEntryModelProducer)
+                }
+            }
+        },
         viewBased = { ViewLineChartWithLabelsInside(chartEntryModelProducer = multiChartEntryModelProducer) },
     ),
     SampleChart(
