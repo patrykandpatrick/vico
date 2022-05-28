@@ -24,6 +24,7 @@ import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.view.R
 import com.patrykandpatryk.vico.view.extension.defaultColors
 
@@ -78,6 +79,17 @@ internal fun TypedArray.getColumnChart(
             defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING,
         ),
         mergeMode = mergeMode,
+        dataLabel = if (getBoolean(R.styleable.ColumnChartStyle_showDataLabels, false)) {
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.ColumnChartStyle_dataLabelStyle,
+                styleableResourceId = R.styleable.LabelStyle,
+            ).getTextComponent(context = context)
+        } else null,
+        dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->
+            val values = VerticalPosition.values()
+            values[value % values.size]
+        },
     )
 }
 

@@ -172,17 +172,16 @@ internal fun TypedArray.getLineSpec(
             defaultValue = DefaultDimens.CUBIC_STRENGTH,
         ),
         lineBackgroundShader = shader,
-        dataLabel = getNestedTypedArray(
-            context = context,
-            resourceId = R.styleable.LineSpec_dataLabelStyle,
-            styleableResourceId = R.styleable.LabelStyle,
-        )
-            .getTextComponent(context = context)
-            .takeIf { getBoolean(R.styleable.LineSpec_showDataLabels, false) },
-        dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0)
-            .let { value ->
-                val values = VerticalPosition.values()
-                values[value % values.size]
-            },
+        dataLabel = if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.LineSpec_dataLabelStyle,
+                styleableResourceId = R.styleable.LabelStyle,
+            ).getTextComponent(context = context)
+        } else null,
+        dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->
+            val values = VerticalPosition.values()
+            values[value % values.size]
+        },
     )
 }
