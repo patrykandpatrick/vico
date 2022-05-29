@@ -44,6 +44,7 @@ jobs:
           body_path: ${{ github.workspace }}/vico/CHANGELOG.md
           prerelease: ${{ env.IS_PRERELEASE }}
       - run: |
+          cd ${{ github.workspace }}/vico
           true > "CHANGELOG.md"
           git add CHANGELOG.md
           git commit -m "Empty \`CHANGELOG.md\`"
