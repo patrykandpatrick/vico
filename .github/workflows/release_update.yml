@@ -51,8 +51,10 @@ jobs:
           ./gradlew dokkaHtmlMultiModule
           cd wiki
           mkdocs build
-          cp -R ${{ github.workspace }}/vico/docs ${{ github.workspace }}/patrykandpatryk.com/vico/api
-          cp -R ${{ github.workspace }}/vico/wiki/site ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
+          rm -r ${{ github.workspace }}/patrykmichalik.com/vico/api/*
+          rm -r ${{ github.workspace }}/patrykmichalik.com/vico/wiki/*
+          cp -R ${{ github.workspace }}/vico/docs/. ${{ github.workspace }}/patrykandpatryk.com/vico/api
+          cp -R ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
           cd ${{ github.workspace }}/patrykandpatryk.com
           git remote set-url origin https://patrykandpatrykbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
           git add vico/api
