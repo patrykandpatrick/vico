@@ -8,7 +8,7 @@ This version includes the following changes.
 ## API changes
 
 - In the `view` module, the `line*spec` attributes of `LineChartStyle` have been renamed to `line*Spec` (note the capitalization).
-- `AxisValueFormatter` now inherits from `ValueFormatter`, which is used for data labels. The return type of `ValueFormatter#formatValue` is now `CharSequence` (as opposed to `String`).
+- `AxisValueFormatter` now inherits from `ValueFormatter`, which is used for data labels. The return type of `ValueFormatter#formatValue` is `CharSequence` (as opposed to `String`).
 
 ## Resolved issues
 
