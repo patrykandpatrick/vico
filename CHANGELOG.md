@@ -9,11 +9,11 @@ This version includes the following changes.
 
 - In the `view` module, the `line*spec` attributes of `LineChartStyle` have been renamed to `line*Spec` (note the capitalization).
 - `AxisValueFormatter` now inherits from `ValueFormatter`, which is used for data labels. The return type of `ValueFormatter#formatValue` is `CharSequence` (as opposed to `String`).
+- There were mix-ups between `HorizontalPosition.Start` and `HorizontalPosition.End` as well as `VerticalPosition.Top` and `VerticalPosition.Bottom` in several places. These have been resolved.
 
 ## Resolved issues
 
 - In line charts, points could be clipped near the top and bottom of the chart.
-- There were mix-ups between `HorizontalPosition.Start` and `HorizontalPosition.End` as well as `VerticalPosition.Top` and `VerticalPosition.Bottom` in several places.
 
 ## Improvements
 
