@@ -19,7 +19,7 @@
     <string name="compose">Compose</string>
     <string name="views">Views</string>
     <string name="swipe_hint">Swipe here</string>
-    <string name="x_of_y">%d of %d</string>
+    <string name="x_of_y">%1$d of %2$d</string>
     <string name="line_chart_label">Line chart</string>
     <string name="line_chart_description">Persistent marker &amp; customized guidelines</string>
     <string name="column_chart_label">Column chart</string>
