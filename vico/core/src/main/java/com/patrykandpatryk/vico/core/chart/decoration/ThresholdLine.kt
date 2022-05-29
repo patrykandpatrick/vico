@@ -17,21 +17,21 @@
 package com.patrykandpatryk.vico.core.chart.decoration
 
 import android.graphics.RectF
-import java.text.DecimalFormat
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
+import com.patrykandpatryk.vico.core.component.text.inBounds
 import com.patrykandpatryk.vico.core.component.text.textComponent
-import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.extension.ceil
 import com.patrykandpatryk.vico.core.extension.floor
 import com.patrykandpatryk.vico.core.extension.getEnd
 import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.median
+import java.text.DecimalFormat
 
 /**
  * [ThresholdLine] is drawn on top of charts and marks a certain range of y-axis values.
@@ -131,23 +131,12 @@ public data class ThresholdLine(
             },
             textY = textY,
             horizontalPosition = labelHorizontalPosition.position,
-            verticalPosition = getSuggestedLabelVerticalPosition(context, bounds, thresholdLabel, textY).position,
+            verticalPosition = labelVerticalPosition.position.inBounds(
+                bounds = bounds,
+                componentHeight = labelComponent.getHeight(context = context, text = thresholdLabel),
+                y = textY,
+            ),
         )
-    }
-
-    private fun getSuggestedLabelVerticalPosition(
-        context: MeasureContext,
-        bounds: RectF,
-        text: CharSequence,
-        textY: Float,
-    ): LabelVerticalPosition {
-        val labelHeight = labelComponent.getHeight(context = context, text = text)
-        return when (labelVerticalPosition) {
-            LabelVerticalPosition.Top ->
-                if (textY - labelHeight < bounds.top) LabelVerticalPosition.Bottom else labelVerticalPosition
-            LabelVerticalPosition.Bottom ->
-                if (textY + labelHeight > bounds.bottom) LabelVerticalPosition.Top else labelVerticalPosition
-        }
     }
 
     /**
@@ -156,8 +145,8 @@ public data class ThresholdLine(
      * @property position the [HorizontalPosition] used when drawing the label.
      */
     public enum class LabelHorizontalPosition(public val position: HorizontalPosition) {
-        Start(HorizontalPosition.Start),
-        End(HorizontalPosition.End),
+        Start(HorizontalPosition.End),
+        End(HorizontalPosition.Start),
     }
 
     /**
@@ -166,8 +155,8 @@ public data class ThresholdLine(
      * @property position the [VerticalPosition] used when drawing the label.
      */
     public enum class LabelVerticalPosition(public val position: VerticalPosition) {
-        Top(VerticalPosition.Bottom),
-        Bottom(VerticalPosition.Top),
+        Top(VerticalPosition.Top),
+        Bottom(VerticalPosition.Bottom),
     }
 
     private companion object {

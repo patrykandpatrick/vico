@@ -16,14 +16,21 @@
 
 <resources>
     <attr name="lineChartStyle" format="reference" />
-    <attr name="line1spec" format="reference" />
-    <attr name="line2spec" format="reference" />
-    <attr name="line3spec" format="reference" />
+    <attr name="line1Spec" format="reference" />
+    <attr name="line2Spec" format="reference" />
+    <attr name="line3Spec" format="reference" />
+    <attr name="showDataLabels" format="boolean" />
+    <attr name="dataLabelStyle" format="reference" />
+    <attr name="dataLabelVerticalPosition" format="enum">
+        <enum name="top" value="0" />
+        <enum name="center" value="1" />
+        <enum name="bottom" value="2" />
+    </attr>
 
     <declare-styleable name="LineChartStyle">
-        <attr name="line1spec" />
-        <attr name="line2spec" />
-        <attr name="line3spec" />
+        <attr name="line1Spec" />
+        <attr name="line2Spec" />
+        <attr name="line3Spec" />
         <attr name="spacing" format="dimension" />
     </declare-styleable>
 
@@ -34,7 +41,10 @@
         <attr name="pointSize" format="dimension" />
         <attr name="lineThickness" format="dimension" />
         <attr name="pointStyle" format="reference" />
-        <attr name="cubicStrength" format="fraction"/>
+        <attr name="cubicStrength" format="fraction" />
+        <attr name="showDataLabels" />
+        <attr name="dataLabelStyle" />
+        <attr name="dataLabelVerticalPosition" />
     </declare-styleable>
 
     <declare-styleable name="ComponentStyle">

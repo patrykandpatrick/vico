@@ -17,26 +17,9 @@
 package com.patrykandpatryk.vico.core.axis.formatter
 
 import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.chart.values.ChartValues
+import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 
 /**
  * Formats the values displayed along chart axes.
  */
-public fun interface AxisValueFormatter<Position : AxisPosition> {
-
-    /**
-     * Called by [com.patrykandpatryk.vico.core.axis.AxisRenderer] subclasses in order to format either y-axis
-     * or x-axis values for display.
-     *
-     * @param value The value to be formatted. This is either an x-axis value or a y-axis value.
-     * @param chartValues The model used by the chart. This holds information on the values along the x-axis and y-axis.
-     *
-     * @see ChartValues
-     *
-     * @return a formatted value that will be displayed on the axis.
-     */
-    public fun formatValue(
-        value: Float,
-        chartValues: ChartValues,
-    ): String
-}
+public fun interface AxisValueFormatter<Position : AxisPosition> : ValueFormatter

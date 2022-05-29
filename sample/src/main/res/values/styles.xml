@@ -19,7 +19,7 @@
 <resources>
 
     <style name="LineChartLineChartStyle">
-        <item name="line1spec">@style/LineChartLine1Spec</item>
+        <item name="line1Spec">@style/LineChartLine1Spec</item>
     </style>
 
     <style name="LineChartLine1Spec">
@@ -54,7 +54,7 @@
     </style>
 
     <style name="ComposedChartLineChartStyle">
-        <item name="line1spec">@style/ComposedChartLine1Spec</item>
+        <item name="line1Spec">@style/ComposedChartLine1Spec</item>
     </style>
 
     <style name="ComposedChartLine1Spec">
@@ -106,9 +106,9 @@
     </style>
 
     <style name="LineChartWithLabelsInsideLineChartStyle">
-        <item name="line1spec">@style/LineChartWithLabelsInsideLine1Spec</item>
-        <item name="line2spec">@style/LineChartWithLabelsInsideLine2Spec</item>
-        <item name="line3spec">@style/LineChartWithLabelsInsideLine3Spec</item>
+        <item name="line1Spec">@style/LineChartWithLabelsInsideLine1Spec</item>
+        <item name="line2Spec">@style/LineChartWithLabelsInsideLine2Spec</item>
+        <item name="line3Spec">@style/LineChartWithLabelsInsideLine3Spec</item>
     </style>
 
     <style name="LineChartWithLabelsInsideLine1Spec" parent="@style/LineChartWithLabelsInsideLineSpec">
@@ -129,7 +129,7 @@
     </style>
 
     <style name="ComplexComposedChartLineChartStyle">
-        <item name="line1spec">@style/ComplexComposedChartLine1Spec</item>
+        <item name="line1Spec">@style/ComplexComposedChartLine1Spec</item>
     </style>
 
     <style name="ComplexComposedChartLine1Spec">

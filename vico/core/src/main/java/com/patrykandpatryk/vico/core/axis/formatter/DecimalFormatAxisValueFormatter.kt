@@ -16,17 +16,16 @@
 
 package com.patrykandpatryk.vico.core.axis.formatter
 
-import com.patrykandpatryk.vico.core.chart.values.ChartValues
+import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import com.patrykandpatryk.vico.core.axis.AxisPosition
 
 /**
- * A subclass of [AxisValueFormatter] that formats values using a [DecimalFormat] with a given pattern.
+ * An [AxisValueFormatter] implementation that formats values using a [DecimalFormat] with a given pattern.
  */
-public class DecimalFormatAxisValueFormatter<Position : AxisPosition>(
-    private val decimalFormat: DecimalFormat,
-) : AxisValueFormatter<Position> {
+public class DecimalFormatAxisValueFormatter<Position : AxisPosition>(decimalFormat: DecimalFormat) :
+    AxisValueFormatter<Position>, DecimalFormatValueFormatter(decimalFormat = decimalFormat) {
 
     /**
      * Creates a [DecimalFormatAxisValueFormatter] using the default pattern.
@@ -41,21 +40,4 @@ public class DecimalFormatAxisValueFormatter<Position : AxisPosition>(
         pattern: String,
         roundingMode: RoundingMode = RoundingMode.HALF_UP,
     ) : this(getDecimalFormat(pattern, roundingMode))
-
-    override fun formatValue(
-        value: Float,
-        chartValues: ChartValues,
-    ): String = decimalFormat.format(value)
-
-    private companion object {
-        private const val DEF_FORMAT = "#.##"
-
-        private fun getDecimalFormat(
-            pattern: String,
-            roundingMode: RoundingMode,
-        ): DecimalFormat =
-            DecimalFormat(pattern).apply {
-                this.roundingMode = roundingMode
-            }
-    }
 }

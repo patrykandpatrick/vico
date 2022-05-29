@@ -54,7 +54,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
 
     private val textHorizontalPosition: HorizontalPosition
-        get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.End else HorizontalPosition.Start
+        get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
 
     /**
      * The maximum label count.
@@ -203,7 +203,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     private fun MeasureContext.getLabels(
         maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
-    ): List<String> {
+    ): List<CharSequence> {
         val chartValues = chartValuesManager.getChartValues(position)
         val cacheKey = LABELS_KEY + position
         return getOrPutExtra(key = cacheKey) {
@@ -259,7 +259,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     private fun getDesiredWidth(
         context: MeasureContext,
-        labels: List<String>,
+        labels: List<CharSequence>,
     ): Float = with(context) {
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> (getMaxLabelWidth(labels) + axisThickness.half + tickLength)
@@ -273,7 +273,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun MeasureContext.getMaxLabelWidth(labels: List<String>): Float = when (horizontalLabelPosition) {
+    private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
         Outside -> label?.let { label -> labels.maxOf { label.getWidth(this, it) } }.orZero
         Inside -> 0f
     }
@@ -295,8 +295,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public enum class VerticalLabelPosition(public val textPosition: VerticalPosition) {
         Center(VerticalPosition.Center),
-        Top(VerticalPosition.Bottom),
-        Bottom(VerticalPosition.Top),
+        Top(VerticalPosition.Top),
+        Bottom(VerticalPosition.Bottom),
     }
 
     /**

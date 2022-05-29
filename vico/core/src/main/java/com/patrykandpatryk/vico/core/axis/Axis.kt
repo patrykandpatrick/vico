@@ -38,7 +38,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
-    protected val labels: ArrayList<String> = ArrayList()
+    protected val labels: ArrayList<CharSequence> = ArrayList()
 
     override val bounds: RectF = RectF()
 

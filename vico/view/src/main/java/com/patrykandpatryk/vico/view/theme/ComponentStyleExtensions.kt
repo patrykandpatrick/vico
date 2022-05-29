@@ -29,6 +29,7 @@ import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.view.R
 import com.patrykandpatryk.vico.view.component.shape.shader.verticalGradient
@@ -171,5 +172,16 @@ internal fun TypedArray.getLineSpec(
             defaultValue = DefaultDimens.CUBIC_STRENGTH,
         ),
         lineBackgroundShader = shader,
+        dataLabel = if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.LineSpec_dataLabelStyle,
+                styleableResourceId = R.styleable.LabelStyle,
+            ).getTextComponent(context = context)
+        } else null,
+        dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->
+            val values = VerticalPosition.values()
+            values[value % values.size]
+        },
     )
 }
