@@ -78,3 +78,6 @@ public fun chartDrawContext(
                 ).coerceAtMost(DEFAULT_SCALE)
         }
 }
+
+internal inline val ChartDrawContext.segmentWidth: Int
+    get() = segmentProperties.segmentWidth.pixels.toInt()

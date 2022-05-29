@@ -17,23 +17,31 @@
 package com.patrykandpatryk.vico.core.chart.column
 
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisPosition
-import com.patrykandpatryk.vico.core.chart.values.ChartValues
-import com.patrykandpatryk.vico.core.component.shape.LineComponent
-import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatryk.vico.core.entry.ChartEntryModel
-import com.patrykandpatryk.vico.core.chart.forEachIn
-import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.BaseChart
+import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatryk.vico.core.chart.draw.segmentWidth
+import com.patrykandpatryk.vico.core.chart.forEachInIndexed
+import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
-import com.patrykandpatryk.vico.core.entry.ChartEntry
-import com.patrykandpatryk.vico.core.extension.getRepeating
-import com.patrykandpatryk.vico.core.extension.half
+import com.patrykandpatryk.vico.core.component.shape.LineComponent
+import com.patrykandpatryk.vico.core.component.text.TextComponent
+import com.patrykandpatryk.vico.core.component.text.VerticalPosition
+import com.patrykandpatryk.vico.core.component.text.inBounds
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
+import com.patrykandpatryk.vico.core.entry.ChartEntry
+import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.extension.getRepeating
 import com.patrykandpatryk.vico.core.extension.getStart
+import com.patrykandpatryk.vico.core.extension.half
+import com.patrykandpatryk.vico.core.extension.orZero
+import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
+import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.min
 
@@ -50,6 +58,10 @@ import kotlin.math.min
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
+ * respective columns.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  */
 public open class ColumnChart(
     public var columns: List<LineComponent>,
@@ -57,6 +69,9 @@ public open class ColumnChart(
     public var innerSpacingDp: Float = DefaultDimens.COLUMN_INSIDE_SPACING,
     public var mergeMode: MergeMode = MergeMode.Grouped,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    public var dataLabel: TextComponent? = null,
+    public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -130,7 +145,8 @@ public open class ColumnChart(
                 columnWidth = column.thicknessDp.pixels * chartScale,
             ) - horizontalScroll
 
-            entryCollection.forEachIn(chartValues.minX..chartValues.maxX) { entry ->
+            entryCollection.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { entryIndex, entry ->
+
                 height = entry.y * heightMultiplier - heightReduce
                 columnCenterX = drawingStart + layoutDirectionMultiplier *
                     (cellWidth + spacing) * (entry.x - chartValues.minX) / model.stepX
@@ -164,7 +180,71 @@ public open class ColumnChart(
                     updateMarkerLocationMap(entry, columnTop, columnCenterX, column)
                     column.drawVertical(this, columnTop, columnBottom, columnCenterX, chartScale)
                 }
+
+                drawDataLabel(index, model, column.thicknessDp, entry, entryIndex, columnCenterX, columnTop)
             }
+        }
+    }
+
+    @LongParameterListDrawFunction
+    private fun ChartDrawContext.drawDataLabel(
+        entryCollectionIndex: Int,
+        model: ChartEntryModel,
+        columnThicknessDp: Float,
+        entry: ChartEntry,
+        entryIndex: Int,
+        x: Float,
+        y: Float,
+    ) {
+        if (mergeMode == MergeMode.Stack && entryCollectionIndex != model.entries.lastIndex) return
+
+        dataLabel?.let { textComponent ->
+
+            val canUseSegmentWidth =
+                mergeMode == MergeMode.Stack ||
+                    mergeMode == MergeMode.Grouped && model.entries.size == 1
+            val maxWidth = when {
+                canUseSegmentWidth -> segmentWidth
+                mergeMode == MergeMode.Grouped ->
+                    (columnThicknessDp + 2 * minOf(spacingDp, innerSpacingDp.half)).wholePixels
+                else -> error(message = "Encountered an unexpected `MergeMode`.")
+            } * chartScale
+            val dataLabelValue = when (mergeMode) {
+                MergeMode.Grouped -> entry.y
+                MergeMode.Stack -> model.entries.fold(initial = 0f) { sum, entryCollection ->
+                    sum + entryCollection.getOrNull(index = entryIndex)?.y.orZero
+                }
+            }
+            val text = dataLabelValueFormatter.formatValue(
+                value = dataLabelValue,
+                chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
+            )
+            val dataLabelWidth = textComponent.getWidth(
+                context = this,
+                text = text,
+            ).coerceAtMost(maximumValue = maxWidth)
+
+            if (x - dataLabelWidth.half > bounds.right ||
+                x + dataLabelWidth.half < bounds.left
+            ) return
+
+            val verticalPosition = dataLabelVerticalPosition.inBounds(
+                y = y,
+                bounds = bounds,
+                componentHeight = textComponent.getHeight(
+                    context = this,
+                    text = text,
+                    width = maxWidth.toInt(),
+                ),
+            )
+            textComponent.drawText(
+                context = this,
+                text = text,
+                textX = x,
+                textY = y,
+                verticalPosition = verticalPosition,
+                maxTextWidth = maxWidth.toInt(),
+            )
         }
     }
 

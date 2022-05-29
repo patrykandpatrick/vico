@@ -42,6 +42,10 @@ import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.text.TextComponent
+import com.patrykandpatryk.vico.core.component.text.VerticalPosition
+import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
+import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 
 /**
  * Defines the appearance of charts.
@@ -120,12 +124,19 @@ public data class ChartStyle(
      * @property innerSpacing the spacing between the columns contained in chart segments. This has no effect on
      * segments that contain a single column only.
      * @property mergeMode defines the way multiple columns are rendered in [ColumnChart]s.
+     * @property dataLabel an optional [TextComponent] to use for data labels.
+     * @property dataLabelVerticalPosition the vertical position of data labels relative to the top of their
+     * respective columns.
+     * @property dataLabelValueFormatter the [ValueFormatter] to use for data labels.
      */
     public data class ColumnChart(
         val columns: List<LineComponent>,
         val outsideSpacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
         val innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
         val mergeMode: MergeMode = MergeMode.Grouped,
+        val dataLabel: TextComponent? = null,
+        val dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+        val dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     )
 
     /**

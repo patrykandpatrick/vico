@@ -3,7 +3,7 @@ This version includes the following changes.
 ## Additions
 
 - chart legends
-- data labels in line charts
+- data labels
 
 ## API changes
 

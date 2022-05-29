@@ -25,7 +25,10 @@ import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
+import com.patrykandpatryk.vico.core.component.text.TextComponent
+import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 import com.patrykandpatryk.vico.core.marker.Marker
 
 /**
@@ -42,6 +45,10 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
  * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  * @param decorations the list of [Decoration]s that will be added to the [ColumnChart].
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
+ * respective columns.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
@@ -59,6 +66,9 @@ public fun columnChart(
     decorations: List<Decoration>? = null,
     persistentMarkers: Map<Float, Marker>? = null,
     targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    dataLabel: TextComponent? = currentChartStyle.columnChart.dataLabel,
+    dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnChart.dataLabelVerticalPosition,
+    dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnChart.dataLabelValueFormatter,
 ): ColumnChart = remember { ColumnChart() }.apply {
     this.columns = columns
     this.spacingDp = spacing.value
@@ -69,6 +79,9 @@ public fun columnChart(
     this.minY = minY
     this.maxY = maxY
     this.targetVerticalAxisPosition = targetVerticalAxisPosition
+    this.dataLabel = dataLabel
+    this.dataLabelVerticalPosition = dataLabelVerticalPosition
+    this.dataLabelValueFormatter = dataLabelValueFormatter
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }

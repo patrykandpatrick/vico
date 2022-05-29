@@ -30,3 +30,18 @@ public inline fun List<ChartEntry>.forEachIn(
         if (entry.x in range) action(entry)
     }
 }
+
+/**
+ * For each [ChartEntry] the list, calls the [action] function block with the [ChartEntry] and its index as the block’s
+ * arguments if [ChartEntry.x] belongs to the provided range.
+ */
+public inline fun List<ChartEntry>.forEachInIndexed(
+    range: ClosedFloatingPointRange<Float>,
+    action: (Int, ChartEntry) -> Unit,
+) {
+    var index = 0
+    forEachIn(range = range) {
+        action(index, it)
+        index++
+    }
+}
