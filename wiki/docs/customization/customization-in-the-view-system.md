@@ -64,6 +64,9 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `column3Style` | The style for columns whose index in a segment is 2 + 3*k* (*k* ∈ *N*). | A [`ComponentStyle`](#componentstyle) attribute set. |
 | `columnOuterSpacing` | The spacing between the columns contained in chart segments. | A dimension. |
 | `columnInnerSpacing` | The horizontal padding between the edges of chart segments and the columns they contain. | A dimension. |
+| `showDataLabels` | Whether to show data labels. | A boolean. |
+| `dataLabelStyle` | The style of data labels. | A [`LabelStyle`](#labelstyle) attribute set. |
+| `dataLabelVerticalPosition` | The vertical position of each data label relative to the top edge of its respective column. | `top`, `center`, or `bottom`. |
 
 ### `LabelStyle`
 
@@ -84,9 +87,9 @@ In the view system, charts can be customized via XML attributes. You can make mo
 
 | Attribute | Description | Type |
 | --- | --- | --- |
-| `line1spec` | The style for lines whose index in the list of lines in a line chart is 3*k* (*k* ∈ *N*). | A [`LineSpec`](#linespec) attribute set. |
-| `line2spec` | The style for lines whose index in the list of lines in a line chart is 1 + 3*k* (*k* ∈ *N*). | A [`LineSpec`](#linespec) attribute set. |
-| `line3spec` | The style for lines whose index in the list of lines in a line chart is 2 + 3*k* (*k* ∈ *N*). | A [`LineSpec`](#linespec) attribute set. |
+| `line1Spec` | The style for lines whose index in the list of lines in a line chart is 3*k* (*k* ∈ *N*). | A [`LineSpec`](#linespec) attribute set. |
+| `line2Spec` | The style for lines whose index in the list of lines in a line chart is 1 + 3*k* (*k* ∈ *N*). | A [`LineSpec`](#linespec) attribute set. |
+| `line3Spec` | The style for lines whose index in the list of lines in a line chart is 2 + 3*k* (*k* ∈ *N*). | A [`LineSpec`](#linespec) attribute set. |
 | `spacing` | The point spacing. | A dimension. |
 
 ### `LineComponentStyle`
@@ -110,6 +113,9 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `lineThickness` | The thickness of the line. | A dimension. |
 | `pointStyle` | The style of points. | A [`ComponentStyle`](#componentstyle) attribute set. |
 | `cubicStrength` | The strength of the cubic bezier curve between each key point on the line. | A fraction. |
+| `showDataLabels` | Whether to show data labels. | A boolean. |
+| `dataLabelStyle` | The style of data labels. | A [`LabelStyle`](#labelstyle) attribute set. |
+| `dataLabelVerticalPosition` | The vertical position of each data label relative to its respective point on the line. | `top`, `center`, or `bottom`. |
 
 ### `Shape`
 

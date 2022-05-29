@@ -6,6 +6,7 @@ Note that the way data is represented on a chart depends on the chart type, but 
 
 Line charts display data as a continuous line or, in the case of [`ChartEntryModel`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s
 containing multiple datasets, multiple lines. Each line in a line chart can be individually customized (see [`LineSpec`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.chart.line/-line-chart/-line-spec/)).
+Line charts also support data labels, which are displayed for each key point on the line (that is, for each y-axis value defined in the line’s corresponding dataset).
 
 ![](../images/line-chart.png)
 
@@ -13,6 +14,7 @@ containing multiple datasets, multiple lines. Each line in a line chart can be i
 
 Column charts display data in the form of columns. For [`ChartEntryModel`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s
 containing multiple datasets, multiple columns are displayed per chart segment, in which case they can be grouped (displayed next to each other) or stacked (placed on top of one another).
+Like line charts, column charts support data labels. These are displayed near the top edge of each column.
 
 ![](../images/column-chart.png)
 
