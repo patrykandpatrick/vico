@@ -52,8 +52,8 @@ jobs:
           ./gradlew dokkaHtmlMultiModule
           cd wiki
           mkdocs build
-          rm -r ${{ github.workspace }}/patrykmichalik.com/vico/api/*
-          rm -r ${{ github.workspace }}/patrykmichalik.com/vico/wiki/*
+          rm -r ${{ github.workspace }}/patrykandpatryk.com/vico/api/*
+          rm -r ${{ github.workspace }}/patrykandpatryk.com/vico/wiki/*
           cp -R ${{ github.workspace }}/vico/docs/. ${{ github.workspace }}/patrykandpatryk.com/vico/api
           cp -R ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
           cd ${{ github.workspace }}/patrykandpatryk.com
@@ -61,7 +61,7 @@ jobs:
           git add vico/api
           git commit -m "Update Vico API reference"
           git add vico/wiki
-          git commit -m "Update Vico wiki"
+          git diff-index --quiet HEAD || git commit -m "Update Vico wiki"
           git push origin
           cd ${{ github.workspace }}/vico
           git push origin
