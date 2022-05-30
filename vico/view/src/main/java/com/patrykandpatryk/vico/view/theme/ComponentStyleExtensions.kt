@@ -183,5 +183,9 @@ internal fun TypedArray.getLineSpec(
             val values = VerticalPosition.values()
             values[value % values.size]
         },
+        dataLabelRotationDegrees = getFloat(
+            R.styleable.LineSpec_dataLabelRotationDegrees,
+            0f,
+        ),
     )
 }

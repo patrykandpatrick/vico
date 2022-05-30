@@ -49,6 +49,7 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
  * respective columns.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels in degrees.
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
@@ -69,6 +70,7 @@ public fun columnChart(
     dataLabel: TextComponent? = currentChartStyle.columnChart.dataLabel,
     dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnChart.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnChart.dataLabelValueFormatter,
+    dataLabelRotationDegrees: Float = currentChartStyle.columnChart.dataLabelRotationDegrees,
 ): ColumnChart = remember { ColumnChart() }.apply {
     this.columns = columns
     this.spacingDp = spacing.value
@@ -82,6 +84,7 @@ public fun columnChart(
     this.dataLabel = dataLabel
     this.dataLabelVerticalPosition = dataLabelVerticalPosition
     this.dataLabelValueFormatter = dataLabelValueFormatter
+    this.dataLabelRotationDegrees = dataLabelRotationDegrees
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }

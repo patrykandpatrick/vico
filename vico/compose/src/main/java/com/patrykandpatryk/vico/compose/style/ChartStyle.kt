@@ -128,6 +128,7 @@ public data class ChartStyle(
      * @property dataLabelVerticalPosition the vertical position of data labels relative to the top of their
      * respective columns.
      * @property dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+     * @property dataLabelRotationDegrees the rotation of data labels in degrees.
      */
     public data class ColumnChart(
         val columns: List<LineComponent>,
@@ -137,6 +138,7 @@ public data class ChartStyle(
         val dataLabel: TextComponent? = null,
         val dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         val dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+        val dataLabelRotationDegrees: Float = 0f,
     )
 
     /**
