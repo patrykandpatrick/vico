@@ -140,6 +140,10 @@ internal class ThemeHandler(
                 styleableResourceId = R.styleable.LineComponent,
                 defaultShape = DashedShape(),
             )
+            labelRotationDegrees = axisStyle.getFloat(
+                R.styleable.Axis_labelRotationDegrees,
+                0f,
+            )
             label = axisStyle.getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.Axis_axisLabelStyle,

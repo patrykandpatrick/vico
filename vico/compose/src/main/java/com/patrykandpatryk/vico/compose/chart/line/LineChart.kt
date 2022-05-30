@@ -99,6 +99,7 @@ public fun lineChart(
  * @param dataLabel an optional [TextComponent] to use for data labels.
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels in degrees.
  *
  * @see LineChart
  * @see LineChart.LineSpec
@@ -121,6 +122,7 @@ public fun lineSpec(
     dataLabel: TextComponent? = null,
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+    dataLabelRotationDegrees: Float = 0f,
 ): LineSpec = LineSpec(
     lineColor = lineColor.toArgb(),
     lineThicknessDp = lineThickness.value,
@@ -132,6 +134,7 @@ public fun lineSpec(
     dataLabel = dataLabel,
     dataLabelVerticalPosition = dataLabelVerticalPosition,
     dataLabelValueFormatter = dataLabelValueFormatter,
+    dataLabelRotationDegrees = dataLabelRotationDegrees,
 )
 
 private val StrokeCap.paintCap: Paint.Cap

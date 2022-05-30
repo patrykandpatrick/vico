@@ -19,7 +19,6 @@ package com.patrykandpatryk.vico.sample.chart
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.patrykandpatryk.vico.compose.axis.axisLabelComponent
 import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
@@ -39,9 +38,8 @@ internal fun ComposeStackedColumnChart(
     modifier: Modifier = Modifier,
 ) {
     val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
-    val axisLabel = axisLabelComponent(rotationDegrees = AXIS_LABEL_ROTATION_DEGREES)
-    val startAxis = startAxis(label = axisLabel, maxLabelCount = MAX_LABEL_COUNT)
-    val bottomAxis = bottomAxis(label = axisLabel)
+    val startAxis = startAxis(maxLabelCount = MAX_LABEL_COUNT, labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES)
+    val bottomAxis = bottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES)
     ProvideChartStyle(chartStyle = chartStyle) {
         val columnChart = columnChart(mergeMode = ColumnChart.MergeMode.Stack)
         Chart(

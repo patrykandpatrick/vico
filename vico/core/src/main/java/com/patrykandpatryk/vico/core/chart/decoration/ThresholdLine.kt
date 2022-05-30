@@ -44,6 +44,7 @@ import java.text.DecimalFormat
  * @property labelComponent the [TextComponent] used to draw the [thresholdLabel] text.
  * @property labelHorizontalPosition defines the horizontal position of the label.
  * @property labelVerticalPosition defines the vertical position of the label.
+ * @property labelRotationDegrees the rotation of the label in degrees.
  *
  * @see Decoration
  */
@@ -58,6 +59,7 @@ public data class ThresholdLine(
     val labelComponent: TextComponent = textComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
+    val labelRotationDegrees: Float = 0f,
 ) : Decoration {
 
     /**
@@ -71,6 +73,7 @@ public data class ThresholdLine(
      * @property labelComponent the [TextComponent] used to draw the [thresholdLabel] text.
      * @property labelHorizontalPosition defines the horizontal position of the label.
      * @property labelVerticalPosition defines the vertical position of the label.
+     * @property labelRotationDegrees the rotation of the label in degrees.
      */
     public constructor(
         thresholdValue: Float,
@@ -80,6 +83,7 @@ public data class ThresholdLine(
         labelComponent: TextComponent = textComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
+        labelRotationDegrees: Float = 0f,
     ) : this(
         thresholdRange = thresholdValue..thresholdValue,
         thresholdLabel = thresholdLabel,
@@ -88,6 +92,7 @@ public data class ThresholdLine(
         labelComponent = labelComponent,
         labelHorizontalPosition = labelHorizontalPosition,
         labelVerticalPosition = labelVerticalPosition,
+        labelRotationDegrees = labelRotationDegrees,
     )
 
     override fun onDrawAboveChart(
@@ -133,9 +138,14 @@ public data class ThresholdLine(
             horizontalPosition = labelHorizontalPosition.position,
             verticalPosition = labelVerticalPosition.position.inBounds(
                 bounds = bounds,
-                componentHeight = labelComponent.getHeight(context = context, text = thresholdLabel),
+                componentHeight = labelComponent.getHeight(
+                    context = context,
+                    text = thresholdLabel,
+                    rotationDegrees = labelRotationDegrees,
+                ),
                 y = textY,
             ),
+            rotationDegrees = labelRotationDegrees,
         )
     }
 

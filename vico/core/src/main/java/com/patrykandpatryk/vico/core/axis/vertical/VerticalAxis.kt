@@ -137,7 +137,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
             label ?: return@forEach
             val labelText = labels.getOrNull(index) ?: return@forEach
-            val textBounds = label.getTextBounds(context, labelText).apply {
+            val textBounds = label.getTextBounds(context, labelText, rotationDegrees = labelRotationDegrees).apply {
                 translate(
                     x = labelX,
                     y = tickCenterY - centerY(),
@@ -160,6 +160,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     textY = tickCenterY,
                     horizontalPosition = textHorizontalPosition,
                     verticalPosition = verticalLabelPosition.textPosition,
+                    rotationDegrees = labelRotationDegrees,
                     maxTextWidth = when (sizeConstraint) {
                         is SizeConstraint.Auto ->
                             // Let the `TextComponent` use as much width as it needs, based on measuring phase.
@@ -184,7 +185,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             val chartValues = chartValuesManager.getChartValues(position)
 
             fun getLabelHeight(value: Float): Float =
-                label.getHeight(this, valueFormatter.formatValue(value, chartValues))
+                label.getHeight(
+                    context = this,
+                    text = valueFormatter.formatValue(value, chartValues),
+                    rotationDegrees = labelRotationDegrees,
+                )
 
             val avgHeight = arrayOf(
                 getLabelHeight(chartValues.minY),
@@ -269,12 +274,15 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             is SizeConstraint.TextWidth -> label?.getWidth(
                 context = this,
                 text = constraint.text,
+                rotationDegrees = labelRotationDegrees,
             ).orZero + tickLength + axisThickness.half
         }
     }
 
     private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
-        Outside -> label?.let { label -> labels.maxOf { label.getWidth(this, it) } }.orZero
+        Outside -> label?.let { label ->
+            labels.maxOf { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
+        }.orZero
         Inside -> 0f
     }
 

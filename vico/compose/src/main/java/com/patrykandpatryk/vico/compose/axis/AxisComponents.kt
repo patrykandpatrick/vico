@@ -54,7 +54,6 @@ public typealias ChartShape = com.patrykandpatryk.vico.core.component.shape.Shap
  * @param horizontalPadding the horizontal padding between the text and the background.
  * @param verticalMargin the vertical margin around the background.
  * @param horizontalMargin the horizontal margin around the background.
- * @param rotationDegrees the rotation of the component in degrees.
  * @param typeface the typeface used for the label.
  */
 @Composable
@@ -68,7 +67,6 @@ public fun axisLabelComponent(
     horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
     verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
     horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
-    rotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
 ): TextComponent = textComponent {
     this.color = color.toArgb()
@@ -84,7 +82,6 @@ public fun axisLabelComponent(
         vertical = verticalMargin,
         horizontal = horizontalMargin,
     )
-    this.rotationDegrees = rotationDegrees
     this.typeface = typeface
 }
 

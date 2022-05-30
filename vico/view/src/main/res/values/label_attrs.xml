@@ -17,7 +17,6 @@
 <resources>
     <declare-styleable name="LabelStyle">
         <attr name="labelColor" format="color" />
-        <attr name="labelRotation" format="integer" />
         <attr name="backgroundStyle" format="reference" />
         <attr name="android:padding" />
         <attr name="android:paddingStart" />

@@ -85,12 +85,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     centerX = tickCenter,
                     boundingBox = chartBounds,
                 )
-            }?.drawVertical(
-                context = context,
-                top = chartBounds.top,
-                bottom = chartBounds.bottom,
-                centerX = tickCenter,
-            )
+            }?.drawVertical(context = context, top = chartBounds.top, bottom = chartBounds.bottom, centerX = tickCenter)
 
             tick?.drawVertical(context = context, top = tickMarkTop, bottom = tickMarkBottom, centerX = tickCenter)
 
@@ -102,6 +97,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
                     maxTextWidth = tickDrawStep.toInt(),
+                    rotationDegrees = labelRotationDegrees,
                 )
 
                 valueIndex += step
@@ -167,6 +163,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                             context = this,
                             text = labelText,
                             width = labelWidth,
+                            rotationDegrees = labelRotationDegrees,
                         ).orZero
                     }
                 }.orZero + (if (position.isBottom) axisThickness else 0f) + tickLength
@@ -177,6 +174,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 context = this,
                 text = constraint.text,
                 width = labelWidth,
+                rotationDegrees = labelRotationDegrees,
             ).orZero
         }
     }

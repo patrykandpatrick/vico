@@ -98,6 +98,7 @@ public open class LineChart(
      * @param dataLabel an optional [TextComponent] to use for data labels.
      * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
      * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+     * @param dataLabelRotationDegrees the rotation of data labels in degrees.
      */
     public open class LineSpec(
         lineColor: Int = Color.LTGRAY,
@@ -110,6 +111,7 @@ public open class LineChart(
         public var dataLabel: TextComponent? = null,
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+        public var dataLabelRotationDegrees: Float = 0f,
     ) {
 
         /**
@@ -278,7 +280,12 @@ public open class LineChart(
                 val verticalPosition = lineSpec.dataLabelVerticalPosition.inBounds(
                     bounds = bounds,
                     distanceFromPoint = distanceFromLine,
-                    componentHeight = textComponent.getHeight(context = this, text = text, width = segmentWidth),
+                    componentHeight = textComponent.getHeight(
+                        context = this,
+                        text = text,
+                        width = segmentWidth,
+                        rotationDegrees = lineSpec.dataLabelRotationDegrees,
+                    ),
                     y = y,
                 )
                 val dataLabelY = y + when (verticalPosition) {
@@ -293,6 +300,7 @@ public open class LineChart(
                     text = text,
                     verticalPosition = verticalPosition,
                     maxTextWidth = segmentWidth,
+                    rotationDegrees = lineSpec.dataLabelRotationDegrees,
                 )
             }
         }

@@ -43,6 +43,7 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `axisLabelBackground` | The background for axis labels. | A color or a [`Shape`](#shape) attribute set. |
 | `verticalAxisHorizontalLabelPosition` | The horizontal position of the labels on this axis if it is vertical. | `outside` or `inside`. |
 | `verticalAxisVerticalLabelPosition` | The vertical position of the labels on this axis is if it vertical. | `top`, `center`, or `bottom`. |
+| `labelRotationDegrees` | The rotation of axis labels in degrees. | A floating-point number. |
 
 ### `ComponentStyle`
 
@@ -67,13 +68,13 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `showDataLabels` | Whether to show data labels. | A boolean. |
 | `dataLabelStyle` | The style of data labels. | A [`LabelStyle`](#labelstyle) attribute set. |
 | `dataLabelVerticalPosition` | The vertical position of each data label relative to the top edge of its respective column. | `top`, `center`, or `bottom`. |
+| `dataLabelRotationDegrees` | The rotation of data labels in degrees. | A floating-point number. |
 
 ### `LabelStyle`
 
 | Attribute | Description | Type |
 | --- | --- | --- |
 | `labelColor` | The text color. | A color. |
-| `labelRotation` | The number of degrees by which the label is rotated. | An integer. |
 | `backgroundStyle` | The background for the label. | A [`ComponentStyle`](#componentstyle) attribute set. |
 | `android:padding` | The padding for each edge of the label. | A dimension. |
 | `android:padding*` | The padding for a specific edge or edge pair of the label. | A dimension. |
@@ -116,6 +117,7 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `showDataLabels` | Whether to show data labels. | A boolean. |
 | `dataLabelStyle` | The style of data labels. | A [`LabelStyle`](#labelstyle) attribute set. |
 | `dataLabelVerticalPosition` | The vertical position of each data label relative to its respective point on the line. | `top`, `center`, or `bottom`. |
+| `dataLabelRotationDegrees` | The rotation of data labels in degrees. | A floating-point number. |
 
 ### `Shape`
 
