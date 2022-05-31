@@ -40,7 +40,7 @@ import com.patrykandpatryk.vico.core.extension.translate
 import com.patrykandpatryk.vico.core.throwable.UnknownAxisPositionException
 
 private const val LABELS_KEY = "labels"
-private const val TITLE_ROTATION_DEGREES = 90f
+private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 /**
  * A subclass of [com.patrykandpatryk.vico.core.axis.AxisRenderer] used for vertical axes, used either at the start or
@@ -156,7 +156,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 textY = bounds.centerY(),
                 horizontalPosition = if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
                 verticalPosition = VerticalPosition.Center,
-                rotationDegrees = TITLE_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
+                rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
             )
         }
     }
@@ -299,7 +299,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     titleComponent?.getWidth(
                         context = this,
                         text = title,
-                        rotationDegrees = TITLE_ROTATION_DEGREES,
+                        rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
                     )
                 }.orZero
                 (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness.half + tickLength)
