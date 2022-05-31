@@ -46,6 +46,8 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
  * @param verticalLabelPosition the vertical position of the labels along the axis.
  * @param maxLabelCount the maximum label count.
  * @param labelRotationDegrees the rotation of axis labels in degrees.
+ * @param titleComponent an optional [TextComponent] use as the axis title.
+ * @param title the axis title.
  */
 @Composable
 public fun startAxis(
@@ -60,6 +62,8 @@ public fun startAxis(
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
     maxLabelCount: Int = DEF_LABEL_COUNT,
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    titleComponent: TextComponent? = null,
+    title: CharSequence? = null,
 ): VerticalAxis<AxisPosition.Vertical.Start> = createVerticalAxis {
     this.label = label
     this.axis = axis
@@ -72,6 +76,8 @@ public fun startAxis(
     this.verticalLabelPosition = verticalLabelPosition
     this.maxLabelCount = maxLabelCount
     this.labelRotationDegrees = labelRotationDegrees
+    this.titleComponent = titleComponent
+    this.title = title
 }
 
 /**
@@ -87,6 +93,8 @@ public fun startAxis(
  * @param verticalLabelPosition the vertical position of the labels along the axis.
  * @param maxLabelCount the maximum label count.
  * @param labelRotationDegrees the rotation of axis labels in degrees.
+ * @param titleComponent an optional [TextComponent] use as the axis title.
+ * @param title the axis title.
  */
 @Composable
 public fun endAxis(
@@ -101,6 +109,8 @@ public fun endAxis(
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
     maxLabelCount: Int = DEF_LABEL_COUNT,
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    titleComponent: TextComponent? = null,
+    title: CharSequence? = null,
 ): VerticalAxis<AxisPosition.Vertical.End> = createVerticalAxis {
     this.label = label
     this.axis = axis
@@ -113,4 +123,6 @@ public fun endAxis(
     this.verticalLabelPosition = verticalLabelPosition
     this.maxLabelCount = maxLabelCount
     this.labelRotationDegrees = labelRotationDegrees
+    this.titleComponent = titleComponent
+    this.title = title
 }

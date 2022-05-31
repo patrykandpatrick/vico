@@ -16,7 +16,6 @@
 
 package com.patrykandpatryk.vico.core.axis.horizontal
 
-import kotlin.math.ceil
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.setTo
@@ -31,6 +30,7 @@ import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.throwable.UnknownAxisPositionException
 import kotlin.math.abs
+import kotlin.math.ceil
 
 /**
  * A subclass of [com.patrykandpatryk.vico.core.axis.AxisRenderer] used for horizontal axes, used either at the top
@@ -114,6 +114,17 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half,
         )
 
+        title?.let { title ->
+            titleComponent?.drawText(
+                context = context,
+                textX = bounds.centerX(),
+                textY = if (position.isTop) bounds.top else bounds.bottom,
+                verticalPosition = if (position.isTop) VerticalPosition.Bottom else VerticalPosition.Top,
+                maxTextWidth = bounds.width().wholePixels,
+                text = title,
+            )
+        }
+
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
@@ -156,8 +167,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private fun getDesiredHeight(context: ChartDrawContext): Float = with(context) {
         val labelWidth by lazy { segmentProperties.segmentWidth.toInt() }
         when (val constraint = sizeConstraint) {
-            is SizeConstraint.Auto -> (
-                label?.let { label ->
+            is SizeConstraint.Auto -> {
+                val labelHeight = label?.let { label ->
                     getLabelsToMeasure().maxOf { labelText ->
                         label.getHeight(
                             context = this,
@@ -166,8 +177,16 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                             rotationDegrees = labelRotationDegrees,
                         ).orZero
                     }
-                }.orZero + (if (position.isBottom) axisThickness else 0f) + tickLength
-                ).coerceIn(constraint.minSizeDp.pixels, constraint.maxSizeDp.pixels)
+                }.orZero
+                val titleComponentHeight = title?.let { title ->
+                    titleComponent?.getHeight(
+                        context = context,
+                        text = title,
+                    )
+                }.orZero
+                (labelHeight + titleComponentHeight + (if (position.isBottom) axisThickness else 0f) + tickLength)
+                    .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
+            }
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> canvasBounds.height() * constraint.fraction
             is SizeConstraint.TextWidth -> label?.getHeight(

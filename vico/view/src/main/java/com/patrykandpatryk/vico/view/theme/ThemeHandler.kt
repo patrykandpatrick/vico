@@ -149,6 +149,14 @@ internal class ThemeHandler(
                 resourceId = R.styleable.Axis_axisLabelStyle,
                 styleableResourceId = R.styleable.LabelStyle
             ).getTextComponent(context = context)
+            titleComponent = if (axisStyle.getBoolean(R.styleable.Axis_showTitle, false)) {
+                axisStyle.getNestedTypedArray(
+                    context = context,
+                    resourceId = R.styleable.Axis_titleStyle,
+                    styleableResourceId = R.styleable.LabelStyle,
+                ).getTextComponent(context = context)
+            } else null
+            title = axisStyle.getString(R.styleable.Axis_title)
 
             if (this is VerticalAxis.Builder<*>) {
                 horizontalLabelPosition = axisStyle

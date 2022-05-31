@@ -75,6 +75,9 @@
             <enum name="bottom" value="2" />
         </attr>
         <attr name="labelRotationDegrees" format="float" />
+        <attr name="titleStyle" format="reference" />
+        <attr name="title" format="string|reference" />
+        <attr name="showTitle" format="boolean|reference" />
     </declare-styleable>
 
     <declare-styleable name="LineComponent">

@@ -28,7 +28,6 @@ import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.view.R
 import com.patrykandpatryk.vico.view.extension.defaultColors
 
-@Suppress("LongMethod")
 internal fun TypedArray.getColumnChart(
     context: Context,
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_columnChartStyle,
