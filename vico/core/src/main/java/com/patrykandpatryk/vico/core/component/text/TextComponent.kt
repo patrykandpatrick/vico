@@ -32,6 +32,7 @@ import com.patrykandpatryk.vico.core.component.dimension.Padding
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.getOrPutExtra
+import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 import com.patrykandpatryk.vico.core.draw.withCanvas
@@ -170,7 +171,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
                     HorizontalPosition.Start -> widthDelta.half
                     HorizontalPosition.End -> -widthDelta.half
                     else -> 0f
-                }
+                } * context.layoutDirectionMultiplier
+
                 yCorrection = when (verticalPosition) {
                     VerticalPosition.Top -> heightDelta.half
                     VerticalPosition.Bottom -> -heightDelta.half
