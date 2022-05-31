@@ -83,7 +83,7 @@ internal fun TypedArray.getColumnChart(
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.ColumnChartStyle_dataLabelStyle,
-                styleableResourceId = R.styleable.LabelStyle,
+                styleableResourceId = R.styleable.TextComponentStyle,
             ).getTextComponent(context = context)
         } else null,
         dataLabelVerticalPosition = getInteger(R.styleable.ColumnChartStyle_dataLabelVerticalPosition, 0).let { value ->
