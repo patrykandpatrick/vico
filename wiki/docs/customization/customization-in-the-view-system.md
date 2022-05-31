@@ -44,6 +44,9 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `verticalAxisHorizontalLabelPosition` | The horizontal position of the labels on this axis if it is vertical. | `outside` or `inside`. |
 | `verticalAxisVerticalLabelPosition` | The vertical position of the labels on this axis is if it vertical. | `top`, `center`, or `bottom`. |
 | `labelRotationDegrees` | The rotation of axis labels in degrees. | A floating-point number. |
+| `title` | The axis title. | A string or a reference. |
+| `showTitle` | Whether to display the axis title. | A boolean or a reference. |
+| `titleStyle` | The style of the axis title. | A [`LabelStyle`](#labelstyle) attribute set. |
 
 ### `ComponentStyle`
 
