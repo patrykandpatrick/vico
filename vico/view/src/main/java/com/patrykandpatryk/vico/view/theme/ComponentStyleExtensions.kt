@@ -176,7 +176,7 @@ internal fun TypedArray.getLineSpec(
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.LineSpec_dataLabelStyle,
-                styleableResourceId = R.styleable.LabelStyle,
+                styleableResourceId = R.styleable.TextComponentStyle,
             ).getTextComponent(context = context)
         } else null,
         dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->

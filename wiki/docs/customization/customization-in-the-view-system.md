@@ -38,12 +38,15 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `axisLineStyle` | The style of the axis line. | A [`LineComponentStyle`](#linecomponentstyle) attribute set. |
 | `axisGuidelineStyle` | The style of axis guidelines. | A [`LineComponentStyle`](#linecomponentstyle) attribute set. |
 | `axisTickStyle` | The style of axis ticks. | A [`LineComponentStyle`](#linecomponentstyle) attribute set. |
-| `axisLabelStyle` | The style of axis labels. | A [`LabelStyle`](#labelstyle) attribute set. |
+| `axisLabelStyle` | The style of axis labels. | A [`TextComponentStyle`](#textcomponentstyle) attribute set. |
 | `axisTickLength` | The length of axis ticks. | A dimension. |
 | `axisLabelBackground` | The background for axis labels. | A color or a [`Shape`](#shape) attribute set. |
 | `verticalAxisHorizontalLabelPosition` | The horizontal position of the labels on this axis if it is vertical. | `outside` or `inside`. |
 | `verticalAxisVerticalLabelPosition` | The vertical position of the labels on this axis is if it vertical. | `top`, `center`, or `bottom`. |
 | `labelRotationDegrees` | The rotation of axis labels in degrees. | A floating-point number. |
+| `title` | The axis title. | A string or a reference. |
+| `showTitle` | Whether to display the axis title. | A boolean or a reference. |
+| `titleStyle` | The style of the axis title. | A [`TextComponentStyle`](#textcomponentstyle) attribute set. |
 
 ### `ComponentStyle`
 
@@ -66,11 +69,11 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `columnOuterSpacing` | The spacing between the columns contained in chart segments. | A dimension. |
 | `columnInnerSpacing` | The horizontal padding between the edges of chart segments and the columns they contain. | A dimension. |
 | `showDataLabels` | Whether to show data labels. | A boolean. |
-| `dataLabelStyle` | The style of data labels. | A [`LabelStyle`](#labelstyle) attribute set. |
+| `dataLabelStyle` | The style of data labels. | A [`TextComponentStyle`](#textcomponentstyle) attribute set. |
 | `dataLabelVerticalPosition` | The vertical position of each data label relative to the top edge of its respective column. | `top`, `center`, or `bottom`. |
 | `dataLabelRotationDegrees` | The rotation of data labels in degrees. | A floating-point number. |
 
-### `LabelStyle`
+### `TextComponentStyle`
 
 | Attribute | Description | Type |
 | --- | --- | --- |
@@ -115,7 +118,7 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `pointStyle` | The style of points. | A [`ComponentStyle`](#componentstyle) attribute set. |
 | `cubicStrength` | The strength of the cubic bezier curve between each key point on the line. | A fraction. |
 | `showDataLabels` | Whether to show data labels. | A boolean. |
-| `dataLabelStyle` | The style of data labels. | A [`LabelStyle`](#labelstyle) attribute set. |
+| `dataLabelStyle` | The style of data labels. | A [`TextComponentStyle`](#textcomponentstyle) attribute set. |
 | `dataLabelVerticalPosition` | The vertical position of each data label relative to its respective point on the line. | `top`, `center`, or `bottom`. |
 | `dataLabelRotationDegrees` | The rotation of data labels in degrees. | A floating-point number. |
 

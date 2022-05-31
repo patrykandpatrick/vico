@@ -94,6 +94,16 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
      */
     public var labelRotationDegrees: Float = 0f
 
+    /**
+     * An optional [TextComponent] to use as the axis title.
+     */
+    public var titleComponent: TextComponent? = null
+
+    /**
+     * The axis title.
+     */
+    public var title: CharSequence? = null
+
     override fun setRestrictedBounds(vararg bounds: RectF?) {
         restrictedBounds.setAll(bounds.filterNotNull())
     }
@@ -146,6 +156,16 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
          * The [SizeConstraint] used by [Axis] subclasses to lay themselves out.
          */
         public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
+
+        /**
+         * An optional [TextComponent] to use as the axis title.
+         */
+        public var titleComponent: TextComponent? = builder?.titleComponent
+
+        /**
+         * The axis title.
+         */
+        public var title: CharSequence? = builder?.title
 
         /**
          * The rotation of axis labels in degrees.
@@ -226,6 +246,8 @@ public fun <Position : AxisPosition, A : Axis<Position>> Axis.Builder<Position>.
     axis.tickLengthDp = tickLengthDp
     axis.valueFormatter = valueFormatter
     axis.sizeConstraint = sizeConstraint
+    axis.titleComponent = titleComponent
+    axis.title = title
     axis.labelRotationDegrees = labelRotationDegrees
     return axis
 }

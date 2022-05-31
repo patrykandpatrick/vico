@@ -28,7 +28,6 @@ import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.view.R
 import com.patrykandpatryk.vico.view.extension.defaultColors
 
-@Suppress("LongMethod")
 internal fun TypedArray.getColumnChart(
     context: Context,
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_columnChartStyle,
@@ -84,7 +83,7 @@ internal fun TypedArray.getColumnChart(
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.ColumnChartStyle_dataLabelStyle,
-                styleableResourceId = R.styleable.LabelStyle,
+                styleableResourceId = R.styleable.TextComponentStyle,
             ).getTextComponent(context = context)
         } else null,
         dataLabelVerticalPosition = getInteger(R.styleable.ColumnChartStyle_dataLabelVerticalPosition, 0).let { value ->

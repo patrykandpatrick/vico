@@ -75,6 +75,9 @@
             <enum name="bottom" value="2" />
         </attr>
         <attr name="labelRotationDegrees" format="float" />
+        <attr name="titleStyle" format="reference" />
+        <attr name="title" format="string|reference" />
+        <attr name="showTitle" format="boolean|reference" />
     </declare-styleable>
 
     <declare-styleable name="LineComponent">
@@ -83,6 +86,26 @@
         <attr name="shapeStyle" />
         <attr name="strokeColor" />
         <attr name="strokeWidth" />
+    </declare-styleable>
+
+    <declare-styleable name="TextComponentStyle">
+        <attr name="labelColor" format="color" />
+        <attr name="backgroundStyle" format="reference" />
+        <attr name="android:padding" />
+        <attr name="android:paddingStart" />
+        <attr name="android:paddingTop" />
+        <attr name="android:paddingEnd" />
+        <attr name="android:paddingBottom" />
+        <attr name="android:paddingVertical" />
+        <attr name="android:paddingHorizontal" />
+        <attr name="android:fontFamily" />
+        <attr name="fontFamily" />
+        <attr name="android:textFontWeight" />
+        <attr name="android:fontStyle" />
+        <attr name="fontStyle" />
+        <attr name="android:textSize" />
+        <attr name="android:maxLines" />
+        <attr name="android:ellipsize" />
     </declare-styleable>
 
     <declare-styleable name="Shape">

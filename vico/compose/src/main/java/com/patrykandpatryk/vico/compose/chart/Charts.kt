@@ -138,7 +138,6 @@ public fun <Model : ChartEntryModel> Chart(
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
  */
-@Suppress("LongMethod")
 @Composable
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
