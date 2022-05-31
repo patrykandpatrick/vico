@@ -14,7 +14,7 @@ You can customize the appearance of charts axes, including the style of the line
 
 - In Jetpack Compose, each of the four `*axis` composable functions has parameters that allow for customization.
 
-- In the view system, axes can be customized via [XML attributes](../../customization/customization-in-the-view-system) or programmatically. For an example of programmatic customization, see [`ViewStackedChart`](https://github.com/patrykandpatryk/vico/blob/master/sample/src/main/java/com/patrykandpatryk/vico/sample/chart/StackedColumnChart.kt#L57) in the sample app.
+- In the view system, axes can be customized via [XML attributes](../../customization/customization-in-the-view-system) or programmatically. For an example of programmatic customization, see [`ViewStackedColumnChart`](https://github.com/patrykandpatryk/vico/blob/master/sample/src/main/java/com/patrykandpatryk/vico/sample/chart/StackedColumnChart.kt#L57) in the sample app.
 
 To create entirely custom axes, you can write your own [`VerticalAxis`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.vertical/-vertical-axis/) and [`HorizontalAxis`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.horizontal/-horizontal-axis/) implementations.
 
