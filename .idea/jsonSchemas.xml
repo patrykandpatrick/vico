@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+    <component name="JsonSchemaMappingsProjectConfiguration">
+        <state>
+            <map>
+                <entry key="detekt">
+                    <value>
+                        <SchemaInfo>
+                            <option name="name" value="detekt" />
+                            <option name="relativePathToSchema"
+                                value="https://json.schemastore.org/detekt" />
+                            <option name="patterns">
+                                <list>
+                                    <Item>
+                                        <option name="path" value=".idea/detekt-config.yml" />
+                                    </Item>
+                                </list>
+                            </option>
+                        </SchemaInfo>
+                    </value>
+                </entry>
+            </map>
+        </state>
+    </component>
+</project>
