@@ -60,6 +60,7 @@ tasks.register("detektFix", Detekt) {
     autoCorrect = true
     buildUponDefaultConfig = true
     source = files("sample", "vico/core", "vico/compose", "vico/view", "vico/compose-m3", "vico/compose-m2")
+    config.setFrom(files(".idea/detekt-config.yml"))
 }
 
 allprojects {
