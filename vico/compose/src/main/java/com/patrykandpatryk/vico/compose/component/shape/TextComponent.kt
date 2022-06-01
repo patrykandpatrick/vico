@@ -32,6 +32,7 @@ import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 
 /**
  * Creates a [TextComponent].
+ *
  * @param color the text color.
  * @param textSize the text size.
  * @param background an optional [ShapeComponent] to display behind the text.

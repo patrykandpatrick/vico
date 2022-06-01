@@ -29,6 +29,7 @@ import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 
 /**
  * Creates a [LineComponent].
+ *
  * @param color the background color.
  * @param thickness the thickness of the line.
  * @param shape the [Shape] to use for the line.
@@ -57,6 +58,7 @@ public fun lineComponent(
 
 /**
  * Creates a [LineComponent].
+ *
  * @param color the background color.
  * @param thickness the thickness of the line.
  * @param shape the [Shape] to use for the line.

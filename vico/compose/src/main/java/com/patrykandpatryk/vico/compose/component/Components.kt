@@ -138,6 +138,7 @@ public fun shapeComponent(
 
 /**
  * Creates an [OverlayingComponent].
+ *
  * @param outer the outer (background) [Component].
  * @param inner the inner (foreground) [Component].
  * @param innerPaddingAll the padding between the inner and outer components.
@@ -154,6 +155,7 @@ public fun overlayingComponent(
 
 /**
  * Creates an [OverlayingComponent].
+ *
  * @param outer the outer (background) [Component].
  * @param inner the inner (foreground) [Component].
  * @property innerPaddingStart the start padding between the inner and outer components.

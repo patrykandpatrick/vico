@@ -201,6 +201,7 @@ public fun axisTickComponent(
 
 /**
  * Creates an axis guideline.
+ *
  * @param color the background color.
  * @param thickness the line thickness.
  * @param shape the [ChartShape] to use for the guideline.

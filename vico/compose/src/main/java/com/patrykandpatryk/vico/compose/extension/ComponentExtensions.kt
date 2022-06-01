@@ -35,6 +35,7 @@ public var MarkerComponent.indicatorSize: Dp
 
 /**
  * Applies a drop shadow to this [ShapeComponent].
+ *
  * @param radius the blur radius.
  * @param dx the horizontal offset.
  * @param dy the vertical offset.

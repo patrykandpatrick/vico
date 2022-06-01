@@ -238,6 +238,7 @@ public fun Shapes.markerCorneredShape(
 
 /**
  * Creates a [DashedShape].
+ *
  * @param shape the base [Shape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
@@ -257,6 +258,7 @@ public fun Shapes.dashedShape(
 
 /**
  * Creates a [DashedShape].
+ *
  * @param shape the base [ChartShape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.

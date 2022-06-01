@@ -49,6 +49,7 @@ import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 
 /**
  * Defines the appearance of charts.
+ *
  * @property axis the appearance of chart axes.
  * @property columnChart the appearance of column charts.
  * @property lineChart the appearance of line charts.
@@ -64,6 +65,7 @@ public data class ChartStyle(
 ) {
     /**
      * Defines the appearance of chart axes.
+     *
      * @property axisLabelBackground an optional [ShapeComponent] to display behind the text of axis labels.
      * @property axisLabelColor the text color for axis labels.
      * @property axisLabelTextSize the text size for axis labels.
@@ -118,6 +120,7 @@ public data class ChartStyle(
 
     /**
      * Defines the appearance of column charts.
+     *
      * @property columns the [LineComponent] instances to use for columns. This list is iterated through as many times
      * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
      * @property outsideSpacing the horizontal padding between the edges of chart segments and the columns they contain.
@@ -143,6 +146,7 @@ public data class ChartStyle(
 
     /**
      * Defines the appearance of line charts.
+     *
      * @param lines the [LineSpec]s to use for the lines. This list is iterated through as many times as there are
      * lines.
      * @property spacing the spacing between points.
@@ -154,6 +158,7 @@ public data class ChartStyle(
 
     /**
      * Defines the appearance of chart markers.
+     *
      * @property indicatorSize the size of indicators (these are the components shown at the top of columns and on lines
      * to highlight the value or values that a marker refers to).
      * @property horizontalPadding the horizontal padding for marker bubbles.

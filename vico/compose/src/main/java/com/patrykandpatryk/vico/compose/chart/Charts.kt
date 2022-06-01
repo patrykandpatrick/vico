@@ -191,7 +191,7 @@ public fun <Model : ChartEntryModel> Chart(
                 interactionSource = interactionSource,
             ),
     ) {
-        bounds.set(0, 0, size.width, size.height)
+        bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
         chart.updateChartValues(measureContext.chartValuesManager, model)
 

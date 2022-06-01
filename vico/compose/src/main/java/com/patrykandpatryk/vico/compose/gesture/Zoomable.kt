@@ -35,6 +35,7 @@ public typealias OnZoom = (centroid: Offset, zoomChange: Float) -> Unit
 
 /**
  * Handles the pinch-to-zoom gesture.
+ *
  * @param onZoom called when a pinch gesture is detected.
  * @param enabled whether zooming is enabled.
  */

@@ -35,6 +35,7 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
 
 /**
  * Creates a start axis.
+ *
  * @param label the [TextComponent] to use for labels.
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
@@ -82,6 +83,7 @@ public fun startAxis(
 
 /**
  * Creates an end axis.
+ *
  * @param label the [TextComponent] to use for labels.
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
