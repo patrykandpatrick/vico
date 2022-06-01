@@ -120,7 +120,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 textX = bounds.centerX(),
                 textY = if (position.isTop) bounds.top else bounds.bottom,
                 verticalPosition = if (position.isTop) VerticalPosition.Bottom else VerticalPosition.Top,
-                maxTextWidth = bounds.width().wholePixels,
+                maxTextWidth = bounds.width().toInt(),
                 text = title,
             )
         }
