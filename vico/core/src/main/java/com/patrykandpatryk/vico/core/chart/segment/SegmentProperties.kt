@@ -17,7 +17,7 @@
 package com.patrykandpatryk.vico.core.chart.segment
 
 /**
- * [SegmentProperties] holds information about the width of each individual segment on the x-axis.
+ * [SegmentProperties] holds information about the dimensions of a segment on an x-axis.
  */
 public interface SegmentProperties {
 
@@ -63,7 +63,7 @@ public interface SegmentProperties {
 /**
  * A convenience function that creates an anonymous implementation the [SegmentProperties].
  *
- * @param cellWidth the width of each individual cell (e.g. a column in a column chart or a point in a line chart).
+ * @param cellWidth the width of each individual cell (e.g., a column in a column chart or a point in a line chart).
  * @param marginWidth the sum of the cell width and margin width.
  */
 public fun SegmentProperties(cellWidth: Float, marginWidth: Float): SegmentProperties = object : SegmentProperties {
