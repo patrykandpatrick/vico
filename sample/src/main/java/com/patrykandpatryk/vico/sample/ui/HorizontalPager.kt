@@ -18,6 +18,7 @@ package com.patrykandpatryk.vico.sample.ui
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -38,7 +41,7 @@ internal fun HorizontalPager(
     state: SwipeableState<Int>,
     above: (@Composable () -> Unit)? = null,
     below: (@Composable () -> Unit)? = null,
-    getPage: @Composable (Int) -> Unit,
+    getPage: @Composable BoxScope.(Int) -> Unit,
 ) {
     val density = LocalDensity.current
     val indices = 0 until itemCount
@@ -54,7 +57,7 @@ internal fun HorizontalPager(
                     state = state,
                     anchors = anchors,
                     orientation = Orientation.Horizontal,
-                    reverseDirection = true,
+                    reverseDirection = LocalLayoutDirection.current == LayoutDirection.Ltr,
                 ),
         ) {
             above?.invoke()
