@@ -141,6 +141,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             text = text,
             fontScale = fontScale,
             width = (maxTextWidth - (padding.horizontalDp + margins.horizontalDp).wholePixels).coerceAtLeast(0),
+            rotationDegrees = rotationDegrees,
         )
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
