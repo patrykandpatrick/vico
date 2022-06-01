@@ -16,13 +16,13 @@
 
 package com.patrykandpatryk.vico.core.entry.diff
 
-import java.util.TreeMap
-import java.util.concurrent.locks.ReentrantLock
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.calculateStackedYRange
 import com.patrykandpatryk.vico.core.entry.entryOf
 import com.patrykandpatryk.vico.core.entry.yRange
 import com.patrykandpatryk.vico.core.extension.setAll
+import java.util.TreeMap
+import java.util.concurrent.locks.ReentrantLock
 
 /**
  * The default implementation of [DiffProcessor].

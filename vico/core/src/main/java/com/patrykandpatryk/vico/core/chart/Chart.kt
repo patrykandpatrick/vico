@@ -16,14 +16,14 @@
 
 package com.patrykandpatryk.vico.core.chart
 
-import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
-import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.marker.Marker
 
 /**

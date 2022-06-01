@@ -124,11 +124,11 @@ internal class ThemeHandler(
         return builder.apply {
             axis = axisStyle.getLineComponent(
                 resourceId = R.styleable.Axis_axisLineStyle,
-                styleableResourceId = R.styleable.LineComponent
+                styleableResourceId = R.styleable.LineComponent,
             )
             tick = axisStyle.getLineComponent(
                 resourceId = R.styleable.Axis_axisTickStyle,
-                styleableResourceId = R.styleable.LineComponent
+                styleableResourceId = R.styleable.LineComponent,
             )
             tickLengthDp = axisStyle.getRawDimension(
                 context = context,
@@ -147,7 +147,7 @@ internal class ThemeHandler(
             label = axisStyle.getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.Axis_axisLabelStyle,
-                styleableResourceId = R.styleable.TextComponentStyle
+                styleableResourceId = R.styleable.TextComponentStyle,
             ).getTextComponent(context = context)
             titleComponent = if (axisStyle.getBoolean(R.styleable.Axis_showTitle, false)) {
                 axisStyle.getNestedTypedArray(
@@ -190,7 +190,7 @@ internal class ThemeHandler(
         val columnChart: ColumnChart? = if (chartFlags.hasAnyFlagOf(COLUMN_CHART, STACKED_COLUMN_CHART)) {
             getColumnChart(
                 context,
-                mergeMode = if (chartFlags.hasFlag(STACKED_COLUMN_CHART)) MergeMode.Stack else MergeMode.Grouped
+                mergeMode = if (chartFlags.hasFlag(STACKED_COLUMN_CHART)) MergeMode.Stack else MergeMode.Grouped,
             )
         } else {
             null

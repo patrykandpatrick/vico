@@ -41,7 +41,7 @@ public fun horizontalGradient(
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float
+        bottom: Float,
     ): Shader =
         LinearGradient(
             left,
@@ -71,7 +71,7 @@ public fun verticalGradient(
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float
+        bottom: Float,
     ): Shader =
         LinearGradient(
             left,

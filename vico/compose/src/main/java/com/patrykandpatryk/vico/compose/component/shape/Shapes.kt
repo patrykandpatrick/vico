@@ -199,7 +199,7 @@ public fun Shapes.markerCorneredShape(
     topRight = topRight,
     bottomRight = bottomRight,
     bottomLeft = bottomLeft,
-    tickSizeDp = tickSizeDp.value
+    tickSizeDp = tickSizeDp.value,
 )
 
 /**
@@ -216,7 +216,7 @@ public fun Shapes.markerCorneredShape(
     topRight = all,
     bottomRight = all,
     bottomLeft = all,
-    tickSizeDp = tickSizeDp.value
+    tickSizeDp = tickSizeDp.value,
 )
 
 /**
@@ -233,7 +233,7 @@ public fun Shapes.markerCorneredShape(
     topRight = corneredShape.topRight,
     bottomRight = corneredShape.bottomRight,
     bottomLeft = corneredShape.bottomLeft,
-    tickSizeDp = tickSizeDp.value
+    tickSizeDp = tickSizeDp.value,
 )
 
 /**

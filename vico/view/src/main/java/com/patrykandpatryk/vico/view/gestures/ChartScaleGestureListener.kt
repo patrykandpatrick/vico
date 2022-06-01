@@ -21,7 +21,7 @@ import android.view.ScaleGestureDetector
 
 internal class ChartScaleGestureListener(
     private val getChartBounds: () -> RectF?,
-    private val onZoom: (focusX: Float, zoomChange: Float) -> Unit
+    private val onZoom: (focusX: Float, zoomChange: Float) -> Unit,
 ) : ScaleGestureDetector.OnScaleGestureListener {
 
     override fun onScale(detector: ScaleGestureDetector): Boolean {

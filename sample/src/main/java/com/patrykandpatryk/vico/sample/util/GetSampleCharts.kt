@@ -83,5 +83,5 @@ internal fun getSampleCharts(
             ComposeComplexComposedChart(composedChartEntryModelProducer = composedChartEntryModelProducer)
         },
         viewBased = { ViewComplexComposedChart(composedChartEntryModelProducer = composedChartEntryModelProducer) },
-    )
+    ),
 )

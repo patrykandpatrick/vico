@@ -77,7 +77,7 @@ internal fun getMarker(
             shape = pillShape,
             dashLengthDp = 8f,
             gapLengthDp = 4f,
-        )
+        ),
     )
 
     return object : MarkerComponent(

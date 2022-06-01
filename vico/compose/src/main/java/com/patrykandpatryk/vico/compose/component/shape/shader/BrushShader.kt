@@ -21,10 +21,10 @@ import android.graphics.Shader
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Paint
-import kotlin.math.abs
 import com.patrykandpatryk.vico.core.component.shape.shader.CacheableDynamicShader
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.context.DrawContext
+import kotlin.math.abs
 
 /**
  * Creates a [DynamicShader] out of [Brush].
@@ -46,7 +46,7 @@ public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
         brush.applyTo(
             size = Size(
                 abs(left - right),
-                abs(top - bottom)
+                abs(top - bottom),
             ),
             p = tempPaint,
             alpha = 1f,

@@ -64,7 +64,7 @@ public inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
  * indicating whether the element is the first or last element in the collection.
  */
 public inline fun <T> Iterable<T>.forEachIndexedExtended(
-    selector: (index: Int, isFirst: Boolean, isLast: Boolean, value: T) -> Unit
+    selector: (index: Int, isFirst: Boolean, isLast: Boolean, value: T) -> Unit,
 ) {
     var index = 0
     val iterator = iterator()

@@ -31,15 +31,15 @@ internal fun Int.overlayColor(overlayingColor: Int): Int {
     val alpha = compositeAlpha(fgAlpha, bgAlpha)
     val red = compositeComponent(
         Color.red(overlayingColor), fgAlpha,
-        Color.red(this), bgAlpha, alpha
+        Color.red(this), bgAlpha, alpha,
     )
     val green = compositeComponent(
         Color.green(overlayingColor), fgAlpha,
-        Color.green(this), bgAlpha, alpha
+        Color.green(this), bgAlpha, alpha,
     )
     val blue = compositeComponent(
         Color.blue(overlayingColor), fgAlpha,
-        Color.blue(this), bgAlpha, alpha
+        Color.blue(this), bgAlpha, alpha,
     )
     return Color.argb(alpha, red, green, blue)
 }

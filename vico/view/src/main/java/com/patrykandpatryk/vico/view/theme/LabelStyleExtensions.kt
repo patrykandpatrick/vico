@@ -37,7 +37,7 @@ import com.patrykandpatryk.vico.view.extension.defaultColors
 private const val FONT_WEIGHT_NORMAL = 500
 
 internal fun TypedArray.getTextComponent(
-    context: Context
+    context: Context,
 ): TextComponent = use {
     val color = getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.axisLabelColor.toInt())
     val background = getNestedTypedArray(

@@ -49,7 +49,7 @@ internal fun staticLayout(
                 startIndex,
                 endIndex,
                 paint,
-                width
+                width,
             ).setAlignment(align)
             .setLineSpacing(spacingAddition, spacingMultiplication)
             .setIncludePad(includePadding)

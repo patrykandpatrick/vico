@@ -16,8 +16,8 @@
 
 package com.patrykandpatryk.vico.core.entry.composed
 
-import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 
 /**
  * Combines two [ChartEntryModel] instances into a [ComposedChartEntryModelProducer].

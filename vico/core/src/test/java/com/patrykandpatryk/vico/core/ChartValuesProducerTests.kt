@@ -16,11 +16,11 @@
 
 package com.patrykandpatryk.vico.core
 
-import kotlin.test.assertEquals
-import org.junit.Test
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.core.entry.diff.DefaultDiffProcessor
 import com.patrykandpatryk.vico.core.entry.entriesOf
+import org.junit.Test
+import kotlin.test.assertEquals
 
 public class ChartValuesProducerTests {
 

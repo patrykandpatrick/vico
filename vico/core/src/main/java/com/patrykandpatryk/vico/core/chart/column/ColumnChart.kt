@@ -176,7 +176,7 @@ public open class ColumnChart(
                         bottom = columnBottom,
                         centerX = columnCenterX,
                         boundingBox = bounds,
-                        thicknessScale = chartScale
+                        thicknessScale = chartScale,
                     )
                 ) {
                     updateMarkerLocationMap(entry, columnTop, columnCenterX, column)

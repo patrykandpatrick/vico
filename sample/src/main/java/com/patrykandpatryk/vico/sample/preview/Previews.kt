@@ -38,11 +38,12 @@ import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.line.lineSpec
-import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatryk.vico.compose.component.shapeComponent
 import com.patrykandpatryk.vico.compose.component.shape.lineComponent
+import com.patrykandpatryk.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatryk.vico.compose.component.shape.textComponent
+import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.createVerticalAxis
@@ -52,7 +53,6 @@ import com.patrykandpatryk.vico.core.component.shape.Shapes.pillShape
 import com.patrykandpatryk.vico.core.component.shape.Shapes.rectShape
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatryk.vico.core.entry.entryModelOf
-import com.patrykandpatryk.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatryk.vico.sample.ui.VicoTheme
 
 private val chartModifier = Modifier.height(100.dp)
@@ -72,8 +72,8 @@ public fun ColumnChartCard(): Unit = VicoTheme {
                         thickness = 8.dp,
                         shape = RoundedCornerShape(4.dp),
                         dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
-                    )
-                )
+                    ),
+                ),
             ),
             startAxis = createVerticalAxis {
                 label = textComponent(
@@ -97,7 +97,7 @@ public fun ColumnChartCard(): Unit = VicoTheme {
                     1.dp.value,
                 )
             },
-            model = @Suppress("MagicNumber") (entryModelOf(1, 2, 3, 2))
+            model = @Suppress("MagicNumber") (entryModelOf(1, 2, 3, 2)),
         )
     }
 }
@@ -143,7 +143,7 @@ public fun LineChartCard(): Unit = VicoTheme {
                         shape = pillShape,
                         dashLengthDp = 2.dp.value,
                         gapLengthDp = 4.dp.value,
-                    )
+                    ),
                 )
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
             },
@@ -164,7 +164,7 @@ private fun SampleCard(
     Card(
         modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(8.dp),
-        elevation = 4.dp
+        elevation = 4.dp,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             chart()

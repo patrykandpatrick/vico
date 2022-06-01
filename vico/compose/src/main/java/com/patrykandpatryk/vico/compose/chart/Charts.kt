@@ -171,7 +171,7 @@ public fun <Model : ChartEntryModel> Chart(
     val setHorizontalScroll = rememberSetHorizontalScroll(
         scroll = horizontalScroll,
         touchPoint = markerTouchPoint,
-        interaction = interaction
+        interaction = interaction,
     )
 
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
@@ -218,7 +218,7 @@ public fun <Model : ChartEntryModel> Chart(
         legend?.draw(chartDrawContext)
         ifNotNull(
             t1 = marker,
-            t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
+            t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
         ) { marker, markerModel ->
             marker.draw(
                 context = chartDrawContext,

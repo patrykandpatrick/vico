@@ -57,8 +57,8 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
                     dynamicShader = it.dynamicShader,
                     margins = it.margins,
                 )
-            }
-        )
+            },
+        ),
     )
     CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
 }
@@ -99,7 +99,7 @@ public fun HorizontalAxisTextInside() {
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
                 guideline = null,
                 label = label,
-            )
+            ),
         )
     }
 }

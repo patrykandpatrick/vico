@@ -195,7 +195,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                     // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
                     is SizeConstraint.Auto -> Int.MAX_VALUE
                     else -> (bounds.width() - tickLength - axisThickness.half).toInt()
-                }
+                },
             )
         }
     }

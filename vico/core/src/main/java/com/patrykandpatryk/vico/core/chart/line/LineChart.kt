@@ -400,7 +400,7 @@ public open class LineChart(
             value = lines.maxOf {
                 if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp)
                 else it.lineThicknessDp
-            }.pixels
+            }.pixels,
         )
     }
 

@@ -20,11 +20,11 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
-import kotlin.math.abs
 import com.patrykandpatryk.vico.core.model.Point
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
 import com.patrykandpatryk.vico.view.extension.fling
 import com.patrykandpatryk.vico.view.extension.point
+import kotlin.math.abs
 
 /**
  * Handles motion events.

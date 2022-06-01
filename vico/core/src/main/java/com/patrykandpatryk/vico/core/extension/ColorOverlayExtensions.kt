@@ -52,5 +52,5 @@ public fun DrawContext.applyElevationOverlayToColor(color: Int, elevationDp: Flo
         getElevationOverlayColorWithCorrectAlpha(
             elevationOverlayColor = elevationOverlayColor,
             elevationDp = elevationDp,
-        )
+        ),
     )

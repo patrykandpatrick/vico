@@ -16,15 +16,15 @@
 
 package com.patrykandpatryk.vico.core.entry.composed
 
-import java.util.SortedMap
-import java.util.TreeMap
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 import com.patrykandpatryk.vico.core.DEF_THREAD_POOL_SIZE
 import com.patrykandpatryk.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
+import java.util.SortedMap
+import java.util.TreeMap
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 /**
  * A subclass of [ChartModelProducer] that generates [ComposedChartEntryModel] instances.

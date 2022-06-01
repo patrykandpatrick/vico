@@ -91,7 +91,7 @@ public open class VerticalLegend(
                 textY = centerY,
                 horizontalPosition = HorizontalPosition.End,
                 maxTextWidth = (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
-                    .toInt()
+                    .toInt(),
             )
 
             currentTop += height + spacingDp.pixels

@@ -70,7 +70,7 @@ internal fun OverScroller.fling(
 ) {
     fling(
         startX, startY, velocityX, velocityY, Int.MIN_VALUE, Int.MAX_VALUE, Int.MIN_VALUE,
-        Int.MAX_VALUE
+        Int.MAX_VALUE,
     )
 }
 

@@ -60,12 +60,12 @@ internal fun TypedArray.getShape(
     val dashLength = getRawDimension(
         context = context,
         index = R.styleable.Shape_dashLength,
-        defaultValue = 0f
+        defaultValue = 0f,
     )
     val dashGapLength = getRawDimension(
         context = context,
         index = R.styleable.Shape_dashGapLength,
-        defaultValue = 0f
+        defaultValue = 0f,
     )
 
     return if (dashLength == 0f) {
@@ -83,14 +83,14 @@ private fun TypedArray.getCorner(
     context: Context,
     @StyleableRes sizeIndex: Int,
     @StyleableRes treatmentIndex: Int,
-    handleNullSizeIndex: Boolean = true
+    handleNullSizeIndex: Boolean = true,
 ): Corner = when {
     !hasValue(sizeIndex) && handleNullSizeIndex -> {
         getCorner(
             context = context,
             sizeIndex = R.styleable.Shape_cornerSize,
             treatmentIndex = treatmentIndex,
-            handleNullSizeIndex = false
+            handleNullSizeIndex = false,
         )
     }
     isFraction(sizeIndex) -> {
@@ -101,7 +101,7 @@ private fun TypedArray.getCorner(
                 SharpCornerTreatment
             } else {
                 getCornerTreatment(treatmentIndex)
-            }
+            },
         )
     }
     else -> {
@@ -119,7 +119,7 @@ private fun TypedArray.getCorner(
 
 private fun TypedArray.getCornerTreatment(
     @StyleableRes index: Int,
-    defaultValue: Int = -1
+    defaultValue: Int = -1,
 ): CornerTreatment =
     when (getInt(index, defaultValue)) {
         -1 -> getCornerTreatment(R.styleable.Shape_cornerTreatment, defaultValue = 0)

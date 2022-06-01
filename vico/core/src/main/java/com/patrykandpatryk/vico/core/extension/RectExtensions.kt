@@ -28,7 +28,7 @@ public fun RectF.updateBounds(
     left: Float = this.left,
     top: Float = this.top,
     right: Float = this.right,
-    bottom: Float = this.bottom
+    bottom: Float = this.bottom,
 ) {
     set(left, top, right, bottom)
 }
@@ -40,13 +40,13 @@ public fun RectF.updateBy(
     left: Float = 0f,
     top: Float = 0f,
     right: Float = 0f,
-    bottom: Float = 0f
+    bottom: Float = 0f,
 ) {
     set(
         left = this.left + left,
         top = this.top + top,
         right = this.right + right,
-        bottom = this.bottom + bottom
+        bottom = this.bottom + bottom,
     )
 }
 
@@ -57,7 +57,7 @@ public fun RectF.set(
     left: Number,
     top: Number,
     right: Number,
-    bottom: Number
+    bottom: Number,
 ) {
     set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
 }

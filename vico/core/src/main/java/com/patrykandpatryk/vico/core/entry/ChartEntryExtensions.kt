@@ -16,9 +16,9 @@
 
 package com.patrykandpatryk.vico.core.entry
 
+import com.patrykandpatryk.vico.core.extension.rangeOfOrNull
 import kotlin.math.abs
 import kotlin.math.min
-import com.patrykandpatryk.vico.core.extension.rangeOfOrNull
 
 /**
  * Conveniently creates an instance of [FloatEntry].

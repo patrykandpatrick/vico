@@ -20,10 +20,10 @@ import android.graphics.RectF
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK
-import kotlin.math.sqrt
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
+import kotlin.math.sqrt
 
 public class RectFExtensionsTest {
 

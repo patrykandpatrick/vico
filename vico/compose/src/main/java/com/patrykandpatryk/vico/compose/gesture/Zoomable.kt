@@ -57,5 +57,5 @@ public fun Modifier.zoomable(
     inspectorInfo = debugInspectorInfo {
         name = "zoomable"
         properties["enabled"] = enabled
-    }
+    },
 )

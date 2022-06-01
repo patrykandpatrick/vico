@@ -157,7 +157,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         with(outInsets) {
             setHorizontal(
                 if (tickType == TickType.Minor) tickThickness.half
-                else 0f
+                else 0f,
             )
             top = if (position.isTop) getDesiredHeight(context) else 0f
             bottom = if (position.isBottom) getDesiredHeight(context) else 0f

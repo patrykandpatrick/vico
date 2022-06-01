@@ -31,23 +31,24 @@ import androidx.core.animation.doOnEnd
 import androidx.core.animation.doOnStart
 import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import kotlin.properties.Delegates.observable
 import com.patrykandpatryk.vico.core.Animation
-import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatryk.vico.core.DEF_MIN_ZOOM
+import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
 import com.patrykandpatryk.vico.core.extension.ifNotNull
 import com.patrykandpatryk.vico.core.extension.set
 import com.patrykandpatryk.vico.core.layout.VirtualLayout
+import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.model.Point
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
@@ -61,9 +62,8 @@ import com.patrykandpatryk.vico.view.extension.specSize
 import com.patrykandpatryk.vico.view.extension.verticalPadding
 import com.patrykandpatryk.vico.view.gestures.ChartScaleGestureListener
 import com.patrykandpatryk.vico.view.gestures.MotionEventHandler
-import com.patrykandpatryk.vico.core.context.MutableMeasureContext
-import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.view.theme.ThemeHandler
+import kotlin.properties.Delegates.observable
 
 /**
  * The base for [View]s that display a chart. Subclasses define a [Model] implementation they can handle.
@@ -90,7 +90,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         scrollHandler = scrollHandler,
         density = resources.displayMetrics.density,
         onTouchPoint = ::handleTouchEvent,
-        requestInvalidate = ::invalidate
+        requestInvalidate = ::invalidate,
     )
 
     private val measureContext = MutableMeasureContext(
@@ -307,7 +307,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             MeasureSpec.UNSPECIFIED -> DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
             MeasureSpec.AT_MOST -> minOf(
                 DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding,
-                heightMeasureSpec.specSize
+                heightMeasureSpec.specSize,
             )
             else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
         }
@@ -317,7 +317,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             paddingLeft,
             paddingTop,
             width - paddingRight,
-            height - paddingBottom
+            height - paddingBottom,
         )
     }
 
@@ -328,7 +328,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             contentBounds = contentBounds,
             chart = chart,
             legend = legend,
-            marker
+            marker,
         )
     }
 

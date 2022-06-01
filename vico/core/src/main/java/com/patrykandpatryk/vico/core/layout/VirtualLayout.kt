@@ -24,8 +24,8 @@ import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
-import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.extension.orZero
+import com.patrykandpatryk.vico.core.legend.Legend
 
 /**
  * [VirtualLayout] measures and lays out the chart, the axis, and other components (such as markers).

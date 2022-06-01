@@ -124,7 +124,7 @@ public data class ThresholdLine(
             left = bounds.left,
             right = bounds.right,
             top = topY,
-            bottom = bottomY
+            bottom = bottomY,
         )
         labelComponent.drawText(
             context = context,

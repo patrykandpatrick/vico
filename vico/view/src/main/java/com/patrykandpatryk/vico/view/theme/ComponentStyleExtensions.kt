@@ -118,7 +118,7 @@ internal fun TypedArray.getComponent(
                 context = context,
                 index = R.styleable.ComponentStyle_overlayingComponentPadding,
                 defaultValue = 0f,
-            )
+            ),
         )
     } else {
         baseComponent

@@ -16,9 +16,9 @@
 
 package com.patrykandpatryk.vico.core.entry
 
-import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
+import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
 
 /**
