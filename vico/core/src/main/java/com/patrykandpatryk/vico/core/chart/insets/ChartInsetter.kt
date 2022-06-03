@@ -16,7 +16,6 @@
 
 package com.patrykandpatryk.vico.core.chart.insets
 
-import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 
 /**
@@ -32,11 +31,11 @@ public interface ChartInsetter {
      * The [com.patrykandpatryk.vico.core.layout.VirtualLayout] will use the highest inset values returned by any
      * [ChartInsetter] for the resulting insets.
      *
-     * @param context the [ChartDrawContext] that holds the data used for component drawing.
+     * @param context the [MeasureContext] that holds the data used for the measurement of components.
      * @param outInsets the mutable class used to store the [ChartInsetter] subclass’s desired insets.
      */
     public fun getInsets(
-        context: ChartDrawContext,
+        context: MeasureContext,
         outInsets: Insets,
     ): Unit = Unit
 

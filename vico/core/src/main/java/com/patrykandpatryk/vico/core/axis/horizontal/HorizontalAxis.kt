@@ -151,7 +151,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun getInsets(
-        context: ChartDrawContext,
+        context: MeasureContext,
         outInsets: Insets,
     ): Unit = with(context) {
         with(outInsets) {
@@ -164,8 +164,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    private fun getDesiredHeight(context: ChartDrawContext): Float = with(context) {
-        val labelWidth by lazy { segmentProperties.segmentWidth.toInt() }
+    private fun getDesiredHeight(context: MeasureContext): Float = with(context) {
+        val labelWidth = Int.MAX_VALUE // FIXME
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
                 val labelHeight = label?.let { label ->

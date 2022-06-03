@@ -20,9 +20,9 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.chart.Chart
-import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.legend.Legend
@@ -45,7 +45,7 @@ public open class VirtualLayout(
     /**
      * Measures and sets the bounds for the chart, the axes, and other components.
      *
-     * @param context the [ChartDrawContext] that holds the data used for component drawing.
+     * @param context the [MeasureContext] that holds the data used for the measurement of components.
      * @param contentBounds the bounds in which the chart contents must be drawn.
      * @param chart the actual chart.
      * @param legend the legend for the chart.
@@ -53,7 +53,7 @@ public open class VirtualLayout(
      */
     @LongParameterListDrawFunction
     public open fun <Model : ChartEntryModel> setBounds(
-        context: ChartDrawContext,
+        context: MeasureContext,
         contentBounds: RectF,
         chart: Chart<Model>,
         legend: Legend?,
@@ -90,7 +90,7 @@ public open class VirtualLayout(
             bottom = contentBounds.bottom - finalInsets.bottom - legendHeight,
         )
 
-        axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)
+        axisManager.setAxesBounds(context, contentBounds, finalInsets)
 
         legend?.setBounds(
             left = contentBounds.left,

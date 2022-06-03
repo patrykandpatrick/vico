@@ -22,6 +22,7 @@ import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.dimension.Padding
 import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 import com.patrykandpatryk.vico.core.extension.half
@@ -47,7 +48,7 @@ public open class VerticalLegend(
 
     override val bounds: RectF = RectF()
 
-    override fun getHeight(context: ChartDrawContext, availableWidth: Float): Float = with(context) {
+    override fun getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
         items.fold(0f) { sum, item ->
             sum + maxOf(
                 iconSizeDp.pixels,
@@ -99,7 +100,7 @@ public open class VerticalLegend(
     }
 
     protected open fun Item.getHeight(
-        context: ChartDrawContext,
+        context: MeasureContext,
         availableWidth: Float,
     ): Float = with(context) {
         label.getHeight(

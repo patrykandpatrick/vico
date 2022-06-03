@@ -113,7 +113,7 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     override fun getInsets(
-        context: ChartDrawContext,
+        context: MeasureContext,
         outInsets: Insets,
     ) {
         charts.forEach { chart ->

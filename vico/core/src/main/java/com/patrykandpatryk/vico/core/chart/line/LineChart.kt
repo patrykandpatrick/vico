@@ -393,7 +393,7 @@ public open class LineChart(
     }
 
     override fun getInsets(
-        context: ChartDrawContext,
+        context: MeasureContext,
         outInsets: Insets,
     ): Unit = with(context) {
         outInsets.setVertical(

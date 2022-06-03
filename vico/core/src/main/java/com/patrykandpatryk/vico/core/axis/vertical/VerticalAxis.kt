@@ -265,7 +265,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     override fun getInsets(
-        context: ChartDrawContext,
+        context: MeasureContext,
         outInsets: Insets,
     ): Unit = with(context) {
         val labelHeight = label?.getHeight(context = context).orZero

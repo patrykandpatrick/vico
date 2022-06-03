@@ -95,13 +95,11 @@ public open class AxisManager {
     public fun setAxesBounds(
         measureContext: MeasureContext,
         contentBounds: RectF,
-        chartBounds: RectF,
         insets: Insets,
     ) {
         startAxis?.setStartAxisBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            chartBounds = chartBounds,
             insets = insets,
         )
 
@@ -114,14 +112,12 @@ public open class AxisManager {
         endAxis?.setEndAxisBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            chartBounds = chartBounds,
             insets = insets,
         )
 
         bottomAxis?.setBottomAxisBounds(
             context = measureContext,
             contentBounds = contentBounds,
-            chartBounds = chartBounds,
             insets = insets,
         )
 
@@ -131,15 +127,14 @@ public open class AxisManager {
     private fun AxisRenderer<AxisPosition.Vertical.Start>.setStartAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        chartBounds: RectF,
         insets: Insets,
     ) {
         with(context) {
             setBounds(
                 left = if (isLtr) contentBounds.left else contentBounds.right - insets.start,
-                top = chartBounds.top,
+                top = contentBounds.top + insets.top,
                 right = if (isLtr) contentBounds.left + insets.start else contentBounds.right,
-                bottom = chartBounds.bottom,
+                bottom = contentBounds.bottom - insets.bottom,
             )
         }
     }
@@ -162,15 +157,14 @@ public open class AxisManager {
     private fun AxisRenderer<AxisPosition.Vertical.End>.setEndAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        chartBounds: RectF,
         insets: Insets,
     ) {
         with(context) {
             setBounds(
                 left = if (isLtr) contentBounds.right - insets.end else contentBounds.left,
-                top = chartBounds.top,
+                top = contentBounds.top + insets.top,
                 right = if (isLtr) contentBounds.right else contentBounds.left + insets.end,
-                bottom = chartBounds.bottom,
+                bottom = contentBounds.bottom - insets.bottom,
             )
         }
     }
@@ -178,15 +172,14 @@ public open class AxisManager {
     private fun AxisRenderer<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        chartBounds: RectF,
         insets: Insets,
     ) {
         with(context) {
             setBounds(
                 left = contentBounds.left + if (isLtr) insets.start else insets.end,
-                top = chartBounds.bottom,
+                top = contentBounds.bottom - insets.bottom,
                 right = contentBounds.right - if (isLtr) insets.end else insets.start,
-                bottom = chartBounds.bottom + insets.bottom,
+                bottom = contentBounds.bottom,
             )
         }
     }
