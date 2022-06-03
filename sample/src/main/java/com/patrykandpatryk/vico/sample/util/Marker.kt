@@ -23,7 +23,6 @@ import androidx.annotation.ColorInt
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
-import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.component.OverlayingComponent
 import com.patrykandpatryk.vico.core.component.marker.MarkerComponent
@@ -34,6 +33,7 @@ import com.patrykandpatryk.vico.core.component.shape.Shapes.pillShape
 import com.patrykandpatryk.vico.core.component.shape.cornered.Corner
 import com.patrykandpatryk.vico.core.component.shape.cornered.MarkerCorneredShape
 import com.patrykandpatryk.vico.core.component.text.textComponent
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.core.marker.Marker
@@ -97,7 +97,7 @@ internal fun getMarker(
         }
 
         override fun getInsets(
-            context: ChartDrawContext,
+            context: MeasureContext,
             outInsets: Insets,
         ) = with(context) {
             outInsets.top = label.getHeight(context) + labelBackgroundShape.tickSizeDp.pixels +
