@@ -23,6 +23,7 @@ import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.dimensions.setBounds
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.legend.Legend
@@ -83,14 +84,15 @@ public open class VirtualLayout(
             finalInsets.setValuesIfGreater(tempInsets)
         }
 
-        chart.setBounds(
-            left = contentBounds.left + finalInsets.getLeft(isLtr),
-            top = contentBounds.top + finalInsets.top,
-            right = contentBounds.right - finalInsets.getRight(isLtr),
-            bottom = contentBounds.bottom - finalInsets.bottom - legendHeight,
-        )
+        val chartBounds = RectF().apply {
+            left = contentBounds.left + finalInsets.getLeft(isLtr)
+            top = contentBounds.top + finalInsets.top
+            right = contentBounds.right - finalInsets.getRight(isLtr)
+            bottom = contentBounds.bottom - finalInsets.bottom - legendHeight
+        }
 
-        axisManager.setAxesBounds(context, contentBounds, finalInsets)
+        chart.setBounds(bounds = chartBounds)
+        axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)
 
         legend?.setBounds(
             left = contentBounds.left,
