@@ -23,7 +23,6 @@ import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.context.MeasureContext
-import com.patrykandpatryk.vico.core.dimensions.setBounds
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.legend.Legend
@@ -91,7 +90,13 @@ public open class VirtualLayout(
             bottom = contentBounds.bottom - finalInsets.bottom - legendHeight
         }
 
-        chart.setBounds(bounds = chartBounds)
+        chart.setBounds(
+            left = chartBounds.left,
+            top = chartBounds.top,
+            right = chartBounds.right,
+            bottom = chartBounds.bottom,
+        )
+
         axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)
 
         legend?.setBounds(
