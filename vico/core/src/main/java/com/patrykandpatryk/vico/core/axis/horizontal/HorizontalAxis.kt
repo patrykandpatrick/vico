@@ -165,7 +165,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     private fun getDesiredHeight(context: MeasureContext): Float = with(context) {
-        val labelWidth = Int.MAX_VALUE // FIXME
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
                 val labelHeight = label?.let { label ->
@@ -173,7 +172,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                         label.getHeight(
                             context = this,
                             text = labelText,
-                            width = labelWidth,
                             rotationDegrees = labelRotationDegrees,
                         ).orZero
                     }
@@ -185,6 +183,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     )
                 }.orZero
                 (labelHeight + titleComponentHeight + (if (position.isBottom) axisThickness else 0f) + tickLength)
+                    .coerceAtMost(maximumValue = canvasBounds.height() / MAX_HEIGHT_DIVISOR)
                     .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
             }
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
@@ -192,7 +191,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             is SizeConstraint.TextWidth -> label?.getHeight(
                 context = this,
                 text = constraint.text,
-                width = labelWidth,
                 rotationDegrees = labelRotationDegrees,
             ).orZero
         }
@@ -260,6 +258,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 axis.tickType = tickType
             } as HorizontalAxis<T>
         }
+    }
+
+    internal companion object {
+        const val MAX_HEIGHT_DIVISOR = 3f
     }
 }
 
