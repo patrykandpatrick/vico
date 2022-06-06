@@ -21,6 +21,7 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.setTo
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
@@ -151,21 +152,29 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun getInsets(
-        context: ChartDrawContext,
+        context: MeasureContext,
         outInsets: Insets,
+        segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         with(outInsets) {
             setHorizontal(
                 if (tickType == TickType.Minor) tickThickness.half
                 else 0f,
             )
-            top = if (position.isTop) getDesiredHeight(context) else 0f
-            bottom = if (position.isBottom) getDesiredHeight(context) else 0f
+            top = if (position.isTop) getDesiredHeight(context, segmentProperties) else 0f
+            bottom = if (position.isBottom) getDesiredHeight(context, segmentProperties) else 0f
         }
     }
 
-    private fun getDesiredHeight(context: ChartDrawContext): Float = with(context) {
-        val labelWidth by lazy { segmentProperties.segmentWidth.toInt() }
+    private fun getDesiredHeight(
+        context: MeasureContext,
+        segmentProperties: SegmentProperties,
+    ): Float = with(context) {
+
+        val labelWidth =
+            if (isHorizontalScrollEnabled) segmentProperties.scaled(scale = chartScale).segmentWidth.toInt()
+            else Int.MAX_VALUE
+
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
                 val labelHeight = label?.let { label ->
@@ -181,10 +190,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 val titleComponentHeight = title?.let { title ->
                     titleComponent?.getHeight(
                         context = context,
+                        width = labelWidth,
                         text = title,
                     )
                 }.orZero
                 (labelHeight + titleComponentHeight + (if (position.isBottom) axisThickness else 0f) + tickLength)
+                    .coerceAtMost(maximumValue = canvasBounds.height() / MAX_HEIGHT_DIVISOR)
                     .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
             }
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
@@ -260,6 +271,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 axis.tickType = tickType
             } as HorizontalAxis<T>
         }
+    }
+
+    internal companion object {
+        const val MAX_HEIGHT_DIVISOR = 3f
     }
 }
 

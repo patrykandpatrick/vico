@@ -192,24 +192,26 @@ public fun <Model : ChartEntryModel> Chart(
             ),
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
-
         chart.updateChartValues(measureContext.chartValuesManager, model)
+
+        val segmentProperties = chart.getSegmentProperties(measureContext, model)
+
+        virtualLayout.setBounds(
+            context = measureContext,
+            contentBounds = bounds,
+            chart = chart,
+            legend = legend,
+            segmentProperties = segmentProperties,
+            marker,
+        )
 
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint.value,
-            segmentProperties = chart.getSegmentProperties(measureContext, model),
+            segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
-        )
-
-        virtualLayout.setBounds(
-            context = chartDrawContext,
-            contentBounds = bounds,
-            chart = chart,
-            legend = legend,
-            marker,
         )
 
         axisManager.drawBehindChart(chartDrawContext)

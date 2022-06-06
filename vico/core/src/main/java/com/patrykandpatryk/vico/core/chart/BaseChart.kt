@@ -79,7 +79,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     ): Unit = with(context) {
 
         insets.clear()
-        getInsets(this, insets)
+        getInsets(this, insets, segmentProperties)
 
         drawChartInternal(context, model)
 
