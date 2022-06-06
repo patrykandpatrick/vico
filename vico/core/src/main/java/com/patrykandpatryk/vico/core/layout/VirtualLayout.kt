@@ -50,6 +50,7 @@ public open class VirtualLayout(
      * @param contentBounds the bounds in which the chart contents must be drawn.
      * @param chart the actual chart.
      * @param legend the legend for the chart.
+     * @param segmentProperties the [SegmentProperties] of the chart.
      * @param chartInsetter additional components that influence the chart layout, such as markers.
      */
     @LongParameterListDrawFunction

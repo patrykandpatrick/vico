@@ -34,6 +34,7 @@ public interface ChartInsetter {
      *
      * @param context the [MeasureContext] that holds the data used for the measurement of components.
      * @param outInsets the mutable class used to store the [ChartInsetter] subclass’s desired insets.
+     * @param segmentProperties the [SegmentProperties] of the chart.
      */
     public fun getInsets(
         context: MeasureContext,
