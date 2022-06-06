@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.core.chart.insets
 
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.MeasureContext
 
 /**
@@ -37,6 +38,7 @@ public interface ChartInsetter {
     public fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
+        segmentProperties: SegmentProperties,
     ): Unit = Unit
 
     /**

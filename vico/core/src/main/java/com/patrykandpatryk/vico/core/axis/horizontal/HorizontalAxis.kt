@@ -21,6 +21,7 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.setTo
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
@@ -153,18 +154,27 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
+        segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         with(outInsets) {
             setHorizontal(
                 if (tickType == TickType.Minor) tickThickness.half
                 else 0f,
             )
-            top = if (position.isTop) getDesiredHeight(context) else 0f
-            bottom = if (position.isBottom) getDesiredHeight(context) else 0f
+            top = if (position.isTop) getDesiredHeight(context, segmentProperties) else 0f
+            bottom = if (position.isBottom) getDesiredHeight(context, segmentProperties) else 0f
         }
     }
 
-    private fun getDesiredHeight(context: MeasureContext): Float = with(context) {
+    private fun getDesiredHeight(
+        context: MeasureContext,
+        segmentProperties: SegmentProperties,
+    ): Float = with(context) {
+
+        val labelWidth =
+            if (isHorizontalScrollEnabled) segmentProperties.scaled(scale = chartScale).segmentWidth.toInt()
+            else Int.MAX_VALUE
+
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
                 val labelHeight = label?.let { label ->
@@ -172,6 +182,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                         label.getHeight(
                             context = this,
                             text = labelText,
+                            width = labelWidth,
                             rotationDegrees = labelRotationDegrees,
                         ).orZero
                     }
@@ -179,6 +190,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 val titleComponentHeight = title?.let { title ->
                     titleComponent?.getHeight(
                         context = context,
+                        width = labelWidth,
                         text = title,
                     )
                 }.orZero
@@ -191,6 +203,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             is SizeConstraint.TextWidth -> label?.getHeight(
                 context = this,
                 text = constraint.text,
+                width = labelWidth,
                 rotationDegrees = labelRotationDegrees,
             ).orZero
         }

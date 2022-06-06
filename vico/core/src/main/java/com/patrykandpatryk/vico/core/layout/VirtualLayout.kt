@@ -22,6 +22,7 @@ import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.orZero
@@ -57,6 +58,7 @@ public open class VirtualLayout(
         contentBounds: RectF,
         chart: Chart<Model>,
         legend: Legend?,
+        segmentProperties: SegmentProperties,
         vararg chartInsetter: ChartInsetter?,
     ): Unit = with(context) {
 
@@ -72,7 +74,7 @@ public open class VirtualLayout(
         tempInsetters.add(chart)
 
         tempInsetters.forEach { insetter ->
-            insetter.getInsets(context, tempInsets)
+            insetter.getInsets(context, tempInsets, segmentProperties)
             finalInsets.setValuesIfGreater(tempInsets)
         }
 

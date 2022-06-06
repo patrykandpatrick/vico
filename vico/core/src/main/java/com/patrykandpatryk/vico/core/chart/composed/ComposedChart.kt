@@ -115,9 +115,10 @@ public class ComposedChart<Model : ChartEntryModel>(
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
+        segmentProperties: SegmentProperties,
     ) {
         charts.forEach { chart ->
-            chart.getInsets(context, tempInsets)
+            chart.getInsets(context, tempInsets, segmentProperties)
             outInsets.setValuesIfGreater(tempInsets)
         }
     }

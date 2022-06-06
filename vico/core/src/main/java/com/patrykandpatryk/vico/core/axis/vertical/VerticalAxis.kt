@@ -27,6 +27,7 @@ import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis.VerticalLabelPos
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
@@ -267,6 +268,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
+        segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         val labelHeight = label?.getHeight(context = context).orZero
         val lineThickness = maxOf(axisThickness, tickThickness)

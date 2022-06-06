@@ -24,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.toArgb
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.component.OverlayingComponent
 import com.patrykandpatryk.vico.core.component.marker.MarkerComponent
 import com.patrykandpatryk.vico.core.component.shape.DashedShape
@@ -99,6 +100,7 @@ internal fun getMarker(
         override fun getInsets(
             context: MeasureContext,
             outInsets: Insets,
+            segmentProperties: SegmentProperties,
         ) = with(context) {
             outInsets.top = label.getHeight(context) + labelBackgroundShape.tickSizeDp.pixels +
                 SHADOW_RADIUS.pixels * SHADOW_RADIUS_TO_PX_MULTIPLIER - SHADOW_DY.pixels

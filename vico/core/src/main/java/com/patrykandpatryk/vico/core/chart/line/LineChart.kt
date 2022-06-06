@@ -395,6 +395,7 @@ public open class LineChart(
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
+        segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         outInsets.setVertical(
             value = lines.maxOf {

@@ -40,6 +40,7 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
@@ -256,7 +257,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
-        updateBounds()
+        updateBounds(context = measureContext)
         motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
@@ -320,13 +321,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         )
     }
 
-    private fun updateBounds() = withChartAndModel { chart, _ ->
+    private fun updateBounds(context: MeasureContext) = withChartAndModel { chart, model ->
         measureContext.clearExtras()
         virtualLayout.setBounds(
             context = measureContext,
             contentBounds = contentBounds,
             chart = chart,
             legend = legend,
+            segmentProperties = chart.getSegmentProperties(context = context, model = model),
             marker,
         )
     }
