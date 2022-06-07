@@ -59,7 +59,7 @@ public fun Shapes.cutCornerShape(
     topLeft: Float = 0f,
     topRight: Float = 0f,
     bottomRight: Float = 0f,
-    bottomLeft: Float = 0f
+    bottomLeft: Float = 0f,
 ): CorneredShape = CorneredShape(
     Corner.Absolute(topLeft, CutCornerTreatment),
     Corner.Absolute(topRight, CutCornerTreatment),

@@ -118,7 +118,7 @@ internal fun TypedArray.getComponent(
                 context = context,
                 index = R.styleable.ComponentStyle_overlayingComponentPadding,
                 defaultValue = 0f,
-            )
+            ),
         )
     } else {
         baseComponent
@@ -176,12 +176,16 @@ internal fun TypedArray.getLineSpec(
             getNestedTypedArray(
                 context = context,
                 resourceId = R.styleable.LineSpec_dataLabelStyle,
-                styleableResourceId = R.styleable.LabelStyle,
+                styleableResourceId = R.styleable.TextComponentStyle,
             ).getTextComponent(context = context)
         } else null,
         dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->
             val values = VerticalPosition.values()
             values[value % values.size]
         },
+        dataLabelRotationDegrees = getFloat(
+            R.styleable.LineSpec_dataLabelRotationDegrees,
+            0f,
+        ),
     )
 }

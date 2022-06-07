@@ -49,7 +49,7 @@ private fun PreviewShape(shape: Shape) {
         modifier = Modifier
             .fillMaxSize()
             .background(color = Color.LightGray, shape = RoundedCornerShape(size = 4.dp))
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         shape.drawShape(
             context = drawContext(drawContext.canvas.nativeCanvas),
@@ -107,7 +107,7 @@ public fun DrawableShape() {
             drawable = getDrawable(id = R.drawable.ic_baseline_android_24),
             keepAspectRatio = true,
             otherShape = Shapes.pillShape,
-        )
+        ),
     )
 }
 
@@ -119,7 +119,7 @@ public fun DrawableShape2() {
             drawable = getDrawable(id = R.drawable.ic_baseline_android_24),
             keepAspectRatio = true,
             otherShape = Shapes.pillShape,
-        )
+        ),
     )
 }
 
@@ -136,8 +136,8 @@ public fun DashedCutCornerCustomShape() {
         shape = Shapes.dashedShape(
             shape = Shapes.cutCornerShape(topRightPercent = 50, bottomLeftPercent = 50),
             dashLength = 24.dp,
-            gapLength = 8.dp
-        )
+            gapLength = 8.dp,
+        ),
     )
 }
 

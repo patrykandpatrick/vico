@@ -17,8 +17,8 @@
 package com.patrykandpatryk.vico.core.component.marker
 
 import android.graphics.RectF
-import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
@@ -26,6 +26,7 @@ import com.patrykandpatryk.vico.core.component.shape.cornered.MarkerCorneredShap
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.context.DrawContext
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.extension.averageOf
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
@@ -138,8 +139,9 @@ public open class MarkerComponent(
     }
 
     override fun getInsets(
-        context: ChartDrawContext,
+        context: MeasureContext,
         outInsets: Insets,
+        segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
     }

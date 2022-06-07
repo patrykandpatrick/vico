@@ -18,6 +18,7 @@ package com.patrykandpatryk.vico.sample.chart
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -39,7 +40,6 @@ import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.databinding.GroupedColumnChartBinding
 import com.patrykandpatryk.vico.sample.extension.fromEntityColors
 import com.patrykandpatryk.vico.sample.util.marker
-import androidx.compose.runtime.remember
 
 @Composable
 internal fun ComposeGroupedColumnChart(

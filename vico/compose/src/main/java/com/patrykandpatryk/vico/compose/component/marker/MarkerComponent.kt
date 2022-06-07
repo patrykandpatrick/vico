@@ -24,6 +24,7 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
 
 /**
  * Creates a [MarkerComponent].
+ *
  * @param label the [TextComponent] to use for the label.
  * @param indicator the [Component] to use for the indicator.
  * @param guideline the [LineComponent] to use for the guideline.

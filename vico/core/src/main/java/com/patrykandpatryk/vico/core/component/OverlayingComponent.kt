@@ -16,8 +16,8 @@
 
 package com.patrykandpatryk.vico.core.component
 
-import com.patrykandpatryk.vico.core.debug.DebugHelper
 import com.patrykandpatryk.vico.core.context.DrawContext
+import com.patrykandpatryk.vico.core.debug.DebugHelper
 
 /**
  * A [Component] composed out of two [Component]s, with one drawn over the other.
@@ -64,7 +64,7 @@ public class OverlayingComponent(
         left: Float,
         top: Float,
         right: Float,
-        bottom: Float
+        bottom: Float,
     ): Unit = with(context) {
         val leftWithMargin = left + margins.startDp.pixels
         val topWithMargin = top + margins.topDp.pixels

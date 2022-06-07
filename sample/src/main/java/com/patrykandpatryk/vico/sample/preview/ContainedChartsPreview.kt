@@ -75,7 +75,7 @@ private fun getLineChart(
         lineSpec(
             lineColor = Color.DarkGray,
             lineBackgroundShader = verticalGradient(
-                arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f))
+                arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f)),
             ),
         ),
     ),

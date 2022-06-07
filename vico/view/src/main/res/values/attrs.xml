@@ -19,6 +19,15 @@
     <attr name="shapeStyle" format="reference" />
     <attr name="strokeColor" format="color" />
     <attr name="strokeWidth" format="dimension" />
+    <attr name="dataLabelRotationDegrees" format="float" />
+    <attr name="showDataLabels" format="boolean" />
+    <attr name="dataLabelStyle" format="reference" />\
+
+    <attr name="dataLabelVerticalPosition" format="enum">
+        <enum name="top" value="0" />
+        <enum name="center" value="1" />
+        <enum name="bottom" value="2" />
+    </attr>
 
     <declare-styleable name="ChartView">
         <attr name="chart" format="enum">
@@ -65,6 +74,10 @@
             <enum name="top" value="1" />
             <enum name="bottom" value="2" />
         </attr>
+        <attr name="labelRotationDegrees" format="float" />
+        <attr name="titleStyle" format="reference" />
+        <attr name="title" format="string|reference" />
+        <attr name="showTitle" format="boolean|reference" />
     </declare-styleable>
 
     <declare-styleable name="LineComponent">
@@ -73,6 +86,26 @@
         <attr name="shapeStyle" />
         <attr name="strokeColor" />
         <attr name="strokeWidth" />
+    </declare-styleable>
+
+    <declare-styleable name="TextComponentStyle">
+        <attr name="labelColor" format="color" />
+        <attr name="backgroundStyle" format="reference" />
+        <attr name="android:padding" />
+        <attr name="android:paddingStart" />
+        <attr name="android:paddingTop" />
+        <attr name="android:paddingEnd" />
+        <attr name="android:paddingBottom" />
+        <attr name="android:paddingVertical" />
+        <attr name="android:paddingHorizontal" />
+        <attr name="android:fontFamily" />
+        <attr name="fontFamily" />
+        <attr name="android:textFontWeight" />
+        <attr name="android:fontStyle" />
+        <attr name="fontStyle" />
+        <attr name="android:textSize" />
+        <attr name="android:maxLines" />
+        <attr name="android:ellipsize" />
     </declare-styleable>
 
     <declare-styleable name="Shape">

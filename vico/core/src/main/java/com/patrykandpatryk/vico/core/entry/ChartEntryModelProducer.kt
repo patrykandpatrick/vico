@@ -16,12 +16,12 @@
 
 package com.patrykandpatryk.vico.core.entry
 
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
 import com.patrykandpatryk.vico.core.DEF_THREAD_POOL_SIZE
 import com.patrykandpatryk.vico.core.entry.diff.DefaultDiffProcessor
 import com.patrykandpatryk.vico.core.entry.diff.DiffProcessor
 import com.patrykandpatryk.vico.core.extension.setAll
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 /**
  * A subclass of [ChartModelProducer] that generates [ChartEntryModel] instances.

@@ -24,10 +24,10 @@ import kotlin.math.abs
 /**
  * The actual source of data rendered by [Chart].
  *
- * By default [minX], [maxX], [minY] and [maxY] are equal to [ChartEntryModel.minX],
- * [ChartEntryModel.maxX], [ChartEntryModel.minY] and [ChartEntryModel.maxY] respectively,
- * but they will be replaced with [Chart.minX], [Chart.maxX], [Chart.minY] and [Chart.maxY]
- * respectively when they are non-null.
+ * By default [minX], [maxX], [minY], and [maxY] are equal to [ChartEntryModel.minX],
+ * [ChartEntryModel.maxX], [ChartEntryModel.minY], and [ChartEntryModel.maxY], respectively,
+ * but they will be replaced with [Chart.minX], [Chart.maxX], [Chart.minY], and [Chart.maxY],
+ * respectively, when they are non-null.
  */
 public interface ChartValues {
 

@@ -38,7 +38,7 @@ public fun interface DynamicShader {
         left = bounds.left,
         top = bounds.top,
         right = bounds.right,
-        bottom = bounds.bottom
+        bottom = bounds.bottom,
     )
 
     /**

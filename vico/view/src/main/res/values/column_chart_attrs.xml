@@ -26,5 +26,6 @@
         <attr name="showDataLabels" />
         <attr name="dataLabelStyle" />
         <attr name="dataLabelVerticalPosition" />
+        <attr name="dataLabelRotationDegrees" />
     </declare-styleable>
 </resources>

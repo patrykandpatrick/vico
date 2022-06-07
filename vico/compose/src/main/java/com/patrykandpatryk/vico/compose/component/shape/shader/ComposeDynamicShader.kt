@@ -35,7 +35,7 @@ public fun composeShader(
     ComposeShader(
         first.provideShader(context, left, top, right, bottom),
         second.provideShader(context, left, top, right, bottom),
-        mode
+        mode,
     )
 }
 
@@ -50,6 +50,6 @@ public fun composeShader(
     ComposeShader(
         first.provideShader(context, left, top, right, bottom),
         second.provideShader(context, left, top, right, bottom),
-        mode
+        mode,
     )
 }

@@ -16,10 +16,10 @@
 
 package com.patrykandpatryk.vico.core.chart.decoration
 
-import android.graphics.RectF
 import android.graphics.Canvas
-import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
+import android.graphics.RectF
 import com.patrykandpatryk.vico.core.chart.Chart
+import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.marker.Marker
 
 /**

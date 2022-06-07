@@ -32,13 +32,13 @@ public object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
     private const val PATTERN = "%.02f"
 
     override fun getLabel(
-        markedEntries: List<Marker.EntryModel>
+        markedEntries: List<Marker.EntryModel>,
     ): CharSequence = markedEntries.transformToSpannable(
         prefix = if (markedEntries.size > 1) {
             PATTERN.format(markedEntries.sumOf { it.entry.y }) + " ("
         } else "",
         postfix = if (markedEntries.size > 1) ")" else "",
-        separator = "; "
+        separator = "; ",
     ) { model ->
         appendCompat(
             PATTERN.format(model.entry.y),

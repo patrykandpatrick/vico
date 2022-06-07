@@ -33,7 +33,12 @@ public fun <P : Padding> P.setPadding(
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
 ): P = apply {
-    padding.set(start.value, top.value, end.value, bottom.value)
+    padding.set(
+        startDp = start.value,
+        topDp = top.value,
+        endDp = end.value,
+        bottomDp = bottom.value,
+    )
 }
 
 /**
@@ -44,7 +49,12 @@ public fun <P : Padding> P.setPadding(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
 ): P = apply {
-    padding.set(horizontal.value, vertical.value, horizontal.value, vertical.value)
+    padding.set(
+        startDp = horizontal.value,
+        topDp = vertical.value,
+        endDp = horizontal.value,
+        bottomDp = vertical.value,
+    )
 }
 
 /**
@@ -54,5 +64,10 @@ public fun <P : Padding> P.setPadding(
 public fun <P : Padding> P.setPadding(
     all: Dp = 0.dp,
 ): P = apply {
-    padding.set(all.value, all.value, all.value, all.value)
+    padding.set(
+        startDp = all.value,
+        topDp = all.value,
+        endDp = all.value,
+        bottomDp = all.value,
+    )
 }

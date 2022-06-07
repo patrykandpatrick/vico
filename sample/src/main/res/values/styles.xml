@@ -62,11 +62,7 @@
     </style>
 
     <style name="StackedColumnChartAxisStyle">
-        <item name="axisLabelStyle">@style/StackedColumnChartAxisLabelStyle</item>
-    </style>
-
-    <style name="StackedColumnChartAxisLabelStyle">
-        <item name="labelRotation">45</item>
+        <item name="labelRotationDegrees">45</item>
     </style>
 
     <style name="StackedColumnChartColumnChartStyle">

@@ -18,10 +18,10 @@ package com.patrykandpatryk.vico.core.component.shape.cornered
 
 import android.graphics.Paint
 import android.graphics.Path
-import kotlin.math.absoluteValue
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.context.DrawContext
+import kotlin.math.absoluteValue
 
 /**
  * An implementation of generic [Shape] allowing to specify look and size of each corner

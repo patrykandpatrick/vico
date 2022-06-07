@@ -20,10 +20,10 @@ import android.graphics.Color
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.component.shape.Shapes.rectShape
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
-import com.patrykandpatryk.vico.core.dimensions.Dimensions
-import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.dimensions.Dimensions
+import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 
 /**
  * Draws a line.

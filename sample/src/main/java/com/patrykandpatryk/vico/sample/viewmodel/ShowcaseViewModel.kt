@@ -18,15 +18,15 @@ package com.patrykandpatryk.vico.sample.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatryk.vico.core.entry.composed.plus
 import com.patrykandpatryk.vico.core.util.RandomEntriesGenerator
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 internal class ShowcaseViewModel : ViewModel() {
 

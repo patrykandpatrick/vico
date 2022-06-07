@@ -16,14 +16,14 @@
 
 package com.patrykandpatryk.vico.core.chart.composed
 
-import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.chart.Chart
+import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 
 /**
  * Combines this [Chart] with another one to create a [ComposedChart].
  */
 public operator fun <Model : ChartEntryModel> Chart<Model>.plus(
-    other: Chart<Model>
+    other: Chart<Model>,
 ): ComposedChart<Model> =
     ComposedChart(listOf(this, other))
 
@@ -31,7 +31,7 @@ public operator fun <Model : ChartEntryModel> Chart<Model>.plus(
  * Combines this [ComposedChart] with a [Chart] to create a [ComposedChart].
  */
 public operator fun <Model : ChartEntryModel> ComposedChart<Model>.plus(
-    other: Chart<Model>
+    other: Chart<Model>,
 ): ComposedChart<Model> =
     ComposedChart(charts + other)
 
@@ -39,6 +39,6 @@ public operator fun <Model : ChartEntryModel> ComposedChart<Model>.plus(
  * Combines this [ComposedChart] and another one into a single [ComposedChart].
  */
 public operator fun <Model : ChartEntryModel> ComposedChart<Model>.plus(
-    other: ComposedChart<Model>
+    other: ComposedChart<Model>,
 ): ComposedChart<Model> =
     ComposedChart(charts + other.charts)

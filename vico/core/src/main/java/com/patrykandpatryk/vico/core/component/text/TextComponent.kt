@@ -32,6 +32,7 @@ import com.patrykandpatryk.vico.core.component.dimension.Padding
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.getOrPutExtra
+import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 import com.patrykandpatryk.vico.core.draw.withCanvas
@@ -54,7 +55,7 @@ private const val LAYOUT_KEY_PREFIX = "layout_"
  * - Multiple lines of text with automatic line breaking.
  * - Text truncation.
  * - [android.text.Spanned] text.
- * - Text rotation with [rotationDegrees].
+ * - Text rotation.
  * - Text background with padding. Any [Component] can be used as text’s background.
  * - Text margins.
  *
@@ -74,11 +75,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * The [Typeface] of the text.
      */
     public var typeface: Typeface? by textPaint::typeface
-
-    /**
-     * The clockwise rotation of this text relative to its center. [1f] is equal to 1° of rotation.
-     */
-    public var rotationDegrees: Float = 0f
 
     /**
      * The size of the text in the sp unit.
@@ -120,13 +116,14 @@ public open class TextComponent protected constructor() : Padding, Margins {
 
     /**
      * Draws the text onto [android.graphics.Canvas].
-     * @param context Draw context supplied by a renderer.
-     * @param text The text to be drawn.
-     * @param textX The X coordinate for the text.
-     * @param textY The Y coordinate for the text.
-     * @param horizontalPosition The horizontal position of the text, relative to [textX].
-     * @param verticalPosition The vertical position of the text, relative to [textY].
-     * @param maxTextWidth The maximum available width in pixels for the text.
+     * @param context draw context supplied by a renderer.
+     * @param text the text to be drawn.
+     * @param textX the X coordinate for the text.
+     * @param textY the Y coordinate for the text.
+     * @param horizontalPosition the horizontal position of the text, relative to [textX].
+     * @param verticalPosition the vertical position of the text, relative to [textY].
+     * @param maxTextWidth the maximum available width in pixels for the text.
+     * @param rotationDegrees the rotation of the text in degrees.
      */
     public fun drawText(
         context: DrawContext,
@@ -136,6 +133,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
         verticalPosition: VerticalPosition = VerticalPosition.Center,
         maxTextWidth: Int = Int.MAX_VALUE,
+        rotationDegrees: Float = 0f,
     ): Unit = with(context) {
 
         if (text.isBlank()) return
@@ -143,6 +141,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             text = text,
             fontScale = fontScale,
             width = (maxTextWidth - (padding.horizontalDp + margins.horizontalDp).wholePixels).coerceAtLeast(0),
+            rotationDegrees = rotationDegrees,
         )
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
@@ -173,7 +172,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
                     HorizontalPosition.Start -> widthDelta.half
                     HorizontalPosition.End -> -widthDelta.half
                     else -> 0f
-                }
+                } * context.layoutDirectionMultiplier
+
                 yCorrection = when (verticalPosition) {
                     VerticalPosition.Top -> heightDelta.half
                     VerticalPosition.Bottom -> -heightDelta.half
@@ -250,7 +250,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
     public fun getWidth(
         context: MeasureContext,
         text: CharSequence,
-    ): Float = getTextBounds(context, text).width()
+        rotationDegrees: Float = 0f,
+    ): Float = getTextBounds(context, text, rotationDegrees = rotationDegrees).width()
 
     /**
      * Returns the height of this [TextComponent] for the given [text] and the available [width].
@@ -259,7 +260,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
-    ): Float = getTextBounds(context, text, width).height()
+        rotationDegrees: Float = 0f,
+    ): Float = getTextBounds(context, text, width, rotationDegrees = rotationDegrees).height()
 
     /**
      * Returns the bounds ([RectF]) of this [TextComponent] for the given [text] and the available [width].
@@ -270,6 +272,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         width: Int = Int.MAX_VALUE,
         outRect: RectF = tempMeasureBounds,
         includePadding: Boolean = true,
+        rotationDegrees: Float = 0f,
     ): RectF = with(context) {
         getLayout(text, fontScale, width).getBounds(outRect).apply {
             right += if (includePadding) (padding.horizontalDp + margins.horizontalDp).pixels else 0f
@@ -281,6 +284,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         text: CharSequence,
         fontScale: Float,
         width: Int = Int.MAX_VALUE,
+        rotationDegrees: Float = 0f,
     ): StaticLayout {
         val correctedWidth = when {
             rotationDegrees % 1f.piRad == 0f -> width
@@ -328,11 +332,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
         public var typeface: Typeface? = null
 
         /**
-         * @see [TextComponent.rotationDegrees]
-         */
-        public var rotationDegrees: Float = 0f
-
-        /**
          * @see [TextComponent.ellipsize]
          */
         public var ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END
@@ -364,7 +363,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
             color = this@Builder.color
             textSizeSp = this@Builder.textSizeSp
             typeface = this@Builder.typeface
-            rotationDegrees = this@Builder.rotationDegrees
             ellipsize = this@Builder.ellipsize
             lineCount = this@Builder.lineCount
             background = this@Builder.background

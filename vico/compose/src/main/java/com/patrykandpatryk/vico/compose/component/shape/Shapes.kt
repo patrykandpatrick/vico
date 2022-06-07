@@ -199,7 +199,7 @@ public fun Shapes.markerCorneredShape(
     topRight = topRight,
     bottomRight = bottomRight,
     bottomLeft = bottomLeft,
-    tickSizeDp = tickSizeDp.value
+    tickSizeDp = tickSizeDp.value,
 )
 
 /**
@@ -216,7 +216,7 @@ public fun Shapes.markerCorneredShape(
     topRight = all,
     bottomRight = all,
     bottomLeft = all,
-    tickSizeDp = tickSizeDp.value
+    tickSizeDp = tickSizeDp.value,
 )
 
 /**
@@ -233,11 +233,12 @@ public fun Shapes.markerCorneredShape(
     topRight = corneredShape.topRight,
     bottomRight = corneredShape.bottomRight,
     bottomLeft = corneredShape.bottomLeft,
-    tickSizeDp = tickSizeDp.value
+    tickSizeDp = tickSizeDp.value,
 )
 
 /**
  * Creates a [DashedShape].
+ *
  * @param shape the base [Shape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
@@ -257,6 +258,7 @@ public fun Shapes.dashedShape(
 
 /**
  * Creates a [DashedShape].
+ *
  * @param shape the base [ChartShape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.

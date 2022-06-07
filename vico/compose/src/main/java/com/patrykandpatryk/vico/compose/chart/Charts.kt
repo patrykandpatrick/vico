@@ -138,7 +138,6 @@ public fun <Model : ChartEntryModel> Chart(
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
  */
-@Suppress("LongMethod")
 @Composable
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
@@ -172,7 +171,7 @@ public fun <Model : ChartEntryModel> Chart(
     val setHorizontalScroll = rememberSetHorizontalScroll(
         scroll = horizontalScroll,
         touchPoint = markerTouchPoint,
-        interaction = interaction
+        interaction = interaction,
     )
 
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
@@ -192,25 +191,27 @@ public fun <Model : ChartEntryModel> Chart(
                 interactionSource = interactionSource,
             ),
     ) {
-        bounds.set(0, 0, size.width, size.height)
-
+        bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
         chart.updateChartValues(measureContext.chartValuesManager, model)
+
+        val segmentProperties = chart.getSegmentProperties(measureContext, model)
+
+        virtualLayout.setBounds(
+            context = measureContext,
+            contentBounds = bounds,
+            chart = chart,
+            legend = legend,
+            segmentProperties = segmentProperties,
+            marker,
+        )
 
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint.value,
-            segmentProperties = chart.getSegmentProperties(measureContext, model),
+            segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
-        )
-
-        virtualLayout.setBounds(
-            context = chartDrawContext,
-            contentBounds = bounds,
-            chart = chart,
-            legend = legend,
-            marker,
         )
 
         axisManager.drawBehindChart(chartDrawContext)
@@ -219,7 +220,7 @@ public fun <Model : ChartEntryModel> Chart(
         legend?.draw(chartDrawContext)
         ifNotNull(
             t1 = marker,
-            t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
+            t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
         ) { marker, markerModel ->
             marker.draw(
                 context = chartDrawContext,

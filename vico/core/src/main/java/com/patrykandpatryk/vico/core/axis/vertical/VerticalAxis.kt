@@ -27,16 +27,21 @@ import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis.VerticalLabelPos
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
+import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.getOrPutExtra
+import com.patrykandpatryk.vico.core.extension.getEnd
+import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.extension.translate
 import com.patrykandpatryk.vico.core.throwable.UnknownAxisPositionException
 
 private const val LABELS_KEY = "labels"
+private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 /**
  * A subclass of [com.patrykandpatryk.vico.core.axis.AxisRenderer] used for vertical axes, used either at the start or
@@ -125,8 +130,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         var tickCenterY: Float
 
         (0..labelCount).forEach { index ->
-            tickCenterY =
-                bounds.bottom - bounds.height() / labelCount * index + tickThickness.half
+            tickCenterY = bounds.bottom - bounds.height() / labelCount * index + tickThickness.half
 
             tick?.drawHorizontal(
                 context = context,
@@ -137,38 +141,63 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
             label ?: return@forEach
             val labelText = labels.getOrNull(index) ?: return@forEach
-            val textBounds = label.getTextBounds(context, labelText).apply {
-                translate(
-                    x = labelX,
-                    y = tickCenterY - centerY(),
-                )
-            }
+            drawLabel(
+                label = label,
+                labelText = labelText,
+                labelX = labelX,
+                tickCenterY = tickCenterY,
+            )
+        }
 
-            if (
-                horizontalLabelPosition == Outside ||
-                isNotInRestrictedBounds(
-                    left = textBounds.left,
-                    top = textBounds.top,
-                    right = textBounds.right,
-                    bottom = textBounds.bottom,
-                )
-            ) {
-                label.drawText(
-                    context = context,
-                    text = labelText,
-                    textX = labelX,
-                    textY = tickCenterY,
-                    horizontalPosition = textHorizontalPosition,
-                    verticalPosition = verticalLabelPosition.textPosition,
-                    maxTextWidth = when (sizeConstraint) {
-                        is SizeConstraint.Auto ->
-                            // Let the `TextComponent` use as much width as it needs, based on measuring phase.
-                            Int.MAX_VALUE
-                        else ->
-                            (bounds.width() - tickLength - axisThickness.half).toInt()
-                    }
-                )
-            }
+        title?.let { title ->
+            titleComponent?.drawText(
+                context = this,
+                text = title,
+                textX = if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
+                textY = bounds.centerY(),
+                horizontalPosition = if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
+                verticalPosition = VerticalPosition.Center,
+                rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
+            )
+        }
+    }
+
+    private fun ChartDrawContext.drawLabel(
+        label: TextComponent,
+        labelText: CharSequence,
+        labelX: Float,
+        tickCenterY: Float,
+    ) {
+        val textBounds = label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).apply {
+            translate(
+                x = labelX,
+                y = tickCenterY - centerY(),
+            )
+        }
+
+        if (
+            horizontalLabelPosition == Outside ||
+            isNotInRestrictedBounds(
+                left = textBounds.left,
+                top = textBounds.top,
+                right = textBounds.right,
+                bottom = textBounds.bottom,
+            )
+        ) {
+            label.drawText(
+                context = this,
+                text = labelText,
+                textX = labelX,
+                textY = tickCenterY,
+                horizontalPosition = textHorizontalPosition,
+                verticalPosition = verticalLabelPosition.textPosition,
+                rotationDegrees = labelRotationDegrees,
+                maxTextWidth = when (sizeConstraint) {
+                    // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
+                    is SizeConstraint.Auto -> Int.MAX_VALUE
+                    else -> (bounds.width() - tickLength - axisThickness.half).toInt()
+                },
+            )
         }
     }
 
@@ -184,7 +213,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             val chartValues = chartValuesManager.getChartValues(position)
 
             fun getLabelHeight(value: Float): Float =
-                label.getHeight(this, valueFormatter.formatValue(value, chartValues))
+                label.getHeight(
+                    context = this,
+                    text = valueFormatter.formatValue(value, chartValues),
+                    rotationDegrees = labelRotationDegrees,
+                )
 
             val avgHeight = arrayOf(
                 getLabelHeight(chartValues.minY),
@@ -233,8 +266,9 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     override fun getInsets(
-        context: ChartDrawContext,
+        context: MeasureContext,
         outInsets: Insets,
+        segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         val labelHeight = label?.getHeight(context = context).orZero
         val lineThickness = maxOf(axisThickness, tickThickness)
@@ -262,19 +296,31 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         labels: List<CharSequence>,
     ): Float = with(context) {
         when (val constraint = sizeConstraint) {
-            is SizeConstraint.Auto -> (getMaxLabelWidth(labels) + axisThickness.half + tickLength)
-                .coerceIn(constraint.minSizeDp.pixels, constraint.maxSizeDp.pixels)
+            is SizeConstraint.Auto -> {
+                val titleComponentWidth = title?.let { title ->
+                    titleComponent?.getWidth(
+                        context = this,
+                        text = title,
+                        rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
+                    )
+                }.orZero
+                (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness.half + tickLength)
+                    .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
+            }
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
             is SizeConstraint.TextWidth -> label?.getWidth(
                 context = this,
                 text = constraint.text,
+                rotationDegrees = labelRotationDegrees,
             ).orZero + tickLength + axisThickness.half
         }
     }
 
     private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
-        Outside -> label?.let { label -> labels.maxOf { label.getWidth(this, it) } }.orZero
+        Outside -> label?.let { label ->
+            labels.maxOf { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
+        }.orZero
         Inside -> 0f
     }
 

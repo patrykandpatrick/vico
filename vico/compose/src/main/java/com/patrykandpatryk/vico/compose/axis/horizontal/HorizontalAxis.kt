@@ -34,6 +34,7 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
 
 /**
  * Creates a top axis.
+ *
  * @param label the [TextComponent] to use for labels.
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
@@ -41,6 +42,9 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
  * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
+ * @param labelRotationDegrees the rotation of axis labels in degrees.
+ * @param titleComponent an optional [TextComponent] use as the axis title.
+ * @param title the axis title.
  */
 @Composable
 public fun topAxis(
@@ -51,6 +55,9 @@ public fun topAxis(
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Top> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
+    labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    titleComponent: TextComponent? = null,
+    title: CharSequence? = null,
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -59,10 +66,14 @@ public fun topAxis(
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
     this.sizeConstraint = sizeConstraint
+    this.labelRotationDegrees = labelRotationDegrees
+    this.titleComponent = titleComponent
+    this.title = title
 }
 
 /**
  * Creates a bottom axis.
+ *
  * @param label the [TextComponent] to use for labels.
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
@@ -70,6 +81,9 @@ public fun topAxis(
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
  * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
+ * @param labelRotationDegrees the rotation of axis labels in degrees.
+ * @param titleComponent an optional [TextComponent] use as the axis title.
+ * @param title the axis title.
  */
 @Composable
 public fun bottomAxis(
@@ -80,6 +94,9 @@ public fun bottomAxis(
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
+    titleComponent: TextComponent? = null,
+    title: CharSequence? = null,
+    labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -88,4 +105,7 @@ public fun bottomAxis(
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
     this.sizeConstraint = sizeConstraint
+    this.labelRotationDegrees = labelRotationDegrees
+    this.titleComponent = titleComponent
+    this.title = title
 }

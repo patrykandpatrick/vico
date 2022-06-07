@@ -55,13 +55,13 @@ public fun LineChartDark() {
                     lineSpec(
                         lineColor = yellow,
                         lineBackgroundShader = verticalGradient(
-                            arrayOf(yellow.copy(0.5f), yellow.copy(alpha = 0f))
+                            arrayOf(yellow.copy(0.5f), yellow.copy(alpha = 0f)),
                         ),
                     ),
                     lineSpec(
                         lineColor = pink,
                         lineBackgroundShader = verticalGradient(
-                            arrayOf(pink.copy(0.5f), pink.copy(alpha = 0f))
+                            arrayOf(pink.copy(0.5f), pink.copy(alpha = 0f)),
                         ),
                     ),
                 ),

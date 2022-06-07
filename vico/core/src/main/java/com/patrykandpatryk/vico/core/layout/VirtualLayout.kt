@@ -20,12 +20,13 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.chart.Chart
-import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
-import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.extension.orZero
+import com.patrykandpatryk.vico.core.legend.Legend
 
 /**
  * [VirtualLayout] measures and lays out the chart, the axis, and other components (such as markers).
@@ -45,18 +46,20 @@ public open class VirtualLayout(
     /**
      * Measures and sets the bounds for the chart, the axes, and other components.
      *
-     * @param context the [ChartDrawContext] that holds the data used for component drawing.
+     * @param context the [MeasureContext] that holds the data used for the measurement of components.
      * @param contentBounds the bounds in which the chart contents must be drawn.
      * @param chart the actual chart.
      * @param legend the legend for the chart.
+     * @param segmentProperties the [SegmentProperties] of the chart.
      * @param chartInsetter additional components that influence the chart layout, such as markers.
      */
     @LongParameterListDrawFunction
     public open fun <Model : ChartEntryModel> setBounds(
-        context: ChartDrawContext,
+        context: MeasureContext,
         contentBounds: RectF,
         chart: Chart<Model>,
         legend: Legend?,
+        segmentProperties: SegmentProperties,
         vararg chartInsetter: ChartInsetter?,
     ): Unit = with(context) {
 
@@ -72,7 +75,7 @@ public open class VirtualLayout(
         tempInsetters.add(chart)
 
         tempInsetters.forEach { insetter ->
-            insetter.getInsets(context, tempInsets)
+            insetter.getInsets(context, tempInsets, segmentProperties)
             finalInsets.setValuesIfGreater(tempInsets)
         }
 
@@ -83,11 +86,18 @@ public open class VirtualLayout(
             finalInsets.setValuesIfGreater(tempInsets)
         }
 
+        val chartBounds = RectF().apply {
+            left = contentBounds.left + finalInsets.getLeft(isLtr)
+            top = contentBounds.top + finalInsets.top
+            right = contentBounds.right - finalInsets.getRight(isLtr)
+            bottom = contentBounds.bottom - finalInsets.bottom - legendHeight
+        }
+
         chart.setBounds(
-            left = contentBounds.left + finalInsets.getLeft(isLtr),
-            top = contentBounds.top + finalInsets.top,
-            right = contentBounds.right - finalInsets.getRight(isLtr),
-            bottom = contentBounds.bottom - finalInsets.bottom - legendHeight,
+            left = chartBounds.left,
+            top = chartBounds.top,
+            right = chartBounds.right,
+            bottom = chartBounds.bottom,
         )
 
         axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)

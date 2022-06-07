@@ -65,14 +65,14 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
                     dynamicShader = it.dynamicShader,
                     margins = it.margins,
                 )
-            }
-        )
+            },
+        ),
     )
     Surface(
         color = Color.Transparent,
         modifier = Modifier
             .background(color = Color.LightGray, shape = RoundedCornerShape(size = 4.dp))
-            .padding(8.dp)
+            .padding(8.dp),
     ) {
         CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
     }
@@ -90,7 +90,7 @@ public fun ThresholdLine() {
                         thresholdValue = 2f,
                         lineComponent = shapeComponent(color = Color.Black),
                         labelComponent = textComponent(Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
-                    )
+                    ),
                 )
             },
             model = model,
@@ -128,8 +128,8 @@ public fun ThresholdLineWithCustomText() {
                             ),
                             margins = dimensionsOf(horizontal = 4.dp),
                         ),
-                        labelVerticalPosition = ThresholdLine.LabelVerticalPosition.Bottom
-                    )
+                        labelVerticalPosition = ThresholdLine.LabelVerticalPosition.Bottom,
+                    ),
                 )
                 addDecoration(
                     ThresholdLine(
@@ -151,7 +151,7 @@ public fun ThresholdLineWithCustomText() {
                             ),
                             margins = dimensionsOf(horizontal = 4.dp),
                         ),
-                    )
+                    ),
                 )
             },
             model = model,
@@ -174,7 +174,7 @@ public fun RangedThresholdLine() {
                         thresholdRange = 2f..3f,
                         lineComponent = shapeComponent(color = Color.Black.copy(alpha = 0.5f)),
                         labelComponent = textComponent(color = Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
-                    )
+                    ),
                 )
             },
             model = model,
@@ -201,11 +201,11 @@ public fun RangedThresholdLineWithBrushShader() {
                                 colors = listOf(
                                     Color.Black.copy(0.75f),
                                     Color.Black.copy(0.25f),
-                                )
-                            ).toDynamicShader()
+                                ),
+                            ).toDynamicShader(),
                         ),
                         labelComponent = textComponent(color = Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
-                    )
+                    ),
                 )
             },
             model = model,
@@ -236,7 +236,7 @@ public fun RangedThresholdLineWithComponentShader() {
                             strokeColor = Color.Black,
                         ),
                         labelComponent = textComponent(color = Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
-                    )
+                    ),
                 )
             },
             model = model,

@@ -19,7 +19,6 @@ package com.patrykandpatryk.vico.core.component.shape
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
-import kotlin.properties.Delegates
 import com.patrykandpatryk.vico.core.DEF_SHADOW_COLOR
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.dimension.setMargins
@@ -31,6 +30,7 @@ import com.patrykandpatryk.vico.core.dimensions.Dimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 import com.patrykandpatryk.vico.core.extension.alpha
 import com.patrykandpatryk.vico.core.extension.half
+import kotlin.properties.Delegates
 
 /**
  * [ShapeComponent] is a [Component] that draws a shape.
@@ -103,7 +103,7 @@ public open class ShapeComponent(
                 left = minOf(left + margins.startDp.pixels + strokeWidth.half, centerX),
                 top = minOf(top + margins.topDp.pixels + strokeWidth.half, centerY),
                 right = maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX),
-                bottom = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY)
+                bottom = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY),
             )
         }
 
@@ -115,7 +115,7 @@ public open class ShapeComponent(
             left = left,
             top = top,
             right = right,
-            bottom = bottom
+            bottom = bottom,
         )
     }
 

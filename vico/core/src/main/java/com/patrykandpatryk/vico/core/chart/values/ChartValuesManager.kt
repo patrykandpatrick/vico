@@ -18,8 +18,8 @@ package com.patrykandpatryk.vico.core.chart.values
 
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
-import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.chart.Chart
+import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 
 /**
  * Manages the [ChartValues] used by a chart. There may be many [ChartValues], but all of them have the same

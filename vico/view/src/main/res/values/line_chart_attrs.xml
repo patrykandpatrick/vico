@@ -19,13 +19,6 @@
     <attr name="line1Spec" format="reference" />
     <attr name="line2Spec" format="reference" />
     <attr name="line3Spec" format="reference" />
-    <attr name="showDataLabels" format="boolean" />
-    <attr name="dataLabelStyle" format="reference" />
-    <attr name="dataLabelVerticalPosition" format="enum">
-        <enum name="top" value="0" />
-        <enum name="center" value="1" />
-        <enum name="bottom" value="2" />
-    </attr>
 
     <declare-styleable name="LineChartStyle">
         <attr name="line1Spec" />
@@ -45,6 +38,7 @@
         <attr name="showDataLabels" />
         <attr name="dataLabelStyle" />
         <attr name="dataLabelVerticalPosition" />
+        <attr name="dataLabelRotationDegrees" />
     </declare-styleable>
 
     <declare-styleable name="ComponentStyle">

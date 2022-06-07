@@ -49,7 +49,7 @@ public fun TypedArray.getColor(
 public fun TypedArray.getRawDimension(
     context: Context,
     @StyleableRes index: Int,
-    defaultValue: Float
+    defaultValue: Float,
 ): Float = synchronized(lock) {
     if (getValue(index, rawValueTypedValue)) {
         rawValueTypedValue.getDimension(context.resources.displayMetrics) / context.density

@@ -62,6 +62,7 @@ import kotlin.math.min
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
  * respective columns.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels in degrees.
  */
 public open class ColumnChart(
     public var columns: List<LineComponent>,
@@ -72,6 +73,7 @@ public open class ColumnChart(
     public var dataLabel: TextComponent? = null,
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+    public var dataLabelRotationDegrees: Float = 0f,
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -174,7 +176,7 @@ public open class ColumnChart(
                         bottom = columnBottom,
                         centerX = columnCenterX,
                         boundingBox = bounds,
-                        thicknessScale = chartScale
+                        thicknessScale = chartScale,
                     )
                 ) {
                     updateMarkerLocationMap(entry, columnTop, columnCenterX, column)
@@ -222,6 +224,7 @@ public open class ColumnChart(
             val dataLabelWidth = textComponent.getWidth(
                 context = this,
                 text = text,
+                rotationDegrees = dataLabelRotationDegrees,
             ).coerceAtMost(maximumValue = maxWidth)
 
             if (x - dataLabelWidth.half > bounds.right ||
@@ -235,6 +238,7 @@ public open class ColumnChart(
                     context = this,
                     text = text,
                     width = maxWidth.toInt(),
+                    rotationDegrees = dataLabelRotationDegrees,
                 ),
             )
             textComponent.drawText(
@@ -244,6 +248,7 @@ public open class ColumnChart(
                 textY = y,
                 verticalPosition = verticalPosition,
                 maxTextWidth = maxWidth.toInt(),
+                rotationDegrees = dataLabelRotationDegrees,
             )
         }
     }
