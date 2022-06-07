@@ -9,5 +9,4 @@
 ## Resolved issues
 
 - Charts that werenʼt scrollable could be rendered incorrectly (#90).
-
 - In right-to-left layouts, `TextComponent` positioned itself incorrectly if `TextComponent#horizontalPosiiton` was equal to `HorizontalPosition.Start` or `HorizontalPosition.End`.
