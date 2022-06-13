@@ -45,6 +45,10 @@ import com.patrykandpatryk.vico.core.extension.translate
 import com.patrykandpatryk.vico.core.text.getBounds
 import com.patrykandpatryk.vico.core.text.staticLayout
 import com.patrykandpatryk.vico.core.text.widestLineWidth
+import kotlin.math.absoluteValue
+import kotlin.math.cos
+import kotlin.math.min
+import kotlin.math.sin
 
 private const val TEXT_MEASUREMENT_CHAR = ""
 private const val LAYOUT_KEY_PREFIX = "layout_"
@@ -122,7 +126,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * @param textY the Y coordinate for the text.
      * @param horizontalPosition the horizontal position of the text, relative to [textX].
      * @param verticalPosition the vertical position of the text, relative to [textY].
-     * @param maxTextWidth the maximum available width in pixels for the text.
+     * @param maxTextWidth the maximum width available for the text (in pixels).
+     * @param maxTextHeight the maximum height available for the text (in pixels).
      * @param rotationDegrees the rotation of the text in degrees.
      */
     public fun drawText(
@@ -133,6 +138,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
         verticalPosition: VerticalPosition = VerticalPosition.Center,
         maxTextWidth: Int = Int.MAX_VALUE,
+        maxTextHeight: Int = Int.MAX_VALUE,
         rotationDegrees: Float = 0f,
     ): Unit = with(context) {
 
@@ -140,7 +146,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
         layout = getLayout(
             text = text,
             fontScale = fontScale,
-            width = (maxTextWidth - (padding.horizontalDp + margins.horizontalDp).wholePixels).coerceAtLeast(0),
+            width = maxTextWidth,
+            height = maxTextHeight,
             rotationDegrees = rotationDegrees,
         )
 
@@ -245,58 +252,98 @@ public open class TextComponent protected constructor() : Padding, Margins {
     }
 
     /**
-     * Returns the width of this [TextComponent] for the given [text].
+     * Returns the width of this [TextComponent] for the given [text] and the available [width] and [height]..
      */
     public fun getWidth(
         context: MeasureContext,
         text: CharSequence,
+        width: Int = Int.MAX_VALUE,
+        height: Int = Int.MAX_VALUE,
         rotationDegrees: Float = 0f,
-    ): Float = getTextBounds(context, text, rotationDegrees = rotationDegrees).width()
+    ): Float = getTextBounds(
+        context = context,
+        text = text,
+        width = width,
+        height = height,
+        rotationDegrees = rotationDegrees,
+    ).width()
 
     /**
-     * Returns the height of this [TextComponent] for the given [text] and the available [width].
+     * Returns the height of this [TextComponent] for the given [text] and the available [width] and [height].
      */
     public fun getHeight(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
+        height: Int = Int.MAX_VALUE,
         rotationDegrees: Float = 0f,
-    ): Float = getTextBounds(context, text, width, rotationDegrees = rotationDegrees).height()
+    ): Float = getTextBounds(
+        context = context,
+        text = text,
+        width = width,
+        height = height,
+        rotationDegrees = rotationDegrees,
+    ).height()
 
     /**
-     * Returns the bounds ([RectF]) of this [TextComponent] for the given [text] and the available [width].
+     * Returns the bounds ([RectF]) of this [TextComponent] for the given [text] and the available [width] and [height].
      */
     public fun getTextBounds(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
         width: Int = Int.MAX_VALUE,
+        height: Int = Int.MAX_VALUE,
         outRect: RectF = tempMeasureBounds,
-        includePadding: Boolean = true,
+        includePaddingAndMargins: Boolean = true,
         rotationDegrees: Float = 0f,
     ): RectF = with(context) {
-        getLayout(text, fontScale, width).getBounds(outRect).apply {
-            right += if (includePadding) (padding.horizontalDp + margins.horizontalDp).pixels else 0f
-            bottom += if (includePadding) (padding.verticalDp + margins.verticalDp).pixels else 0f
-        }.rotate(rotationDegrees)
+
+        getLayout(
+            text = text,
+            fontScale = fontScale,
+            width = width,
+            height = height,
+            rotationDegrees = rotationDegrees,
+        ).getBounds(outRect).apply {
+            if (includePaddingAndMargins) {
+                right += padding.horizontalDp.pixels
+                bottom += padding.verticalDp.pixels
+            }
+        }.rotate(rotationDegrees).apply {
+            if (includePaddingAndMargins) {
+                right += margins.horizontalDp.pixels
+                bottom += margins.verticalDp.pixels
+            }
+        }
     }
 
     private fun MeasureContext.getLayout(
         text: CharSequence,
         fontScale: Float,
         width: Int = Int.MAX_VALUE,
+        height: Int = Int.MAX_VALUE,
         rotationDegrees: Float = 0f,
     ): StaticLayout {
-        val correctedWidth = when {
-            rotationDegrees % 1f.piRad == 0f -> width
-            rotationDegrees % .5f.piRad == 0f -> Int.MAX_VALUE
-            else -> {
-                val cumulatedHeight = lineCount * textPaint.lineHeight
-                tempMeasureBounds.set(0f, 0f, 100f, cumulatedHeight)
-                var widthDelta = tempMeasureBounds.width()
-                tempMeasureBounds.rotate(degrees = rotationDegrees).also { widthDelta = it.width() / widthDelta }
-                (width / widthDelta).toInt()
-            }
-        }
+
+        val widthWithoutMargins = width - margins.horizontalDp.wholePixels
+        val heightWithoutMargins = height - margins.verticalDp.wholePixels
+
+        val correctedWidth = (
+            when {
+                rotationDegrees % 1f.piRad == 0f -> widthWithoutMargins
+                rotationDegrees % .5f.piRad == 0f -> heightWithoutMargins
+                else -> {
+                    val cumulatedHeight = lineCount * textPaint.lineHeight + padding.verticalDp.wholePixels
+                    val alpha = Math.toRadians(rotationDegrees.toDouble())
+                    val absSinAlpha = sin(alpha).absoluteValue
+                    val absCosAlpha = cos(alpha).absoluteValue
+                    val basedOnWidth = (widthWithoutMargins - cumulatedHeight * absSinAlpha) / absCosAlpha
+                    val basedOnHeight = (heightWithoutMargins - cumulatedHeight * absCosAlpha) / absSinAlpha
+                    min(basedOnWidth, basedOnHeight).toInt()
+                }
+            } - padding.horizontalDp.wholePixels
+            ).coerceAtLeast(0)
+
         val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode()
         return getOrPutExtra(key = key) {
             textPaint.textSize = textSizeSp * fontScale
