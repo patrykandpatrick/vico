@@ -158,6 +158,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 horizontalPosition = if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
                 verticalPosition = VerticalPosition.Center,
                 rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
+                maxTextHeight = bounds.height().toInt(),
             )
         }
     }
@@ -302,6 +303,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                         context = this,
                         text = title,
                         rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
+                        height = bounds.height().toInt(),
                     )
                 }.orZero
                 (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness.half + tickLength)
