@@ -252,7 +252,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     }
 
     /**
-     * Returns the width of this [TextComponent] for the given [text] and the available [width] and [height]..
+     * Returns the width of this [TextComponent] for the given [text] and the available [width] and [height].
      */
     public fun getWidth(
         context: MeasureContext,
