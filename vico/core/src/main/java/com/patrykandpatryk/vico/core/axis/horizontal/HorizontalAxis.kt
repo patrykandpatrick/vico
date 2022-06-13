@@ -190,7 +190,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 val titleComponentHeight = title?.let { title ->
                     titleComponent?.getHeight(
                         context = context,
-                        width = labelWidth,
+                        width = bounds.width().toInt(),
                         text = title,
                     )
                 }.orZero
