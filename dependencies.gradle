@@ -108,15 +108,6 @@ ext {
             ],
     ]
 
-    def material_libs = [
-
-            main: [
-                    group  : "com.google.android.material",
-                    name   : "material",
-                    version: versions.material
-            ]
-    ]
-
     def test_libs = [
 
             junit   : [
@@ -154,7 +145,6 @@ ext {
             [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
-            [configuration: "implementation", dependency: material_libs.main],
             [configuration: "testImplementation", dependency: test_libs.junit],
             [configuration: "testImplementation", dependency: test_libs.junitExt],
             [configuration: "implementation", dependency: jetpack_compose_libs.activity],
@@ -179,7 +169,6 @@ ext {
             [configuration: "implementation", dependency: androidx_libs.core],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
-            [configuration: "implementation", dependency: material_libs.main],
             [configuration: "testImplementation", dependency: test_libs.junit],
             [configuration: "testImplementation", dependency: test_libs.junitExt],
     ]

@@ -37,7 +37,6 @@ ext {
             junitExt          : "1.1.2",
             kotlin            : "1.6.21",
             lifecycle_runtime : "2.4.1",
-            material          : "1.6.0",
             mockk             : "1.12.4",
             viewmodel         : "2.4.1",
             testCore          : "1.3.0",
