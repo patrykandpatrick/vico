@@ -10,7 +10,7 @@ This release includes the following changes.
 - During the measuring phase, `HorizontalAxis` provided `HorizontalAxis#titleComponent` with an incorrect maximum width.
 - `VerticalAxis` didn’t limit the length of its title. This could cause the title to stick out past the axis.
 
-## API Changes
+## API changes
 
 - The `includePadding` parameter of `TextComponent#getTextBounds` is now called `includePaddingAndMargins` for clarity.
 
