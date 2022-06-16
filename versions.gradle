@@ -29,7 +29,7 @@ ext {
             activity          : "1.4.0",
             androidx_core     : "1.8.0",
             androidx_appcompat: "1.4.2",
-            compose           : "1.2.0-beta03",
+            compose           : "1.2.0-rc01",
             coroutines        : "1.6.2",
             dokka             : "1.6.10",
             agp               : "7.2.1",
