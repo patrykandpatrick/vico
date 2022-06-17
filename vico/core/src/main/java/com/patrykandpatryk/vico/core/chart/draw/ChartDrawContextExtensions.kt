@@ -24,8 +24,6 @@ import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.model.Point
 
-private const val DEFAULT_SCALE = 1f
-
 /**
  * The anonymous implementation of [ChartDrawContext].
  *
@@ -72,10 +70,8 @@ public fun chartDrawContext(
         if (isHorizontalScrollEnabled) {
             measureContext.chartScale
         } else {
-            (
-                chartBounds.width() /
-                    (segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount())
-                ).coerceAtMost(DEFAULT_SCALE)
+            chartBounds.width() /
+                (segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount())
         }
 }
 
