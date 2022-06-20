@@ -17,14 +17,15 @@
 package com.patrykandpatryk.vico.core.marker
 
 /**
- * Allows listening to [Marker] visibility changes.
+ * Allows for listening to [Marker] visibility changes.
  */
 public fun interface MarkerVisibilityChangeListener {
 
     /**
-     * Called when [Marker] visibility changes.
-     * @param isVisible whether [Marker] is visible.
-     * @param marker the [Marker], which visibility has changed.
+     * Called when the linked [Marker]’s visibility changes.
+     *
+     * @param isVisible whether the linked [Marker] is visible.
+     * @param marker the linked [Marker], whose visibility has changed.
      */
     public fun onMarkerVisibilityChanged(
         isVisible: Boolean,

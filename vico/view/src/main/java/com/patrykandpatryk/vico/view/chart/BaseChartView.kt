@@ -200,7 +200,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var marker: Marker? = null
 
     /**
-     * Allows listening to [marker] visibility changes.
+     * Allows for listening to [marker] visibility changes.
      */
     public var markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null
 
