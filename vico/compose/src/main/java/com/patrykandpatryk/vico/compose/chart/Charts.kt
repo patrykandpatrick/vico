@@ -29,8 +29,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -57,6 +59,7 @@ import com.patrykandpatryk.vico.core.extension.set
 import com.patrykandpatryk.vico.core.layout.VirtualLayout
 import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
+import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
 
@@ -74,6 +77,7 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * @param bottomAxis an axis displayed on the bottom of the chart.
  * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
  * nearest to the touch point.
+ * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
  * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
@@ -90,6 +94,7 @@ public fun <Model : ChartEntryModel> Chart(
     endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
     bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
     marker: Marker? = null,
+    markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null,
     legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
@@ -110,6 +115,7 @@ public fun <Model : ChartEntryModel> Chart(
             endAxis = endAxis,
             bottomAxis = bottomAxis,
             marker = marker,
+            markerVisibilityChangeListener = markerVisibilityChangeListener,
             legend = legend,
             isHorizontalScrollEnabled = isHorizontalScrollEnabled,
             isZoomEnabled = isZoomEnabled,
@@ -134,6 +140,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param bottomAxis an axis displayed on the bottom of the chart.
  * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
  * nearest to the touch point.
+ * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
  * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
@@ -148,6 +155,7 @@ public fun <Model : ChartEntryModel> Chart(
     endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
     bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
     marker: Marker? = null,
+    markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null,
     legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
@@ -179,6 +187,8 @@ public fun <Model : ChartEntryModel> Chart(
     val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
     val virtualLayout = remember { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
+
+    var wasMarkerVisible: Boolean by remember { mutableStateOf(false) }
 
     Canvas(
         modifier = modifier
@@ -218,6 +228,7 @@ public fun <Model : ChartEntryModel> Chart(
         chart.draw(chartDrawContext, model)
         axisManager.drawAboveChart(chartDrawContext)
         legend?.draw(chartDrawContext)
+
         ifNotNull(
             t1 = marker,
             t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
@@ -227,7 +238,17 @@ public fun <Model : ChartEntryModel> Chart(
                 bounds = chart.bounds,
                 markedEntries = markerModel,
             )
-        }
+            if (wasMarkerVisible.not()) {
+                markerVisibilityChangeListener?.onMarkerVisibilityChanged(true, marker)
+                wasMarkerVisible = true
+            }
+        } ?: marker
+            .takeIf { wasMarkerVisible }
+            ?.also { marker ->
+                markerVisibilityChangeListener?.onMarkerVisibilityChanged(false, marker)
+                wasMarkerVisible = false
+            }
+
         scrollHandler.maxScrollDistance = chartDrawContext.maxScrollDistance
         measureContext.chartValuesManager.resetChartValues()
         measureContext.clearExtras()

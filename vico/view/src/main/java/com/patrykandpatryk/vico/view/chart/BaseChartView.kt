@@ -50,6 +50,7 @@ import com.patrykandpatryk.vico.core.extension.set
 import com.patrykandpatryk.vico.core.layout.VirtualLayout
 import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
+import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
 import com.patrykandpatryk.vico.view.extension.defaultColors
@@ -108,6 +109,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             getChartBounds = { chart?.bounds },
             onZoom = ::handleZoom,
         )
+
     private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
     private val animator: ValueAnimator = ValueAnimator.ofFloat(
@@ -125,6 +127,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     private var markerTouchPoint: Point? = null
+
+    private var wasMarkerVisible: Boolean = false
 
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
 
@@ -194,6 +198,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      * The indication of certain entry appearing on physical touch of the [Chart].
      */
     public var marker: Marker? = null
+
+    /**
+     * Allows for listening to [marker] visibility changes.
+     */
+    public var markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null
 
     /**
      * The legend for this chart.
@@ -287,7 +296,16 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 bounds = chart.bounds,
                 markedEntries = markerModel,
             )
-        }
+            if (wasMarkerVisible.not()) {
+                markerVisibilityChangeListener?.onMarkerVisibilityChanged(true, marker)
+                wasMarkerVisible = true
+            }
+        } ?: marker
+            .takeIf { wasMarkerVisible }
+            ?.also { marker ->
+                markerVisibilityChangeListener?.onMarkerVisibilityChanged(false, marker)
+                wasMarkerVisible = false
+            }
 
         scrollHandler.maxScrollDistance = drawContext.maxScrollDistance
 
