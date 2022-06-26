@@ -70,6 +70,11 @@ Markers highlight the _y_ value corresponding to a specific value on the x-axis.
 - In Jetpack Compose, use the `marker` parameter of the `Chart` composable to add a marker displayed when a chart is touched, and use the `persistentMarkers` parameter of `columnChart` and `lineChart` to add persistent markers.
 - In the view system, use use the `marker` field of `BaseChartView` to add a marker displayed when a chart is touched, and use the `addPersistentMarker`, `setPersistentMarkers`, and `removePersistentMarker` functions to add and remove persistent markers. These functions are accessible via the `chart` field of `BaseChartView` (which is extended by `ChartView` and `ComposedChartView`).
 
+To listen to marker visibility changes, use [`MarkerVisibilityChangeListener`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.component.marker/-marker-visibility-change-listener/):
+
+- In Jetpack Compose, use the `markerVisibilityChangeListener` parameter of the [`Chart`](https://patrykandpatryk.com/vico/api/vico/compose/com.patrykandpatryk.vico.compose.chart/-chart) composable.
+- In the view system, use the `markerVisibilityChangeListener` field of [`BaseChartView`](https://patrykandpatryk.com/vico/api/vico/view/com.patrykandpatryk.vico.view.chart/-base-chart-view/).
+
 Below is an example of how a marker can be created. Also see [`getMarker` in the sample app](https://github.com/patrykandpatryk/vico/blob/master/sample/src/main/java/com/patrykandpatryk/vico/sample/component/Marker.kt#L38).
 
 ```kotlin
