@@ -18,7 +18,7 @@ ext {
 
     library = [
             groupId        : "com.patrykandpatryk.vico",
-            version_name   : "1.1.1",
+            version_name   : "1.2.0",
             version_code   : 1,
             target_sdk     : 32,
             min_sdk        : 16,
