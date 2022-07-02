@@ -31,8 +31,8 @@ import kotlin.random.Random
  * @param yRange the range from which y values are randomly selected.
  */
 public class RandomEntriesGenerator(
-    private val xRange: IntRange = 0..X_RANGE_TOP,
-    private val yRange: IntRange = 0..Y_RANGE_TOP,
+    private val xRange: IntProgression = 0..X_RANGE_TOP,
+    private val yRange: IntProgression = 0..Y_RANGE_TOP,
 ) {
     /**
      * Generates a [List] of [FloatEntry] instances with randomized y values.
