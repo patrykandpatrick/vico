@@ -167,6 +167,15 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var isZoomEnabled: Boolean = true
 
     /**
+     * A scale of the chart which can be set up initially.
+     */
+    public var chartScale: Float = 1f
+        set(value) {
+            field = value
+            measureContext.chartScale = value
+        }
+
+    /**
      * The chart displayed by this [View].
      */
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
@@ -222,6 +231,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         bottomAxis = themeHandler.bottomAxis
         isHorizontalScrollEnabled = themeHandler.isHorizontalScrollEnabled
         isZoomEnabled = themeHandler.isChartZoomEnabled
+        chartScale = themeHandler.chartScale.takeIf { it in DEF_MIN_ZOOM..DEF_MAX_ZOOM } ?: 1f
     }
 
     /**

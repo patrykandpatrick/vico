@@ -63,6 +63,9 @@ internal class ThemeHandler(
     public var isChartZoomEnabled: Boolean = false
         private set
 
+    public var chartScale: Float = 1f
+        private set
+
     public var chart: Chart<ChartEntryModel>? = null
         private set
 
@@ -87,6 +90,8 @@ internal class ThemeHandler(
                 .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, true)
             isChartZoomEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, true)
+            chartScale = typedArray
+                .getFloat(R.styleable.BaseChartView_chartScale, 1f)
         }
         when (chartType) {
             ChartType.Single ->

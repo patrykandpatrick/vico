@@ -48,6 +48,7 @@ internal fun ComposeLineChart(
             startAxis = startAxis,
             bottomAxis = bottomAxis,
             marker = marker(),
+            chartScale = 3f
         )
     }
 }

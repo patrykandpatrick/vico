@@ -81,6 +81,7 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
+ * @param chartScale initial scale of the chart.
  * @param diffAnimationSpec the animation spec used to animate differences between entry sets ([ChartEntryModel]
  * instances).
  */
@@ -98,6 +99,7 @@ public fun <Model : ChartEntryModel> Chart(
     legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
+    chartScale: Float = 1f,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
 ) {
     val model = chartModelProducer.collect(
@@ -119,6 +121,7 @@ public fun <Model : ChartEntryModel> Chart(
             legend = legend,
             isHorizontalScrollEnabled = isHorizontalScrollEnabled,
             isZoomEnabled = isZoomEnabled,
+            chartScale = chartScale.takeIf { it in DEF_MIN_ZOOM..DEF_MAX_ZOOM } ?: 1f,
         )
     }
 }
@@ -144,6 +147,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
+ * @param chartScale initial scale of the chart.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -159,12 +163,13 @@ public fun <Model : ChartEntryModel> Chart(
     legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
+    chartScale: Float = 1f,
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val horizontalScroll = remember { mutableStateOf(0f) }
-    val zoom = remember { mutableStateOf(1f) }
+    val zoom = remember { mutableStateOf(chartScale) }
     val measureContext = getMeasureContext(
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
         horizontalScroll = horizontalScroll.value,

@@ -55,6 +55,7 @@
         <attr name="showBottomAxis" format="boolean" />
         <attr name="chartHorizontalScrollingEnabled" format="boolean" />
         <attr name="chartZoomEnabled" format="boolean" />
+        <attr name="chartScale" format="float" />
     </declare-styleable>
 
     <!-- Defines the appearance of chart axes. -->

@@ -40,7 +40,7 @@ public fun getMeasureContext(
     chartScale: Float,
     canvasBounds: RectF,
 ): MutableMeasureContext {
-    val context = remember() {
+    val context = remember {
         MutableMeasureContext(
             canvasBounds = canvasBounds,
             density = 0f,

@@ -26,8 +26,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:chart="line"
+        app:chartScale="3"
+        app:lineChartStyle="@style/LineChartLineChartStyle"
         app:showBottomAxis="true"
-        app:showStartAxis="true"
-        app:lineChartStyle="@style/LineChartLineChartStyle" />
+        app:showStartAxis="true" />
 
 </FrameLayout>
