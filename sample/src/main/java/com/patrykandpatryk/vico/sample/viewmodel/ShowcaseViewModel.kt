@@ -40,14 +40,7 @@ internal class ShowcaseViewModel : ViewModel() {
         yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
     )
 
-    private val customStepGenerator = RandomEntriesGenerator(
-        xRange = IntProgression.fromClosedRange(rangeStart = 0, rangeEnd = 24, step = 2),
-        yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
-    )
-
     internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
-
-    internal val chartStepEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
     internal val multiChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
@@ -63,7 +56,6 @@ internal class ShowcaseViewModel : ViewModel() {
                         multiGenerator.generateRandomEntries()
                     },
                 )
-                chartStepEntryModelProducer.setEntries(customStepGenerator.generateRandomEntries())
                 delay(UPDATE_FREQUENCY)
             }
         }

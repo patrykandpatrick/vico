@@ -37,15 +37,14 @@ import com.patrykandpatryk.vico.sample.chart.ViewStackedColumnChart
 
 internal fun getSampleCharts(
     chartEntryModelProducer: ChartEntryModelProducer,
-    chartStepEntryModelProducer: ChartEntryModelProducer,
     multiChartEntryModelProducer: ChartEntryModelProducer,
     composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
 ) = listOf(
     SampleChart(
         labelResourceId = R.string.line_chart_label,
         descriptionResourceId = R.string.line_chart_description,
-        composeBased = { ComposeLineChart(chartEntryModelProducer = chartStepEntryModelProducer) },
-        viewBased = { ViewLineChart(chartEntryModelProducer = chartStepEntryModelProducer) },
+        composeBased = { ComposeLineChart(chartEntryModelProducer = chartEntryModelProducer) },
+        viewBased = { ViewLineChart(chartEntryModelProducer = chartEntryModelProducer) },
     ),
     SampleChart(
         labelResourceId = R.string.column_chart_label,
