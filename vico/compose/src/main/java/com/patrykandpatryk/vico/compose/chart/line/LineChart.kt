@@ -38,6 +38,7 @@ import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -100,6 +101,7 @@ public fun lineChart(
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+ * @param pointHorizontalPosition the horizontal position of each point in its corresponding segment.
  *
  * @see LineChart
  * @see LineChart.LineSpec
@@ -123,6 +125,7 @@ public fun lineSpec(
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
+    pointHorizontalPosition: HorizontalPosition = HorizontalPosition.Center,
 ): LineSpec = LineSpec(
     lineColor = lineColor.toArgb(),
     lineThicknessDp = lineThickness.value,
@@ -135,6 +138,7 @@ public fun lineSpec(
     dataLabelVerticalPosition = dataLabelVerticalPosition,
     dataLabelValueFormatter = dataLabelValueFormatter,
     dataLabelRotationDegrees = dataLabelRotationDegrees,
+    pointHorizontalPosition = pointHorizontalPosition,
 )
 
 private val StrokeCap.paintCap: Paint.Cap

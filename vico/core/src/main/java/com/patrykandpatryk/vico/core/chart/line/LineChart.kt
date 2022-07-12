@@ -36,6 +36,7 @@ import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.extension.horizontalCubicTo
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
+import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.component.text.inBounds
@@ -99,6 +100,7 @@ public open class LineChart(
      * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
      * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
      * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+     * @param pointHorizontalPosition the horizontal position of each point in its corresponding segment.
      */
     public open class LineSpec(
         lineColor: Int = Color.LTGRAY,
@@ -112,6 +114,7 @@ public open class LineChart(
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
         public var dataLabelRotationDegrees: Float = 0f,
+        public var pointHorizontalPosition: HorizontalPosition = HorizontalPosition.Center,
     ) {
 
         /**
@@ -201,8 +204,14 @@ public open class LineChart(
             var prevX = bounds.getStart(isLtr = isLtr)
             var prevY = bounds.bottom
 
-            val drawingStart = bounds.getStart(isLtr = isLtr) +
-                layoutDirectionMultiplier * (spacing.half + cellWidth.half) - horizontalScroll
+            val drawingStartAlignmentCorrection = layoutDirectionMultiplier *
+                when (component.pointHorizontalPosition) {
+                    HorizontalPosition.Start -> 0f
+                    HorizontalPosition.Center -> (spacing + cellWidth).half
+                    HorizontalPosition.End -> spacing + cellWidth
+                }
+
+            val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
 
             forEachPointWithinBounds(
                 entries = entries,

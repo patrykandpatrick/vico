@@ -29,6 +29,7 @@ import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.extension.copyColor
 import com.patrykandpatryk.vico.view.R
@@ -187,5 +188,9 @@ internal fun TypedArray.getLineSpec(
             R.styleable.LineSpec_dataLabelRotationDegrees,
             0f,
         ),
+        pointHorizontalPosition = getInteger(R.styleable.LineSpec_pointHorizontalPosition, 1).let { value ->
+            val values = HorizontalPosition.values()
+            values[value % values.size]
+        },
     )
 }
