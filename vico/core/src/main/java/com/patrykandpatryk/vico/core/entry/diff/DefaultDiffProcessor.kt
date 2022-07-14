@@ -60,10 +60,11 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
         if (setEntriesLock.isLocked) {
             setEntriesLock.newCondition().await()
         }
-        progressMaps.map { map ->
-            map.map { (x, model) ->
-                entryOf(x, model.progressDiff(progress))
-            }
+        progressMaps.mapNotNull { map ->
+            map.mapNotNull { (x, model) ->
+                if (model.temporary && progress == 1f) null
+                else entryOf(x, model.progressDiff(progress))
+            }.takeIf { list -> list.isNotEmpty() }
         }
     }
 
@@ -105,6 +106,7 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
                     map[x] = ProgressModel(
                         oldY = map[x]?.oldY,
                         newY = y,
+                        temporary = false,
                     )
                 }
             progressMaps.add(map)
@@ -134,6 +136,7 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
     private data class ProgressModel(
         val oldY: Float? = null,
         val newY: Float? = null,
+        val temporary: Boolean = true,
     ) {
 
         fun progressDiff(progress: Float): Float {
