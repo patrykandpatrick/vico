@@ -28,6 +28,7 @@ import java.util.concurrent.Executors
  *
  * @param entryCollections a two-dimensional list of [ChartEntry] instances used to generate the [ChartEntryModel].
  * @param backgroundExecutor an [Executor] used to generate instances of the [ChartEntryModel] off the main thread.
+ * @param diffProcessor the [DiffProcessor] to use for diff animations.
  *
  * @see ChartModelProducer
  */
