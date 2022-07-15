@@ -18,8 +18,8 @@ package com.patrykandpatryk.vico.core.entry.diff
 
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.calculateStackedYRange
-import com.patrykandpatryk.vico.core.entry.entryOf
 import com.patrykandpatryk.vico.core.entry.yRange
+import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.extension.setAll
 import java.util.TreeMap
 import java.util.concurrent.locks.ReentrantLock
@@ -30,7 +30,7 @@ import java.util.concurrent.locks.ReentrantLock
 public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
 
     private val setEntriesLock: ReentrantLock = ReentrantLock()
-    private val progressMaps = ArrayList<TreeMap<Float, ProgressModel>>()
+    private val progressMaps = ArrayList<TreeMap<Float, ChartEntryProgressModel>>()
 
     private val oldEntries = ArrayList<List<ChartEntry>>()
     private val newEntries = ArrayList<List<ChartEntry>>()
@@ -61,9 +61,9 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
             setEntriesLock.newCondition().await()
         }
         progressMaps.mapNotNull { map ->
-            map.mapNotNull { (x, model) ->
+            map.mapNotNull { (_, model) ->
                 if (model.temporary && progress == 1f) null
-                else entryOf(x, model.progressDiff(progress))
+                else model.progressDiff(progress)
             }.takeIf { list -> list.isNotEmpty() }
         }
     }
@@ -94,19 +94,23 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
         progressMaps.clear()
         val maxListSize = maxOf(oldEntries.size, newEntries.size)
         for (i in 0 until maxListSize) {
-            val map = TreeMap<Float, ProgressModel>()
+            val map = TreeMap<Float, ChartEntryProgressModel>()
             oldEntries
                 .getOrNull(i)
-                ?.forEach { (x, y) ->
-                    map[x] = ProgressModel(oldY = y)
+                ?.forEach { chartEntry ->
+                    map[chartEntry.x] = ChartEntryProgressModel(
+                        oldY = chartEntry.y,
+                        chartEntry = chartEntry,
+                    )
                 }
             newEntries
                 .getOrNull(i)
-                ?.forEach { (x, y) ->
-                    map[x] = ProgressModel(
-                        oldY = map[x]?.oldY,
-                        newY = y,
+                ?.forEach { chartEntry ->
+                    map[chartEntry.x] = ChartEntryProgressModel(
+                        oldY = map[chartEntry.x]?.oldY,
+                        newY = chartEntry.y,
                         temporary = false,
+                        chartEntry = chartEntry,
                     )
                 }
             progressMaps.add(map)
@@ -117,7 +121,6 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
         val oldRange: ClosedFloatingPointRange<Float>,
         val newRange: ClosedFloatingPointRange<Float>,
     ) {
-
         fun progressDiff(progress: Float): ClosedFloatingPointRange<Float> {
             val minValue = ProgressModel(
                 oldY = oldRange.start,
@@ -133,15 +136,27 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
         }
     }
 
-    private data class ProgressModel(
+    private data class ChartEntryProgressModel(
         val oldY: Float? = null,
         val newY: Float? = null,
         val temporary: Boolean = true,
+        val chartEntry: ChartEntry,
     ) {
+        fun progressDiff(progress: Float): ChartEntry = chartEntry.withY(
+            y = ProgressModel(
+                oldY = oldY,
+                newY = newY,
+            ).progressDiff(progress = progress),
+        )
+    }
 
+    private data class ProgressModel(
+        val oldY: Float? = null,
+        val newY: Float? = null,
+    ) {
         fun progressDiff(progress: Float): Float {
-            val oldY = oldY ?: 0f
-            val newY = newY ?: 0f
+            val oldY = oldY.orZero
+            val newY = newY.orZero
             return oldY + (newY - oldY) * progress
         }
     }
