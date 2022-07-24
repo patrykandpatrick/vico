@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.core.axis.horizontal
 
+import android.graphics.RectF
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.setTo
@@ -26,6 +27,7 @@ import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
+import com.patrykandpatryk.vico.core.extension.doubled
 import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
 import com.patrykandpatryk.vico.core.extension.orZero
@@ -50,7 +52,17 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     /**
      * Defines the tick placement.
      */
-    public var tickType: TickType = TickType.Minor
+    @Deprecated(message = "Tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
+    public var tickType: TickType? = null
+        set(value) {
+            field = value
+            if (value != null) tickPosition = TickPosition.fromTickType(value)
+        }
+
+    /**
+     * Defines the tick placement.
+     */
+    public var tickPosition: TickPosition = TickPosition.Edge
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
@@ -60,50 +72,66 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val step = chartValues.stepX
 
         canvas.clipRect(
-            bounds.left - if (tickType == TickType.Minor) tickThickness.half else 0f,
+            bounds.left - tickPosition.getTickInset(tickThickness),
             minOf(bounds.top, chartBounds.top),
-            bounds.right + if (tickType == TickType.Minor) tickThickness.half else 0f,
+            bounds.right + tickPosition.getTickInset(tickThickness),
             maxOf(bounds.bottom, chartBounds.bottom),
         )
 
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
-        val tickCount = tickType.getTickCount(entryLength)
+        val tickCount = tickPosition.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (abs(x = horizontalScroll) / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
         var textCenter = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier *
             (tickDrawStep.half + tickDrawStep * scrollAdjustment) - horizontalScroll
 
-        var tickCenter = getTickDrawCenter(tickType, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
+        var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
         var valueIndex: Float = chartValues.minX + scrollAdjustment * step
 
         for (index in 0 until tickCount) {
-            guideline?.takeIf {
-                it.fitsInVertical(
+            val shouldDraw = valueIndex >= tickPosition.offset &&
+                (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f
+
+            guideline
+                ?.takeIf {
+                    shouldDraw &&
+                        it.fitsInVertical(
+                            context = context,
+                            top = chartBounds.top,
+                            bottom = chartBounds.bottom,
+                            centerX = tickCenter,
+                            boundingBox = chartBounds,
+                        )
+                }?.drawVertical(
                     context = context,
                     top = chartBounds.top,
                     bottom = chartBounds.bottom,
                     centerX = tickCenter,
-                    boundingBox = chartBounds,
                 )
-            }?.drawVertical(context = context, top = chartBounds.top, bottom = chartBounds.bottom, centerX = tickCenter)
 
-            tick?.drawVertical(context = context, top = tickMarkTop, bottom = tickMarkBottom, centerX = tickCenter)
+            tick
+                ?.takeIf { shouldDraw }
+                ?.drawVertical(context = context, top = tickMarkTop, bottom = tickMarkBottom, centerX = tickCenter)
 
-            if (index < entryLength) {
-                label?.drawText(
+            label
+                ?.takeIf { index < entryLength && shouldDraw }
+                ?.drawText(
                     context = context,
                     text = valueFormatter.formatValue(valueIndex, chartValues),
                     textX = textCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
-                    maxTextWidth = tickDrawStep.toInt(),
+                    maxTextWidth = getMaxTextWidth(
+                        tickDrawStep = tickDrawStep.toInt(),
+                        spacing = tickPosition.spacing,
+                        textX = textCenter,
+                        bounds = chartBounds,
+                    ),
                     rotationDegrees = labelRotationDegrees,
                 )
 
-                valueIndex += step
-            }
-
+            valueIndex += step
             tickCenter += layoutDirectionMultiplier * tickDrawStep
             textCenter += layoutDirectionMultiplier * tickDrawStep
         }
@@ -134,20 +162,15 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width() / segmentWidth).toInt() + 1
 
-    private fun TickType.getTickCount(entryLength: Int) = when (this) {
-        TickType.Minor -> entryLength + 1
-        TickType.Major -> entryLength
-    }
-
     private fun DrawContext.getTickDrawCenter(
-        tickType: TickType,
+        tickPosition: TickPosition,
         scrollX: Float,
         tickDrawStep: Float,
         scrollAdjustment: Int,
         textDrawCenter: Float,
-    ) = when (tickType) {
-        TickType.Major -> textDrawCenter
-        TickType.Minor -> bounds.getStart(isLtr = isLtr) +
+    ) = when (tickPosition) {
+        is TickPosition.Center -> textDrawCenter
+        is TickPosition.Edge -> bounds.getStart(isLtr = isLtr) + (tickDrawStep * tickPosition.offset) +
             layoutDirectionMultiplier * (tickDrawStep * scrollAdjustment) - scrollX
     }
 
@@ -157,10 +180,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         segmentProperties: SegmentProperties,
     ): Unit = with(context) {
         with(outInsets) {
-            setHorizontal(
-                if (tickType == TickType.Minor) tickThickness.half
-                else 0f,
-            )
+            setHorizontal(tickPosition.getTickInset(tickThickness))
             top = if (position.isTop) getDesiredHeight(context, segmentProperties) else 0f
             bottom = if (position.isBottom) getDesiredHeight(context, segmentProperties) else 0f
         }
@@ -172,8 +192,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ): Float = with(context) {
 
         val labelWidth =
-            if (isHorizontalScrollEnabled) segmentProperties.scaled(scale = chartScale).segmentWidth.toInt()
-            else Int.MAX_VALUE
+            if (isHorizontalScrollEnabled) {
+                segmentProperties.scaled(scale = chartScale).segmentWidth.toInt() * tickPosition.spacing
+            } else Int.MAX_VALUE
 
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
@@ -223,6 +244,15 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     /**
      * Defines the tick placement.
      */
+    @Deprecated(
+        message = "TickType has been replaced with `TickPosition`, which uses better naming and has more features.",
+        replaceWith = ReplaceWith(
+            expression = "TickPosition",
+            imports = arrayOf(
+                "com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis.TickPosition",
+            ),
+        ),
+    )
     public enum class TickType {
         /**
          * The tick will be placed at the edges of each section on the horizontal axis.
@@ -232,6 +262,15 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
          *   1   2   3
          * ```
          */
+        @Deprecated(
+            message = "TickType has been replaced with `TickPosition`, which uses better naming and has more features.",
+            replaceWith = ReplaceWith(
+                expression = "TickPosition.Edge",
+                imports = arrayOf(
+                    "com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis.TickPosition",
+                ),
+            ),
+        )
         Minor,
 
         /**
@@ -242,7 +281,113 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
          *   1   2   3
          * ```
          */
+        @Deprecated(
+            message = "TickType has been replaced with `TickPosition`, which uses better naming and has more features.",
+            replaceWith = ReplaceWith(
+                expression = "TickPosition.Center()",
+                imports = arrayOf(
+                    "com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis.TickPosition",
+                ),
+            ),
+        )
         Major,
+    }
+
+    /**
+     * [TickPosition] defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows using custom offset
+     * and spacing for both ticks and labels.
+     *
+     * @param offset the index at which ticks and labels start to be drawn. The default is 0.
+     * @param spacing defines how often ticks should be drawn, where 1 means a tick is drawn for each entry,
+     * 2 means a tick is drawn for every second entry, and so on.
+     */
+    public sealed class TickPosition(
+        public val offset: Int,
+        public val spacing: Int,
+    ) {
+
+        /**
+         * Returns a tick count required by given [TickPosition].
+         */
+        public abstract fun getTickCount(entryLength: Int): Int
+
+        /**
+         * Returns a chart bounds inset required by given [TickPosition].
+         */
+        public abstract fun getTickInset(tickThickness: Float): Float
+
+        /**
+         * The tick will be placed at the edges of each section on the horizontal axis.
+         *```
+         * —————————————————
+         * |   |   |   |   |
+         *   1   2   3   4
+         * ```
+         */
+        public object Edge : TickPosition(offset = 0, spacing = 1) {
+
+            override fun getTickCount(entryLength: Int): Int = entryLength + 1
+
+            override fun getTickInset(tickThickness: Float): Float = tickThickness.half
+        }
+
+        /**
+         * The tick will be placed at the center of each section on the horizontal axis.
+         *```
+         * ————————————————
+         *   |   |   |   |
+         *   1   2   3   4
+         * ```
+         *
+         * With [offset] higher than 0, the tick will start at given [offset].
+         *
+         *
+         * Example for [offset] == 2.
+         *```
+         * ————————————————
+         *   |   |   |   |
+         *           3   4
+         * ```
+         *
+         * Example for [offset] == 0 and [spacing] == 2.
+         *```
+         * ————————————————
+         *   |   |   |   |
+         *   1       3
+         * ```
+         */
+        public class Center(
+            offset: Int = 0,
+            spacing: Int = 1,
+        ) : TickPosition(offset = offset, spacing = spacing) {
+
+            public constructor(spacing: Int) : this(offset = spacing, spacing = spacing)
+
+            init {
+                if (offset < 0) {
+                    throw IllegalArgumentException("The offset cannot be negative. Received $offset.")
+                }
+
+                if (spacing < 1) {
+                    throw IllegalArgumentException("The offset cannot be less than 1. Received $spacing.")
+                }
+            }
+
+            override fun getTickCount(entryLength: Int): Int = entryLength
+
+            override fun getTickInset(tickThickness: Float): Float = 0f
+        }
+
+        public companion object {
+
+            /**
+             * Returns a [TickPosition] that replaces deprecated [type].
+             */
+            public fun fromTickType(type: TickType): TickPosition = when (type) {
+                TickType.Minor -> Edge
+                TickType.Major -> Center()
+            }
+        }
     }
 
     /**
@@ -255,7 +400,13 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         /**
          * Defines the tick placement.
          */
-        public var tickType: TickType = TickType.Minor
+        @Deprecated(message = "Tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
+        public var tickType: TickType? = null
+
+        /**
+         * Defines the tick placement.
+         */
+        public var tickPosition: TickPosition = TickPosition.Edge
 
         /**
          * Creates an instance of [HorizontalAxis] using the properties set in this [Builder].
@@ -268,13 +419,32 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 else -> throw UnknownAxisPositionException(T::class.java)
             } as Position
             return setTo(HorizontalAxis(position = position)).also { axis ->
-                axis.tickType = tickType
+                tickType?.also { axis.tickType = it }
+                axis.tickPosition = tickPosition
             } as HorizontalAxis<T>
         }
     }
 
     internal companion object {
         const val MAX_HEIGHT_DIVISOR = 3f
+
+        private fun MeasureContext.getMaxTextWidth(
+            tickDrawStep: Int,
+            spacing: Int,
+            textX: Float,
+            bounds: RectF,
+        ): Int {
+            val baseWidth = tickDrawStep * spacing
+            val left = textX - baseWidth.half
+            val right = textX + baseWidth.half
+
+            return when {
+                isHorizontalScrollEnabled -> baseWidth
+                bounds.left > left -> baseWidth - (bounds.left - left).doubled
+                bounds.right < right -> baseWidth - (right - bounds.right).doubled
+                else -> baseWidth
+            }.toInt()
+        }
     }
 }
 
