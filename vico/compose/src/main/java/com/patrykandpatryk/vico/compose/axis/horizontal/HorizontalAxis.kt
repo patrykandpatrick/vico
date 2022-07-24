@@ -39,6 +39,8 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
  * @param tickLength the length of ticks.
+ * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
+ * offset and spacing for both ticks and labels.
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
  * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
@@ -52,6 +54,7 @@ public fun topAxis(
     axis: LineComponent? = axisLineComponent(),
     tick: LineComponent? = axisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
+    tickPosition: HorizontalAxis.TickPosition = HorizontalAxis.TickPosition.Edge,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Top> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
@@ -65,6 +68,7 @@ public fun topAxis(
     this.guideline = guideline
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
+    this.tickPosition = tickPosition
     this.sizeConstraint = sizeConstraint
     this.labelRotationDegrees = labelRotationDegrees
     this.titleComponent = titleComponent
@@ -78,6 +82,8 @@ public fun topAxis(
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
  * @param tickLength the length of ticks.
+ * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
+ * offset and spacing for both ticks and labels.
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
  * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
@@ -91,6 +97,7 @@ public fun bottomAxis(
     axis: LineComponent? = axisLineComponent(),
     tick: LineComponent? = axisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
+    tickPosition: HorizontalAxis.TickPosition = HorizontalAxis.TickPosition.Edge,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
@@ -104,6 +111,7 @@ public fun bottomAxis(
     this.guideline = guideline
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
+    this.tickPosition = tickPosition
     this.sizeConstraint = sizeConstraint
     this.labelRotationDegrees = labelRotationDegrees
     this.titleComponent = titleComponent

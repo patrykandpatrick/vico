@@ -33,6 +33,7 @@ import com.patrykandpatryk.vico.compose.component.shape.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.formatter.PercentageFormatAxisValueFormatter
+import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
@@ -66,7 +67,12 @@ internal fun ComposeColumnChart(
         chart = columnChart,
         chartModelProducer = chartEntryModelProducer,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = bottomAxis(
+            tickPosition = HorizontalAxis.TickPosition.Center(
+                offset = 1,
+                spacing = 3,
+            ),
+        ),
         marker = marker(),
     )
 }

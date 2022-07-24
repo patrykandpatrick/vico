@@ -61,6 +61,12 @@
         <item name="color">#3D84A8</item>
     </style>
 
+    <style name="ColumnChartAxisStyle">
+        <item name="horizontalAxisTickPosition">center</item>
+        <item name="horizontalAxisTickOffset">1</item>
+        <item name="horizontalAxisTickSpacing">3</item>
+    </style>
+
     <style name="StackedColumnChartAxisStyle">
         <item name="labelRotationDegrees">45</item>
     </style>
