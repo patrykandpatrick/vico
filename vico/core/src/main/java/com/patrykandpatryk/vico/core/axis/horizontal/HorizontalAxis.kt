@@ -52,7 +52,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     /**
      * Defines the tick placement.
      */
-    @Deprecated(message = "Tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
+    @Deprecated(message = "The tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
     public var tickType: TickType? = null
         set(value) {
             field = value
@@ -294,7 +294,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     /**
-     * [TickPosition] defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using custom offset
+     * [TickPosition] defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom offset
      * and spacing for both ticks and labels.
      *
      * @param offset the index at which ticks and labels start to be drawn. The default is 0.
@@ -307,12 +307,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ) {
 
         /**
-         * Returns a tick count required by given [TickPosition].
+         * Returns the tick count required by given [TickPosition].
          */
         public abstract fun getTickCount(entryLength: Int): Int
 
         /**
-         * Returns a chart bounds inset required by given [TickPosition].
+         * Returns the chart bounds inset required by the given [TickPosition].
          */
         public abstract fun getTickInset(tickThickness: Float): Float
 
@@ -376,7 +376,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         public companion object {
 
             /**
-             * Returns a [TickPosition] that replaces deprecated [type].
+             * Returns the [TickPosition] that replaces the deprecated [type].
              */
             public fun fromTickType(type: TickType): TickPosition = when (type) {
                 TickType.Minor -> Edge
@@ -395,7 +395,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         /**
          * Defines the tick placement.
          */
-        @Deprecated(message = "Tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
+        @Deprecated(message = "The tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
         public var tickType: TickType? = null
 
         /**

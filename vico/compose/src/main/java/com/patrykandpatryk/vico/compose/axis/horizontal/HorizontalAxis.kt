@@ -39,7 +39,7 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
  * @param tickLength the length of ticks.
- * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows using custom offset
+ * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom offset
  * and spacing for both ticks and labels.
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
@@ -82,7 +82,7 @@ public fun topAxis(
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
  * @param tickLength the length of ticks.
- * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows using custom offset
+ * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom offset
  * and spacing for both ticks and labels.
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
