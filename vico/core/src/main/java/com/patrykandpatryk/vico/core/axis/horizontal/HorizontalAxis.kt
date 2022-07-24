@@ -294,7 +294,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     /**
-     * [TickPosition] defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows using custom offset
+     * [TickPosition] defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using custom offset
      * and spacing for both ticks and labels.
      *
      * @param offset the index at which ticks and labels start to be drawn. The default is 0.
