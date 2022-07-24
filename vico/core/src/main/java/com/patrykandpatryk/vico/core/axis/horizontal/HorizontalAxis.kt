@@ -364,13 +364,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             public constructor(spacing: Int) : this(offset = spacing, spacing = spacing)
 
             init {
-                if (offset < 0) {
-                    throw IllegalArgumentException("The offset cannot be negative. Received $offset.")
-                }
-
-                if (spacing < 1) {
-                    throw IllegalArgumentException("The offset cannot be less than 1. Received $spacing.")
-                }
+                require(offset >= 0) { "The offset cannot be negative. Received $offset." }
+                require(spacing >= 1) { "The offset cannot be less than 1. Received $spacing." }
             }
 
             override fun getTickCount(entryLength: Int): Int = entryLength
