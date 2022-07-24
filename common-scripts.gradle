@@ -14,16 +14,12 @@
  * limitations under the License.
  */
 
-apply from: "$rootDir/compiler-args.gradle"
-
 android {
 
     compileSdk library.target_sdk
 
     defaultConfig {
-
         minSdk library.min_sdk
-        targetSdk library.target_sdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -43,12 +39,16 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+        useIR = true
+        freeCompilerArgs = [
+                "-Xexplicit-api=strict",
+                "-opt-in=kotlin.RequiresOptIn"
+        ]
     }
 }
 
 ext {
-
     getNamespace = this.&getNamespace
     getArtifactId = this.&getArtifactId
     customizePom = this.&customizePom

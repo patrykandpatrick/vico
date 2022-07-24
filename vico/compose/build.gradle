@@ -23,19 +23,8 @@ apply from: "$rootDir/common-scripts.gradle"
 apply from: "$rootDir/dokka-common.gradle"
 
 android {
-
     defaultConfig {
-
         minSdk library.compose_min_sdk
-        targetSdk library.target_sdk
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-        useIR = true
     }
 
     buildFeatures {
