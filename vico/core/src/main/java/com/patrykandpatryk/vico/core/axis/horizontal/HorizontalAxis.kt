@@ -111,11 +111,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 )
 
             tick
-                ?.takeIf { shouldDraw }
+                .takeIf { shouldDraw }
                 ?.drawVertical(context = context, top = tickMarkTop, bottom = tickMarkBottom, centerX = tickCenter)
 
             label
-                ?.takeIf { index < entryLength && shouldDraw }
+                .takeIf { index < entryLength && shouldDraw }
                 ?.drawText(
                     context = context,
                     text = valueFormatter.formatValue(valueIndex, chartValues),
