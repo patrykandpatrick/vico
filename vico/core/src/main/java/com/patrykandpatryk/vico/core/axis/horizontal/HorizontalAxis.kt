@@ -294,8 +294,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     /**
-     * [TickPosition] defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom offset
-     * and spacing for both ticks and labels.
+     * [TickPosition] defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
+     * offset and spacing for both ticks and labels.
      *
      * @param offset the index at which ticks and labels start to be drawn. The default is 0.
      * @param spacing defines how often ticks should be drawn, where 1 means a tick is drawn for each entry,
@@ -395,7 +395,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         /**
          * Defines the tick placement.
          */
-        @Deprecated(message = "The tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
+        @Deprecated(
+            message = "The tick type is now defined by `tickPosition`.",
+            replaceWith = ReplaceWith("tickPosition"),
+        )
         public var tickType: TickType? = null
 
         /**
