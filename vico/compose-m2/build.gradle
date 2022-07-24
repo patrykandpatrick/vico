@@ -26,8 +26,8 @@ android {
 
     defaultConfig {
 
-        minSdkVersion library.compose_min_sdk
-        targetSdkVersion library.target_sdk
+        minSdk library.compose_min_sdk
+        targetSdk library.target_sdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"

@@ -23,11 +23,11 @@ apply from: "$rootDir/common-scripts.gradle"
 
 android {
 
-    compileSdkVersion library.target_sdk
+    compileSdk library.target_sdk
 
     defaultConfig {
-        minSdkVersion library.compose_min_sdk
-        targetSdkVersion library.target_sdk
+        minSdk library.compose_min_sdk
+        targetSdk library.target_sdk
         versionCode library.version_code
         versionName library.version_name
 

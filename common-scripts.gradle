@@ -18,12 +18,12 @@ apply from: "$rootDir/compiler-args.gradle"
 
 android {
 
-    compileSdkVersion library.target_sdk
+    compileSdk library.target_sdk
 
     defaultConfig {
 
-        minSdkVersion library.min_sdk
-        targetSdkVersion library.target_sdk
+        minSdk library.min_sdk
+        targetSdk library.target_sdk
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
