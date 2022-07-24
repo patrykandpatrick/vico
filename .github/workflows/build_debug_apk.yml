@@ -1,6 +1,9 @@
 name: Build debug APK
+
 on:
   push:
+  pull_request:
+
 jobs:
   build_debug_apk:
     runs-on: ubuntu-latest
