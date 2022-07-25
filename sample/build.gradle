@@ -24,6 +24,7 @@ apply from: "$rootDir/common-scripts.gradle"
 android {
     defaultConfig {
         minSdk library.compose_min_sdk
+        targetSdk library.target_sdk
         versionCode library.version_code
         versionName library.version_name
     }
