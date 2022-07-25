@@ -13,6 +13,7 @@ This release includes the following changes.
 
 - `ChartEntryModelProducer` now allows for a custom `DiffProcessor` implementation to be specified.
 - `DefaultDiffProcessor` now works with custom `ChartEntry` implementations.
+- The `bottomAxis` and `topAxis` functions in the `compose` module now allow for tick position customization.
 
 ## Resolved issues
 
