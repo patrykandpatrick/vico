@@ -22,4 +22,10 @@ package com.patrykandpatryk.vico.core.entry
 public data class FloatEntry(
     override val x: Float,
     override val y: Float,
-) : ChartEntry
+) : ChartEntry {
+
+    override fun withY(y: Float): ChartEntry = FloatEntry(
+        x = x,
+        y = y,
+    )
+}

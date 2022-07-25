@@ -43,4 +43,9 @@ public interface ChartEntry {
      * @see y
      */
     public operator fun component2(): Float = y
+
+    /**
+     * Creates a copy of this [ChartEntry] implementation, but with a new [y] value.
+     */
+    public fun withY(y: Float): ChartEntry
 }

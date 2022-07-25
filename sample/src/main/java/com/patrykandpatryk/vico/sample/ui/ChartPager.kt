@@ -32,6 +32,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.sample.util.SampleChart
 import com.patrykandpatryk.vico.sample.util.Tab
@@ -53,18 +54,20 @@ internal fun ChartPager(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 32.dp),
+                        .padding(vertical = 32.dp, horizontal = 16.dp),
                 ) {
                     Text(
                         text = stringResource(id = sampleCharts[targetState].labelResourceId),
                         style = MaterialTheme.typography.headlineSmall,
                         color = MaterialTheme.colorScheme.onSurface,
+                        textAlign = TextAlign.Center,
                     )
                     Text(
                         text = stringResource(id = sampleCharts[targetState].descriptionResourceId),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         modifier = Modifier.padding(top = 4.dp),
+                        textAlign = TextAlign.Center,
                     )
                 }
             }

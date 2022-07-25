@@ -28,12 +28,14 @@ import java.util.concurrent.Executors
  *
  * @param entryCollections a two-dimensional list of [ChartEntry] instances used to generate the [ChartEntryModel].
  * @param backgroundExecutor an [Executor] used to generate instances of the [ChartEntryModel] off the main thread.
+ * @param diffProcessor the [DiffProcessor] to use for diff animations.
  *
  * @see ChartModelProducer
  */
 public class ChartEntryModelProducer(
     entryCollections: List<List<ChartEntry>>,
     backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
+    private val diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor(),
 ) : ChartModelProducer<ChartEntryModel> {
 
     private var cachedModel: ChartEntryModel? = null
@@ -50,7 +52,8 @@ public class ChartEntryModelProducer(
     public constructor(
         vararg entryCollections: List<ChartEntry>,
         backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-    ) : this(entryCollections.toList(), backgroundExecutor)
+        diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor(),
+    ) : this(entryCollections.toList(), backgroundExecutor, diffProcessor)
 
     init {
         setEntries(entryCollections)
@@ -126,7 +129,6 @@ public class ChartEntryModelProducer(
         updateListener: () -> ChartEntryModel?,
         onModel: (ChartEntryModel) -> Unit,
     ) {
-        val diffProcessor = DefaultDiffProcessor()
         updateReceivers[key] = UpdateReceiver(
             listener = updateListener,
             onModel = onModel,

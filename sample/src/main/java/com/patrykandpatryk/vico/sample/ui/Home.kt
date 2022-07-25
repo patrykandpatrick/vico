@@ -58,6 +58,7 @@ internal fun Home() {
     val showcaseViewModel = viewModel<ShowcaseViewModel>()
     val sampleCharts = getSampleCharts(
         chartEntryModelProducer = showcaseViewModel.chartEntryModelProducer,
+        chartStepEntryModelProducer = showcaseViewModel.chartStepEntryModelProducer,
         composedChartEntryModelProducer = showcaseViewModel.composedChartEntryModelProducer,
         multiChartEntryModelProducer = showcaseViewModel.multiChartEntryModelProducer,
     ).remember()

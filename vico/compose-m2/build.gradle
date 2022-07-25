@@ -30,9 +30,9 @@ android {
     buildFeatures {
         compose true
     }
-    
+
     composeOptions {
-        kotlinCompilerExtensionVersion versions.compose
+        kotlinCompilerExtensionVersion versions.composeCompiler
     }
 
     namespace = getNamespace(project)

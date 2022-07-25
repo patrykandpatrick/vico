@@ -78,6 +78,12 @@
         <attr name="titleStyle" format="reference" />
         <attr name="title" format="string|reference" />
         <attr name="showTitle" format="boolean|reference" />
+        <attr name="horizontalAxisTickPosition" format="enum">
+            <enum name="edge" value="0" />
+            <enum name="center" value="1" />
+        </attr>
+        <attr name="horizontalAxisTickOffset" format="integer"/>
+        <attr name="horizontalAxisTickSpacing" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="LineComponent">

@@ -28,6 +28,7 @@
         app:chart="column"
         app:showBottomAxis="true"
         app:showStartAxis="true"
+        app:axisStyle="@style/ColumnChartAxisStyle"
         app:columnChartStyle="@style/ColumnChartColumnChartStyle" />
 
 </FrameLayout>
