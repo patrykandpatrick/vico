@@ -40,10 +40,9 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
-        useIR = true
         freeCompilerArgs = [
-                "-Xexplicit-api=strict",
-                "-opt-in=kotlin.RequiresOptIn"
+            "-Xexplicit-api=strict",
+            "-opt-in=kotlin.RequiresOptIn"
         ]
     }
 }
