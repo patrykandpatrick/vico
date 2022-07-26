@@ -117,7 +117,7 @@ public class Insets(
     }
 
     /**
-     * For each of these [Insets]ʼ four values, updates the value to the corresponding value
+     * For each of these [Insets]’ four values, updates the value to the corresponding value
      * from [other] if the value from [other] is greater than the current value.
      */
     public fun setValuesIfGreater(other: Insets) {
@@ -128,7 +128,7 @@ public class Insets(
     }
 
     /**
-     * For each of these [Insets]ʼ four values, updates the value to the corresponding provided
+     * For each of these [Insets]’ four values, updates the value to the corresponding provided
      * value if the provided value is greater than the current value.
      */
     public fun setAllIfGreater(
