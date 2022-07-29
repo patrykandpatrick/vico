@@ -17,6 +17,7 @@
 package com.patrykandpatryk.vico.sample.ui
 
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,34 +50,52 @@ internal fun ChartPager(
         state = state,
         itemCount = itemCount,
         above = {
-            Crossfade(targetState = state.currentValue) { targetState ->
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+            Box(
+                modifier = Modifier.weight(weight = 1f),
+                contentAlignment = Alignment.BottomCenter,
+            ) {
+                Crossfade(
+                    targetState = state.currentValue,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 32.dp, horizontal = 16.dp),
-                ) {
-                    Text(
-                        text = stringResource(id = sampleCharts[targetState].labelResourceId),
-                        style = MaterialTheme.typography.headlineSmall,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        text = stringResource(id = sampleCharts[targetState].descriptionResourceId),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.padding(top = 4.dp),
-                        textAlign = TextAlign.Center,
-                    )
+                        .animateContentSize(),
+                ) { targetState ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 32.dp, horizontal = 16.dp),
+                    ) {
+                        Text(
+                            text = stringResource(id = sampleCharts[targetState].labelResourceId),
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                        Text(
+                            text = stringResource(id = sampleCharts[targetState].descriptionResourceId),
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .fillMaxWidth(),
+                        )
+                    }
                 }
             }
         },
         below = {
-            SwipeHint(
-                currentPage = state.currentValue + 1,
-                pageCount = itemCount,
-            )
+            Box(
+                modifier = Modifier.weight(weight = 1f),
+                contentAlignment = Alignment.TopCenter,
+            ) {
+                SwipeHint(
+                    currentPage = state.currentValue + 1,
+                    pageCount = itemCount,
+                )
+            }
         },
     ) {
         Box(
