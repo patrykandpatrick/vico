@@ -1,4 +1,4 @@
-Chart data in Vico is stored in [`ChartEntryModel`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s.
+Chart data in Vico is stored in [`ChartEntryModel`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model/)s. A [`ChartEntry`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry) holds data about an individual entry on a chart (for example, a single column).
 
 ## Static data
 
