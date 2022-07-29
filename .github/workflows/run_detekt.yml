@@ -1,9 +1,7 @@
 name: Run Detekt
-
 on:
   push:
   pull_request:
-
 jobs:
   run_detekt:
     runs-on: ubuntu-latest
