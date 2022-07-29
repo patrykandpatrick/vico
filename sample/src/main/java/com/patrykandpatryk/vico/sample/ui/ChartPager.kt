@@ -54,18 +54,18 @@ internal fun ChartPager(
                 modifier = Modifier.weight(weight = 1f),
                 contentAlignment = Alignment.BottomCenter,
             ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Crossfade(
+                    targetState = state.currentValue,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 32.dp, horizontal = 16.dp),
-                ) {
-                    Crossfade(
-                        targetState = state.currentValue,
+                        .animateContentSize(),
+                ) { targetState ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .animateContentSize(),
-                    ) { targetState ->
+                            .padding(vertical = 32.dp, horizontal = 16.dp),
+                    ) {
                         Text(
                             text = stringResource(id = sampleCharts[targetState].labelResourceId),
                             style = MaterialTheme.typography.headlineSmall,
@@ -73,20 +73,14 @@ internal fun ChartPager(
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
                         )
-                    }
-                    Crossfade(
-                        targetState = state.currentValue,
-                        modifier = Modifier
-                            .padding(top = 4.dp)
-                            .fillMaxWidth()
-                            .animateContentSize(),
-                    ) { targetState ->
                         Text(
                             text = stringResource(id = sampleCharts[targetState].descriptionResourceId),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .padding(top = 4.dp)
+                                .fillMaxWidth(),
                         )
                     }
                 }
