@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.material.ExperimentalMaterialApi
@@ -39,8 +40,8 @@ import androidx.compose.ui.unit.dp
 internal fun HorizontalPager(
     itemCount: Int,
     state: SwipeableState<Int>,
-    above: (@Composable () -> Unit)? = null,
-    below: (@Composable () -> Unit)? = null,
+    above: (@Composable ColumnScope.() -> Unit)? = null,
+    below: (@Composable ColumnScope.() -> Unit)? = null,
     getPage: @Composable BoxScope.(Int) -> Unit,
 ) {
     val density = LocalDensity.current
@@ -60,7 +61,7 @@ internal fun HorizontalPager(
                     reverseDirection = LocalLayoutDirection.current == LayoutDirection.Ltr,
                 ),
         ) {
-            above?.invoke()
+            if (above != null) above()
             Box(modifier = Modifier.fillMaxWidth()) {
                 indices.map { index ->
                     val delta = -fractionalState + index
@@ -76,7 +77,7 @@ internal fun HorizontalPager(
                     }
                 }
             }
-            below?.invoke()
+            if (below != null) below()
         }
     }
 }
