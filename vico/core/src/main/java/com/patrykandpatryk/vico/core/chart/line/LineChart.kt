@@ -181,7 +181,7 @@ public open class LineChart(
         /**
          * Defines the horizontal position of each point in its corresponding segment.
          */
-        public enum class PointPosition(public val position: HorizontalPosition) {
+        public enum class PointPosition(internal val position: HorizontalPosition) {
             Start(position = HorizontalPosition.Start),
             Center(position = HorizontalPosition.Center),
         }

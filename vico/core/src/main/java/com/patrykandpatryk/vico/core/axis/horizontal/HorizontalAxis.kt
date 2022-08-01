@@ -84,7 +84,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         )
 
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
-        val tickCount = tickPosition.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (abs(x = horizontalScroll) / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
@@ -100,10 +99,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
         var valueIndex: Float = chartValues.minX + scrollAdjustment * step
 
-        for (index in 0 until tickCount) {
-            val shouldDraw = valueIndex >= tickPosition.offset &&
-                (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f &&
-                (index >= labelPosition.labelsToSkip || tickPosition.offset > 0)
+        forEachEntityIndex(valueIndex = valueIndex, entryLength = entryLength) { index, shouldDraw ->
 
             guideline
                 ?.takeIf {
@@ -173,6 +169,19 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width() / segmentWidth).toInt() + 1
+
+    private fun forEachEntityIndex(
+        valueIndex: Float,
+        entryLength: Int,
+        action: (Int, Boolean) -> Unit,
+    ) {
+        for (index in 0 until tickPosition.getTickCount(entryLength)) {
+            val shouldDraw = valueIndex >= tickPosition.offset &&
+                (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f &&
+                (index >= labelPosition.labelsToSkip || tickPosition.offset > 0)
+            action(index, shouldDraw)
+        }
+    }
 
     private fun DrawContext.getTickDrawCenter(
         tickPosition: TickPosition,
