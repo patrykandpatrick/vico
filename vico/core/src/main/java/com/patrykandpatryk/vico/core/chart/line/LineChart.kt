@@ -114,7 +114,7 @@ public open class LineChart(
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
         public var dataLabelRotationDegrees: Float = 0f,
-        public var pointHorizontalPosition: HorizontalPosition = HorizontalPosition.Center,
+        public var pointHorizontalPosition: PointHorizontalPosition = PointHorizontalPosition.Center,
     ) {
 
         /**
@@ -206,9 +206,8 @@ public open class LineChart(
 
             val drawingStartAlignmentCorrection = layoutDirectionMultiplier *
                 when (component.pointHorizontalPosition) {
-                    HorizontalPosition.Start -> 0f
-                    HorizontalPosition.Center -> (spacing + cellWidth).half
-                    HorizontalPosition.End -> spacing + cellWidth
+                    PointHorizontalPosition.Start -> 0f
+                    PointHorizontalPosition.Center -> (spacing + cellWidth).half
                 }
 
             val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
@@ -412,6 +411,11 @@ public open class LineChart(
                 else it.lineThicknessDp
             }.pixels,
         )
+    }
+
+    public enum class PointHorizontalPosition(public val position: HorizontalPosition) {
+        Start(position = HorizontalPosition.Start),
+        Center(position = HorizontalPosition.Center),
     }
 
     private companion object {

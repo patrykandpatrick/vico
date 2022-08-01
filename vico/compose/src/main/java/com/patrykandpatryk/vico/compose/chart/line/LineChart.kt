@@ -38,7 +38,6 @@ import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -125,7 +124,7 @@ public fun lineSpec(
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
-    pointHorizontalPosition: HorizontalPosition = HorizontalPosition.Center,
+    pointHorizontalPosition: LineChart.PointHorizontalPosition = LineChart.PointHorizontalPosition.Center,
 ): LineSpec = LineSpec(
     lineColor = lineColor.toArgb(),
     lineThicknessDp = lineThickness.value,
