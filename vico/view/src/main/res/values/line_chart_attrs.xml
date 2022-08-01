@@ -39,7 +39,7 @@
         <attr name="dataLabelStyle" />
         <attr name="dataLabelVerticalPosition" />
         <attr name="dataLabelRotationDegrees" />
-        <attr name="pointHorizontalPosition" format="enum">
+        <attr name="pointPosition" format="enum">
             <enum name="start" value="0" />
             <enum name="center" value="1" />
         </attr>

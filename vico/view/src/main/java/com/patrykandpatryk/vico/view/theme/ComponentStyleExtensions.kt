@@ -187,8 +187,8 @@ internal fun TypedArray.getLineSpec(
             R.styleable.LineSpec_dataLabelRotationDegrees,
             0f,
         ),
-        pointHorizontalPosition = getInteger(R.styleable.LineSpec_pointHorizontalPosition, 1).let { value ->
-            val values = LineChart.PointHorizontalPosition.values()
+        pointPosition = getInteger(R.styleable.LineSpec_pointPosition, 1).let { value ->
+            val values = LineChart.LineSpec.PointPosition.values()
             values[value % values.size]
         },
     )

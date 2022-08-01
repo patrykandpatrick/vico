@@ -100,7 +100,7 @@ public open class LineChart(
      * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
      * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
      * @param dataLabelRotationDegrees the rotation of data labels in degrees.
-     * @param pointHorizontalPosition the horizontal position of each point in its corresponding segment.
+     * @param pointPosition the horizontal position of each point in its corresponding segment.
      */
     public open class LineSpec(
         lineColor: Int = Color.LTGRAY,
@@ -114,7 +114,7 @@ public open class LineChart(
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
         public var dataLabelRotationDegrees: Float = 0f,
-        public var pointHorizontalPosition: PointHorizontalPosition = PointHorizontalPosition.Center,
+        public var pointPosition: PointPosition = PointPosition.Center,
     ) {
 
         /**
@@ -177,6 +177,14 @@ public open class LineChart(
 
             canvas.drawPath(path, lineBackgroundPaint)
         }
+
+        /**
+         * Defines the horizontal position of each point in its corresponding segment.
+         */
+        public enum class PointPosition(public val position: HorizontalPosition) {
+            Start(position = HorizontalPosition.Start),
+            Center(position = HorizontalPosition.Center),
+        }
     }
 
     private val linePath = Path()
@@ -205,9 +213,9 @@ public open class LineChart(
             var prevY = bounds.bottom
 
             val drawingStartAlignmentCorrection = layoutDirectionMultiplier *
-                when (component.pointHorizontalPosition) {
-                    PointHorizontalPosition.Start -> 0f
-                    PointHorizontalPosition.Center -> (spacing + cellWidth).half
+                when (component.pointPosition) {
+                    LineSpec.PointPosition.Start -> 0f
+                    LineSpec.PointPosition.Center -> (spacing + cellWidth).half
                 }
 
             val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
@@ -411,11 +419,6 @@ public open class LineChart(
                 else it.lineThicknessDp
             }.pixels,
         )
-    }
-
-    public enum class PointHorizontalPosition(public val position: HorizontalPosition) {
-        Start(position = HorizontalPosition.Start),
-        Center(position = HorizontalPosition.Center),
     }
 
     private companion object {
