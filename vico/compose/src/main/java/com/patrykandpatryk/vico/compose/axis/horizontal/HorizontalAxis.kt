@@ -47,6 +47,7 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
  * @param labelRotationDegrees the rotation of axis labels in degrees.
  * @param titleComponent an optional [TextComponent] use as the axis title.
  * @param title the axis title.
+ * @param labelPosition defines the position of labels.
  */
 @Composable
 public fun topAxis(
@@ -61,6 +62,7 @@ public fun topAxis(
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
+    labelPosition: HorizontalAxis.LabelPosition = HorizontalAxis.LabelPosition.Center,
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -73,6 +75,7 @@ public fun topAxis(
     this.labelRotationDegrees = labelRotationDegrees
     this.titleComponent = titleComponent
     this.title = title
+    this.labelPosition = labelPosition
 }
 
 /**
@@ -90,6 +93,7 @@ public fun topAxis(
  * @param labelRotationDegrees the rotation of axis labels in degrees.
  * @param titleComponent an optional [TextComponent] use as the axis title.
  * @param title the axis title.
+ * @param labelPosition defines the position of labels.
  */
 @Composable
 public fun bottomAxis(
@@ -104,6 +108,7 @@ public fun bottomAxis(
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    labelPosition: HorizontalAxis.LabelPosition = HorizontalAxis.LabelPosition.Center,
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -116,4 +121,5 @@ public fun bottomAxis(
     this.labelRotationDegrees = labelRotationDegrees
     this.titleComponent = titleComponent
     this.title = title
+    this.labelPosition = labelPosition
 }

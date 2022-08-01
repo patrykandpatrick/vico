@@ -158,27 +158,35 @@ internal class ThemeHandler(
             } else null
             title = axisStyle.getString(R.styleable.Axis_title)
 
-            if (this is VerticalAxis.Builder<*>) {
-                horizontalLabelPosition = axisStyle
-                    .getInteger(R.styleable.Axis_verticalAxisHorizontalLabelPosition, 0)
-                    .let { value ->
-                        val values = VerticalAxis.HorizontalLabelPosition.values()
-                        values[value % values.size]
+            when (this) {
+                is VerticalAxis.Builder<*> -> {
+                    horizontalLabelPosition = axisStyle
+                        .getInteger(R.styleable.Axis_verticalAxisHorizontalLabelPosition, 0)
+                        .let { value ->
+                            val values = VerticalAxis.HorizontalLabelPosition.values()
+                            values[value % values.size]
+                        }
+
+                    verticalLabelPosition = axisStyle
+                        .getInteger(R.styleable.Axis_verticalAxisVerticalLabelPosition, 0)
+                        .let { value ->
+                            val values = VerticalAxis.VerticalLabelPosition.values()
+                            values[value % values.size]
+                        }
+                }
+                is HorizontalAxis.Builder<*> -> {
+                    tickPosition = when (axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickPosition, 0)) {
+                        0 -> HorizontalAxis.TickPosition.Edge
+                        else -> HorizontalAxis.TickPosition.Center(
+                            offset = axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickOffset, 0),
+                            spacing = axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickSpacing, 1),
+                        )
                     }
 
-                verticalLabelPosition = axisStyle
-                    .getInteger(R.styleable.Axis_verticalAxisVerticalLabelPosition, 0)
-                    .let { value ->
-                        val values = VerticalAxis.VerticalLabelPosition.values()
+                    labelPosition = axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelPosition, 1).let { value ->
+                        val values = HorizontalAxis.LabelPosition.values()
                         values[value % values.size]
                     }
-            } else if (this is HorizontalAxis.Builder<*>) {
-                tickPosition = when (axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickPosition, 0)) {
-                    0 -> HorizontalAxis.TickPosition.Edge
-                    else -> HorizontalAxis.TickPosition.Center(
-                        offset = axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickOffset, 0),
-                        spacing = axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickSpacing, 1),
-                    )
                 }
             }
         }.also { axisStyle.recycle() }

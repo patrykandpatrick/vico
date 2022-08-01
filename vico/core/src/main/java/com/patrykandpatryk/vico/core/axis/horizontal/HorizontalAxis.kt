@@ -64,6 +64,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      */
     public var tickPosition: TickPosition = TickPosition.Edge
 
+    /**
+     * Defines the position of labels.
+     */
+    public var labelPosition: LabelPosition = LabelPosition.Center
+
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
@@ -83,15 +88,22 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (abs(x = horizontalScroll) / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
+
+        val labelPositionOffset = when (labelPosition) {
+            LabelPosition.Start -> 0f
+            LabelPosition.Center -> tickDrawStep.half
+        }
+
         var textCenter = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier *
-            (tickDrawStep.half + tickDrawStep * scrollAdjustment) - horizontalScroll
+            (labelPositionOffset + tickDrawStep * scrollAdjustment) - horizontalScroll
 
         var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
         var valueIndex: Float = chartValues.minX + scrollAdjustment * step
 
         for (index in 0 until tickCount) {
             val shouldDraw = valueIndex >= tickPosition.offset &&
-                (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f
+                (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f &&
+                (index >= labelPosition.labelsToSkip || tickPosition.offset > 0)
 
             guideline
                 ?.takeIf {
@@ -285,12 +297,18 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             message = "TickType has been replaced with `TickPosition`, which uses better naming and has more features.",
             replaceWith = ReplaceWith(
                 expression = "TickPosition.Center()",
-                imports = arrayOf(
-                    "com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis.TickPosition",
-                ),
+                imports = arrayOf("com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis.TickPosition"),
             ),
         )
         Major,
+    }
+
+    /**
+     * Defines the position of labels.
+     */
+    public enum class LabelPosition(internal val labelsToSkip: Int) {
+        Start(labelsToSkip = 1),
+        Center(labelsToSkip = 0),
     }
 
     /**
@@ -407,6 +425,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         public var tickPosition: TickPosition = TickPosition.Edge
 
         /**
+         * Defines the position of labels.
+         */
+        public var labelPosition: LabelPosition = LabelPosition.Center
+
+        /**
          * Creates an instance of [HorizontalAxis] using the properties set in this [Builder].
          */
         @Suppress("UNCHECKED_CAST")
@@ -419,6 +442,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             return setTo(HorizontalAxis(position = position)).also { axis ->
                 tickType?.also { axis.tickType = it }
                 axis.tickPosition = tickPosition
+                axis.labelPosition = labelPosition
             } as HorizontalAxis<T>
         }
     }
