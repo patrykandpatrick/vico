@@ -16,6 +16,8 @@ You can customize the appearance of charts axes, including the style of the line
 
 - In the view system, axes can be customized via [XML attributes](../../customization/customization-in-the-view-system) or programmatically. For an example of programmatic customization, see [`ViewStackedColumnChart`](https://github.com/patrykandpatryk/vico/blob/master/sample/src/main/java/com/patrykandpatryk/vico/sample/chart/StackedColumnChart.kt#L57) in the sample app.
 
+Most notably, [`HorizontalAxis`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.horizontal/-horizontal-axis/), when `tickPosition` is set to [`HorizontalAxis.TickPosition.Center`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.horizontal/-horizontal-axis/-tick-position/-center/), allows for the tick offset and spacing to be specified. This enables you to add intermediate entries between labels. For example, a chart could include 28 days’ worth of data, but only four labels, one for each week. See [`ColumnChart.kt`](https://github.com/patrykandpatryk/vico/blob/master/sample/src/main/java/com/patrykandpatryk/vico/sample/chart/ColumnChart.kt) in the sample app for an example of this.
+
 To create entirely custom axes, you can write your own [`VerticalAxis`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.vertical/-vertical-axis/) and [`HorizontalAxis`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.horizontal/-horizontal-axis/) implementations.
 
 ## [`AxisValueFormatter`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter/)s

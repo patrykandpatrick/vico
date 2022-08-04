@@ -47,6 +47,9 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `title` | The axis title. | A string or a reference. |
 | `showTitle` | Whether to display the axis title. | A boolean or a reference. |
 | `titleStyle` | The style of the axis title. | A [`TextComponentStyle`](#textcomponentstyle) attribute set. |
+| `horizontalAxisTickPosition` | The horizontal position of the ticks along this axis if it is horizontal. | `edge` or `center`. |
+| `horizontalAxisTickOffset` | The tick offset for this axis if it is horizontal and `horizontalAxisTickPosition` is set to `center`. | An integer. |
+| `horizontalAxisTickSpacing` | The tick spacing for this axis if it is horizontal and `horizontalAxisTickPosition` is set to `center`. | An integer. |
 
 ### `ComponentStyle`
 
