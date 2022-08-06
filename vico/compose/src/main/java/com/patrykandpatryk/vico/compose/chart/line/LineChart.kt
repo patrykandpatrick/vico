@@ -32,6 +32,7 @@ import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
+import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
@@ -93,7 +94,6 @@ public fun lineChart(
  * @param lineThickness the thickness of the line.
  * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
  * @param lineCap the stroke cap for the line.
- * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
  * @param point an optional [Component] that can be drawn at a given point on the line.
  * @param pointSize the size of the [point].
  * @param dataLabel an optional [TextComponent] to use for data labels.
@@ -101,6 +101,7 @@ public fun lineChart(
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
  * @param pointPosition the horizontal position of each point in its corresponding segment.
+ * @param pointConnector the [LineSpec.PointConnector] for the line.
  *
  * @see LineChart
  * @see LineChart.LineSpec
@@ -117,7 +118,6 @@ public fun lineSpec(
         ),
     ),
     lineCap: StrokeCap = StrokeCap.Round,
-    cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
     point: Component? = null,
     pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
     dataLabel: TextComponent? = null,
@@ -125,12 +125,12 @@ public fun lineSpec(
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
     pointPosition: LineSpec.PointPosition = LineSpec.PointPosition.Center,
+    pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
 ): LineSpec = LineSpec(
     lineColor = lineColor.toArgb(),
     lineThicknessDp = lineThickness.value,
     lineBackgroundShader = lineBackgroundShader,
     lineCap = lineCap.paintCap,
-    cubicStrength = cubicStrength,
     point = point,
     pointSizeDp = pointSize.value,
     dataLabel = dataLabel,
@@ -138,6 +138,7 @@ public fun lineSpec(
     dataLabelValueFormatter = dataLabelValueFormatter,
     dataLabelRotationDegrees = dataLabelRotationDegrees,
     pointPosition = pointPosition,
+    pointConnector = pointConnector,
 )
 
 private val StrokeCap.paintCap: Paint.Cap

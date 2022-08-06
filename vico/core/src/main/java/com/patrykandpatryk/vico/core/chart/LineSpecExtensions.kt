@@ -29,15 +29,15 @@ public fun LineChart.LineSpec.copy(
     lineThicknessDp: Float = this.lineThicknessDp,
     lineBackgroundShader: DynamicShader? = this.lineBackgroundShader,
     lineCap: Paint.Cap = this.lineCap,
-    cubicStrength: Float = this.cubicStrength,
     point: Component? = this.point,
     pointSizeDp: Float = this.pointSizeDp,
+    pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,
 ): LineChart.LineSpec = LineChart.LineSpec(
     lineColor = lineColor,
     lineThicknessDp = lineThicknessDp,
     lineBackgroundShader = lineBackgroundShader,
     lineCap = lineCap,
-    cubicStrength = cubicStrength,
     point = point,
     pointSizeDp = pointSizeDp,
+    pointConnector = pointConnector,
 )
