@@ -30,9 +30,9 @@ import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
-import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatryk.vico.core.chart.values.ChartValues

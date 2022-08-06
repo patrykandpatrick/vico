@@ -21,6 +21,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
@@ -195,6 +196,7 @@ public open class LineChart(
             /**
              * Draws a line between two points.
              */
+            @LongParameterListDrawFunction
             public fun connect(
                 path: Path,
                 prevX: Float,
