@@ -170,7 +170,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width() / segmentWidth).toInt() + 1
 
-    private fun forEachEntityIndex(
+    private inline fun forEachEntityIndex(
         valueIndex: Float,
         entryLength: Int,
         action: (Int, Boolean) -> Unit,
