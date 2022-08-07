@@ -164,6 +164,23 @@ public fun lineSpec(
     message = """Rather than using this `lineSpec` function and its `cubicStrength` parameter, use the `lineSpec`
         function with the `pointConnector` parameter and provide a `DefaultPointConnector` instance with a custom
         `cubicStrength` via the `pointConnector` parameter.""",
+    replaceWith = ReplaceWith(
+        expression = """lineSpec(
+                lineColor = lineColor,
+                lineThickness = lineThickness,
+                lineBackgroundShader = lineBackgroundShader,
+                lineCap = lineCap,
+                point = point,
+                pointSize = pointSize,
+                dataLabel = dataLabel,
+                dataLabelVerticalPosition = dataLabelVerticalPosition,
+                dataLabelValueFormatter = dataLabelValueFormatter,
+                dataLabelRotationDegrees = dataLabelRotationDegrees,
+                pointPosition = pointPosition,
+                pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
+            )""",
+        imports = arrayOf("com.patrykandpatryk.vico.core.chart.DefaultPointConnector"),
+    ),
 )
 public fun lineSpec(
     lineColor: Color,

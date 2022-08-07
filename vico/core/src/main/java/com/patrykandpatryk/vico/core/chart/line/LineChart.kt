@@ -137,6 +137,23 @@ public open class LineChart(
             message = """Rather than using this constructor and its `cubicStrength` parameter, use the primary
                 constructor and provide a `DefaultPointConnector` instance with a custom `cubicStrength` via the
                 `pointConnector` parameter.""",
+            replaceWith = ReplaceWith(
+                expression = """LineSpec(
+                        lineColor = lineColor,
+                        lineThicknessDp = lineThicknessDp,
+                        lineBackgroundShader = lineBackgroundShader,
+                        lineCap = lineCap,
+                        point = point,
+                        pointSizeDp = pointSizeDp,
+                        dataLabel = dataLabel,
+                        dataLabelVerticalPosition = dataLabelVerticalPosition,
+                        dataLabelValueFormatter = dataLabelValueFormatter,
+                        dataLabelRotationDegrees = dataLabelRotationDegrees,
+                        pointPosition = pointPosition,
+                        pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
+                    )""",
+                imports = arrayOf("com.patrykandpatryk.vico.core.chart.DefaultPointConnector"),
+            ),
         )
         public constructor(
             lineColor: Int = Color.LTGRAY,
