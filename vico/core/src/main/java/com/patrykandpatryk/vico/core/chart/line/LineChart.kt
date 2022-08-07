@@ -118,6 +118,55 @@ public open class LineChart(
     ) {
 
         /**
+         * Defines the appearance of a line in a line chart.
+         *
+         * @param lineColor the color of the line.
+         * @param lineThicknessDp the thickness of the line in dp.
+         * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
+         * @param lineCap the stroke cap for the line.
+         * @param cubicStrength the strength of the cubic bezier curve between each point on the line.
+         * @param point an optional [Component] that can be drawn at a given point on the line.
+         * @param pointSizeDp the size of the [point] in dp.
+         * @param dataLabel an optional [TextComponent] to use for data labels.
+         * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
+         * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+         * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+         * @param pointPosition the horizontal position of each point in its corresponding segment.
+         */
+        @Deprecated(
+            message = """Rather than using this constructor and its `cubicStrength` parameter, use the primary
+                constructor and provide a `DefaultPointConnector` instance with a custom `cubicStrength` via the
+                `pointConnector` parameter.""",
+        )
+        public constructor(
+            lineColor: Int = Color.LTGRAY,
+            lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
+            lineBackgroundShader: DynamicShader? = null,
+            lineCap: Paint.Cap = Paint.Cap.ROUND,
+            cubicStrength: Float,
+            point: Component? = null,
+            pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+            dataLabel: TextComponent? = null,
+            dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+            dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+            dataLabelRotationDegrees: Float = 0f,
+            pointPosition: PointPosition = PointPosition.Center,
+        ) : this(
+            lineColor = lineColor,
+            lineThicknessDp = lineThicknessDp,
+            lineBackgroundShader = lineBackgroundShader,
+            lineCap = lineCap,
+            point = point,
+            pointSizeDp = pointSizeDp,
+            dataLabel = dataLabel,
+            dataLabelVerticalPosition = dataLabelVerticalPosition,
+            dataLabelValueFormatter = dataLabelValueFormatter,
+            dataLabelRotationDegrees = dataLabelRotationDegrees,
+            pointPosition = pointPosition,
+            pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
+        )
+
+        /**
          * Returns true if the [lineBackgroundShader] is not null, and false otherwise.
          */
         public val hasLineBackgroundShader: Boolean

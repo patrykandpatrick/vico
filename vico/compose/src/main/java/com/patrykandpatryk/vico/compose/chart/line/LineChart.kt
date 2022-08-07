@@ -141,6 +141,65 @@ public fun lineSpec(
     pointConnector = pointConnector,
 )
 
+/**
+ * Creates a [LineChart.LineSpec] for use in [LineChart]s.
+ *
+ * @param lineColor the color of the line.
+ * @param lineThickness the thickness of the line.
+ * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
+ * @param lineCap the stroke cap for the line.
+ * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
+ * @param point an optional [Component] that can be drawn at a given point on the line.
+ * @param pointSize the size of the [point].
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+ * @param pointPosition the horizontal position of each point in its corresponding segment.
+ *
+ * @see LineChart
+ * @see LineChart.LineSpec
+ */
+@Deprecated(
+    message = """Rather than using this `lineSpec` function and its `cubicStrength` parameter, use the `lineSpec`
+        function with the `pointConnector` parameter and provide a `DefaultPointConnector` instance with a custom
+        `cubicStrength` via the `pointConnector` parameter.""",
+)
+public fun lineSpec(
+    lineColor: Color,
+    lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
+    lineBackgroundShader: DynamicShader? = DynamicShaders.fromBrush(
+        brush = Brush.verticalGradient(
+            listOf(
+                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+            ),
+        ),
+    ),
+    lineCap: StrokeCap = StrokeCap.Round,
+    cubicStrength: Float,
+    point: Component? = null,
+    pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
+    dataLabel: TextComponent? = null,
+    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+    dataLabelRotationDegrees: Float = 0f,
+    pointPosition: LineSpec.PointPosition = LineSpec.PointPosition.Center,
+): LineSpec = LineSpec(
+    lineColor = lineColor.toArgb(),
+    lineThicknessDp = lineThickness.value,
+    lineBackgroundShader = lineBackgroundShader,
+    lineCap = lineCap.paintCap,
+    point = point,
+    pointSizeDp = pointSize.value,
+    dataLabel = dataLabel,
+    dataLabelVerticalPosition = dataLabelVerticalPosition,
+    dataLabelValueFormatter = dataLabelValueFormatter,
+    dataLabelRotationDegrees = dataLabelRotationDegrees,
+    pointPosition = pointPosition,
+    pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
+)
+
 private val StrokeCap.paintCap: Paint.Cap
     get() = when (this) {
         StrokeCap.Butt -> Paint.Cap.BUTT
