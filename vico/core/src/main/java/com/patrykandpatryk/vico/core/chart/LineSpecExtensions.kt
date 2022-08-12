@@ -31,6 +31,7 @@ public fun LineChart.LineSpec.copy(
     lineCap: Paint.Cap = this.lineCap,
     point: Component? = this.point,
     pointSizeDp: Float = this.pointSizeDp,
+    pointPosition: LineChart.LineSpec.PointPosition = this.pointPosition,
     pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,
 ): LineChart.LineSpec = LineChart.LineSpec(
     lineColor = lineColor,
@@ -39,5 +40,6 @@ public fun LineChart.LineSpec.copy(
     lineCap = lineCap,
     point = point,
     pointSizeDp = pointSizeDp,
+    pointPosition = pointPosition,
     pointConnector = pointConnector,
 )
