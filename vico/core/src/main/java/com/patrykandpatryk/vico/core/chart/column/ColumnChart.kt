@@ -259,12 +259,14 @@ public open class ColumnChart(
         columnCenterX: Float,
         column: LineComponent,
     ) {
-        entryLocationMap.put(
-            x = columnCenterX,
-            y = columnTop.coerceIn(bounds.top, bounds.bottom),
-            entry = entry,
-            color = column.color,
-        )
+        if (columnCenterX in bounds.left..bounds.right) {
+            entryLocationMap.put(
+                x = columnCenterX,
+                y = columnTop.coerceIn(bounds.top, bounds.bottom),
+                entry = entry,
+                color = column.color,
+            )
+        }
     }
 
     override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel) {
