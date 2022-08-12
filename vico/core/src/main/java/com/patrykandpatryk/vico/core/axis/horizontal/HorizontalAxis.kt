@@ -97,9 +97,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             (labelPositionOffset + tickDrawStep * scrollAdjustment) - horizontalScroll
 
         var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
-        var valueIndex: Float = chartValues.minX + scrollAdjustment * step
 
-        forEachEntityIndex(valueIndex = valueIndex, entryLength = entryLength) { index, shouldDraw ->
+        forEachEntityIndex(
+            startValueIndex = chartValues.minX + scrollAdjustment * step,
+            step = step,
+            entryLength = entryLength,
+        ) { index, valueIndex, shouldDraw ->
 
             guideline
                 ?.takeIf {
@@ -139,7 +142,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     rotationDegrees = labelRotationDegrees,
                 )
 
-            valueIndex += step
             tickCenter += layoutDirectionMultiplier * tickDrawStep
             textCenter += layoutDirectionMultiplier * tickDrawStep
         }
@@ -171,15 +173,25 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         ceil(bounds.width() / segmentWidth).toInt() + 1
 
     private inline fun forEachEntityIndex(
-        valueIndex: Float,
+        startValueIndex: Float,
+        step: Float,
         entryLength: Int,
-        action: (Int, Boolean) -> Unit,
+        action: (index: Int, valueIndex: Float, shouldDraw: Boolean) -> Unit,
     ) {
+        var valueIndex = startValueIndex
+
         for (index in 0 until tickPosition.getTickCount(entryLength)) {
             val shouldDraw = valueIndex >= tickPosition.offset &&
                 (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f &&
                 (index >= labelPosition.labelsToSkip || tickPosition.offset > 0)
-            action(index, shouldDraw)
+
+            action(
+                index,
+                valueIndex,
+                shouldDraw,
+            )
+
+            valueIndex += step
         }
     }
 
