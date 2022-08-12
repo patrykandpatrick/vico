@@ -82,7 +82,7 @@ public open class MarkerCorneredShape(
             val cornerScale = getCornerScale(right - left, bottom - top, density)
 
             val minLeft = left + bottomLeft.getCornerSize(availableCornerSize, density) * cornerScale
-            val maxLeft = right - (bottomRight.getCornerSize(availableCornerSize, density) * cornerScale)
+            val maxLeft = right - bottomRight.getCornerSize(availableCornerSize, density) * cornerScale
 
             val coercedTickSize = tickSize.coerceAtMost((maxLeft - minLeft).half.coerceAtLeast(0f))
 
