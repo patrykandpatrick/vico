@@ -65,7 +65,8 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
 
     override fun registerForUpdates(
         key: Any,
-        updateListener: () -> ComposedChartEntryModel<Model>?,
+        updateListener: () -> Unit,
+        getOldModel: () -> ComposedChartEntryModel<Model>?,
         onModel: (ComposedChartEntryModel<Model>) -> Unit,
     ) {
         val receiver = CompositeModelReceiver(onModel, executor)
@@ -73,7 +74,8 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
         chartModelProducers.forEachIndexed { index, producer ->
             producer.registerForUpdates(
                 key = key,
-                updateListener = { updateListener()?.composedEntryCollections?.getOrNull(index) },
+                updateListener = updateListener,
+                getOldModel = { getOldModel()?.composedEntryCollections?.getOrNull(index) },
                 onModel = receiver.getModelReceiver(index),
             )
         }

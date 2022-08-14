@@ -121,11 +121,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         doOnEnd { progressModelOnAnimationProgress(Animation.range.endInclusive) }
     }
 
-    private val updateListener: () -> Model? = {
-        animator.start()
-        model
-    }
-
     private var markerTouchPoint: Point? = null
 
     private var wasMarkerVisible: Boolean = false
@@ -188,7 +183,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         set(value) {
             field?.unregisterFromUpdates(key = this)
             field = value
-            value?.registerForUpdates(key = this, updateListener = updateListener) { model ->
+            value?.registerForUpdates(
+                key = this,
+                updateListener = { animator.start() },
+                getOldModel = { model },
+            ) { model ->
                 setModel(model)
                 postInvalidateOnAnimation()
             }

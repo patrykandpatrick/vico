@@ -74,9 +74,14 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
             } else {
                 progressModel(key, Animation.range.endInclusive)
             }
-            model
         }
-        registerForUpdates(key, listener) { updatedModel -> model = updatedModel }
+        registerForUpdates(
+            key = key,
+            updateListener = listener,
+            getOldModel = { model },
+        ) { updatedModel ->
+            model = updatedModel
+        }
         onDispose { unregisterFromUpdates(key) }
     }
     return model
