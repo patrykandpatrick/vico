@@ -185,7 +185,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             field = value
             value?.registerForUpdates(
                 key = this,
-                updateListener = { animator.start() },
+                updateListener = animator::start,
                 getOldModel = { model },
             ) { model ->
                 setModel(model)
