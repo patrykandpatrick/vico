@@ -16,21 +16,28 @@
 
 package com.patrykandpatryk.vico.core.chart.segment
 
+import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
+
 /**
  * An implementation of [SegmentProperties] whose every property is mutable.
  */
 public data class MutableSegmentProperties(
     override var cellWidth: Float = 0f,
     override var marginWidth: Float = 0f,
+    override var labelPosition: HorizontalAxis.LabelPosition? = null,
 ) : SegmentProperties {
 
     /**
      * Sets a cell width and margin width.
      */
-    public fun set(cellWidth: Float, marginWidth: Float): MutableSegmentProperties {
+    public fun set(
+        cellWidth: Float,
+        marginWidth: Float,
+        labelPosition: HorizontalAxis.LabelPosition? = this.labelPosition,
+    ): MutableSegmentProperties = apply {
         this.cellWidth = cellWidth
         this.marginWidth = marginWidth
-        return this
+        this.labelPosition = labelPosition
     }
 
     /**

@@ -64,11 +64,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      */
     public var tickPosition: TickPosition = TickPosition.Edge
 
-    /**
-     * Defines the position of labels.
-     */
-    public var labelPosition: LabelPosition = LabelPosition.Center
-
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
@@ -88,7 +83,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val scrollAdjustment = (abs(x = horizontalScroll) / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
-        val labelPositionOffset = when (labelPosition) {
+        val labelPositionOffset = when (segmentProperties.labelPositionOrDefault) {
             LabelPosition.Start -> 0f
             LabelPosition.Center -> tickDrawStep.half
         }
@@ -102,6 +97,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             startValueIndex = chartValues.minX + scrollAdjustment * step,
             step = step,
             entryLength = entryLength,
+            labelsToSkip = segmentProperties.labelPositionOrDefault.labelsToSkip,
         ) { index, valueIndex, shouldDraw ->
 
             guideline
@@ -176,6 +172,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         startValueIndex: Float,
         step: Float,
         entryLength: Int,
+        labelsToSkip: Int,
         action: (index: Int, valueIndex: Float, shouldDraw: Boolean) -> Unit,
     ) {
         var valueIndex = startValueIndex
@@ -183,7 +180,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         for (index in 0 until tickPosition.getTickCount(entryLength)) {
             val shouldDraw = valueIndex >= tickPosition.offset &&
                 (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f &&
-                (index >= labelPosition.labelsToSkip || tickPosition.offset > 0)
+                (index >= labelsToSkip || tickPosition.offset > 0)
 
             action(
                 index,
@@ -446,11 +443,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         public var tickPosition: TickPosition = TickPosition.Edge
 
         /**
-         * Defines the position of labels.
-         */
-        public var labelPosition: LabelPosition = LabelPosition.Center
-
-        /**
          * Creates an instance of [HorizontalAxis] using the properties set in this [Builder].
          */
         @Suppress("UNCHECKED_CAST")
@@ -463,7 +455,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             return setTo(HorizontalAxis(position = position)).also { axis ->
                 tickType?.also { axis.tickType = it }
                 axis.tickPosition = tickPosition
-                axis.labelPosition = labelPosition
             } as HorizontalAxis<T>
         }
     }

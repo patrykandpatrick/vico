@@ -84,10 +84,6 @@
         </attr>
         <attr name="horizontalAxisTickOffset" format="integer" />
         <attr name="horizontalAxisTickSpacing" format="integer" />
-        <attr name="horizontalAxisLabelPosition" format="enum">
-            <enum name="start" value="0" />
-            <enum name="center" value="1" />
-        </attr>
     </declare-styleable>
 
     <declare-styleable name="LineComponent">

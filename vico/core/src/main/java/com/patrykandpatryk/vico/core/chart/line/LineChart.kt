@@ -23,6 +23,7 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
@@ -30,6 +31,7 @@ import com.patrykandpatryk.vico.core.chart.draw.segmentWidth
 import com.patrykandpatryk.vico.core.chart.forEachIn
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec.PointConnector
 import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
@@ -37,7 +39,6 @@ import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
-import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.component.text.inBounds
@@ -64,11 +65,13 @@ import kotlin.math.min
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param pointPosition the horizontal position of each point in its corresponding segment.
  */
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    public var pointPosition: PointPosition = PointPosition.Center,
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -79,12 +82,14 @@ public open class LineChart(
      * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
      * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
      * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+     * @param pointPosition the horizontal position of each point in its corresponding segment.
      */
     public constructor(
         line: LineSpec,
         spacingDp: Float,
         targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-    ) : this(listOf(line), spacingDp, targetVerticalAxisPosition)
+        pointPosition: PointPosition = PointPosition.Center,
+    ) : this(listOf(line), spacingDp, targetVerticalAxisPosition, pointPosition)
 
     /**
      * Defines the appearance of a line in a line chart.
@@ -99,7 +104,6 @@ public open class LineChart(
      * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
      * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
      * @param dataLabelRotationDegrees the rotation of data labels in degrees.
-     * @param pointPosition the horizontal position of each point in its corresponding segment.
      * @param pointConnector the [PointConnector] for the line.
      */
     public open class LineSpec(
@@ -113,7 +117,6 @@ public open class LineChart(
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
         public var dataLabelRotationDegrees: Float = 0f,
-        public var pointPosition: PointPosition = PointPosition.Center,
         public var pointConnector: PointConnector = DefaultPointConnector(),
     ) {
 
@@ -131,7 +134,6 @@ public open class LineChart(
          * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
          * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
          * @param dataLabelRotationDegrees the rotation of data labels in degrees.
-         * @param pointPosition the horizontal position of each point in its corresponding segment.
          */
         @Deprecated(
             message = """Rather than using this constructor and its `cubicStrength` parameter, use the primary
@@ -167,7 +169,6 @@ public open class LineChart(
             dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
             dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
             dataLabelRotationDegrees: Float = 0f,
-            pointPosition: PointPosition = PointPosition.Center,
         ) : this(
             lineColor = lineColor,
             lineThicknessDp = lineThicknessDp,
@@ -179,7 +180,6 @@ public open class LineChart(
             dataLabelVerticalPosition = dataLabelVerticalPosition,
             dataLabelValueFormatter = dataLabelValueFormatter,
             dataLabelRotationDegrees = dataLabelRotationDegrees,
-            pointPosition = pointPosition,
             pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
         )
 
@@ -245,14 +245,6 @@ public open class LineChart(
         }
 
         /**
-         * Defines the horizontal position of each point in its corresponding segment.
-         */
-        public enum class PointPosition(internal val position: HorizontalPosition) {
-            Start(position = HorizontalPosition.Start),
-            Center(position = HorizontalPosition.Center),
-        }
-
-        /**
          * Defines the shape of a line in a line chart by specifying how points are to be connected.
          *
          * @see DefaultPointConnector
@@ -288,7 +280,7 @@ public open class LineChart(
     ): Unit = with(context) {
         resetTempData()
 
-        val (cellWidth, spacing, _) = segmentProperties
+        val (cellWidth, spacing) = segmentProperties
 
         model.entries.forEachIndexed { index, entries ->
 
@@ -300,9 +292,9 @@ public open class LineChart(
             var prevY = bounds.bottom
 
             val drawingStartAlignmentCorrection = layoutDirectionMultiplier *
-                when (component.pointPosition) {
-                    LineSpec.PointPosition.Start -> 0f
-                    LineSpec.PointPosition.Center -> (spacing + cellWidth).half
+                when (pointPosition) {
+                    PointPosition.Start -> 0f
+                    PointPosition.Center -> (spacing + cellWidth).half
                 }
 
             val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
@@ -492,6 +484,7 @@ public open class LineChart(
         segmentProperties.set(
             cellWidth = lines.maxOf { it.pointSizeDp.pixels },
             marginWidth = spacingDp.pixels,
+            labelPosition = pointPosition.labelPosition,
         )
     }
 
@@ -520,5 +513,13 @@ public open class LineChart(
                 else it.lineThicknessDp
             }.pixels,
         )
+    }
+
+    /**
+     * Defines the horizontal position of each point in its corresponding segment.
+     */
+    public enum class PointPosition(internal val labelPosition: HorizontalAxis.LabelPosition) {
+        Start(labelPosition = HorizontalAxis.LabelPosition.Start),
+        Center(labelPosition = HorizontalAxis.LabelPosition.Center),
     }
 }

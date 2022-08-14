@@ -60,6 +60,7 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param pointPosition the horizontal position of each point in its corresponding segment.
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
@@ -75,6 +76,7 @@ public fun lineChart(
     decorations: List<Decoration>? = null,
     persistentMarkers: Map<Float, Marker>? = null,
     targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    pointPosition: LineChart.PointPosition = LineChart.PointPosition.Center,
 ): LineChart = remember { LineChart() }.apply {
     this.lines = lines
     this.spacingDp = spacing.value
@@ -83,6 +85,7 @@ public fun lineChart(
     this.minY = minY
     this.maxY = maxY
     this.targetVerticalAxisPosition = targetVerticalAxisPosition
+    this.pointPosition = pointPosition
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }
@@ -100,7 +103,6 @@ public fun lineChart(
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
- * @param pointPosition the horizontal position of each point in its corresponding segment.
  * @param pointConnector the [LineSpec.PointConnector] for the line.
  *
  * @see LineChart
@@ -124,7 +126,6 @@ public fun lineSpec(
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
-    pointPosition: LineSpec.PointPosition = LineSpec.PointPosition.Center,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
 ): LineSpec = LineSpec(
     lineColor = lineColor.toArgb(),
@@ -137,7 +138,6 @@ public fun lineSpec(
     dataLabelVerticalPosition = dataLabelVerticalPosition,
     dataLabelValueFormatter = dataLabelValueFormatter,
     dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointPosition = pointPosition,
     pointConnector = pointConnector,
 )
 
@@ -155,7 +155,6 @@ public fun lineSpec(
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
- * @param pointPosition the horizontal position of each point in its corresponding segment.
  *
  * @see LineChart
  * @see LineChart.LineSpec
@@ -201,7 +200,6 @@ public fun lineSpec(
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
-    pointPosition: LineSpec.PointPosition = LineSpec.PointPosition.Center,
 ): LineSpec = LineSpec(
     lineColor = lineColor.toArgb(),
     lineThicknessDp = lineThickness.value,
@@ -213,7 +211,6 @@ public fun lineSpec(
     dataLabelVerticalPosition = dataLabelVerticalPosition,
     dataLabelValueFormatter = dataLabelValueFormatter,
     dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointPosition = pointPosition,
     pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
 )
 

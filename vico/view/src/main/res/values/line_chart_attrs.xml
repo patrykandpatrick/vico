@@ -25,6 +25,10 @@
         <attr name="line2Spec" />
         <attr name="line3Spec" />
         <attr name="spacing" format="dimension" />
+        <attr name="pointPosition" format="enum">
+            <enum name="start" value="0" />
+            <enum name="center" value="1" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="LineSpec">
@@ -39,10 +43,6 @@
         <attr name="dataLabelStyle" />
         <attr name="dataLabelVerticalPosition" />
         <attr name="dataLabelRotationDegrees" />
-        <attr name="pointPosition" format="enum">
-            <enum name="start" value="0" />
-            <enum name="center" value="1" />
-        </attr>
     </declare-styleable>
 
     <declare-styleable name="ComponentStyle">
