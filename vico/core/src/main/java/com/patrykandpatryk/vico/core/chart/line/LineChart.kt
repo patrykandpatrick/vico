@@ -23,6 +23,7 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
@@ -38,7 +39,6 @@ import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
-import com.patrykandpatryk.vico.core.component.text.HorizontalPosition
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.component.text.inBounds
@@ -280,7 +280,7 @@ public open class LineChart(
     ): Unit = with(context) {
         resetTempData()
 
-        val (cellWidth, spacing, _) = segmentProperties
+        val (cellWidth, spacing) = segmentProperties
 
         model.entries.forEachIndexed { index, entries ->
 
@@ -484,6 +484,7 @@ public open class LineChart(
         segmentProperties.set(
             cellWidth = lines.maxOf { it.pointSizeDp.pixels },
             marginWidth = spacingDp.pixels,
+            labelPosition = pointPosition.labelPosition,
         )
     }
 
@@ -517,8 +518,8 @@ public open class LineChart(
     /**
      * Defines the horizontal position of each point in its corresponding segment.
      */
-    public enum class PointPosition(internal val position: HorizontalPosition) {
-        Start(position = HorizontalPosition.Start),
-        Center(position = HorizontalPosition.Center),
+    public enum class PointPosition(internal val labelPosition: HorizontalAxis.LabelPosition) {
+        Start(labelPosition = HorizontalAxis.LabelPosition.Start),
+        Center(labelPosition = HorizontalAxis.LabelPosition.Center),
     }
 }

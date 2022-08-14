@@ -182,11 +182,6 @@ internal class ThemeHandler(
                             spacing = axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickSpacing, 1),
                         )
                     }
-
-                    labelPosition = axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelPosition, 1).let { value ->
-                        val values = HorizontalAxis.LabelPosition.values()
-                        values[value % values.size]
-                    }
                 }
             }
         }.also { axisStyle.recycle() }

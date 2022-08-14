@@ -55,6 +55,7 @@
 
     <style name="ComposedChartLineChartStyle">
         <item name="line1Spec">@style/ComposedChartLine1Spec</item>
+        <item name="pointPosition">start</item>
     </style>
 
     <style name="ComposedChartLine1Spec">

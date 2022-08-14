@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.core.chart.composed
 
+import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
@@ -98,10 +99,21 @@ public class ComposedChart<Model : ChartEntryModel>(
             segmentProperties.apply {
                 cellWidth = maxOf(cellWidth, chartSegmentProperties.cellWidth)
                 marginWidth = maxOf(marginWidth, chartSegmentProperties.marginWidth)
+                labelPosition = getProperLabelPosition(labelPosition, chartSegmentProperties.labelPosition)
             }
         }
         return segmentProperties
     }
+
+    private fun getProperLabelPosition(
+        first: HorizontalAxis.LabelPosition?,
+        second: HorizontalAxis.LabelPosition?,
+    ): HorizontalAxis.LabelPosition =
+        if (first == null || first == second && second == HorizontalAxis.LabelPosition.Start) {
+            HorizontalAxis.LabelPosition.Start
+        } else {
+            HorizontalAxis.LabelPosition.Center
+        }
 
     override fun updateChartValues(
         chartValuesManager: ChartValuesManager,
