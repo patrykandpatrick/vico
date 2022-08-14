@@ -146,6 +146,8 @@ public class ChartEntryModelProducer(
         updateReceivers.remove(key)
     }
 
+    override fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key = key)
+
     private data class UpdateReceiver(
         val listener: () -> Unit,
         val onModel: (ChartEntryModel) -> Unit,

@@ -114,6 +114,8 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
         }
     }
 
+    override fun isRegistered(key: Any): Boolean = compositeModelReceivers.containsKey(key = key)
+
     public companion object {
 
         /**

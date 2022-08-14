@@ -54,6 +54,11 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
     )
 
     /**
+     * Checks if an update listener with the given [key] is registered.
+     */
+    public fun isRegistered(key: Any): Boolean
+
+    /**
      * Unregisters the update listener associated with the given [key].
      */
     public fun unregisterFromUpdates(key: Any)

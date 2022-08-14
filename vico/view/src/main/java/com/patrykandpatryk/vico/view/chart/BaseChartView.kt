@@ -183,15 +183,26 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         set(value) {
             field?.unregisterFromUpdates(key = this)
             field = value
-            value?.registerForUpdates(
-                key = this,
-                updateListener = animator::start,
-                getOldModel = { model },
-            ) { model ->
-                setModel(model)
-                postInvalidateOnAnimation()
-            }
+            if (ViewCompat.isAttachedToWindow(this)) registerForUpdates()
         }
+
+    private fun registerForUpdates() {
+        entryProducer?.registerForUpdates(
+            key = this,
+            updateListener = { handler.post(animator::start) },
+            getOldModel = { model },
+        ) { model ->
+            setModel(model)
+            postInvalidateOnAnimation()
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (entryProducer?.isRegistered(key = this) != true) {
+            registerForUpdates()
+        }
+    }
 
     /**
      * The indication of certain entry appearing on physical touch of the [Chart].
