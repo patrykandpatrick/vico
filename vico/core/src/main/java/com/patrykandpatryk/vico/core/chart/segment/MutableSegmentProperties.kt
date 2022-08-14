@@ -34,11 +34,10 @@ public data class MutableSegmentProperties(
         cellWidth: Float,
         marginWidth: Float,
         labelPosition: HorizontalAxis.LabelPosition? = this.labelPosition,
-    ): MutableSegmentProperties {
+    ): MutableSegmentProperties = apply {
         this.cellWidth = cellWidth
         this.marginWidth = marginWidth
         this.labelPosition = labelPosition
-        return this
     }
 
     /**
