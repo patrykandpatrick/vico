@@ -135,5 +135,9 @@ internal fun TypedArray.getLineChart(
             index = R.styleable.LineChartStyle_spacing,
             defaultValue = DefaultDimens.POINT_SPACING,
         ),
+        pointPosition = getInteger(R.styleable.LineChartStyle_pointPosition, 1).let { value ->
+            val values = LineChart.PointPosition.values()
+            values[value % values.size]
+        },
     )
 }

@@ -184,10 +184,6 @@ internal fun TypedArray.getLineSpec(
             R.styleable.LineSpec_dataLabelRotationDegrees,
             0f,
         ),
-        pointPosition = getInteger(R.styleable.LineSpec_pointPosition, 1).let { value ->
-            val values = LineChart.LineSpec.PointPosition.values()
-            values[value % values.size]
-        },
         pointConnector = DefaultPointConnector(
             cubicStrength = getFraction(
                 index = R.styleable.LineSpec_cubicStrength,
