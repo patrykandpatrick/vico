@@ -83,6 +83,8 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param diffAnimationSpec the animation spec used to animate differences between entry sets ([ChartEntryModel]
  * instances).
+ * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
+ * of each chart entry is animated from zero to the actual value.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -99,10 +101,12 @@ public fun <Model : ChartEntryModel> Chart(
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
+    runInitialAnimation: Boolean = true,
 ) {
     val model = chartModelProducer.collect(
         key = chart,
         animationSpec = diffAnimationSpec,
+        runInitialAnimation = runInitialAnimation,
     )
 
     if (model != null) {
