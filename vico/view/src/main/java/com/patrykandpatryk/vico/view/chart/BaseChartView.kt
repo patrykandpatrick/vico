@@ -162,6 +162,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var isZoomEnabled: Boolean = true
 
     /**
+     * Whether to display an animation when the chart is created. In this animation, the value of each chart entry is
+     * animated from zero to the actual value.
+     */
+    public var initialAnimation: Boolean = true
+
+    /**
      * The chart displayed by this [View].
      */
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
@@ -189,7 +195,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private fun registerForUpdates() {
         entryProducer?.registerForUpdates(
             key = this,
-            updateListener = { handler.post(animator::start) },
+            updateListener = {
+                if (model != null || initialAnimation) {
+                    handler.post(animator::start)
+                } else {
+                    progressModelOnAnimationProgress(progress = Animation.range.endInclusive)
+                }
+            },
             getOldModel = { model },
         ) { model ->
             setModel(model)
@@ -199,9 +211,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
-        if (entryProducer?.isRegistered(key = this) != true) {
-            registerForUpdates()
-        }
+        if (entryProducer?.isRegistered(key = this) != true) registerForUpdates()
     }
 
     /**

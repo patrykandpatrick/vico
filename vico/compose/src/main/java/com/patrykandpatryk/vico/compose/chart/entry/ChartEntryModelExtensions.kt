@@ -52,13 +52,14 @@ public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(
 public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
     key: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
+    initialAnimation: Boolean = true,
 ): Model? {
     var model: Model? by remember(key) { mutableStateOf(null) }
     val scope = rememberCoroutineScope()
     DisposableEffect(key1 = key) {
         var animationJob: Job? = null
         val listener = {
-            if (animationSpec != null) {
+            if (animationSpec != null && (model != null || initialAnimation)) {
                 animationJob?.cancel()
                 animationJob = scope.launch {
                     animate(
