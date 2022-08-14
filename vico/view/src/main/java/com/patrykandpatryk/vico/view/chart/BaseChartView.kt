@@ -214,6 +214,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         if (entryProducer?.isRegistered(key = this) != true) registerForUpdates()
     }
 
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        entryProducer?.unregisterFromUpdates(key = this)
+    }
+
     /**
      * The indication of certain entry appearing on physical touch of the [Chart].
      */
