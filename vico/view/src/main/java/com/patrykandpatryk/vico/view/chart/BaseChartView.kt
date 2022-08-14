@@ -165,7 +165,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      * Whether to display an animation when the chart is created. In this animation, the value of each chart entry is
      * animated from zero to the actual value.
      */
-    public var initialAnimation: Boolean = true
+    public var runInitialAnimation: Boolean = true
 
     /**
      * The chart displayed by this [View].
@@ -196,7 +196,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         entryProducer?.registerForUpdates(
             key = this,
             updateListener = {
-                if (model != null || initialAnimation) {
+                if (model != null || runInitialAnimation) {
                     handler.post(animator::start)
                 } else {
                     progressModelOnAnimationProgress(progress = Animation.range.endInclusive)
