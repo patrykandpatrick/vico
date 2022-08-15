@@ -28,7 +28,7 @@ import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.segmentWidth
-import com.patrykandpatryk.vico.core.chart.forEachIn
+import com.patrykandpatryk.vico.core.chart.forEachInIndexed
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec.PointConnector
@@ -299,11 +299,11 @@ public open class LineChart(
 
             val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
 
-            forEachPointWithinBounds(
+            forEachPointWithinBoundsIndexed(
                 entries = entries,
                 segment = segmentProperties,
                 drawingStart = drawingStart,
-            ) { entry, x, y ->
+            ) { _, entry, x, y ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
                     if (component.hasLineBackgroundShader) {
@@ -367,15 +367,15 @@ public open class LineChart(
     ) {
         if (lineSpec.point == null && lineSpec.dataLabel == null) return
 
-        forEachPointWithinBounds(
+        forEachPointWithinBoundsIndexed(
             entries = entries,
             segment = segmentProperties,
             drawingStart = drawingStart,
-        ) { chartEntry, x, y ->
+        ) { index, chartEntry, x, y ->
 
             if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
 
-            lineSpec.dataLabel?.let { textComponent ->
+            lineSpec.dataLabel.takeIf { pointPosition.dataLabelsToSkip <= index }?.let { textComponent ->
 
                 val distanceFromLine = maxOf(
                     a = lineSpec.lineThicknessDp,
@@ -421,11 +421,11 @@ public open class LineChart(
         lineBackgroundPath.rewind()
     }
 
-    private fun DrawContext.forEachPointWithinBounds(
+    private fun DrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
         segment: SegmentProperties,
         drawingStart: Float,
-        action: (entry: ChartEntry, x: Float, y: Float) -> Unit,
+        action: (index: Int, entry: ChartEntry, x: Float, y: Float) -> Unit,
     ) {
 
         val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
@@ -453,7 +453,7 @@ public open class LineChart(
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (entry.y - minY) * heightMultiplier
 
-        entries.forEachIn(minX - stepX..maxX + stepX) { entry ->
+        entries.forEachInIndexed(minX - stepX..maxX + stepX) { index, entry ->
 
             x = getDrawX(entry)
             y = getDrawY(entry)
@@ -464,13 +464,13 @@ public open class LineChart(
                 }
                 x in boundsStart.rangeWith(other = boundsEnd) -> {
                     prevEntry?.also {
-                        action(it, getDrawX(it), getDrawY(it))
+                        action(index, it, getDrawX(it), getDrawY(it))
                         prevEntry = null
                     }
-                    action(entry, x, y)
+                    action(index, entry, x, y)
                 }
                 (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
-                    action(entry, x, y)
+                    action(index, entry, x, y)
                     lastEntry = entry
                 }
             }
@@ -518,8 +518,17 @@ public open class LineChart(
     /**
      * Defines the horizontal position of each point in its corresponding segment.
      */
-    public enum class PointPosition(internal val labelPosition: HorizontalAxis.LabelPosition) {
-        Start(labelPosition = HorizontalAxis.LabelPosition.Start),
-        Center(labelPosition = HorizontalAxis.LabelPosition.Center),
+    public enum class PointPosition(
+        internal val labelPosition: HorizontalAxis.LabelPosition,
+        internal val dataLabelsToSkip: Int,
+    ) {
+        Start(
+            labelPosition = HorizontalAxis.LabelPosition.Start,
+            dataLabelsToSkip = 1,
+        ),
+        Center(
+            labelPosition = HorizontalAxis.LabelPosition.Center,
+            dataLabelsToSkip = 0,
+        ),
     }
 }
