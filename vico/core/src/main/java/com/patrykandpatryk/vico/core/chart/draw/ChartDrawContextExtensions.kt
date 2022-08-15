@@ -66,13 +66,14 @@ public fun chartDrawContext(
         this.canvas = originalCanvas
     }
 
-    private fun calculateDrawScale(): Float =
-        if (isHorizontalScrollEnabled) {
+    private fun calculateDrawScale(): Float {
+        val drawnEntryWidth = segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount()
+        return if (isHorizontalScrollEnabled && drawnEntryWidth >= chartBounds.width()) {
             measureContext.chartScale
         } else {
-            chartBounds.width() /
-                (segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount())
+            chartBounds.width() / drawnEntryWidth
         }
+    }
 }
 
 internal inline val ChartDrawContext.segmentWidth: Int
