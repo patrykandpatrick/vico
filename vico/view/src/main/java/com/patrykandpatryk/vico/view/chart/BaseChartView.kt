@@ -27,8 +27,6 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.animation.Interpolator
 import android.widget.OverScroller
-import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
 import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatryk.vico.core.Animation
@@ -117,8 +115,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     ).apply {
         duration = Animation.DIFF_DURATION.toLong()
         interpolator = FastOutSlowInInterpolator()
-        doOnStart { invalidate() }
-        doOnEnd { progressModelOnAnimationProgress(Animation.range.endInclusive) }
+        addUpdateListener { progressModelOnAnimationProgress(it.animatedFraction) }
     }
 
     private var markerTouchPoint: Point? = null
@@ -333,10 +330,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             }
 
         scrollHandler.maxScrollDistance = drawContext.maxScrollDistance
-
-        if (animator.isRunning) {
-            progressModelOnAnimationProgress(animator.animatedValue as Float)
-        }
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {
