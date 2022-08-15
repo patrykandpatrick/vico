@@ -22,16 +22,11 @@ plugins {
 apply from: "$rootDir/common-scripts.gradle"
 
 android {
-
-    compileSdkVersion library.target_sdk
-
     defaultConfig {
-        minSdkVersion library.compose_min_sdk
-        targetSdkVersion library.target_sdk
+        minSdk library.compose_min_sdk
+        targetSdk library.target_sdk
         versionCode library.version_code
         versionName library.version_name
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -49,10 +44,6 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
     }
 
     composeOptions {

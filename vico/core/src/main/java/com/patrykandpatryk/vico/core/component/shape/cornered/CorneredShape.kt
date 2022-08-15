@@ -39,6 +39,9 @@ public open class CorneredShape(
     public val bottomLeft: Corner = Corner.Sharp,
 ) : Shape {
 
+    private val Float.nonZero: Float
+        get() = if (this == 0f) 1f else this
+
     /**
      * Returns a scale factor for the corner size, which will prevent graphical glitches in case the size of the
      * corners is larger than the shape’s dimensions.
@@ -54,10 +57,10 @@ public open class CorneredShape(
         val bR = bottomRight.getCornerSize(availableSize, density)
         val bL = bottomLeft.getCornerSize(availableSize, density)
         return minOf(
-            width / (tL + tR),
-            width / (bL + bR),
-            height / (tL + bL),
-            height / (tR + bR),
+            width / (tL + tR).nonZero,
+            width / (bL + bR).nonZero,
+            height / (tL + bL).nonZero,
+            height / (tR + bR).nonZero,
         )
     }
 

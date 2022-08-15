@@ -46,7 +46,17 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
      * [ChartModelProducer] to handle the difference animation with [progressModel].
      * @param onModel called when the [ChartModelProducer] has generated the [Model].
      */
-    public fun registerForUpdates(key: Any, updateListener: () -> Model?, onModel: (Model) -> Unit)
+    public fun registerForUpdates(
+        key: Any,
+        updateListener: () -> Unit,
+        getOldModel: () -> Model?,
+        onModel: (Model) -> Unit,
+    )
+
+    /**
+     * Checks if an update listener with the given [key] is registered.
+     */
+    public fun isRegistered(key: Any): Boolean
 
     /**
      * Unregisters the update listener associated with the given [key].

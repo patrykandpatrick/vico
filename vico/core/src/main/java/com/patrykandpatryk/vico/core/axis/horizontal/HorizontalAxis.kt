@@ -79,19 +79,26 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         )
 
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
-        val tickCount = tickPosition.getTickCount(entryLength)
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (abs(x = horizontalScroll) / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
+
+        val labelPositionOffset = when (segmentProperties.labelPositionOrDefault) {
+            LabelPosition.Start -> 0f
+            LabelPosition.Center -> tickDrawStep.half
+        }
+
         var textCenter = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier *
-            (tickDrawStep.half + tickDrawStep * scrollAdjustment) - horizontalScroll
+            (labelPositionOffset + tickDrawStep * scrollAdjustment) - horizontalScroll
 
         var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
-        var valueIndex: Float = chartValues.minX + scrollAdjustment * step
 
-        for (index in 0 until tickCount) {
-            val shouldDraw = valueIndex >= tickPosition.offset &&
-                (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f
+        forEachEntityIndex(
+            startValueIndex = chartValues.minX + scrollAdjustment * step,
+            step = step,
+            entryLength = entryLength,
+            labelsToSkip = segmentProperties.labelPositionOrDefault.labelsToSkip,
+        ) { index, valueIndex, shouldDraw ->
 
             guideline
                 ?.takeIf {
@@ -131,7 +138,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     rotationDegrees = labelRotationDegrees,
                 )
 
-            valueIndex += step
             tickCenter += layoutDirectionMultiplier * tickDrawStep
             textCenter += layoutDirectionMultiplier * tickDrawStep
         }
@@ -161,6 +167,30 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width() / segmentWidth).toInt() + 1
+
+    private inline fun forEachEntityIndex(
+        startValueIndex: Float,
+        step: Float,
+        entryLength: Int,
+        labelsToSkip: Int,
+        action: (index: Int, valueIndex: Float, shouldDraw: Boolean) -> Unit,
+    ) {
+        var valueIndex = startValueIndex
+
+        for (index in 0 until tickPosition.getTickCount(entryLength)) {
+            val shouldDraw = valueIndex >= tickPosition.offset &&
+                (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f &&
+                (index >= labelsToSkip || tickPosition.offset > 0)
+
+            action(
+                index,
+                valueIndex,
+                shouldDraw,
+            )
+
+            valueIndex += step
+        }
+    }
 
     private fun DrawContext.getTickDrawCenter(
         tickPosition: TickPosition,
@@ -285,12 +315,18 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             message = "TickType has been replaced with `TickPosition`, which uses better naming and has more features.",
             replaceWith = ReplaceWith(
                 expression = "TickPosition.Center()",
-                imports = arrayOf(
-                    "com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis.TickPosition",
-                ),
+                imports = arrayOf("com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis.TickPosition"),
             ),
         )
         Major,
+    }
+
+    /**
+     * Defines the position of labels.
+     */
+    public enum class LabelPosition(internal val labelsToSkip: Int) {
+        Start(labelsToSkip = 1),
+        Center(labelsToSkip = 0),
     }
 
     /**

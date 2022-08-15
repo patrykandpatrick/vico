@@ -21,6 +21,7 @@ import android.content.res.TypedArray
 import android.graphics.Color
 import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.OverlayingComponent
@@ -167,10 +168,6 @@ internal fun TypedArray.getLineSpec(
             index = R.styleable.LineSpec_lineThickness,
             defaultValue = DefaultDimens.LINE_THICKNESS,
         ),
-        cubicStrength = getFraction(
-            index = R.styleable.LineSpec_cubicStrength,
-            defaultValue = DefaultDimens.CUBIC_STRENGTH,
-        ),
         lineBackgroundShader = shader,
         dataLabel = if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
             getNestedTypedArray(
@@ -186,6 +183,12 @@ internal fun TypedArray.getLineSpec(
         dataLabelRotationDegrees = getFloat(
             R.styleable.LineSpec_dataLabelRotationDegrees,
             0f,
+        ),
+        pointConnector = DefaultPointConnector(
+            cubicStrength = getFraction(
+                index = R.styleable.LineSpec_cubicStrength,
+                defaultValue = DefaultDimens.CUBIC_STRENGTH,
+            ),
         ),
     )
 }

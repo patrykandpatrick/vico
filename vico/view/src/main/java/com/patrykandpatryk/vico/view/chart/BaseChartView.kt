@@ -27,8 +27,6 @@ import android.view.ScaleGestureDetector
 import android.view.View
 import android.view.animation.Interpolator
 import android.widget.OverScroller
-import androidx.core.animation.doOnEnd
-import androidx.core.animation.doOnStart
 import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatryk.vico.core.Animation
@@ -117,13 +115,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     ).apply {
         duration = Animation.DIFF_DURATION.toLong()
         interpolator = FastOutSlowInInterpolator()
-        doOnStart { invalidate() }
-        doOnEnd { progressModelOnAnimationProgress(Animation.range.endInclusive) }
-    }
-
-    private val updateListener: () -> Model? = {
-        animator.start()
-        model
+        addUpdateListener { progressModelOnAnimationProgress(it.animatedFraction) }
     }
 
     private var markerTouchPoint: Point? = null
@@ -167,6 +159,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var isZoomEnabled: Boolean = true
 
     /**
+     * Whether to display an animation when the chart is created. In this animation, the value of each chart entry is
+     * animated from zero to the actual value.
+     */
+    public var runInitialAnimation: Boolean = true
+
+    /**
      * The chart displayed by this [View].
      */
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
@@ -188,11 +186,35 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         set(value) {
             field?.unregisterFromUpdates(key = this)
             field = value
-            value?.registerForUpdates(key = this, updateListener = updateListener) { model ->
-                setModel(model)
-                postInvalidateOnAnimation()
-            }
+            if (ViewCompat.isAttachedToWindow(this)) registerForUpdates()
         }
+
+    private fun registerForUpdates() {
+        entryProducer?.registerForUpdates(
+            key = this,
+            updateListener = {
+                if (model != null || runInitialAnimation) {
+                    handler.post(animator::start)
+                } else {
+                    progressModelOnAnimationProgress(progress = Animation.range.endInclusive)
+                }
+            },
+            getOldModel = { model },
+        ) { model ->
+            setModel(model)
+            postInvalidateOnAnimation()
+        }
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        if (entryProducer?.isRegistered(key = this) != true) registerForUpdates()
+    }
+
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
+        entryProducer?.unregisterFromUpdates(key = this)
+    }
 
     /**
      * The indication of certain entry appearing on physical touch of the [Chart].
@@ -308,10 +330,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             }
 
         scrollHandler.maxScrollDistance = drawContext.maxScrollDistance
-
-        if (animator.isRunning) {
-            progressModelOnAnimationProgress(animator.animatedValue as Float)
-        }
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {

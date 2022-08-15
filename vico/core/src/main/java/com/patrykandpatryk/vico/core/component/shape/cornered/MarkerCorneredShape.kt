@@ -21,6 +21,8 @@ import android.graphics.Path
 import com.patrykandpatryk.vico.core.DEF_MARKER_TICK_SIZE
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.context.DrawContext
+import com.patrykandpatryk.vico.core.extension.doubled
+import com.patrykandpatryk.vico.core.extension.half
 
 /**
  * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick at a given point.
@@ -81,12 +83,19 @@ public open class MarkerCorneredShape(
             val cornerScale = getCornerScale(right - left, bottom - top, density)
 
             val minLeft = left + bottomLeft.getCornerSize(availableCornerSize, density) * cornerScale
-            val maxLeft = right - (bottomRight.getCornerSize(availableCornerSize, density) * cornerScale + tickSize * 2)
+            val maxLeft = right - bottomRight.getCornerSize(availableCornerSize, density) * cornerScale
 
-            val tickTopLeft = (tickX - tickSize).coerceIn(minLeft, maxLeft)
-            path.moveTo(tickTopLeft, bottom)
-            path.lineTo(tickX, bottom + tickSize)
-            path.lineTo(tickTopLeft + tickSize * 2, bottom)
+            val coercedTickSize = tickSize.coerceAtMost((maxLeft - minLeft).half.coerceAtLeast(0f))
+
+            (tickX - coercedTickSize)
+                .takeIf { minLeft < maxLeft }
+                ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
+                ?.also { tickTopLeft ->
+                    path.moveTo(tickTopLeft, bottom)
+                    path.lineTo(tickX, bottom + tickSize)
+                    path.lineTo(tickTopLeft + coercedTickSize.doubled, bottom)
+                }
+
             path.close()
             context.canvas.drawPath(path, paint)
         } else {

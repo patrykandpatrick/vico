@@ -15,6 +15,7 @@
  */
 
 plugins {
+
     id "com.android.library"
     id "kotlin-android"
 }
@@ -25,22 +26,13 @@ apply from: "$rootDir/dokka-common.gradle"
 android {
 
     defaultConfig {
-
-        minSdkVersion library.compose_min_sdk
-        targetSdkVersion library.target_sdk
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
+        minSdk library.compose_min_sdk
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-    
     buildFeatures {
         compose true
     }
-    
+
     composeOptions {
         kotlinCompilerExtensionVersion versions.composeCompiler
     }

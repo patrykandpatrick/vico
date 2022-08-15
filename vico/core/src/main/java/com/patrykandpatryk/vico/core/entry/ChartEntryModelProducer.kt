@@ -68,10 +68,10 @@ public class ChartEntryModelProducer(
     public fun setEntries(entries: List<List<ChartEntry>>) {
         this.entries.setAll(entries)
         cachedModel = null
-        updateReceivers.values.forEach { (updateListener, _, diffProcessor) ->
-            val oldModel = updateListener()
+        updateReceivers.values.forEach { (updateListener, _, diffProcessor, getOldModel) ->
             executor.execute {
-                diffProcessor.setEntries(old = oldModel?.entries.orEmpty(), new = entries)
+                diffProcessor.setEntries(old = getOldModel()?.entries.orEmpty(), new = entries)
+                updateListener()
             }
         }
     }
@@ -126,18 +126,19 @@ public class ChartEntryModelProducer(
 
     override fun registerForUpdates(
         key: Any,
-        updateListener: () -> ChartEntryModel?,
+        updateListener: () -> Unit,
+        getOldModel: () -> ChartEntryModel?,
         onModel: (ChartEntryModel) -> Unit,
     ) {
         updateReceivers[key] = UpdateReceiver(
             listener = updateListener,
             onModel = onModel,
             diffProcessor = diffProcessor,
+            getOldModel = getOldModel,
         )
-        val oldModel = updateListener()
         executor.execute {
-            diffProcessor.setEntries(old = oldModel?.entries.orEmpty(), new = entries)
-            progressModelSynchronously(0f, onModel, diffProcessor)
+            diffProcessor.setEntries(old = getOldModel()?.entries.orEmpty(), new = entries)
+            updateListener()
         }
     }
 
@@ -145,10 +146,13 @@ public class ChartEntryModelProducer(
         updateReceivers.remove(key)
     }
 
+    override fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key = key)
+
     private data class UpdateReceiver(
-        val listener: () -> ChartEntryModel?,
+        val listener: () -> Unit,
         val onModel: (ChartEntryModel) -> Unit,
         val diffProcessor: DiffProcessor<ChartEntry>,
+        val getOldModel: () -> ChartEntryModel?,
     )
 
     internal data class Model(

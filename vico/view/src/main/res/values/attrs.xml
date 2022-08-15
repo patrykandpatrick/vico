@@ -21,7 +21,7 @@
     <attr name="strokeWidth" format="dimension" />
     <attr name="dataLabelRotationDegrees" format="float" />
     <attr name="showDataLabels" format="boolean" />
-    <attr name="dataLabelStyle" format="reference" />\
+    <attr name="dataLabelStyle" format="reference" />
 
     <attr name="dataLabelVerticalPosition" format="enum">
         <enum name="top" value="0" />
@@ -82,8 +82,8 @@
             <enum name="edge" value="0" />
             <enum name="center" value="1" />
         </attr>
-        <attr name="horizontalAxisTickOffset" format="integer"/>
-        <attr name="horizontalAxisTickSpacing" format="integer"/>
+        <attr name="horizontalAxisTickOffset" format="integer" />
+        <attr name="horizontalAxisTickSpacing" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="LineComponent">

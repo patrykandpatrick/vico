@@ -21,20 +21,23 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatryk.vico.core.chart.BaseChart
+import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.segmentWidth
-import com.patrykandpatryk.vico.core.chart.forEachIn
+import com.patrykandpatryk.vico.core.chart.forEachInIndexed
 import com.patrykandpatryk.vico.core.chart.insets.Insets
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec.PointConnector
 import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.component.Component
-import com.patrykandpatryk.vico.core.component.shape.extension.horizontalCubicTo
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
@@ -51,7 +54,6 @@ import com.patrykandpatryk.vico.core.extension.rangeWith
 import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 import com.patrykandpatryk.vico.core.marker.Marker
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -63,11 +65,13 @@ import kotlin.math.min
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param pointPosition the horizontal position of each point in its corresponding segment.
  */
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    public var pointPosition: PointPosition = PointPosition.Center,
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -78,12 +82,14 @@ public open class LineChart(
      * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
      * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
      * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+     * @param pointPosition the horizontal position of each point in its corresponding segment.
      */
     public constructor(
         line: LineSpec,
         spacingDp: Float,
         targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-    ) : this(listOf(line), spacingDp, targetVerticalAxisPosition)
+        pointPosition: PointPosition = PointPosition.Center,
+    ) : this(listOf(line), spacingDp, targetVerticalAxisPosition, pointPosition)
 
     /**
      * Defines the appearance of a line in a line chart.
@@ -92,27 +98,90 @@ public open class LineChart(
      * @param lineThicknessDp the thickness of the line in dp.
      * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
      * @param lineCap the stroke cap for the line.
-     * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
      * @param point an optional [Component] that can be drawn at a given point on the line.
      * @param pointSizeDp the size of the [point] in dp.
      * @param dataLabel an optional [TextComponent] to use for data labels.
      * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
      * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
      * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+     * @param pointConnector the [PointConnector] for the line.
      */
     public open class LineSpec(
         lineColor: Int = Color.LTGRAY,
         public var lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
         public var lineBackgroundShader: DynamicShader? = null,
         public var lineCap: Paint.Cap = Paint.Cap.ROUND,
-        public var cubicStrength: Float = 1f,
         public var point: Component? = null,
         public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
         public var dataLabel: TextComponent? = null,
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
         public var dataLabelRotationDegrees: Float = 0f,
+        public var pointConnector: PointConnector = DefaultPointConnector(),
     ) {
+
+        /**
+         * Defines the appearance of a line in a line chart.
+         *
+         * @param lineColor the color of the line.
+         * @param lineThicknessDp the thickness of the line in dp.
+         * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
+         * @param lineCap the stroke cap for the line.
+         * @param cubicStrength the strength of the cubic bezier curve between each point on the line.
+         * @param point an optional [Component] that can be drawn at a given point on the line.
+         * @param pointSizeDp the size of the [point] in dp.
+         * @param dataLabel an optional [TextComponent] to use for data labels.
+         * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
+         * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+         * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+         */
+        @Deprecated(
+            message = """Rather than using this constructor and its `cubicStrength` parameter, use the primary
+                constructor and provide a `DefaultPointConnector` instance with a custom `cubicStrength` via the
+                `pointConnector` parameter.""",
+            replaceWith = ReplaceWith(
+                expression = """LineSpec(
+                        lineColor = lineColor,
+                        lineThicknessDp = lineThicknessDp,
+                        lineBackgroundShader = lineBackgroundShader,
+                        lineCap = lineCap,
+                        point = point,
+                        pointSizeDp = pointSizeDp,
+                        dataLabel = dataLabel,
+                        dataLabelVerticalPosition = dataLabelVerticalPosition,
+                        dataLabelValueFormatter = dataLabelValueFormatter,
+                        dataLabelRotationDegrees = dataLabelRotationDegrees,
+                        pointPosition = pointPosition,
+                        pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
+                    )""",
+                imports = arrayOf("com.patrykandpatryk.vico.core.chart.DefaultPointConnector"),
+            ),
+        )
+        public constructor(
+            lineColor: Int = Color.LTGRAY,
+            lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
+            lineBackgroundShader: DynamicShader? = null,
+            lineCap: Paint.Cap = Paint.Cap.ROUND,
+            cubicStrength: Float,
+            point: Component? = null,
+            pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+            dataLabel: TextComponent? = null,
+            dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+            dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+            dataLabelRotationDegrees: Float = 0f,
+        ) : this(
+            lineColor = lineColor,
+            lineThicknessDp = lineThicknessDp,
+            lineBackgroundShader = lineBackgroundShader,
+            lineCap = lineCap,
+            point = point,
+            pointSizeDp = pointSizeDp,
+            dataLabel = dataLabel,
+            dataLabelVerticalPosition = dataLabelVerticalPosition,
+            dataLabelValueFormatter = dataLabelValueFormatter,
+            dataLabelRotationDegrees = dataLabelRotationDegrees,
+            pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
+        )
 
         /**
          * Returns true if the [lineBackgroundShader] is not null, and false otherwise.
@@ -174,6 +243,28 @@ public open class LineChart(
 
             canvas.drawPath(path, lineBackgroundPaint)
         }
+
+        /**
+         * Defines the shape of a line in a line chart by specifying how points are to be connected.
+         *
+         * @see DefaultPointConnector
+         */
+        public interface PointConnector {
+
+            /**
+             * Draws a line between two points.
+             */
+            @LongParameterListDrawFunction
+            public fun connect(
+                path: Path,
+                prevX: Float,
+                prevY: Float,
+                x: Float,
+                y: Float,
+                segmentProperties: SegmentProperties,
+                bounds: RectF,
+            )
+        }
     }
 
     private val linePath = Path()
@@ -189,7 +280,7 @@ public open class LineChart(
     ): Unit = with(context) {
         resetTempData()
 
-        val (cellWidth, spacing, _) = segmentProperties
+        val (cellWidth, spacing) = segmentProperties
 
         model.entries.forEachIndexed { index, entries ->
 
@@ -197,18 +288,22 @@ public open class LineChart(
             lineBackgroundPath.rewind()
             val component = lines.getRepeating(index)
 
-            var cubicCurvature: Float
             var prevX = bounds.getStart(isLtr = isLtr)
             var prevY = bounds.bottom
 
-            val drawingStart = bounds.getStart(isLtr = isLtr) +
-                layoutDirectionMultiplier * (spacing.half + cellWidth.half) - horizontalScroll
+            val drawingStartAlignmentCorrection = layoutDirectionMultiplier *
+                when (pointPosition) {
+                    PointPosition.Start -> 0f
+                    PointPosition.Center -> (spacing + cellWidth).half
+                }
 
-            forEachPointWithinBounds(
+            val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
+
+            forEachPointWithinBoundsIndexed(
                 entries = entries,
                 segment = segmentProperties,
                 drawingStart = drawingStart,
-            ) { entry, x, y ->
+            ) { _, entry, x, y ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
                     if (component.hasLineBackgroundShader) {
@@ -216,11 +311,25 @@ public open class LineChart(
                         lineBackgroundPath.lineTo(x, y)
                     }
                 } else {
-                    cubicCurvature = spacing * component.cubicStrength *
-                        min(1f, abs((y - prevY) / bounds.bottom) * CUBIC_Y_MULTIPLIER)
-                    linePath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature)
+                    component.pointConnector.connect(
+                        path = linePath,
+                        prevX = prevX,
+                        prevY = prevY,
+                        x = x,
+                        y = y,
+                        segmentProperties = segmentProperties,
+                        bounds = bounds,
+                    )
                     if (component.hasLineBackgroundShader) {
-                        lineBackgroundPath.horizontalCubicTo(prevX, prevY, x, y, cubicCurvature)
+                        component.pointConnector.connect(
+                            path = lineBackgroundPath,
+                            prevX = prevX,
+                            prevY = prevY,
+                            x = x,
+                            y = y,
+                            segmentProperties = segmentProperties,
+                            bounds = bounds,
+                        )
                     }
                 }
                 prevX = x
@@ -258,15 +367,15 @@ public open class LineChart(
     ) {
         if (lineSpec.point == null && lineSpec.dataLabel == null) return
 
-        forEachPointWithinBounds(
+        forEachPointWithinBoundsIndexed(
             entries = entries,
             segment = segmentProperties,
             drawingStart = drawingStart,
-        ) { chartEntry, x, y ->
+        ) { index, chartEntry, x, y ->
 
             if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
 
-            lineSpec.dataLabel?.let { textComponent ->
+            lineSpec.dataLabel.takeIf { pointPosition.dataLabelsToSkip <= index }?.let { textComponent ->
 
                 val distanceFromLine = maxOf(
                     a = lineSpec.lineThicknessDp,
@@ -312,11 +421,11 @@ public open class LineChart(
         lineBackgroundPath.rewind()
     }
 
-    private fun DrawContext.forEachPointWithinBounds(
+    private fun DrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
         segment: SegmentProperties,
         drawingStart: Float,
-        action: (entry: ChartEntry, x: Float, y: Float) -> Unit,
+        action: (index: Int, entry: ChartEntry, x: Float, y: Float) -> Unit,
     ) {
 
         val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
@@ -344,7 +453,7 @@ public open class LineChart(
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (entry.y - minY) * heightMultiplier
 
-        entries.forEachIn(minX - stepX..maxX + stepX) { entry ->
+        entries.forEachInIndexed(minX - stepX..maxX + stepX) { index, entry ->
 
             x = getDrawX(entry)
             y = getDrawY(entry)
@@ -355,13 +464,13 @@ public open class LineChart(
                 }
                 x in boundsStart.rangeWith(other = boundsEnd) -> {
                     prevEntry?.also {
-                        action(it, getDrawX(it), getDrawY(it))
+                        action(index, it, getDrawX(it), getDrawY(it))
                         prevEntry = null
                     }
-                    action(entry, x, y)
+                    action(index, entry, x, y)
                 }
                 (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
-                    action(entry, x, y)
+                    action(index, entry, x, y)
                     lastEntry = entry
                 }
             }
@@ -375,6 +484,7 @@ public open class LineChart(
         segmentProperties.set(
             cellWidth = lines.maxOf { it.pointSizeDp.pixels },
             marginWidth = spacingDp.pixels,
+            labelPosition = pointPosition.labelPosition,
         )
     }
 
@@ -405,7 +515,20 @@ public open class LineChart(
         )
     }
 
-    private companion object {
-        const val CUBIC_Y_MULTIPLIER = 4
+    /**
+     * Defines the horizontal position of each point in its corresponding segment.
+     */
+    public enum class PointPosition(
+        internal val labelPosition: HorizontalAxis.LabelPosition,
+        internal val dataLabelsToSkip: Int,
+    ) {
+        Start(
+            labelPosition = HorizontalAxis.LabelPosition.Start,
+            dataLabelsToSkip = 1,
+        ),
+        Center(
+            labelPosition = HorizontalAxis.LabelPosition.Center,
+            dataLabelsToSkip = 0,
+        ),
     }
 }

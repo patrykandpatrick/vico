@@ -1,16 +1,16 @@
 name: Run Detekt
 on:
   push:
+  pull_request:
 jobs:
   run_detekt:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3.3.0
+      - uses: actions/setup-java@v3
         with:
-          java-version: 11
-          distribution: adopt
-      - run: |
-          chmod +x gradlew
-          ./gradlew detekt
+          java-version: 17
+          distribution: zulu
+      - uses: gradle/gradle-build-action@v2
+      - run: ./gradlew detekt
