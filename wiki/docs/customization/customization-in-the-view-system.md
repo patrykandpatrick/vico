@@ -98,6 +98,7 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `line2Spec` | The style for lines whose index in the list of lines in a line chart is 1 + 3*k* (*k* ∈ *N*). | A [`LineSpec`](#linespec) attribute set. |
 | `line3Spec` | The style for lines whose index in the list of lines in a line chart is 2 + 3*k* (*k* ∈ *N*). | A [`LineSpec`](#linespec) attribute set. |
 | `spacing` | The point spacing. | A dimension. |
+| `pointPosition` | The horizontal position of each point of each line in its corresponding segment. | `start` or `center`. |
 
 ### `LineComponentStyle`
 
