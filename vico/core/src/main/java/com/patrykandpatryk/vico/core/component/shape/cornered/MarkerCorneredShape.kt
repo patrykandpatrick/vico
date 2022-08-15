@@ -21,6 +21,7 @@ import android.graphics.Path
 import com.patrykandpatryk.vico.core.DEF_MARKER_TICK_SIZE
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.context.DrawContext
+import com.patrykandpatryk.vico.core.extension.doubled
 import com.patrykandpatryk.vico.core.extension.half
 
 /**
@@ -88,11 +89,11 @@ public open class MarkerCorneredShape(
 
             (tickX - coercedTickSize)
                 .takeIf { minLeft < maxLeft }
-                ?.coerceIn(minLeft, maxLeft)
+                ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
                 ?.also { tickTopLeft ->
                     path.moveTo(tickTopLeft, bottom)
                     path.lineTo(tickX, bottom + tickSize)
-                    path.lineTo(tickTopLeft + coercedTickSize * 2, bottom)
+                    path.lineTo(tickTopLeft + coercedTickSize.doubled, bottom)
                 }
 
             path.close()
