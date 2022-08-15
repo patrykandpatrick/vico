@@ -49,8 +49,8 @@ internal fun Modifier.chartTouchEvent(
         value = onZoom,
         factory = Modifier::zoomable,
     )
-    .then(
-        other = when {
+    .run {
+        when {
             scrollableState != null -> {
                 scrollable(
                     state = scrollableState,
@@ -68,8 +68,8 @@ internal fun Modifier.chartTouchEvent(
                 }
             }
             else -> Modifier
-        },
-    )
+        }
+    }
 
 private val Offset.point: Point
     get() = Point(x, y)
