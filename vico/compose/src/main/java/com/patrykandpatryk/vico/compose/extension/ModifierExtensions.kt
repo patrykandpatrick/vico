@@ -67,7 +67,7 @@ internal fun Modifier.chartTouchEvent(
                     )
                 }
             }
-            else -> Modifier
+            else -> this
         }
     }
 
