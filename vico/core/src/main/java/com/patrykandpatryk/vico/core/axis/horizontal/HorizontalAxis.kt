@@ -78,7 +78,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             maxOf(bounds.bottom, chartBounds.bottom),
         )
 
-        val entryLength = getEntryLength(segmentProperties.segmentWidth)
         val tickDrawStep = segmentProperties.segmentWidth
         val scrollAdjustment = (abs(x = horizontalScroll) / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
@@ -96,13 +95,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         forEachEntityIndex(
             startValueIndex = chartValues.minX + scrollAdjustment * step,
             step = step,
-            entryLength = entryLength,
-            labelsToSkip = segmentProperties.labelPositionOrDefault.labelsToSkip,
-        ) { index, valueIndex, shouldDraw ->
+            xRange = chartValues.minX..chartValues.maxX,
+        ) { valueIndex, shouldDrawLines, shouldDrawLabel ->
 
             guideline
                 ?.takeIf {
-                    shouldDraw &&
+                    shouldDrawLines &&
                         it.fitsInVertical(
                             context = context,
                             top = chartBounds.top,
@@ -118,11 +116,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 )
 
             tick
-                .takeIf { shouldDraw }
+                .takeIf { shouldDrawLines }
                 ?.drawVertical(context = context, top = tickMarkTop, bottom = tickMarkBottom, centerX = tickCenter)
 
             label
-                .takeIf { index < entryLength && shouldDraw }
+                .takeIf { shouldDrawLabel }
                 ?.drawText(
                     context = context,
                     text = valueFormatter.formatValue(valueIndex, chartValues),
@@ -168,24 +166,29 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width() / segmentWidth).toInt() + 1
 
-    private inline fun forEachEntityIndex(
+    private inline fun ChartDrawContext.forEachEntityIndex(
         startValueIndex: Float,
         step: Float,
-        entryLength: Int,
-        labelsToSkip: Int,
-        action: (index: Int, valueIndex: Float, shouldDraw: Boolean) -> Unit,
+        xRange: ClosedFloatingPointRange<Float>,
+        action: (valueIndex: Float, shouldDrawLines: Boolean, shouldDrawLabel: Boolean) -> Unit,
     ) {
         var valueIndex = startValueIndex
+        val entryLength = getEntryLength(segmentProperties.segmentWidth)
 
-        for (index in 0 until tickPosition.getTickCount(entryLength)) {
-            val shouldDraw = valueIndex >= tickPosition.offset &&
+        for (index in 0 until tickPosition.getTickCount(entryLength = entryLength)) {
+
+            val firstEntityConditionsMet = valueIndex != xRange.start ||
+                !segmentProperties.labelPositionOrDefault.skipFirstEntity ||
+                tickPosition.offset > 0
+
+            val shouldDrawLines = valueIndex >= tickPosition.offset &&
                 (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f &&
-                (index >= labelsToSkip || tickPosition.offset > 0)
+                firstEntityConditionsMet
 
             action(
-                index,
                 valueIndex,
-                shouldDraw,
+                shouldDrawLines,
+                shouldDrawLines && valueIndex in xRange && index < entryLength,
             )
 
             valueIndex += step
@@ -324,9 +327,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     /**
      * Defines the position of labels.
      */
-    public enum class LabelPosition(internal val labelsToSkip: Int) {
-        Start(labelsToSkip = 1),
-        Center(labelsToSkip = 0),
+    public enum class LabelPosition(internal val skipFirstEntity: Boolean) {
+        Start(skipFirstEntity = true),
+        Center(skipFirstEntity = false),
     }
 
     /**
