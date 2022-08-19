@@ -92,7 +92,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
 
-        forEachEntityIndex(
+        forEachEntity(
             startValueIndex = chartValues.minX + scrollAdjustment * step,
             step = step,
             xRange = chartValues.minX..chartValues.maxX,
@@ -166,7 +166,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private fun getEntryLength(segmentWidth: Float) =
         ceil(bounds.width() / segmentWidth).toInt() + 1
 
-    private inline fun ChartDrawContext.forEachEntityIndex(
+    private inline fun ChartDrawContext.forEachEntity(
         startValueIndex: Float,
         step: Float,
         xRange: ClosedFloatingPointRange<Float>,
