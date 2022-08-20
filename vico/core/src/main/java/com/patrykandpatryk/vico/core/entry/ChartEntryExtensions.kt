@@ -101,7 +101,7 @@ internal fun Iterable<Iterable<ChartEntry>>.calculateStep(): Float {
         }
         if (step == -1f) step = 1f
     }
-    return step ?: 0f
+    return step ?: 1f
 }
 
 internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =
