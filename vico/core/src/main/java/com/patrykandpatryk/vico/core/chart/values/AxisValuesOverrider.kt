@@ -17,7 +17,6 @@
 package com.patrykandpatryk.vico.core.chart.values
 
 import com.patrykandpatryk.vico.core.axis.Axis
-import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.round
@@ -28,41 +27,35 @@ import kotlin.math.abs
  * It can be set in [com.patrykandpatryk.vico.view.chart.BaseChartView] and
  * [com.patrykandpatryk.vico.compose.chart.Chart] `@Composable` function.
  */
-public interface AxisValuesOverrider <Model : ChartEntryModel> {
+public interface AxisValuesOverrider<Model> {
 
     /**
      * The minimum value shown on the x-axis.
      *
      * @param model holds entries data which can be used to calculate the new min x-axis value.
      */
-    public fun getMinX(model: Model): Float = model.minX
+    public fun getMinX(model: Model): Float
 
     /**
      * The maximum value shown on the x-axis.
      *
      * @param model holds entries data which can be used to calculate the new max x-axis value.
      */
-    public fun getMaxX(model: Model): Float = model.maxX
+    public fun getMaxX(model: Model): Float
 
     /**
      * The minimum value shown on the y-axis.
      *
      * @param model holds entries data which can be used to calculate the new min y-axis value.
      */
-    public fun getMinY(
-        model: Model,
-        targetVerticalAxisPosition: AxisPosition.Vertical?,
-    ): Float = 0f
+    public fun getMinY(model: Model): Float
 
     /**
      * The maximum value shown on the y-axis.
      *
      * @param model holds entries data which can be used to calculate the new max y-axis value.
      */
-    public fun getMaxY(
-        model: Model,
-        targetVerticalAxisPosition: AxisPosition.Vertical?,
-    ): Float = model.maxY
+    public fun getMaxY(model: Model): Float
 
     public companion object {
 
@@ -70,25 +63,19 @@ public interface AxisValuesOverrider <Model : ChartEntryModel> {
          * Creates an [AxisValuesOverrider] with fixed values for [minX], [maxX], [minY] and [maxY].
          */
         public fun fixed(
-            minX: Float,
-            maxX: Float,
-            minY: Float,
-            maxY: Float,
+            minX: Float? = null,
+            maxX: Float? = null,
+            minY: Float? = null,
+            maxY: Float? = null,
         ): AxisValuesOverrider<ChartEntryModel> = object : AxisValuesOverrider<ChartEntryModel> {
 
-            override fun getMinX(model: ChartEntryModel): Float = minX
+            override fun getMinX(model: ChartEntryModel): Float = minX ?: model.minX
 
-            override fun getMaxX(model: ChartEntryModel): Float = maxX
+            override fun getMaxX(model: ChartEntryModel): Float = maxX ?: model.maxX
 
-            override fun getMinY(
-                model: ChartEntryModel,
-                targetVerticalAxisPosition: AxisPosition.Vertical?,
-            ): Float = minY
+            override fun getMinY(model: ChartEntryModel): Float = minY ?: minOf(model.minY, 0f)
 
-            override fun getMaxY(
-                model: ChartEntryModel,
-                targetVerticalAxisPosition: AxisPosition.Vertical?,
-            ): Float = maxY
+            override fun getMaxY(model: ChartEntryModel): Float = maxY ?: model.maxY
         }
 
         /**
@@ -106,18 +93,16 @@ public interface AxisValuesOverrider <Model : ChartEntryModel> {
                 require(yFraction > 0f)
             }
 
-            override fun getMinY(
-                model: ChartEntryModel,
-                targetVerticalAxisPosition: AxisPosition.Vertical?,
-            ): Float {
-                val difference = abs(getMaxY(model, targetVerticalAxisPosition) - model.maxY)
+            override fun getMinX(model: ChartEntryModel): Float = model.minX
+
+            override fun getMaxX(model: ChartEntryModel): Float = model.maxX
+
+            override fun getMinY(model: ChartEntryModel): Float {
+                val difference = abs(getMaxY(model) - model.maxY)
                 return (model.minY - difference).maybeRound().coerceAtLeast(0f)
             }
 
-            override fun getMaxY(
-                model: ChartEntryModel,
-                targetVerticalAxisPosition: AxisPosition.Vertical?,
-            ): Float = (model.maxY * yFraction).maybeRound()
+            override fun getMaxY(model: ChartEntryModel): Float = (model.maxY * yFraction).maybeRound()
 
             private fun Float.maybeRound() = if (round) this.round else this
         }

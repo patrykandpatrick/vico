@@ -35,6 +35,7 @@ import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
@@ -65,15 +66,17 @@ import com.patrykandpatryk.vico.core.marker.Marker
 public fun lineChart(
     lines: List<LineSpec> = currentChartStyle.lineChart.lines,
     spacing: Dp = currentChartStyle.lineChart.spacing,
+    pointPosition: LineChart.PointPosition = LineChart.PointPosition.Center,
     decorations: List<Decoration>? = null,
     persistentMarkers: Map<Float, Marker>? = null,
+    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
     targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-    pointPosition: LineChart.PointPosition = LineChart.PointPosition.Center,
 ): LineChart = remember { LineChart() }.apply {
     this.lines = lines
     this.spacingDp = spacing.value
-    this.targetVerticalAxisPosition = targetVerticalAxisPosition
     this.pointPosition = pointPosition
+    this.axisValuesOverrider = axisValuesOverrider
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }
@@ -97,10 +100,7 @@ public fun lineChart(
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
  */
-@Deprecated(
-    message = "Overriding axis values should be done with `AxisValuesOverrider`" +
-        " which is an argument of `Chart` @Composable function.",
-)
+@Deprecated(message = "Overriding axis values should be done with `AxisValuesOverrider`.")
 @Composable
 public fun lineChart(
     lines: List<LineSpec> = currentChartStyle.lineChart.lines,

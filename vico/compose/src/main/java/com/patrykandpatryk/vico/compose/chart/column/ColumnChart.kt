@@ -24,6 +24,7 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
@@ -63,16 +64,18 @@ public fun columnChart(
     dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnChart.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnChart.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = currentChartStyle.columnChart.dataLabelRotationDegrees,
+    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
 ): ColumnChart = remember { ColumnChart() }.apply {
     this.columns = columns
     this.spacingDp = spacing.value
     this.innerSpacingDp = innerSpacing.value
     this.mergeMode = mergeMode
-    this.targetVerticalAxisPosition = targetVerticalAxisPosition
     this.dataLabel = dataLabel
     this.dataLabelVerticalPosition = dataLabelVerticalPosition
     this.dataLabelValueFormatter = dataLabelValueFormatter
     this.dataLabelRotationDegrees = dataLabelRotationDegrees
+    this.axisValuesOverrider = axisValuesOverrider
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }
@@ -100,10 +103,7 @@ public fun columnChart(
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
  */
-@Deprecated(
-    message = "Overriding axis values should be done with `AxisValuesOverrider`" +
-        " which is an argument of `Chart` `@Composable` function.",
-)
+@Deprecated(message = "Overriding axis values should be done with `AxisValuesOverrider`.")
 @Composable
 public fun columnChart(
     columns: List<LineComponent> = currentChartStyle.columnChart.columns,

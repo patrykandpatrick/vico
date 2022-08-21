@@ -33,13 +33,11 @@ import com.patrykandpatryk.vico.core.Animation
 import com.patrykandpatryk.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatryk.vico.core.DEF_MIN_ZOOM
 import com.patrykandpatryk.vico.core.DefaultDimens
-import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
-import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -180,11 +178,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         private set
 
     /**
-     * Overrides minimum and maximum values on x-axis and y-axis displayed in [Chart] and [Axis].
-     */
-    public var axisValuesOverrider: AxisValuesOverrider<Model>? = null
-
-    /**
      * A [ChartModelProducer] can provide the [Model] updates asynchronously.
      *
      * @see ChartModelProducer
@@ -264,9 +257,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
             measureContext.chartValuesManager.resetChartValues()
-            axisValuesOverrider?.also { overrider ->
-                measureContext.chartValuesManager.update(overrider, model)
-            } ?: chart.updateChartValues(measureContext.chartValuesManager, model)
+            chart.updateChartValues(measureContext.chartValuesManager, model)
 
             if (ViewCompat.isAttachedToWindow(this)) {
                 invalidate()

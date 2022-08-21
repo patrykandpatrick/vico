@@ -271,10 +271,10 @@ public open class ColumnChart(
 
     override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel) {
         chartValuesManager.tryUpdate(
-            minX = minX ?: model.minX,
-            maxX = maxX ?: model.maxX,
-            minY = minY ?: min(model.minY, 0f),
-            maxY = maxY ?: mergeMode.getMaxY(model),
+            minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
+            maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
+            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: min(model.minY, 0f),
+            maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: mergeMode.getMaxY(model),
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,
         )

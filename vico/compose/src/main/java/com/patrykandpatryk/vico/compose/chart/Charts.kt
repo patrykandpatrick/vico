@@ -46,13 +46,11 @@ import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatryk.vico.core.DEF_MIN_ZOOM
 import com.patrykandpatryk.vico.core.DefaultDimens
-import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisManager
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
-import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
@@ -87,7 +85,6 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * instances).
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value.
- * @param axisValuesOverrider overrides minimum and maximum values on x-axis and y-axis displayed in [Chart] and [Axis].
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -105,7 +102,6 @@ public fun <Model : ChartEntryModel> Chart(
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
-    axisValuesOverrider: AxisValuesOverrider<Model>? = null,
 ) {
     val model = chartModelProducer.collect(
         key = chart,
@@ -127,7 +123,6 @@ public fun <Model : ChartEntryModel> Chart(
             legend = legend,
             isHorizontalScrollEnabled = isHorizontalScrollEnabled,
             isZoomEnabled = isZoomEnabled,
-            axisValuesOverrider = axisValuesOverrider,
         )
     }
 }
@@ -153,7 +148,6 @@ public fun <Model : ChartEntryModel> Chart(
  * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
- * @param axisValuesOverrider overrides minimum and maximum values on x-axis and y-axis displayed in [Chart] and [Axis].
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -169,7 +163,6 @@ public fun <Model : ChartEntryModel> Chart(
     legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
-    axisValuesOverrider: AxisValuesOverrider<Model>? = null,
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
@@ -213,10 +206,7 @@ public fun <Model : ChartEntryModel> Chart(
             ),
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
-
-        axisValuesOverrider?.also { overrider ->
-            measureContext.chartValuesManager.update(overrider, model)
-        } ?: chart.updateChartValues(measureContext.chartValuesManager, model)
+        chart.updateChartValues(measureContext.chartValuesManager, model)
 
         val segmentProperties = chart.getSegmentProperties(measureContext, model)
 

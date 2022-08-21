@@ -21,6 +21,7 @@ import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.chart.insets.Insets
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.getEntryModel
@@ -47,6 +48,8 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     override val bounds: RectF = RectF()
 
     override val chartInsetters: Collection<ChartInsetter> = persistentMarkers.values
+
+    override var axisValuesOverrider: AxisValuesOverrider<@UnsafeVariance Model>? = null
 
     @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var minY: Float? = null
