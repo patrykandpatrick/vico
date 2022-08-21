@@ -31,36 +31,41 @@ public interface AxisValuesOverrider<Model> {
 
     /**
      * The minimum value shown on the x-axis.
+     * In case a value is `null`, the chart will fall back to the default value.
      *
      * @param model holds entries data which can be used to calculate the new min x-axis value.
      */
-    public fun getMinX(model: Model): Float
+    public fun getMinX(model: Model): Float? = null
 
     /**
      * The maximum value shown on the x-axis.
+     * In case a value is `null`, the chart will fall back to the default value.
      *
      * @param model holds entries data which can be used to calculate the new max x-axis value.
      */
-    public fun getMaxX(model: Model): Float
+    public fun getMaxX(model: Model): Float? = null
 
     /**
      * The minimum value shown on the y-axis.
+     * In case a value is `null`, the chart will fall back to the default value.
      *
      * @param model holds entries data which can be used to calculate the new min y-axis value.
      */
-    public fun getMinY(model: Model): Float
+    public fun getMinY(model: Model): Float? = null
 
     /**
      * The maximum value shown on the y-axis.
+     * In case a value is `null`, the chart will fall back to the default value.
      *
      * @param model holds entries data which can be used to calculate the new max y-axis value.
      */
-    public fun getMaxY(model: Model): Float
+    public fun getMaxY(model: Model): Float? = null
 
     public companion object {
 
         /**
          * Creates an [AxisValuesOverrider] with fixed values for [minX], [maxX], [minY] and [maxY].
+         * In case a value is `null`, the chart will fall back to the default value.
          */
         public fun fixed(
             minX: Float? = null,
@@ -69,13 +74,13 @@ public interface AxisValuesOverrider<Model> {
             maxY: Float? = null,
         ): AxisValuesOverrider<ChartEntryModel> = object : AxisValuesOverrider<ChartEntryModel> {
 
-            override fun getMinX(model: ChartEntryModel): Float = minX ?: model.minX
+            override fun getMinX(model: ChartEntryModel): Float? = minX
 
-            override fun getMaxX(model: ChartEntryModel): Float = maxX ?: model.maxX
+            override fun getMaxX(model: ChartEntryModel): Float? = maxX
 
-            override fun getMinY(model: ChartEntryModel): Float = minY ?: minOf(model.minY, 0f)
+            override fun getMinY(model: ChartEntryModel): Float? = minY
 
-            override fun getMaxY(model: ChartEntryModel): Float = maxY ?: model.maxY
+            override fun getMaxY(model: ChartEntryModel): Float? = maxY
         }
 
         /**
@@ -92,10 +97,6 @@ public interface AxisValuesOverrider<Model> {
             init {
                 require(yFraction > 0f)
             }
-
-            override fun getMinX(model: ChartEntryModel): Float = model.minX
-
-            override fun getMaxX(model: ChartEntryModel): Float = model.maxX
 
             override fun getMinY(model: ChartEntryModel): Float {
                 val difference = abs(getMaxY(model) - model.maxY)
