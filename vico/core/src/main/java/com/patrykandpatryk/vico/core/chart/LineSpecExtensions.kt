@@ -20,6 +20,9 @@ import android.graphics.Paint
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
+import com.patrykandpatryk.vico.core.component.text.TextComponent
+import com.patrykandpatryk.vico.core.component.text.VerticalPosition
+import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 
 /**
  * Creates a new [LineChart.LineSpec] based on this one, updating select properties.
@@ -31,6 +34,10 @@ public fun LineChart.LineSpec.copy(
     lineCap: Paint.Cap = this.lineCap,
     point: Component? = this.point,
     pointSizeDp: Float = this.pointSizeDp,
+    dataLabel: TextComponent? = this.dataLabel,
+    dataLabelVerticalPosition: VerticalPosition = this.dataLabelVerticalPosition,
+    dataLabelValueFormatter: ValueFormatter = this.dataLabelValueFormatter,
+    dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
     pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,
 ): LineChart.LineSpec = LineChart.LineSpec(
     lineColor = lineColor,
@@ -39,5 +46,9 @@ public fun LineChart.LineSpec.copy(
     lineCap = lineCap,
     point = point,
     pointSizeDp = pointSizeDp,
+    dataLabel = dataLabel,
+    dataLabelVerticalPosition = dataLabelVerticalPosition,
+    dataLabelValueFormatter = dataLabelValueFormatter,
+    dataLabelRotationDegrees = dataLabelRotationDegrees,
     pointConnector = pointConnector,
 )
