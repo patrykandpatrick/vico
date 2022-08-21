@@ -29,7 +29,9 @@ import com.patrykandpatryk.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
@@ -54,10 +56,12 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * are lines.
  * @param decorations the list of [Decoration]s that will be added to the [LineChart].
  * @param persistentMarkers maps x-axis values to persistent [Marker]s.
+ * @param pointPosition the horizontal position of each point in its corresponding segment.
+ * @param axisValuesOverrider overrides minimum and maximum values on x-axis and y-axis displayed in this [Chart]
+ * and [Axis].
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
- * @param pointPosition the horizontal position of each point in its corresponding segment.
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
