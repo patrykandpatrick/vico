@@ -98,7 +98,7 @@ public fun lineChart(
  * @param persistentMarkers maps x-axis values to persistent [Marker]s.
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
- * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart]. // TODO
+ * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
  * @param pointPosition the horizontal position of each point in its corresponding segment.
  *
  * @see com.patrykandpatryk.vico.compose.chart.Chart
