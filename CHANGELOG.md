@@ -9,4 +9,4 @@ This release includes the following changes.
 
 ## Dependency updates
 
-Please see [this commit](https://github.com/patrykandpatryk/vico/commit/099ab29fd97b188ef8056761bc7e4bf04f1dff41) for information on dependency updates.
+Please see [this commit](https://github.com/patrykandpatryk/vico/commit/099ab29fd97b188ef8056761bc7e4bf04f1dff41) for information on the dependency updates included in this release.
