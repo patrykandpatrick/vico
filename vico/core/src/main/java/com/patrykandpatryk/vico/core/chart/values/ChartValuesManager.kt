@@ -38,6 +38,12 @@ public class ChartValuesManager {
 
     private val chartValues: MutableMap<AxisPosition.Vertical?, MutableChartValues> = mutableMapOf()
 
+    private val verticalAxes: Array<AxisPosition.Vertical?> = arrayOf(
+        null,
+        AxisPosition.Vertical.Start,
+        AxisPosition.Vertical.End,
+    )
+
     /**
      * Returns the [ChartValues] associated with the given [axisPosition].
      * @param axisPosition if this is null, the main [ChartValues] instance is returned. Otherwise, the [ChartValues]
@@ -49,10 +55,30 @@ public class ChartValuesManager {
             ?: chartValues.getOrPut(null) { MutableChartValues() }
 
     /**
+     * Updates the stored values to the values provided by the [axisValuesOverrider].
+     * The [axisValuesOverrider] uses the [chartEntryModel] to provide new axis values.
+     */
+    public fun <Model: ChartEntryModel> update(
+        axisValuesOverrider: AxisValuesOverrider<Model>,
+        chartEntryModel: Model,
+    ) {
+        verticalAxes.forEach { axisPosition ->
+            chartValues.getOrPut(axisPosition) { MutableChartValues() }
+                .tryUpdate(
+                    minX = axisValuesOverrider.getMinX(chartEntryModel),
+                    maxX = axisValuesOverrider.getMaxX(chartEntryModel),
+                    minY = axisValuesOverrider.getMinY(chartEntryModel, axisPosition),
+                    maxY = axisValuesOverrider.getMaxY(chartEntryModel, axisPosition),
+                    chartEntryModel = chartEntryModel,
+                )
+        }
+    }
+
+    /**
      * Attempts to update the stored values to the provided params.
      * [minX] and [minY] can be updated to a lower value.
      * [maxX] and [maxY] can be updated to a higher value.
-     * The [chartEntryModel] is always be updated.
+     * The [chartEntryModel] is always updated.
      * If [axisPosition] is null, only the main [ChartValues] are updated. Otherwise, both the main [ChartValues]
      * and the [ChartValues] associated with the given [axisPosition] are updated.
      */

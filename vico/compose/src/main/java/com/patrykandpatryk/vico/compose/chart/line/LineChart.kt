@@ -51,10 +51,6 @@ import com.patrykandpatryk.vico.core.marker.Marker
  *
  * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
  * are lines.
- * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
- * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
- * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
- * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
  * @param decorations the list of [Decoration]s that will be added to the [LineChart].
  * @param persistentMarkers maps x-axis values to persistent [Marker]s.
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
@@ -65,6 +61,46 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
  */
+@Composable
+public fun lineChart(
+    lines: List<LineSpec> = currentChartStyle.lineChart.lines,
+    spacing: Dp = currentChartStyle.lineChart.spacing,
+    decorations: List<Decoration>? = null,
+    persistentMarkers: Map<Float, Marker>? = null,
+    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    pointPosition: LineChart.PointPosition = LineChart.PointPosition.Center,
+): LineChart = remember { LineChart() }.apply {
+    this.lines = lines
+    this.spacingDp = spacing.value
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
+    this.pointPosition = pointPosition
+    decorations?.also(::setDecorations)
+    persistentMarkers?.also(::setPersistentMarkers)
+}
+
+/**
+ * Creates a [LineChart].
+ *
+ * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
+ * are lines.
+ * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
+ * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
+ * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
+ * @param maxY the maximum value shown on the y-axis. If not null, it overrides [ChartEntryModel.maxY].
+ * @param decorations the list of [Decoration]s that will be added to the [LineChart].
+ * @param persistentMarkers maps x-axis values to persistent [Marker]s.
+ * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+ * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+ * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart]. // TODO
+ * @param pointPosition the horizontal position of each point in its corresponding segment.
+ *
+ * @see com.patrykandpatryk.vico.compose.chart.Chart
+ * @see ColumnChart
+ */
+@Deprecated(
+    message = "Overriding axis values should be done with `AxisValuesOverrider`" +
+        " which is an argument of `Chart` @Composable function.",
+)
 @Composable
 public fun lineChart(
     lines: List<LineSpec> = currentChartStyle.lineChart.lines,

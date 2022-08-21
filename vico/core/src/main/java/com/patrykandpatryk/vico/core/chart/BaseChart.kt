@@ -48,9 +48,16 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     override val chartInsetters: Collection<ChartInsetter> = persistentMarkers.values
 
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var minY: Float? = null
+
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var maxY: Float? = null
+
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var minX: Float? = null
+
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var maxX: Float? = null
 
     override fun addDecoration(decoration: Decoration): Boolean = decorations.add(decoration)

@@ -26,6 +26,9 @@ import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.marker.Marker
 
+internal const val AXIS_VALUES_DEPRECATION_MESSAGE: String = "Overriding axis values should be done with " +
+    "`AxisValuesOverrider` which is an argument of `Chart` `@Composable` function and a property of `BaseChartView`."
+
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to draw a chart.
  */
@@ -53,6 +56,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.minY
      */
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     public var minY: Float?
 
     /**
@@ -63,6 +67,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.maxY
      */
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     public var maxY: Float?
 
     /**
@@ -73,6 +78,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.minX
      */
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     public var minX: Float?
 
     /**
@@ -83,6 +89,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.maxX
      */
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     public var maxX: Float?
 
     /**

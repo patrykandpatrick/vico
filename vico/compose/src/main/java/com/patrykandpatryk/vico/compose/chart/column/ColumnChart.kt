@@ -40,6 +40,52 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @param innerSpacing the spacing between the columns contained in chart segments. This has no effect on
  * segments that contain a single column only.
  * @param mergeMode defines the way multiple columns are rendered in the [ColumnChart].
+ * @param decorations the list of [Decoration]s that will be added to the [ColumnChart].
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
+ * respective columns.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+ *
+ * @see com.patrykandpatryk.vico.compose.chart.Chart
+ * @see ColumnChart
+ */
+@Composable
+public fun columnChart(
+    columns: List<LineComponent> = currentChartStyle.columnChart.columns,
+    spacing: Dp = currentChartStyle.columnChart.outsideSpacing,
+    innerSpacing: Dp = currentChartStyle.columnChart.innerSpacing,
+    mergeMode: MergeMode = currentChartStyle.columnChart.mergeMode,
+    decorations: List<Decoration>? = null,
+    persistentMarkers: Map<Float, Marker>? = null,
+    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    dataLabel: TextComponent? = currentChartStyle.columnChart.dataLabel,
+    dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnChart.dataLabelVerticalPosition,
+    dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnChart.dataLabelValueFormatter,
+    dataLabelRotationDegrees: Float = currentChartStyle.columnChart.dataLabelRotationDegrees,
+): ColumnChart = remember { ColumnChart() }.apply {
+    this.columns = columns
+    this.spacingDp = spacing.value
+    this.innerSpacingDp = innerSpacing.value
+    this.mergeMode = mergeMode
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
+    this.dataLabel = dataLabel
+    this.dataLabelVerticalPosition = dataLabelVerticalPosition
+    this.dataLabelValueFormatter = dataLabelValueFormatter
+    this.dataLabelRotationDegrees = dataLabelRotationDegrees
+    decorations?.also(::setDecorations)
+    persistentMarkers?.also(::setPersistentMarkers)
+}
+
+/**
+ * Creates a [ColumnChart].
+ *
+ * @param columns the [LineComponent] instances to use for columns. This list is iterated through as many times
+ * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
+ * @param spacing the horizontal padding between the edges of chart segments and the columns they contain.
+ * @param innerSpacing the spacing between the columns contained in chart segments. This has no effect on
+ * segments that contain a single column only.
+ * @param mergeMode defines the way multiple columns are rendered in the [ColumnChart].
  * @param minX the minimum value shown on the x-axis. If not null, it overrides [ChartEntryModel.minX].
  * @param maxX the maximum value shown on the x-axis. If not null, it overrides [ChartEntryModel.maxX].
  * @param minY the minimum value shown on the y-axis. If not null, it overrides [ChartEntryModel.minY].
@@ -54,6 +100,10 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
  */
+@Deprecated(
+    message = "Overriding axis values should be done with `AxisValuesOverrider`" +
+        " which is an argument of `Chart` `@Composable` function.",
+)
 @Composable
 public fun columnChart(
     columns: List<LineComponent> = currentChartStyle.columnChart.columns,
