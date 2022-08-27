@@ -111,6 +111,7 @@
         <item name="line1Spec">@style/LineChartWithLabelsInsideLine1Spec</item>
         <item name="line2Spec">@style/LineChartWithLabelsInsideLine2Spec</item>
         <item name="line3Spec">@style/LineChartWithLabelsInsideLine3Spec</item>
+        <item name="pointPosition">start</item>
     </style>
 
     <style name="LineChartWithLabelsInsideLine1Spec" parent="@style/LineChartWithLabelsInsideLineSpec">
