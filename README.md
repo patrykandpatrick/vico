@@ -51,7 +51,7 @@ This approach encourages a greater level of abstraction and promotes separation 
 1. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` file:
 
     ```groovy
-    buildscript {
+    allprojects {
         repositories {
             mavenCentral()
             ...
