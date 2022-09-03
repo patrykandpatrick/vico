@@ -16,7 +16,7 @@ Vico is a light and extensible chart library for Jetpack Compose and the view sy
 -   `compose` (for Jetpack Compose)
 -   `view` (for views)
 
-Vico has a very low number of dependecies, and these two modules don’t depend on each other. [Find out how.](#how-is-that)
+Vico has a very low number of dependencies, and these two modules don’t depend on each other. [Find out how.](#achieving-module-independence)
 
 ## A foreword by the founder
 
@@ -51,7 +51,7 @@ This approach encourages a greater level of abstraction and promotes separation 
 1. Ensure the `mavenCentral()` repository is declared in the project-level `build.gradle` file:
 
     ```groovy
-    buildscript {
+    allprojects {
         repositories {
             mavenCentral()
             ...
