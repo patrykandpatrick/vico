@@ -31,7 +31,7 @@ import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.marker.Marker
 
-internal const val AXIS_VALUES_DEPRECATION_MESSAGE: String = "Axis values should be overridden via" +
+internal const val AXIS_VALUES_DEPRECATION_MESSAGE: String = "Axis values should be overridden via " +
     "`Chart#axisValuesOverrider`."
 
 /**
@@ -54,10 +54,9 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
     public val chartInsetters: Collection<ChartInsetter>
 
     /**
-     * Overrides minimum and maximum values on x-axis and y-axis displayed in this [Chart] and [Axis].
-     * In [ColumnChart] and [LineChart] the overridden axis values may be applied to only one vertical axis
-     * if [ColumnChart.targetVerticalAxisPosition] or [LineChart.targetVerticalAxisPosition] is not `null` and the
-     * [Chart] is used in a [ComposedChart].
+     * Overrides the minimum and maximum x-axis and y-axis values. In the case of [ColumnChart]s and [LineChart]s, the
+     * axis value overrides may be applied to only one vertical axis if [ColumnChart.targetVerticalAxisPosition] or
+     * [LineChart.targetVerticalAxisPosition] is not `null` and the [Chart] is used in a [ComposedChart].
      */
     public var axisValuesOverrider: AxisValuesOverrider<@UnsafeVariance Model>?
 

@@ -51,8 +51,7 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * respective columns.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
- * @param axisValuesOverrider overrides minimum and maximum values on x-axis and y-axis displayed in this [Chart]
- * and [Axis].
+ * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
@@ -116,7 +115,7 @@ public fun columnChart(
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
  */
-@Deprecated(message = "Overriding axis values should be done with `AxisValuesOverrider`.")
+@Deprecated(message = "Axis values should be overridden `AxisValuesOverrider`.")
 @Composable
 public fun columnChart(
     columns: List<LineComponent> = currentChartStyle.columnChart.columns,

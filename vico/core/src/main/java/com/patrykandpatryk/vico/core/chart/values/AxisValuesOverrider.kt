@@ -16,56 +16,51 @@
 
 package com.patrykandpatryk.vico.core.chart.values
 
-import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.round
 import kotlin.math.abs
 
 /**
- * Overrides minimum and maximum values on x-axis and y-axis displayed in [Chart] and [Axis].
- * It can be set in [com.patrykandpatryk.vico.view.chart.BaseChartView] and
- * [com.patrykandpatryk.vico.compose.chart.Chart] `@Composable` function.
+ * Overrides a chart’s minimum and maximum values x-axis and y-axis values.
+ * This can be used with [com.patrykandpatryk.vico.view.chart.BaseChartView] and the
+ * [com.patrykandpatryk.vico.compose.chart.Chart] composable.
  */
 public interface AxisValuesOverrider<Model> {
 
     /**
-     * The minimum value shown on the x-axis.
-     * In case a value is `null`, the chart will fall back to the default value.
+     * The minimum value shown on the x-axis. If `null` is returned, the chart will fall back to the default value.
      *
-     * @param model holds entries data which can be used to calculate the new min x-axis value.
+     * @param model holds data about the chart’s entries, which can be used to calculate the new minimum x-axis value.
      */
     public fun getMinX(model: Model): Float? = null
 
     /**
-     * The maximum value shown on the x-axis.
-     * In case a value is `null`, the chart will fall back to the default value.
+     * The maximum value shown on the x-axis. If `null` is returned, the chart will fall back to the default value.
      *
-     * @param model holds entries data which can be used to calculate the new max x-axis value.
+     * @param model holds data about the chart’s entries, which can be used to calculate the new maximum x-axis value.
      */
     public fun getMaxX(model: Model): Float? = null
 
     /**
-     * The minimum value shown on the y-axis.
-     * In case a value is `null`, the chart will fall back to the default value.
+     * The minimum value shown on the y-axis. If `null` is returned, the chart will fall back to the default value.
      *
-     * @param model holds entries data which can be used to calculate the new min y-axis value.
+     * @param model holds data about the chart’s entries, which can be used to calculate the new minimum y-axis value.
      */
     public fun getMinY(model: Model): Float? = null
 
     /**
-     * The maximum value shown on the y-axis.
-     * In case a value is `null`, the chart will fall back to the default value.
+     * The maximum value shown on the y-axis. If `null` is returned, the chart will fall back to the default value.
      *
-     * @param model holds entries data which can be used to calculate the new max y-axis value.
+     * @param model holds data about the chart’s entries, which can be used to calculate the new maximum y-axis value.
      */
     public fun getMaxY(model: Model): Float? = null
 
     public companion object {
 
         /**
-         * Creates an [AxisValuesOverrider] with fixed values for [minX], [maxX], [minY] and [maxY].
-         * In case a value is `null`, the chart will fall back to the default value.
+         * Creates an [AxisValuesOverrider] with fixed values for [minX], [maxX], [minY], and [maxY]. If one of the
+         * values is `null`, the chart will fall back to the default value.
          */
         public fun fixed(
             minX: Float? = null,
@@ -84,10 +79,9 @@ public interface AxisValuesOverrider<Model> {
         }
 
         /**
-         * Creates an [AxisValuesOverrider] with adaptive min and max y-axis values.
-         * The overridden max y-axis value is equal to `[ChartEntryModel.maxY] × [yFraction]`.
-         * The overridden min y-axis value is smaller than [ChartEntryModel.minY] by
-         * `[ChartEntryModel.maxY] × [yFraction] - [ChartEntryModel.maxY]`.
+         * Creates an [AxisValuesOverrider] with adaptive minimum and maximum y-axis values. The overridden maximum
+         * y-axis value is equal to [ChartEntryModel.maxY] × [yFraction]. The overridden minimum y-axis value is smaller
+         * than [ChartEntryModel.minY] by [ChartEntryModel.maxY] × [yFraction] − [ChartEntryModel.maxY].
          */
         public fun adaptiveYValues(
             yFraction: Float,

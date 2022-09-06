@@ -57,8 +57,7 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @param decorations the list of [Decoration]s that will be added to the [LineChart].
  * @param persistentMarkers maps x-axis values to persistent [Marker]s.
  * @param pointPosition the horizontal position of each point in its corresponding segment.
- * @param axisValuesOverrider overrides minimum and maximum values on x-axis and y-axis displayed in this [Chart]
- * and [Axis].
+ * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
@@ -104,7 +103,7 @@ public fun lineChart(
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
  */
-@Deprecated(message = "Overriding axis values should be done with `AxisValuesOverrider`.")
+@Deprecated(message = "Axis values should be overridden via `AxisValuesOverrider`.")
 @Composable
 public fun lineChart(
     lines: List<LineSpec> = currentChartStyle.lineChart.lines,
