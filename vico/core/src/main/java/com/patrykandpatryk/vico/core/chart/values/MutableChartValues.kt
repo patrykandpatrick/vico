@@ -18,23 +18,32 @@ package com.patrykandpatryk.vico.core.chart.values
 
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.extension.orZero
 
 /**
  * A subclass of [ChartValues] whose every property is mutable.
  */
 public class MutableChartValues : ChartValues {
 
-    override var minX: Float = 0f
-        private set
+    private var _minX: Float? = null
 
-    override var maxX: Float = 0f
-        private set
+    private var _maxX: Float? = null
 
-    override var minY: Float = 0f
-        private set
+    private var _minY: Float? = null
 
-    override var maxY: Float = 0f
-        private set
+    private var _maxY: Float? = null
+
+    override val minX: Float
+        get() = _minX.orZero
+
+    override val maxX: Float
+        get() = _maxX.orZero
+
+    override val minY: Float
+        get() = _minY.orZero
+
+    override val maxY: Float
+        get() = _maxY.orZero
 
     override var chartEntryModel: ChartEntryModel = emptyChartEntryModel()
 
@@ -44,8 +53,8 @@ public class MutableChartValues : ChartValues {
     /**
      * Returns `true` if all values have been set and at least one call to [tryUpdate] or [set] has been made.
      */
-    public var hasValuesSet: Boolean = false
-        private set
+    public val hasValuesSet: Boolean
+        get() = _minX != null || _maxX != null || _minY != null || _maxY != null
 
     /**
      * Attempts to update the stored values to the provided params.
@@ -54,30 +63,28 @@ public class MutableChartValues : ChartValues {
      * The [chartEntryModel] is always be updated.
      */
     public fun tryUpdate(
-        minX: Float = this.minX,
-        maxX: Float = this.maxX,
-        minY: Float = this.minY,
-        maxY: Float = this.maxY,
+        minX: Float? = null,
+        maxX: Float? = null,
+        minY: Float? = null,
+        maxY: Float? = null,
         chartEntryModel: ChartEntryModel = this.chartEntryModel,
     ): MutableChartValues = apply {
-        this.minX = if (hasValuesSet) minOf(this.minX, minX) else minX
-        this.maxX = if (hasValuesSet) maxOf(this.maxX, maxX) else maxX
-        this.minY = if (hasValuesSet) minOf(this.minY, minY) else minY
-        this.maxY = if (hasValuesSet) maxOf(this.maxY, maxY) else maxY
+        if (minX != null) _minX = if (_minX != null) minOf(this.minX, minX) else minX
+        if (maxX != null) _maxX = if (_maxX != null) maxOf(this.maxX, maxX) else maxX
+        if (minY != null) _minY = if (_minY != null) minOf(this.minY, minY) else minY
+        if (maxY != null) _maxY = if (_maxY != null) maxOf(this.maxY, maxY) else maxY
         this.chartEntryModel = chartEntryModel
-        hasValuesSet = true
     }
 
     /**
      * Sets [minX], [maxX], [minY], and [maxY] to 0.
      */
     public fun reset() {
-        minX = 0f
-        maxX = 0f
-        minY = 0f
-        maxY = 0f
+        _minX = null
+        _maxX = null
+        _minY = null
+        _maxY = null
         chartEntryModel = emptyChartEntryModel()
-        hasValuesSet = false
     }
 
     private companion object {

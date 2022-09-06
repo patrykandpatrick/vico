@@ -493,10 +493,10 @@ public open class LineChart(
         model: ChartEntryModel,
     ) {
         chartValuesManager.tryUpdate(
-            minX = minX ?: model.minX,
-            maxX = maxX ?: model.maxX,
-            minY = minY ?: min(model.minY, 0f),
-            maxY = maxY ?: model.maxY,
+            minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
+            maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
+            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: min(model.minY, 0f),
+            maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: model.maxY,
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,
         )

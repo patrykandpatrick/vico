@@ -17,6 +17,7 @@
 package com.patrykandpatryk.vico.core.chart.composed
 
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
+import com.patrykandpatryk.vico.core.chart.AXIS_VALUES_DEPRECATION_MESSAGE
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
@@ -58,12 +59,16 @@ public class ComposedChart<Model : ChartEntryModel>(
     override val chartInsetters: Collection<ChartInsetter>
         get() = charts.map { it.chartInsetters }.flatten() + persistentMarkers.values
 
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var minY: Float? by childChartsValue { minY = it }
 
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var maxY: Float? by childChartsValue { maxY = it }
 
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var minX: Float? by childChartsValue { minX = it }
 
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var maxX: Float? by childChartsValue { maxX = it }
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {

@@ -16,15 +16,23 @@
 
 package com.patrykandpatryk.vico.core.chart
 
+import com.patrykandpatryk.vico.core.axis.Axis
+import com.patrykandpatryk.vico.core.chart.column.ColumnChart
+import com.patrykandpatryk.vico.core.chart.composed.ComposedChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
+import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 import com.patrykandpatryk.vico.core.marker.Marker
+
+internal const val AXIS_VALUES_DEPRECATION_MESSAGE: String = "Axis values should be overridden via " +
+    "`Chart#axisValuesOverrider`."
 
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to draw a chart.
@@ -46,6 +54,13 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
     public val chartInsetters: Collection<ChartInsetter>
 
     /**
+     * Overrides the minimum and maximum x-axis and y-axis values. In the case of [ColumnChart]s and [LineChart]s, the
+     * axis value overrides may be applied to only one vertical axis if [ColumnChart.targetVerticalAxisPosition] or
+     * [LineChart.targetVerticalAxisPosition] is not `null` and the [Chart] is used in a [ComposedChart].
+     */
+    public var axisValuesOverrider: AxisValuesOverrider<@UnsafeVariance Model>?
+
+    /**
      * The minimum value shown on the y-axis.
      * If [Model] is a subclass of [com.patrykandpatryk.vico.core.entry.ChartEntryModel], and [minY]
      * is not null, this overrides the minimal y-axis value defined in
@@ -53,6 +68,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.minY
      */
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     public var minY: Float?
 
     /**
@@ -63,6 +79,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.maxY
      */
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     public var maxY: Float?
 
     /**
@@ -73,6 +90,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.minX
      */
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     public var minX: Float?
 
     /**
@@ -83,11 +101,13 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see com.patrykandpatryk.vico.core.entry.ChartEntryModel.maxX
      */
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     public var maxX: Float?
 
     /**
      * The function responsible for drawing the chart itself.
-     * @param context a drawing context that holds data about the environment as well as the [Canvas] to draw on.
+     * @param context a drawing context that holds data about the environment as well as the [android.graphics.Canvas]
+     * to draw on.
      * @param model holds data about the entries that are supposed to be drawn.
      *
      * @see ChartDrawContext

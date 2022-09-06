@@ -258,6 +258,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         if (chart != null && model != null) {
             measureContext.chartValuesManager.resetChartValues()
             chart.updateChartValues(measureContext.chartValuesManager, model)
+
             if (ViewCompat.isAttachedToWindow(this)) {
                 invalidate()
             }
