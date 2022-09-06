@@ -16,7 +16,6 @@
 
 package com.patrykandpatryk.vico.core.chart
 
-import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.composed.ComposedChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration

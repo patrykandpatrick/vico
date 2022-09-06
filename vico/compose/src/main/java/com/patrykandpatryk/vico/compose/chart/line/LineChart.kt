@@ -29,7 +29,6 @@ import com.patrykandpatryk.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultDimens
-import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
