@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -36,6 +37,7 @@ import com.patrykandpatryk.vico.R
 internal fun SwipeHint(
     currentPage: Int,
     pageCount: Int,
+    onArrowClick: (direction: Int) -> Unit,
 ) {
     Row(
         horizontalArrangement = Arrangement.Center,
@@ -44,11 +46,13 @@ internal fun SwipeHint(
             .padding(vertical = 32.dp)
             .fillMaxWidth(),
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_caret_left),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        IconButton(onClick = { onArrowClick(DIRECTION_BACKWARD) }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_caret_left),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         Column(
             modifier = Modifier.padding(horizontal = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -65,10 +69,15 @@ internal fun SwipeHint(
                 modifier = Modifier.padding(top = 2.dp),
             )
         }
-        Icon(
-            painter = painterResource(id = R.drawable.ic_caret_right),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        IconButton(onClick = { onArrowClick(DIRECTION_FORWARD) }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_caret_right),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
+
+private const val DIRECTION_FORWARD = 1
+private const val DIRECTION_BACKWARD = -1
