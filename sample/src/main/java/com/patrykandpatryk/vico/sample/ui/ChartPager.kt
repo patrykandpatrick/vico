@@ -99,8 +99,10 @@ internal fun ChartPager(
                     currentPage = state.currentValue + 1,
                     pageCount = itemCount
                 ) { direction ->
-                    val newState = (state.currentValue + direction).coerceIn(0 until itemCount)
-                    scope.launch { state.animateTo(newState) }
+                    val newState = (state.currentValue + direction)
+                    if (newState in 0 until itemCount) {
+                        scope.launch { state.animateTo(newState) }
+                    }
                 }
             }
         },
