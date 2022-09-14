@@ -61,6 +61,8 @@ style:
       - "1"
       - "2"
       - "100"
+  UnnecessaryParentheses:
+    active: true
 naming:
   FunctionNaming:
     ignoreAnnotated:

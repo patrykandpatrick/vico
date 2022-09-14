@@ -203,8 +203,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         textDrawCenter: Float,
     ) = when (tickPosition) {
         is TickPosition.Center -> textDrawCenter
-        is TickPosition.Edge -> bounds.getStart(isLtr = isLtr) + (tickDrawStep * tickPosition.offset) +
-            layoutDirectionMultiplier * (tickDrawStep * scrollAdjustment) - scrollX
+        is TickPosition.Edge -> bounds.getStart(isLtr = isLtr) + tickDrawStep * tickPosition.offset +
+            layoutDirectionMultiplier * tickDrawStep * scrollAdjustment - scrollX
     }
 
     override fun getInsets(
