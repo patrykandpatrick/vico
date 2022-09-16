@@ -18,7 +18,9 @@ package com.patrykandpatryk.vico.compose.chart
 
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
@@ -32,6 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
@@ -61,7 +64,9 @@ import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
+import com.patrykandpatryk.vico.core.scroll.InitialScroll
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
+import kotlinx.coroutines.launch
 
 /**
  * Displays a chart.
@@ -102,6 +107,8 @@ public fun <Model : ChartEntryModel> Chart(
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
+    initialScroll: InitialScroll = InitialScroll.Start(),
+    autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
 ) {
     val model = chartModelProducer.collect(
         key = chart,
@@ -123,6 +130,8 @@ public fun <Model : ChartEntryModel> Chart(
             legend = legend,
             isHorizontalScrollEnabled = isHorizontalScrollEnabled,
             isZoomEnabled = isZoomEnabled,
+            initialScroll = initialScroll,
+            autoScrollAnimationSpec = autoScrollAnimationSpec,
         )
     }
 }
@@ -163,6 +172,8 @@ public fun <Model : ChartEntryModel> Chart(
     legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean = true,
     isZoomEnabled: Boolean = true,
+    initialScroll: InitialScroll = InitialScroll.Start(),
+    autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
@@ -193,6 +204,8 @@ public fun <Model : ChartEntryModel> Chart(
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
 
     var wasMarkerVisible: Boolean by remember { mutableStateOf(false) }
+    var lastMaxScrollDistance by remember { mutableStateOf(value = 0f) }
+    val coroutineScope = rememberCoroutineScope()
 
     Canvas(
         modifier = modifier
@@ -253,7 +266,25 @@ public fun <Model : ChartEntryModel> Chart(
                 wasMarkerVisible = false
             }
 
-        scrollHandler.maxScrollDistance = chartDrawContext.maxScrollDistance
+        chartDrawContext.maxScrollDistance.also { maxScrollDistance ->
+
+            scrollHandler.maxScrollDistance = maxScrollDistance
+
+            if (initialScroll.autoScroll && maxScrollDistance > lastMaxScrollDistance) {
+                coroutineScope.launch {
+                    scrollableState.animateScrollBy(
+                        value = when (initialScroll) {
+                            is InitialScroll.Start -> 0f
+                            is InitialScroll.End -> horizontalScroll.value - maxScrollDistance
+                        },
+                        animationSpec = autoScrollAnimationSpec,
+                    )
+                }
+            }
+
+            lastMaxScrollDistance = maxScrollDistance
+        }
+
         measureContext.chartValuesManager.resetChartValues()
         measureContext.clearExtras()
     }
