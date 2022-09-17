@@ -39,23 +39,21 @@ public fun getMeasureContext(
     horizontalScroll: Float,
     chartScale: Float,
     canvasBounds: RectF,
-): MutableMeasureContext {
-    val context = remember() {
-        MutableMeasureContext(
-            canvasBounds = canvasBounds,
-            density = 0f,
-            fontScale = 0f,
-            isLtr = true,
-            isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-            horizontalScroll = horizontalScroll,
-            chartScale = chartScale,
-        )
-    }
-    context.density = LocalDensity.current.density
-    context.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
-    context.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-    context.isHorizontalScrollEnabled = isHorizontalScrollEnabled
-    context.horizontalScroll = horizontalScroll
-    context.chartScale = chartScale
-    return context
+): MutableMeasureContext = remember {
+    MutableMeasureContext(
+        canvasBounds = canvasBounds,
+        density = 0f,
+        fontScale = 0f,
+        isLtr = true,
+        isHorizontalScrollEnabled = isHorizontalScrollEnabled,
+        horizontalScroll = horizontalScroll,
+        chartScale = chartScale,
+    )
+}.apply {
+    this.density = LocalDensity.current.density
+    this.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
+    this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+    this.horizontalScroll = horizontalScroll
+    this.chartScale = chartScale
 }

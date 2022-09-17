@@ -68,10 +68,13 @@ public class ChartEntryModelProducer(
     public fun setEntries(entries: List<List<ChartEntry>>) {
         this.entries.setAll(entries)
         cachedModel = null
-        updateReceivers.values.forEach { (updateListener, _, diffProcessor, getOldModel) ->
+        updateReceivers.values.forEach { updateReceiver ->
             executor.execute {
-                diffProcessor.setEntries(old = getOldModel()?.entries.orEmpty(), new = entries)
-                updateListener()
+                updateReceiver.diffProcessor.setEntries(
+                    old = updateReceiver.getOldModel()?.entries.orEmpty(),
+                    new = entries,
+                )
+                updateReceiver.listener()
             }
         }
     }
