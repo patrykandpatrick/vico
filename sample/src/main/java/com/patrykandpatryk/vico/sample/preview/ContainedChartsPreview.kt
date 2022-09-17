@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.sample.compose.preview
+package com.patrykandpatryk.vico.sample.preview
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
