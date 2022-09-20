@@ -188,7 +188,7 @@ findViewById<ChartView>(R.id.chart).entryProducer = producer
 With [`ChartEntryModelProducer`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer), you can update the data displayed by a chart. For the above example, this would be done as follows:
 
 ```kt
-chartModelProducer.setEntries(getRandomEntries()
+chartModelProducer.setEntries(getRandomEntries())
 ```
 
 Differences are animated by default.
