@@ -31,6 +31,7 @@ import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.line.lineSpec
 import com.patrykandpatryk.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatryk.vico.core.chart.composed.plus
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.entry.entriesOf
 import com.patrykandpatryk.vico.core.entry.entryModelOf
 
@@ -65,7 +66,7 @@ public fun LineChartDark() {
                         ),
                     ),
                 ),
-                maxY = 4f,
+                axisValuesOverrider = AxisValuesOverrider.fixed(maxY = 4f),
             ),
             model = model3,
         )
@@ -87,8 +88,10 @@ public fun RegularLineChart() {
 public fun RegularLineChartExpanded() {
     Chart(
         chart = lineChart(
-            minY = -1f,
-            maxY = 5f,
+            axisValuesOverrider = AxisValuesOverrider.fixed(
+                minY = -1f,
+                maxY = 5f,
+            ),
         ),
         model = model1,
         startAxis = startAxis(),
@@ -100,8 +103,10 @@ public fun RegularLineChartExpanded() {
 public fun RegularLineChartCollapsed() {
     Chart(
         chart = lineChart(
-            minY = 1f,
-            maxY = 3f,
+            axisValuesOverrider = AxisValuesOverrider.fixed(
+                minY = 1f,
+                maxY = 3f,
+            ),
         ),
         model = model1,
         startAxis = startAxis(),
@@ -134,11 +139,17 @@ public fun ComposedLineChart() {
 @Composable
 public fun ComposedLineChartCollapsed() {
     Chart(
-        chart = (lineChart() + lineChart())
-            .apply {
-                minY = 1f
-                maxY = 3f
-            },
+        chart = lineChart(
+            axisValuesOverrider = AxisValuesOverrider.fixed(
+                minY = 1f,
+                maxY = 3f,
+            ),
+        ) + lineChart(
+            axisValuesOverrider = AxisValuesOverrider.fixed(
+                minY = 1f,
+                maxY = 3f,
+            ),
+        ),
         model = model1 + model2,
         startAxis = startAxis(),
     )
