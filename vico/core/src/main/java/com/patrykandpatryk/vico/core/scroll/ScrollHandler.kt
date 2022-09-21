@@ -27,6 +27,8 @@ public class ScrollHandler(
     public var maxScrollDistance: Float = 0f,
 ) {
 
+    private var initialScrollHandled: Boolean = false
+
     /**
      * The current scroll amount.
      */
@@ -60,4 +62,13 @@ public class ScrollHandler(
      */
     public fun handleScroll(targetScroll: Float): Float =
         handleScrollDelta(currentScroll - targetScroll)
+
+    public fun handleInitialScroll(initialScroll: InitialScroll) {
+        if (initialScrollHandled) return
+        currentScroll = when (initialScroll) {
+            InitialScroll.Start -> 0f
+            InitialScroll.End -> maxScrollDistance
+        }
+        initialScrollHandled = true
+    }
 }

@@ -38,6 +38,7 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -98,7 +99,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         fontScale = context.fontScale,
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
-        horizontalScroll = scrollHandler.currentScroll,
         chartScale = 1f,
     )
 
@@ -295,14 +295,24 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             scrollHandler.handleScroll(scroller.currX.toFloat())
             ViewCompat.postInvalidateOnAnimation(this)
         }
-        measureContext.horizontalScroll = scrollHandler.currentScroll
+
+        val segmentProperties = chart.getSegmentProperties(measureContext, model)
+
+        scrollHandler.maxScrollDistance = measureContext.getMaxScrollDistance(
+            chartWidth = chart.bounds.width(),
+            segmentProperties = segmentProperties,
+        )
+
+//        scrollHandler.handleInitialScroll(initialScroll = scrollSpec.initialScroll)
+
         val drawContext = chartDrawContext(
             canvas = canvas,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint,
-            segmentProperties = chart.getSegmentProperties(measureContext, model),
+            segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
+            horizontalScroll = scrollHandler.currentScroll
         )
         axisManager.drawBehindChart(drawContext)
         chart.draw(drawContext, model)
@@ -329,8 +339,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 markerVisibilityChangeListener?.onMarkerVisibilityChanged(false, marker)
                 wasMarkerVisible = false
             }
-
-        scrollHandler.maxScrollDistance = drawContext.maxScrollDistance
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {

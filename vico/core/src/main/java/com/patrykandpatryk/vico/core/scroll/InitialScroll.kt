@@ -16,8 +16,7 @@
 
 package com.patrykandpatryk.vico.core.scroll
 
-public sealed class InitialScroll(public val autoScroll: Boolean = false) {
-
-    public class Start(autoScroll: Boolean = false) : InitialScroll(autoScroll = autoScroll)
-    public class End(autoScroll: Boolean = false) : InitialScroll(autoScroll = autoScroll)
+public enum class InitialScroll {
+    Start,
+    End,
 }

@@ -19,6 +19,7 @@ package com.patrykandpatryk.vico.core.chart.draw
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.DrawContext
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.model.Point
 
 /**
@@ -42,12 +43,9 @@ public interface ChartDrawContext : DrawContext {
     public val markerTouchPoint: Point?
 
     /**
-     * A multiplier used to ensure support for both left-to-right and right-to-left layouts.
-     * Values such as translation deltas are multiplied by this value.
-     * [layoutDirectionMultiplier] is equal to `1f` if [isLtr] is `true`, and `-1f` otherwise.
+     * The current amount of horizontal scroll.
      */
-    public val layoutDirectionMultiplier: Float
-        get() = if (isLtr) 1f else -1f
+    public val horizontalScroll: Float
 
     /**
      * Returns the maximum horizontal scroll value.
@@ -62,4 +60,16 @@ public interface ChartDrawContext : DrawContext {
                 if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
             }
         }
+}
+
+public fun MeasureContext.getMaxScrollDistance(
+    chartWidth: Float,
+    segmentProperties: SegmentProperties,
+): Float {
+    val cumulatedSegmentWidth = segmentProperties.segmentWidth *
+        chartValuesManager.getChartValues().getDrawnEntryCount()
+
+    return (layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
+        if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
+    }
 }
