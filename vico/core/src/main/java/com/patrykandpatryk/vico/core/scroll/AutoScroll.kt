@@ -17,7 +17,7 @@
 package com.patrykandpatryk.vico.core.scroll
 
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
-import com.patrykandpatryk.vico.core.extension.anyIndexed
+import com.patrykandpatryk.vico.core.extension.ifNotNull
 
 // TODO some better name?
 public fun interface AutoScroll<in Model : ChartEntryModel> {
@@ -32,8 +32,11 @@ public fun interface AutoScroll<in Model : ChartEntryModel> {
             if (o != null) {
                 val new = n.entries
                 val old = o.entries
-                old.size < new.size ||
-                    old.size == new.size && old.anyIndexed { index, value -> value.size < new[index].size }
+                new.size > old.size ||
+                    ifNotNull(
+                        t1 = new.maxOfOrNull { entries -> entries.size },
+                        t2 = old.maxOfOrNull { entries -> entries.size },
+                    ) { t1, t2 -> t1 > t2 } == true
             } else false
         }
     }

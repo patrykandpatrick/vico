@@ -113,13 +113,3 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
  */
 public fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
     ArrayList<T>(sourceCollection.size).apply { addAll(sourceCollection) }
-
-/**
- * Returns `true` if at least one element matches the given [predicate].
- */
-public inline fun <T> Iterable<T>.anyIndexed(predicate: (index: Int, value: T) -> Boolean): Boolean {
-    if (this is Collection && isEmpty()) return false
-    var index = 0
-    for (element in this) if (predicate(index++, element)) return true
-    return false
-}
