@@ -84,7 +84,6 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * nearest to the touch point.
  * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
  * @param legend an optional legend for the chart.
- * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param diffAnimationSpec the animation spec used to animate differences between entry sets ([ChartEntryModel]
  * instances).
@@ -206,9 +205,9 @@ public fun <Model : ChartEntryModel> Chart(
  * nearest to the touch point.
  * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
  * @param legend an optional legend for the chart.
- * @param scrollSpec TODO
+ * @param scrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
- * @param oldModel TODO
+ * @param oldModel the chart’s previous model. This is used to determine whether to perform an automatic scroll.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
