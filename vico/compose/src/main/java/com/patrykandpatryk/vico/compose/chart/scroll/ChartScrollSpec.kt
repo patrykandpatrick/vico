@@ -24,14 +24,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
-import com.patrykandpatryk.vico.core.scroll.AutoScroll
+import com.patrykandpatryk.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatryk.vico.core.scroll.InitialScroll
 
 @Stable
 public class ChartScrollSpec<in Model : ChartEntryModel>(
     public val isScrollEnabled: Boolean,
     public val initialScroll: InitialScroll,
-    public val autoScroll: AutoScroll<Model>,
+    public val autoScrollCondition: AutoScrollCondition<Model>,
     public val autoScrollAnimationSpec: AnimationSpec<Float>,
 ) {
 
@@ -42,7 +42,7 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
         maxScrollDistance: Float,
         scrollableState: ScrollableState,
     ) {
-        if (autoScroll.shouldPerformAutoScroll(model, oldModel)) {
+        if (autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) {
             scrollableState.animateScrollBy(
                 value = when (initialScroll) {
                     InitialScroll.Start -> 0f
@@ -58,18 +58,18 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
 public fun <Model : ChartEntryModel> rememberChartScrollSpec(
     isScrollEnabled: Boolean = true,
     initialScroll: InitialScroll = InitialScroll.Start,
-    autoScroll: AutoScroll<Model> = AutoScroll.Disabled,
+    autoScrollCondition: AutoScrollCondition<Model> = AutoScrollCondition.Never,
     autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
 ): ChartScrollSpec<Model> = remember(
     isScrollEnabled,
     initialScroll,
-    autoScroll,
+    autoScrollCondition,
     autoScrollAnimationSpec,
 ) {
     ChartScrollSpec(
         isScrollEnabled = isScrollEnabled,
         initialScroll = initialScroll,
-        autoScroll = autoScroll,
+        autoScrollCondition = autoScrollCondition,
         autoScrollAnimationSpec = autoScrollAnimationSpec,
     )
 }

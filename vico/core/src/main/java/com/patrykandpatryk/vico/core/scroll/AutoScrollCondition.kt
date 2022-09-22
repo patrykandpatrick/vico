@@ -19,16 +19,15 @@ package com.patrykandpatryk.vico.core.scroll
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.ifNotNull
 
-// TODO some better name?
-public fun interface AutoScroll<in Model : ChartEntryModel> {
+public fun interface AutoScrollCondition<in Model : ChartEntryModel> {
 
     public fun shouldPerformAutoScroll(newModel: Model, oldModel: Model?): Boolean
 
     public companion object {
 
-        public val Disabled: AutoScroll<ChartEntryModel> = AutoScroll { _, _ -> false }
+        public val Never: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition { _, _ -> false }
 
-        public val OnModelSizeIncreased: AutoScroll<ChartEntryModel> = AutoScroll { n, o ->
+        public val OnModelSizeIncreased: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition { n, o ->
             if (o != null) {
                 val new = n.entries
                 val old = o.entries
