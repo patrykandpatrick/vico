@@ -21,6 +21,7 @@ import android.graphics.Path
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.context.DrawContext
+import com.patrykandpatryk.vico.core.context.MeasureContext
 import kotlin.math.absoluteValue
 
 /**
@@ -79,7 +80,7 @@ public open class CorneredShape(
 
     @LongParameterListDrawFunction
     protected open fun createPath(
-        context: DrawContext,
+        context: MeasureContext,
         path: Path,
         left: Float,
         top: Float,
