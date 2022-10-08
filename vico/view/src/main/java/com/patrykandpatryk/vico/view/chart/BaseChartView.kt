@@ -51,7 +51,9 @@ import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
+import com.patrykandpatryk.vico.core.scroll.ChartScrollSpec
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
+import com.patrykandpatryk.vico.core.scroll.copy
 import com.patrykandpatryk.vico.view.extension.defaultColors
 import com.patrykandpatryk.vico.view.extension.density
 import com.patrykandpatryk.vico.view.extension.dpInt
@@ -145,13 +147,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
     /**
-     * Whether the chart can be scrolled horizontally.
+     * Houses scrolling-related settings.
      */
-    public var isHorizontalScrollEnabled: Boolean = false
-        set(value) {
-            field = value
-            measureContext.isHorizontalScrollEnabled = value
-        }
+    public var chartScrollSpec: ChartScrollSpec<Model> by observable(ChartScrollSpec()) { _, _, newValue ->
+        measureContext.isHorizontalScrollEnabled = newValue.isScrollEnabled
+    }
 
     /**
      * Whether the pinch-to-zoom gesture is enabled.
@@ -242,7 +242,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         topAxis = themeHandler.topAxis
         endAxis = themeHandler.endAxis
         bottomAxis = themeHandler.bottomAxis
-        isHorizontalScrollEnabled = themeHandler.isHorizontalScrollEnabled
+        chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = themeHandler.isHorizontalScrollEnabled)
         isZoomEnabled = themeHandler.isChartZoomEnabled
     }
 
@@ -290,7 +290,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
         updateBounds(context = measureContext)
-        motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+        motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
             ViewCompat.postInvalidateOnAnimation(this)
@@ -303,7 +303,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             segmentProperties = segmentProperties,
         )
 
-//        scrollHandler.handleInitialScroll(initialScroll = scrollSpec.initialScroll)
+        scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
         val drawContext = chartDrawContext(
             canvas = canvas,
@@ -312,8 +312,9 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             markerTouchPoint = markerTouchPoint,
             segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
-            horizontalScroll = scrollHandler.currentScroll
+            horizontalScroll = scrollHandler.currentScroll,
         )
+
         axisManager.drawBehindChart(drawContext)
         chart.draw(drawContext, model)
         axisManager.drawAboveChart(drawContext)
