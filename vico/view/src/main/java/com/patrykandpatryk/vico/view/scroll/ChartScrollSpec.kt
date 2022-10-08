@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.core.scroll
+package com.patrykandpatryk.vico.view.scroll
 
 import android.animation.TimeInterpolator
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.scroll.AutoScrollCondition
+import com.patrykandpatryk.vico.core.scroll.InitialScroll
 
 public class ChartScrollSpec<in Model : ChartEntryModel>(
     public val isScrollEnabled: Boolean = true,
