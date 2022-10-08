@@ -176,7 +176,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      */
     public var model: Model? by observable(null) { _, oldValue, newValue ->
         tryInvalidate(chart, newValue)
-        if (oldValue != null && newValue != null && oldValue.id != newValue.id) {
+        if (newValue != null && oldValue?.id != newValue.id) {
             handler.post {
                 chartScrollSpec.performAutoScroll(
                     model = newValue,
