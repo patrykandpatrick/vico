@@ -51,9 +51,7 @@ import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
-import com.patrykandpatryk.vico.core.scroll.ChartScrollSpec
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
-import com.patrykandpatryk.vico.core.scroll.copy
 import com.patrykandpatryk.vico.view.extension.defaultColors
 import com.patrykandpatryk.vico.view.extension.density
 import com.patrykandpatryk.vico.view.extension.dpInt
@@ -64,6 +62,8 @@ import com.patrykandpatryk.vico.view.extension.specSize
 import com.patrykandpatryk.vico.view.extension.verticalPadding
 import com.patrykandpatryk.vico.view.gestures.ChartScaleGestureListener
 import com.patrykandpatryk.vico.view.gestures.MotionEventHandler
+import com.patrykandpatryk.vico.view.scroll.ChartScrollSpec
+import com.patrykandpatryk.vico.view.scroll.copy
 import com.patrykandpatryk.vico.view.theme.ThemeHandler
 import kotlin.properties.Delegates.observable
 
@@ -174,8 +174,18 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * The [Model] used in the [chart] to render the data.
      */
-    public var model: Model? = null
-        private set
+    public var model: Model? by observable(null) { _, oldValue, newValue ->
+        tryInvalidate(chart, newValue)
+        if (oldValue != null && newValue != null && oldValue.id != newValue.id) {
+            handler.post {
+                chartScrollSpec.performAutoScroll(
+                    model = newValue,
+                    oldModel = oldValue,
+                    scrollHandler = scrollHandler,
+                )
+            }
+        }
+    }
 
     /**
      * A [ChartModelProducer] can provide the [Model] updates asynchronously.
@@ -201,7 +211,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             },
             getOldModel = { model },
         ) { model ->
-            setModel(model)
+            this.model = model
             postInvalidateOnAnimation()
         }
     }
@@ -244,14 +254,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         bottomAxis = themeHandler.bottomAxis
         chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = themeHandler.isHorizontalScrollEnabled)
         isZoomEnabled = themeHandler.isChartZoomEnabled
-    }
-
-    /**
-     * Sets a [Model] used to render data of the chart.
-     */
-    public fun setModel(model: Model) {
-        this.model = model
-        tryInvalidate(chart, model)
     }
 
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {

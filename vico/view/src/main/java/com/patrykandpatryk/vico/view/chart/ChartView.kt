@@ -35,12 +35,8 @@ public class ChartView @JvmOverloads constructor(
     defStyleAttr = defStyleAttr,
     chartType = ThemeHandler.ChartType.Single,
 ) {
-
     init {
         chart = themeHandler.chart
-
-        if (isInEditMode) {
-            setModel(RandomEntriesGenerator().randomEntryModel())
-        }
+        if (isInEditMode) model = RandomEntriesGenerator().randomEntryModel()
     }
 }

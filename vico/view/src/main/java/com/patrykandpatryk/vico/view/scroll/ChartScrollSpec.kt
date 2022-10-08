@@ -17,18 +17,50 @@
 package com.patrykandpatryk.vico.view.scroll
 
 import android.animation.TimeInterpolator
+import android.animation.ValueAnimator
 import android.view.animation.AccelerateDecelerateInterpolator
+import com.patrykandpatryk.vico.core.Animation
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatryk.vico.core.scroll.InitialScroll
+import com.patrykandpatryk.vico.core.scroll.ScrollHandler
 
 public class ChartScrollSpec<in Model : ChartEntryModel>(
     public val isScrollEnabled: Boolean = true,
     public val initialScroll: InitialScroll = InitialScroll.Start,
     public val autoScrollCondition: AutoScrollCondition<Model> = AutoScrollCondition.Never,
     public val autoScrollInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+    public val autoScrollDuration: Long = Animation.DIFF_DURATION.toLong(),
 ) {
-    public fun performAutoScroll() { /* TODO */ }
+    private val animator: ValueAnimator = ValueAnimator.ofFloat(
+        Animation.range.start,
+        Animation.range.endInclusive,
+    ).apply {
+        duration = autoScrollDuration
+        interpolator = autoScrollInterpolator
+    }
+
+    public fun performAutoScroll(
+        model: Model,
+        oldModel: Model?,
+        scrollHandler: ScrollHandler,
+    ) {
+        if (!autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) return
+        with(receiver = animator) {
+            cancel()
+            removeAllUpdateListeners()
+            addUpdateListener {
+                scrollHandler.handleScroll(
+                    targetScroll = when (initialScroll) {
+                        InitialScroll.Start -> (1 - it.animatedFraction) * scrollHandler.currentScroll
+                        InitialScroll.End -> scrollHandler.currentScroll + it.animatedFraction *
+                            (scrollHandler.maxScrollDistance - scrollHandler.currentScroll)
+                    },
+                )
+            }
+            start()
+        }
+    }
 }
 
 public fun <Model : ChartEntryModel> ChartScrollSpec<Model>.copy(
@@ -36,9 +68,11 @@ public fun <Model : ChartEntryModel> ChartScrollSpec<Model>.copy(
     initialScroll: InitialScroll = this.initialScroll,
     autoScrollCondition: AutoScrollCondition<Model> = this.autoScrollCondition,
     autoScrollInterpolator: TimeInterpolator = this.autoScrollInterpolator,
+    autoScrollDuration: Long = this.autoScrollDuration,
 ): ChartScrollSpec<Model> = ChartScrollSpec(
     isScrollEnabled = isScrollEnabled,
     initialScroll = initialScroll,
     autoScrollCondition = autoScrollCondition,
     autoScrollInterpolator = autoScrollInterpolator,
+    autoScrollDuration = autoScrollDuration,
 )

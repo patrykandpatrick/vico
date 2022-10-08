@@ -39,9 +39,6 @@ public class ComposedChartView @JvmOverloads constructor(
 
     init {
         chart = themeHandler.composedChart
-
-        if (isInEditMode) {
-            setModel(RandomEntriesGenerator().randomComposedEntryModel())
-        }
+        if (isInEditMode) model = RandomEntriesGenerator().randomComposedEntryModel()
     }
 }
