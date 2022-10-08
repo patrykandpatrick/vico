@@ -256,6 +256,15 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         isZoomEnabled = themeHandler.isChartZoomEnabled
     }
 
+    /**
+     * Sets the [Model] used by the chart.
+     */
+    @JvmName(name = "deprecatedSetModel")
+    @Deprecated(message = "`setModel` is deprecated. Use the `model` field instead.")
+    public fun setModel(model: Model) {
+        this.model = model
+    }
+
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
             measureContext.chartValuesManager.resetChartValues()
