@@ -37,6 +37,6 @@ public class ChartView @JvmOverloads constructor(
 ) {
     init {
         chart = themeHandler.chart
-        if (isInEditMode) model = RandomEntriesGenerator().randomEntryModel()
+        if (isInEditMode) setModel(model = RandomEntriesGenerator().randomEntryModel())
     }
 }
