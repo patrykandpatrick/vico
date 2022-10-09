@@ -125,6 +125,7 @@ public class ChartEntryModelProducer(
             maxY = yRange.endInclusive,
             stackedMaxY = stackedYRange.endInclusive,
             stepX = entries.calculateStep(),
+            id = this.entries.hashCode(),
         )
 
     override fun registerForUpdates(
@@ -166,5 +167,6 @@ public class ChartEntryModelProducer(
         override val maxY: Float,
         override val stackedMaxY: Float,
         override val stepX: Float,
+        override val id: Int,
     ) : ChartEntryModel
 }

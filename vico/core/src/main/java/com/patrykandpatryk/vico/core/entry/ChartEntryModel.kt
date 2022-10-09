@@ -39,6 +39,15 @@ import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProdu
 public interface ChartEntryModel {
 
     /**
+     * The [ChartEntryModel]’s identifier. Different [ChartEntryModel] instances don’t necessarily have different
+     * identifiers. [ChartEntryModelProducer] and [ComposedChartEntryModelProducer] use the same [id] for all
+     * [ChartEntryModel] instances created for the purpose of running a single difference animation. This enables
+     * charts to differentiate between data set changes and difference animations.
+     */
+    public val id: Int
+        get() = entries.hashCode()
+
+    /**
      * The collection of [List] of [ChartEntry].
      * Multiple lists of entries can be rendered by [ColumnChart].
      */

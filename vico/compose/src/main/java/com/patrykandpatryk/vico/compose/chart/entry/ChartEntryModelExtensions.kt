@@ -21,11 +21,10 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import com.patrykandpatryk.vico.compose.state.MutableSharedState
+import com.patrykandpatryk.vico.compose.state.mutableSharedStateOf
 import com.patrykandpatryk.vico.core.Animation
 import com.patrykandpatryk.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -53,13 +52,29 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
     key: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
-): Model? {
-    var model: Model? by remember(key) { mutableStateOf(null) }
+): Model? = collectAsState(
+    key = key,
+    animationSpec = animationSpec,
+    runInitialAnimation = runInitialAnimation,
+).value
+
+/**
+ * Observes data provided by [ChartModelProducer] and launches an animation for each [ChartEntryModel] update.
+ *
+ * @see ChartModelProducer
+ */
+@Composable
+public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
+    key: Any,
+    animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
+    runInitialAnimation: Boolean = true,
+): MutableSharedState<Model?, Model?> {
+    val model: MutableSharedState<Model?, Model?> = remember(key) { mutableSharedStateOf(null) }
     val scope = rememberCoroutineScope()
     DisposableEffect(key1 = key) {
         var animationJob: Job? = null
         val listener = {
-            if (animationSpec != null && (model != null || runInitialAnimation)) {
+            if (animationSpec != null && (model.value != null || runInitialAnimation)) {
                 animationJob?.cancel()
                 animationJob = scope.launch {
                     animate(
@@ -79,9 +94,9 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
         registerForUpdates(
             key = key,
             updateListener = listener,
-            getOldModel = { model },
+            getOldModel = { model.value },
         ) { updatedModel ->
-            model = updatedModel
+            model.value = updatedModel
         }
         onDispose { unregisterFromUpdates(key) }
     }

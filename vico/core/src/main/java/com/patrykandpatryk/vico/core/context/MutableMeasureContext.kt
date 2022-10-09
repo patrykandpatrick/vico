@@ -28,7 +28,6 @@ public data class MutableMeasureContext(
     override var fontScale: Float,
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean = false,
-    override var horizontalScroll: Float = 0f,
     override var chartScale: Float = 1f,
 ) : MeasureContext, Extras by DefaultExtras() {
 

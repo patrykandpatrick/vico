@@ -38,6 +38,7 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -61,6 +62,8 @@ import com.patrykandpatryk.vico.view.extension.specSize
 import com.patrykandpatryk.vico.view.extension.verticalPadding
 import com.patrykandpatryk.vico.view.gestures.ChartScaleGestureListener
 import com.patrykandpatryk.vico.view.gestures.MotionEventHandler
+import com.patrykandpatryk.vico.view.scroll.ChartScrollSpec
+import com.patrykandpatryk.vico.view.scroll.copy
 import com.patrykandpatryk.vico.view.theme.ThemeHandler
 import kotlin.properties.Delegates.observable
 
@@ -98,7 +101,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         fontScale = context.fontScale,
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
-        horizontalScroll = scrollHandler.currentScroll,
         chartScale = 1f,
     )
 
@@ -145,13 +147,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
     /**
-     * Whether the chart can be scrolled horizontally.
+     * Houses scrolling-related settings.
      */
-    public var isHorizontalScrollEnabled: Boolean = false
-        set(value) {
-            field = value
-            measureContext.isHorizontalScrollEnabled = value
-        }
+    public var chartScrollSpec: ChartScrollSpec<Model> by observable(ChartScrollSpec()) { _, _, newValue ->
+        measureContext.isHorizontalScrollEnabled = newValue.isScrollEnabled
+    }
 
     /**
      * Whether the pinch-to-zoom gesture is enabled.
@@ -201,7 +201,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             },
             getOldModel = { model },
         ) { model ->
-            setModel(model)
+            setModel(model = model)
             postInvalidateOnAnimation()
         }
     }
@@ -242,16 +242,26 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         topAxis = themeHandler.topAxis
         endAxis = themeHandler.endAxis
         bottomAxis = themeHandler.bottomAxis
-        isHorizontalScrollEnabled = themeHandler.isHorizontalScrollEnabled
+        chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = themeHandler.isHorizontalScrollEnabled)
         isZoomEnabled = themeHandler.isChartZoomEnabled
     }
 
     /**
-     * Sets a [Model] used to render data of the chart.
+     * Sets the [Model] used by the chart.
      */
     public fun setModel(model: Model) {
+        val oldModel = this.model
         this.model = model
-        tryInvalidate(chart, model)
+        tryInvalidate(chart = chart, model = model)
+        if (oldModel?.id != model.id) {
+            handler.post {
+                chartScrollSpec.performAutoScroll(
+                    model = model,
+                    oldModel = oldModel,
+                    scrollHandler = scrollHandler,
+                )
+            }
+        }
     }
 
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
@@ -290,20 +300,31 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
         updateBounds(context = measureContext)
-        motionEventHandler.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+        motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
             ViewCompat.postInvalidateOnAnimation(this)
         }
-        measureContext.horizontalScroll = scrollHandler.currentScroll
+
+        val segmentProperties = chart.getSegmentProperties(measureContext, model)
+
+        scrollHandler.maxScrollDistance = measureContext.getMaxScrollDistance(
+            chartWidth = chart.bounds.width(),
+            segmentProperties = segmentProperties,
+        )
+
+        scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
+
         val drawContext = chartDrawContext(
             canvas = canvas,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint,
-            segmentProperties = chart.getSegmentProperties(measureContext, model),
+            segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
+            horizontalScroll = scrollHandler.currentScroll,
         )
+
         axisManager.drawBehindChart(drawContext)
         chart.draw(drawContext, model)
         axisManager.drawAboveChart(drawContext)
@@ -329,8 +350,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 markerVisibilityChangeListener?.onMarkerVisibilityChanged(false, marker)
                 wasMarkerVisible = false
             }
-
-        scrollHandler.maxScrollDistance = drawContext.maxScrollDistance
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {
