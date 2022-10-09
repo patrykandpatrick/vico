@@ -43,6 +43,8 @@ import com.patrykandpatryk.vico.core.component.shape.cornered.RoundedCornerTreat
 import com.patrykandpatryk.vico.core.context.DrawContext
 import androidx.compose.ui.graphics.Shape as ComposeShape
 
+private typealias ComposePath = androidx.compose.ui.graphics.AndroidPath
+
 private const val RADII_ARRAY_SIZE = 8
 
 /**
@@ -77,6 +79,7 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
                 bottom,
                 Path.Direction.CCW,
             )
+
             is Outline.Rounded -> path.addRoundRect(
                 left = left,
                 top = top,
@@ -85,12 +88,33 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
                 rect = outline.roundRect,
                 radii = radii,
             )
+
             is Outline.Generic -> {
                 matrix.setTranslate(left, top)
                 path.addPath(outline.path.asAndroidPath(), matrix)
             }
         }
         context.canvas.drawPath(path, paint)
+    }
+}
+
+/**
+ * Converts [CorneredShape] to [androidx.compose.ui.graphics.Shape].
+ */
+public fun CorneredShape.composeShape(): ComposeShape = object : ComposeShape {
+
+    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
+        val path = ComposePath()
+
+        createPath(
+            density = density.density,
+            path = path.asAndroidPath(),
+            left = 0f,
+            top = 0f,
+            right = size.width,
+            bottom = size.height,
+        )
+        return Outline.Generic(path)
     }
 }
 

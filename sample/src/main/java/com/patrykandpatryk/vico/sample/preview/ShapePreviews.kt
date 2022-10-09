@@ -22,9 +22,16 @@ import android.graphics.drawable.Drawable
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -35,72 +42,100 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import com.patrykandpatryk.vico.R
+import com.patrykandpatryk.vico.compose.component.shape.composeShape
 import com.patrykandpatryk.vico.compose.component.shape.dashedShape
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.shape.cornered.CorneredShape
 import com.patrykandpatryk.vico.core.draw.drawContext
 
 @Composable
 private fun PreviewShape(shape: Shape) {
-    val paint = remember { Paint(Paint.ANTI_ALIAS_FLAG).apply { color = 0xFF212121.toInt() } }
+    val black = 0xFF212121.toInt()
+    val paint = remember { Paint(Paint.ANTI_ALIAS_FLAG).apply { color = black } }
     val path = remember { Path() }
 
-    Canvas(
+    Column(
         modifier = Modifier
-            .fillMaxSize()
-            .background(color = Color.LightGray, shape = RoundedCornerShape(size = 4.dp))
+            .width(100.dp)
+            .background(color = Color.White, shape = RoundedCornerShape(size = 4.dp))
             .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        shape.drawShape(
-            context = drawContext(drawContext.canvas.nativeCanvas),
-            paint = paint,
-            path = path,
-            left = 0f,
-            top = 0f,
-            right = size.width,
-            bottom = size.height,
-        )
+        Text(text = "Canvas")
+
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp),
+        ) {
+            shape.drawShape(
+                context = drawContext(drawContext.canvas.nativeCanvas),
+                paint = paint,
+                path = path,
+                left = 0f,
+                top = 0f,
+                right = size.width,
+                bottom = size.height,
+            )
+        }
+
+        if (shape is CorneredShape) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(text = "Compose Shape")
+
+            Box(
+                modifier = Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
+                    .background(
+                        color = Color(black),
+                        shape = shape.composeShape(),
+                    ),
+            )
+        }
     }
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun PreviewRectShape() {
     PreviewShape(shape = Shapes.rectShape)
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun PreviewPillShape() {
     PreviewShape(shape = Shapes.pillShape)
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun RoundedCorner25Shape() {
     PreviewShape(shape = Shapes.roundedCornerShape(allPercent = 25))
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun RoundedCornerCustom1Shape() {
     PreviewShape(shape = Shapes.roundedCornerShape(topLeftPercent = 50, bottomRightPercent = 75))
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun CutCorner25Shape() {
     PreviewShape(shape = Shapes.cutCornerShape(allPercent = 25))
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun CutCornerCustom1Shape() {
     PreviewShape(shape = Shapes.cutCornerShape(topRightPercent = 100, bottomLeftPercent = 15))
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun DrawableShape() {
     PreviewShape(
         shape = Shapes.drawableShape(
@@ -112,7 +147,7 @@ public fun DrawableShape() {
 }
 
 @Composable
-@Preview(widthDp = 50, heightDp = 100)
+@Preview
 public fun DrawableShape2() {
     PreviewShape(
         shape = Shapes.drawableShape(
@@ -124,13 +159,13 @@ public fun DrawableShape2() {
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun DrawableShapeStretched() {
     PreviewShape(shape = Shapes.drawableShape(getDrawable(id = R.drawable.ic_baseline_android_24)))
 }
 
 @Composable
-@Preview(widthDp = 100, heightDp = 50)
+@Preview
 public fun DashedCutCornerCustomShape() {
     PreviewShape(
         shape = Shapes.dashedShape(
