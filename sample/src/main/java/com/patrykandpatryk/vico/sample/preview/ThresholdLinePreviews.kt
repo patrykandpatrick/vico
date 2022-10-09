@@ -31,6 +31,7 @@ import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
+import com.patrykandpatryk.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatryk.vico.compose.component.lineComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatryk.vico.compose.component.shape.textComponent
@@ -96,7 +97,7 @@ public fun ThresholdLine() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            isHorizontalScrollEnabled = false,
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }
@@ -157,7 +158,7 @@ public fun ThresholdLineWithCustomText() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            isHorizontalScrollEnabled = false,
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }
@@ -180,7 +181,7 @@ public fun RangedThresholdLine() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            isHorizontalScrollEnabled = false,
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }
@@ -211,7 +212,7 @@ public fun RangedThresholdLineWithBrushShader() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            isHorizontalScrollEnabled = false,
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }
@@ -242,7 +243,7 @@ public fun RangedThresholdLineWithComponentShader() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            isHorizontalScrollEnabled = false,
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }

@@ -24,6 +24,7 @@ import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
+import com.patrykandpatryk.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
@@ -53,7 +54,7 @@ public fun ColumnChartEdgeTickPosition() {
             tickPosition = HorizontalAxis.TickPosition.Edge,
             valueFormatter = axisValueFormatter,
         ),
-        isHorizontalScrollEnabled = false,
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
 
@@ -68,7 +69,7 @@ public fun ColumnChartWithCustomEdgeTickPosition() {
             tickPosition = HorizontalAxis.TickPosition.Center(offset = 0, spacing = 2),
             valueFormatter = axisValueFormatter,
         ),
-        isHorizontalScrollEnabled = false,
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
 
@@ -83,7 +84,7 @@ public fun ColumnChartWithEdgeTickPosition() {
             tickPosition = HorizontalAxis.TickPosition.Center(),
             valueFormatter = axisValueFormatter,
         ),
-        isHorizontalScrollEnabled = false,
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
 
@@ -99,7 +100,7 @@ public fun ColumnChartWithEdgeTickPositionDeprecated() {
         ).apply {
             tickType = HorizontalAxis.TickType.Minor
         },
-        isHorizontalScrollEnabled = false,
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
 
@@ -116,6 +117,6 @@ public fun ColumnChartWithCenterTickPositionDeprecated() {
         ).apply {
             tickType = HorizontalAxis.TickType.Major
         },
-        isHorizontalScrollEnabled = false,
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }

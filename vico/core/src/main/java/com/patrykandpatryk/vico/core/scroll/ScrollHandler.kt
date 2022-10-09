@@ -27,13 +27,15 @@ public class ScrollHandler(
     public var maxScrollDistance: Float = 0f,
 ) {
 
+    private var initialScrollHandled: Boolean = false
+
     /**
      * The current scroll amount.
      */
     public var currentScroll: Float = 0f
         set(value) {
             field = getClampedScroll(value)
-            setScrollAmount(value)
+            setScrollAmount(currentScroll)
         }
 
     private fun getClampedScroll(scroll: Float): Float =
@@ -45,7 +47,7 @@ public class ScrollHandler(
      */
     public fun handleScrollDelta(delta: Float): Float {
         val previousScroll = currentScroll
-        currentScroll = getClampedScroll(currentScroll - delta)
+        currentScroll -= delta
         return previousScroll - currentScroll
     }
 
@@ -60,4 +62,16 @@ public class ScrollHandler(
      */
     public fun handleScroll(targetScroll: Float): Float =
         handleScrollDelta(currentScroll - targetScroll)
+
+    /**
+     * Updates the value of [currentScroll] to match the provided [InitialScroll].
+     */
+    public fun handleInitialScroll(initialScroll: InitialScroll) {
+        if (initialScrollHandled) return
+        currentScroll = when (initialScroll) {
+            InitialScroll.Start -> 0f
+            InitialScroll.End -> maxScrollDistance
+        }
+        initialScrollHandled = true
+    }
 }

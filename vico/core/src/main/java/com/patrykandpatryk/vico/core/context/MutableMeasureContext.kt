@@ -27,9 +27,8 @@ public data class MutableMeasureContext(
     override var density: Float,
     override var fontScale: Float,
     override var isLtr: Boolean,
-    override var isHorizontalScrollEnabled: Boolean,
-    override var horizontalScroll: Float,
-    override var chartScale: Float,
+    override var isHorizontalScrollEnabled: Boolean = false,
+    override var chartScale: Float = 1f,
 ) : MeasureContext, Extras by DefaultExtras() {
 
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()

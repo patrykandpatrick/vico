@@ -29,33 +29,27 @@ import com.patrykandpatryk.vico.core.context.MutableMeasureContext
  * The anonymous implementation of the [MeasureContext].
  *
  * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
- * @param horizontalScroll the current horizontal scroll amount.
  * @param chartScale the scale of the chart. Used to handle zooming in and out.
  * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
  */
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
-    horizontalScroll: Float,
     chartScale: Float,
     canvasBounds: RectF,
-): MutableMeasureContext {
-    val context = remember() {
-        MutableMeasureContext(
-            canvasBounds = canvasBounds,
-            density = 0f,
-            fontScale = 0f,
-            isLtr = true,
-            isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-            horizontalScroll = horizontalScroll,
-            chartScale = chartScale,
-        )
-    }
-    context.density = LocalDensity.current.density
-    context.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
-    context.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-    context.isHorizontalScrollEnabled = isHorizontalScrollEnabled
-    context.horizontalScroll = horizontalScroll
-    context.chartScale = chartScale
-    return context
+): MutableMeasureContext = remember {
+    MutableMeasureContext(
+        canvasBounds = canvasBounds,
+        density = 0f,
+        fontScale = 0f,
+        isLtr = true,
+        isHorizontalScrollEnabled = isHorizontalScrollEnabled,
+        chartScale = chartScale,
+    )
+}.apply {
+    this.density = LocalDensity.current.density
+    this.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
+    this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+    this.chartScale = chartScale
 }

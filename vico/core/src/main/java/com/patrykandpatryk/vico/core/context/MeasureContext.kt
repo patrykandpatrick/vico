@@ -58,14 +58,17 @@ public interface MeasureContext : Extras {
     public val isHorizontalScrollEnabled: Boolean
 
     /**
-     * The current amount of horizontal scroll.
-     */
-    public val horizontalScroll: Float
-
-    /**
      * The scale of the chart. Used to handle zooming in and out.
      */
     public val chartScale: Float
+
+    /**
+     * A multiplier used to ensure support for both left-to-right and right-to-left layouts.
+     * Values such as translation deltas are multiplied by this value.
+     * [layoutDirectionMultiplier] is equal to `1f` if [isLtr] is `true`, and `-1f` otherwise.
+     */
+    public val layoutDirectionMultiplier: Float
+        get() = if (isLtr) 1f else -1f
 
     /**
      * Converts the receiver [Float] to pixels.

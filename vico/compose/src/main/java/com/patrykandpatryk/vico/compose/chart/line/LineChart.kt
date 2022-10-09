@@ -30,11 +30,13 @@ import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.decoration.Decoration
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
@@ -45,6 +47,41 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 import com.patrykandpatryk.vico.core.marker.Marker
+
+/**
+ * Creates a [LineChart].
+ *
+ * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
+ * are lines.
+ * @param decorations the list of [Decoration]s that will be added to the [LineChart].
+ * @param persistentMarkers maps x-axis values to persistent [Marker]s.
+ * @param pointPosition the horizontal position of each point in its corresponding segment.
+ * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
+ * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
+ * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
+ * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ *
+ * @see com.patrykandpatryk.vico.compose.chart.Chart
+ * @see ColumnChart
+ */
+@Composable
+public fun lineChart(
+    lines: List<LineSpec> = currentChartStyle.lineChart.lines,
+    spacing: Dp = currentChartStyle.lineChart.spacing,
+    pointPosition: LineChart.PointPosition = LineChart.PointPosition.Center,
+    decorations: List<Decoration>? = null,
+    persistentMarkers: Map<Float, Marker>? = null,
+    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
+    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+): LineChart = remember { LineChart() }.apply {
+    this.lines = lines
+    this.spacingDp = spacing.value
+    this.pointPosition = pointPosition
+    this.axisValuesOverrider = axisValuesOverrider
+    this.targetVerticalAxisPosition = targetVerticalAxisPosition
+    decorations?.also(::setDecorations)
+    persistentMarkers?.also(::setPersistentMarkers)
+}
 
 /**
  * Creates a [LineChart].
@@ -65,6 +102,7 @@ import com.patrykandpatryk.vico.core.marker.Marker
  * @see com.patrykandpatryk.vico.compose.chart.Chart
  * @see ColumnChart
  */
+@Deprecated(message = "Axis values should be overridden via `AxisValuesOverrider`.")
 @Composable
 public fun lineChart(
     lines: List<LineSpec> = currentChartStyle.lineChart.lines,

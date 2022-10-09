@@ -68,10 +68,13 @@ public class ChartEntryModelProducer(
     public fun setEntries(entries: List<List<ChartEntry>>) {
         this.entries.setAll(entries)
         cachedModel = null
-        updateReceivers.values.forEach { (updateListener, _, diffProcessor, getOldModel) ->
+        updateReceivers.values.forEach { updateReceiver ->
             executor.execute {
-                diffProcessor.setEntries(old = getOldModel()?.entries.orEmpty(), new = entries)
-                updateListener()
+                updateReceiver.diffProcessor.setEntries(
+                    old = updateReceiver.getOldModel()?.entries.orEmpty(),
+                    new = entries,
+                )
+                updateReceiver.listener()
             }
         }
     }
@@ -122,6 +125,7 @@ public class ChartEntryModelProducer(
             maxY = yRange.endInclusive,
             stackedMaxY = stackedYRange.endInclusive,
             stepX = entries.calculateStep(),
+            id = this.entries.hashCode(),
         )
 
     override fun registerForUpdates(
@@ -163,5 +167,6 @@ public class ChartEntryModelProducer(
         override val maxY: Float,
         override val stackedMaxY: Float,
         override val stepX: Float,
+        override val id: Int,
     ) : ChartEntryModel
 }

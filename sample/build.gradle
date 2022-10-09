@@ -49,6 +49,8 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion versions.composeCompiler
     }
+
+    namespace "com.patrykandpatryk.vico"
 }
 
 dependencies {

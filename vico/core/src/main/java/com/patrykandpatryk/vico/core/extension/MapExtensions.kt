@@ -40,9 +40,9 @@ public fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
  */
 public fun Map<Float, List<Marker.EntryModel>>.getEntryModel(
     xValue: Float,
-): List<Marker.EntryModel>? = values.mapNotNull { entries ->
-    if (entries.firstOrNull()?.entry?.x == xValue) entries else null
-}.flatten()
+): List<Marker.EntryModel>? = values
+    .mapNotNull { entries -> entries.takeIf { it.firstOrNull()?.entry?.x == xValue } }
+    .flatten()
     .takeIf { it.isNotEmpty() }
 
 /**

@@ -30,6 +30,7 @@ import androidx.compose.material.SwipeableState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -37,6 +38,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.sample.util.SampleChart
 import com.patrykandpatryk.vico.sample.util.Tab
+import kotlinx.coroutines.launch
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
@@ -46,6 +48,8 @@ internal fun ChartPager(
     sampleCharts: List<SampleChart>,
     tab: Tab,
 ) {
+    val scope = rememberCoroutineScope()
+
     HorizontalPager(
         state = state,
         itemCount = itemCount,
@@ -94,7 +98,12 @@ internal fun ChartPager(
                 SwipeHint(
                     currentPage = state.currentValue + 1,
                     pageCount = itemCount,
-                )
+                ) { direction ->
+                    val newState = state.currentValue + direction
+                    if (newState in 0 until itemCount) {
+                        scope.launch { state.animateTo(newState) }
+                    }
+                }
             }
         },
     ) {

@@ -52,7 +52,7 @@ public class ChartValuesManager {
      * Attempts to update the stored values to the provided params.
      * [minX] and [minY] can be updated to a lower value.
      * [maxX] and [maxY] can be updated to a higher value.
-     * The [chartEntryModel] is always be updated.
+     * The [chartEntryModel] is always updated.
      * If [axisPosition] is null, only the main [ChartValues] are updated. Otherwise, both the main [ChartValues]
      * and the [ChartValues] associated with the given [axisPosition] are updated.
      */

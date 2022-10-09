@@ -45,6 +45,7 @@ public fun chartDrawContext(
     markerTouchPoint: Point?,
     segmentProperties: SegmentProperties,
     chartBounds: RectF,
+    horizontalScroll: Float,
 ): ChartDrawContext = object : ChartDrawContext, MeasureContext by measureContext {
 
     override val chartBounds: RectF = chartBounds
@@ -58,6 +59,8 @@ public fun chartDrawContext(
     override val chartScale: Float = calculateDrawScale()
 
     override val segmentProperties: SegmentProperties = segmentProperties.scaled(chartScale)
+
+    override val horizontalScroll: Float = horizontalScroll
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
         val originalCanvas = this.canvas

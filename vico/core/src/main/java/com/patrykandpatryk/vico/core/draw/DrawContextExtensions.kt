@@ -54,7 +54,6 @@ public fun drawContext(
     override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
-    override val horizontalScroll: Float = 0f
     override val chartScale: Float = 1f
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()
 
