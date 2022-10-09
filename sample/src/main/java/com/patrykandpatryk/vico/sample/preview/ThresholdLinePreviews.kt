@@ -97,7 +97,7 @@ public fun ThresholdLine() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }
@@ -158,7 +158,7 @@ public fun ThresholdLineWithCustomText() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }
@@ -181,7 +181,7 @@ public fun RangedThresholdLine() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }
@@ -212,7 +212,7 @@ public fun RangedThresholdLineWithBrushShader() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }
@@ -243,7 +243,7 @@ public fun RangedThresholdLineWithComponentShader() {
             model = model,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
-            scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
 }

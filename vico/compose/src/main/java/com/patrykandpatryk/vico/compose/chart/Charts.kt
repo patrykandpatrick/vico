@@ -84,6 +84,7 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * nearest to the touch point.
  * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
  * @param legend an optional legend for the chart.
+ * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param diffAnimationSpec the animation spec used to animate differences between entry sets ([ChartEntryModel]
  * instances).
@@ -102,7 +103,7 @@ public fun <Model : ChartEntryModel> Chart(
     marker: Marker? = null,
     markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null,
     legend: Legend? = null,
-    scrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
+    chartScrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
@@ -126,7 +127,7 @@ public fun <Model : ChartEntryModel> Chart(
             marker = marker,
             markerVisibilityChangeListener = markerVisibilityChangeListener,
             legend = legend,
-            scrollSpec = scrollSpec,
+            chartScrollSpec = chartScrollSpec,
             isZoomEnabled = isZoomEnabled,
         )
     }
@@ -154,7 +155,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
  */
-@Deprecated("Use `scrollSpec` to enable or disable scrolling.")
+@Deprecated("Use `chartScrollSpec` to enable or disable scrolling.")
 @Composable
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
@@ -182,7 +183,7 @@ public fun <Model : ChartEntryModel> Chart(
         markerVisibilityChangeListener = markerVisibilityChangeListener,
         legend = legend,
         isZoomEnabled = isZoomEnabled,
-        scrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
     )
 }
 
@@ -205,7 +206,7 @@ public fun <Model : ChartEntryModel> Chart(
  * nearest to the touch point.
  * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
  * @param legend an optional legend for the chart.
- * @param scrollSpec houses scrolling-related settings.
+ * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param oldModel the chart’s previous model. This is used to determine whether to perform an automatic scroll.
  */
@@ -221,7 +222,7 @@ public fun <Model : ChartEntryModel> Chart(
     marker: Marker? = null,
     markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null,
     legend: Legend? = null,
-    scrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
+    chartScrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
     oldModel: Model? = null,
 ) {
@@ -230,7 +231,7 @@ public fun <Model : ChartEntryModel> Chart(
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val horizontalScroll = remember { mutableStateOf(0f) }
     val zoom = remember { mutableStateOf(1f) }
-    val measureContext = getMeasureContext(scrollSpec.isScrollEnabled, zoom.value, bounds)
+    val measureContext = getMeasureContext(chartScrollSpec.isScrollEnabled, zoom.value, bounds)
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
 
@@ -246,7 +247,7 @@ public fun <Model : ChartEntryModel> Chart(
     var wasMarkerVisible: Boolean by remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = model.id) {
-        scrollSpec.performAutoScroll(
+        chartScrollSpec.performAutoScroll(
             model = model,
             oldModel = oldModel,
             currentScroll = horizontalScroll.value,
@@ -261,7 +262,7 @@ public fun <Model : ChartEntryModel> Chart(
             .fillMaxWidth()
             .chartTouchEvent(
                 setTouchPoint = markerTouchPoint.component2().takeIf { marker != null },
-                scrollableState = scrollableState.takeIf { scrollSpec.isScrollEnabled },
+                scrollableState = scrollableState.takeIf { chartScrollSpec.isScrollEnabled },
                 onZoom = onZoom.takeIf { isZoomEnabled },
                 interactionSource = interactionSource,
             ),
@@ -285,7 +286,7 @@ public fun <Model : ChartEntryModel> Chart(
             segmentProperties = segmentProperties,
         )
 
-        scrollHandler.handleInitialScroll(initialScroll = scrollSpec.initialScroll)
+        scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,

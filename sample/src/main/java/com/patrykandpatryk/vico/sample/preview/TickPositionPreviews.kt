@@ -54,7 +54,7 @@ public fun ColumnChartEdgeTickPosition() {
             tickPosition = HorizontalAxis.TickPosition.Edge,
             valueFormatter = axisValueFormatter,
         ),
-        scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
 
@@ -69,7 +69,7 @@ public fun ColumnChartWithCustomEdgeTickPosition() {
             tickPosition = HorizontalAxis.TickPosition.Center(offset = 0, spacing = 2),
             valueFormatter = axisValueFormatter,
         ),
-        scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
 
@@ -84,7 +84,7 @@ public fun ColumnChartWithEdgeTickPosition() {
             tickPosition = HorizontalAxis.TickPosition.Center(),
             valueFormatter = axisValueFormatter,
         ),
-        scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
 
@@ -100,7 +100,7 @@ public fun ColumnChartWithEdgeTickPositionDeprecated() {
         ).apply {
             tickType = HorizontalAxis.TickType.Minor
         },
-        scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
 
@@ -117,6 +117,6 @@ public fun ColumnChartWithCenterTickPositionDeprecated() {
         ).apply {
             tickType = HorizontalAxis.TickType.Major
         },
-        scrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
