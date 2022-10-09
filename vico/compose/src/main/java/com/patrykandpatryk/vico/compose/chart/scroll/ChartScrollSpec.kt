@@ -56,7 +56,7 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
         if (autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) {
             scrollableState.animateScrollBy(
                 value = when (initialScroll) {
-                    InitialScroll.Start -> 0f
+                    InitialScroll.Start -> currentScroll
                     InitialScroll.End -> currentScroll - maxScrollDistance
                 },
                 animationSpec = autoScrollAnimationSpec,
