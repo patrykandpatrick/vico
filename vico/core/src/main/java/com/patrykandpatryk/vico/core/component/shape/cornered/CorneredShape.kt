@@ -21,7 +21,6 @@ import android.graphics.Path
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.context.DrawContext
-import com.patrykandpatryk.vico.core.context.MeasureContext
 import kotlin.math.absoluteValue
 
 /**
@@ -80,7 +79,36 @@ public open class CorneredShape(
 
     @LongParameterListDrawFunction
     protected open fun createPath(
-        context: MeasureContext,
+        context: DrawContext,
+        path: Path,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ) {
+        createPath(
+            density = context.density,
+            path = path,
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+        )
+    }
+
+    /**
+     * Fills provided [path] with this [CorneredShape]’s contours.
+     *
+     * @param density the screen density.
+     * @param path the [Path] that will be filled with this [CorneredShape]’s contours.
+     * @param left the left edge of the [CorneredShape].
+     * @param top the top edge of the [CorneredShape].
+     * @param right the right edge of the [CorneredShape].
+     * @param bottom the bottom edge of the [CorneredShape].
+     */
+    @LongParameterListDrawFunction
+    public open fun createPath(
+        density: Float,
         path: Path,
         left: Float,
         top: Float,
@@ -92,12 +120,12 @@ public open class CorneredShape(
         if (width == 0f || height == 0f) return
 
         val size = minOf(width, height).absoluteValue
-        val scale = getCornerScale(width, height, context.density).coerceAtMost(1f)
+        val scale = getCornerScale(width, height, density).coerceAtMost(1f)
 
-        val tL = topLeft.getCornerSize(size, context.density) * scale
-        val tR = topRight.getCornerSize(size, context.density) * scale
-        val bR = bottomRight.getCornerSize(size, context.density) * scale
-        val bL = bottomLeft.getCornerSize(size, context.density) * scale
+        val tL = topLeft.getCornerSize(size, density) * scale
+        val tR = topRight.getCornerSize(size, density) * scale
+        val bR = bottomRight.getCornerSize(size, density) * scale
+        val bL = bottomLeft.getCornerSize(size, density) * scale
 
         path.moveTo(left, top + tL)
         topLeft.cornerTreatment.createCorner(
