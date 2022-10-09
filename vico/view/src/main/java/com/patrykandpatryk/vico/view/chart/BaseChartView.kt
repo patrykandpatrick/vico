@@ -174,18 +174,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * The [Model] used in the [chart] to render the data.
      */
-    public var model: Model? by observable(null) { _, oldValue, newValue ->
-        tryInvalidate(chart, newValue)
-        if (newValue != null && oldValue?.id != newValue.id) {
-            handler.post {
-                chartScrollSpec.performAutoScroll(
-                    model = newValue,
-                    oldModel = oldValue,
-                    scrollHandler = scrollHandler,
-                )
-            }
-        }
-    }
+    public var model: Model? = null
+        private set
 
     /**
      * A [ChartModelProducer] can provide the [Model] updates asynchronously.
@@ -211,7 +201,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             },
             getOldModel = { model },
         ) { model ->
-            this.model = model
+            setModel(model = model)
             postInvalidateOnAnimation()
         }
     }
@@ -259,10 +249,19 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * Sets the [Model] used by the chart.
      */
-    @JvmName(name = "deprecatedSetModel")
-    @Deprecated(message = "`setModel` is deprecated. Use the `model` field instead.")
     public fun setModel(model: Model) {
+        val oldModel = this.model
         this.model = model
+        tryInvalidate(chart = chart, model = model)
+        if (oldModel?.id != model.id) {
+            handler.post {
+                chartScrollSpec.performAutoScroll(
+                    model = model,
+                    oldModel = oldModel,
+                    scrollHandler = scrollHandler,
+                )
+            }
+        }
     }
 
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
