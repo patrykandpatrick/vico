@@ -260,9 +260,9 @@ public fun <Model : ChartEntryModel> Chart(
             .height(DefaultDimens.CHART_HEIGHT.dp)
             .fillMaxWidth()
             .chartTouchEvent(
-                setTouchPoint = if (marker != null) markerTouchPoint.component2() else null,
-                scrollableState = if (scrollSpec.isScrollEnabled) scrollableState else null,
-                onZoom = if (isZoomEnabled) onZoom else null,
+                setTouchPoint = markerTouchPoint.component2().takeIf { marker != null },
+                scrollableState = scrollableState.takeIf { scrollSpec.isScrollEnabled },
+                onZoom = onZoom.takeIf { isZoomEnabled },
                 interactionSource = interactionSource,
             ),
     ) {
