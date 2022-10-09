@@ -16,6 +16,9 @@
 
 package com.patrykandpatryk.vico.core.scroll
 
+/**
+ * Represents a chart’s initial scroll position.
+ */
 public enum class InitialScroll {
     Start,
     End,

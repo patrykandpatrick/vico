@@ -63,6 +63,9 @@ public class ScrollHandler(
     public fun handleScroll(targetScroll: Float): Float =
         handleScrollDelta(currentScroll - targetScroll)
 
+    /**
+     * Updates the value of [currentScroll] to match the provided [InitialScroll].
+     */
     public fun handleInitialScroll(initialScroll: InitialScroll) {
         if (initialScrollHandled) return
         currentScroll = when (initialScroll) {

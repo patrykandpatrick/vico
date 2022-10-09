@@ -19,14 +19,27 @@ package com.patrykandpatryk.vico.core.scroll
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.ifNotNull
 
+/**
+ * Defines when an automatic scroll should be performed.
+ */
 public fun interface AutoScrollCondition<in Model : ChartEntryModel> {
 
+    /**
+     * Given a chart’s new and old models, defines whether an automatic scroll should be performed.
+     */
     public fun shouldPerformAutoScroll(newModel: Model, oldModel: Model?): Boolean
 
     public companion object {
 
+        /**
+         * Prevents any automatic scrolling from occurring.
+         */
         public val Never: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition { _, _ -> false }
 
+        /**
+         * Triggers an automatic scroll when the size of the model increases (that is, the contents of the chart become
+         * wider).
+         */
         public val OnModelSizeIncreased: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition { n, o ->
             if (o != null) {
                 val new = n.entries

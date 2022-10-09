@@ -62,6 +62,9 @@ public interface ChartDrawContext : DrawContext {
         }
 }
 
+/**
+ * Returns the maximum scroll distance.
+ */
 public fun MeasureContext.getMaxScrollDistance(
     chartWidth: Float,
     segmentProperties: SegmentProperties,

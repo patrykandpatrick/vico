@@ -27,6 +27,14 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatryk.vico.core.scroll.InitialScroll
 
+/**
+ * Houses scrolling-related settings for charts.
+ *
+ * @property isScrollEnabled whether horizontal scrolling is enabled.
+ * @property initialScroll represents the chart’s initial scroll position.
+ * @property autoScrollCondition defines when an automatic scroll should be performed.
+ * @property autoScrollAnimationSpec the [AnimationSpec] to use for automatic scrolling.
+ */
 @Stable
 public class ChartScrollSpec<in Model : ChartEntryModel>(
     public val isScrollEnabled: Boolean,
@@ -35,6 +43,9 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
     public val autoScrollAnimationSpec: AnimationSpec<Float>,
 ) {
 
+    /**
+     * Performs an automatic scroll.
+     */
     public suspend fun performAutoScroll(
         model: Model,
         oldModel: Model?,
@@ -54,6 +65,9 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
     }
 }
 
+/**
+ * Creates and remembers an instance of [ChartScrollSpec].
+ */
 @Composable
 public fun <Model : ChartEntryModel> rememberChartScrollSpec(
     isScrollEnabled: Boolean = true,
