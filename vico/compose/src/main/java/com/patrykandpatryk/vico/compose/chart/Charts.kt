@@ -230,22 +230,13 @@ public fun <Model : ChartEntryModel> Chart(
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val horizontalScroll = remember { mutableStateOf(0f) }
     val zoom = remember { mutableStateOf(1f) }
-    val measureContext = getMeasureContext(
-        isHorizontalScrollEnabled = scrollSpec.isScrollEnabled,
-        chartScale = zoom.value,
-        canvasBounds = bounds,
-    )
+    val measureContext = getMeasureContext(scrollSpec.isScrollEnabled, zoom.value, bounds)
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
 
-    val setHorizontalScroll = rememberSetHorizontalScroll(
-        scroll = horizontalScroll,
-        touchPoint = markerTouchPoint,
-        interaction = interaction,
-    )
-
+    val setHorizontalScroll = rememberSetHorizontalScroll(horizontalScroll, markerTouchPoint, interaction)
     val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
     val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
     val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
