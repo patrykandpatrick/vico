@@ -25,6 +25,15 @@ import com.patrykandpatryk.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatryk.vico.core.scroll.InitialScroll
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
 
+/**
+ * Houses scrolling-related settings for charts.
+ *
+ * @property isScrollEnabled whether horizontal scrolling is enabled.
+ * @property initialScroll represents the chart’s initial scroll position.
+ * @property autoScrollCondition defines when an automatic scroll should be performed.
+ * @property autoScrollInterpolator the [TimeInterpolator] to use for automatic scrolling.
+ * @property autoScrollDuration the animation duration for automatic scrolling.
+ */
 public class ChartScrollSpec<in Model : ChartEntryModel>(
     public val isScrollEnabled: Boolean = true,
     public val initialScroll: InitialScroll = InitialScroll.Start,
@@ -40,6 +49,9 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
         interpolator = autoScrollInterpolator
     }
 
+    /**
+     * Performs an automatic scroll.
+     */
     public fun performAutoScroll(
         model: Model,
         oldModel: Model?,
@@ -53,8 +65,9 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
                 scrollHandler.handleScroll(
                     targetScroll = when (initialScroll) {
                         InitialScroll.Start -> (1 - it.animatedFraction) * scrollHandler.currentScroll
-                        InitialScroll.End -> scrollHandler.currentScroll + it.animatedFraction *
-                            (scrollHandler.maxScrollDistance - scrollHandler.currentScroll)
+                        InitialScroll.End ->
+                            scrollHandler.currentScroll + it.animatedFraction *
+                                (scrollHandler.maxScrollDistance - scrollHandler.currentScroll)
                     },
                 )
             }
@@ -63,6 +76,9 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
     }
 }
 
+/**
+ * Copies this [ChartScrollSpec], changing select values.
+ */
 public fun <Model : ChartEntryModel> ChartScrollSpec<Model>.copy(
     isScrollEnabled: Boolean = this.isScrollEnabled,
     initialScroll: InitialScroll = this.initialScroll,

@@ -19,6 +19,9 @@ package com.patrykandpatryk.vico.compose.state
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 
+/**
+ * A [MutableState] implementation that stores both its current and previous values.
+ */
 public class MutableSharedState<P, T : P>(
     value: T,
     previousValue: P,
@@ -28,6 +31,9 @@ public class MutableSharedState<P, T : P>(
 
     private var mutablePreviousValue: P = previousValue
 
+    /**
+     * The previous value.
+     */
     public val previousValue: P
         get() = mutablePreviousValue
 
@@ -45,12 +51,18 @@ public class MutableSharedState<P, T : P>(
     override fun component2(): (T) -> Unit = backingState.component2()
 }
 
+/**
+ * Creates a [MutableSharedState] instance with the provided current value and a previous value of `null`.
+ */
 public fun <T> mutableSharedStateOf(value: T): MutableSharedState<T?, T> =
     MutableSharedState(
         value = value,
         previousValue = null,
     )
 
+/**
+ * Creates a [MutableSharedState] with the provided current and previous values.
+ */
 public fun <P, T : P & Any> mutableSharedStateOf(
     value: T,
     previousValue: P,
