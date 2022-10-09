@@ -154,6 +154,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     /**
+     * Whether the chart can be scrolled horizontally.
+     */
+    @Deprecated(message = "`isHorizontalScrollEnabled` is deprecated. Use `chartScrollSpec` instead.")
+    public var isHorizontalScrollEnabled: Boolean
+        get() = chartScrollSpec.isScrollEnabled
+        set(value) { chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = value) }
+
+    /**
      * Whether the pinch-to-zoom gesture is enabled.
      */
     public var isZoomEnabled: Boolean = true
