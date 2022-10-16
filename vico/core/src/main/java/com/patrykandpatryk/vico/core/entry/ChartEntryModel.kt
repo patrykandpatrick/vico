@@ -76,7 +76,12 @@ public interface ChartEntryModel {
     /**
      * The maximum y-axis value among all [entries] with the same [ChartEntry.x] value.
      */
-    public val stackedMaxY: Float
+    public val stackedPositiveY: Float
+
+    /**
+     * The minimum y-axis value among all [entries] with the same [ChartEntry.x] value.
+     */
+    public val stackedNegativeY: Float
 
     /**
      * The value at which [Chart] increments x-axis value between each [ChartEntry].

@@ -107,7 +107,7 @@ public class ChartEntryModelProducer(
         val model = getModel(
             entries = diffProcessor.progressDiff(progress),
             yRange = diffProcessor.yRangeProgressDiff(progress),
-            stackedYRange = diffProcessor.stackedYRangeProgressDiff(progress),
+            stackedPositiveYRange = diffProcessor.stackedYRangeProgressDiff(progress),
         )
         modelReceiver(model)
     }
@@ -115,7 +115,7 @@ public class ChartEntryModelProducer(
     private fun getModel(
         entries: List<List<ChartEntry>>,
         yRange: ClosedFloatingPointRange<Float> = entries.yRange,
-        stackedYRange: ClosedFloatingPointRange<Float> = entries.calculateStackedYRange(),
+        stackedPositiveYRange: ClosedFloatingPointRange<Float> = entries.calculateStackedYRange(),
     ): ChartEntryModel =
         Model(
             entries = entries,
@@ -123,7 +123,8 @@ public class ChartEntryModelProducer(
             maxX = entries.xRange.endInclusive,
             minY = yRange.start,
             maxY = yRange.endInclusive,
-            stackedMaxY = stackedYRange.endInclusive,
+            stackedPositiveY = stackedPositiveYRange.endInclusive,
+            stackedNegativeY = stackedPositiveYRange.start,
             stepX = entries.calculateStep(),
             id = this.entries.hashCode(),
         )
@@ -165,7 +166,8 @@ public class ChartEntryModelProducer(
         override val maxX: Float,
         override val minY: Float,
         override val maxY: Float,
-        override val stackedMaxY: Float,
+        override val stackedPositiveY: Float,
+        override val stackedNegativeY: Float,
         override val stepX: Float,
         override val id: Int,
     ) : ChartEntryModel
