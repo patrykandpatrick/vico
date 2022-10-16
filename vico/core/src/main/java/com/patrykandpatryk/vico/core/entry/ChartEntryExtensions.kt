@@ -17,6 +17,7 @@
 package com.patrykandpatryk.vico.core.entry
 
 import com.patrykandpatryk.vico.core.extension.rangeOfOrNull
+import com.patrykandpatryk.vico.core.extension.rangeOfPairOrNull
 import kotlin.math.abs
 import kotlin.math.min
 
@@ -105,7 +106,8 @@ internal fun Iterable<Iterable<ChartEntry>>.calculateStep(): Float {
 }
 
 internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =
-    flatten().fold(HashMap<Float, Float>()) { map, entry ->
-        map[entry.x] = map.getOrElse(entry.x) { 0f } + entry.y
+    flatten().fold(HashMap<Float, Pair<Float, Float>>()) { map, entry ->
+        val (negY, posY) = map.getOrElse(entry.x) { 0f to 0f }
+        map[entry.x] = if (entry.y < 0f) negY + entry.y to posY else negY to posY + entry.y
         map
-    }.values.rangeOfOrNull { it } ?: 0f..0f
+    }.values.rangeOfPairOrNull { it } ?: 0f..0f

@@ -104,14 +104,14 @@ public data class ThresholdLine(
 
         val valueRange = chartValues.maxY - chartValues.minY
 
-        val centerY = bounds.bottom - thresholdRange.median / valueRange * bounds.height()
+        val centerY = bounds.bottom - (thresholdRange.median - chartValues.minY) / valueRange * bounds.height()
 
         val topY = minOf(
-            bounds.bottom - thresholdRange.endInclusive / valueRange * bounds.height(),
+            bounds.bottom - (thresholdRange.endInclusive - chartValues.minY) / valueRange * bounds.height(),
             centerY - minimumLineThicknessDp.pixels.half,
         ).ceil
         val bottomY = maxOf(
-            bounds.bottom - thresholdRange.start / valueRange * bounds.height(),
+            bounds.bottom - (thresholdRange.start - chartValues.minY) / valueRange * bounds.height(),
             centerY + minimumLineThicknessDp.pixels.half,
         ).floor
         val textY = when (labelVerticalPosition) {

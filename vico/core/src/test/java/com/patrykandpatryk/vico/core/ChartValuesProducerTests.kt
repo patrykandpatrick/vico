@@ -40,7 +40,7 @@ public class ChartValuesProducerTests {
         assertEquals(maxX, entryList.maxX)
         assertEquals(minY, entryList.minY)
         assertEquals(maxY, entryList.maxY)
-        assertEquals(10f, entryList.stackedMaxY)
+        assertEquals(10f, entryList.stackedPositiveY)
     }
 
     @Test
