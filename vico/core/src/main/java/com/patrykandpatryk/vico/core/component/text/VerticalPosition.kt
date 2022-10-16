@@ -25,7 +25,7 @@ public enum class VerticalPosition {
     Bottom;
 
     /**
-     * Returns a negative [VerticalPosition] to given [VerticalPosition].
+     * Returns the inverse of this [VerticalPosition].
      */
     public fun negative(): VerticalPosition = when (this) {
         Top -> Bottom
