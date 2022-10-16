@@ -38,6 +38,7 @@ import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.databinding.ColumnChartBinding
 import com.patrykandpatryk.vico.sample.util.marker
@@ -48,6 +49,8 @@ internal fun ComposeColumnChart(
     modifier: Modifier = Modifier,
 ) {
     val startAxis = startAxis(
+        title = "Foo",
+        titleComponent = textComponent {},
         maxLabelCount = MAX_LABEL_COUNT,
         valueFormatter = PercentageFormatAxisValueFormatter(),
     )
@@ -68,6 +71,8 @@ internal fun ComposeColumnChart(
         chartModelProducer = chartEntryModelProducer,
         startAxis = startAxis,
         bottomAxis = bottomAxis(
+            title = "Baz",
+            titleComponent = textComponent {},
             tickPosition = HorizontalAxis.TickPosition.Center(
                 offset = 1,
                 spacing = 3,
