@@ -131,7 +131,7 @@ public open class ColumnChart(
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
-        val zeroLinePosition = bounds.bottom - -chartValues.minY / yRange * bounds.height()
+        val zeroLinePosition = bounds.bottom + chartValues.minY / yRange * bounds.height()
 
         val defCellWidth = getCellWidth(model.entries.size) * chartScale
 
@@ -367,8 +367,8 @@ public open class ColumnChart(
          * Returns the minimum y-axis value, taking into account the current [MergeMode].
          */
         public fun getMinY(model: ChartEntryModel): Float = when (this) {
-            Grouped -> min(model.minY, 0f)
-            Stack -> min(model.stackedNegativeY, 0f)
+            Grouped -> model.minY.coerceAtMost(0f)
+            Stack -> model.stackedNegativeY.coerceAtMost(0f)
         }
 
         /**
