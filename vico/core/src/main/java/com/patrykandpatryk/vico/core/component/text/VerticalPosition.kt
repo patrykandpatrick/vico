@@ -22,5 +22,14 @@ package com.patrykandpatryk.vico.core.component.text
 public enum class VerticalPosition {
     Top,
     Center,
-    Bottom,
+    Bottom;
+
+    /**
+     * Returns a negative [VerticalPosition] to given [VerticalPosition].
+     */
+    public fun negative(): VerticalPosition = when (this) {
+        Top -> Bottom
+        Center -> Center
+        Bottom -> Top
+    }
 }
