@@ -42,7 +42,6 @@ import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.abs
-import kotlin.math.min
 
 /**
  * [ColumnChart] displays data in vertical columns.
