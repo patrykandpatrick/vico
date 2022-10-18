@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatryk.vico.R
 import com.patrykandpatryk.vico.compose.axis.axisLabelComponent
@@ -29,6 +30,7 @@ import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.line.lineSpec
+import com.patrykandpatryk.vico.compose.component.shape.textComponent
 import com.patrykandpatryk.vico.compose.component.shapeComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.compose.legend.verticalLegend
@@ -36,7 +38,6 @@ import com.patrykandpatryk.vico.compose.legend.verticalLegendItem
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.component.shape.Shapes
-import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.core.legend.VerticalLegend
 import com.patrykandpatryk.vico.databinding.LineChartWithLabelsInsideBinding
@@ -111,9 +112,7 @@ private fun legend(): VerticalLegend = verticalLegend(
     items = entityColors.mapIndexed { index, color ->
         verticalLegendItem(
             icon = shapeComponent(shape = Shapes.pillShape, color = Color(color)),
-            label = textComponent {
-                textSizeSp = LEGEND_LABEL_SIZE_SP
-            },
+            label = textComponent(textSize = LEGEND_LABEL_SIZE_SP.sp),
             labelText = LocalContext.current.getString(R.string.line_chart_with_labels_inside_label_legend, index),
         )
     },
