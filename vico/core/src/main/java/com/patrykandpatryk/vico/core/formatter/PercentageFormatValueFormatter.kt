@@ -47,6 +47,6 @@ public open class PercentageFormatValueFormatter(pattern: String) : ValueFormatt
         /**
          * The default percentage pattern.
          */
-        public const val DEF_PATTERN: String = "#.##%"
+        public const val DEF_PATTERN: String = "#.##%;−#.##%"
     }
 }

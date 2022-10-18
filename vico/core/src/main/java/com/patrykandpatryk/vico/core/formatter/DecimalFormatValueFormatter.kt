@@ -48,7 +48,7 @@ public open class DecimalFormatValueFormatter(private val decimalFormat: Decimal
         /**
          * The default pattern for the [DecimalFormat].
          */
-        public const val DEF_FORMAT: String = "#.##"
+        public const val DEF_FORMAT: String = "#.##;−#.##"
 
         /**
          * Creates a [DecimalFormat] using the provided pattern and rounding mode.

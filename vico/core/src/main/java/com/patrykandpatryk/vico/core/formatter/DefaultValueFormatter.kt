@@ -17,6 +17,7 @@
 package com.patrykandpatryk.vico.core.formatter
 
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
+import com.patrykandpatryk.vico.core.extension.toPrettyString
 
 /**
  * The default implementation of [ValueFormatter]. This converts [Float]s to [String]s.
@@ -25,5 +26,5 @@ public open class DefaultValueFormatter : ValueFormatter {
     override fun formatValue(
         value: Float,
         chartValues: ChartValues,
-    ): String = value.toString()
+    ): String = value.toPrettyString()
 }
