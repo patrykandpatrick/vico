@@ -17,12 +17,8 @@
 package com.patrykandpatryk.vico.sample.ui
 
 import androidx.compose.animation.Crossfade
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -64,31 +60,23 @@ internal fun Home() {
     ).remember()
     Scaffold(
         bottomBar = {
-            Column {
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    tonalElevation = 0.dp,
-                ) {
-                    Tab.values().forEach {
-                        NavigationBarItem(
-                            selected = tab == it,
-                            onClick = { tab = it },
-                            label = { Text(text = stringResource(id = it.labelResourceId)) },
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = it.iconResourceId),
-                                    contentDescription = null,
-                                )
-                            },
-                        )
-                    }
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.surface,
+                tonalElevation = 0.dp,
+            ) {
+                Tab.values().forEach {
+                    NavigationBarItem(
+                        selected = tab == it,
+                        onClick = { tab = it },
+                        label = { Text(text = stringResource(id = it.labelResourceId)) },
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = it.iconResourceId),
+                                contentDescription = null,
+                            )
+                        },
+                    )
                 }
-                Spacer(
-                    modifier = Modifier
-                        .background(color = MaterialTheme.colorScheme.surface)
-                        .fillMaxWidth()
-                        .navigationBarsPadding(),
-                )
             }
         },
     ) { paddingValues ->
