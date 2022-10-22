@@ -16,7 +16,6 @@
 
 package com.patrykandpatryk.vico.compose.gesture
 
-import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -25,6 +24,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerInputScope
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.debugInspectorInfo
+import com.patrykandpatryk.vico.compose.extension.detectZoomGestures
 
 /**
  * Represents a function block that handles the pinch-to-zoom gesture.
@@ -47,7 +47,7 @@ public fun Modifier.zoomable(
         val block: suspend PointerInputScope.() -> Unit = remember {
             {
                 forEachGesture {
-                    detectTransformGestures { centroid, _, zoom, _ ->
+                    detectZoomGestures { centroid, zoom ->
                         onZoom(centroid, zoom)
                     }
                 }
