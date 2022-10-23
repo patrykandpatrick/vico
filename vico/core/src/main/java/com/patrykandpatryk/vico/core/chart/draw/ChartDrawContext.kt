@@ -46,20 +46,6 @@ public interface ChartDrawContext : DrawContext {
      * The current amount of horizontal scroll.
      */
     public val horizontalScroll: Float
-
-    /**
-     * Returns the maximum horizontal scroll value.
-     */
-    public val maxScrollDistance: Float
-        get() {
-            val chartWidth = chartBounds.width()
-            val cumulatedSegmentWidth = segmentProperties.segmentWidth *
-                chartValuesManager.getChartValues().getDrawnEntryCount()
-
-            return (layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
-                if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
-            }
-        }
 }
 
 /**
@@ -70,7 +56,8 @@ public fun MeasureContext.getMaxScrollDistance(
     segmentProperties: SegmentProperties,
 ): Float {
     val cumulatedSegmentWidth = segmentProperties.segmentWidth *
-        chartValuesManager.getChartValues().getDrawnEntryCount()
+        chartValuesManager.getChartValues().getDrawnEntryCount() *
+        chartScale
 
     return (layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
         if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
