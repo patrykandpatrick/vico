@@ -7,3 +7,4 @@ This release includes the following changes.
 ## Resolved issues
 
 - Charts consumed more gestures than necessary in some instances.
+- For scrollable charts, the chart scale wasn’t considered when the maximum scroll distance was being calculated, which caused scrolling-related bugs.
