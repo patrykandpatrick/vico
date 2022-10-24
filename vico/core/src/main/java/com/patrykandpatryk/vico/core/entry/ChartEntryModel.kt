@@ -19,9 +19,9 @@ package com.patrykandpatryk.vico.core.entry
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.line.LineChart
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
-import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 
 /**
  * Contains the data for a [Chart]. Pre-calculates values needed for the rendering of the [Chart].
