@@ -18,18 +18,18 @@ package com.patrykandpatryk.vico.core.entry
 
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
+import com.patrykandpatryk.vico.core.chart.line.LineChart
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.entry.composed.ComposedChartEntryModelProducer
 
 /**
- * The real source of data used by [Chart] to render itself.
- * The [ChartEntryModel] has data needed for [Chart] rendering pre-calculated.
+ * Contains the data for a [Chart]. Pre-calculates values needed for the rendering of the [Chart].
  *
- * The [Chart] may override [minX], [maxX], [minY] and [maxY] when respectively [Chart.minX],
- * [Chart.maxX], [Chart.minY] and [Chart.maxY] are non-null.
- * Overridden values will be used in [ChartValues].
+ * The [Chart] may override [minX], [maxX], [minY], or [maxY] via [AxisValuesOverrider]. These overrides will be used
+ * in the [Chart]’s [ChartValues] instance.
  *
- * It’s recommended to delegate creation of [ChartEntryModel] to [ChartEntryModelProducer] or
+ * It’s recommended to delegate the creation of [ChartEntryModel] to [ChartEntryModelProducer] or
  * [ComposedChartEntryModelProducer].
  *
  * @see [ChartValues]
@@ -48,38 +48,44 @@ public interface ChartEntryModel {
         get() = entries.hashCode()
 
     /**
-     * The collection of [List] of [ChartEntry].
-     * Multiple lists of entries can be rendered by [ColumnChart].
+     * The chart entries ([ChartEntry] instances). Multiple lists of [ChartEntry] instances can be provided. In such a
+     * case, entries will be associated by index, and the [Chart] will stack or group them if it’s a [ColumnChart],
+     * and display multiple lines if it’s a [LineChart].
      */
     public val entries: List<List<ChartEntry>>
 
     /**
-     * The minimum x-axis value among all [entries].
+     * The minimum x-axis value from among all [entries].
      */
     public val minX: Float
 
     /**
-     * The maximum x-axis value among all [entries].
+     * The maximum x-axis value from among all [entries].
      */
     public val maxX: Float
 
     /**
-     * The minimum y-axis value among all [entries].
+     * The minimum y-axis value from among all [entries].
      */
     public val minY: Float
 
     /**
-     * The maximum y-axis value among all [entries].
+     * The maximum y-axis value from among all [entries].
      */
     public val maxY: Float
 
     /**
-     * The maximum y-axis value among all [entries] with the same [ChartEntry.x] value.
+     * The maximum cumulated y-axis value from among all sets of entries associated by [ChartEntry.x].
      */
-    public val stackedMaxY: Float
+    public val stackedPositiveY: Float
 
     /**
-     * The value at which [Chart] increments x-axis value between each [ChartEntry].
+     * The minimum cumulated y-axis value from among all sets of entries associated by [ChartEntry.x].
+     */
+    public val stackedNegativeY: Float
+
+    /**
+     * The value by which the [Chart] increments the x-axis value from one [ChartEntry] to the next.
      */
     public val stepX: Float
 }

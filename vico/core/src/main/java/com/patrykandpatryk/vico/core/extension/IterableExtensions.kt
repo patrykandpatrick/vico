@@ -31,3 +31,20 @@ public inline fun <T> Iterable<T>.rangeOfOrNull(selector: (T) -> Float): ClosedF
     }
     return minValue..maxValue
 }
+
+/**
+ * Calls the [selector] function for each value in the collection and returns the range of the produced values.
+ */
+public inline fun <T> Iterable<T>.rangeOfPairOrNull(
+    selector: (T) -> Pair<Float, Float>,
+): ClosedFloatingPointRange<Float>? {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return null
+    var (minValue, maxValue) = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val (negValue, posValue) = selector(iterator.next())
+        minValue = minOf(minValue, negValue)
+        maxValue = maxOf(maxValue, posValue)
+    }
+    return minValue..maxValue
+}

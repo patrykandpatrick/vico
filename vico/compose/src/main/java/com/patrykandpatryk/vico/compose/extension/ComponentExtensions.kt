@@ -42,16 +42,17 @@ public var MarkerComponent.indicatorSize: Dp
  * @param color the shadow color.
  * @param applyElevationOverlay whether to apply an elevation overlay to the [ShapeComponent].
  */
-public fun ShapeComponent.setShadow(
+@Suppress("UNCHECKED_CAST")
+public fun <T : ShapeComponent> T.setShadow(
     radius: Dp,
     dx: Dp = 0.dp,
     dy: Dp = 0.dp,
     color: Color = Color(DEF_SHADOW_COLOR),
     applyElevationOverlay: Boolean = false,
-): ShapeComponent = setShadow(
+): T = setShadow(
     radius = radius.value,
     dx = dx.value,
     dy = dy.value,
     color = color.toArgb(),
     applyElevationOverlay = applyElevationOverlay,
-)
+) as T

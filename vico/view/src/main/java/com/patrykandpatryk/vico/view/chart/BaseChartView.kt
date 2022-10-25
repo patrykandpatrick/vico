@@ -17,7 +17,6 @@
 package com.patrykandpatryk.vico.view.chart
 
 import android.animation.ValueAnimator
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.RectF
@@ -62,6 +61,8 @@ import com.patrykandpatryk.vico.view.extension.specSize
 import com.patrykandpatryk.vico.view.extension.verticalPadding
 import com.patrykandpatryk.vico.view.gestures.ChartScaleGestureListener
 import com.patrykandpatryk.vico.view.gestures.MotionEventHandler
+import com.patrykandpatryk.vico.view.gestures.movedXDistance
+import com.patrykandpatryk.vico.view.gestures.movedYDistance
 import com.patrykandpatryk.vico.view.scroll.ChartScrollSpec
 import com.patrykandpatryk.vico.view.scroll.copy
 import com.patrykandpatryk.vico.view.theme.ThemeHandler
@@ -124,6 +125,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private var wasMarkerVisible: Boolean = false
 
+    private var scrollDirectionResolved = false
+
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
 
     /**
@@ -159,7 +162,9 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     @Deprecated(message = "`isHorizontalScrollEnabled` is deprecated. Use `chartScrollSpec` instead.")
     public var isHorizontalScrollEnabled: Boolean
         get() = chartScrollSpec.isScrollEnabled
-        set(value) { chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = value) }
+        set(value) {
+            chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = value)
+        }
 
     /**
      * Whether the pinch-to-zoom gesture is enabled.
@@ -283,12 +288,21 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
         val scaleHandled =
             if (isZoomEnabled && event.pointerCount > 1) scaleGestureDetector.onTouchEvent(event) else false
         val touchHandled = motionEventHandler.handleMotionEvent(event)
-        return (touchHandled || scaleHandled).also(parent::requestDisallowInterceptTouchEvent)
+
+        if (scrollDirectionResolved.not() && event.historySize > 0) {
+            scrollDirectionResolved = true
+            parent.requestDisallowInterceptTouchEvent(
+                event.movedXDistance > event.movedYDistance || event.pointerCount > 1,
+            )
+        } else if (event.actionMasked == MotionEvent.ACTION_UP || event.actionMasked == MotionEvent.ACTION_CANCEL) {
+            scrollDirectionResolved = false
+        }
+
+        return touchHandled || scaleHandled
     }
 
     private fun handleZoom(focusX: Float, zoomChange: Float) {
@@ -373,6 +387,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding,
                 heightMeasureSpec.specSize,
             )
+
             else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
         }
         setMeasuredDimension(width, height)

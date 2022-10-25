@@ -33,17 +33,15 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.component.text.inBounds
 import com.patrykandpatryk.vico.core.context.MeasureContext
-import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.getRepeating
 import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
-import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatryk.vico.core.formatter.ValueFormatter
 import com.patrykandpatryk.vico.core.marker.Marker
-import kotlin.math.min
+import kotlin.math.abs
 
 /**
  * [ColumnChart] displays data in vertical columns.
@@ -97,7 +95,7 @@ public open class ColumnChart(
      */
     public constructor() : this(emptyList())
 
-    private val heightMap = HashMap<Float, Float>()
+    private val heightMap = HashMap<Float, Pair<Float, Float>>()
     private val segmentProperties = MutableSegmentProperties()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
@@ -125,7 +123,6 @@ public open class ColumnChart(
 
         val yRange = (chartValues.maxY - chartValues.minY).takeIf { it != 0f } ?: return
         val heightMultiplier = bounds.height() / yRange
-        val heightReduce = chartValues.minY * heightMultiplier
 
         var drawingStart: Float
         var height: Float
@@ -133,7 +130,7 @@ public open class ColumnChart(
         var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
-        val bottomCompensation = if (chartValues.minY < 0f) chartValues.minY * heightMultiplier else 0f
+        val zeroLinePosition = bounds.bottom + chartValues.minY / yRange * bounds.height()
 
         val defCellWidth = getCellWidth(model.entries.size) * chartScale
 
@@ -149,26 +146,32 @@ public open class ColumnChart(
 
             entryCollection.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { entryIndex, entry ->
 
-                height = entry.y * heightMultiplier - heightReduce
+                height = abs(entry.y) * heightMultiplier
                 columnCenterX = drawingStart + layoutDirectionMultiplier *
                     (cellWidth + spacing) * (entry.x - chartValues.minX) / model.stepX
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
-                        val cumulatedHeight = heightMap.getOrElse(entry.x) { 0f }
-                        columnBottom = (bounds.bottom + bottomCompensation - cumulatedHeight)
-                            .coerceIn(bounds.top, bounds.bottom)
+                        val (stackedNegY, stackedPosY) = heightMap.getOrElse(entry.x) { 0f to 0f }
+                        columnBottom = zeroLinePosition +
+                            if (entry.y < 0f) height + abs(stackedNegY) * heightMultiplier
+                            else -stackedPosY * heightMultiplier
+
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += layoutDirectionMultiplier * cellWidth.half
-                        heightMap[entry.x] = cumulatedHeight + height
+                        heightMap[entry.x] =
+                            if (entry.y < 0f) stackedNegY + entry.y to stackedPosY
+                            else stackedNegY to stackedPosY + entry.y
                     }
+
                     MergeMode.Grouped -> {
-                        columnBottom = (bounds.bottom + bottomCompensation)
-                            .coerceIn(bounds.top, bounds.bottom)
-                        columnTop = (columnBottom - height).coerceAtMost(columnBottom)
+                        columnBottom = zeroLinePosition + if (entry.y < 0f) height else 0f
+                        columnTop = columnBottom - height
                         columnCenterX += layoutDirectionMultiplier * column.thicknessDp.pixels * chartScale
                     }
                 }
+
+                val columnSignificantY = if (entry.y < 0f) columnBottom else columnTop
 
                 if (column.intersectsVertical(
                         context = this,
@@ -179,44 +182,63 @@ public open class ColumnChart(
                         thicknessScale = chartScale,
                     )
                 ) {
-                    updateMarkerLocationMap(entry, columnTop, columnCenterX, column)
+                    updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column)
                     column.drawVertical(this, columnTop, columnBottom, columnCenterX, chartScale)
                 }
 
-                drawDataLabel(index, model, column.thicknessDp, entry, entryIndex, columnCenterX, columnTop)
+                if (mergeMode == MergeMode.Grouped) {
+                    drawDataLabel(model.entries.size, column.thicknessDp, entry.y, columnCenterX, columnSignificantY)
+                } else if (index == model.entries.lastIndex) {
+                    val yValues = heightMap[entry.x]
+                    drawDataLabel(
+                        model.entries.size, column.thicknessDp, yValues?.first, yValues?.second,
+                        columnCenterX, zeroLinePosition, heightMultiplier,
+                    )
+                }
             }
         }
     }
 
     @LongParameterListDrawFunction
     private fun ChartDrawContext.drawDataLabel(
-        entryCollectionIndex: Int,
-        model: ChartEntryModel,
+        modelEntriesSize: Int,
         columnThicknessDp: Float,
-        entry: ChartEntry,
-        entryIndex: Int,
+        negativeY: Float?,
+        positiveY: Float?,
+        x: Float,
+        zeroLinePosition: Float,
+        heightMultiplier: Float,
+    ) {
+        if (positiveY != null && positiveY > 0f) {
+            val y = zeroLinePosition - positiveY * heightMultiplier
+            drawDataLabel(modelEntriesSize, columnThicknessDp, positiveY, x, y)
+        }
+        if (negativeY != null && negativeY < 0f) {
+            val y = zeroLinePosition + abs(negativeY) * heightMultiplier
+            drawDataLabel(modelEntriesSize, columnThicknessDp, negativeY, x, y)
+        }
+    }
+
+    @LongParameterListDrawFunction
+    private fun ChartDrawContext.drawDataLabel(
+        modelEntriesSize: Int,
+        columnThicknessDp: Float,
+        dataLabelValue: Float,
         x: Float,
         y: Float,
     ) {
-        if (mergeMode == MergeMode.Stack && entryCollectionIndex != model.entries.lastIndex) return
 
         dataLabel?.let { textComponent ->
 
             val canUseSegmentWidth =
                 mergeMode == MergeMode.Stack ||
-                    mergeMode == MergeMode.Grouped && model.entries.size == 1
+                    mergeMode == MergeMode.Grouped && modelEntriesSize == 1
             val maxWidth = when {
                 canUseSegmentWidth -> segmentWidth
                 mergeMode == MergeMode.Grouped ->
                     (columnThicknessDp + 2 * minOf(spacingDp, innerSpacingDp.half)).wholePixels
                 else -> error(message = "Encountered an unexpected `MergeMode`.")
             } * chartScale
-            val dataLabelValue = when (mergeMode) {
-                MergeMode.Grouped -> entry.y
-                MergeMode.Stack -> model.entries.fold(initial = 0f) { sum, entryCollection ->
-                    sum + entryCollection.getOrNull(index = entryIndex)?.y.orZero
-                }
-            }
             val text = dataLabelValueFormatter.formatValue(
                 value = dataLabelValue,
                 chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
@@ -231,7 +253,10 @@ public open class ColumnChart(
                 x + dataLabelWidth.half < bounds.left
             ) return
 
-            val verticalPosition = dataLabelVerticalPosition.inBounds(
+            val labelVerticalPosition =
+                if (dataLabelValue < 0f) dataLabelVerticalPosition.negative() else dataLabelVerticalPosition
+
+            val verticalPosition = labelVerticalPosition.inBounds(
                 y = y,
                 bounds = bounds,
                 componentHeight = textComponent.getHeight(
@@ -273,7 +298,7 @@ public open class ColumnChart(
         chartValuesManager.tryUpdate(
             minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
             maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
-            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: min(model.minY, 0f),
+            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: mergeMode.getMinY(model),
             maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: mergeMode.getMaxY(model),
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,
@@ -338,11 +363,19 @@ public open class ColumnChart(
         Stack;
 
         /**
+         * Returns the minimum y-axis value, taking into account the current [MergeMode].
+         */
+        public fun getMinY(model: ChartEntryModel): Float = when (this) {
+            Grouped -> model.minY.coerceAtMost(0f)
+            Stack -> model.stackedNegativeY.coerceAtMost(0f)
+        }
+
+        /**
          * Returns the maximum y-axis value, taking into account the current [MergeMode].
          */
         public fun getMaxY(model: ChartEntryModel): Float = when (this) {
             Grouped -> model.maxY
-            Stack -> model.stackedMaxY
+            Stack -> model.stackedPositiveY
         }
     }
 }

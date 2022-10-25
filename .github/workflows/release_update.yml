@@ -39,7 +39,6 @@ jobs:
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
       - uses: softprops/action-gh-release@v1
         with:
-          draft: true
           tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.VICO_CHART_BOT_PAT }}
           body_path: ${{ github.workspace }}/vico/CHANGELOG.md

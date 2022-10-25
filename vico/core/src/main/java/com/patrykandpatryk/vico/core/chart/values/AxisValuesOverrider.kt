@@ -16,7 +16,6 @@
 
 package com.patrykandpatryk.vico.core.chart.values
 
-import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.round
 import kotlin.math.abs

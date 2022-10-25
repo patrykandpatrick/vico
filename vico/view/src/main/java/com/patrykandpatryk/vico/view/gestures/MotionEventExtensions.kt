@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.core.component.text
+package com.patrykandpatryk.vico.view.gestures
 
-/**
- * Defines the vertical position of a drawn object relative to a given point.
- */
-public enum class VerticalPosition {
-    Top,
-    Center,
-    Bottom;
+import android.view.MotionEvent
+import kotlin.math.abs
 
-    /**
-     * Returns the inverse of this [VerticalPosition].
-     */
-    public fun negative(): VerticalPosition = when (this) {
-        Top -> Bottom
-        Center -> Center
-        Bottom -> Top
-    }
-}
+internal val MotionEvent.movedXDistance: Float
+    get() = if (historySize > 0) abs(x - getHistoricalX(historySize - 1)) else 0f
+
+internal val MotionEvent.movedYDistance: Float
+    get() = if (historySize > 0) abs(y - getHistoricalY(historySize - 1)) else 0f

@@ -130,7 +130,8 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
             override val maxX: Float = models.maxOf { it.maxX }
             override val minY: Float = models.minOf { it.minY }
             override val maxY: Float = models.maxOf { it.maxY }
-            override val stackedMaxY: Float = models.maxOf { it.stackedMaxY }
+            override val stackedPositiveY: Float = models.maxOf { it.stackedPositiveY }
+            override val stackedNegativeY: Float = models.minOf { it.stackedNegativeY }
             override val stepX: Float = models.minOf { it.stepX }
             override val id: Int = models.map { it.id }.hashCode()
         }
