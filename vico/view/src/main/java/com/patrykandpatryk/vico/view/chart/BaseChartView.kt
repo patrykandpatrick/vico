@@ -356,20 +356,20 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         ifNotNull(
             t1 = marker,
             t2 = markerTouchPoint?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
-        ) { marker, markerModel ->
+        ) { marker, markerEntryModels ->
             marker.draw(
                 context = drawContext,
                 bounds = chart.bounds,
-                markedEntries = markerModel,
+                markedEntries = markerEntryModels,
             )
             if (wasMarkerVisible.not()) {
-                markerVisibilityChangeListener?.onMarkerVisibilityChanged(true, marker)
+                markerVisibilityChangeListener?.onMarkerShown(marker, markerEntryModels)
                 wasMarkerVisible = true
             }
         } ?: marker
             .takeIf { wasMarkerVisible }
             ?.also { marker ->
-                markerVisibilityChangeListener?.onMarkerVisibilityChanged(false, marker)
+                markerVisibilityChangeListener?.onMarkerHidden(marker)
                 wasMarkerVisible = false
             }
     }
