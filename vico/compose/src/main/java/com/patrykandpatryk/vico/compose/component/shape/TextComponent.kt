@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.compose.component.shape
 
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.TextUtils
 import androidx.compose.runtime.Composable
@@ -42,6 +43,7 @@ import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
  * @param padding the padding between the text and the background.
  * @param margins the margins around the background.
  * @param typeface the [Typeface] for the text.
+ * @param textAlign the text alignment.
  */
 @Composable
 public fun textComponent(
@@ -53,6 +55,7 @@ public fun textComponent(
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,
+    textAlign: Paint.Align = Paint.Align.LEFT,
 ): TextComponent = remember(
     color,
     textSize,
@@ -62,6 +65,7 @@ public fun textComponent(
     padding,
     margins,
     typeface,
+    textAlign,
 ) {
     textComponent {
         this.color = color.toArgb()
@@ -72,5 +76,6 @@ public fun textComponent(
         this.padding = padding
         this.margins = margins
         this.typeface = typeface
+        this.textAlign = textAlign
     }
 }
