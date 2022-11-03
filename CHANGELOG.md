@@ -8,3 +8,7 @@ This release includes the following changes.
 ## API changes
 
 - In `MarkerVisibilityChangeListener`, `onMarkerVisibilityChanged` has been split into `onMarkerShown` and `onMarkerHidden`. See also the first point under “Additions.”
+
+## Dependency updates
+
+See [this commit](https://github.com/patrykandpatryk/vico/commit/d494985a885bacd6720ac41c8d3ba9b09970d489) for information on the dependency updates included in this release.
