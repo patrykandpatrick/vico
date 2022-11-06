@@ -19,16 +19,38 @@ package com.patrykandpatryk.vico.core.marker
 /**
  * Allows for listening to [Marker] visibility changes.
  */
-public fun interface MarkerVisibilityChangeListener {
+public interface MarkerVisibilityChangeListener {
 
     /**
-     * Called when the linked [Marker]’s visibility changes.
+     * Called when the linked [Marker] is shown.
+     *
+     * @param marker the linked [Marker], which has been shown.
+     * @param markerEntryModels a list of [Marker.EntryModel]s, which contain information about the marked chart
+     * entries.
+     */
+    public fun onMarkerShown(
+        marker: Marker,
+        markerEntryModels: List<Marker.EntryModel>,
+    ): Unit = onMarkerVisibilityChanged(isVisible = true, marker = marker)
+
+    /**
+     * Called when the linked [Marker] is hidden.
+     *
+     * @param marker the linked [Marker], which has been hidden.
+     */
+    public fun onMarkerHidden(marker: Marker): Unit = onMarkerVisibilityChanged(isVisible = false, marker = marker)
+
+    /**
+     * Called when the linked [Marker]ʼs visibility changes.
      *
      * @param isVisible whether the linked [Marker] is visible.
      * @param marker the linked [Marker], whose visibility has changed.
      */
+    @Deprecated(
+        message = "`onMarkerVisibilityChanged` is deprecated. Use `onMarkerShown` and `onMarkerHidden` instead.",
+    )
     public fun onMarkerVisibilityChanged(
         isVisible: Boolean,
         marker: Marker,
-    )
+    ): Unit = Unit
 }

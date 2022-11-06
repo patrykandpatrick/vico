@@ -306,20 +306,20 @@ public fun <Model : ChartEntryModel> Chart(
         ifNotNull(
             t1 = marker,
             t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
-        ) { marker, markerModel ->
+        ) { marker, markerEntryModels ->
             marker.draw(
                 context = chartDrawContext,
                 bounds = chart.bounds,
-                markedEntries = markerModel,
+                markedEntries = markerEntryModels,
             )
             if (wasMarkerVisible.not()) {
-                markerVisibilityChangeListener?.onMarkerVisibilityChanged(true, marker)
+                markerVisibilityChangeListener?.onMarkerShown(marker, markerEntryModels)
                 wasMarkerVisible = true
             }
         } ?: marker
             .takeIf { wasMarkerVisible }
             ?.also { marker ->
-                markerVisibilityChangeListener?.onMarkerVisibilityChanged(false, marker)
+                markerVisibilityChangeListener?.onMarkerHidden(marker)
                 wasMarkerVisible = false
             }
 

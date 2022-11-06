@@ -32,7 +32,6 @@ import com.patrykandpatryk.vico.core.component.dimension.Padding
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.getOrPutExtra
-import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 import com.patrykandpatryk.vico.core.draw.withCanvas
@@ -105,6 +104,11 @@ public open class TextComponent protected constructor() : Padding, Margins {
     public var background: Component? = null
 
     /**
+     * The text alignment.
+     */
+    public var textAlign: Paint.Align by textPaint::textAlign
+
+    /**
      * The padding (space) between each side of the text and the [background].
      * It is applied whether or not [background] is null.
      */
@@ -152,7 +156,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
         )
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
-        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
+        val textStartPosition =
+            horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth, textAlign)
         val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layout.height.toFloat())
 
         context.withCanvas {
@@ -219,24 +224,35 @@ public open class TextComponent protected constructor() : Padding, Margins {
         context: MeasureContext,
         baseXPosition: Float,
         width: Float,
+        textAlign: Paint.Align,
     ): Float = with(context) {
         when (this@getTextStartPosition) {
             HorizontalPosition.Start ->
-                if (isLtr) getTextRightPosition(baseXPosition, width)
+                if (isLtr) getTextRightPosition(baseXPosition, width, textAlign)
                 else getTextLeftPosition(baseXPosition)
             HorizontalPosition.Center ->
-                baseXPosition - width.half
+                baseXPosition - width.half + textAlign.getXCorrection(width)
             HorizontalPosition.End ->
                 if (isLtr) getTextLeftPosition(baseXPosition)
-                else getTextRightPosition(baseXPosition, width)
+                else getTextRightPosition(baseXPosition, width, textAlign)
         }
     }
 
     private fun MeasureContext.getTextLeftPosition(baseXPosition: Float): Float =
         baseXPosition + padding.getLeftDp(isLtr).pixels + margins.getLeftDp(isLtr).pixels
 
-    private fun MeasureContext.getTextRightPosition(baseXPosition: Float, width: Float): Float =
-        baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels - width
+    private fun MeasureContext.getTextRightPosition(
+        baseXPosition: Float,
+        width: Float,
+        textAlign: Paint.Align,
+    ): Float = baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels -
+        width + textAlign.getXCorrection(width = width)
+
+    private fun Paint.Align.getXCorrection(width: Float): Float = when (this) {
+        Paint.Align.LEFT -> 0f
+        Paint.Align.CENTER -> width.half
+        Paint.Align.RIGHT -> width
+    }
 
     @JvmName("getTextTopPositionExt")
     private fun VerticalPosition.getTextTopPosition(
@@ -394,6 +410,11 @@ public open class TextComponent protected constructor() : Padding, Margins {
         public var background: Component? = null
 
         /**
+         * @see [TextComponent.textAlign]
+         */
+        public var textAlign: Paint.Align = Paint.Align.LEFT
+
+        /**
          * @see [TextComponent.padding]
          */
         public var padding: MutableDimensions = emptyDimensions()
@@ -413,6 +434,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             ellipsize = this@Builder.ellipsize
             lineCount = this@Builder.lineCount
             background = this@Builder.background
+            textAlign = this@Builder.textAlign
             padding.set(this@Builder.padding)
             margins.set(this@Builder.margins)
         }
