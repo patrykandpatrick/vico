@@ -18,6 +18,7 @@ package com.patrykandpatryk.vico.compose.m3.style
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatryk.vico.compose.style.ChartStyle
 
@@ -36,10 +37,18 @@ public fun m3ChartStyle(
         MaterialTheme.colorScheme.tertiary,
     ),
     elevationOverlayColor: Color = MaterialTheme.colorScheme.primary,
-): ChartStyle = ChartStyle.fromColors(
-    axisLabelColor = axisLabelColor,
-    axisGuidelineColor = axisGuidelineColor,
-    axisLineColor = axisLineColor,
-    entityColors = entityColors,
-    elevationOverlayColor = elevationOverlayColor,
-)
+): ChartStyle = remember(
+    axisLabelColor,
+    axisGuidelineColor,
+    axisLineColor,
+    entityColors,
+    elevationOverlayColor,
+) {
+    ChartStyle.fromColors(
+        axisLabelColor = axisLabelColor,
+        axisGuidelineColor = axisGuidelineColor,
+        axisLineColor = axisLineColor,
+        entityColors = entityColors,
+        elevationOverlayColor = elevationOverlayColor,
+    )
+}
