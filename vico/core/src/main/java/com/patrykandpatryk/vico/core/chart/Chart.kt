@@ -104,14 +104,27 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
     public var maxX: Float?
 
     /**
-     * The function responsible for drawing the chart itself.
+     * The function responsible for drawing the chart itself and any decoration behind it.
      * @param context a drawing context that holds data about the environment as well as the [android.graphics.Canvas]
      * to draw on.
      * @param model holds data about the entries that are supposed to be drawn.
      *
      * @see ChartDrawContext
      */
-    public fun draw(
+    public fun drawScrollableContent(
+        context: ChartDrawContext,
+        model: Model,
+    )
+
+    /**
+     * The function responsible for drawing any decoration placed above the chart, as well as persistent markers.
+     * @param context a drawing context that holds data about the environment as well as the [android.graphics.Canvas]
+     * to draw on.
+     * @param model holds data about the entries that are supposed to be drawn.
+     *
+     * @see ChartDrawContext
+     */
+    public fun drawNonScrollableContent(
         context: ChartDrawContext,
         model: Model,
     )

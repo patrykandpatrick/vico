@@ -30,10 +30,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -55,11 +53,11 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatryk.vico.core.chart.draw.drawMarker
 import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
+import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
-import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
-import com.patrykandpatryk.vico.core.extension.ifNotNull
 import com.patrykandpatryk.vico.core.extension.set
 import com.patrykandpatryk.vico.core.layout.VirtualLayout
 import com.patrykandpatryk.vico.core.legend.Legend
@@ -90,6 +88,7 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * instances).
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value.
+ * @param fadingEdges applies a horizontal fade for scrollable content inside of a chart.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -107,6 +106,7 @@ public fun <Model : ChartEntryModel> Chart(
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
+    fadingEdges: FadingEdges? = null,
 ) {
     val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
         key = chartModelProducer,
@@ -129,6 +129,7 @@ public fun <Model : ChartEntryModel> Chart(
             legend = legend,
             chartScrollSpec = chartScrollSpec,
             isZoomEnabled = isZoomEnabled,
+            fadingEdges = fadingEdges,
         )
     }
 }
@@ -209,6 +210,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param oldModel the chart’s previous model. This is used to determine whether to perform an automatic scroll.
+ * @param fadingEdges applies a horizontal fade for scrollable content inside of a chart.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -225,6 +227,7 @@ public fun <Model : ChartEntryModel> Chart(
     chartScrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
     oldModel: Model? = null,
+    fadingEdges: FadingEdges? = null,
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
@@ -244,7 +247,7 @@ public fun <Model : ChartEntryModel> Chart(
     val virtualLayout = remember { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
 
-    var wasMarkerVisible: Boolean by remember { mutableStateOf(false) }
+    val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = model.id) {
         chartScrollSpec.performAutoScroll(
@@ -261,7 +264,9 @@ public fun <Model : ChartEntryModel> Chart(
             .height(DefaultDimens.CHART_HEIGHT.dp)
             .fillMaxWidth()
             .chartTouchEvent(
-                setTouchPoint = markerTouchPoint.component2().takeIf { marker != null },
+                setTouchPoint = markerTouchPoint
+                    .component2()
+                    .takeIf { marker != null },
                 scrollableState = scrollableState.takeIf { chartScrollSpec.isScrollEnabled },
                 onZoom = onZoom.takeIf { isZoomEnabled },
                 interactionSource = interactionSource,
@@ -298,33 +303,32 @@ public fun <Model : ChartEntryModel> Chart(
             horizontalScroll = horizontalScroll.value,
         )
 
+        val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
+
         axisManager.drawBehindChart(chartDrawContext)
-        chart.draw(chartDrawContext, model)
+        chart.drawScrollableContent(chartDrawContext, model)
+
+        fadingEdges?.apply {
+            applyFadingEdges(chartDrawContext, chart.bounds)
+            chartDrawContext.restoreCanvasToCount(count)
+        }
+
+        chart.drawNonScrollableContent(chartDrawContext, model)
         axisManager.drawAboveChart(chartDrawContext)
         legend?.draw(chartDrawContext)
 
-        ifNotNull(
-            t1 = marker,
-            t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
-        ) { marker, markerEntryModels ->
-            marker.draw(
-                context = chartDrawContext,
-                bounds = chart.bounds,
-                markedEntries = markerEntryModels,
+        if (marker != null) {
+            chartDrawContext.drawMarker(
+                marker = marker,
+                markerTouchPoint = markerTouchPoint.value,
+                chart = chart,
+                markerVisibilityChangeListener = markerVisibilityChangeListener,
+                wasMarkerVisible = wasMarkerVisible,
+                setWasMarkerVisible = setWasMarkerVisible,
             )
-            if (wasMarkerVisible.not()) {
-                markerVisibilityChangeListener?.onMarkerShown(marker, markerEntryModels)
-                wasMarkerVisible = true
-            }
-        } ?: marker
-            .takeIf { wasMarkerVisible }
-            ?.also { marker ->
-                markerVisibilityChangeListener?.onMarkerHidden(marker)
-                wasMarkerVisible = false
-            }
+        }
 
-        measureContext.chartValuesManager.resetChartValues()
-        measureContext.clearExtras()
+        measureContext.reset()
     }
 }
 

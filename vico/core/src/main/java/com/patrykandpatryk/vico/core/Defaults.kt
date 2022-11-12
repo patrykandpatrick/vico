@@ -60,6 +60,11 @@ public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
 public const val DEF_THREAD_POOL_SIZE: Int = 4
 
 /**
+ * the default amount of scroll in dp unit needed to make a fading edge fully visible.
+ */
+public const val FULL_FADE_SCROLL_THRESHOLD_DP: Float = 16f
+
+/**
  * Defaults for animations.
  */
 public object Animation {

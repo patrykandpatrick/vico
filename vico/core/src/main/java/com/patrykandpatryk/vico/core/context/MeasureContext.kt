@@ -91,4 +91,12 @@ public interface MeasureContext : Extras {
      * Converts the given [sp] value to a font size in pixels.
      */
     public fun toFontSize(sp: Float): Float = sp * fontScale
+
+    /**
+     * Removes all stored extras and resets [ChartValuesManager.chartValues].
+     *
+     * @see Extras.clearExtras
+     * @see ChartValuesManager.resetChartValues
+     */
+    public fun reset()
 }

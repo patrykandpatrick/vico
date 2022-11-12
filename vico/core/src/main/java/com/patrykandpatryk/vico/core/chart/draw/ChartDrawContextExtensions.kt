@@ -19,9 +19,14 @@ package com.patrykandpatryk.vico.core.chart.draw
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
+import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
+import com.patrykandpatryk.vico.core.marker.Marker
+import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
 
 /**
@@ -81,3 +86,39 @@ public fun chartDrawContext(
 
 internal inline val ChartDrawContext.segmentWidth: Int
     get() = segmentProperties.segmentWidth.pixels.toInt()
+
+/**
+ * Draws a [marker] on top of a chart at a given [markerTouchPoint] and notifies [markerVisibilityChangeListener] about
+ * the [marker]’s visibility changes.
+ */
+@LongParameterListDrawFunction
+public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
+    marker: Marker,
+    markerTouchPoint: Point?,
+    chart: Chart<Model>,
+    markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
+    wasMarkerVisible: Boolean,
+    setWasMarkerVisible: (Boolean) -> Unit,
+) {
+    markerTouchPoint
+        ?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
+        ?.let { markerEntryModels ->
+            marker.draw(
+                context = this,
+                bounds = chart.bounds,
+                markedEntries = markerEntryModels,
+            )
+            if (wasMarkerVisible.not()) {
+                markerVisibilityChangeListener?.onMarkerShown(
+                    marker = marker,
+                    markerEntryModels = markerEntryModels,
+                )
+                setWasMarkerVisible(true)
+            }
+        } ?: marker
+        .takeIf { wasMarkerVisible }
+        ?.also {
+            markerVisibilityChangeListener?.onMarkerHidden(marker = marker)
+            setWasMarkerVisible(false)
+        }
+}
