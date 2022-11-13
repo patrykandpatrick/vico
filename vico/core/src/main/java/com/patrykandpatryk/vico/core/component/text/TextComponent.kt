@@ -453,5 +453,5 @@ public open class TextComponent protected constructor() : Padding, Margins {
  * }
  *```
  */
-public fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
+public inline fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
     TextComponent.Builder().apply(block).build()
