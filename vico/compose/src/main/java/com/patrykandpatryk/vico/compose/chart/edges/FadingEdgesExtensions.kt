@@ -73,6 +73,27 @@ public fun rememberFadingEdges(
     }
 
 /**
+ * Creates and remember [FadingEdges].
+ *
+ * @param fadingEdgesLength the length in dp unit of horizontal edges.
+ * @param fullFadeThreshold the amount of scroll in dp unit needed to make the fade fully visible.
+ * @param fadeEasing interpolates a fade transition of fading edges.
+ *
+ * @see FadingEdges
+ */
+@Composable
+public fun rememberFadingEdges(
+    fadingEdgesLength: Dp = FadingEdgesDefaults.fadingEdgeLength,
+    fullFadeThreshold: Dp = FadingEdgesDefaults.fullFadeThreshold,
+    fadeEasing: Easing = FadingEdgesDefaults.fadeInterpolator,
+): FadingEdges = rememberFadingEdges(
+    startFadingEdgeLength = fadingEdgesLength,
+    endFadingEdgeLength = fadingEdgesLength,
+    fullFadeThreshold = fullFadeThreshold,
+    fadeEasing = fadeEasing,
+)
+
+/**
  * The default values for [FadingEdges].
  */
 public object FadingEdgesDefaults {

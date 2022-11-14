@@ -54,6 +54,24 @@ public open class FadingEdges(
 
     private val rect: RectF = RectF()
 
+    /**
+     * Creates [FadingEdges] with horizontal edges in equal length.
+     *
+     * @param fadingEdgesLengthDp the length in dp unit of horizontal edges.
+     * @param fullFadeThresholdDp the amount of scroll in dp unit needed to make the fade fully visible.
+     * @param fadeInterpolator interpolates a fade transition of fading edges.
+     */
+    public constructor(
+        fadingEdgesLengthDp: Float = 0f,
+        fullFadeThresholdDp: Float = FULL_FADE_SCROLL_THRESHOLD_DP,
+        fadeInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+    ) : this(
+        startFadingEdgeLengthDp = fadingEdgesLengthDp,
+        endFadingEdgeLengthDp = fadingEdgesLengthDp,
+        fullFadeThresholdDp = fullFadeThresholdDp,
+        fadeInterpolator = fadeInterpolator,
+    )
+
     init {
         if (startFadingEdgeLengthDp < 0) error("startFadingEdgeLengthDp cannot be smaller than 0.")
         if (endFadingEdgeLengthDp < 0) error("endFadingEdgeLengthDp cannot be smaller than 0.")
