@@ -16,11 +16,15 @@
 
 package com.patrykandpatryk.vico.view.theme
 
+import android.animation.TimeInterpolator
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
+import android.util.Log
+import android.view.animation.AccelerateInterpolator
 import androidx.annotation.StyleableRes
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.FULL_FADE_SCROLL_THRESHOLD_DP
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
@@ -30,6 +34,7 @@ import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.chart.composed.ComposedChart
 import com.patrykandpatryk.vico.core.chart.composed.ComposedChartEntryModel
+import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
 import com.patrykandpatryk.vico.core.component.shape.DashedShape
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shape
@@ -38,6 +43,7 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.hasAnyFlagOf
 import com.patrykandpatryk.vico.core.extension.hasFlag
 import com.patrykandpatryk.vico.view.R
+import java.lang.Exception
 
 internal class ThemeHandler(
     private val context: Context,
@@ -67,6 +73,9 @@ internal class ThemeHandler(
         private set
 
     public var composedChart: Chart<ComposedChartEntryModel<ChartEntryModel>>? = null
+        private set
+
+    public var fadingEdges: FadingEdges? = null
         private set
 
     init {
@@ -99,6 +108,7 @@ internal class ThemeHandler(
                 .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, true)
             isChartZoomEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, true)
+            fadingEdges = typedArray.getFadingEdges()
         }
         when (chartType) {
             ChartType.Single ->
@@ -231,6 +241,40 @@ internal class ThemeHandler(
             lineChart != null -> lineChart
             else -> null
         }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private fun TypedArray.getFadingEdges(): FadingEdges? {
+        val edgesLength = getRawDimension(context, R.styleable.BaseChartView_fadingEdgesLength, 0f)
+        val startLength = getRawDimension(context, R.styleable.BaseChartView_startFadingEdgeLength, edgesLength)
+        val endLength = getRawDimension(context, R.styleable.BaseChartView_endFadingEdgeLength, edgesLength)
+        val threshold =
+            getRawDimension(context, R.styleable.BaseChartView_fullFadeThreshold, FULL_FADE_SCROLL_THRESHOLD_DP)
+
+        return if (startLength > 0f || endLength > 0f) {
+
+            val interpolatorClassName = getString(R.styleable.BaseChartView_fadingEdgesInterpolator)
+
+            val interpolator = if (interpolatorClassName != null) {
+                try {
+                    context.classLoader.loadClass(interpolatorClassName).newInstance() as? TimeInterpolator
+                } catch (e: Exception) {
+                    Log.e(
+                        "ChartView",
+                        "Caught exception when trying to instantiate $interpolatorClassName " +
+                            "as fade interpolator.",
+                    )
+                    null
+                }
+            } else null
+
+            FadingEdges(
+                startFadingEdgeLengthDp = startLength,
+                endFadingEdgeLengthDp = endLength,
+                fullFadeThresholdDp = threshold,
+                fadeInterpolator = interpolator ?: AccelerateInterpolator(),
+            )
+        } else null
     }
 
     internal enum class ChartType {

@@ -262,6 +262,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         bottomAxis = themeHandler.bottomAxis
         chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = themeHandler.isHorizontalScrollEnabled)
         isZoomEnabled = themeHandler.isChartZoomEnabled
+        fadingEdges = themeHandler.fadingEdges
     }
 
     /**
