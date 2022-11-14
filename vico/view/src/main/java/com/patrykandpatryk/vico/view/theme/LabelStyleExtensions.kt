@@ -50,6 +50,7 @@ internal fun TypedArray.getTextComponent(
         this.color = color
         this.background = background
         this.padding = getLabelPadding(context)
+        this.margins = getLabelMargins(context)
         this.textSizeSp = getRawDimension(
             context = context,
             index = R.styleable.TextComponentStyle_android_textSize,
@@ -119,5 +120,25 @@ private fun TypedArray.getLabelPadding(context: Context): MutableDimensions {
             ?: AXIS_LABEL_HORIZONTAL_PADDING.toFloat(),
         bottomDp = firstNonNegativeOf(paddingBottom, paddingVertical, padding)
             ?: AXIS_LABEL_VERTICAL_PADDING.toFloat(),
+    )
+}
+
+private fun TypedArray.getLabelMargins(context: Context): MutableDimensions {
+
+    fun getDpDimension(@StyleableRes index: Int): Float =
+        getRawDimension(context, index, -1f)
+
+    val padding = getDpDimension(R.styleable.TextComponentStyle_margin)
+    val paddingVertical = getDpDimension(R.styleable.TextComponentStyle_marginVertical)
+    val paddingHorizontal = getDpDimension(R.styleable.TextComponentStyle_marginHorizontal)
+    val paddingStart = getDpDimension(R.styleable.TextComponentStyle_marginStart)
+    val paddingTop = getDpDimension(R.styleable.TextComponentStyle_marginTop)
+    val paddingEnd = getDpDimension(R.styleable.TextComponentStyle_marginEnd)
+    val paddingBottom = getDpDimension(R.styleable.TextComponentStyle_marginBottom)
+    return MutableDimensions(
+        startDp = firstNonNegativeOf(paddingStart, paddingHorizontal, padding) ?: 0f,
+        topDp = firstNonNegativeOf(paddingTop, paddingVertical, padding) ?: 0f,
+        endDp = firstNonNegativeOf(paddingEnd, paddingHorizontal, padding) ?: 0f,
+        bottomDp = firstNonNegativeOf(paddingBottom, paddingVertical, padding) ?: 0f,
     )
 }

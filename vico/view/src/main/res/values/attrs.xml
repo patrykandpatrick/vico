@@ -116,6 +116,13 @@
         <attr name="android:textSize" />
         <attr name="android:maxLines" />
         <attr name="android:ellipsize" />
+        <attr name="margin" format="dimension" />
+        <attr name="marginStart" format="dimension" />
+        <attr name="marginTop" format="dimension" />
+        <attr name="marginEnd" format="dimension" />
+        <attr name="marginBottom" format="dimension" />
+        <attr name="marginVertical" format="dimension" />
+        <attr name="marginHorizontal" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="Shape">
