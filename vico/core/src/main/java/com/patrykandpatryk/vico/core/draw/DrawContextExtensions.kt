@@ -63,4 +63,9 @@ public fun drawContext(
         block(this)
         this.canvas = originalCanvas
     }
+
+    override fun reset() {
+        chartValuesManager.resetChartValues()
+        clearExtras()
+    }
 }
