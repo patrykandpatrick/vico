@@ -34,7 +34,7 @@ import com.patrykandpatryk.vico.core.extension.firstNonNegativeOf
 import com.patrykandpatryk.vico.view.R
 import com.patrykandpatryk.vico.view.extension.defaultColors
 
-private const val FONT_WEIGHT_NORMAL = 500
+private const val FONT_WEIGHT_NORMAL = 400
 
 internal fun TypedArray.getTextComponent(
     context: Context,
@@ -71,6 +71,7 @@ private fun TypedArray.getLabelTruncateAt(): TextUtils.TruncateAt {
     }
 }
 
+@Suppress("MagicNumber")
 private fun TypedArray.getLabelTypeface(context: Context): Typeface? {
     val fontIndex = if (hasValue(R.styleable.TextComponentStyle_android_fontFamily)) {
         R.styleable.TextComponentStyle_android_fontFamily
@@ -90,7 +91,12 @@ private fun TypedArray.getLabelTypeface(context: Context): Typeface? {
     val family = if (fontResId > 0) {
         ResourcesCompat.getFont(context, fontResId)
     } else {
-        Typeface.MONOSPACE
+        when (getInteger(R.styleable.TextComponentStyle_typeface, 3)) {
+            0 -> Typeface.DEFAULT
+            1 -> Typeface.SANS_SERIF
+            2 -> Typeface.SERIF
+            else -> Typeface.MONOSPACE
+        }
     }
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         Typeface.create(family, fontWeight, fontStyle == 1)

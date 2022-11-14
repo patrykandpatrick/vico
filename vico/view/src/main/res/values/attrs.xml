@@ -112,6 +112,12 @@
         <attr name="fontFamily" />
         <attr name="android:textFontWeight" />
         <attr name="android:fontStyle" />
+        <attr name="typeface">
+            <enum name="normal" value="0" />
+            <enum name="sans" value="1" />
+            <enum name="serif" value="2" />
+            <enum name="monospace" value="3" />
+        </attr>
         <attr name="fontStyle" />
         <attr name="android:textSize" />
         <attr name="android:maxLines" />
