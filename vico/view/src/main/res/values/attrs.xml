@@ -47,6 +47,10 @@
 
     <declare-styleable name="BaseChartView">
         <attr name="axisStyle" format="reference" />
+        <attr name="startAxisStyle" format="reference" />
+        <attr name="topAxisStyle" format="reference" />
+        <attr name="endAxisStyle" format="reference" />
+        <attr name="bottomAxisStyle" format="reference" />
         <attr name="columnChartStyle" />
         <attr name="lineChartStyle" />
         <attr name="showStartAxis" format="boolean" />

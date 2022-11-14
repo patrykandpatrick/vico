@@ -72,16 +72,28 @@ internal class ThemeHandler(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.BaseChartView).use { typedArray ->
             if (typedArray.getBoolean(R.styleable.BaseChartView_showStartAxis, false)) {
-                startAxis = typedArray.getAxisBuilder(VerticalAxis.Builder()).build()
+                startAxis = typedArray.getAxisBuilder(
+                    R.styleable.BaseChartView_startAxisStyle,
+                    VerticalAxis.Builder(),
+                ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showTopAxis, false)) {
-                topAxis = typedArray.getAxisBuilder(HorizontalAxis.Builder()).build()
+                topAxis = typedArray.getAxisBuilder(
+                    R.styleable.BaseChartView_topAxisStyle,
+                    HorizontalAxis.Builder(),
+                ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showEndAxis, false)) {
-                endAxis = typedArray.getAxisBuilder(VerticalAxis.Builder()).build()
+                endAxis = typedArray.getAxisBuilder(
+                    R.styleable.BaseChartView_endAxisStyle,
+                    VerticalAxis.Builder(),
+                ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showBottomAxis, false)) {
-                bottomAxis = typedArray.getAxisBuilder(HorizontalAxis.Builder()).build()
+                bottomAxis = typedArray.getAxisBuilder(
+                    R.styleable.BaseChartView_bottomAxisStyle,
+                    HorizontalAxis.Builder(),
+                ).build()
             }
             isHorizontalScrollEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, true)
@@ -101,6 +113,7 @@ internal class ThemeHandler(
     }
 
     private fun <Position : AxisPosition, Builder : Axis.Builder<Position>> TypedArray.getAxisBuilder(
+        styleAttrId: Int,
         builder: Builder,
     ): Builder {
 
@@ -117,7 +130,7 @@ internal class ThemeHandler(
 
         val axisStyle = getNestedTypedArray(
             context = context,
-            resourceId = R.styleable.BaseChartView_axisStyle,
+            resourceId = if (hasValue(styleAttrId)) styleAttrId else R.styleable.BaseChartView_axisStyle,
             styleableResourceId = R.styleable.Axis,
         )
 
