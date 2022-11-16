@@ -115,6 +115,7 @@ internal class ThemeHandler(
                 context.obtainStyledAttributes(attrs, R.styleable.ChartView).use { typedArray ->
                     chart = typedArray.getChart()
                 }
+
             ChartType.Composed ->
                 context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView).use { typedArray ->
                     composedChart = typedArray.getComposedChart()
@@ -145,24 +146,30 @@ internal class ThemeHandler(
         )
 
         return builder.apply {
-            axis = axisStyle.getLineComponent(
-                resourceId = R.styleable.Axis_axisLineStyle,
-                styleableResourceId = R.styleable.LineComponent,
-            )
-            tick = axisStyle.getLineComponent(
-                resourceId = R.styleable.Axis_axisTickStyle,
-                styleableResourceId = R.styleable.LineComponent,
-            )
+            axis = axisStyle
+                .takeIf { it.getBoolean(R.styleable.Axis_showAxisLine, true) }
+                ?.getLineComponent(
+                    resourceId = R.styleable.Axis_axisLineStyle,
+                    styleableResourceId = R.styleable.LineComponent,
+                )
+            tick = axisStyle
+                .takeIf { it.getBoolean(R.styleable.Axis_showTick, true) }
+                ?.getLineComponent(
+                    resourceId = R.styleable.Axis_axisTickStyle,
+                    styleableResourceId = R.styleable.LineComponent,
+                )
             tickLengthDp = axisStyle.getRawDimension(
                 context = context,
                 R.styleable.Axis_axisTickLength,
                 defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
             )
-            guideline = axisStyle.getLineComponent(
-                resourceId = R.styleable.Axis_axisGuidelineStyle,
-                styleableResourceId = R.styleable.LineComponent,
-                defaultShape = DashedShape(),
-            )
+            guideline = axisStyle
+                .takeIf { it.getBoolean(R.styleable.Axis_showGuideline, true) }
+                ?.getLineComponent(
+                    resourceId = R.styleable.Axis_axisGuidelineStyle,
+                    styleableResourceId = R.styleable.LineComponent,
+                    defaultShape = DashedShape(),
+                )
             labelRotationDegrees = axisStyle.getFloat(
                 R.styleable.Axis_labelRotationDegrees,
                 0f,
@@ -197,6 +204,7 @@ internal class ThemeHandler(
                             values[value % values.size]
                         }
                 }
+
                 is HorizontalAxis.Builder<*> -> {
                     tickPosition = when (axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickPosition, 0)) {
                         0 -> HorizontalAxis.TickPosition.Edge

@@ -68,8 +68,11 @@
 
     <!-- Defines the appearance of chart axes. -->
     <declare-styleable name="Axis">
+        <attr name="showAxisLine" format="boolean" />
         <attr name="axisLineStyle" format="reference" />
+        <attr name="showGuideline" format="boolean" />
         <attr name="axisGuidelineStyle" format="reference" />
+        <attr name="showTick" format="boolean" />
         <attr name="axisTickStyle" format="reference" />
         <attr name="axisLabelStyle" format="reference" />
         <attr name="axisTickLength" format="dimension" />
