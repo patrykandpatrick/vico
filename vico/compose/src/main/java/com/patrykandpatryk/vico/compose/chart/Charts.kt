@@ -109,7 +109,8 @@ public fun <Model : ChartEntryModel> Chart(
     runInitialAnimation: Boolean = true,
 ) {
     val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
-        key = chartModelProducer,
+        chartKey = chart,
+        producerKey = chartModelProducer,
         animationSpec = diffAnimationSpec,
         runInitialAnimation = runInitialAnimation,
     )
