@@ -22,6 +22,8 @@
     <string name="x_of_y">%1$d of %2$d</string>
     <string name="line_chart_label">Line chart</string>
     <string name="line_chart_description">Persistent marker &amp; customized guidelines</string>
+    <string name="line_chart_with_fading_edges_label">Line chart with fading edges</string>
+    <string name="line_chart_with_fading_edges_description">Adaptive y-axis values with labels inside</string>
     <string name="column_chart_label">Column chart</string>
     <string name="column_chart_description">Percentages, threshold line &amp; custom tick\u00A0position</string>
     <string name="composed_chart_label">Composed chart</string>
