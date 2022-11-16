@@ -108,6 +108,15 @@ ext {
             ],
     ]
 
+    def material = [
+
+        materialComponents: [
+            group  : "com.google.android.material",
+            name   : "material",
+            version: versions.materialComponents
+        ]
+    ]
+
     def test_libs = [
 
             junit   : [
@@ -144,6 +153,7 @@ ext {
             [configuration: "implementation", dependency: jetpack_compose_libs.ui_tooling],
             [configuration: "implementation", dependency: kotlin_libs.coroutines],
             [configuration: "implementation", dependency: kotlin_libs.std_lib],
+            [configuration: "implementation", dependency: material.materialComponents],
             [configuration: "testImplementation", dependency: kotlin_libs.test],
             [configuration: "testImplementation", dependency: test_libs.junit],
             [configuration: "testImplementation", dependency: test_libs.junitExt],
