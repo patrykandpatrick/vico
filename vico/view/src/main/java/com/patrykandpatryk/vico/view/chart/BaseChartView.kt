@@ -285,7 +285,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
-            measureContext.reset()
+            measureContext.chartValuesManager.resetChartValues()
             chart.updateChartValues(measureContext.chartValuesManager, model)
 
             if (ViewCompat.isAttachedToWindow(this)) {
@@ -377,6 +377,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 setWasMarkerVisible = { wasMarkerVisible = it },
             )
         }
+        measureContext.clearExtras()
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {
