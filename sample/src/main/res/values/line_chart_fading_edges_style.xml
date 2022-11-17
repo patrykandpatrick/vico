@@ -39,7 +39,7 @@
 
     <style name="LineChartFadingEdgesAxisStyle.Start">
         <item name="verticalAxisHorizontalLabelPosition">inside</item>
-        <item name="title">X-axis Title</item>
+        <item name="title">x-axis title</item>
         <item name="titleStyle">@style/LineChartFadingEdgesAxisTitleStyle.Start</item>
     </style>
 
@@ -54,7 +54,7 @@
     </style>
 
     <style name="LineChartFadingEdgesAxisStyle.Bottom">
-        <item name="title">Y-axis Title</item>
+        <item name="title">y-axis title</item>
         <item name="titleStyle">@style/LineChartFadingEdgesAxisTitleStyle.Bottom</item>
         <item name="showGuideline">false</item>
     </style>

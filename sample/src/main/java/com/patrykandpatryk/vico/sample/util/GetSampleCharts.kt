@@ -50,16 +50,16 @@ internal fun getSampleCharts(
         viewBased = { ViewLineChart(chartEntryModelProducer = chartStepEntryModelProducer) },
     ),
     SampleChart(
-        labelResourceId = R.string.line_chart_with_fading_edges_label,
-        descriptionResourceId = R.string.line_chart_with_fading_edges_description,
-        composeBased = { ComposeLineChartWithFadingEdges(chartEntryModelProducer = chartEntryModelProducer) },
-        viewBased = { ViewLineChartWithFadingEdges(chartEntryModelProducer = chartEntryModelProducer) },
-    ),
-    SampleChart(
         labelResourceId = R.string.column_chart_label,
         descriptionResourceId = R.string.column_chart_description,
         composeBased = { ComposeColumnChart(chartEntryModelProducer = chartEntryModelProducer) },
         viewBased = { ViewColumnChart(chartEntryModelProducer = chartEntryModelProducer) },
+    ),
+    SampleChart(
+        labelResourceId = R.string.line_chart_with_fading_edges_label,
+        descriptionResourceId = R.string.line_chart_with_fading_edges_description,
+        composeBased = { ComposeLineChartWithFadingEdges(chartEntryModelProducer = chartEntryModelProducer) },
+        viewBased = { ViewLineChartWithFadingEdges(chartEntryModelProducer = chartEntryModelProducer) },
     ),
     SampleChart(
         labelResourceId = R.string.composed_chart_label,

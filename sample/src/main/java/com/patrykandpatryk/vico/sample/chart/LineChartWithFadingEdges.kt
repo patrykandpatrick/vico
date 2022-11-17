@@ -52,7 +52,7 @@ internal fun ComposeLineChartWithFadingEdges(
 
     val startAxis = startAxis(
         horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-        title = "X-axis Title",
+        title = "x-axis title",
         titleComponent = textComponent(
             background = shapeComponent(
                 shape = Shapes.pillShape,
@@ -66,7 +66,7 @@ internal fun ComposeLineChartWithFadingEdges(
 
     val bottomAxis = bottomAxis(
         guideline = null,
-        title = "Y-axis Title",
+        title = "y-axis title",
         titleComponent = textComponent(
             background = shapeComponent(
                 shape = Shapes.pillShape,
