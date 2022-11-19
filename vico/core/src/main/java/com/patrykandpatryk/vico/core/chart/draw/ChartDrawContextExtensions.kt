@@ -88,8 +88,8 @@ internal inline val ChartDrawContext.segmentWidth: Int
     get() = segmentProperties.segmentWidth.pixels.toInt()
 
 /**
- * Draws a [marker] on top of a chart at a given [markerTouchPoint] and notifies [markerVisibilityChangeListener] about
- * the [marker]’s visibility changes.
+ * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the
+ * [markerVisibilityChangeListener] about the [marker]’s visibility changes.
  */
 @LongParameterListDrawFunction
 public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(

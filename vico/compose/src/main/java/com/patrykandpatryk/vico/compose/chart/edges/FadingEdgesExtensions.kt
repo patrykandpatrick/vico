@@ -27,13 +27,14 @@ import com.patrykandpatryk.vico.core.FULL_FADE_SCROLL_THRESHOLD_DP
 import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
 
 /**
- * [FadingEdges] applies a horizontal fade for scrollable content inside of a chart.
- * A faded edge indicates a possibility to scroll towards the edge to reveal more content.
+ * [FadingEdges] applies a horizontal fade to the edges of the chart area for scrollable charts.
+ * This effect indicates that there’s more content beyond a given edge, and the user can scroll to reveal it.
  *
- * @param startFadingEdgeLength the length in dp unit of a start edge.
- * @param endFadingEdgeLength the length in dp unit of an end edge.
- * @param fullFadeThreshold the amount of scroll in dp unit needed to make the fade fully visible.
- * @param fadeEasing interpolates a fade transition of fading edges.
+ * @param startFadingEdgeLength the width of the fade overlay for the start edge (in dp).
+ * @param endFadingEdgeLength the width of the fade overlay for the end edge (in dp).
+ * @param fullFadeThreshold the scroll distance over which the overlays fade in and out (in dp).
+ * @param fadeEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
+ * which [fullFadeThreshold] has been satisfied to the opacity of the fading edges.
  */
 public fun FadingEdges(
     startFadingEdgeLength: Dp = FadingEdgesDefaults.fadingEdgeLength,
@@ -47,12 +48,13 @@ public fun FadingEdges(
 ) { input -> fadeEasing.transform(input) }
 
 /**
- * Creates and remember [FadingEdges].
+ * Creates and remembers a [FadingEdges] instance.
  *
- * @param startFadingEdgeLength the length in dp unit of a start edge.
- * @param endFadingEdgeLength the length in dp unit of an end edge.
- * @param fullFadeThreshold the amount of scroll in dp unit needed to make the fade fully visible.
- * @param fadeEasing interpolates a fade transition of fading edges.
+ * @param startFadingEdgeLength the width of the fade overlay for the start edge (in dp).
+ * @param endFadingEdgeLength the width of the fade overlay for the end edge (in dp).
+ * @param fullFadeThreshold the scroll distance over which the overlays fade in and out (in dp).
+ * @param fadeEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
+ * which [fullFadeThreshold] has been satisfied to the opacity of the fading edges.
  *
  * @see FadingEdges
  */
@@ -73,11 +75,12 @@ public fun rememberFadingEdges(
     }
 
 /**
- * Creates and remember [FadingEdges].
+ * Creates and remembers a [FadingEdges] instance.
  *
- * @param fadingEdgesLength the length in dp unit of horizontal edges.
- * @param fullFadeThreshold the amount of scroll in dp unit needed to make the fade fully visible.
- * @param fadeEasing interpolates a fade transition of fading edges.
+ * @param fadingEdgesLength the width of the fade overlay.
+ * @param fullFadeThreshold the scroll distance over which the overlays fade in and out (in dp).
+ * @param fadeEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
+ * which [fullFadeThreshold] has been satisfied to the opacity of the fading edges.
  *
  * @see FadingEdges
  */
@@ -99,17 +102,18 @@ public fun rememberFadingEdges(
 public object FadingEdgesDefaults {
 
     /**
-     * The length in dp unit of an edge.
+     * The width of the fade overlays (in dp).
      */
     public val fadingEdgeLength: Dp = 0.dp
 
     /**
-     * The amount of scroll in dp unit needed to make the fade fully visible.
+     * The scroll distance over which the overlays fade in and out (in dp).
      */
     public val fullFadeThreshold: Dp = FULL_FADE_SCROLL_THRESHOLD_DP.dp
 
     /**
-     * Interpolates a fade transition of fading edges.
+     * Used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to which the fading
+     * edges’ visibility threshold has been satisfied to the opacity of the fading edges.
      */
     public val fadeInterpolator: Easing = FastOutSlowInEasing
 }

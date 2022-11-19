@@ -88,7 +88,7 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * instances).
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value.
- * @param fadingEdges applies a horizontal fade for scrollable content inside of a chart.
+ * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -210,7 +210,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param oldModel the chart’s previous model. This is used to determine whether to perform an automatic scroll.
- * @param fadingEdges applies a horizontal fade for scrollable content inside of a chart.
+ * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(

@@ -251,7 +251,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
 
     /**
-     * Applies a horizontal fade for scrollable content inside of a chart.
+     * Applies a horizontal fade to the edges of the chart area for scrollable charts.
      */
     public var fadingEdges: FadingEdges? = null
 

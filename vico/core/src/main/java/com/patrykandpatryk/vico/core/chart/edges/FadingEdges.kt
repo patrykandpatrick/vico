@@ -35,13 +35,14 @@ private const val FULL_FADE: Int = 0xFF000000.toInt()
 private const val NO_FADE: Int = 0x00000000
 
 /**
- * [FadingEdges] applies a horizontal fade for scrollable content inside of a chart.
- * A faded edge indicates a possibility to scroll towards the edge to reveal more content.
+ * [FadingEdges] applies a horizontal fade to the edges of the chart area for scrollable charts.
+ * This effect indicates that there’s more content beyond a given edge, and the user can scroll to reveal it.
  *
- * @param startFadingEdgeLengthDp the length in dp unit of a start edge.
- * @param endFadingEdgeLengthDp the length in dp unit of an end edge.
- * @param fullFadeThresholdDp the amount of scroll in dp unit needed to make the fade fully visible.
- * @param fadeInterpolator interpolates a fade transition of fading edges.
+ * @param startFadingEdgeLengthDp the width of the fade overlay for the start edge (in dp).
+ * @param endFadingEdgeLengthDp the width of the fade overlay for the end edge (in dp).
+ * @param fullFadeThresholdDp the scroll distance over which the overlays fade in and out (in dp).
+ * @param fadeInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
+ * to which [fullFadeThresholdDp] has been satisfied to the opacity of the fading edges.
  */
 public open class FadingEdges(
     public var startFadingEdgeLengthDp: Float = 0f,
@@ -55,11 +56,12 @@ public open class FadingEdges(
     private val rect: RectF = RectF()
 
     /**
-     * Creates [FadingEdges] with horizontal edges in equal length.
+     * Creates a [FadingEdges] instance with fading edges of equal width.
      *
-     * @param fadingEdgesLengthDp the length in dp unit of horizontal edges.
-     * @param fullFadeThresholdDp the amount of scroll in dp unit needed to make the fade fully visible.
-     * @param fadeInterpolator interpolates a fade transition of fading edges.
+     * @param fadingEdgesLengthDp the width of the fade overlay (in dp).
+     * @param fullFadeThresholdDp the scroll distance over which the overlays fade in and out (in dp).
+     * @param fadeInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the
+     * degree to which [fullFadeThresholdDp] has been satisfied to the opacity of the fading edges.
      */
     public constructor(
         fadingEdgesLengthDp: Float = 0f,
@@ -73,17 +75,17 @@ public open class FadingEdges(
     )
 
     init {
-        if (startFadingEdgeLengthDp < 0) error("startFadingEdgeLengthDp cannot be smaller than 0.")
-        if (endFadingEdgeLengthDp < 0) error("endFadingEdgeLengthDp cannot be smaller than 0.")
+        if (startFadingEdgeLengthDp < 0) error("`startFadingEdgeLengthDp` cannot be smaller than 0.")
+        if (endFadingEdgeLengthDp < 0) error("`endFadingEdgeLengthDp` cannot be smaller than 0.")
 
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
     }
 
     /**
-     * Applies fading edges inside of given [bounds] accordingly to a scroll state.
+     * Applies fading edges inside of the given [bounds] accordingly to the scroll state.
      *
      * @param context the drawing context that holds the information necessary to draw the fading edges.
-     * @param bounds within which the fading edges will be drawn.
+     * @param bounds the bounds within which the fading edges will be drawn.
      */
     public fun applyFadingEdges(
         context: ChartDrawContext,
