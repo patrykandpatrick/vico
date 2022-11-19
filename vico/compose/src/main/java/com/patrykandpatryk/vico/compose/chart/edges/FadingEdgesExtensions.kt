@@ -69,9 +69,7 @@ public fun rememberFadingEdges(
         startFadingEdgeLengthDp = startFadingEdgeLength.value
         endFadingEdgeLengthDp = endFadingEdgeLength.value
         visibilityThresholdDp = visibilityThreshold.value
-        this.fadeInterpolator = remember(fadeEasing) {
-            TimeInterpolator { input -> fadeEasing.transform(input) }
-        }
+        this.fadeInterpolator = remember(fadeEasing) { TimeInterpolator(fadeEasing::transform) }
     }
 
 /**
