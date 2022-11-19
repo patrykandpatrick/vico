@@ -21,17 +21,17 @@ ext {
             appcompat: [
                     group  : "androidx.appcompat",
                     name   : "appcompat",
-                    version: versions.androidx_appcompat
+                    version: versions.androidx_appcompat,
             ],
             core     : [
                     group  : "androidx.core",
                     name   : "core-ktx",
-                    version: versions.androidx_core
+                    version: versions.androidx_core,
             ],
             lifecycle: [
                     group  : "androidx.lifecycle",
                     name   : "lifecycle-runtime-ktx",
-                    version: versions.lifecycle_runtime
+                    version: versions.lifecycle_runtime,
             ],
     ]
 
@@ -40,17 +40,17 @@ ext {
             ui         : [
                     group  : "androidx.compose.ui",
                     name   : "ui",
-                    version: versions.compose
+                    version: versions.compose,
             ],
             ui_tooling : [
                     group  : "androidx.compose.ui",
                     name   : "ui-tooling",
-                    version: versions.compose
+                    version: versions.compose,
             ],
             material   : [
                     group  : "androidx.compose.material",
                     name   : "material",
-                    version: versions.compose
+                    version: versions.compose,
             ],
             material3  : [
                     group  : "androidx.compose.material3",
@@ -60,28 +60,28 @@ ext {
             activity          : [
                     group  : "androidx.activity",
                     name   : "activity-compose",
-                    version: versions.activity
+                    version: versions.activity,
             ],
             viewbinding       : [
                     group  : "androidx.compose.ui",
                     name   : "ui-viewbinding",
-                    version: versions.compose
+                    version: versions.compose,
             ],
             foundation        : [
                     group  : "androidx.compose.foundation",
                     name   : "foundation",
-                    version: versions.compose
+                    version: versions.compose,
             ],
             viewmodel         : [
                     group  : "androidx.lifecycle",
                     name   : "lifecycle-viewmodel-compose",
-                    version: versions.viewmodel
+                    version: versions.viewmodel,
             ],
             systemuicontroller: [
                     group  : "com.google.accompanist",
                     name   : "accompanist-systemuicontroller",
                     version: versions.accompanist,
-            ]
+            ],
     ]
 
     def kotlin_libs = [
@@ -89,22 +89,22 @@ ext {
             coroutines_android: [
                     group  : "org.jetbrains.kotlinx",
                     name   : "kotlinx-coroutines-android",
-                    version: versions.coroutines
+                    version: versions.coroutines,
             ],
             coroutines        : [
                     group  : "org.jetbrains.kotlinx",
                     name   : "kotlinx-coroutines-core",
-                    version: versions.coroutines
+                    version: versions.coroutines,
             ],
             std_lib           : [
                     group  : "org.jetbrains.kotlin",
                     name   : "kotlin-stdlib",
-                    version: versions.kotlin
+                    version: versions.kotlin,
             ],
             test              : [
                     group  : "org.jetbrains.kotlin",
                     name   : "kotlin-test",
-                    version: versions.kotlin
+                    version: versions.kotlin,
             ],
     ]
 
@@ -113,8 +113,8 @@ ext {
         materialComponents: [
             group  : "com.google.android.material",
             name   : "material",
-            version: versions.materialComponents
-        ]
+            version: versions.materialComponents,
+        ],
     ]
 
     def test_libs = [
@@ -122,23 +122,23 @@ ext {
             junit   : [
                     group  : "junit",
                     name   : "junit",
-                    version: versions.junit
+                    version: versions.junit,
             ],
             junitExt: [
                     group  : "androidx.test.ext",
                     name   : "junit",
-                    version: versions.junitExt
+                    version: versions.junitExt,
             ],
             mockk   : [
                     group  : "io.mockk",
                     name   : "mockk",
-                    version: versions.mockk
+                    version: versions.mockk,
             ],
             testCore: [
                     group  : "androidx.test",
                     name   : "core-ktx",
-                    version: versions.testCore
-            ]
+                    version: versions.testCore,
+            ],
     ]
 
     sample_dependencies = [
