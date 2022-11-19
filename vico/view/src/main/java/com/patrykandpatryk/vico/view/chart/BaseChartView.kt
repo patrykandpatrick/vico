@@ -37,13 +37,13 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatryk.vico.core.chart.draw.drawMarker
 import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
+import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
-import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
-import com.patrykandpatryk.vico.core.extension.ifNotNull
 import com.patrykandpatryk.vico.core.extension.set
 import com.patrykandpatryk.vico.core.layout.VirtualLayout
 import com.patrykandpatryk.vico.core.legend.Legend
@@ -250,6 +250,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      */
     public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
 
+    /**
+     * Applies a horizontal fade to the edges of the chart area for scrollable charts.
+     */
+    public var fadingEdges: FadingEdges? = null
+
     init {
         startAxis = themeHandler.startAxis
         topAxis = themeHandler.topAxis
@@ -257,6 +262,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         bottomAxis = themeHandler.bottomAxis
         chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = themeHandler.isHorizontalScrollEnabled)
         isZoomEnabled = themeHandler.isChartZoomEnabled
+        fadingEdges = themeHandler.fadingEdges
     }
 
     /**
@@ -266,7 +272,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val oldModel = this.model
         this.model = model
         tryInvalidate(chart = chart, model = model)
-        if (oldModel?.id != model.id) {
+        if (oldModel?.id != model.id && isInEditMode.not()) {
             handler.post {
                 chartScrollSpec.performAutoScroll(
                     model = model,
@@ -337,7 +343,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
         scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
-        val drawContext = chartDrawContext(
+        val chartDrawContext = chartDrawContext(
             canvas = canvas,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
@@ -347,31 +353,31 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             horizontalScroll = scrollHandler.currentScroll,
         )
 
-        axisManager.drawBehindChart(drawContext)
-        chart.draw(drawContext, model)
-        axisManager.drawAboveChart(drawContext)
+        val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
 
-        legend?.draw(drawContext)
+        axisManager.drawBehindChart(chartDrawContext)
+        chart.drawScrollableContent(chartDrawContext, model)
 
-        ifNotNull(
-            t1 = marker,
-            t2 = markerTouchPoint?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
-        ) { marker, markerEntryModels ->
-            marker.draw(
-                context = drawContext,
-                bounds = chart.bounds,
-                markedEntries = markerEntryModels,
+        fadingEdges?.apply {
+            applyFadingEdges(chartDrawContext, chart.bounds)
+            chartDrawContext.restoreCanvasToCount(count)
+        }
+
+        chart.drawNonScrollableContent(chartDrawContext, model)
+        axisManager.drawAboveChart(chartDrawContext)
+        legend?.draw(chartDrawContext)
+
+        marker?.also { marker ->
+            chartDrawContext.drawMarker(
+                marker = marker,
+                markerTouchPoint = markerTouchPoint,
+                chart = chart,
+                markerVisibilityChangeListener = markerVisibilityChangeListener,
+                wasMarkerVisible = wasMarkerVisible,
+                setWasMarkerVisible = { wasMarkerVisible = it },
             )
-            if (wasMarkerVisible.not()) {
-                markerVisibilityChangeListener?.onMarkerShown(marker, markerEntryModels)
-                wasMarkerVisible = true
-            }
-        } ?: marker
-            .takeIf { wasMarkerVisible }
-            ?.also { marker ->
-                markerVisibilityChangeListener?.onMarkerHidden(marker)
-                wasMarkerVisible = false
-            }
+        }
+        measureContext.clearExtras()
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {

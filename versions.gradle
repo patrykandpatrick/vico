@@ -43,5 +43,6 @@ ext {
             testCore          : "1.4.0",
             compose_material3 : "1.0.1",
             accompanist       : "0.27.0",
+            materialComponents: "1.8.0-alpha02",
     ]
 }

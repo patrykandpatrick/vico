@@ -83,23 +83,25 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
         persistentMarkers.remove(x) != null
     }
 
-    override fun draw(
+    override fun drawScrollableContent(
         context: ChartDrawContext,
         model: Model,
     ): Unit = with(context) {
-
         insets.clear()
         getInsets(this, insets, segmentProperties)
-
         drawChartInternal(context, model)
+    }
 
+    override fun drawNonScrollableContent(
+        context: ChartDrawContext,
+        model: Model,
+    ): Unit = with(context) {
         canvas.inClip(
             left = bounds.left,
             top = 0f,
             right = bounds.right,
             bottom = context.canvas.height.toFloat(),
         ) {
-
             drawDecorationAboveChart(context)
             persistentMarkers.forEach { (x, marker) ->
                 entryLocationMap.getEntryModel(x)?.also { markerModel ->

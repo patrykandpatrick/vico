@@ -47,6 +47,10 @@
 
     <declare-styleable name="BaseChartView">
         <attr name="axisStyle" format="reference" />
+        <attr name="startAxisStyle" format="reference" />
+        <attr name="topAxisStyle" format="reference" />
+        <attr name="endAxisStyle" format="reference" />
+        <attr name="bottomAxisStyle" format="reference" />
         <attr name="columnChartStyle" />
         <attr name="lineChartStyle" />
         <attr name="showStartAxis" format="boolean" />
@@ -55,12 +59,20 @@
         <attr name="showBottomAxis" format="boolean" />
         <attr name="chartHorizontalScrollingEnabled" format="boolean" />
         <attr name="chartZoomEnabled" format="boolean" />
+        <attr name="fadingEdgesLength" format="dimension" />
+        <attr name="startFadingEdgeLength" format="dimension" />
+        <attr name="endFadingEdgeLength" format="dimension" />
+        <attr name="visibilityThreshold" format="dimension" />
+        <attr name="fadingEdgesInterpolator" format="string" />
     </declare-styleable>
 
     <!-- Defines the appearance of chart axes. -->
     <declare-styleable name="Axis">
+        <attr name="showAxisLine" format="boolean" />
         <attr name="axisLineStyle" format="reference" />
+        <attr name="showGuideline" format="boolean" />
         <attr name="axisGuidelineStyle" format="reference" />
+        <attr name="showTick" format="boolean" />
         <attr name="axisTickStyle" format="reference" />
         <attr name="axisLabelStyle" format="reference" />
         <attr name="axisTickLength" format="dimension" />
@@ -108,10 +120,23 @@
         <attr name="fontFamily" />
         <attr name="android:textFontWeight" />
         <attr name="android:fontStyle" />
+        <attr name="typeface">
+            <enum name="normal" value="0" />
+            <enum name="sans" value="1" />
+            <enum name="serif" value="2" />
+            <enum name="monospace" value="3" />
+        </attr>
         <attr name="fontStyle" />
         <attr name="android:textSize" />
         <attr name="android:maxLines" />
         <attr name="android:ellipsize" />
+        <attr name="margin" format="dimension" />
+        <attr name="marginStart" format="dimension" />
+        <attr name="marginTop" format="dimension" />
+        <attr name="marginEnd" format="dimension" />
+        <attr name="marginBottom" format="dimension" />
+        <attr name="marginVertical" format="dimension" />
+        <attr name="marginHorizontal" format="dimension" />
     </declare-styleable>
 
     <declare-styleable name="Shape">

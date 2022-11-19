@@ -18,5 +18,5 @@
 
 <resources>
 
-    <style name="Theme.Vico" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.Vico" parent="Theme.Material3.DayNight.NoActionBar" />
 </resources>

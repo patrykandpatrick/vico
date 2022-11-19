@@ -18,6 +18,7 @@ package com.patrykandpatryk.vico.core.context
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import com.patrykandpatryk.vico.core.extension.saveLayer
 
 /**
  * [DrawContext] is an extension of [MeasureContext] that stores a [Canvas] and other properties.
@@ -83,4 +84,16 @@ public interface DrawContext : MeasureContext {
     public fun restoreCanvasToCount(count: Int) {
         canvas.restoreToCount(count)
     }
+
+    /**
+     * A convenience function for [Canvas.saveLayer].
+     *
+     * @see Canvas.saveLayer
+     */
+    public fun saveLayer(
+        left: Float = 0f,
+        top: Float = 0f,
+        right: Float = canvas.width.toFloat(),
+        bottom: Float = canvas.height.toFloat(),
+    ): Int = canvas.saveLayer(left, top, right, bottom)
 }

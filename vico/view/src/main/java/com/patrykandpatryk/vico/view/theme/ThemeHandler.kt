@@ -16,11 +16,15 @@
 
 package com.patrykandpatryk.vico.view.theme
 
+import android.animation.TimeInterpolator
 import android.content.Context
 import android.content.res.TypedArray
 import android.util.AttributeSet
+import android.util.Log
+import android.view.animation.AccelerateInterpolator
 import androidx.annotation.StyleableRes
 import com.patrykandpatryk.vico.core.DefaultDimens
+import com.patrykandpatryk.vico.core.FADING_EDGES_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
@@ -30,6 +34,7 @@ import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatryk.vico.core.chart.composed.ComposedChart
 import com.patrykandpatryk.vico.core.chart.composed.ComposedChartEntryModel
+import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
 import com.patrykandpatryk.vico.core.component.shape.DashedShape
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shape
@@ -38,6 +43,7 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.extension.hasAnyFlagOf
 import com.patrykandpatryk.vico.core.extension.hasFlag
 import com.patrykandpatryk.vico.view.R
+import java.lang.Exception
 
 internal class ThemeHandler(
     private val context: Context,
@@ -69,30 +75,47 @@ internal class ThemeHandler(
     public var composedChart: Chart<ComposedChartEntryModel<ChartEntryModel>>? = null
         private set
 
+    public var fadingEdges: FadingEdges? = null
+        private set
+
     init {
         context.obtainStyledAttributes(attrs, R.styleable.BaseChartView).use { typedArray ->
             if (typedArray.getBoolean(R.styleable.BaseChartView_showStartAxis, false)) {
-                startAxis = typedArray.getAxisBuilder(VerticalAxis.Builder()).build()
+                startAxis = typedArray.getAxisBuilder(
+                    R.styleable.BaseChartView_startAxisStyle,
+                    VerticalAxis.Builder(),
+                ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showTopAxis, false)) {
-                topAxis = typedArray.getAxisBuilder(HorizontalAxis.Builder()).build()
+                topAxis = typedArray.getAxisBuilder(
+                    R.styleable.BaseChartView_topAxisStyle,
+                    HorizontalAxis.Builder(),
+                ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showEndAxis, false)) {
-                endAxis = typedArray.getAxisBuilder(VerticalAxis.Builder()).build()
+                endAxis = typedArray.getAxisBuilder(
+                    R.styleable.BaseChartView_endAxisStyle,
+                    VerticalAxis.Builder(),
+                ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showBottomAxis, false)) {
-                bottomAxis = typedArray.getAxisBuilder(HorizontalAxis.Builder()).build()
+                bottomAxis = typedArray.getAxisBuilder(
+                    R.styleable.BaseChartView_bottomAxisStyle,
+                    HorizontalAxis.Builder(),
+                ).build()
             }
             isHorizontalScrollEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, true)
             isChartZoomEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, true)
+            fadingEdges = typedArray.getFadingEdges()
         }
         when (chartType) {
             ChartType.Single ->
                 context.obtainStyledAttributes(attrs, R.styleable.ChartView).use { typedArray ->
                     chart = typedArray.getChart()
                 }
+
             ChartType.Composed ->
                 context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView).use { typedArray ->
                     composedChart = typedArray.getComposedChart()
@@ -101,6 +124,7 @@ internal class ThemeHandler(
     }
 
     private fun <Position : AxisPosition, Builder : Axis.Builder<Position>> TypedArray.getAxisBuilder(
+        styleAttrId: Int,
         builder: Builder,
     ): Builder {
 
@@ -117,29 +141,35 @@ internal class ThemeHandler(
 
         val axisStyle = getNestedTypedArray(
             context = context,
-            resourceId = R.styleable.BaseChartView_axisStyle,
+            resourceId = if (hasValue(styleAttrId)) styleAttrId else R.styleable.BaseChartView_axisStyle,
             styleableResourceId = R.styleable.Axis,
         )
 
         return builder.apply {
-            axis = axisStyle.getLineComponent(
-                resourceId = R.styleable.Axis_axisLineStyle,
-                styleableResourceId = R.styleable.LineComponent,
-            )
-            tick = axisStyle.getLineComponent(
-                resourceId = R.styleable.Axis_axisTickStyle,
-                styleableResourceId = R.styleable.LineComponent,
-            )
+            axis = axisStyle
+                .takeIf { it.getBoolean(R.styleable.Axis_showAxisLine, true) }
+                ?.getLineComponent(
+                    resourceId = R.styleable.Axis_axisLineStyle,
+                    styleableResourceId = R.styleable.LineComponent,
+                )
+            tick = axisStyle
+                .takeIf { it.getBoolean(R.styleable.Axis_showTick, true) }
+                ?.getLineComponent(
+                    resourceId = R.styleable.Axis_axisTickStyle,
+                    styleableResourceId = R.styleable.LineComponent,
+                )
             tickLengthDp = axisStyle.getRawDimension(
                 context = context,
                 R.styleable.Axis_axisTickLength,
                 defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
             )
-            guideline = axisStyle.getLineComponent(
-                resourceId = R.styleable.Axis_axisGuidelineStyle,
-                styleableResourceId = R.styleable.LineComponent,
-                defaultShape = DashedShape(),
-            )
+            guideline = axisStyle
+                .takeIf { it.getBoolean(R.styleable.Axis_showGuideline, true) }
+                ?.getLineComponent(
+                    resourceId = R.styleable.Axis_axisGuidelineStyle,
+                    styleableResourceId = R.styleable.LineComponent,
+                    defaultShape = DashedShape(),
+                )
             labelRotationDegrees = axisStyle.getFloat(
                 R.styleable.Axis_labelRotationDegrees,
                 0f,
@@ -174,6 +204,7 @@ internal class ThemeHandler(
                             values[value % values.size]
                         }
                 }
+
                 is HorizontalAxis.Builder<*> -> {
                     tickPosition = when (axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickPosition, 0)) {
                         0 -> HorizontalAxis.TickPosition.Edge
@@ -218,6 +249,43 @@ internal class ThemeHandler(
             lineChart != null -> lineChart
             else -> null
         }
+    }
+
+    @Suppress("TooGenericExceptionCaught")
+    private fun TypedArray.getFadingEdges(): FadingEdges? {
+        val edgesLength = getRawDimension(context, R.styleable.BaseChartView_fadingEdgesLength, 0f)
+        val startLength = getRawDimension(context, R.styleable.BaseChartView_startFadingEdgeLength, edgesLength)
+        val endLength = getRawDimension(context, R.styleable.BaseChartView_endFadingEdgeLength, edgesLength)
+        val threshold = getRawDimension(
+            context,
+            R.styleable.BaseChartView_visibilityThreshold,
+            FADING_EDGES_VISIBILITY_THRESHOLD_DP,
+        )
+
+        return if (startLength > 0f || endLength > 0f) {
+
+            val interpolatorClassName = getString(R.styleable.BaseChartView_fadingEdgesInterpolator)
+
+            val interpolator = if (interpolatorClassName != null) {
+                try {
+                    context.classLoader.loadClass(interpolatorClassName).newInstance() as? TimeInterpolator
+                } catch (e: Exception) {
+                    Log.e(
+                        "ChartView",
+                        "Caught exception when trying to instantiate $interpolatorClassName " +
+                            "as fade interpolator.",
+                    )
+                    null
+                }
+            } else null
+
+            FadingEdges(
+                startFadingEdgeLengthDp = startLength,
+                endFadingEdgeLengthDp = endLength,
+                visibilityThresholdDp = threshold,
+                fadeInterpolator = interpolator ?: AccelerateInterpolator(),
+            )
+        } else null
     }
 
     internal enum class ChartType {

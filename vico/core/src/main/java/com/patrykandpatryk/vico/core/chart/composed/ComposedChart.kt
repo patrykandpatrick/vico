@@ -82,7 +82,7 @@ public class ComposedChart<Model : ChartEntryModel>(
     ) {
         entryLocationMap.clear()
         model.forEachModelWithChart { item, chart ->
-            chart.draw(context, item)
+            chart.drawScrollableContent(context, item)
             entryLocationMap.updateAll(chart.entryLocationMap)
         }
     }

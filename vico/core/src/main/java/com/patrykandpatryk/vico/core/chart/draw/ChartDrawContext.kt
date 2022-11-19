@@ -63,3 +63,12 @@ public fun MeasureContext.getMaxScrollDistance(
         if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
     }
 }
+
+/**
+ * Returns the maximum scroll distance.
+ */
+public fun ChartDrawContext.getMaxScrollDistance(): Float =
+    getMaxScrollDistance(
+        chartWidth = chartBounds.width(),
+        segmentProperties = segmentProperties,
+    )
