@@ -31,6 +31,7 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.extension.firstNonNegativeOf
+import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.view.R
 import com.patrykandpatryk.vico.view.extension.defaultColors
 
@@ -142,9 +143,9 @@ private fun TypedArray.getLabelMargins(context: Context): MutableDimensions {
     val paddingEnd = getDpDimension(R.styleable.TextComponentStyle_marginEnd)
     val paddingBottom = getDpDimension(R.styleable.TextComponentStyle_marginBottom)
     return MutableDimensions(
-        startDp = firstNonNegativeOf(paddingStart, paddingHorizontal, padding) ?: 0f,
-        topDp = firstNonNegativeOf(paddingTop, paddingVertical, padding) ?: 0f,
-        endDp = firstNonNegativeOf(paddingEnd, paddingHorizontal, padding) ?: 0f,
-        bottomDp = firstNonNegativeOf(paddingBottom, paddingVertical, padding) ?: 0f,
+        startDp = firstNonNegativeOf(paddingStart, paddingHorizontal, padding).orZero,
+        topDp = firstNonNegativeOf(paddingTop, paddingVertical, padding).orZero,
+        endDp = firstNonNegativeOf(paddingEnd, paddingHorizontal, padding).orZero,
+        bottomDp = firstNonNegativeOf(paddingBottom, paddingVertical, padding).orZero,
     )
 }
