@@ -62,7 +62,7 @@
         <attr name="fadingEdgesLength" format="dimension" />
         <attr name="startFadingEdgeLength" format="dimension" />
         <attr name="endFadingEdgeLength" format="dimension" />
-        <attr name="fullFadeThreshold" format="dimension" />
+        <attr name="visibilityThreshold" format="dimension" />
         <attr name="fadingEdgesInterpolator" format="string" />
     </declare-styleable>
 

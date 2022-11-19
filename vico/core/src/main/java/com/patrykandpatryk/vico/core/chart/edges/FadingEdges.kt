@@ -24,7 +24,7 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
-import com.patrykandpatryk.vico.core.FULL_FADE_SCROLL_THRESHOLD_DP
+import com.patrykandpatryk.vico.core.FADING_EDGES_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
@@ -40,14 +40,14 @@ private const val NO_FADE: Int = 0x00000000
  *
  * @param startFadingEdgeLengthDp the width of the fade overlay for the start edge (in dp).
  * @param endFadingEdgeLengthDp the width of the fade overlay for the end edge (in dp).
- * @param fullFadeThresholdDp the scroll distance over which the overlays fade in and out (in dp).
+ * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in dp).
  * @param fadeInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
- * to which [fullFadeThresholdDp] has been satisfied to the opacity of the fading edges.
+ * to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
  */
 public open class FadingEdges(
     public var startFadingEdgeLengthDp: Float = 0f,
     public var endFadingEdgeLengthDp: Float = startFadingEdgeLengthDp,
-    public var fullFadeThresholdDp: Float = FULL_FADE_SCROLL_THRESHOLD_DP,
+    public var visibilityThresholdDp: Float = FADING_EDGES_VISIBILITY_THRESHOLD_DP,
     public var fadeInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
 ) {
 
@@ -59,18 +59,18 @@ public open class FadingEdges(
      * Creates a [FadingEdges] instance with fading edges of equal width.
      *
      * @param fadingEdgesLengthDp the width of the fade overlay (in dp).
-     * @param fullFadeThresholdDp the scroll distance over which the overlays fade in and out (in dp).
+     * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in dp).
      * @param fadeInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the
-     * degree to which [fullFadeThresholdDp] has been satisfied to the opacity of the fading edges.
+     * degree to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
      */
     public constructor(
         fadingEdgesLengthDp: Float = 0f,
-        fullFadeThresholdDp: Float = FULL_FADE_SCROLL_THRESHOLD_DP,
+        visibilityThresholdDp: Float = FADING_EDGES_VISIBILITY_THRESHOLD_DP,
         fadeInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
     ) : this(
         startFadingEdgeLengthDp = fadingEdgesLengthDp,
         endFadingEdgeLengthDp = fadingEdgesLengthDp,
-        fullFadeThresholdDp = fullFadeThresholdDp,
+        visibilityThresholdDp = visibilityThresholdDp,
         fadeInterpolator = fadeInterpolator,
     )
 
@@ -97,7 +97,7 @@ public open class FadingEdges(
 
         if (isHorizontalScrollEnabled && startFadingEdgeLengthDp > 0f && horizontalScroll > 0f) {
 
-            fadeAlphaFraction = (horizontalScroll / fullFadeThresholdDp.pixels).coerceAtMost(1f)
+            fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
             drawFadingEdge(
                 left = bounds.left,
@@ -111,7 +111,7 @@ public open class FadingEdges(
 
         if (isHorizontalScrollEnabled && endFadingEdgeLengthDp > 0f && horizontalScroll < maxScroll) {
 
-            fadeAlphaFraction = ((maxScroll - horizontalScroll) / fullFadeThresholdDp.pixels).coerceAtMost(1f)
+            fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
             drawFadingEdge(
                 left = bounds.right - endFadingEdgeLengthDp.pixels,

@@ -24,7 +24,7 @@ import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import androidx.annotation.StyleableRes
 import com.patrykandpatryk.vico.core.DefaultDimens
-import com.patrykandpatryk.vico.core.FULL_FADE_SCROLL_THRESHOLD_DP
+import com.patrykandpatryk.vico.core.FADING_EDGES_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
@@ -256,8 +256,11 @@ internal class ThemeHandler(
         val edgesLength = getRawDimension(context, R.styleable.BaseChartView_fadingEdgesLength, 0f)
         val startLength = getRawDimension(context, R.styleable.BaseChartView_startFadingEdgeLength, edgesLength)
         val endLength = getRawDimension(context, R.styleable.BaseChartView_endFadingEdgeLength, edgesLength)
-        val threshold =
-            getRawDimension(context, R.styleable.BaseChartView_fullFadeThreshold, FULL_FADE_SCROLL_THRESHOLD_DP)
+        val threshold = getRawDimension(
+            context,
+            R.styleable.BaseChartView_visibilityThreshold,
+            FADING_EDGES_VISIBILITY_THRESHOLD_DP,
+        )
 
         return if (startLength > 0f || endLength > 0f) {
 
@@ -279,7 +282,7 @@ internal class ThemeHandler(
             FadingEdges(
                 startFadingEdgeLengthDp = startLength,
                 endFadingEdgeLengthDp = endLength,
-                fullFadeThresholdDp = threshold,
+                visibilityThresholdDp = threshold,
                 fadeInterpolator = interpolator ?: AccelerateInterpolator(),
             )
         } else null
