@@ -75,8 +75,8 @@ public open class FadingEdges(
     )
 
     init {
-        if (startFadingEdgeLengthDp < 0) error("`startFadingEdgeLengthDp` cannot be smaller than 0.")
-        if (endFadingEdgeLengthDp < 0) error("`endFadingEdgeLengthDp` cannot be smaller than 0.")
+        require(value = startFadingEdgeLengthDp >= 0) { "`startFadingEdgeLengthDp` must be greater than 0." }
+        require(value = endFadingEdgeLengthDp >= 0) { "`endFadingEdgeLengthDp` must be greater than 0." }
 
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
     }
