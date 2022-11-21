@@ -31,7 +31,7 @@
     <string name="stacked_column_chart_label">Stacked column chart</string>
     <string name="stacked_column_chart_description">Rotated axis labels</string>
     <string name="grouped_column_chart_label">Grouped column chart</string>
-    <string name="grouped_column_chart_description">Threshold line for range</string>
+    <string name="grouped_column_chart_description">Threshold line for range &amp; days of week along\u00A0axis</string>
     <string name="line_chart_with_labels_inside_label">Complex line chart</string>
     <string name="line_chart_with_labels_inside_description">Axis labels on inside, start-aligned lines &amp; vertical legend</string>
     <string name="line_chart_with_labels_inside_label_legend">Data set %d</string>
