@@ -89,6 +89,8 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
+ * @param fillEmptySpace whether the content of the chart should be scaled up when the entry count and intrinsic segment
+ * width are such that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -107,6 +109,7 @@ public fun <Model : ChartEntryModel> Chart(
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
     fadingEdges: FadingEdges? = null,
+    fillEmptySpace: Boolean = true,
 ) {
     val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
         chartKey = chart,
@@ -131,6 +134,7 @@ public fun <Model : ChartEntryModel> Chart(
             chartScrollSpec = chartScrollSpec,
             isZoomEnabled = isZoomEnabled,
             fadingEdges = fadingEdges,
+            fillEmptySpace = fillEmptySpace,
         )
     }
 }
@@ -156,6 +160,9 @@ public fun <Model : ChartEntryModel> Chart(
  * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
+ * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
+ * @param fillEmptySpace whether the content of the chart should be scaled up when the entry count and intrinsic segment
+ * width are such that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
  */
 @Deprecated("Use `chartScrollSpec` to enable or disable scrolling.")
 @Composable
@@ -172,6 +179,8 @@ public fun <Model : ChartEntryModel> Chart(
     legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean,
     isZoomEnabled: Boolean = true,
+    fadingEdges: FadingEdges? = null,
+    fillEmptySpace: Boolean = true,
 ) {
     Chart(
         chart = chart,
@@ -186,6 +195,8 @@ public fun <Model : ChartEntryModel> Chart(
         legend = legend,
         isZoomEnabled = isZoomEnabled,
         chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
+        fadingEdges = fadingEdges,
+        fillEmptySpace = fillEmptySpace,
     )
 }
 
@@ -212,6 +223,8 @@ public fun <Model : ChartEntryModel> Chart(
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param oldModel the chart’s previous model. This is used to determine whether to perform an automatic scroll.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
+ * @param fillEmptySpace whether the content of the chart should be scaled up when the entry count and intrinsic segment
+ * width are such that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -229,6 +242,7 @@ public fun <Model : ChartEntryModel> Chart(
     isZoomEnabled: Boolean = true,
     oldModel: Model? = null,
     fadingEdges: FadingEdges? = null,
+    fillEmptySpace: Boolean = true,
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
@@ -302,6 +316,7 @@ public fun <Model : ChartEntryModel> Chart(
             segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
             horizontalScroll = horizontalScroll.value,
+            fillEmptySpace = fillEmptySpace,
         )
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1

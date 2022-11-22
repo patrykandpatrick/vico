@@ -51,6 +51,7 @@ public fun chartDrawContext(
     segmentProperties: SegmentProperties,
     chartBounds: RectF,
     horizontalScroll: Float,
+    fillEmptySpace: Boolean,
 ): ChartDrawContext = object : ChartDrawContext, MeasureContext by measureContext {
 
     override val chartBounds: RectF = chartBounds
@@ -76,7 +77,9 @@ public fun chartDrawContext(
 
     private fun calculateDrawScale(): Float {
         val drawnEntryWidth = segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount()
-        return if (isHorizontalScrollEnabled && drawnEntryWidth >= chartBounds.width()) {
+        val upscalingPossibleButDisallowed = drawnEntryWidth < chartBounds.width() && fillEmptySpace.not()
+        val scrollEnabledAndUpscalingImpossible = isHorizontalScrollEnabled && drawnEntryWidth >= chartBounds.width()
+        return if (upscalingPossibleButDisallowed || scrollEnabledAndUpscalingImpossible) {
             measureContext.chartScale
         } else {
             chartBounds.width() / drawnEntryWidth

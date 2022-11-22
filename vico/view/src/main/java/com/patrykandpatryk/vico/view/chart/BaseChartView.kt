@@ -255,6 +255,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      */
     public var fadingEdges: FadingEdges? = null
 
+    /**
+     * Whether the content of the chart should be scaled up when the entry count and intrinsic segment width are such
+     * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+     */
+    public var fillEmptySpace: Boolean = true
+
     init {
         startAxis = themeHandler.startAxis
         topAxis = themeHandler.topAxis
@@ -351,6 +357,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
             horizontalScroll = scrollHandler.currentScroll,
+            fillEmptySpace = fillEmptySpace,
         )
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
