@@ -114,7 +114,7 @@ internal fun rememberGroupedColumnChartThresholdLine(): ThresholdLine {
 
 @Composable
 internal fun rememberGroupedColumnChartAxisValueFormatter(): AxisValueFormatter<AxisPosition.Horizontal.Bottom> =
-    AxisValueFormatter { x, _ -> daysOfWeek[x.toInt() % 7] }
+    AxisValueFormatter { x, _ -> daysOfWeek[x.toInt() % daysOfWeek.size] }
 
 @Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFF68A7AD, 0xFF99C4C8, 0xFFE5CB9F)
