@@ -40,6 +40,7 @@ import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.drawMarker
 import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
+import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -256,10 +257,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var fadingEdges: FadingEdges? = null
 
     /**
-     * Whether the content of the chart should be scaled up when the entry count and intrinsic segment width are such
-     * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+     * Defines whether the content of a scrollable chart should be scaled up when the entry count and intrinsic segment
+     * width are such that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
      */
-    public var fillEmptySpace: Boolean = true
+    public var autoScaleUp: AutoScaleUp = AutoScaleUp.Full
 
     init {
         startAxis = themeHandler.startAxis
@@ -357,7 +358,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
             horizontalScroll = scrollHandler.currentScroll,
-            fillEmptySpace = fillEmptySpace,
+            autoScaleUp = autoScaleUp,
         )
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
