@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.compose.style
 
+import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -78,6 +79,7 @@ public data class ChartStyle(
      * @property axisLabelHorizontalMargin the horizontal margin around the backgrounds of axis labels.
      * @property axisLabelRotationDegrees the number of degrees by which axis labels are rotated.
      * @property axisLabelTypeface the typeface used for axis labels.
+     * @property axisLabelTextAlign the text alignment for axis labels.
      * @property axisGuidelineColor the color of axis guidelines.
      * @property axisGuidelineWidth the width of axis guidelines.
      * @property axisGuidelineShape the [Shape] used for axis guidelines.
@@ -101,6 +103,7 @@ public data class ChartStyle(
         val axisLabelHorizontalMargin: Dp = DefaultDimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
         val axisLabelRotationDegrees: Float = DefaultDimens.AXIS_LABEL_ROTATION_DEGREES,
         val axisLabelTypeface: Typeface = Typeface.MONOSPACE,
+        val axisLabelTextAlign: Paint.Align = Paint.Align.LEFT,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
         val axisGuidelineShape: Shape = Shapes.dashedShape(
