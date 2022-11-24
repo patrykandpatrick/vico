@@ -20,6 +20,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.chart.Chart
+import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
@@ -28,7 +29,6 @@ import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
-import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 
 /**
  * The anonymous implementation of [ChartDrawContext].

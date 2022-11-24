@@ -56,6 +56,7 @@ import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.drawMarker
 import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
+import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
 import com.patrykandpatryk.vico.core.extension.set
@@ -64,7 +65,6 @@ import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
-import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
 
 /**
