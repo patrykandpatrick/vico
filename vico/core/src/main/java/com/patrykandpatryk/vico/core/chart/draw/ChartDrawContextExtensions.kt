@@ -28,6 +28,7 @@ import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
+import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 
 /**
  * The anonymous implementation of [ChartDrawContext].
@@ -39,6 +40,10 @@ import com.patrykandpatryk.vico.core.model.Point
  * @param markerTouchPoint the point inside the chart’s coordinates where physical touch is occurring.
  * @param segmentProperties holds information about the width of each individual segment on the x-axis.
  * @param chartBounds the bounds in which the [com.patrykandpatryk.vico.core.chart.Chart] will be drawn.
+ * @param horizontalScroll the horizontal scroll.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
+ * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
+ * the chart.
  *
  * @see [com.patrykandpatryk.vico.core.component.shape.ShapeComponent.setShadow]
  */
@@ -51,7 +56,7 @@ public fun chartDrawContext(
     segmentProperties: SegmentProperties,
     chartBounds: RectF,
     horizontalScroll: Float,
-    fillEmptySpace: Boolean,
+    autoScaleUp: AutoScaleUp,
 ): ChartDrawContext = object : ChartDrawContext, MeasureContext by measureContext {
 
     override val chartBounds: RectF = chartBounds
@@ -77,7 +82,7 @@ public fun chartDrawContext(
 
     private fun calculateDrawScale(): Float {
         val drawnEntryWidth = segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount()
-        val upscalingPossibleButDisallowed = drawnEntryWidth < chartBounds.width() && fillEmptySpace.not()
+        val upscalingPossibleButDisallowed = drawnEntryWidth < chartBounds.width() && autoScaleUp == AutoScaleUp.None
         val scrollEnabledAndUpscalingImpossible = isHorizontalScrollEnabled && drawnEntryWidth >= chartBounds.width()
         return if (upscalingPossibleButDisallowed || scrollEnabledAndUpscalingImpossible) {
             measureContext.chartScale
