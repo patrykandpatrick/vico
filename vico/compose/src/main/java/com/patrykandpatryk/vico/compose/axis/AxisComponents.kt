@@ -56,6 +56,7 @@ public typealias ChartShape = com.patrykandpatryk.vico.core.component.shape.Shap
  * @param verticalMargin the vertical margin around the background.
  * @param horizontalMargin the horizontal margin around the background.
  * @param typeface the typeface used for the label.
+ * @param textAlign the text alignment.
  */
 @Composable
 public fun axisLabelComponent(
