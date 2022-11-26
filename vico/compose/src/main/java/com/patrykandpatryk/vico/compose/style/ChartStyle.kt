@@ -24,6 +24,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
@@ -31,6 +32,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatryk.vico.compose.component.shape.dashedShape
+import com.patrykandpatryk.vico.compose.component.shape.shader.fromBrush
+import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultColors
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisPosition
@@ -42,6 +45,7 @@ import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
@@ -201,7 +205,17 @@ public data class ChartStyle(
             ),
             lineChart = LineChart(
                 lines = entityColors.map { entityColor ->
-                    LineSpec(lineColor = entityColor.toArgb())
+                    LineSpec(
+                        lineColor = entityColor.toArgb(),
+                        lineBackgroundShader = DynamicShaders.fromBrush(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    entityColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                                    entityColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                                ),
+                            ),
+                        )
+                    )
                 },
             ),
             marker = Marker(),
