@@ -41,8 +41,8 @@ import com.patrykandpatryk.vico.compose.chart.line.lineSpec
 import com.patrykandpatryk.vico.compose.component.lineComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis

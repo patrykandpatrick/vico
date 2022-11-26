@@ -28,8 +28,8 @@ import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
-import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.compose.style.ChartStyle
 import com.patrykandpatryk.vico.compose.style.ProvideChartStyle
