@@ -43,7 +43,7 @@ internal fun TypedArray.getLineComponent(
     defaultShape: Shape = Shapes.rectShape,
 ): LineComponent = use { array ->
     LineComponent(
-        color = array.getColor(
+        color = array.getColorExtended(
             index = R.styleable.LineComponent_color,
             defaultColor = defaultColor,
         ),
@@ -63,7 +63,7 @@ internal fun TypedArray.getLineComponent(
         } else {
             defaultShape
         },
-        strokeColor = array.getColor(
+        strokeColor = array.getColorExtended(
             index = R.styleable.LineComponent_strokeColor,
             defaultColor = Color.TRANSPARENT,
         ),
@@ -94,13 +94,13 @@ internal fun TypedArray.getComponent(
     }
 
     val baseComponent = ShapeComponent(
-        color = array.getColor(index = R.styleable.ComponentStyle_color),
+        color = array.getColorExtended(index = R.styleable.ComponentStyle_color),
         shape = getNestedTypedArray(
             context = context,
             resourceId = R.styleable.ComponentStyle_shapeStyle,
             styleableResourceId = R.styleable.Shape,
         ).getShape(context),
-        strokeColor = array.getColor(
+        strokeColor = array.getColorExtended(
             index = R.styleable.ComponentStyle_strokeColor,
             defaultColor = Color.TRANSPARENT,
         ),
@@ -131,7 +131,7 @@ internal fun TypedArray.getLineSpec(
     defaultColor: Int = context.defaultColors.entity1Color.toInt(),
 ): LineChart.LineSpec {
 
-    val lineColor = getColor(
+    val lineColor = getColorExtended(
         index = R.styleable.LineSpec_color,
         defaultColor = defaultColor,
     )
@@ -140,8 +140,8 @@ internal fun TypedArray.getLineSpec(
         hasValue(R.styleable.LineSpec_gradientTopColor) ||
         hasValue(R.styleable.LineSpec_gradientBottomColor)
     ) {
-        val gradientTopColor = getColor(R.styleable.LineSpec_gradientTopColor)
-        val gradientBottomColor = getColor(R.styleable.LineSpec_gradientBottomColor)
+        val gradientTopColor = getColorExtended(R.styleable.LineSpec_gradientTopColor)
+        val gradientBottomColor = getColorExtended(R.styleable.LineSpec_gradientBottomColor)
 
         DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
     } else {

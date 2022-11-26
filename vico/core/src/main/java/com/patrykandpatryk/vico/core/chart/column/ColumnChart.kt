@@ -22,7 +22,7 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.segmentWidth
-import com.patrykandpatryk.vico.core.chart.forEachInIndexed
+import com.patrykandpatryk.vico.core.chart.forEachIn
 import com.patrykandpatryk.vico.core.chart.put
 import com.patrykandpatryk.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
@@ -144,7 +144,7 @@ public open class ColumnChart(
                 columnWidth = column.thicknessDp.pixels * chartScale,
             ) - horizontalScroll
 
-            entryCollection.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { entryIndex, entry ->
+            entryCollection.forEachIn(range = chartValues.minX..chartValues.maxX) { entry ->
 
                 height = abs(entry.y) * heightMultiplier
                 columnCenterX = drawingStart + layoutDirectionMultiplier *
@@ -295,6 +295,7 @@ public open class ColumnChart(
     }
 
     override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel) {
+        @Suppress("DEPRECATION")
         chartValuesManager.tryUpdate(
             minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
             maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,

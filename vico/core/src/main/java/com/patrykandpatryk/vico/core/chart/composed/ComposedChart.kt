@@ -60,15 +60,19 @@ public class ComposedChart<Model : ChartEntryModel>(
         get() = charts.map { it.chartInsetters }.flatten() + persistentMarkers.values
 
     @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     override var minY: Float? by childChartsValue { minY = it }
 
     @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     override var maxY: Float? by childChartsValue { maxY = it }
 
     @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     override var minX: Float? by childChartsValue { minX = it }
 
     @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Suppress("DEPRECATION")
     override var maxX: Float? by childChartsValue { maxX = it }
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {

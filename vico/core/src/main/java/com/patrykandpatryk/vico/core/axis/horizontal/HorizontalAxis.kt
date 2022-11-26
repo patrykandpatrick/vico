@@ -26,7 +26,6 @@ import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
-import com.patrykandpatryk.vico.core.context.layoutDirectionMultiplier
 import com.patrykandpatryk.vico.core.extension.doubled
 import com.patrykandpatryk.vico.core.extension.getStart
 import com.patrykandpatryk.vico.core.extension.half
@@ -53,6 +52,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      * Defines the tick placement.
      */
     @Deprecated(message = "The tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
+    @Suppress("DEPRECATION")
     public var tickType: TickType? = null
         set(value) {
             field = value
@@ -417,6 +417,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             /**
              * Returns the [TickPosition] that replaces the deprecated [type].
              */
+            @Suppress("DEPRECATION")
             public fun fromTickType(type: TickType): TickPosition = when (type) {
                 TickType.Minor -> Edge
                 TickType.Major -> Center()
@@ -438,6 +439,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             message = "The tick type is now defined by `tickPosition`.",
             replaceWith = ReplaceWith("tickPosition"),
         )
+        @Suppress("DEPRECATION")
         public var tickType: TickType? = null
 
         /**
@@ -456,6 +458,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 else -> throw UnknownAxisPositionException(T::class.java)
             } as Position
             return setTo(HorizontalAxis(position = position)).also { axis ->
+                @Suppress("DEPRECATION")
                 tickType?.also { axis.tickType = it }
                 axis.tickPosition = tickPosition
             } as HorizontalAxis<T>

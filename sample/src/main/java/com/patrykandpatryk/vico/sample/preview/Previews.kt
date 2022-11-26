@@ -47,6 +47,7 @@ import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.createVerticalAxis
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.component.shape.DashedShape
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes.pillShape
@@ -123,8 +124,10 @@ public fun LineChartCard(): Unit = VicoTheme {
                         ),
                     ),
                 ),
-                minX = 0f,
-                maxY = 3f,
+                axisValuesOverrider = AxisValuesOverrider.fixed(
+                    minX = 0f,
+                    maxY = 3f,
+                ),
             ),
             model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
             startAxis = createVerticalAxis {
