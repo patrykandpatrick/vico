@@ -25,13 +25,12 @@ import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatryk.vico.compose.chart.line.lineSpec
 import com.patrykandpatryk.vico.compose.component.shape.dashedShape
-import com.patrykandpatryk.vico.compose.component.shape.lineComponent
 import com.patrykandpatryk.vico.core.DefaultColors
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisPosition
@@ -193,16 +192,16 @@ public data class ChartStyle(
             ),
             columnChart = ColumnChart(
                 columns = entityColors.map { entityColor ->
-                    lineComponent(
-                        color = entityColor,
-                        thickness = DefaultDimens.COLUMN_WIDTH.dp,
+                    LineComponent(
+                        color = entityColor.toArgb(),
+                        thicknessDp = DefaultDimens.COLUMN_WIDTH,
                         shape = Shapes.roundedCornerShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
                     )
                 },
             ),
             lineChart = LineChart(
                 lines = entityColors.map { entityColor ->
-                    lineSpec(lineColor = entityColor)
+                    LineSpec(lineColor = entityColor.toArgb())
                 },
             ),
             marker = Marker(),

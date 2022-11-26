@@ -27,9 +27,9 @@ import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
-import com.patrykandpatryk.vico.compose.component.shape.lineComponent
+import com.patrykandpatryk.vico.compose.component.lineComponent
 import com.patrykandpatryk.vico.compose.component.shape.roundedCornerShape
-import com.patrykandpatryk.vico.compose.component.shape.textComponent
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.formatter.PercentageFormatAxisValueFormatter

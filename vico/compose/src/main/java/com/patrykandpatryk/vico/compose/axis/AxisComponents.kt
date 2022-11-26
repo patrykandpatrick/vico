@@ -24,20 +24,19 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.vico.compose.component.lineComponent
 import com.patrykandpatryk.vico.compose.component.shape.chartShape
 import com.patrykandpatryk.vico.compose.component.shape.shader.BrushShader
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatryk.vico.compose.extension.pixelSize
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatryk.vico.core.component.text.TextComponent
-import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.dimensions.Dimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 
@@ -71,23 +70,23 @@ public fun axisLabelComponent(
     horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
     typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
     textAlign: Paint.Align = currentChartStyle.axis.axisLabelTextAlign,
-): TextComponent = textComponent {
-    this.color = color.toArgb()
-    this.textSizeSp = textSize.pixelSize()
-    this.ellipsize = ellipsize
-    this.lineCount = lineCount
-    this.background = background
-    this.padding = dimensionsOf(
+): TextComponent = textComponent(
+    color = color,
+    textSize = textSize,
+    background = background,
+    ellipsize = ellipsize,
+    lineCount = lineCount,
+    padding = dimensionsOf(
         vertical = verticalPadding,
         horizontal = horizontalPadding,
-    )
-    this.margins = dimensionsOf(
+    ),
+    margins = dimensionsOf(
         vertical = verticalMargin,
         horizontal = horizontalMargin,
-    )
-    this.typeface = typeface
-    this.textAlign = textAlign
-}
+    ),
+    typeface = typeface,
+    textAlign = textAlign,
+)
 
 /**
  * Creates a [LineComponent] styled as an axis line.
@@ -109,14 +108,14 @@ public fun axisLineComponent(
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): LineComponent = LineComponent(
-    color = color.toArgb(),
-    thicknessDp = thickness.value,
+): LineComponent = lineComponent(
+    color = color,
+    thickness = thickness,
     dynamicShader = dynamicShader,
     shape = shape,
     margins = margins,
-    strokeWidthDp = strokeWidth.value,
-    strokeColor = strokeColor.toArgb(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
 )
 
 /**
@@ -139,14 +138,14 @@ public fun axisLineComponent(
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
     margins: Dimensions = emptyDimensions(),
-): LineComponent = LineComponent(
-    color = color.toArgb(),
-    thicknessDp = thickness.value,
+): LineComponent = lineComponent(
+    color = color,
+    thickness = thickness,
     dynamicShader = brush?.let(::BrushShader),
-    shape = shape.chartShape(),
+    shape = shape,
     margins = margins,
-    strokeWidthDp = strokeWidth.value,
-    strokeColor = strokeColor.toArgb(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
 )
 
 /**
@@ -167,13 +166,13 @@ public fun axisTickComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
-): LineComponent = LineComponent(
-    color = color.toArgb(),
-    thicknessDp = thickness.value,
+): LineComponent = lineComponent(
+    color = color,
+    thickness = thickness,
     dynamicShader = dynamicShader,
     shape = shape,
-    strokeWidthDp = strokeWidth.value,
-    strokeColor = strokeColor.toArgb(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
 )
 
 /**
@@ -194,13 +193,13 @@ public fun axisTickComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
-): LineComponent = LineComponent(
-    color = color.toArgb(),
-    thicknessDp = thickness.value,
+): LineComponent = lineComponent(
+    color = color,
+    thickness = thickness,
     dynamicShader = brush?.let(::BrushShader),
     shape = shape.chartShape(),
-    strokeWidthDp = strokeWidth.value,
-    strokeColor = strokeColor.toArgb(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
 )
 
 /**
@@ -223,12 +222,12 @@ public fun axisGuidelineComponent(
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): LineComponent = LineComponent(
-    color = color.toArgb(),
-    thicknessDp = thickness.value,
+): LineComponent = lineComponent(
+    color = color,
+    thickness = thickness,
     dynamicShader = dynamicShader,
     shape = shape,
     margins = margins,
-    strokeWidthDp = strokeWidth.value,
-    strokeColor = strokeColor.toArgb(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
 )
