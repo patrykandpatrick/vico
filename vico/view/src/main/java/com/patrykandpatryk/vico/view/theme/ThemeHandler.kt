@@ -253,18 +253,18 @@ internal class ThemeHandler(
 
     @Suppress("TooGenericExceptionCaught")
     private fun TypedArray.getFadingEdges(): FadingEdges? {
-        val edgesLength = getRawDimension(context, R.styleable.BaseChartView_fadingEdgesLength, 0f)
-        val startLength = getRawDimension(context, R.styleable.BaseChartView_startFadingEdgeLength, edgesLength)
-        val endLength = getRawDimension(context, R.styleable.BaseChartView_endFadingEdgeLength, edgesLength)
+        val edgesLength = getRawDimension(context, R.styleable.BaseChartView_fadingEdgeWidth, 0f)
+        val startLength = getRawDimension(context, R.styleable.BaseChartView_startFadingEdgeWidth, edgesLength)
+        val endLength = getRawDimension(context, R.styleable.BaseChartView_endFadingEdgeWidth, edgesLength)
         val threshold = getRawDimension(
             context,
-            R.styleable.BaseChartView_visibilityThreshold,
+            R.styleable.BaseChartView_fadingEdgeVisibilityThreshold,
             FADING_EDGES_VISIBILITY_THRESHOLD_DP,
         )
 
         return if (startLength > 0f || endLength > 0f) {
 
-            val interpolatorClassName = getString(R.styleable.BaseChartView_fadingEdgesInterpolator)
+            val interpolatorClassName = getString(R.styleable.BaseChartView_fadingEdgeVisibilityInterpolator)
 
             val interpolator = if (interpolatorClassName != null) {
                 try {
@@ -280,10 +280,10 @@ internal class ThemeHandler(
             } else null
 
             FadingEdges(
-                startFadingEdgeLengthDp = startLength,
-                endFadingEdgeLengthDp = endLength,
+                startEdgeWidthDp = startLength,
+                endEdgeWidthDp = endLength,
                 visibilityThresholdDp = threshold,
-                fadeInterpolator = interpolator ?: AccelerateInterpolator(),
+                visibilityInterpolator = interpolator ?: AccelerateInterpolator(),
             )
         } else null
     }

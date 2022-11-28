@@ -59,11 +59,11 @@
         <attr name="showBottomAxis" format="boolean" />
         <attr name="chartHorizontalScrollingEnabled" format="boolean" />
         <attr name="chartZoomEnabled" format="boolean" />
-        <attr name="fadingEdgesLength" format="dimension" />
-        <attr name="startFadingEdgeLength" format="dimension" />
-        <attr name="endFadingEdgeLength" format="dimension" />
-        <attr name="visibilityThreshold" format="dimension" />
-        <attr name="fadingEdgesInterpolator" format="string" />
+        <attr name="fadingEdgeWidth" format="dimension" />
+        <attr name="startFadingEdgeWidth" format="dimension" />
+        <attr name="endFadingEdgeWidth" format="dimension" />
+        <attr name="fadingEdgeVisibilityThreshold" format="dimension" />
+        <attr name="fadingEdgeVisibilityInterpolator" format="string" />
     </declare-styleable>
 
     <!-- Defines the appearance of chart axes. -->

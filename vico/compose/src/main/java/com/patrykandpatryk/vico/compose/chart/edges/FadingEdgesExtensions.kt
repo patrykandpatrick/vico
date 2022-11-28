@@ -30,68 +30,68 @@ import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
  * [FadingEdges] applies a horizontal fade to the edges of the chart area for scrollable charts.
  * This effect indicates that there’s more content beyond a given edge, and the user can scroll to reveal it.
  *
- * @param startFadingEdgeLength the width of the fade overlay for the start edge (in dp).
- * @param endFadingEdgeLength the width of the fade overlay for the end edge (in dp).
+ * @param startEdgeWidth the width of the fade overlay for the start edge (in dp).
+ * @param endEdgeWidth the width of the fade overlay for the end edge (in dp).
  * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param fadeEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
+ * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
  * which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
  */
 public fun FadingEdges(
-    startFadingEdgeLength: Dp = FadingEdgesDefaults.fadingEdgeLength,
-    endFadingEdgeLength: Dp = startFadingEdgeLength,
+    startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
+    endEdgeWidth: Dp = startEdgeWidth,
     visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
-    fadeEasing: Easing = FadingEdgesDefaults.fadeInterpolator,
+    visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
 ): FadingEdges = FadingEdges(
-    startFadingEdgeLengthDp = startFadingEdgeLength.value,
-    endFadingEdgeLengthDp = endFadingEdgeLength.value,
+    startEdgeWidthDp = startEdgeWidth.value,
+    endEdgeWidthDp = endEdgeWidth.value,
     visibilityThresholdDp = visibilityThreshold.value,
-) { input -> fadeEasing.transform(input) }
+) { input -> visibilityEasing.transform(input) }
 
 /**
  * Creates and remembers a [FadingEdges] instance.
  *
- * @param startFadingEdgeLength the width of the fade overlay for the start edge (in dp).
- * @param endFadingEdgeLength the width of the fade overlay for the end edge (in dp).
+ * @param startEdgeWidth the width of the fade overlay for the start edge (in dp).
+ * @param endEdgeWidth the width of the fade overlay for the end edge (in dp).
  * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param fadeEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
+ * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
  * which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
  *
  * @see FadingEdges
  */
 @Composable
 public fun rememberFadingEdges(
-    startFadingEdgeLength: Dp = FadingEdgesDefaults.fadingEdgeLength,
-    endFadingEdgeLength: Dp = startFadingEdgeLength,
+    startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
+    endEdgeWidth: Dp = startEdgeWidth,
     visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
-    fadeEasing: Easing = FadingEdgesDefaults.fadeInterpolator,
+    visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
 ): FadingEdges = remember { FadingEdges() }
     .apply {
-        startFadingEdgeLengthDp = startFadingEdgeLength.value
-        endFadingEdgeLengthDp = endFadingEdgeLength.value
+        startEdgeWidthDp = startEdgeWidth.value
+        endEdgeWidthDp = endEdgeWidth.value
         visibilityThresholdDp = visibilityThreshold.value
-        this.fadeInterpolator = remember(fadeEasing) { TimeInterpolator(fadeEasing::transform) }
+        this.visibilityInterpolator = remember(visibilityEasing) { TimeInterpolator(visibilityEasing::transform) }
     }
 
 /**
  * Creates and remembers a [FadingEdges] instance.
  *
- * @param fadingEdgesLength the width of the fade overlay.
+ * @param edgeWidth the width of the fade overlay.
  * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param fadeEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
+ * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
  * which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
  *
  * @see FadingEdges
  */
 @Composable
 public fun rememberFadingEdges(
-    fadingEdgesLength: Dp = FadingEdgesDefaults.fadingEdgeLength,
+    edgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
     visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
-    fadeEasing: Easing = FadingEdgesDefaults.fadeInterpolator,
+    visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
 ): FadingEdges = rememberFadingEdges(
-    startFadingEdgeLength = fadingEdgesLength,
-    endFadingEdgeLength = fadingEdgesLength,
+    startEdgeWidth = edgeWidth,
+    endEdgeWidth = edgeWidth,
     visibilityThreshold = visibilityThreshold,
-    fadeEasing = fadeEasing,
+    visibilityEasing = visibilityEasing,
 )
 
 /**
@@ -102,7 +102,7 @@ public object FadingEdgesDefaults {
     /**
      * The width of the fade overlays (in dp).
      */
-    public val fadingEdgeLength: Dp = 0.dp
+    public val edgeWidth: Dp = 0.dp
 
     /**
      * The scroll distance over which the overlays fade in and out (in dp).
@@ -113,5 +113,5 @@ public object FadingEdgesDefaults {
      * Used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to which the fading
      * edges’ visibility threshold has been satisfied to the opacity of the fading edges.
      */
-    public val fadeInterpolator: Easing = FastOutSlowInEasing
+    public val visibilityEasing: Easing = FastOutSlowInEasing
 }

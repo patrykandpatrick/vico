@@ -38,17 +38,17 @@ private const val NO_FADE: Int = 0x00000000
  * [FadingEdges] applies a horizontal fade to the edges of the chart area for scrollable charts.
  * This effect indicates that there’s more content beyond a given edge, and the user can scroll to reveal it.
  *
- * @param startFadingEdgeLengthDp the width of the fade overlay for the start edge (in dp).
- * @param endFadingEdgeLengthDp the width of the fade overlay for the end edge (in dp).
+ * @param startEdgeWidthDp the width of the fade overlay for the start edge (in dp).
+ * @param endEdgeWidthDp the width of the fade overlay for the end edge (in dp).
  * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in dp).
- * @param fadeInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
+ * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
  * to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
  */
 public open class FadingEdges(
-    public var startFadingEdgeLengthDp: Float = 0f,
-    public var endFadingEdgeLengthDp: Float = startFadingEdgeLengthDp,
+    public var startEdgeWidthDp: Float = 0f,
+    public var endEdgeWidthDp: Float = startEdgeWidthDp,
     public var visibilityThresholdDp: Float = FADING_EDGES_VISIBILITY_THRESHOLD_DP,
-    public var fadeInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+    public var visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
 ) {
 
     private val paint: Paint = Paint()
@@ -58,25 +58,25 @@ public open class FadingEdges(
     /**
      * Creates a [FadingEdges] instance with fading edges of equal width.
      *
-     * @param fadingEdgesLengthDp the width of the fade overlay (in dp).
+     * @param edgeWidthDp the width of the fade overlay (in dp).
      * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in dp).
-     * @param fadeInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the
+     * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the
      * degree to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
      */
     public constructor(
-        fadingEdgesLengthDp: Float = 0f,
+        edgeWidthDp: Float = 0f,
         visibilityThresholdDp: Float = FADING_EDGES_VISIBILITY_THRESHOLD_DP,
-        fadeInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+        visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
     ) : this(
-        startFadingEdgeLengthDp = fadingEdgesLengthDp,
-        endFadingEdgeLengthDp = fadingEdgesLengthDp,
+        startEdgeWidthDp = edgeWidthDp,
+        endEdgeWidthDp = edgeWidthDp,
         visibilityThresholdDp = visibilityThresholdDp,
-        fadeInterpolator = fadeInterpolator,
+        visibilityInterpolator = visibilityInterpolator,
     )
 
     init {
-        require(value = startFadingEdgeLengthDp >= 0) { "`startFadingEdgeLengthDp` must be greater than 0." }
-        require(value = endFadingEdgeLengthDp >= 0) { "`endFadingEdgeLengthDp` must be greater than 0." }
+        require(value = startEdgeWidthDp >= 0) { "`startEdgeWidthDp` must be greater than 0." }
+        require(value = endEdgeWidthDp >= 0) { "`endEdgeWidthDp` must be greater than 0." }
 
         paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
     }
@@ -95,31 +95,31 @@ public open class FadingEdges(
         val maxScroll = getMaxScrollDistance()
         var fadeAlphaFraction: Float
 
-        if (isHorizontalScrollEnabled && startFadingEdgeLengthDp > 0f && horizontalScroll > 0f) {
+        if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
 
             fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
             drawFadingEdge(
                 left = bounds.left,
                 top = bounds.top,
-                right = bounds.left + startFadingEdgeLengthDp.pixels,
+                right = bounds.left + startEdgeWidthDp.pixels,
                 bottom = bounds.bottom,
                 direction = -1,
-                alpha = (fadeInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
+                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
             )
         }
 
-        if (isHorizontalScrollEnabled && endFadingEdgeLengthDp > 0f && horizontalScroll < maxScroll) {
+        if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
 
             fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
             drawFadingEdge(
-                left = bounds.right - endFadingEdgeLengthDp.pixels,
+                left = bounds.right - endEdgeWidthDp.pixels,
                 top = bounds.top,
                 right = bounds.right,
                 bottom = bounds.bottom,
                 direction = 1,
-                alpha = (fadeInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
+                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
             )
         }
     }

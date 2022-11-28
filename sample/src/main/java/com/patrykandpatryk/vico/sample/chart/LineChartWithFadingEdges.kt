@@ -88,7 +88,7 @@ internal fun ComposeLineChartWithFadingEdges(
             startAxis = startAxis,
             bottomAxis = bottomAxis,
             marker = marker(),
-            fadingEdges = rememberFadingEdges(fadingEdgesLength = FADING_EDGE_LENGTH_DP.dp),
+            fadingEdges = rememberFadingEdges(edgeWidth = FADING_EDGE_LENGTH_DP.dp),
         )
     }
 }
