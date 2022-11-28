@@ -28,8 +28,8 @@
         app:startAxisStyle="@style/LineChartFadingEdgesAxisStyle.Start"
         app:bottomAxisStyle="@style/LineChartFadingEdgesAxisStyle.Bottom"
         app:chart="line"
-        app:fadingEdgesInterpolator="androidx.interpolator.view.animation.FastOutSlowInInterpolator"
-        app:fadingEdgesLength="32dp"
+        app:fadingEdgeVisibilityInterpolator="androidx.interpolator.view.animation.FastOutSlowInInterpolator"
+        app:fadingEdgeWidth="32dp"
         app:lineChartStyle="@style/LineChartLineChartStyle"
         app:showBottomAxis="true"
         app:showStartAxis="true" />
