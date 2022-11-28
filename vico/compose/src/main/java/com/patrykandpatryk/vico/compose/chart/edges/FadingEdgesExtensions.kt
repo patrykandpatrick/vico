@@ -33,8 +33,8 @@ import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
  * @param startEdgeWidth the width of the fade overlay for the start edge (in dp).
  * @param endEdgeWidth the width of the fade overlay for the end edge (in dp).
  * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
- * which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
+ * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
+ * to which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
  */
 public fun FadingEdges(
     startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
@@ -53,8 +53,8 @@ public fun FadingEdges(
  * @param startEdgeWidth the width of the fade overlay for the start edge (in dp).
  * @param endEdgeWidth the width of the fade overlay for the end edge (in dp).
  * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
- * which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
+ * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
+ * to which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
  *
  * @see FadingEdges
  */
@@ -77,8 +77,8 @@ public fun rememberFadingEdges(
  *
  * @param edgeWidth the width of the fade overlay.
  * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to
- * which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
+ * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
+ * to which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
  *
  * @see FadingEdges
  */

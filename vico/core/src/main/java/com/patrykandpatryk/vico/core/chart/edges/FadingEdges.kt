@@ -41,8 +41,8 @@ private const val NO_FADE: Int = 0x00000000
  * @param startEdgeWidthDp the width of the fade overlay for the start edge (in dp).
  * @param endEdgeWidthDp the width of the fade overlay for the end edge (in dp).
  * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
- * to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
+ * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the
+ * degree to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
  */
 public open class FadingEdges(
     public var startEdgeWidthDp: Float = 0f,
@@ -60,8 +60,8 @@ public open class FadingEdges(
      *
      * @param edgeWidthDp the width of the fade overlay (in dp).
      * @param visibilityThresholdDp the scroll distance over which the overlays fade in and out (in dp).
-     * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of the
-     * degree to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
+     * @param visibilityInterpolator used for the fading edges’ fade-in and fade-out animations. This is a mapping of
+     * the degree to which [visibilityThresholdDp] has been satisfied to the opacity of the fading edges.
      */
     public constructor(
         edgeWidthDp: Float = 0f,

@@ -214,7 +214,7 @@ public data class ChartStyle(
                                     entityColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
                                 ),
                             ),
-                        )
+                        ),
                     )
                 },
             ),
