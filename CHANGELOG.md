@@ -16,4 +16,5 @@ This release includes the following changes.
 ## Resolved issues
 
 - The `Chart` composable failed to respond to model updates after being recomposed with a new `ChartModelProducer`.
+- When provided with a `ChartModelProducer`, the `Chart` composable briefly had a height of zero when composed.
 - `TextComponent` mispositioned its background when `textAlign` was set to `Paint.Align.CENTER` or `Paint.Align.RIGHT`.
