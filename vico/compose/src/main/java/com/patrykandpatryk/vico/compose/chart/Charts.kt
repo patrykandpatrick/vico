@@ -23,7 +23,9 @@ import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -120,24 +122,25 @@ public fun <Model : ChartEntryModel> Chart(
         runInitialAnimation = runInitialAnimation,
     )
 
-    modelState.value?.also { model ->
-        Chart(
-            modifier = modifier,
-            chart = chart,
-            model = model,
-            oldModel = modelState.previousValue,
-            startAxis = startAxis,
-            topAxis = topAxis,
-            endAxis = endAxis,
-            bottomAxis = bottomAxis,
-            marker = marker,
-            markerVisibilityChangeListener = markerVisibilityChangeListener,
-            legend = legend,
-            chartScrollSpec = chartScrollSpec,
-            isZoomEnabled = isZoomEnabled,
-            fadingEdges = fadingEdges,
-            autoScaleUp = autoScaleUp,
-        )
+    ChartBox(modifier = modifier) {
+        modelState.value?.also { model ->
+            ChartImpl(
+                chart = chart,
+                model = model,
+                oldModel = modelState.previousValue,
+                startAxis = startAxis,
+                topAxis = topAxis,
+                endAxis = endAxis,
+                bottomAxis = bottomAxis,
+                marker = marker,
+                markerVisibilityChangeListener = markerVisibilityChangeListener,
+                legend = legend,
+                chartScrollSpec = chartScrollSpec,
+                isZoomEnabled = isZoomEnabled,
+                fadingEdges = fadingEdges,
+                autoScaleUp = autoScaleUp,
+            )
+        }
     }
 }
 
@@ -167,7 +170,7 @@ public fun <Model : ChartEntryModel> Chart(
  * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
  * the chart.
  */
-@Deprecated("Use `chartScrollSpec` to enable or disable scrolling.")
+@Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.")
 @Composable
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
@@ -185,22 +188,23 @@ public fun <Model : ChartEntryModel> Chart(
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
 ) {
-    Chart(
-        chart = chart,
-        model = model,
-        modifier = modifier,
-        startAxis = startAxis,
-        topAxis = topAxis,
-        endAxis = endAxis,
-        bottomAxis = bottomAxis,
-        marker = marker,
-        markerVisibilityChangeListener = markerVisibilityChangeListener,
-        legend = legend,
-        isZoomEnabled = isZoomEnabled,
-        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
-        fadingEdges = fadingEdges,
-        autoScaleUp = autoScaleUp,
-    )
+    ChartBox(modifier = modifier) {
+        ChartImpl(
+            chart = chart,
+            model = model,
+            startAxis = startAxis,
+            topAxis = topAxis,
+            endAxis = endAxis,
+            bottomAxis = bottomAxis,
+            marker = marker,
+            markerVisibilityChangeListener = markerVisibilityChangeListener,
+            legend = legend,
+            isZoomEnabled = isZoomEnabled,
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
+            fadingEdges = fadingEdges,
+            autoScaleUp = autoScaleUp,
+        )
+    }
 }
 
 /**
@@ -248,6 +252,43 @@ public fun <Model : ChartEntryModel> Chart(
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
 ) {
+    ChartBox(modifier = modifier) {
+        ChartImpl(
+            chart = chart,
+            model = model,
+            startAxis = startAxis,
+            topAxis = topAxis,
+            endAxis = endAxis,
+            bottomAxis = bottomAxis,
+            marker = marker,
+            markerVisibilityChangeListener = markerVisibilityChangeListener,
+            legend = legend,
+            chartScrollSpec = chartScrollSpec,
+            isZoomEnabled = isZoomEnabled,
+            oldModel = oldModel,
+            fadingEdges = fadingEdges,
+            autoScaleUp = autoScaleUp,
+        )
+    }
+}
+
+@Composable
+internal fun <Model : ChartEntryModel> ChartImpl(
+    chart: Chart<Model>,
+    model: Model,
+    startAxis: AxisRenderer<AxisPosition.Vertical.Start>?,
+    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>?,
+    endAxis: AxisRenderer<AxisPosition.Vertical.End>?,
+    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>?,
+    marker: Marker?,
+    markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
+    legend: Legend?,
+    chartScrollSpec: ChartScrollSpec<Model>,
+    isZoomEnabled: Boolean,
+    oldModel: Model? = null,
+    fadingEdges: FadingEdges?,
+    autoScaleUp: AutoScaleUp,
+) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
@@ -279,9 +320,8 @@ public fun <Model : ChartEntryModel> Chart(
     }
 
     Canvas(
-        modifier = modifier
-            .height(DefaultDimens.CHART_HEIGHT.dp)
-            .fillMaxWidth()
+        modifier = Modifier
+            .fillMaxSize()
             .chartTouchEvent(
                 setTouchPoint = markerTouchPoint
                     .component2()
@@ -350,6 +390,17 @@ public fun <Model : ChartEntryModel> Chart(
 
         measureContext.reset()
     }
+}
+
+@Composable
+internal fun ChartBox(
+    modifier: Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier.height(DefaultDimens.CHART_HEIGHT.dp),
+        content = content,
+    )
 }
 
 @Composable
