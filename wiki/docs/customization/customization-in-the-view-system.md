@@ -18,7 +18,6 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `fadingEdgeVisibilityThreshold`     | The visibility threshold for the fading edges. | A dimension.                                                                                                                                              |
 | `fadingEdgeVisibilityInteropolator` | The visibility interpolator for fading edges.  | A string containing a full path to a class that implements `TimeInterpolator` (e.g., `"androidx.interpolator.view.animation.FastOutSlowInInterpolator"`). |
 
-
 ### `ChartView` attributes
 
 `ChartView` has all the attributes of `BaseChartView`, plus the following.
