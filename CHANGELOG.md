@@ -4,6 +4,7 @@ This release includes the following changes.
 
 - Fading edges are now available. This feature applies a horizontal fade to the edges of the chart area for scrollable charts.
 - You can now turn off the automatic scaling up of charts that, at a scale factor of 1, wouldn’t fill up the entire available horizontal area.
+- In the `view` module, several new XML attributes have been added. Among other things, you can now customize individual chart axes via XML.
 
 ## Improvements
 
