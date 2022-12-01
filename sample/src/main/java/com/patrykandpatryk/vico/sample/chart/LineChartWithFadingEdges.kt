@@ -80,7 +80,10 @@ internal fun ComposeLineChartWithFadingEdges(
     )
     val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
     ProvideChartStyle(chartStyle = chartStyle) {
-        val lineChart = lineChart(axisValuesOverrider = axisValuesOverrider)
+        val lineChart = lineChart(
+            axisValuesOverrider = axisValuesOverrider,
+            pointPosition = LineChart.PointPosition.Start,
+        )
         Chart(
             modifier = modifier,
             chart = lineChart,
