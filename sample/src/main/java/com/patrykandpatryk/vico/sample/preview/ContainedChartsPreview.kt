@@ -29,9 +29,9 @@ import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.entry.plus
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.line.lineSpec
-import com.patrykandpatryk.vico.compose.component.shape.lineComponent
+import com.patrykandpatryk.vico.compose.component.lineComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatryk.vico.compose.component.shape.textComponent
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatryk.vico.core.axis.AxisPosition.Vertical.End

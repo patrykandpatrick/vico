@@ -20,15 +20,11 @@ import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.TextUtils
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.TextUnit
-import com.patrykandpatryk.vico.compose.extension.pixelSize
 import com.patrykandpatryk.vico.compose.style.currentChartStyle
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.text.TextComponent
-import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
 
@@ -46,6 +42,7 @@ import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
  * @param textAlign the text alignment.
  */
 @Composable
+@Deprecated(message = "Use `com.patrykandpatryk.vico.compose.component.textComponent` instead.")
 public fun textComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,
     textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
@@ -56,26 +53,14 @@ public fun textComponent(
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,
     textAlign: Paint.Align = Paint.Align.LEFT,
-): TextComponent = remember(
-    color,
-    textSize,
-    background,
-    ellipsize,
-    lineCount,
-    padding,
-    margins,
-    typeface,
-    textAlign,
-) {
-    textComponent {
-        this.color = color.toArgb()
-        textSizeSp = textSize.pixelSize()
-        this.ellipsize = ellipsize
-        this.lineCount = lineCount
-        this.background = background
-        this.padding = padding
-        this.margins = margins
-        this.typeface = typeface
-        this.textAlign = textAlign
-    }
-}
+): TextComponent = com.patrykandpatryk.vico.compose.component.textComponent(
+    color = color,
+    textSize = textSize,
+    background = background,
+    ellipsize = ellipsize,
+    lineCount = lineCount,
+    padding = padding,
+    margins = margins,
+    typeface = typeface,
+    textAlign = textAlign,
+)

@@ -31,10 +31,11 @@ import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.dimensions.MutableDimensions
 import com.patrykandpatryk.vico.core.extension.firstNonNegativeOf
+import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.view.R
 import com.patrykandpatryk.vico.view.extension.defaultColors
 
-private const val FONT_WEIGHT_NORMAL = 500
+private const val FONT_WEIGHT_NORMAL = 400
 
 internal fun TypedArray.getTextComponent(
     context: Context,
@@ -50,6 +51,7 @@ internal fun TypedArray.getTextComponent(
         this.color = color
         this.background = background
         this.padding = getLabelPadding(context)
+        this.margins = getLabelMargins(context)
         this.textSizeSp = getRawDimension(
             context = context,
             index = R.styleable.TextComponentStyle_android_textSize,
@@ -70,6 +72,7 @@ private fun TypedArray.getLabelTruncateAt(): TextUtils.TruncateAt {
     }
 }
 
+@Suppress("MagicNumber")
 private fun TypedArray.getLabelTypeface(context: Context): Typeface? {
     val fontIndex = if (hasValue(R.styleable.TextComponentStyle_android_fontFamily)) {
         R.styleable.TextComponentStyle_android_fontFamily
@@ -89,7 +92,12 @@ private fun TypedArray.getLabelTypeface(context: Context): Typeface? {
     val family = if (fontResId > 0) {
         ResourcesCompat.getFont(context, fontResId)
     } else {
-        Typeface.MONOSPACE
+        when (getInteger(R.styleable.TextComponentStyle_typeface, 3)) {
+            0 -> Typeface.DEFAULT
+            1 -> Typeface.SANS_SERIF
+            2 -> Typeface.SERIF
+            else -> Typeface.MONOSPACE
+        }
     }
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         Typeface.create(family, fontWeight, fontStyle == 1)
@@ -119,5 +127,25 @@ private fun TypedArray.getLabelPadding(context: Context): MutableDimensions {
             ?: AXIS_LABEL_HORIZONTAL_PADDING.toFloat(),
         bottomDp = firstNonNegativeOf(paddingBottom, paddingVertical, padding)
             ?: AXIS_LABEL_VERTICAL_PADDING.toFloat(),
+    )
+}
+
+private fun TypedArray.getLabelMargins(context: Context): MutableDimensions {
+
+    fun getDpDimension(@StyleableRes index: Int): Float =
+        getRawDimension(context, index, -1f)
+
+    val padding = getDpDimension(R.styleable.TextComponentStyle_margin)
+    val paddingVertical = getDpDimension(R.styleable.TextComponentStyle_marginVertical)
+    val paddingHorizontal = getDpDimension(R.styleable.TextComponentStyle_marginHorizontal)
+    val paddingStart = getDpDimension(R.styleable.TextComponentStyle_marginStart)
+    val paddingTop = getDpDimension(R.styleable.TextComponentStyle_marginTop)
+    val paddingEnd = getDpDimension(R.styleable.TextComponentStyle_marginEnd)
+    val paddingBottom = getDpDimension(R.styleable.TextComponentStyle_marginBottom)
+    return MutableDimensions(
+        startDp = firstNonNegativeOf(paddingStart, paddingHorizontal, padding).orZero,
+        topDp = firstNonNegativeOf(paddingTop, paddingVertical, padding).orZero,
+        endDp = firstNonNegativeOf(paddingEnd, paddingHorizontal, padding).orZero,
+        bottomDp = firstNonNegativeOf(paddingBottom, paddingVertical, padding).orZero,
     )
 }

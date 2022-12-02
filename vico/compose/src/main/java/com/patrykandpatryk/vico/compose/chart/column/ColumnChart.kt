@@ -114,6 +114,7 @@ public fun columnChart(
  * @see ColumnChart
  */
 @Deprecated(message = "Axis values should be overridden `AxisValuesOverrider`.")
+@Suppress("DEPRECATION")
 @Composable
 public fun columnChart(
     columns: List<LineComponent> = currentChartStyle.columnChart.columns,

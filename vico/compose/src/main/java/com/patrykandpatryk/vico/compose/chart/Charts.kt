@@ -23,17 +23,17 @@ import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -55,11 +55,12 @@ import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatryk.vico.core.chart.draw.drawMarker
 import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
+import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
+import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import com.patrykandpatryk.vico.core.entry.ChartModelProducer
-import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
-import com.patrykandpatryk.vico.core.extension.ifNotNull
 import com.patrykandpatryk.vico.core.extension.set
 import com.patrykandpatryk.vico.core.layout.VirtualLayout
 import com.patrykandpatryk.vico.core.legend.Legend
@@ -90,6 +91,10 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * instances).
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value.
+ * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
+ * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
+ * the chart.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -107,29 +112,35 @@ public fun <Model : ChartEntryModel> Chart(
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
+    fadingEdges: FadingEdges? = null,
+    autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
 ) {
     val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
-        key = chart,
+        chartKey = chart,
+        producerKey = chartModelProducer,
         animationSpec = diffAnimationSpec,
         runInitialAnimation = runInitialAnimation,
     )
 
-    modelState.value?.also { model ->
-        Chart(
-            modifier = modifier,
-            chart = chart,
-            model = model,
-            oldModel = modelState.previousValue,
-            startAxis = startAxis,
-            topAxis = topAxis,
-            endAxis = endAxis,
-            bottomAxis = bottomAxis,
-            marker = marker,
-            markerVisibilityChangeListener = markerVisibilityChangeListener,
-            legend = legend,
-            chartScrollSpec = chartScrollSpec,
-            isZoomEnabled = isZoomEnabled,
-        )
+    ChartBox(modifier = modifier) {
+        modelState.value?.also { model ->
+            ChartImpl(
+                chart = chart,
+                model = model,
+                oldModel = modelState.previousValue,
+                startAxis = startAxis,
+                topAxis = topAxis,
+                endAxis = endAxis,
+                bottomAxis = bottomAxis,
+                marker = marker,
+                markerVisibilityChangeListener = markerVisibilityChangeListener,
+                legend = legend,
+                chartScrollSpec = chartScrollSpec,
+                isZoomEnabled = isZoomEnabled,
+                fadingEdges = fadingEdges,
+                autoScaleUp = autoScaleUp,
+            )
+        }
     }
 }
 
@@ -154,8 +165,12 @@ public fun <Model : ChartEntryModel> Chart(
  * @param legend an optional legend for the chart.
  * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
+ * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
+ * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
+ * the chart.
  */
-@Deprecated("Use `chartScrollSpec` to enable or disable scrolling.")
+@Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.")
 @Composable
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
@@ -170,21 +185,26 @@ public fun <Model : ChartEntryModel> Chart(
     legend: Legend? = null,
     isHorizontalScrollEnabled: Boolean,
     isZoomEnabled: Boolean = true,
+    fadingEdges: FadingEdges? = null,
+    autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
 ) {
-    Chart(
-        chart = chart,
-        model = model,
-        modifier = modifier,
-        startAxis = startAxis,
-        topAxis = topAxis,
-        endAxis = endAxis,
-        bottomAxis = bottomAxis,
-        marker = marker,
-        markerVisibilityChangeListener = markerVisibilityChangeListener,
-        legend = legend,
-        isZoomEnabled = isZoomEnabled,
-        chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
-    )
+    ChartBox(modifier = modifier) {
+        ChartImpl(
+            chart = chart,
+            model = model,
+            startAxis = startAxis,
+            topAxis = topAxis,
+            endAxis = endAxis,
+            bottomAxis = bottomAxis,
+            marker = marker,
+            markerVisibilityChangeListener = markerVisibilityChangeListener,
+            legend = legend,
+            isZoomEnabled = isZoomEnabled,
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
+            fadingEdges = fadingEdges,
+            autoScaleUp = autoScaleUp,
+        )
+    }
 }
 
 /**
@@ -209,6 +229,10 @@ public fun <Model : ChartEntryModel> Chart(
  * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param oldModel the chart’s previous model. This is used to determine whether to perform an automatic scroll.
+ * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
+ * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
+ * the chart.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -225,6 +249,45 @@ public fun <Model : ChartEntryModel> Chart(
     chartScrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
     oldModel: Model? = null,
+    fadingEdges: FadingEdges? = null,
+    autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
+) {
+    ChartBox(modifier = modifier) {
+        ChartImpl(
+            chart = chart,
+            model = model,
+            startAxis = startAxis,
+            topAxis = topAxis,
+            endAxis = endAxis,
+            bottomAxis = bottomAxis,
+            marker = marker,
+            markerVisibilityChangeListener = markerVisibilityChangeListener,
+            legend = legend,
+            chartScrollSpec = chartScrollSpec,
+            isZoomEnabled = isZoomEnabled,
+            oldModel = oldModel,
+            fadingEdges = fadingEdges,
+            autoScaleUp = autoScaleUp,
+        )
+    }
+}
+
+@Composable
+internal fun <Model : ChartEntryModel> ChartImpl(
+    chart: Chart<Model>,
+    model: Model,
+    startAxis: AxisRenderer<AxisPosition.Vertical.Start>?,
+    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>?,
+    endAxis: AxisRenderer<AxisPosition.Vertical.End>?,
+    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>?,
+    marker: Marker?,
+    markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
+    legend: Legend?,
+    chartScrollSpec: ChartScrollSpec<Model>,
+    isZoomEnabled: Boolean,
+    oldModel: Model? = null,
+    fadingEdges: FadingEdges?,
+    autoScaleUp: AutoScaleUp,
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
@@ -244,7 +307,7 @@ public fun <Model : ChartEntryModel> Chart(
     val virtualLayout = remember { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
 
-    var wasMarkerVisible: Boolean by remember { mutableStateOf(false) }
+    val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
 
     LaunchedEffect(key1 = model.id) {
         chartScrollSpec.performAutoScroll(
@@ -257,11 +320,12 @@ public fun <Model : ChartEntryModel> Chart(
     }
 
     Canvas(
-        modifier = modifier
-            .height(DefaultDimens.CHART_HEIGHT.dp)
-            .fillMaxWidth()
+        modifier = Modifier
+            .fillMaxSize()
             .chartTouchEvent(
-                setTouchPoint = markerTouchPoint.component2().takeIf { marker != null },
+                setTouchPoint = markerTouchPoint
+                    .component2()
+                    .takeIf { marker != null },
                 scrollableState = scrollableState.takeIf { chartScrollSpec.isScrollEnabled },
                 onZoom = onZoom.takeIf { isZoomEnabled },
                 interactionSource = interactionSource,
@@ -296,36 +360,47 @@ public fun <Model : ChartEntryModel> Chart(
             segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
             horizontalScroll = horizontalScroll.value,
+            autoScaleUp = autoScaleUp,
         )
 
+        val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
+
         axisManager.drawBehindChart(chartDrawContext)
-        chart.draw(chartDrawContext, model)
+        chart.drawScrollableContent(chartDrawContext, model)
+
+        fadingEdges?.apply {
+            applyFadingEdges(chartDrawContext, chart.bounds)
+            chartDrawContext.restoreCanvasToCount(count)
+        }
+
+        chart.drawNonScrollableContent(chartDrawContext, model)
         axisManager.drawAboveChart(chartDrawContext)
         legend?.draw(chartDrawContext)
 
-        ifNotNull(
-            t1 = marker,
-            t2 = markerTouchPoint.value?.let(chart.entryLocationMap::getClosestMarkerEntryModel),
-        ) { marker, markerEntryModels ->
-            marker.draw(
-                context = chartDrawContext,
-                bounds = chart.bounds,
-                markedEntries = markerEntryModels,
+        if (marker != null) {
+            chartDrawContext.drawMarker(
+                marker = marker,
+                markerTouchPoint = markerTouchPoint.value,
+                chart = chart,
+                markerVisibilityChangeListener = markerVisibilityChangeListener,
+                wasMarkerVisible = wasMarkerVisible,
+                setWasMarkerVisible = setWasMarkerVisible,
             )
-            if (wasMarkerVisible.not()) {
-                markerVisibilityChangeListener?.onMarkerShown(marker, markerEntryModels)
-                wasMarkerVisible = true
-            }
-        } ?: marker
-            .takeIf { wasMarkerVisible }
-            ?.also { marker ->
-                markerVisibilityChangeListener?.onMarkerHidden(marker)
-                wasMarkerVisible = false
-            }
+        }
 
-        measureContext.chartValuesManager.resetChartValues()
-        measureContext.clearExtras()
+        measureContext.reset()
     }
+}
+
+@Composable
+internal fun ChartBox(
+    modifier: Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier.height(DefaultDimens.CHART_HEIGHT.dp),
+        content = content,
+    )
 }
 
 @Composable

@@ -25,6 +25,7 @@ import com.patrykandpatryk.vico.sample.chart.ComposeComplexComposedChart
 import com.patrykandpatryk.vico.sample.chart.ComposeComposedChart
 import com.patrykandpatryk.vico.sample.chart.ComposeGroupedColumnChart
 import com.patrykandpatryk.vico.sample.chart.ComposeLineChart
+import com.patrykandpatryk.vico.sample.chart.ComposeLineChartWithFadingEdges
 import com.patrykandpatryk.vico.sample.chart.ComposeLineChartWithLabelsInside
 import com.patrykandpatryk.vico.sample.chart.ComposeStackedColumnChart
 import com.patrykandpatryk.vico.sample.chart.ViewColumnChart
@@ -32,6 +33,7 @@ import com.patrykandpatryk.vico.sample.chart.ViewComplexComposedChart
 import com.patrykandpatryk.vico.sample.chart.ViewComposedChart
 import com.patrykandpatryk.vico.sample.chart.ViewGroupedColumnChart
 import com.patrykandpatryk.vico.sample.chart.ViewLineChart
+import com.patrykandpatryk.vico.sample.chart.ViewLineChartWithFadingEdges
 import com.patrykandpatryk.vico.sample.chart.ViewLineChartWithLabelsInside
 import com.patrykandpatryk.vico.sample.chart.ViewStackedColumnChart
 
@@ -52,6 +54,12 @@ internal fun getSampleCharts(
         descriptionResourceId = R.string.column_chart_description,
         composeBased = { ComposeColumnChart(chartEntryModelProducer = chartEntryModelProducer) },
         viewBased = { ViewColumnChart(chartEntryModelProducer = chartEntryModelProducer) },
+    ),
+    SampleChart(
+        labelResourceId = R.string.line_chart_with_fading_edges_label,
+        descriptionResourceId = R.string.line_chart_with_fading_edges_description,
+        composeBased = { ComposeLineChartWithFadingEdges(chartEntryModelProducer = chartEntryModelProducer) },
+        viewBased = { ViewLineChartWithFadingEdges(chartEntryModelProducer = chartEntryModelProducer) },
     ),
     SampleChart(
         labelResourceId = R.string.composed_chart_label,

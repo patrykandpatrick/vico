@@ -43,6 +43,7 @@ complexity:
     ignoreDeprecated: true
     ignorePrivate: true
     ignoreOverridden: true
+    thresholdInInterfaces: 20
 style:
   MagicNumber:
     excludes:

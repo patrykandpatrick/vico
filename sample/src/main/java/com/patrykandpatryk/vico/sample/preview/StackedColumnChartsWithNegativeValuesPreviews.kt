@@ -27,9 +27,10 @@ import com.patrykandpatryk.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
-import com.patrykandpatryk.vico.compose.component.shape.lineComponent
+import com.patrykandpatryk.vico.compose.component.lineComponent
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart.MergeMode.Stack
 import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.text.textComponent
 import com.patrykandpatryk.vico.core.entry.entriesOf
 import com.patrykandpatryk.vico.core.entry.entryModelOf
@@ -41,11 +42,13 @@ private val model = entryModelOf(
     entriesOf(1f, -2f, 2f, 1f, -1f, 4f, 4f, -2f),
 )
 
-private val columns = listOf(
-    lineComponent(color = Color(0xFF494949), thickness = 8.dp),
-    lineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
-    lineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
-)
+private val columns: List<LineComponent>
+    @Composable
+    get() = listOf(
+        lineComponent(color = Color(0xFF494949), thickness = 8.dp),
+        lineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
+        lineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
+    )
 
 @Preview
 @Composable

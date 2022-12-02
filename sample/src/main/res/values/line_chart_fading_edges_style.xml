@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2022 Patryk Goworowski and Patryk Michalik
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <style name="LineChartFadingEdgesAxisTitleStyle">
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="typeface">sans</item>
+    </style>
+
+    <style name="LineChartFadingEdgesAxisStyle">
+        <item name="showTitle">true</item>
+    </style>
+
+    <style name="LineChartFadingEdgesAxisTitleBackgroundStyle">
+        <item name="shapeStyle">@style/PillShapeStyle</item>
+    </style>
+
+    <style name="PillShapeStyle">
+        <item name="cornerSize">100%</item>
+        <item name="cornerTreatment">rounded</item>
+    </style>
+
+    <style name="LineChartFadingEdgesAxisStyle.Start">
+        <item name="verticalAxisHorizontalLabelPosition">inside</item>
+        <item name="title">x-axis title</item>
+        <item name="titleStyle">@style/LineChartFadingEdgesAxisTitleStyle.Start</item>
+    </style>
+
+    <style name="LineChartFadingEdgesAxisTitleStyle.Start">
+        <item name="labelColor">?colorOnPrimary</item>
+        <item name="backgroundStyle">@style/LineChartFadingEdgesAxisTitleBackgroundStyle.Start</item>
+        <item name="marginEnd">4dp</item>
+    </style>
+
+    <style name="LineChartFadingEdgesAxisTitleBackgroundStyle.Start">
+        <item name="color">?colorPrimary</item>
+    </style>
+
+    <style name="LineChartFadingEdgesAxisStyle.Bottom">
+        <item name="title">y-axis title</item>
+        <item name="titleStyle">@style/LineChartFadingEdgesAxisTitleStyle.Bottom</item>
+        <item name="showGuideline">false</item>
+    </style>
+
+    <style name="LineChartFadingEdgesAxisTitleStyle.Bottom">
+        <item name="labelColor">?colorOnSecondary</item>
+        <item name="backgroundStyle">@style/LineChartFadingEdgesAxisTitleBackgroundStyle.Bottom</item>
+        <item name="marginTop">4dp</item>
+    </style>
+
+    <style name="LineChartFadingEdgesAxisTitleBackgroundStyle.Bottom">
+        <item name="color">?colorSecondary</item>
+    </style>
+
+</resources>

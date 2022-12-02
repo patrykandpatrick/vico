@@ -18,6 +18,7 @@ package com.patrykandpatryk.vico.core.extension
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import android.os.Build
 
 /**
  * Clips the given [rect] in the receiver [Canvas], runs the [block], and releases the clip.
@@ -48,3 +49,19 @@ public inline fun Canvas.inClip(
     block()
     restoreToCount(clipRestoreCount)
 }
+
+/**
+ * A convenience function for [Canvas.saveLayer].
+ */
+@Suppress("DEPRECATION")
+public fun Canvas.saveLayer(
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+): Int =
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        saveLayer(left, top, right, bottom, null)
+    } else {
+        saveLayer(left, top, right, bottom, null, Canvas.ALL_SAVE_FLAG)
+    }

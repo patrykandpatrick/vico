@@ -1,0 +1,21 @@
+This release includes the following changes.
+
+## Additions
+
+- Fading edges are now available. This feature applies a horizontal fade to the edges of the chart area for scrollable charts.
+- You can now turn off the automatic scaling up of charts that, at a scale factor of 1, wouldn’t fill up the entire available horizontal area.
+- In the `view` module, several new XML attributes have been added. Among other things, you can now customize individual chart axes via XML.
+
+## Improvements
+
+- In the `compose` module, all functions that create components are now composable and use `remember`. This is to improve performance.
+
+## API changes
+
+- In the `compose` module, two duplicate functions have been deprecated. Additionally, several functions have been moved, with the old functions having been deprecated.
+
+## Resolved issues
+
+- The `Chart` composable failed to respond to model updates after being recomposed with a new `ChartModelProducer`.
+- When provided with a `ChartModelProducer`, the `Chart` composable briefly had a height of zero when composed.
+- `TextComponent` mispositioned its background when `textAlign` was set to `Paint.Align.CENTER` or `Paint.Align.RIGHT`.

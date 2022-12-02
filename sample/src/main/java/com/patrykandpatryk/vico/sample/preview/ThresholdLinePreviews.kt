@@ -34,8 +34,8 @@ import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatryk.vico.compose.component.lineComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.toDynamicShader
-import com.patrykandpatryk.vico.compose.component.shape.textComponent
 import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.compose.style.LocalChartStyle
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine

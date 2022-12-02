@@ -32,4 +32,9 @@ public data class MutableMeasureContext(
 ) : MeasureContext, Extras by DefaultExtras() {
 
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()
+
+    override fun reset() {
+        clearExtras()
+        chartValuesManager.resetChartValues()
+    }
 }

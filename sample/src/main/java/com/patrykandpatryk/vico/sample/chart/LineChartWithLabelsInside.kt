@@ -30,13 +30,12 @@ import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.line.lineSpec
-import com.patrykandpatryk.vico.compose.component.shape.textComponent
 import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.compose.legend.verticalLegend
 import com.patrykandpatryk.vico.compose.legend.verticalLegendItem
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.component.shape.Shapes
 import com.patrykandpatryk.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatryk.vico.core.legend.VerticalLegend
@@ -49,7 +48,6 @@ internal fun ComposeLineChartWithLabelsInside(
     modifier: Modifier = Modifier,
 ) {
     val lineChart = lineChart(
-        pointPosition = LineChart.PointPosition.Start,
         lines = entityColors.map { color ->
             lineSpec(
                 lineColor = Color(color),

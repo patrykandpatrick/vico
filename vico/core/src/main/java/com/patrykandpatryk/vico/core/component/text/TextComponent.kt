@@ -156,15 +156,17 @@ public open class TextComponent protected constructor() : Padding, Margins {
         )
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
-        val textStartPosition =
-            horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth, textAlign)
+        val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
         val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layout.height.toFloat())
 
         context.withCanvas {
 
             save()
 
-            val bounds = layout.getBounds(tempMeasureBounds).apply {
+            val bounds = layout.getBounds(tempMeasureBounds)
+            val textAlignCorrection = textAlign.getXCorrection(width = bounds.width())
+
+            with(receiver = bounds) {
                 left -= padding.getLeftDp(isLtr).pixels
                 top -= padding.topDp.pixels
                 right += padding.getRightDp(isLtr).pixels
@@ -211,7 +213,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             )
 
             translate(
-                bounds.left + padding.getLeftDp(isLtr).pixels,
+                bounds.left + padding.getLeftDp(isLtr).pixels + textAlignCorrection,
                 bounds.top + padding.topDp.pixels,
             )
 
@@ -224,17 +226,16 @@ public open class TextComponent protected constructor() : Padding, Margins {
         context: MeasureContext,
         baseXPosition: Float,
         width: Float,
-        textAlign: Paint.Align,
     ): Float = with(context) {
         when (this@getTextStartPosition) {
             HorizontalPosition.Start ->
-                if (isLtr) getTextRightPosition(baseXPosition, width, textAlign)
+                if (isLtr) getTextRightPosition(baseXPosition, width)
                 else getTextLeftPosition(baseXPosition)
             HorizontalPosition.Center ->
-                baseXPosition - width.half + textAlign.getXCorrection(width)
+                baseXPosition - width.half
             HorizontalPosition.End ->
                 if (isLtr) getTextLeftPosition(baseXPosition)
-                else getTextRightPosition(baseXPosition, width, textAlign)
+                else getTextRightPosition(baseXPosition, width)
         }
     }
 
@@ -244,9 +245,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     private fun MeasureContext.getTextRightPosition(
         baseXPosition: Float,
         width: Float,
-        textAlign: Paint.Align,
-    ): Float = baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels -
-        width + textAlign.getXCorrection(width = width)
+    ): Float = baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels - width
 
     private fun Paint.Align.getXCorrection(width: Float): Float = when (this) {
         Paint.Align.LEFT -> 0f
@@ -453,5 +452,5 @@ public open class TextComponent protected constructor() : Padding, Margins {
  * }
  *```
  */
-public fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
+public inline fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
     TextComponent.Builder().apply(block).build()

@@ -27,10 +27,13 @@ import com.patrykandpatryk.vico.compose.axis.vertical.startAxis
 import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.component.shape.roundedCornerShape
-import com.patrykandpatryk.vico.compose.component.shape.textComponent
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.compose.style.ChartStyle
 import com.patrykandpatryk.vico.compose.style.ProvideChartStyle
+import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.axis.formatter.AxisValueFormatter
+import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatryk.vico.core.chart.column.ColumnChart
 import com.patrykandpatryk.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
@@ -49,6 +52,7 @@ internal fun ComposeGroupedColumnChart(
     val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
     val decorations = listOf(rememberGroupedColumnChartThresholdLine())
     ProvideChartStyle(chartStyle = chartStyle) {
+        val bottomAxis = bottomAxis(valueFormatter = rememberGroupedColumnChartAxisValueFormatter())
         val columnChart = columnChart(
             mergeMode = ColumnChart.MergeMode.Grouped,
             decorations = decorations,
@@ -58,7 +62,7 @@ internal fun ComposeGroupedColumnChart(
             chartModelProducer = chartEntryModelProducer,
             modifier = modifier,
             startAxis = startAxis(),
-            bottomAxis = bottomAxis(),
+            bottomAxis = bottomAxis,
             marker = marker(),
         )
     }
@@ -71,6 +75,7 @@ internal fun ViewGroupedColumnChart(
 ) {
     val marker = marker()
     val thresholdLine = rememberGroupedColumnChartThresholdLine()
+    val axisValueFormatter = rememberGroupedColumnChartAxisValueFormatter()
     AndroidViewBinding(
         factory = GroupedColumnChartBinding::inflate,
         modifier = modifier,
@@ -78,6 +83,7 @@ internal fun ViewGroupedColumnChart(
         chartView.entryProducer = chartEntryModelProducer
         chartView.marker = marker
         chartView.chart?.setDecorations(decorations = listOf(thresholdLine))
+        (chartView.bottomAxis as? HorizontalAxis<AxisPosition.Horizontal.Bottom>)?.valueFormatter = axisValueFormatter
     }
 }
 
@@ -106,8 +112,13 @@ internal fun rememberGroupedColumnChartThresholdLine(): ThresholdLine {
     }
 }
 
+@Composable
+internal fun rememberGroupedColumnChartAxisValueFormatter(): AxisValueFormatter<AxisPosition.Horizontal.Bottom> =
+    AxisValueFormatter { x, _ -> daysOfWeek[x.toInt() % daysOfWeek.size] }
+
 @Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFF68A7AD, 0xFF99C4C8, 0xFFE5CB9F)
+private val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 private const val THRESHOLD_RANGE_START = 7f
 private const val THRESHOLD_RANGE_END = 14f
 private const val THRESHOLD_LINE_COLOR = 0xFF68A7AD

@@ -49,11 +49,13 @@ public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(
  */
 @Composable
 public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
-    key: Any,
+    chartKey: Any,
+    producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
 ): Model? = collectAsState(
-    key = key,
+    chartKey = chartKey,
+    producerKey = producerKey,
     animationSpec = animationSpec,
     runInitialAnimation = runInitialAnimation,
 ).value
@@ -65,13 +67,17 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
  */
 @Composable
 public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
-    key: Any,
+    chartKey: Any,
+    producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
 ): MutableSharedState<Model?, Model?> {
-    val model: MutableSharedState<Model?, Model?> = remember(key) { mutableSharedStateOf(null) }
+    val model: MutableSharedState<Model?, Model?> = remember(key1 = chartKey, key2 = producerKey) {
+        mutableSharedStateOf(null)
+    }
+
     val scope = rememberCoroutineScope()
-    DisposableEffect(key1 = key) {
+    DisposableEffect(key1 = chartKey, key2 = producerKey) {
         var animationJob: Job? = null
         val listener = {
             if (animationSpec != null && (model.value != null || runInitialAnimation)) {
@@ -83,22 +89,22 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                         animationSpec = animationSpec,
                     ) { value, _ ->
                         if (animationJob?.isActive == true) {
-                            progressModel(key, value)
+                            progressModel(chartKey, value)
                         }
                     }
                 }
             } else {
-                progressModel(key, Animation.range.endInclusive)
+                progressModel(chartKey, Animation.range.endInclusive)
             }
         }
         registerForUpdates(
-            key = key,
+            key = chartKey,
             updateListener = listener,
             getOldModel = { model.value },
         ) { updatedModel ->
             model.value = updatedModel
         }
-        onDispose { unregisterFromUpdates(key) }
+        onDispose { unregisterFromUpdates(chartKey) }
     }
     return model
 }

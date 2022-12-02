@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.compose.style
 
+import android.graphics.Paint
 import android.graphics.Typeface
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
@@ -23,14 +24,16 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatryk.vico.compose.chart.line.lineSpec
 import com.patrykandpatryk.vico.compose.component.shape.dashedShape
-import com.patrykandpatryk.vico.compose.component.shape.lineComponent
+import com.patrykandpatryk.vico.compose.component.shape.shader.fromBrush
+import com.patrykandpatryk.vico.core.DefaultAlpha
 import com.patrykandpatryk.vico.core.DefaultColors
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.AxisPosition
@@ -42,6 +45,7 @@ import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes
+import com.patrykandpatryk.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.component.text.VerticalPosition
 import com.patrykandpatryk.vico.core.formatter.DecimalFormatValueFormatter
@@ -78,6 +82,7 @@ public data class ChartStyle(
      * @property axisLabelHorizontalMargin the horizontal margin around the backgrounds of axis labels.
      * @property axisLabelRotationDegrees the number of degrees by which axis labels are rotated.
      * @property axisLabelTypeface the typeface used for axis labels.
+     * @property axisLabelTextAlign the text alignment for axis labels.
      * @property axisGuidelineColor the color of axis guidelines.
      * @property axisGuidelineWidth the width of axis guidelines.
      * @property axisGuidelineShape the [Shape] used for axis guidelines.
@@ -101,6 +106,7 @@ public data class ChartStyle(
         val axisLabelHorizontalMargin: Dp = DefaultDimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
         val axisLabelRotationDegrees: Float = DefaultDimens.AXIS_LABEL_ROTATION_DEGREES,
         val axisLabelTypeface: Typeface = Typeface.MONOSPACE,
+        val axisLabelTextAlign: Paint.Align = Paint.Align.LEFT,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
         val axisGuidelineShape: Shape = Shapes.dashedShape(
@@ -190,16 +196,26 @@ public data class ChartStyle(
             ),
             columnChart = ColumnChart(
                 columns = entityColors.map { entityColor ->
-                    lineComponent(
-                        color = entityColor,
-                        thickness = DefaultDimens.COLUMN_WIDTH.dp,
+                    LineComponent(
+                        color = entityColor.toArgb(),
+                        thicknessDp = DefaultDimens.COLUMN_WIDTH,
                         shape = Shapes.roundedCornerShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
                     )
                 },
             ),
             lineChart = LineChart(
                 lines = entityColors.map { entityColor ->
-                    lineSpec(lineColor = entityColor)
+                    LineSpec(
+                        lineColor = entityColor.toArgb(),
+                        lineBackgroundShader = DynamicShaders.fromBrush(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    entityColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                                    entityColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                                ),
+                            ),
+                        ),
+                    )
                 },
             ),
             marker = Marker(),

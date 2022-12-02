@@ -38,15 +38,16 @@ import com.patrykandpatryk.vico.compose.chart.Chart
 import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.line.lineSpec
-import com.patrykandpatryk.vico.compose.component.shape.lineComponent
+import com.patrykandpatryk.vico.compose.component.lineComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatryk.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatryk.vico.compose.component.shape.textComponent
 import com.patrykandpatryk.vico.compose.component.shapeComponent
+import com.patrykandpatryk.vico.compose.component.textComponent
 import com.patrykandpatryk.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatryk.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.axis.vertical.createVerticalAxis
+import com.patrykandpatryk.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatryk.vico.core.component.shape.DashedShape
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.shape.Shapes.pillShape
@@ -123,8 +124,10 @@ public fun LineChartCard(): Unit = VicoTheme {
                         ),
                     ),
                 ),
-                minX = 0f,
-                maxY = 3f,
+                axisValuesOverrider = AxisValuesOverrider.fixed(
+                    minX = 0f,
+                    maxY = 3f,
+                ),
             ),
             model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
             startAxis = createVerticalAxis {

@@ -14,10 +14,21 @@
  * limitations under the License.
  */
 
-package com.patrykandpatryk.vico.core.context
+package com.patrykandpatryk.vico.core.chart.scale
 
 /**
- * `1f` if [MeasureContext.isLtr] is true, and `-1f` otherwise.
+ * Defines whether the content of a scrollable chart should be scaled up when the entry count and intrinsic segment
+ * width are such that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
  */
-public val MeasureContext.layoutDirectionMultiplier: Float
-    get() = if (isLtr) 1f else -1f
+public enum class AutoScaleUp {
+
+    /**
+     * Scales up the chart to prevent any empty space from being visible.
+     */
+    Full,
+
+    /**
+     * Leaves the chart’s scale unaffected. Empty space may be visible.
+     */
+    None,
+}

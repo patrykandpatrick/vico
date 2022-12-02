@@ -19,6 +19,7 @@ package com.patrykandpatryk.vico.compose.m2.style
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatryk.vico.compose.style.ChartStyle
 
@@ -36,12 +37,20 @@ public fun m2ChartStyle(
         MaterialTheme.colors.secondary,
     ),
     elevationOverlayColor: Color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
-): ChartStyle = ChartStyle.fromColors(
-    axisLabelColor = axisLabelColor,
-    axisGuidelineColor = axisGuidelineColor,
-    axisLineColor = axisLineColor,
-    entityColors = entityColors,
-    elevationOverlayColor = elevationOverlayColor,
-)
+): ChartStyle = remember(
+    axisLabelColor,
+    axisGuidelineColor,
+    axisLineColor,
+    entityColors,
+    elevationOverlayColor,
+) {
+    ChartStyle.fromColors(
+        axisLabelColor = axisLabelColor,
+        axisGuidelineColor = axisGuidelineColor,
+        axisLineColor = axisLineColor,
+        entityColors = entityColors,
+        elevationOverlayColor = elevationOverlayColor,
+    )
+}
 
 private const val LINE_ALPHA = 0.2f

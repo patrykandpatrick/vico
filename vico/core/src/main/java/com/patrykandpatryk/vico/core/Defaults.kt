@@ -60,6 +60,11 @@ public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
 public const val DEF_THREAD_POOL_SIZE: Int = 4
 
 /**
+ * The default scroll distance over which fading edges fade in and out (in dp).
+ */
+public const val FADING_EDGES_VISIBILITY_THRESHOLD_DP: Float = 16f
+
+/**
  * Defaults for animations.
  */
 public object Animation {

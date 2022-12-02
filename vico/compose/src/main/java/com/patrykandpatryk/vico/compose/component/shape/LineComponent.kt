@@ -16,8 +16,8 @@
 
 package com.patrykandpatryk.vico.compose.component.shape
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
@@ -38,6 +38,8 @@ import com.patrykandpatryk.vico.core.dimensions.emptyDimensions
  * @param dynamicShader an optional [DynamicShader] to apply to the line.
  * @param margins the margins of the line.
  */
+@Composable
+@Deprecated(message = "Use `com.patrykandpatryk.vico.compose.component.lineComponent` instead.")
 public fun lineComponent(
     color: Color,
     thickness: Dp,
@@ -46,14 +48,14 @@ public fun lineComponent(
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): LineComponent = LineComponent(
-    color = color.toArgb(),
-    thicknessDp = thickness.value,
-    dynamicShader = dynamicShader,
+): LineComponent = com.patrykandpatryk.vico.compose.component.lineComponent(
+    color = color,
+    thickness = thickness,
     shape = shape,
+    dynamicShader = dynamicShader,
     margins = margins,
-    strokeWidthDp = strokeWidth.value,
-    strokeColor = strokeColor.toArgb(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
 )
 
 /**
@@ -67,6 +69,8 @@ public fun lineComponent(
  * @param dynamicShader an optional [DynamicShader] to apply to the line.
  * @param margins the margins of the line.
  */
+@Composable
+@Deprecated(message = "Use `com.patrykandpatryk.vico.compose.component.lineComponent` instead.")
 public fun lineComponent(
     color: Color,
     thickness: Dp,
@@ -75,12 +79,12 @@ public fun lineComponent(
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): LineComponent = LineComponent(
-    color = color.toArgb(),
-    thicknessDp = thickness.value,
+): LineComponent = com.patrykandpatryk.vico.compose.component.lineComponent(
+    color = color,
+    thickness = thickness,
+    shape = shape,
     dynamicShader = dynamicShader,
-    shape = shape.chartShape(),
     margins = margins,
-    strokeWidthDp = strokeWidth.value,
-    strokeColor = strokeColor.toArgb(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
 )

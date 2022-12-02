@@ -19,9 +19,15 @@ package com.patrykandpatryk.vico.core.chart.draw
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
+import com.patrykandpatryk.vico.core.chart.Chart
+import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.entry.ChartEntryModel
+import com.patrykandpatryk.vico.core.extension.getClosestMarkerEntryModel
+import com.patrykandpatryk.vico.core.marker.Marker
+import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
 
 /**
@@ -34,6 +40,10 @@ import com.patrykandpatryk.vico.core.model.Point
  * @param markerTouchPoint the point inside the chart’s coordinates where physical touch is occurring.
  * @param segmentProperties holds information about the width of each individual segment on the x-axis.
  * @param chartBounds the bounds in which the [com.patrykandpatryk.vico.core.chart.Chart] will be drawn.
+ * @param horizontalScroll the horizontal scroll.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
+ * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
+ * the chart.
  *
  * @see [com.patrykandpatryk.vico.core.component.shape.ShapeComponent.setShadow]
  */
@@ -46,6 +56,7 @@ public fun chartDrawContext(
     segmentProperties: SegmentProperties,
     chartBounds: RectF,
     horizontalScroll: Float,
+    autoScaleUp: AutoScaleUp,
 ): ChartDrawContext = object : ChartDrawContext, MeasureContext by measureContext {
 
     override val chartBounds: RectF = chartBounds
@@ -71,7 +82,9 @@ public fun chartDrawContext(
 
     private fun calculateDrawScale(): Float {
         val drawnEntryWidth = segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount()
-        return if (isHorizontalScrollEnabled && drawnEntryWidth >= chartBounds.width()) {
+        val upscalingPossibleButDisallowed = drawnEntryWidth < chartBounds.width() && autoScaleUp == AutoScaleUp.None
+        val scrollEnabledAndUpscalingImpossible = isHorizontalScrollEnabled && drawnEntryWidth >= chartBounds.width()
+        return if (upscalingPossibleButDisallowed || scrollEnabledAndUpscalingImpossible) {
             measureContext.chartScale
         } else {
             chartBounds.width() / drawnEntryWidth
@@ -81,3 +94,39 @@ public fun chartDrawContext(
 
 internal inline val ChartDrawContext.segmentWidth: Int
     get() = segmentProperties.segmentWidth.pixels.toInt()
+
+/**
+ * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the
+ * [markerVisibilityChangeListener] about the [marker]’s visibility changes.
+ */
+@LongParameterListDrawFunction
+public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
+    marker: Marker,
+    markerTouchPoint: Point?,
+    chart: Chart<Model>,
+    markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
+    wasMarkerVisible: Boolean,
+    setWasMarkerVisible: (Boolean) -> Unit,
+) {
+    markerTouchPoint
+        ?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
+        ?.let { markerEntryModels ->
+            marker.draw(
+                context = this,
+                bounds = chart.bounds,
+                markedEntries = markerEntryModels,
+            )
+            if (wasMarkerVisible.not()) {
+                markerVisibilityChangeListener?.onMarkerShown(
+                    marker = marker,
+                    markerEntryModels = markerEntryModels,
+                )
+                setWasMarkerVisible(true)
+            }
+        } ?: marker
+        .takeIf { wasMarkerVisible }
+        ?.also {
+            markerVisibilityChangeListener?.onMarkerHidden(marker = marker)
+            setWasMarkerVisible(false)
+        }
+}

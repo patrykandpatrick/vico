@@ -37,7 +37,7 @@ public inline fun <R> TypedArray.use(block: (TypedArray) -> R): R =
 /**
  * Retrieves the color at the given index.
  */
-public fun TypedArray.getColor(
+public fun TypedArray.getColorExtended(
     @StyleableRes index: Int,
     @ColorInt defaultColor: Int = Color.TRANSPARENT,
 ): Int = getColor(index, defaultColor)
