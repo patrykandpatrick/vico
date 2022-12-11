@@ -93,10 +93,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
 
         forEachEntity(
-            startValueIndex = chartValues.minX + scrollAdjustment * step,
+            startSegmentX = chartValues.minX + scrollAdjustment * step,
             step = step,
             xRange = chartValues.minX..chartValues.maxX,
-        ) { valueIndex, shouldDrawLines, shouldDrawLabel ->
+        ) { segmentX, shouldDrawLines, shouldDrawLabel ->
 
             guideline
                 ?.takeIf {
@@ -123,7 +123,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 .takeIf { shouldDrawLabel }
                 ?.drawText(
                     context = context,
-                    text = valueFormatter.formatValue(valueIndex, chartValues),
+                    text = valueFormatter.formatValue(segmentX, chartValues),
                     textX = textCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -167,31 +167,31 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         ceil(bounds.width() / segmentWidth).toInt() + 1
 
     private inline fun ChartDrawContext.forEachEntity(
-        startValueIndex: Float,
+        startSegmentX: Float,
         step: Float,
         xRange: ClosedFloatingPointRange<Float>,
         action: (valueIndex: Float, shouldDrawLines: Boolean, shouldDrawLabel: Boolean) -> Unit,
     ) {
-        var valueIndex = startValueIndex
+        var segmentX = startSegmentX
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
 
         for (index in 0 until tickPosition.getTickCount(entryLength = entryLength)) {
 
-            val firstEntityConditionsMet = valueIndex != xRange.start ||
+            val firstEntityConditionsMet = segmentX != xRange.start ||
                 !segmentProperties.labelPositionOrDefault.skipFirstEntity ||
                 tickPosition.offset > 0
 
-            val shouldDrawLines = valueIndex >= tickPosition.offset &&
-                (valueIndex - tickPosition.offset) % tickPosition.spacing == 0f &&
+            val shouldDrawLines = segmentX / step >= tickPosition.offset &&
+                (segmentX / step - tickPosition.offset) % tickPosition.spacing == 0f &&
                 firstEntityConditionsMet
 
             action(
-                valueIndex,
+                segmentX,
                 shouldDrawLines,
-                shouldDrawLines && valueIndex in xRange && index < entryLength,
+                shouldDrawLines && segmentX in xRange && index < entryLength,
             )
 
-            valueIndex += step
+            segmentX += step
         }
     }
 
