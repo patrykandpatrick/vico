@@ -25,6 +25,8 @@ import kotlin.math.roundToInt
  */
 public const val PI_RAD: Float = 180f
 
+internal fun Float.toPrettyString(): String = if (this < 0f) "−${-this}" else this.toString()
+
 /**
  * Half of this value.
  */
@@ -118,5 +120,3 @@ public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull
  */
 public fun Float.rangeWith(other: Float): ClosedFloatingPointRange<Float> =
     if (other > this) this..other else other..this
-
-internal fun Float.toPrettyString(): String = if (this < 0f) "−${-this}" else this.toString()
