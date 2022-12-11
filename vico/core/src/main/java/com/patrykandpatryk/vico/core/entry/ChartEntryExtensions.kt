@@ -16,10 +16,10 @@
 
 package com.patrykandpatryk.vico.core.entry
 
+import com.patrykandpatryk.vico.core.extension.gcdWith
 import com.patrykandpatryk.vico.core.extension.rangeOfOrNull
 import com.patrykandpatryk.vico.core.extension.rangeOfPairOrNull
 import kotlin.math.abs
-import kotlin.math.min
 
 /**
  * Conveniently creates an instance of [FloatEntry].
@@ -96,7 +96,7 @@ internal fun Iterable<Iterable<ChartEntry>>.calculateStep(): Float {
             currentEntry = iterator.next()
             previousEntry?.let { prevEntry ->
                 val difference = abs(x = currentEntry.x - prevEntry.x)
-                step = min(a = step ?: difference, b = difference)
+                step = step?.gcdWith(other = difference) ?: difference
             }
             previousEntry = currentEntry
         }

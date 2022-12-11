@@ -16,14 +16,34 @@
 
 package com.patrykandpatryk.vico.core.extension
 
+import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 /**
  * The number of degrees equivalent to π radians.
  */
 public const val PI_RAD: Float = 180f
+
+internal const val FLOAT_GCD_DECIMALS = 3
+
+private fun Float.round(decimals: Int): Float {
+    val multiplier = 10f.pow(n = decimals)
+    return (this * multiplier).round / multiplier
+}
+
+private fun Float.gcdWithImpl(other: Float, threshold: Float): Float = when {
+    this < other -> other.gcdWithImpl(other = this, threshold = threshold)
+    abs(x = other) < threshold -> this
+    else -> other.gcdWithImpl(other = this - (this / other).floor * other, threshold = threshold)
+}
+
+internal fun Float.gcdWith(other: Float): Float = gcdWithImpl(
+    other = other,
+    threshold = 10f.pow(n = -FLOAT_GCD_DECIMALS - 1),
+).round(decimals = FLOAT_GCD_DECIMALS)
 
 internal fun Float.toPrettyString(): String = if (this < 0f) "−${-this}" else this.toString()
 
