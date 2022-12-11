@@ -21,6 +21,7 @@ import android.graphics.Path
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.context.DrawContext
+import com.patrykandpatryk.vico.core.extension.ceil
 
 /**
  * [DashedShape] draws a dashed line by interchangeably drawing the provided [shape] and leaving a gap.
@@ -144,11 +145,8 @@ public class DashedShape(
                     drawGapLength = 0f
                 }
                 else -> {
-                    var fitWidth = dashLength
-                    while (length > fitWidth) {
-                        fitWidth += gapLength + dashLength
-                    }
-                    val ratio = length / fitWidth
+                    val gapAndDashLength = gapLength + dashLength
+                    val ratio = length / (dashLength + (length / gapAndDashLength).ceil * gapAndDashLength)
                     drawDashLength = dashLength * ratio
                     drawGapLength = gapLength * ratio
                 }
