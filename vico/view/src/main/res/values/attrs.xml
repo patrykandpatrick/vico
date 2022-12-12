@@ -137,6 +137,11 @@
         <attr name="marginBottom" format="dimension" />
         <attr name="marginVertical" format="dimension" />
         <attr name="marginHorizontal" format="dimension" />
+        <attr name="textAlign" format="enum">
+            <enum name="left" value="0" />
+            <enum name="center" value="1" />
+            <enum name="right" value="2" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="Shape">

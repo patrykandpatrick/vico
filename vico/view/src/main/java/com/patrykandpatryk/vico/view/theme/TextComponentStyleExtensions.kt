@@ -61,6 +61,7 @@ internal fun TypedArray.getTextComponent(
         this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
         this.ellipsize = getTruncateAt()
         getTypeface(context)?.let { this.typeface = it }
+        this.textAlign = getTextAlign()
     }
 }
 
@@ -149,4 +150,13 @@ private fun TypedArray.getMargins(context: Context): MutableDimensions {
         endDp = firstNonNegativeOf(paddingEnd, paddingHorizontal, padding).orZero,
         bottomDp = firstNonNegativeOf(paddingBottom, paddingVertical, padding).orZero,
     )
+}
+
+private fun TypedArray.getTextAlign(): Paint.Align {
+    val values = Paint.Align.values()
+    val index = getInt(
+        R.styleable.TextComponentStyle_textAlign,
+        Paint.Align.LEFT.ordinal,
+    ).coerceAtMost(maximumValue = Paint.Align.RIGHT.ordinal)
+    return values[index]
 }
