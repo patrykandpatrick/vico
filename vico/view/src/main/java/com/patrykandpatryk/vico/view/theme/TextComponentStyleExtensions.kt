@@ -18,6 +18,7 @@ package com.patrykandpatryk.vico.view.theme
 
 import android.content.Context
 import android.content.res.TypedArray
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Build
 import android.text.TextUtils
@@ -50,20 +51,20 @@ internal fun TypedArray.getTextComponent(
     textComponent {
         this.color = color
         this.background = background
-        this.padding = getLabelPadding(context)
-        this.margins = getLabelMargins(context)
+        this.padding = getPadding(context)
+        this.margins = getMargins(context)
         this.textSizeSp = getRawDimension(
             context = context,
             index = R.styleable.TextComponentStyle_android_textSize,
             defaultValue = TEXT_COMPONENT_TEXT_SIZE,
         )
         this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
-        this.ellipsize = getLabelTruncateAt()
-        getLabelTypeface(context)?.let { this.typeface = it }
+        this.ellipsize = getTruncateAt()
+        getTypeface(context)?.let { this.typeface = it }
     }
 }
 
-private fun TypedArray.getLabelTruncateAt(): TextUtils.TruncateAt {
+private fun TypedArray.getTruncateAt(): TextUtils.TruncateAt {
     val int = getInt(R.styleable.TextComponentStyle_android_ellipsize, TextUtils.TruncateAt.END.ordinal)
     val values = TextUtils.TruncateAt.values()
     return when (int) {
@@ -73,7 +74,7 @@ private fun TypedArray.getLabelTruncateAt(): TextUtils.TruncateAt {
 }
 
 @Suppress("MagicNumber")
-private fun TypedArray.getLabelTypeface(context: Context): Typeface? {
+private fun TypedArray.getTypeface(context: Context): Typeface? {
     val fontIndex = if (hasValue(R.styleable.TextComponentStyle_android_fontFamily)) {
         R.styleable.TextComponentStyle_android_fontFamily
     } else {
@@ -106,7 +107,7 @@ private fun TypedArray.getLabelTypeface(context: Context): Typeface? {
     }
 }
 
-private fun TypedArray.getLabelPadding(context: Context): MutableDimensions {
+private fun TypedArray.getPadding(context: Context): MutableDimensions {
 
     fun getDpDimension(@StyleableRes index: Int): Float =
         getRawDimension(context, index, -1f)
@@ -130,7 +131,7 @@ private fun TypedArray.getLabelPadding(context: Context): MutableDimensions {
     )
 }
 
-private fun TypedArray.getLabelMargins(context: Context): MutableDimensions {
+private fun TypedArray.getMargins(context: Context): MutableDimensions {
 
     fun getDpDimension(@StyleableRes index: Int): Float =
         getRawDimension(context, index, -1f)
