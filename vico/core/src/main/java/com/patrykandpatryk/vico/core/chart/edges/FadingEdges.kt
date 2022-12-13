@@ -24,7 +24,7 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
-import com.patrykandpatryk.vico.core.FADING_EDGES_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatryk.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
@@ -47,7 +47,7 @@ private const val NO_FADE: Int = 0x00000000
 public open class FadingEdges(
     public var startEdgeWidthDp: Float = 0f,
     public var endEdgeWidthDp: Float = startEdgeWidthDp,
-    public var visibilityThresholdDp: Float = FADING_EDGES_VISIBILITY_THRESHOLD_DP,
+    public var visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
     public var visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
 ) {
 
@@ -65,7 +65,7 @@ public open class FadingEdges(
      */
     public constructor(
         edgeWidthDp: Float = 0f,
-        visibilityThresholdDp: Float = FADING_EDGES_VISIBILITY_THRESHOLD_DP,
+        visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
         visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
     ) : this(
         startEdgeWidthDp = edgeWidthDp,

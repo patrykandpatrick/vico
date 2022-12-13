@@ -24,7 +24,7 @@ import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import androidx.annotation.StyleableRes
 import com.patrykandpatryk.vico.core.DefaultDimens
-import com.patrykandpatryk.vico.core.FADING_EDGES_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatryk.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
@@ -259,7 +259,7 @@ internal class ThemeHandler(
         val threshold = getRawDimension(
             context,
             R.styleable.BaseChartView_fadingEdgeVisibilityThreshold,
-            FADING_EDGES_VISIBILITY_THRESHOLD_DP,
+            FADING_EDGE_VISIBILITY_THRESHOLD_DP,
         )
 
         return if (startLength > 0f || endLength > 0f) {

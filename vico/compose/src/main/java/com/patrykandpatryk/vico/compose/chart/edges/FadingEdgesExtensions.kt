@@ -23,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatryk.vico.core.FADING_EDGES_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatryk.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
 
 /**
@@ -107,7 +107,7 @@ public object FadingEdgesDefaults {
     /**
      * The scroll distance over which the overlays fade in and out (in dp).
      */
-    public val visibilityThreshold: Dp = FADING_EDGES_VISIBILITY_THRESHOLD_DP.dp
+    public val visibilityThreshold: Dp = FADING_EDGE_VISIBILITY_THRESHOLD_DP.dp
 
     /**
      * Used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to which the fading
