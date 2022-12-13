@@ -91,7 +91,7 @@ internal fun ComposeLineChartWithFadingEdges(
             startAxis = startAxis,
             bottomAxis = bottomAxis,
             marker = marker(),
-            fadingEdges = rememberFadingEdges(edgeWidth = FADING_EDGE_LENGTH_DP.dp),
+            fadingEdges = rememberFadingEdges(),
         )
     }
 }
@@ -114,4 +114,3 @@ internal fun ViewLineChartWithFadingEdges(
 
 @Suppress("MagicNumber")
 private val entityColors = longArrayOf(0xFFAA96DA)
-private const val FADING_EDGE_LENGTH_DP = 32f
