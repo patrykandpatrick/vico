@@ -47,7 +47,7 @@ public fun <T> ArrayList<ArrayList<T>>.setToAllChildren(other: List<Collection<T
 
 private fun <T> ArrayList<ArrayList<T>>.ensureSize(size: Int) {
     if (this.size >= size) return
-    for (index in 0 until size - this.size) {
+    repeat(size - this.size) {
         add(ArrayList())
     }
 }
