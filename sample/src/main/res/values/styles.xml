@@ -20,7 +20,6 @@
 
     <style name="LineChartLineChartStyle">
         <item name="line1Spec">@style/LineChartLine1Spec</item>
-        <item name="pointPosition">start</item>
     </style>
 
     <style name="LineChartLine1Spec">
