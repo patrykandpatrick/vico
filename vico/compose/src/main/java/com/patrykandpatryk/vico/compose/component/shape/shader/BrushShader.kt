@@ -27,9 +27,9 @@ import com.patrykandpatryk.vico.core.context.DrawContext
 import kotlin.math.abs
 
 /**
- * Creates a [DynamicShader] out of [Brush].
+ * Creates a [DynamicShader] out of a [Brush].
  *
- * @property brush the source [Brush] that will be used as the [Shader].
+ * @property brush the [Brush] to be converted to a [Shader].
  */
 public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
 

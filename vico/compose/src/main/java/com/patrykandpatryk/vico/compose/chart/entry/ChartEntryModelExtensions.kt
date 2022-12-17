@@ -34,7 +34,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 /**
- * The default [AnimationSpec] used the animation run on each [ChartEntryModel] update.
+ * The default [AnimationSpec] for difference animations.
  *
  * @see collect
  */
@@ -43,7 +43,7 @@ public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(
 )
 
 /**
- * Observes data provided by [ChartModelProducer] and launches an animation for each [ChartEntryModel] update.
+ * Observes the data provided by this [ChartModelProducer] and launches an animation for each [ChartEntryModel] update.
  *
  * @see ChartModelProducer
  */
@@ -61,7 +61,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
 ).value
 
 /**
- * Observes data provided by [ChartModelProducer] and launches an animation for each [ChartEntryModel] update.
+ * Observes the data provided by this [ChartModelProducer] and launches an animation for each [ChartEntryModel] update.
  *
  * @see ChartModelProducer
  */
