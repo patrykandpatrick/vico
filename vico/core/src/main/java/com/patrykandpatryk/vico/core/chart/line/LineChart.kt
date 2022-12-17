@@ -183,7 +183,7 @@ public open class LineChart(
         )
 
         /**
-         * Returns true if the [lineBackgroundShader] is not null, and false otherwise.
+         * Returns `true` if the [lineBackgroundShader] is not null, and false otherwise.
          */
         public val hasLineBackgroundShader: Boolean
             get() = lineBackgroundShader != null

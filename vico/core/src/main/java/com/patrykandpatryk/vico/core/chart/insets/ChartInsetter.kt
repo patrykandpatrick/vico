@@ -16,13 +16,15 @@
 
 package com.patrykandpatryk.vico.core.chart.insets
 
+import com.patrykandpatryk.vico.core.axis.Axis
+import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.MeasureContext
+import com.patrykandpatryk.vico.core.marker.Marker
 
 /**
- * An interface used by various components (e.g., Axis, Marker) to inset [com.patrykandpatryk.vico.core.chart.Chart].
- * It prevents the chart from taking all available space inside a view, so various components don’t overlap it
- * when they shouldn’t.
+ * Enables a component to add insets to [Chart]s to make room for itself. This is used by [Axis], [Marker], and the
+ * like.
  */
 public interface ChartInsetter {
 

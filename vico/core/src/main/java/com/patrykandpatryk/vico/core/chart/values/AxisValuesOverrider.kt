@@ -21,7 +21,7 @@ import com.patrykandpatryk.vico.core.extension.round
 import kotlin.math.abs
 
 /**
- * Overrides a chart’s minimum and maximum values x-axis and y-axis values.
+ * Overrides a chart’s minimum and maximum x-axis and y-axis values.
  * This can be used with [com.patrykandpatryk.vico.view.chart.BaseChartView] and the
  * [com.patrykandpatryk.vico.compose.chart.Chart] composable.
  */
