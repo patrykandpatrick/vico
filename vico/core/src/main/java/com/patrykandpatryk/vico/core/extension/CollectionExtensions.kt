@@ -33,6 +33,30 @@ public fun <T> MutableList<T>.setAll(other: Collection<T>) {
 }
 
 /**
+ * For each child [ArrayList] contained in this [ArrayList], replaces the elements of the child [ArrayList] with the
+ * elements of the corresponding [Collection] from the provided [List]. The child [ArrayList] and [Collection] are
+ * associated by index. If a given child [ArrayList] contained in this [ArrayList] has no corresponding [Collection] in
+ * the provided [List], the child [ArrayList] will be cleared. If the size of this [ArrayList] is smaller than the size
+ * of the provided [List], an appropriate number of empty child [ArrayList]s will first be added to this [ArrayList].
+ */
+public fun <T> ArrayList<ArrayList<T>>.setToAllChildren(other: List<Collection<T>>) {
+    ensureSize(other.size)
+    forEachIndexed { index, childArrayList ->
+        childArrayList.clear()
+        if (other.lastIndex >= index) {
+            childArrayList.addAll(other[index])
+        }
+    }
+}
+
+private fun <T> ArrayList<ArrayList<T>>.ensureSize(size: Int) {
+    if (this.size >= size) return
+    repeat(size - this.size) {
+        add(ArrayList())
+    }
+}
+
+/**
  * Replaces all of the elements of this [MutableMap] with the elements of the provided map.
  */
 public fun <K, V> MutableMap<K, V>.setAll(other: Map<K, V>) {
