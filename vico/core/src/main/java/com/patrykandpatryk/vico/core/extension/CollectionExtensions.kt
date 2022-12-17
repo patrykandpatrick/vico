@@ -33,7 +33,11 @@ public fun <T> MutableList<T>.setAll(other: Collection<T>) {
 }
 
 /**
- * Replaces all of the elements in child [ArrayList]s of this [ArrayList] with the elements of the provided [List].
+ * For each child [ArrayList] contained in this [ArrayList], replaces the elements of the child [ArrayList] with the
+ * elements of the corresponding [Collection] from the provided [List]. The child [ArrayList] and [Collection] are
+ * associated by index. If a given child [ArrayList] contained in this [ArrayList] has no corresponding [Collection] in
+ * the provided [List], the child [ArrayList] will be cleared. If the size of this [ArrayList] is smaller than the size
+ * of the provided [List], an appropriate number of empty child [ArrayList]s will first be added to this [ArrayList].
  */
 public fun <T> ArrayList<ArrayList<T>>.setToAllChildren(other: List<Collection<T>>) {
     ensureSize(other.size)
