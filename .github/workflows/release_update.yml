@@ -24,7 +24,7 @@ jobs:
           git config --global user.name "Vico Chart Bot"
           pip install --upgrade pip
           pip install mkdocs mkdocs-material
-          git clone https://github.com/patrykandpatryk/patrykandpatryk.com
+          git clone https://${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com
           cd ${{ github.workspace }}/vico
           OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatryk\.vico:view:).*(?=\")" README.md)
           NEW_VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
