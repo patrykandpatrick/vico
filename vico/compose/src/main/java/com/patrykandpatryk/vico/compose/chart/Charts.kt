@@ -38,8 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
+import com.patrykandpatryk.vico.compose.chart.column.columnChart
 import com.patrykandpatryk.vico.compose.chart.entry.collectAsState
 import com.patrykandpatryk.vico.compose.chart.entry.defaultDiffAnimationSpec
+import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.scroll.ChartScrollSpec
 import com.patrykandpatryk.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatryk.vico.compose.extension.chartTouchEvent
@@ -72,23 +74,20 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
 /**
  * Displays a chart.
  *
- * @param chart the chart used to display sets of entries (e.g.,
- * [com.patrykandpatryk.vico.core.chart.column.ColumnChart] for a column chart or
- * [com.patrykandpatryk.vico.core.chart.line.LineChart] for a line chart).
- * @param chartModelProducer produces the [ChartEntryModel]s displayed by the [chart].
- * @param modifier an optional modifier.
- * @param startAxis an axis displayed on the start of the chart.
- * @param topAxis an axis displayed on the top of the chart.
- * @param endAxis an axis displayed on the end of the chart.
- * @param bottomAxis an axis displayed on the bottom of the chart.
- * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
- * nearest to the touch point.
- * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
+ * @param chart the chart itself (excluding axes, markers, etc.). You can use [lineChart] or [columnChart], or provide a
+ * custom [Chart] implementation.
+ * @param chartModelProducer creates and updates the [ChartEntryModel] for the chart.
+ * @param modifier the modifier to be applied to the chart.
+ * @param startAxis the axis displayed at the start of the chart.
+ * @param topAxis the axis displayed at the top of the chart.
+ * @param endAxis the axis displayed at the end of the chart.
+ * @param bottomAxis the axis displayed at the bottom of the chart.
+ * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
+ * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
  * @param legend an optional legend for the chart.
  * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
- * @param diffAnimationSpec the animation spec used to animate differences between entry sets ([ChartEntryModel]
- * instances).
+ * @param diffAnimationSpec the animation spec used for difference animations.
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
@@ -147,23 +146,20 @@ public fun <Model : ChartEntryModel> Chart(
 /**
  * Displays a chart.
  *
- * This function accepts a [ChartEntryModel]. For regular usage it’s advised to use the function overload that accepts a
+ * This function accepts a [ChartEntryModel]. For dynamic data, use the function overload that accepts a
  * [ChartModelProducer] instance.
  *
- * @param chart the chart used to display sets of entries (e.g.,
- * [com.patrykandpatryk.vico.core.chart.column.ColumnChart] for a column chart or
- * [com.patrykandpatryk.vico.core.chart.line.LineChart] for a line chart).
- * @param model the [ChartEntryModel]s displayed by the [chart].
- * @param modifier an optional modifier.
- * @param startAxis an axis displayed on the start of the chart.
- * @param topAxis an axis displayed on the top of the chart.
- * @param endAxis an axis displayed on the end of the chart.
- * @param bottomAxis an axis displayed on the bottom of the chart.
- * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
- * nearest to the touch point.
- * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
+ * @param chart the chart itself (excluding axes, markers, etc.). You can use [lineChart] or [columnChart], or provide a
+ * custom [Chart] implementation.
+ * @param model the [ChartEntryModel] for the chart.
+ * @param modifier the modifier to be applied to the chart.
+ * @param startAxis the axis displayed at the start of the chart.
+ * @param topAxis the axis displayed at the top of the chart.
+ * @param endAxis the axis displayed at the end of the chart.
+ * @param bottomAxis the axis displayed at the bottom of the chart.
+ * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
+ * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
  * @param legend an optional legend for the chart.
- * @param isHorizontalScrollEnabled whether horizontal scroll is enabled.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
  * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
@@ -210,25 +206,24 @@ public fun <Model : ChartEntryModel> Chart(
 /**
  * Displays a chart.
  *
- * This function accepts a [ChartEntryModel]. For regular usage it’s advised to use the function overload that accepts a
+ * This function accepts a [ChartEntryModel]. For dynamic data, use the function overload that accepts a
  * [ChartModelProducer] instance.
  *
- * @param chart the chart used to display sets of entries (e.g.,
- * [com.patrykandpatryk.vico.core.chart.column.ColumnChart] for a column chart or
- * [com.patrykandpatryk.vico.core.chart.line.LineChart] for a line chart).
- * @param model the [ChartEntryModel]s displayed by the [chart].
- * @param modifier an optional modifier.
- * @param startAxis an axis displayed on the start of the chart.
- * @param topAxis an axis displayed on the top of the chart.
- * @param endAxis an axis displayed on the end of the chart.
- * @param bottomAxis an axis displayed on the bottom of the chart.
- * @param marker an optional marker that will appear when the chart is touched, highlighting the entry or entries
- * nearest to the touch point.
- * @param markerVisibilityChangeListener an optional listener for [marker] visibility changes.
+ * @param chart the chart itself (excluding axes, markers, etc.). You can use [lineChart] or [columnChart], or provide a
+ * custom [Chart] implementation.
+ * @param model the [ChartEntryModel] for the chart.
+ * @param modifier the modifier to be applied to the chart.
+ * @param startAxis the axis displayed at the start of the chart.
+ * @param topAxis the axis displayed at the top of the chart.
+ * @param endAxis the axis displayed at the end of the chart.
+ * @param bottomAxis the axis displayed at the bottom of the chart.
+ * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
+ * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
  * @param legend an optional legend for the chart.
  * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
- * @param oldModel the chart’s previous model. This is used to determine whether to perform an automatic scroll.
+ * @param oldModel the chart’s previous [ChartEntryModel]. This is used to determine whether to perform an automatic
+ * scroll.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
  * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
  * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of

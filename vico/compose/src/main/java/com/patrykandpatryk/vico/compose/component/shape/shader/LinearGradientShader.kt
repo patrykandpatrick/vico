@@ -28,8 +28,10 @@ import com.patrykandpatryk.vico.core.context.DrawContext
  * Creates a [DynamicShader] in the form of a horizontal gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
- * @param positions the relative positions ([0..1]) of each corresponding color in the color array. This may be null, in
- * which case the colors will be distributed evenly along the gradient line.
+ * @param positions controls the position of each color on the gradient line. Each element of the array should belong to
+ * the interval [[0, 1]], where 0 corresponds to the start of the gradient line, and 1 corresponds to the end of the
+ * gradient line. If `null` (the default value) is passed, the colors will be distributed evenly along the gradient
+ * line.
  */
 public fun horizontalGradient(
     colors: Array<Color>,
@@ -58,8 +60,10 @@ public fun horizontalGradient(
  * Creates a [DynamicShader] in the form of a vertical gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
- * @param positions the relative positions ([0..1]) of each corresponding color in the color array. This may be null, in
- * which case the colors will be distributed evenly along the gradient line.
+ * @param positions controls the position of each color on the gradient line. Each element of the array should belong to
+ * the interval [[0, 1]], where 0 corresponds to the start of the gradient line, and 1 corresponds to the end of the
+ * gradient line. If `null` (the default value) is passed, the colors will be distributed evenly along the gradient
+ * line.
  */
 public fun verticalGradient(
     colors: Array<Color>,

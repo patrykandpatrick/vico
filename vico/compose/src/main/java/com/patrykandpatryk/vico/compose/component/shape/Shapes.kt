@@ -48,7 +48,8 @@ private typealias ComposePath = androidx.compose.ui.graphics.AndroidPath
 private const val RADII_ARRAY_SIZE = 8
 
 /**
- * Converts [androidx.compose.ui.graphics.Shape] to [com.patrykandpatryk.vico.core.component.shape.Shape].
+ * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
+ * [com.patrykandpatryk.vico.core.component.shape.Shape].
  */
 public fun ComposeShape.chartShape(): Shape = object : Shape {
     private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
@@ -99,7 +100,7 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
 }
 
 /**
- * Converts [CorneredShape] to [androidx.compose.ui.graphics.Shape].
+ * Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape].
  */
 public fun CorneredShape.composeShape(): ComposeShape = object : ComposeShape {
 
@@ -121,12 +122,12 @@ public fun CorneredShape.composeShape(): ComposeShape = object : ComposeShape {
 /**
  * Adds a rounded rectangle to the receiver [Path].
  *
- * @param left the left edge of the rectangle.
- * @param top the top edge of the rectangle.
- * @param right the right edge of the rectangle.
- * @param bottom the bottom edge of the rectangle.
- * @param rect the source rect whose values will be read.
- * @param radii a mutable [FloatArray] that stores the corner radii.
+ * @param left the _x_ coordinate of the left edge of the rectangle.
+ * @param top the _y_ coordinate of the top edge of the rectangle.
+ * @param right the _x_ coordinate of the right edge of the rectangle.
+ * @param bottom the _y_ coordinate of the bottom edge of the rectangle.
+ * @param rect the rounded rectangle to be drawn.
+ * @param radii used to store the corner radii. This array must be mutable.
  */
 @Suppress("MagicNumber")
 @LongParameterListDrawFunction
@@ -244,9 +245,9 @@ public fun Shapes.markerCorneredShape(
 )
 
 /**
- * Creates a [MarkerCorneredShape] out of another [CorneredShape].
+ * Creates a [MarkerCorneredShape] out of a regular [CorneredShape].
  *
- * @param corneredShape the source of each corner size and style.
+ * @param corneredShape the base [CorneredShape].
  * @param tickSizeDp the tick size.
  */
 public fun Shapes.markerCorneredShape(
@@ -263,7 +264,7 @@ public fun Shapes.markerCorneredShape(
 /**
  * Creates a [DashedShape].
  *
- * @param shape the base [Shape] from which to create the [DashedShape].
+ * @param shape the [Shape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
@@ -283,7 +284,7 @@ public fun Shapes.dashedShape(
 /**
  * Creates a [DashedShape].
  *
- * @param shape the base [ChartShape] from which to create the [DashedShape].
+ * @param shape the [ChartShape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
