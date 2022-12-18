@@ -44,7 +44,7 @@ import java.text.DecimalFormat
  * @property labelComponent the [TextComponent] used to draw the [thresholdLabel] text.
  * @property labelHorizontalPosition defines the horizontal position of the label.
  * @property labelVerticalPosition defines the vertical position of the label.
- * @property labelRotationDegrees the rotation of the label in degrees.
+ * @property labelRotationDegrees the rotation of the label (in degrees).
  *
  * @see Decoration
  */
@@ -73,7 +73,7 @@ public data class ThresholdLine(
      * @property labelComponent the [TextComponent] used to draw the [thresholdLabel] text.
      * @property labelHorizontalPosition defines the horizontal position of the label.
      * @property labelVerticalPosition defines the vertical position of the label.
-     * @property labelRotationDegrees the rotation of the label in degrees.
+     * @property labelRotationDegrees the rotation of the label (in degrees).
      */
     public constructor(
         thresholdValue: Float,
@@ -150,9 +150,9 @@ public data class ThresholdLine(
     }
 
     /**
-     * Defines the horizontal position of the label.
+     * Defines the horizontal position of a [ThresholdLine]’s label.
      *
-     * @property position the [HorizontalPosition] used when drawing the label.
+     * @property position the label position.
      */
     public enum class LabelHorizontalPosition(public val position: HorizontalPosition) {
         Start(HorizontalPosition.End),
@@ -160,9 +160,9 @@ public data class ThresholdLine(
     }
 
     /**
-     * Defines the vertical position of the label.
+     * Defines the vertical position of a [ThresholdLine]’s label.
      *
-     * @property position the [VerticalPosition] used when drawing the label.
+     * @property position the label position.
      */
     public enum class LabelVerticalPosition(public val position: VerticalPosition) {
         Top(VerticalPosition.Top),

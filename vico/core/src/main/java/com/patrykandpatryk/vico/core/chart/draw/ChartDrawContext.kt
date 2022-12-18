@@ -17,23 +17,24 @@
 package com.patrykandpatryk.vico.core.chart.draw
 
 import android.graphics.RectF
+import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.model.Point
 
 /**
- * An extension of [DrawContext] that holds additional data required to render the chart.
+ * An extension of [DrawContext] that holds additional data required to render a [Chart].
  */
 public interface ChartDrawContext : DrawContext {
 
     /**
-     * The bounds in which the [com.patrykandpatryk.vico.core.chart.Chart] will be drawn.
+     * The bounds in which the [Chart] will be drawn.
      */
     public val chartBounds: RectF
 
     /**
-     * Holds information about the width of each individual segment on the x-axis.
+     * Holds information about the width of each individual chart segment.
      */
     public val segmentProperties: SegmentProperties
 

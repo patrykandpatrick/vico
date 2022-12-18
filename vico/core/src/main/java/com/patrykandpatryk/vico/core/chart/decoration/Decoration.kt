@@ -16,16 +16,14 @@
 
 package com.patrykandpatryk.vico.core.chart.decoration
 
-import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatryk.vico.core.marker.Marker
 
 /**
- * A [Decoration] is drawn between a [Chart] and persistent [Marker] layers.
+ * A [Decoration] presents additional information on a [Chart].
  *
- * An example [Decoration] implementation is [ThresholdLine], which draws threshold lines above the [Chart].
+ * An example [Decoration] implementation is [ThresholdLine].
  *
  * @see [ThresholdLine]
  */
@@ -34,7 +32,7 @@ public interface Decoration {
     /**
      * Called before the [Chart] starts drawing itself.
      *
-     * @param [context] the drawing context containing the [Canvas] and other data.
+     * @param [context] holds the information needed to draw the [Chart].
      * @param [bounds] the bounding box of the [Chart].
      */
     public fun onDrawBehindChart(context: ChartDrawContext, bounds: RectF): Unit = Unit
@@ -42,7 +40,7 @@ public interface Decoration {
     /**
      * Called immediately after the [Chart] finishes drawing itself.
      *
-     * @param [context] the drawing context containing the [Canvas] and other data.
+     * @param [context] holds the information needed to draw the [Chart].
      * @param [bounds] the bounding box of the [Chart].
      */
     public fun onDrawAboveChart(context: ChartDrawContext, bounds: RectF): Unit = Unit
