@@ -44,15 +44,14 @@ import com.patrykandpatryk.vico.core.marker.Marker
 import kotlin.math.abs
 
 /**
- * [ColumnChart] displays data in vertical columns.
- * It supports rendering multiple columns for multiple sets of data.
+ * [ColumnChart] displays data as vertical bars. It can draw multiple columns per segment.
  *
  * @param columns the [LineComponent] instances to use for columns. This list is iterated through as many times
  * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
  * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
  * @param innerSpacingDp the spacing between the columns contained in chart segments. This has no effect on
  * segments that contain a single column only.
- * @param mergeMode defines the way multiple columns are rendered in the [ColumnChart].
+ * @param mergeMode defines how columns should be drawn in multi-column segments.
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
@@ -60,7 +59,7 @@ import kotlin.math.abs
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
  * respective columns.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
- * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+ * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
  */
 public open class ColumnChart(
     public var columns: List<LineComponent>,
@@ -90,8 +89,8 @@ public open class ColumnChart(
     ) : this(columns = listOf(column), spacingDp = spacingDp, targetVerticalAxisPosition = targetVerticalAxisPosition)
 
     /**
-     * Creates [ColumnChart] without any [columns]. At least one [LineComponent] must be added to [columns] before
-     * the chart is rendered.
+     * Creates a [ColumnChart] instance with [columns] set to an empty list. The list must be populated before the chart
+     * is drawn.
      */
     public constructor() : this(emptyList())
 

@@ -17,36 +17,35 @@
 package com.patrykandpatryk.vico.core.axis
 
 import android.graphics.RectF
+import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatryk.vico.core.dimensions.BoundsAware
 
 /**
- * An interface defining the minimal set of properties and functions required by other parts of the library to draw
- * an axis.
+ * Defines the minimal set of properties and functions required by other parts of the library to draw an axis.
  */
 public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInsetter {
 
     /**
-     * Defines the position of an axis relative to the [com.patrykandpatryk.vico.core.chart.Chart].
+     * Defines the position of the axis relative to the [Chart].
      */
     public val position: Position
 
     /**
-     * Called before [com.patrykandpatryk.vico.core.chart.Chart] is drawn.
-     * Subclasses should rely on this function to draw themselves, unless they want to draw something above the chart.
+     * Called before the [Chart] is drawn. Implementations should rely on this function to draw themselves, unless they
+     * need to draw something above the [Chart].
      *
-     * @param context Drawing context holding information necessary to draw the axis.
+     * @param context holds the information needed to draw the axis.
      *
      * @see drawAboveChart
      */
     public fun drawBehindChart(context: ChartDrawContext)
 
     /**
-     * Called after [com.patrykandpatryk.vico.core.chart.Chart] is drawn.
-     * Subclasses can use this function to draw in the chart’s bounds something that can’t be covered by the chart.
+     * Called after the [Chart] is drawn. Implementations can use this function to draw content above the [Chart].
      *
-     * @param context Drawing context holding information necessary to draw the axis.
+     * @param context holds the information needed to draw the axis.
      */
     public fun drawAboveChart(context: ChartDrawContext)
 

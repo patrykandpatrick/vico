@@ -16,77 +16,77 @@
 
 package com.patrykandpatryk.vico.core.axis
 
+import com.patrykandpatryk.vico.core.chart.Chart
+
 /**
- * Defines the position of an axis relative to the [com.patrykandpatryk.vico.core.chart.Chart].
+ * Defines the position of an axis relative to its [Chart].
  */
 public sealed class AxisPosition {
 
     /**
-     * Returns true if the position points to the top of the [com.patrykandpatryk.vico.core.chart.Chart].
+     * Whether the axis is at the top of its [Chart].
      */
     public val isTop: Boolean
         get() = this is Horizontal.Top
 
     /**
-     * Returns true if the position points to the bottom of the [com.patrykandpatryk.vico.core.chart.Chart].
+     * Whether the axis is at the bottom of its [Chart].
      */
     public val isBottom: Boolean
         get() = this is Horizontal.Bottom
 
     /**
-     * Returns true if the position points to the start of the [com.patrykandpatryk.vico.core.chart.Chart].
+     * Whether the axis is at the start of its [Chart].
      */
     public val isStart: Boolean
         get() = this is Vertical.Start
 
     /**
-     * Returns true if the position points to the end of the [com.patrykandpatryk.vico.core.chart.Chart].
+     * Whether the axis is at the end of its [Chart].
      */
     public val isEnd: Boolean
         get() = this is Vertical.End
 
     /**
-     * Returns true if the position points to the left of the [com.patrykandpatryk.vico.core.chart.Chart],
-     * depending on the layout direction.
+     * Whether the axis is on the left of its [Chart]. The layout direction is considered here.
      */
     public fun isLeft(isLtr: Boolean): Boolean =
         this is Vertical.Start && isLtr || this is Vertical.End && isLtr.not()
 
     /**
-     * Returns true if the position points to the right of the [com.patrykandpatryk.vico.core.chart.Chart],
-     * depending on the layout direction.
+     * Whether the axis is on the right of its [Chart]. The layout direction is considered here.
      */
     public fun isRight(isLtr: Boolean): Boolean =
         this is Vertical.End && isLtr || this is Vertical.Start && isLtr.not()
 
     /**
-     * Defines the possible positions of a horizontal axis relative to the [com.patrykandpatryk.vico.core.chart.Chart].
+     * Defines the position of a horizontal axis relative to its [Chart].
      */
     public sealed class Horizontal : AxisPosition() {
 
         /**
-         * The horizontal axis will be placed at the top of the [com.patrykandpatryk.vico.core.chart.Chart].
+         * The horizontal axis will be placed at the top of its [Chart].
          */
         public object Top : Horizontal()
 
         /**
-         * The horizontal axis will be placed at the bottom of the [com.patrykandpatryk.vico.core.chart.Chart].
+         * The horizontal axis will be placed at the bottom of its [Chart].
          */
         public object Bottom : Horizontal()
     }
 
     /**
-     * Defines the possible positions of a vertical axis relative to the [com.patrykandpatryk.vico.core.chart.Chart].
+     * Defines the position of a vertical axis relative to its [Chart].
      */
     public sealed class Vertical : AxisPosition() {
 
         /**
-         * The vertical axis will be placed at the start of the [com.patrykandpatryk.vico.core.chart.Chart].
+         * The vertical axis will be placed at the start of its [Chart].
          */
         public object Start : Vertical()
 
         /**
-         * The vertical axis will be placed at the end of the [com.patrykandpatryk.vico.core.chart.Chart].
+         * The vertical axis will be placed at the end of its [Chart].
          */
         public object End : Vertical()
     }
