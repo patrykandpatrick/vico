@@ -20,7 +20,7 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 
 /**
  * An extended [ChartEntryModel] that can compose multiple [ChartEntryModel]s.
- * It is used in [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * It is used by [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
  */
 public interface ComposedChartEntryModel<Model : ChartEntryModel> : ChartEntryModel {
 

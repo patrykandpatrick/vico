@@ -20,20 +20,18 @@ import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.calculateStackedYRange
 import com.patrykandpatryk.vico.core.entry.yRange
 import com.patrykandpatryk.vico.core.extension.orZero
-import com.patrykandpatryk.vico.core.extension.setAll
+import com.patrykandpatryk.vico.core.extension.setToAllChildren
 import java.util.TreeMap
-import java.util.concurrent.locks.ReentrantLock
 
 /**
  * The default implementation of [DiffProcessor].
  */
 public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
 
-    private val setEntriesLock: ReentrantLock = ReentrantLock()
     private val progressMaps = ArrayList<TreeMap<Float, ChartEntryProgressModel>>()
 
-    private val oldEntries = ArrayList<List<ChartEntry>>()
-    private val newEntries = ArrayList<List<ChartEntry>>()
+    private val oldEntries = ArrayList<ArrayList<ChartEntry>>()
+    private val newEntries = ArrayList<ArrayList<ChartEntry>>()
 
     private var oldYRange = 0f..0f
     private var newYRange = 0f..0f
@@ -44,12 +42,10 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
         old: List<List<ChartEntry>>,
         new: List<List<ChartEntry>>,
     ): Unit = synchronized(this) {
-        setEntriesLock.lock()
-        oldEntries.setAll(old)
-        newEntries.setAll(new)
+        oldEntries.setToAllChildren(old)
+        newEntries.setToAllChildren(new)
         updateProgressMap()
         updateRanges()
-        setEntriesLock.unlock()
     }
 
     override fun setEntries(new: List<List<ChartEntry>>) {
@@ -57,9 +53,6 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
     }
 
     override fun progressDiff(progress: Float): List<List<ChartEntry>> = synchronized(this) {
-        if (setEntriesLock.isLocked) {
-            setEntriesLock.newCondition().await()
-        }
         progressMaps.mapNotNull { map ->
             map.mapNotNull { (_, model) ->
                 if (model.temporary && progress == 1f) null

@@ -40,22 +40,22 @@ ext {
             ui         : [
                     group  : "androidx.compose.ui",
                     name   : "ui",
-                    version: versions.compose,
+                    version: versions.composeUI,
             ],
             ui_tooling : [
                     group  : "androidx.compose.ui",
                     name   : "ui-tooling",
-                    version: versions.compose,
+                    version: versions.composeUI,
             ],
             material   : [
                     group  : "androidx.compose.material",
                     name   : "material",
-                    version: versions.compose,
+                    version: versions.composeMaterial,
             ],
             material3  : [
                     group  : "androidx.compose.material3",
                     name   : "material3",
-                    version: versions.compose_material3,
+                    version: versions.composeMaterial3,
             ],
             activity          : [
                     group  : "androidx.activity",
@@ -65,12 +65,12 @@ ext {
             viewbinding       : [
                     group  : "androidx.compose.ui",
                     name   : "ui-viewbinding",
-                    version: versions.compose,
+                    version: versions.composeUI,
             ],
             foundation        : [
                     group  : "androidx.compose.foundation",
                     name   : "foundation",
-                    version: versions.compose,
+                    version: versions.composeFoundation,
             ],
             viewmodel         : [
                     group  : "androidx.lifecycle",

@@ -16,8 +16,10 @@
 
 package com.patrykandpatryk.vico.core.chart.insets
 
+import com.patrykandpatryk.vico.core.chart.Chart
+
 /**
- * The interface allowing to set horizontal insets.
+ * Used to apply horizontal insets to [Chart]s.
  *
  * @see ChartInsetter
  * @see Insets
@@ -25,7 +27,7 @@ package com.patrykandpatryk.vico.core.chart.insets
 public interface HorizontalInsets {
 
     /**
-     * Called to set [start] and [end] insets.
+     * Sets the start and end insets.
      */
     public fun set(start: Float, end: Float)
 

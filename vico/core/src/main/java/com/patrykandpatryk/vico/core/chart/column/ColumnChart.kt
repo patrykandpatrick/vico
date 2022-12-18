@@ -349,7 +349,7 @@ public open class ColumnChart(
     }
 
     /**
-     * Defines the way multiple columns are rendered in the [ColumnChart].
+     * Defines how a [ColumnChart] should draw columns in multi-column segments.
      */
     public enum class MergeMode {
 

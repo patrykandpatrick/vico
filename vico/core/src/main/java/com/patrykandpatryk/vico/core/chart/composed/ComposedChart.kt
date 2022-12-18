@@ -37,7 +37,7 @@ import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
 /**
- * [ComposedChart] can compose multiple [Chart]s and overlay them.
+ * Combines multiple [Chart]s and draws them on top of one another.
  */
 public class ComposedChart<Model : ChartEntryModel>(
     charts: List<Chart<Model>>,

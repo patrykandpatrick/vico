@@ -18,7 +18,7 @@ ext {
 
     library = [
             groupId        : "com.patrykandpatryk.vico",
-            version_name   : "1.6.0",
+            version_name   : "1.6.1",
             version_code   : 1,
             target_sdk     : 33,
             min_sdk        : 16,
@@ -29,8 +29,12 @@ ext {
             activity          : "1.5.1",
             androidx_core     : "1.8.0",
             androidx_appcompat: "1.5.0",
-            compose           : "1.3.1",
             composeCompiler   : "1.3.2",
+            composeAnimation  : "1.3.2",
+            composeUI         : "1.3.2",
+            composeMaterial   : "1.3.1",
+            composeFoundation : "1.3.1",
+            composeMaterial3  : "1.0.1",
             coroutines        : "1.6.4",
             dokka             : "1.7.20",
             agp               : "7.3.1",
@@ -41,7 +45,6 @@ ext {
             mockk             : "1.12.5",
             viewmodel         : "2.5.1",
             testCore          : "1.4.0",
-            compose_material3 : "1.0.1",
             accompanist       : "0.27.0",
             materialComponents: "1.8.0-alpha02",
     ]

@@ -62,7 +62,12 @@ public const val DEF_THREAD_POOL_SIZE: Int = 4
 /**
  * The default scroll distance over which fading edges fade in and out (in dp).
  */
-public const val FADING_EDGES_VISIBILITY_THRESHOLD_DP: Float = 16f
+public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f
+
+/**
+ * The default width of fading edges.
+ */
+public const val FADING_EDGE_WIDTH_DP: Float = 32f
 
 /**
  * Defaults for animations.

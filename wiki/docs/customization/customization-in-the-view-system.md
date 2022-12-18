@@ -100,6 +100,7 @@ In the view system, charts can be customized via XML attributes. You can make mo
 | `typeface`               | The typeface.                                              | `normal`, `sans`, `serif`, or `monospace`.             |
 | `margin`                 | The size of all four margins.                              | A dimension.                                           |
 | `margin*`                | The size of a specific margin or margin pair.              | A dimension.                                           |
+| `textAlign`              | The text alignment.                                        | `left`, `center`, or `right`.                          |
 
 ### `LineChartStyle`
 

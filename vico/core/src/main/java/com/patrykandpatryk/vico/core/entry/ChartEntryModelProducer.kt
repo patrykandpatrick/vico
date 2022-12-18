@@ -19,7 +19,7 @@ package com.patrykandpatryk.vico.core.entry
 import com.patrykandpatryk.vico.core.DEF_THREAD_POOL_SIZE
 import com.patrykandpatryk.vico.core.entry.diff.DefaultDiffProcessor
 import com.patrykandpatryk.vico.core.entry.diff.DiffProcessor
-import com.patrykandpatryk.vico.core.extension.setAll
+import com.patrykandpatryk.vico.core.extension.setToAllChildren
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
@@ -40,6 +40,8 @@ public class ChartEntryModelProducer(
 
     private var cachedModel: ChartEntryModel? = null
 
+    private var entriesHashCode: Int = 0
+
     private val updateReceivers: HashMap<Any, UpdateReceiver> = HashMap()
 
     private val executor: Executor = backgroundExecutor
@@ -47,7 +49,7 @@ public class ChartEntryModelProducer(
     /**
      * A mutable two-dimensional list of the [ChartEntry] instances used to generate the [ChartEntryModel].
      */
-    private val entries: ArrayList<List<ChartEntry>> = ArrayList()
+    private val entries: ArrayList<ArrayList<ChartEntry>> = ArrayList()
 
     public constructor(
         vararg entryCollections: List<ChartEntry>,
@@ -66,10 +68,12 @@ public class ChartEntryModelProducer(
      * @see registerForUpdates
      */
     public fun setEntries(entries: List<List<ChartEntry>>) {
-        this.entries.setAll(entries)
+        this.entries.setToAllChildren(entries)
+        val entriesHashCode = entries.hashCode()
         cachedModel = null
         updateReceivers.values.forEach { updateReceiver ->
             executor.execute {
+                this.entriesHashCode = entriesHashCode
                 updateReceiver.diffProcessor.setEntries(
                     old = updateReceiver.getOldModel()?.entries.orEmpty(),
                     new = entries,
@@ -126,7 +130,7 @@ public class ChartEntryModelProducer(
             stackedPositiveY = stackedPositiveYRange.endInclusive,
             stackedNegativeY = stackedPositiveYRange.start,
             stepX = entries.calculateStep(),
-            id = this.entries.hashCode(),
+            id = entriesHashCode,
         )
 
     override fun registerForUpdates(
