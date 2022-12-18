@@ -20,6 +20,7 @@ import com.patrykandpatryk.vico.core.DEF_LABEL_COUNT
 import com.patrykandpatryk.vico.core.DEF_LABEL_SPACING
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.axis.setTo
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
@@ -44,10 +45,9 @@ private const val LABELS_KEY = "labels"
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 /**
- * A subclass of [com.patrykandpatryk.vico.core.axis.AxisRenderer] used for vertical axes, used either at the start or
- * at the end of end of a chart. It uses [Axis] as its base implementation.
+ * An implementation of [AxisRenderer] used for vertical axes. This class extends [Axis].
  *
- * @see com.patrykandpatryk.vico.core.axis.AxisRenderer
+ * @see AxisRenderer
  * @see Axis
  */
 public class VerticalAxis<Position : AxisPosition.Vertical>(
@@ -67,17 +67,17 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     public var maxLabelCount: Int = DEF_LABEL_COUNT
 
     /**
-     * The label spacing in dp.
+     * The label spacing (in dp).
      */
     public var labelSpacing: Float = DEF_LABEL_SPACING
 
     /**
-     * Defines a horizontal label position relative to the axis line.
+     * Defines the horizontal position of each axis label relative to the axis line.
      */
     public var horizontalLabelPosition: HorizontalLabelPosition = Outside
 
     /**
-     * Defines a vertical label position relative to the tick line.
+     * Defines the vertical position of each axis label relative to its corresponding tick.
      */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
@@ -290,7 +290,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     /**
-     * Calculates a width of this [VerticalAxis] according to constraints set in [sizeConstraint].
+     * Calculates the optimal width for this [VerticalAxis], accounting for the value of [sizeConstraint].
      */
     private fun getDesiredWidth(
         context: MeasureContext,
@@ -327,17 +327,16 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     /**
-     * Defines a horizontal label position relative to the axis line.
+     * Defines the horizontal position of each of a vertical axis’s labels relative to the axis line.
      */
     public enum class HorizontalLabelPosition {
         Outside, Inside
     }
 
     /**
-     * Defines a vertical label position relative to the tick line.
+     * Defines the vertical position of each of a horizontal axis’s labels relative to the label’s corresponding tick.
      *
-     * @param textPosition a vertical text position definition used internally by
-     * [com.patrykandpatryk.vico.core.component.text.TextComponent].
+     * @param textPosition the label position.
      *
      * @see VerticalPosition
      */
@@ -348,7 +347,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     /**
-     * A subclass of base [Axis.Builder] used to build instances of [VerticalAxis].
+     * A subclass of [Axis.Builder] used to build [VerticalAxis] instances.
      */
     public class Builder<Position : AxisPosition.Vertical>(
         builder: Axis.Builder<Position>? = null,
@@ -359,22 +358,22 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         public var maxLabelCount: Int = DEF_LABEL_COUNT
 
         /**
-         * The label spacing in dp.
+         * The label spacing (in dp).
          */
         public var labelSpacing: Float = DEF_LABEL_SPACING
 
         /**
-         * Defines a horizontal label position relative to the axis line.
+         * Defines the horizontal position of each axis label relative to the axis line.
          */
         public var horizontalLabelPosition: HorizontalLabelPosition = Outside
 
         /**
-         * Defines a vertical label position relative to the tick line.
+         * Defines the vertical position of each axis label relative to its corresponding tick.
          */
         public var verticalLabelPosition: VerticalLabelPosition = Center
 
         /**
-         * Creates an instance of [VerticalAxis] using the properties set in this [Builder].
+         * Creates a [VerticalAxis] instance with the properties from this [Builder].
          */
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : Position> build(): VerticalAxis<T> {
@@ -394,7 +393,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 }
 
 /**
- * A convenience function that creates an instance of [VerticalAxis].
+ * A convenience function that creates a [VerticalAxis] instance.
  *
  * @param block a lambda function yielding [VerticalAxis.Builder] as its receiver.
  */

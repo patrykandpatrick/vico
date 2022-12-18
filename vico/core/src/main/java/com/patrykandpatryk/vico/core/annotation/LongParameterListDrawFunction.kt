@@ -20,7 +20,7 @@ package com.patrykandpatryk.vico.core.annotation
  * Used to annotate drawing functions with long parameter lists.
  * Such functions may require a lot of parameters to avoid extra object allocation, which lowers performance.
  * Drawing functions must be as performant as possible.
- * This annotation disables Detekt’s `LongParameterList` check.
+ * Additionally, this annotation disables Detekt’s `LongParameterList` check.
  */
 @Retention(AnnotationRetention.SOURCE)
 @Target(AnnotationTarget.FUNCTION)

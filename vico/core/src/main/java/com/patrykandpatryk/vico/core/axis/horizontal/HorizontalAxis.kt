@@ -19,6 +19,7 @@ package com.patrykandpatryk.vico.core.axis.horizontal
 import android.graphics.RectF
 import com.patrykandpatryk.vico.core.axis.Axis
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.axis.setTo
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.insets.Insets
@@ -35,10 +36,9 @@ import kotlin.math.abs
 import kotlin.math.ceil
 
 /**
- * A subclass of [com.patrykandpatryk.vico.core.axis.AxisRenderer] used for horizontal axes, used either at the top
- * or at the bottom of a chart. It uses [Axis] as its base implementation.
+ * An implementation of [AxisRenderer] used for horizontal axes. This class extends [Axis].
  *
- * @see com.patrykandpatryk.vico.core.axis.AxisRenderer
+ * @see AxisRenderer
  * @see Axis
  */
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
@@ -278,7 +278,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      * Defines the tick placement.
      */
     @Deprecated(
-        message = "TickType has been replaced with `TickPosition`, which uses better naming and has more features.",
+        message = "`TickType` has been replaced with `TickPosition`, which uses better naming and has more features.",
         replaceWith = ReplaceWith(
             expression = "TickPosition",
             imports = arrayOf(
@@ -288,15 +288,17 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     )
     public enum class TickType {
         /**
-         * The tick will be placed at the edges of each section on the horizontal axis.
-         *```
+         * A tick will be drawn at either edge of each chart segment.
+         *
+         * ```
          * —————————————
          * |   |   |   |
          *   1   2   3
          * ```
          */
         @Deprecated(
-            message = "TickType has been replaced with `TickPosition`, which uses better naming and has more features.",
+            message = """`TickType` has been replaced with `TickPosition`, which uses better naming and has more
+                features.""",
             replaceWith = ReplaceWith(
                 expression = "TickPosition.Edge",
                 imports = arrayOf(
@@ -307,15 +309,17 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         Minor,
 
         /**
-         * The tick will be placed at the center of each section on the horizontal axis.
-         *```
+         * A tick will be drawn at the center of each chart segment.
+         *
+         * ```
          * —————————————
          *   |   |   |
          *   1   2   3
          * ```
          */
         @Deprecated(
-            message = "TickType has been replaced with `TickPosition`, which uses better naming and has more features.",
+            message = """`TickType` has been replaced with `TickPosition`, which uses better naming and has more
+                features.""",
             replaceWith = ReplaceWith(
                 expression = "TickPosition.Center()",
                 imports = arrayOf("com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis.TickPosition"),
@@ -325,7 +329,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     /**
-     * Defines the position of labels.
+     * Defines the position of a horizontal axis’s labels.
      */
     public enum class LabelPosition(internal val skipFirstEntity: Boolean) {
         Start(skipFirstEntity = true),
@@ -333,8 +337,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     /**
-     * [TickPosition] defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
-     * offset and spacing for both ticks and labels.
+     * Defines the position of a horizontal axis’s ticks. [HorizontalAxis.TickPosition.Center] allows for offset and
+     * spacing customization.
      *
      * @param offset the index at which ticks and labels start to be drawn. The default is 0.
      * @param spacing defines how often ticks should be drawn, where 1 means a tick is drawn for each entry,
@@ -346,18 +350,19 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ) {
 
         /**
-         * Returns the tick count required by given [TickPosition].
+         * Returns the tick count required by this [TickPosition].
          */
         public abstract fun getTickCount(entryLength: Int): Int
 
         /**
-         * Returns the chart bounds inset required by the given [TickPosition].
+         * Returns the chart inset required by this [TickPosition].
          */
         public abstract fun getTickInset(tickThickness: Float): Float
 
         /**
-         * The tick will be placed at the edges of each section on the horizontal axis.
-         *```
+         * A tick will be drawn at either edge of each chart segment.
+         *
+         * ```
          * —————————————————
          * |   |   |   |   |
          *   1   2   3   4
@@ -371,27 +376,27 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
 
         /**
-         * The tick will be placed at the center of each section on the horizontal axis.
-         *```
+         * A tick will be drawn at the center of each chart segment.
+         *
+         * ```
          * ————————————————
          *   |   |   |   |
          *   1   2   3   4
          * ```
          *
-         * With [offset] higher than 0, the tick will start at given [offset].
+         * [offset] is the index at which ticks and labels start to be drawn. Setting [offset] to 2 gives this result:
          *
-         *
-         * Example for [offset] == 2.
-         *```
+         * ```
          * ————————————————
-         *   |   |   |   |
+         *           |   |
          *           3   4
          * ```
          *
-         * Example for [offset] == 0 and [spacing] == 2.
-         *```
+         * [spacing] defines how often ticks should be drawn. Setting [spacing] to 2 gives this result:
+         *
+         * ```
          * ————————————————
-         *   |   |   |   |
+         *   |       |
          *   1       3
          * ```
          */
@@ -403,8 +408,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             public constructor(spacing: Int) : this(offset = spacing, spacing = spacing)
 
             init {
-                require(offset >= 0) { "The offset cannot be negative. Received $offset." }
-                require(spacing >= 1) { "The offset cannot be less than 1. Received $spacing." }
+                require(offset >= 0) { "`offset` cannot be negative. Received $offset." }
+                require(spacing >= 1) { "`spacing` cannot be less than 1. Received $spacing." }
             }
 
             override fun getTickCount(entryLength: Int): Int = entryLength
@@ -415,7 +420,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         public companion object {
 
             /**
-             * Returns the [TickPosition] that replaces the deprecated [type].
+             * Returns the [TickPosition] corresponding to the given [TickType].
              */
             @Suppress("DEPRECATION")
             public fun fromTickType(type: TickType): TickPosition = when (type) {
@@ -426,7 +431,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     /**
-     * A subclass of base [Axis.Builder] used to build instances of [HorizontalAxis].
+     * A subclass of [Axis.Builder] used to build [HorizontalAxis] instances.
      */
     public class Builder<Position : AxisPosition.Horizontal>(
         builder: Axis.Builder<Position>? = null,
@@ -448,7 +453,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         public var tickPosition: TickPosition = TickPosition.Edge
 
         /**
-         * Creates an instance of [HorizontalAxis] using the properties set in this [Builder].
+         * Creates a [HorizontalAxis] instance with the properties from this [Builder].
          */
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : Position> build(): HorizontalAxis<T> {
@@ -489,7 +494,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 }
 
 /**
- * A convenience function that creates an instance of [HorizontalAxis].
+ * A convenience function that creates a [HorizontalAxis] instance.
  *
  * @param block a lambda function yielding [HorizontalAxis.Builder] as its receiver.
  */

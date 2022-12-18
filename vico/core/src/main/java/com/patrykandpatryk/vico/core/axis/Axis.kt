@@ -21,6 +21,8 @@ import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatryk.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatryk.vico.core.axis.formatter.DefaultAxisValueFormatter
+import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
+import com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatryk.vico.core.component.shape.LineComponent
 import com.patrykandpatryk.vico.core.component.text.TextComponent
 import com.patrykandpatryk.vico.core.context.MeasureContext
@@ -31,8 +33,8 @@ import com.patrykandpatryk.vico.core.extension.setAll
  * A basic implementation of [AxisRenderer] used throughout the library.
  *
  * @see AxisRenderer
- * @see com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
- * @see com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis
+ * @see HorizontalAxis
+ * @see VerticalAxis
  */
 public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
@@ -60,7 +62,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     public var label: TextComponent? = null
 
     /**
-     * The [LineComponent] to use for axis lines.
+     * The [LineComponent] to use for the axis line.
      */
     public var axisLine: LineComponent? = null
 
@@ -75,12 +77,12 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     public var guideline: LineComponent? = null
 
     /**
-     * The tick length in dp.
+     * The tick length (in dp).
      */
     public var tickLengthDp: Float = 0f
 
     /**
-     * The [SizeConstraint] used by [Axis] subclasses to lay themselves out.
+     * Used by [Axis] subclasses for sizing and layout.
      */
     public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
@@ -90,7 +92,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     public var valueFormatter: AxisValueFormatter<Position> = DefaultAxisValueFormatter()
 
     /**
-     * The rotation of axis labels in degrees.
+     * The rotation of axis labels (in degrees).
      */
     public var labelRotationDegrees: Float = 0f
 
@@ -118,7 +120,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     }
 
     /**
-     * The base builder class for constructing [Axis] instances.
+     * Used to construct [Axis] instances.
      */
     public open class Builder<Position : AxisPosition>(builder: Builder<Position>? = null) {
         /**
@@ -127,7 +129,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         public var label: TextComponent? = builder?.label
 
         /**
-         * The [LineComponent] to use for the axis.
+         * The [LineComponent] to use for the axis line.
          */
         public var axis: LineComponent? = builder?.axis
 
@@ -137,7 +139,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         public var tick: LineComponent? = builder?.tick
 
         /**
-         * The tick length in dp.
+         * The tick length (in dp).
          */
         public var tickLengthDp: Float = builder?.tickLengthDp ?: DefaultDimens.AXIS_TICK_LENGTH
 
@@ -153,7 +155,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
             builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
 
         /**
-         * The [SizeConstraint] used by [Axis] subclasses to lay themselves out.
+         * Used by [Axis] subclasses for sizing and layout.
          */
         public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
@@ -168,23 +170,23 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         public var title: CharSequence? = builder?.title
 
         /**
-         * The rotation of axis labels in degrees.
+         * The rotation of axis labels (in degrees).
          */
         public var labelRotationDegrees: Float = builder?.labelRotationDegrees ?: 0f
     }
 
     /**
-     * The size constraint of an [Axis].
-     * - In [com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis], this defines the width.
-     * - In [com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis], this defines the height.
+     * Defines how an [Axis] is to size itself.
+     * - For [VerticalAxis], this defines the width.
+     * - For [HorizontalAxis], this defines the height.
      *
-     * @see [com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis]
-     * @see [com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis]
+     * @see [VerticalAxis]
+     * @see [HorizontalAxis]
      */
     public sealed class SizeConstraint {
 
         /**
-         * The axis will measure itself and use as much space as it needs, but not less than [minSizeDp] and no more
+         * The axis will measure itself and use as much space as it needs, but no less than [minSizeDp], and no more
          * than [maxSizeDp].
          */
         public class Auto(
@@ -198,15 +200,14 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         public class Exact(public val sizeDp: Float) : SizeConstraint()
 
         /**
-         * The axis size will take an exact fraction of available size:
-         * - in [com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis] the width.
-         * - in [com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis] the height.
+         * The axis will use a fraction of the available space.
+         *
          * @property fraction the fraction of the available space that the axis should use.
          */
         public class Fraction(public val fraction: Float) : SizeConstraint() {
             init {
                 if (fraction !in MIN..MAX) {
-                    throw IllegalArgumentException("Expected a value in range of $MIN to $MAX. Got $fraction.")
+                    throw IllegalArgumentException("Expected a value in the interval [$MIN, $MAX]. Got $fraction.")
                 }
             }
 
@@ -217,9 +218,9 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         }
 
         /**
-         * The axis will measure actual width of given [text] and use it as its size.
-         * [com.patrykandpatryk.vico.core.axis.vertical.VerticalAxis] will append the width of axis line,
-         * the tick length, as well as [TextComponent] horizontal padding and margins.
+         * The axis will measure the width of its label component ([label]) for the given [String] ([text]), and it will
+         * use this width as its size. In the case of [VerticalAxis], the width of the axis line and the tick length
+         * will also be considered.
          */
         public class TextWidth(public val text: String) : SizeConstraint()
     }
