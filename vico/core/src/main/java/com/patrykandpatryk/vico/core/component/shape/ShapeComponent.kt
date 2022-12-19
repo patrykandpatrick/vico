@@ -19,6 +19,7 @@ package com.patrykandpatryk.vico.core.component.shape
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.Shader
 import com.patrykandpatryk.vico.core.DEF_SHADOW_COLOR
 import com.patrykandpatryk.vico.core.component.Component
 import com.patrykandpatryk.vico.core.component.dimension.setMargins
@@ -37,9 +38,9 @@ import kotlin.properties.Delegates
  *
  * @param shape the [Shape] that will be drawn.
  * @param color the color of the shape.
- * @param dynamicShader an optional [android.graphics.Shader] provider used as the shape’s background.
- * @param margins the margins that will inset the shape.
- * @param strokeWidthDp the width of the shape’s stroke in the dp unit.
+ * @param dynamicShader an optional [Shader] provider used as the shape’s background.
+ * @param margins the [Component]’s margins.
+ * @param strokeWidthDp the width of the shape’s stroke (in dp).
  * @param strokeColor the color of the stroke.
  */
 public open class ShapeComponent(
@@ -132,13 +133,13 @@ public open class ShapeComponent(
     }
 
     /**
-     * Sets a shadow layer.
+     * Applies a drop shadow.
      *
      * @param radius the blur radius.
      * @param dx the horizontal offset.
      * @param dy the vertical offset.
      * @param color the shadow color.
-     * @param applyElevationOverlay whether to apply an elevation overlay to the component casting the shadow.
+     * @param applyElevationOverlay whether to apply an elevation overlay to the shape.
      */
     public fun setShadow(
         radius: Float,
@@ -157,7 +158,7 @@ public open class ShapeComponent(
     }
 
     /**
-     * Removes the shadow layer from the [ShapeComponent].
+     * Removes this [ShapeComponent]’s drop shadow.
      */
     public fun clearShadow(): ShapeComponent = apply {
         shadowProperties.apply {

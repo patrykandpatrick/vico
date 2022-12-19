@@ -27,15 +27,15 @@ import kotlin.random.Random
 
 /**
  * Generates randomized chart entries.
- * @param xRange the range of x values.
- * @param yRange the range from which y values are randomly selected.
+ * @param xRange the range of _x_ values.
+ * @param yRange the range from which _y_ values are randomly selected.
  */
 public class RandomEntriesGenerator(
     private val xRange: IntProgression = 0..X_RANGE_TOP,
     private val yRange: IntProgression = 0..Y_RANGE_TOP,
 ) {
     /**
-     * Generates a [List] of [FloatEntry] instances with randomized y values.
+     * Generates a [List] of [FloatEntry] instances with randomized _y_ values.
      * The size of the [List] is equal to the number of values in [xRange].
      */
     public fun generateRandomEntries(): List<FloatEntry> {
@@ -48,7 +48,7 @@ public class RandomEntriesGenerator(
     }
 
     /**
-     * Creates a [ChartEntryModel] containing a collection of [FloatEntry] instances with randomized y values.
+     * Creates a [ChartEntryModel] containing a collection of [FloatEntry] instances with randomized _y_ values.
      * The size of the collection is equal to the number of values in [xRange].
      */
     public fun randomEntryModel(): ChartEntryModel =

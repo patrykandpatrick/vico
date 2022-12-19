@@ -31,7 +31,7 @@ import com.patrykandpatryk.vico.core.extension.half
  * @param topRight specifies a [Corner] for the top right of the [Shape].
  * @param bottomLeft specifies a [Corner] for the bottom left of the [Shape].
  * @param bottomRight specifies a [Corner] for the bottom right of the [Shape].
- * @param tickSizeDp the size of the tick in the dp unit.
+ * @param tickSizeDp the size of the tick (in dp).
  */
 public open class MarkerCorneredShape(
     topLeft: Corner,
@@ -105,7 +105,7 @@ public open class MarkerCorneredShape(
 
     public companion object {
         /**
-         * A key used to store and retrieve the x coordinate of the tick.
+         * Used to store and retrieve the _x_ coordinate of the tick.
          *
          * @see com.patrykandpatryk.vico.core.context.Extras
          */

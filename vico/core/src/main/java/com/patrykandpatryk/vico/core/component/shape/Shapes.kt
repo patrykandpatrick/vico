@@ -65,7 +65,7 @@ public object Shapes {
     /**
      * Creates a [Shape] with all corners rounded.
      *
-     * @param allPercent the radius of each corner in percent.
+     * @param allPercent the radius of each corner (in percent).
      */
     public fun roundedCornerShape(allPercent: Int): CorneredShape =
         roundedCornerShape(allPercent, allPercent, allPercent, allPercent)
@@ -73,10 +73,10 @@ public object Shapes {
     /**
      * Creates a [Shape] with all corners rounded.
      *
-     * @param topLeftPercent the top-left corner radius in percent.
-     * @param topRightPercent the top-right corner radius in percent.
-     * @param bottomRightPercent the bottom-right corner radius in percent.
-     * @param bottomLeftPercent the bottom-left corner radius in percent.
+     * @param topLeftPercent the top-left corner radius (in percent).
+     * @param topRightPercent the top-right corner radius (in percent).
+     * @param bottomRightPercent the bottom-right corner radius (in percent).
+     * @param bottomLeftPercent the bottom-left corner radius (in percent).
      */
     public fun roundedCornerShape(
         topLeftPercent: Int = 0,
@@ -93,7 +93,7 @@ public object Shapes {
     /**
      * Creates a [Shape] with all corners cut.
      *
-     * @param allPercent the radius of each corner in percent.
+     * @param allPercent the radius of each corner (in percent).
      */
     public fun cutCornerShape(allPercent: Int): CorneredShape =
         cutCornerShape(allPercent, allPercent, allPercent, allPercent)
@@ -101,10 +101,10 @@ public object Shapes {
     /**
      * Creates a [Shape] with all corners cut.
      *
-     * @param topLeftPercent the top-left corner radius in percent.
-     * @param topRightPercent the top-right corner radius in percent.
-     * @param bottomRightPercent the bottom-right corner radius in percent.
-     * @param bottomLeftPercent the bottom-left corner radius in percent.
+     * @param topLeftPercent the top-left corner radius (in percent).
+     * @param topRightPercent the top-right corner radius (in percent).
+     * @param bottomRightPercent the bottom-right corner radius (in percent).
+     * @param bottomLeftPercent the bottom-left corner radius (in percent).
      */
     public fun cutCornerShape(
         topLeftPercent: Int = 0,

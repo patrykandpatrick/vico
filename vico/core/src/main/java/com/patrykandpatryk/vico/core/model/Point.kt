@@ -38,13 +38,13 @@ public fun Point(x: Int, y: Int): Point = Point(packInts(x, y))
 public value class Point internal constructor(private val packedValue: Long) {
 
     /**
-     * The x coordinate.
+     * The _x_ coordinate.
      */
     public val x: Float
         get() = unpackFloat1(packedValue)
 
     /**
-     * The y coordinate.
+     * The _y_ coordinate.
      */
     public val y: Float
         get() = unpackFloat2(packedValue)
