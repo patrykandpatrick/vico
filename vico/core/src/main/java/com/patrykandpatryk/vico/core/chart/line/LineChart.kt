@@ -60,7 +60,7 @@ import kotlin.math.min
  * [LineChart] displays data as a continuous line.
  *
  * @param lines a [List] of [LineSpec]s defining the style of each line.
- * @param spacingDp the spacing between each [LineSpec.point] in dp.
+ * @param spacingDp the spacing between each [LineSpec.point] (in dp).
  * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
  * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
  * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
@@ -77,7 +77,7 @@ public open class LineChart(
      * Creates a [LineChart] with a common style for all lines.
      *
      * @param line a [LineSpec] defining the style of each line.
-     * @param spacingDp the spacing between each [LineSpec.point] in dp.
+     * @param spacingDp the spacing between each [LineSpec.point] (in dp).
      * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
      * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
      * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
@@ -94,15 +94,15 @@ public open class LineChart(
      * Defines the appearance of a line in a line chart.
      *
      * @param lineColor the color of the line.
-     * @param lineThicknessDp the thickness of the line in dp.
+     * @param lineThicknessDp the thickness of the line (in dp).
      * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
      * @param lineCap the stroke cap for the line.
      * @param point an optional [Component] that can be drawn at a given point on the line.
-     * @param pointSizeDp the size of the [point] in dp.
+     * @param pointSizeDp the size of the [point] (in dp).
      * @param dataLabel an optional [TextComponent] to use for data labels.
      * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
      * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
-     * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+     * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
      * @param pointConnector the [PointConnector] for the line.
      */
     public open class LineSpec(
@@ -123,12 +123,12 @@ public open class LineChart(
          * Defines the appearance of a line in a line chart.
          *
          * @param lineColor the color of the line.
-         * @param lineThicknessDp the thickness of the line in dp.
+         * @param lineThicknessDp the thickness of the line (in dp).
          * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
          * @param lineCap the stroke cap for the line.
          * @param cubicStrength the strength of the cubic bezier curve between each point on the line.
          * @param point an optional [Component] that can be drawn at a given point on the line.
-         * @param pointSizeDp the size of the [point] in dp.
+         * @param pointSizeDp the size of the [point] (in dp).
          * @param dataLabel an optional [TextComponent] to use for data labels.
          * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
          * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
@@ -183,7 +183,7 @@ public open class LineChart(
         )
 
         /**
-         * Returns `true` if the [lineBackgroundShader] is not null, and false otherwise.
+         * Returns `true` if the [lineBackgroundShader] is not null, and `false` otherwise.
          */
         public val hasLineBackgroundShader: Boolean
             get() = lineBackgroundShader != null
@@ -220,7 +220,7 @@ public open class LineChart(
         }
 
         /**
-         * Draws the chart line using the given [context] and the [path].
+         * Draws the line.
          */
         public fun drawLine(context: DrawContext, path: Path): Unit = with(context) {
             linePaint.strokeWidth = lineThicknessDp.pixels
@@ -228,7 +228,7 @@ public open class LineChart(
         }
 
         /**
-         * Draws a background of the chart line using the given [context] and the [path].
+         * Draws the line background.
          */
         public fun drawBackgroundLine(context: DrawContext, bounds: RectF, path: Path): Unit = with(context) {
             lineBackgroundPaint.shader = lineBackgroundShader
@@ -516,7 +516,7 @@ public open class LineChart(
     }
 
     /**
-     * Defines the horizontal position of each point in its corresponding segment.
+     * Defines the horizontal position of each of a line chart’s points in its corresponding segment.
      */
     public enum class PointPosition(
         internal val labelPosition: HorizontalAxis.LabelPosition,

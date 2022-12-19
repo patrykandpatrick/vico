@@ -17,68 +17,71 @@
 package com.patrykandpatryk.vico.core.chart.values
 
 import com.patrykandpatryk.vico.core.chart.Chart
-import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 import kotlin.math.abs
 
 /**
- * The actual source of data rendered by [Chart].
+ * Where [Chart]s get their data from.
  *
- * By default [minX], [maxX], [minY], and [maxY] are equal to [ChartEntryModel.minX],
+ * By default, [minX], [maxX], [minY], and [maxY] are equal to [ChartEntryModel.minX],
  * [ChartEntryModel.maxX], [ChartEntryModel.minY], and [ChartEntryModel.maxY], respectively,
- * but they will be replaced with [Chart.minX], [Chart.maxX], [Chart.minY], and [Chart.maxY],
- * respectively, when they are non-null.
+ * but you can use [AxisValuesOverrider] to override these values.
  */
 public interface ChartValues {
 
     /**
-     * The minimum value on the x-axis. It is equal to [ChartEntryModel.minX] from [chartEntryModel] by default
-     * but may be overridden.
+     * The minimum value displayed on the x-axis. By default, this is equal to [ChartEntryModel.minX] (the
+     * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
+     * value.
      */
     public val minX: Float
 
     /**
-     * The maximum value on the x-axis. It is equal to [ChartEntryModel.maxX] from [chartEntryModel] by default
-     * but may be overridden.
+     * The maximum value displayed on the x-axis. By default, this is equal to [ChartEntryModel.maxX] (the
+     * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
+     * value.
      */
     public val maxX: Float
 
     /**
-     * The value at which [Chart] increments x-axis value between each [ChartEntry].
+     * The value by which the associated [Chart] increments the _x_ value between each segment.
      */
     public val stepX: Float
 
     /**
-     * The minimum value on the y-axis. It is equal to [ChartEntryModel.minY] from [chartEntryModel] by default
-     * but may be overridden.
+     * The minimum value displayed on the y-axis. By default, this is equal to [ChartEntryModel.minY] (the
+     * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
+     * value.
      */
     public val minY: Float
 
     /**
-     * The maximum value on the y-axis. It is equal to [ChartEntryModel.maxY] from [chartEntryModel] by default
-     * but may be overridden.
+     * The maximum value displayed on the y-axis. By default, this is equal to [ChartEntryModel.maxY] (the
+     * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
+     * value.
      */
     public val maxY: Float
 
     /**
-     * The source of the entries drawn on the chart. It holds default values for [minX], [maxX], [minY], and [maxY].
+     * The source of the associated [Chart]’s entries. The [ChartEntryModel] defines the default values for [minX],
+     * [maxX], [minY], and [maxY].
      */
     public val chartEntryModel: ChartEntryModel
 
     /**
-     * The length of value ranges on x-axis.
+     * The difference between [maxX] and [minX].
      */
     public val lengthX: Float
         get() = maxX - minX
 
     /**
-     * The length of value ranges on y-axis.
+     * The difference between [maxY] and [minY].
      */
     public val lengthY: Float
         get() = maxY - minY
 
     /**
-     * Calculates entry count rendered on [Chart].
+     * The number of segments displayed on the associated [Chart].
      */
     public fun getDrawnEntryCount(): Int =
         ((abs(maxX) - abs(minX)) / stepX + 1).toInt()

@@ -20,12 +20,12 @@ import com.patrykandpatryk.vico.core.extension.half
 import kotlin.math.max
 
 /**
- * The class used to store insets specified by [ChartInsetter].
+ * Used to store the insets requested by [ChartInsetter]s.
  *
- * @param start defines an inset at the start of the given rectangle.
- * @param top defines an inset at the top of the given rectangle.
- * @param end defines an inset at the end of the given rectangle.
- * @param bottom defines an inset at the bottom of the given rectangle.
+ * @param start the start inset.
+ * @param top the top inset.
+ * @param end the end inset.
+ * @param bottom the bottom inset.
  *
  * @see ChartInsetter
  */
@@ -37,29 +37,30 @@ public class Insets(
 ) : HorizontalInsets {
 
     /**
-     * Returns the total value of the horizontal insets.
+     * The sum of the sizes of the start inset and the end inset.
      */
     public val horizontal: Float
         get() = start + end
 
     /**
-     * Returns the total value of the vertical insets.
+     * The sum of the sizes of the top inset and the bottom inset.
      */
     public val vertical: Float
         get() = top + bottom
 
     /**
-     * Sets the inset values specified by another [Insets] instance.
+     * Updates the size of each of the four insets to match the size of its corresponding inset from the provided
+     * [Insets] instance.
      */
     public fun set(other: Insets): Insets = set(other.start, other.top, other.end, other.bottom)
 
     /**
-     * Sets all inset values to [all].
+     * Sets a common size for all four insets.
      */
     public fun set(all: Float): Insets = set(all, all, all, all)
 
     /**
-     * Sets the insets for each side.
+     * Updates the size of each of the four insets individually.
      */
     public fun set(
         start: Float = 0f,
@@ -74,7 +75,7 @@ public class Insets(
     }
 
     /**
-     * Sets the [start] and [end] insets.
+     * Updates the sizes of the start inset and the end inset.
      */
     override fun set(start: Float, end: Float) {
         this.start = start
@@ -82,20 +83,22 @@ public class Insets(
     }
 
     /**
-     * Returns the left inset, depending on the layout direction.
-     * @param isLtr true if layout is Left-to-Right, false otherwise.
+     * Returns the size of the left inset, taking into account the layout direction.
+     *
+     * @param isLtr whether the layout is left-to-right.
      */
     public fun getLeft(isLtr: Boolean): Float = if (isLtr) start else end
 
     /**
-     * Returns the right inset, depending the on layout direction.
-     * @param isLtr true if layout is Left-to-Right, false otherwise.
+     * Returns the size of the right inset, taking into account the layout direction.
+     *
+     * @param isLtr whether the layout is left-to-right.
      */
     public fun getRight(isLtr: Boolean): Float = if (isLtr) end else start
 
     /**
-     * Sets the [start] and [end] insets.
-     * The [value] defines a total width. Thus, each horizontal inset gets half of the [value].
+     * Sets the sizes of the start inset and the end inset. [value] represents the sum of the two insets’ sizes, meaning
+     * the size of either inset will be half of [value].
      */
     public fun setHorizontal(value: Float): Insets = apply {
         start = value.half
@@ -103,8 +106,8 @@ public class Insets(
     }
 
     /**
-     * Sets the [top] and [bottom] insets.
-     * The [value] defines a total height. Thus, each vertical inset gets half of the [value].
+     * Sets the sizes of the top inset and the bottom inset. [value] represents the sum of the two insets’ sizes,
+     * meaning the size of either inset will be half of [value].
      */
     public fun setVertical(value: Float): Insets = apply {
         top = value.half
@@ -117,8 +120,8 @@ public class Insets(
     }
 
     /**
-     * For each of these [Insets]’ four values, updates the value to the corresponding value
-     * from [other] if the value from [other] is greater than the current value.
+     * For each of the four insets, updates the size of the inset to the size of the corresponding inset from the
+     * provided [Insets] instance if the size of the corresponding inset from the provided [Insets] instance is greater.
      */
     public fun setValuesIfGreater(other: Insets) {
         start = max(start, other.start)
@@ -128,8 +131,8 @@ public class Insets(
     }
 
     /**
-     * For each of these [Insets]’ four values, updates the value to the corresponding provided
-     * value if the provided value is greater than the current value.
+     * For each of the four insets, updates the size of the inset to the corresponding provided value if the
+     * corresponding provided value is greater.
      */
     public fun setAllIfGreater(
         start: Float = this.start,
@@ -144,7 +147,7 @@ public class Insets(
     }
 
     /**
-     * Sets all inset values to 0.
+     * Sets the size of each of the four insets to zero.
      */
     public fun clear() {
         set(0f)

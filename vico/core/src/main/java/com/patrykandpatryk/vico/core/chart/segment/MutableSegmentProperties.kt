@@ -28,7 +28,7 @@ public data class MutableSegmentProperties(
 ) : SegmentProperties {
 
     /**
-     * Sets a cell width and margin width.
+     * Sets the cell width and margin width.
      */
     public fun set(
         cellWidth: Float,

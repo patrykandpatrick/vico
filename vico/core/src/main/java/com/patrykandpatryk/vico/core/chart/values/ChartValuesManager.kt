@@ -19,6 +19,8 @@ package com.patrykandpatryk.vico.core.chart.values
 import com.patrykandpatryk.vico.core.axis.AxisPosition
 import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.Chart
+import com.patrykandpatryk.vico.core.chart.column.ColumnChart
+import com.patrykandpatryk.vico.core.chart.line.LineChart
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
 
 /**
@@ -31,8 +33,8 @@ import com.patrykandpatryk.vico.core.entry.ChartEntryModel
  * - A [ChartValues] instance for [AxisRenderer]s with [AxisPosition.Vertical.End]. It’s available when the [Chart]
  * is configured to use [AxisPosition.Vertical.End] as a key to update and retrieve its [ChartValues].
  *
- * @see com.patrykandpatryk.vico.core.chart.column.ColumnChart.targetVerticalAxisPosition
- * @see com.patrykandpatryk.vico.core.chart.line.LineChart.targetVerticalAxisPosition
+ * @see ColumnChart.targetVerticalAxisPosition
+ * @see LineChart.targetVerticalAxisPosition
  */
 public class ChartValuesManager {
 
@@ -49,7 +51,7 @@ public class ChartValuesManager {
             ?: chartValues.getOrPut(null) { MutableChartValues() }
 
     /**
-     * Attempts to update the stored values to the provided params.
+     * Attempts to update the stored values to the provided values.
      * [minX] and [minY] can be updated to a lower value.
      * [maxX] and [maxY] can be updated to a higher value.
      * The [chartEntryModel] is always updated.
@@ -86,7 +88,7 @@ public class ChartValuesManager {
     }
 
     /**
-     * Resets the values stored in all the [ChartValues] instances in the [chartValues] map.
+     * Resets the values stored in each of the [ChartValues] instances in the [chartValues] map.
      */
     public fun resetChartValues() {
         chartValues.values.forEach { it.reset() }

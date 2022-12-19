@@ -22,6 +22,7 @@ import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatryk.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.context.DrawContext
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -33,19 +34,18 @@ import com.patrykandpatryk.vico.core.model.Point
 /**
  * The anonymous implementation of [ChartDrawContext].
  *
- * @param canvas the canvas to draw the chart on.
- * @param elevationOverlayColor the color of elevation overlay, applied to components that cast shadows in
- * [com.patrykandpatryk.vico.core.component.shape.ShapeComponent].
- * @param measureContext the measuring context that holds the data used for component measurements.
- * @param markerTouchPoint the point inside the chart’s coordinates where physical touch is occurring.
- * @param segmentProperties holds information about the width of each individual segment on the x-axis.
- * @param chartBounds the bounds in which the [com.patrykandpatryk.vico.core.chart.Chart] will be drawn.
+ * @param canvas the canvas on which the [Chart] is to be drawn.
+ * @param elevationOverlayColor the color of elevation overlays, applied to [ShapeComponent]s that cast shadows.
+ * @param measureContext holds data used for component measurements.
+ * @param markerTouchPoint the point inside the chart’s bounds where physical touch is occurring.
+ * @param segmentProperties holds information about the width of each individual chart segment.
+ * @param chartBounds the bounds in which the [Chart] will be drawn.
  * @param horizontalScroll the horizontal scroll.
  * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
  * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
  * the chart.
  *
- * @see [com.patrykandpatryk.vico.core.component.shape.ShapeComponent.setShadow]
+ * @see [ShapeComponent.setShadow]
  */
 @LongParameterListDrawFunction
 public fun chartDrawContext(
