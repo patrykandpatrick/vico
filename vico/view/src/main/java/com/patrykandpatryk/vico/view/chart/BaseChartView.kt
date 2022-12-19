@@ -41,6 +41,7 @@ import com.patrykandpatryk.vico.core.chart.draw.drawMarker
 import com.patrykandpatryk.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatryk.vico.core.chart.edges.FadingEdges
 import com.patrykandpatryk.vico.core.chart.scale.AutoScaleUp
+import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.context.MeasureContext
 import com.patrykandpatryk.vico.core.context.MutableMeasureContext
 import com.patrykandpatryk.vico.core.entry.ChartEntryModel
@@ -179,20 +180,20 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var runInitialAnimation: Boolean = true
 
     /**
-     * The chart displayed by this [View].
+     * The [Chart] displayed by this [View].
      */
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
         tryInvalidate(chart, model)
     }
 
     /**
-     * The [Model] used in the [chart] to render the data.
+     * The [Model] for this [BaseChartView]’s [Chart] instance ([chart]).
      */
     public var model: Model? = null
         private set
 
     /**
-     * A [ChartModelProducer] can provide the [Model] updates asynchronously.
+     * A [ChartModelProducer] can provide [Model] updates asynchronously.
      *
      * @see ChartModelProducer
      */
@@ -231,7 +232,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     /**
-     * The indication of certain entry appearing on physical touch of the [Chart].
+     * The [Marker] for this chart.
      */
     public var marker: Marker? = null
 
@@ -246,8 +247,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var legend: Legend? = null
 
     /**
-     * The color of elevation overlays, which are applied to components that cast shadows in
-     * [com.patrykandpatryk.vico.core.component.shape.ShapeComponent].
+     * The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows.
      */
     public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
 
@@ -273,7 +273,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     /**
-     * Sets the [Model] used by the chart.
+     * Sets the [Model] for this [BaseChartView]’s [Chart] instance ([chart]).
      */
     public fun setModel(model: Model) {
         val oldModel = this.model
@@ -433,14 +433,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     /**
-     * Sets a duration in milliseconds of the animation run on each [model] update.
+     * Sets the duration (in milliseconds) of difference animations.
      */
     public fun setDiffAnimationDuration(durationMillis: Long) {
         animator.duration = durationMillis
     }
 
     /**
-     * Sets an interpolator used in the animation run on each [model] update.
+     * Sets the [Interpolator] for difference animations.
      */
     public fun setDiffAnimationInterpolator(interpolator: Interpolator) {
         animator.interpolator = interpolator

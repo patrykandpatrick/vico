@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
+import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.model.Point
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
 import com.patrykandpatryk.vico.view.extension.fling
@@ -27,7 +28,8 @@ import com.patrykandpatryk.vico.view.extension.point
 import kotlin.math.abs
 
 /**
- * Handles motion events.
+ * Handles [MotionEvent]s.
+ *
  * @param density the pixel density.
  * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
  */
@@ -50,7 +52,7 @@ public open class MotionEventHandler(
     private var totalDragAmount: Float = 0f
 
     /**
-     * Called to handle the [MotionEvent], which may result in touch marker indication, scroll, or zoom.
+     * Called to handle a [MotionEvent], which may result in scroll, zoom, or the appearance of a [Marker].
      */
     public fun handleMotionEvent(motionEvent: MotionEvent): Boolean {
         val ignoreEvent =

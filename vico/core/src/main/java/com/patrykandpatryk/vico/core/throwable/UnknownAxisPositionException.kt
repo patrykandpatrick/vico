@@ -16,9 +16,10 @@
 
 package com.patrykandpatryk.vico.core.throwable
 
+import com.patrykandpatryk.vico.core.axis.AxisPosition
+
 /**
- * The [Exception] thrown when a function receives an unexpected [com.patrykandpatryk.vico.core.axis.AxisPosition]
- * subclass.
+ * The [Exception] thrown when a function receives an unexpected [AxisPosition] subclass.
  */
 public class UnknownAxisPositionException(
     receivedClass: Class<*>,

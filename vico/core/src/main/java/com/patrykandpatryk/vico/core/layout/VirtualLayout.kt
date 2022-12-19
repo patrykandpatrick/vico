@@ -29,9 +29,9 @@ import com.patrykandpatryk.vico.core.extension.orZero
 import com.patrykandpatryk.vico.core.legend.Legend
 
 /**
- * [VirtualLayout] measures and lays out the chart, the axis, and other components (such as markers).
+ * [VirtualLayout] measures and lays out the components of a chart.
  *
- * @param axisManager the [AxisManager] that manages this chart’s axes.
+ * @param axisManager the [AxisManager] that manages the associated chart’s axes.
  */
 public open class VirtualLayout(
     private val axisManager: AxisManager,
@@ -44,11 +44,11 @@ public open class VirtualLayout(
     private val tempInsets: Insets = Insets()
 
     /**
-     * Measures and sets the bounds for the chart, the axes, and other components.
+     * Measures and sets the bounds for the components of the chart.
      *
-     * @param context the [MeasureContext] that holds the data used for the measurement of components.
-     * @param contentBounds the bounds in which the chart contents must be drawn.
-     * @param chart the actual chart.
+     * @param context holds data used for the measuring of components.
+     * @param contentBounds the bounds in which the chart should be drawn.
+     * @param chart the chart itself.
      * @param legend the legend for the chart.
      * @param segmentProperties the [SegmentProperties] of the chart.
      * @param chartInsetter additional components that influence the chart layout, such as markers.

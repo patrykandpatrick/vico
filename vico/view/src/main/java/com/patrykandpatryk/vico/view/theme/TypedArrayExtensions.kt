@@ -43,8 +43,8 @@ public fun TypedArray.getColorExtended(
 ): Int = getColor(index, defaultColor)
 
 /**
- * Returns a dimension converted to pixels from a complex unit such as dp or sp, and divides it by the pixel density of
- * the screen.
+ * Returns a dimension converted to pixels from a complex unit (such as dp or sp), and divides it by the pixel density
+ * of the screen.
  */
 public fun TypedArray.getRawDimension(
     context: Context,

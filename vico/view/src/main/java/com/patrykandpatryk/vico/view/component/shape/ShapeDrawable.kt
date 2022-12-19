@@ -137,6 +137,7 @@ public class ShapeDrawable(
 
 /**
  * Converts this [Shape] to a [Drawable].
+ *
  * @param intrinsicWidth the width of the [Drawable].
  * @param intrinsicHeight the height of the [Drawable].
  */
