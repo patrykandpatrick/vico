@@ -28,7 +28,7 @@ import com.patrykandpatryk.vico.core.extension.half
  * [ComponentShader] creates a [Shader] out of the provided [component].
  *
  * @property component used as a pattern in the [Shader].
- * @property componentSizeDp the size of the [component] in the dp unit.
+ * @property componentSizeDp the size of the [component] (in dp).
  * @property checkeredArrangement whether the [component] should be arranged in a checkered pattern in the [Shader].
  * @property tileXMode the horizontal tiling mode for the [component].
  * @property tileYMode the vertical tiling mode for the [component].

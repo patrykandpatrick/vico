@@ -18,6 +18,7 @@ package com.patrykandpatryk.vico.core.context
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import com.patrykandpatryk.vico.core.component.shape.ShapeComponent
 import com.patrykandpatryk.vico.core.extension.saveLayer
 
 /**
@@ -27,8 +28,7 @@ import com.patrykandpatryk.vico.core.extension.saveLayer
 public interface DrawContext : MeasureContext {
 
     /**
-     * The elevation overlay color, applied to components that cast shadows in
-     * [com.patrykandpatryk.vico.core.component.shape.ShapeComponent].
+     * The elevation overlay color, applied to [ShapeComponent]s that cast shadows.
      */
     public val elevationOverlayColor: Long
 

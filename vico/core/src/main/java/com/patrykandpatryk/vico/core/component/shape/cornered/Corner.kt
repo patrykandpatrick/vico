@@ -33,14 +33,14 @@ public sealed class Corner(
      * @param availableCornerSize the available space that this corner can take.
      * @param density the density of the screen (used in pixel size calculation).
      *
-     * @return the size of the corner in pixels.
+     * @return the size of the corner (in pixels).
      */
     public abstract fun getCornerSize(availableCornerSize: Float, density: Float): Float
 
     /**
-     * Defines an absolute size for a corner in the dp unit.
+     * Defines an absolute size for a corner (in dp).
      *
-     * @param sizeDp the size of the corner in the dp unit.
+     * @param sizeDp the size of the corner (in dp).
      */
     public class Absolute(
         public val sizeDp: Float,
@@ -52,7 +52,7 @@ public sealed class Corner(
     }
 
     /**
-     * Defines a relative size for a corner in percent.
+     * Defines a relative size for a corner (in percent).
      *
      * @param percentage the percentage of the space available for the corner that will be used as its size.
      */
@@ -78,7 +78,7 @@ public sealed class Corner(
         public val FullyRounded: Corner = Relative(MAX_PERCENTAGE, RoundedCornerTreatment)
 
         /**
-         * A [Corner] that has sharp corners.
+         * A sharp [Corner].
          */
         public val Sharp: Corner = Relative(0, SharpCornerTreatment)
     }

@@ -30,12 +30,12 @@ public const val DEF_LABEL_LINE_COUNT: Int = 1
 public const val DEF_LABEL_COUNT: Int = 99
 
 /**
- * The default label spacing for vertical axes in dp.
+ * The default label spacing for vertical axes (in dp).
  */
 public const val DEF_LABEL_SPACING: Float = 16f
 
 /**
- * The default tick size for markers in dp.
+ * The default tick size for markers (in dp).
  */
 public const val DEF_MARKER_TICK_SIZE: Float = 6f
 
@@ -89,57 +89,57 @@ public object Animation {
  */
 public object DefaultDimens {
     /**
-     * The default horizontal padding for axis labels in dp.
+     * The default horizontal padding for axis labels (in dp).
      */
     public const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
 
     /**
-     * The default maximum line count for axis labels in dp.
+     * The default maximum line count for axis labels (in dp).
      */
     public const val AXIS_LABEL_MAX_LINES: Int = 1
 
     /**
-     * The default vertical padding for axis labels in dp.
+     * The default vertical padding for axis labels (in dp).
      */
     public const val AXIS_LABEL_VERTICAL_PADDING: Int = 2
 
     /**
-     * The default text size for axis labels in sp.
+     * The default text size for axis labels (in sp).
      */
     public const val AXIS_LABEL_SIZE: Int = 12
 
     /**
-     * The default horizontal margin for axis labels in dp.
+     * The default horizontal margin for axis labels (in dp).
      */
     public const val AXIS_LABEL_HORIZONTAL_MARGIN: Int = 0
 
     /**
-     * The default vertical margin for axis labels in dp.
+     * The default vertical margin for axis labels (in dp).
      */
     public const val AXIS_LABEL_VERTICAL_MARGIN: Int = 0
 
     /**
-     * The default rotation for axis labels in degrees.
+     * The default rotation for axis labels (in degrees).
      */
     public const val AXIS_LABEL_ROTATION_DEGREES: Float = 0f
 
     /**
-     * The default width for axis guidelines in dp.
+     * The default width for axis guidelines (in dp).
      */
     public const val AXIS_GUIDELINE_WIDTH: Float = 1f
 
     /**
-     * The default width for axis lines in dp.
+     * The default width for axis lines (in dp).
      */
     public const val AXIS_LINE_WIDTH: Float = 1f
 
     /**
-     * The default length for axis ticks in dp.
+     * The default length for axis ticks (in dp).
      */
     public const val AXIS_TICK_LENGTH: Float = 4f
 
     /**
-     * The default width for columns in dp.
+     * The default width for columns (in dp).
      */
     public const val COLUMN_WIDTH: Float = 8f
 
@@ -154,7 +154,7 @@ public object DefaultDimens {
     public const val COLUMN_OUTSIDE_SPACING: Float = 32f
 
     /**
-     * The default corner radius for columns in percent.
+     * The default corner radius for columns (in percent).
      */
     public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
 
@@ -164,42 +164,42 @@ public object DefaultDimens {
     public const val CUBIC_STRENGTH: Float = 1f
 
     /**
-     * The default dash length for [DashedShape] in dp.
+     * The default dash length for [DashedShape] (in dp).
      */
     public const val DASH_LENGTH: Float = 4f
 
     /**
-     * The default dash gap for [DashedShape] in dp.
+     * The default dash gap for [DashedShape] (in dp).
      */
     public const val DASH_GAP: Float = 2f
 
     /**
-     * The default line thickness for line charts in dp.
+     * The default line thickness for line charts (in dp).
      */
     public const val LINE_THICKNESS: Float = 2f
 
     /**
-     * The default size for marker indicators in dp.
+     * The default size for marker indicators (in dp).
      */
     public const val MARKER_INDICATOR_SIZE: Float = 36f
 
     /**
-     * The default horizontal padding for markers in dp.
+     * The default horizontal padding for markers (in dp).
      */
     public const val MARKER_HORIZONTAL_PADDING: Float = 8f
 
     /**
-     * The default vertical padding for markers in dp.
+     * The default vertical padding for markers (in dp).
      */
     public const val MARKER_VERTICAL_PADDING: Float = 4f
 
     /**
-     * The default size for line chart points in dp.
+     * The default size for line chart points (in dp).
      */
     public const val POINT_SIZE: Float = 16f
 
     /**
-     * The default spacing for line chart points in dp.
+     * The default spacing for line chart points (in dp).
      */
     public const val POINT_SPACING: Float = 16f
 
@@ -209,12 +209,12 @@ public object DefaultDimens {
     public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
 
     /**
-     * The default thickness for threshold lines in dp.
+     * The default thickness for threshold lines (in dp).
      */
     public const val THRESHOLD_LINE_THICKNESS: Float = 2f
 
     /**
-     * The default height for charts in dp.
+     * The default height for charts (in dp).
      */
     public const val CHART_HEIGHT: Float = 200f
 }

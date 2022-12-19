@@ -159,7 +159,7 @@ public class DashedShape(
     }
 
     /**
-     * Defines a way to render the [DashedShape].
+     * Defines how a [DashedShape] is to be rendered.
      */
     public enum class FitStrategy {
         /**
@@ -170,7 +170,7 @@ public class DashedShape(
 
         /**
          * The [DashedShape] will use the exact [DashedShape.dashLengthDp] and [DashedShape.gapLengthDp] values
-         * provided. In effect the [DashedShape] may not fit within its bounds or be cut off.
+         * provided. As a result, the [DashedShape] may not fit within its bounds or be cut off.
          */
         Fixed,
     }

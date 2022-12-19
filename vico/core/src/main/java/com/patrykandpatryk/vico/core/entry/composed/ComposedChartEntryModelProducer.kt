@@ -27,7 +27,7 @@ import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 /**
- * A subclass of [ChartModelProducer] that generates [ComposedChartEntryModel] instances.
+ * A [ChartModelProducer] implementation that generates [ComposedChartEntryModel] instances.
  *
  * @property chartModelProducers the list of [ChartModelProducer]s to be composed by this
  * [ComposedChartEntryModelProducer].

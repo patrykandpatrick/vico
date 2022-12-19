@@ -24,8 +24,7 @@ import com.patrykandpatryk.vico.core.context.DrawContext
 import kotlin.math.absoluteValue
 
 /**
- * An implementation of generic [Shape] allowing to specify look and size of each corner
- * with [Corner]. It also allows to intercept drawing of each of [Shape]’s sides
+ * A [Shape] implementation with customizable corners.
  *
  * @param topLeft specifies a [Corner] for the top left of the [Shape].
  * @param topRight specifies a [Corner] for the top right of the [Shape].
@@ -97,10 +96,10 @@ public open class CorneredShape(
     }
 
     /**
-     * Fills provided [path] with this [CorneredShape]’s contours.
+     * Adds a contour of this [CorneredShape] to the provided [Path].
      *
      * @param density the screen density.
-     * @param path the [Path] that will be filled with this [CorneredShape]’s contours.
+     * @param path the [Path] to use.
      * @param left the left edge of the [CorneredShape].
      * @param top the top edge of the [CorneredShape].
      * @param right the right edge of the [CorneredShape].

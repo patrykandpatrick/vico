@@ -16,9 +16,12 @@
 
 package com.patrykandpatryk.vico.core.entry
 
+import com.patrykandpatryk.vico.core.chart.column.ColumnChart
+import com.patrykandpatryk.vico.core.chart.line.LineChart
+
 /**
- * Creates a [ChartEntryModel] out of the given pairs of numbers, treating the first number in each pair as the x value,
- * and the second one as the y value.
+ * Creates a [ChartEntryModel] out of the given pairs of numbers, treating the first number in each pair as the _x_
+ * value, and the second one as the _y_ value.
  */
 public fun entryModelOf(vararg entries: Pair<Number, Number>): ChartEntryModel =
     entries
@@ -27,8 +30,8 @@ public fun entryModelOf(vararg entries: Pair<Number, Number>): ChartEntryModel =
         .getModel()
 
 /**
- * Creates a [ChartEntryModel] out of the provided array of numbers, treating each number’s index as the x value, and
- * the number itself as the y value.
+ * Creates a [ChartEntryModel] out of the provided array of numbers, treating each number’s index as the _x_ value, and
+ * the number itself as the _y_ value.
  */
 public fun entryModelOf(vararg values: Number): ChartEntryModel =
     values
@@ -39,8 +42,7 @@ public fun entryModelOf(vararg values: Number): ChartEntryModel =
 /**
  * Creates a [ChartEntryModel] out of the provided list of list of [FloatEntry] instances.
  *
- * Can be used to create a [com.patrykandpatryk.vico.core.chart.line.LineChart]s with multiple lines and
- * [com.patrykandpatryk.vico.core.chart.column.ColumnChart]s with multiple columns.
+ * This can be used to create [LineChart]s with multiple lines and [ColumnChart]s with multi-column segments.
  */
 public fun entryModelOf(vararg values: List<FloatEntry>): ChartEntryModel =
     ChartEntryModelProducer(values.toList()).getModel()

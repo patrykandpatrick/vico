@@ -17,9 +17,7 @@
 package com.patrykandpatryk.vico.core.entry
 
 /**
- * A declaration of a [Model] producer that may deliver generated [Model]s asynchronously.
- * It supports animating the difference between the previous and current lists of entries.
- * The [Model] is used by the chart to render the data.
+ * A [Model] producer that can deliver generated [Model]s asynchronously. It supports difference animations.
  *
  * @see ChartEntryModel
  */

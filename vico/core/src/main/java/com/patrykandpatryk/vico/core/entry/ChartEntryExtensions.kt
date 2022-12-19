@@ -22,59 +22,61 @@ import com.patrykandpatryk.vico.core.extension.rangeOfPairOrNull
 import kotlin.math.abs
 
 /**
- * Conveniently creates an instance of [FloatEntry].
- * @param [x] Position on x-axis of this [FloatEntry].
- * @param [y] Position on y-axis of this [FloatEntry].
- * @return [FloatEntry] with [x] and [y] values.
+ * Creates a [FloatEntry] instance.
+ *
+ * @param [x] the [FloatEntry]’s _x_ coordinate.
+ * @param [y] the [FloatEntry]’s _y_ coordinate.
  *
  * @see [entriesOf]
  */
 public fun entryOf(x: Float, y: Float): FloatEntry = FloatEntry(x, y)
 
 /**
- * Conveniently creates an instance of [FloatEntry] out of any [Number].
- * @param [x] Position on x-axis of this [FloatEntry]. Will be converted to [Float].
- * @param [y] Position on y-axis of this [FloatEntry]. Will be converted to [Float].
- * @return [FloatEntry] with [x] and [y] values converted to [Float].
+ * Creates a [FloatEntry] instance.
+
+ * @param [x] the [FloatEntry]’s _x_ coordinate. This will be converted to a [Float] instance.
+ * @param [y] the [FloatEntry]’s _y_ coordinate. This will be converted to a [Float] instance.
  *
  * @see [entriesOf]
  */
 public fun entryOf(x: Number, y: Number): FloatEntry = entryOf(x.toFloat(), y.toFloat())
 
 /**
- * Conveniently creates a [List] of [FloatEntry] out of [Pair] of [Number].
- * [Pair.first] is mapped to x-axis value, and [Pair.second] is mapped to y-axis value.
+ * Creates a [List] of [FloatEntry] instances. Each of the provided [Pair]s corresponds to a single [FloatEntry], with
+ * the first element of the [Pair] being the [FloatEntry]’s _x_ coordinate, and the second element of the [Pair] being
+ * the [FloatEntry]’s _y_ coordinate.
  *
- * For example:
+ * Example usage:
  *
  * ```
  *  entriesOf(0 to 1, 1 to 2, 3 to 5)
  * ```
  *
- * All [Number] instances are converted to [Float].
+ * The provided [Number] instances will be converted to [Float] instances.
+ *
  * @see [entryOf]
  */
 public fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> =
     pairs.map { (x, y) -> entryOf(x, y) }
 
 /**
- * Conveniently creates a [List] of [FloatEntry] out of array of y-axis values.
+ * Creates a [List] of [FloatEntry] instances out of an array of y-axis values.
  *
- * For example:
+ * The following are equivalent:
  *
  * ```
  * entriesOf(1, 2, 5)
  * ```
- * is the same as:
  *
  * ```
  * entriesOf(0 to 1, 1 to 2, 2 to 5)
  * ```
  *
- * Each y-axis value from [yValues] will have a x-axis value assigned.
- * X-axis value will be equal to index of y-axis value in the [yValues].
+ * An x-axis value will be automatically assigned to each y-axis value from [yValues]. The x-axis value will be equal
+ * to the y-axis value’s index in [yValues].
  *
- * All [Number] instances are converted to [Float].
+ * The provided [Number] instances will be converted to [Float] instances.
+ *
  * @see [entryOf]
  */
 public fun entriesOf(vararg yValues: Number): List<FloatEntry> =
