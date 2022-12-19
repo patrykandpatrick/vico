@@ -53,7 +53,7 @@ public open class MarkerComponent(
         get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
     /**
-     * The indicator size in dp.
+     * The indicator size (in dp).
      */
     public var indicatorSizeDp: Float = 0f
 

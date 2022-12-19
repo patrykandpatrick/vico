@@ -17,9 +17,10 @@
 package com.patrykandpatryk.vico.core.chart.segment
 
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
+import com.patrykandpatryk.vico.core.chart.Chart
 
 /**
- * [SegmentProperties] holds information about the dimensions of a segment on an x-axis.
+ * [SegmentProperties] holds information about the width of each segment of a [Chart].
  */
 public interface SegmentProperties {
 
@@ -74,7 +75,7 @@ public interface SegmentProperties {
 }
 
 /**
- * A convenience function that creates an anonymous implementation the [SegmentProperties].
+ * A convenience function that creates an anonymous [SegmentProperties] implementation.
  *
  * @param cellWidth the width of each individual cell (e.g., a column in a column chart or a point in a line chart).
  * @param marginWidth the sum of the cell width and margin width.

@@ -29,14 +29,13 @@ import com.patrykandpatryk.vico.core.marker.Marker
 public interface ChartInsetter {
 
     /**
-     * Called during the measurement phase, before [getHorizontalInsets].
-     * Subclasses can specify both vertical and horizontal insets for the chart.
-     * The [com.patrykandpatryk.vico.core.layout.VirtualLayout] will use the highest inset values returned by any
-     * [ChartInsetter] for the resulting insets.
+     * Called during the measurement phase, before [getHorizontalInsets]. Both horizontal and vertical insets can be
+     * requested from this function. The final inset for a given edge of the associated [Chart] is the largest of the
+     * insets requested for the edge.
      *
-     * @param context the [MeasureContext] that holds the data used for the measurement of components.
-     * @param outInsets the mutable class used to store the [ChartInsetter] subclass’s desired insets.
-     * @param segmentProperties the [SegmentProperties] of the chart.
+     * @param context holds data used for the measuring of components.
+     * @param outInsets used to store the requested insets.
+     * @param segmentProperties the associated [Chart]’s [SegmentProperties].
      */
     public fun getInsets(
         context: MeasureContext,
@@ -45,16 +44,13 @@ public interface ChartInsetter {
     ): Unit = Unit
 
     /**
-     * Called during the measurement phase, after [getInsets].
-     * Subclasses can specify the chart’s horizontal insets only.
-     * Unless the component needs to know the [availableHeight] that it may use,
-     * it can specify all insets in [getInsets].
-     * The [com.patrykandpatryk.vico.core.layout.VirtualLayout] will use the highest horizontal inset values returned by
-     * any [ChartInsetter] for the resulting insets.
+     * Called during the measurement phase, after [getInsets]. Only horizontal insets can be requested from this
+     * function. Unless the available height is of interest, [getInsets] can be used to set all insets. The final inset
+     * for a given edge of the associated [Chart] is the largest of the insets requested for the edge.
      *
-     * @param context The measuring context holding data used for component measurements.
-     * @param availableHeight The height that may be used by the [ChartInsetter] subclass.
-     * @param outInsets The mutable class used to store the [ChartInsetter] subclass’s desired insets.
+     * @param context holds data used for the measuring of components.
+     * @param availableHeight the available height. The vertical insets are considered here.
+     * @param outInsets used to store the requested insets.
      */
     public fun getHorizontalInsets(
         context: MeasureContext,
