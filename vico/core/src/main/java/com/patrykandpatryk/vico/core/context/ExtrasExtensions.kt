@@ -17,8 +17,8 @@
 package com.patrykandpatryk.vico.core.context
 
 /**
- * Returns the extra with the given [key] if such an extra exists.
- * Otherwise, returns the result of [block].
+ * Returns the value of the extra with the given [key] if such an extra exists. Otherwise, returns the result of
+ * [block].
  */
 public fun <T : Any> Extras.getExtraOr(
     key: Any,
@@ -26,8 +26,8 @@ public fun <T : Any> Extras.getExtraOr(
 ): T = if (hasExtra(key = key)) getExtra(key = key) else block()
 
 /**
- * Returns the extra with the given [key] if such an extra exists.
- * Otherwise, returns the result of [block] and saves it as an extra with the given key.
+ * Returns the value of the extra with the given [key] if such an extra exists. Otherwise, returns the result of [block]
+ * and saves it as an extra with the given key.
  */
 public fun <T : Any> Extras.getOrPutExtra(
     key: Any,

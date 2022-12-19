@@ -16,53 +16,55 @@
 
 package com.patrykandpatryk.vico.core.context
 
+import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
+import kotlin.collections.Map
+
 /**
- * An abstraction layer over [kotlin.collections.Map], used to store and retrieve data for:
- * - Measuring operation, used within [com.patrykandpatryk.vico.core.context.MeasureContext].
- * - Draw operation, used within [com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext].
+ * An abstraction layer over [Map] used by [MeasureContext] and [ChartDrawContext] to store and retrieve data.
  *
- * Extras will be available downstream the measuring or drawing operation. Once the operation is complete,
- * the data will be lost.
- *
- * Once the data for given key is retrieved, it is being cleared from underlying map.
+ * Extras are kept in memory while measuring or drawing is taking place. Afterwards, they are removed.
  */
 public interface Extras {
 
     /**
-     * Adds a [value] to local store.
-     * @param key Used to retrieve given [value] from the store.
-     * @param value Can be retrieved from the store using the [key].
+     * Saves an extra.
+     *
+     * @param key the extra’s unique identifier.
+     * @param value the extra’s value.
      */
     public fun putExtra(key: Any, value: Any)
 
     /**
-     * Check whether local store contains a value for given [key].
+     * Checks whether an extra with the given key exists.
      */
     public fun hasExtra(key: Any): Boolean
 
     /**
-     * Retrieves the stored value for the [key], if it exists and wasn’t already consumed with [consumeExtra].
+     * Retrieves the value of the extra with the given key, unless no such extra exists.
+     *
      * @see consumeExtra
      */
     public fun <T> getExtra(key: Any): T
 
     /**
-     * Retrieves the stored value for the [key], if it exists and wasn’t already consumed.
-     * The value can be read only once, and will be cleared after this function is called.
-     * For non-consumable value retrieval use [getExtra].
+     * Retrieves the value of the extra with the given key, unless no such extra exists. Once the value of the extra is
+     * retrieved, the extra is removed. Use [getExtra] to prevent the extra from being removed.
+     *
      * @see getExtra
      */
     public fun <T> consumeExtra(key: Any): T
 
     /**
-     * Convenience operator fun for [putExtra].
+     * Operator function for [putExtra].
+     *
      * @see putExtra
      */
     public operator fun set(key: Any, value: Any): Unit = putExtra(key, value)
 
     /**
-     * Convenience operator fun for [consumeExtra].
-     * @see [consumeExtra]
+     * Operator function for [consumeExtra].
+     *
+     * @see consumeExtra
      */
     public operator fun <T> get(key: Any): T = consumeExtra(key)
 

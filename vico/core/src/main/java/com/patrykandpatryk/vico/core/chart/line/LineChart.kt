@@ -23,9 +23,11 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatryk.vico.core.chart.BaseChart
 import com.patrykandpatryk.vico.core.chart.DefaultPointConnector
+import com.patrykandpatryk.vico.core.chart.composed.ComposedChart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.segmentWidth
 import com.patrykandpatryk.vico.core.chart.forEachInIndexed
@@ -61,9 +63,8 @@ import kotlin.math.min
  *
  * @param lines a [List] of [LineSpec]s defining the style of each line.
  * @param spacingDp the spacing between each [LineSpec.point] (in dp).
- * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
- * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
- * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
+ * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
  * @param pointPosition the horizontal position of each point in its corresponding segment.
  */
 public open class LineChart(
@@ -78,9 +79,8 @@ public open class LineChart(
      *
      * @param line a [LineSpec] defining the style of each line.
      * @param spacingDp the spacing between each [LineSpec.point] (in dp).
-     * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
-     * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
-     * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+     * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
+     * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
      * @param pointPosition the horizontal position of each point in its corresponding segment.
      */
     public constructor(

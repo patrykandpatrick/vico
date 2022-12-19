@@ -16,6 +16,7 @@
 
 package com.patrykandpatryk.vico.core.extension
 
+import com.patrykandpatryk.vico.core.entry.ChartEntry
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.model.Point
 import java.util.TreeMap
@@ -33,8 +34,7 @@ public fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
 ): List<Marker.EntryModel>? = keys.findClosestPositiveValue(touchPoint.x)?.let(::get)
 
 /**
- * Returns those of the [Marker.EntryModel]s stored in the [Map] whose
- * [com.patrykandpatryk.vico.core.entry.ChartEntry.x] is equal to [xValue].
+ * Returns those of the [Marker.EntryModel]s stored in the [Map] whose [ChartEntry.x] is equal to [xValue].
  *
  * @see Marker.EntryModel
  */

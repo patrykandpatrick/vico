@@ -20,7 +20,7 @@ import android.graphics.RectF
 import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 
 /**
- * A subclass of [MeasureContext] that facilitates the mutation of some of its properties.
+ * A [MeasureContext] implementation that facilitates the mutation of some of its properties.
  */
 public data class MutableMeasureContext(
     override val canvasBounds: RectF,

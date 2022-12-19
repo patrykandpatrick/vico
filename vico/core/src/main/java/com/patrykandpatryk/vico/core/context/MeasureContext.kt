@@ -17,6 +17,7 @@
 package com.patrykandpatryk.vico.core.context
 
 import android.graphics.RectF
+import com.patrykandpatryk.vico.core.chart.Chart
 import com.patrykandpatryk.vico.core.chart.values.ChartValues
 import com.patrykandpatryk.vico.core.chart.values.ChartValuesManager
 
@@ -31,7 +32,7 @@ public interface MeasureContext : Extras {
     public val canvasBounds: RectF
 
     /**
-     * Manages [ChartValues] used in the chart.
+     * Manages the associated [Chart]’s [ChartValues].
      *
      * @see [ChartValuesManager]
      */
@@ -43,12 +44,12 @@ public interface MeasureContext : Extras {
     public val density: Float
 
     /**
-     * The scale of fonts.
+     * The font scale.
      */
     public val fontScale: Float
 
     /**
-     * Whether the current device layout is left-to-right.
+     * Whether the layout direction is left-to-right.
      */
     public val isLtr: Boolean
 
@@ -63,32 +64,32 @@ public interface MeasureContext : Extras {
     public val chartScale: Float
 
     /**
-     * A multiplier used to ensure support for both left-to-right and right-to-left layouts.
-     * Values such as translation deltas are multiplied by this value.
-     * [layoutDirectionMultiplier] is equal to `1f` if [isLtr] is `true`, and `-1f` otherwise.
+     * A multiplier used to ensure support for both left-to-right and right-to-left layouts. Values such as translation
+     * deltas are multiplied by this value. [layoutDirectionMultiplier] is equal to `1f` if [isLtr] is `true`, and `-1f`
+     * otherwise.
      */
     public val layoutDirectionMultiplier: Float
         get() = if (isLtr) 1f else -1f
 
     /**
-     * Converts the receiver [Float] to pixels.
+     * The number of pixels corresponding to this number of density-independent pixels.
      */
     public val Float.pixels: Float
         get() = this * density
 
     /**
-     * Converts the receiver [Float] to pixels and discards decimal values.
+     * The number of pixels corresponding to this number of density-independent pixels, with decimal values discarded.
      */
     public val Float.wholePixels: Int
         get() = pixels.toInt()
 
     /**
-     * Converts the given [dp] value to pixels.
+     * Returns the number of pixels corresponding to the provided number of density-independent pixels.
      */
     public fun toPixels(dp: Float): Float = dp * density
 
     /**
-     * Converts the given [sp] value to a font size in pixels.
+     * Returns the number of pixels corresponding to the provided number of scaled pixels.
      */
     public fun toFontSize(sp: Float): Float = sp * fontScale
 

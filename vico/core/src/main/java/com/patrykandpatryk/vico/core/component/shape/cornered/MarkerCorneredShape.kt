@@ -21,6 +21,7 @@ import android.graphics.Path
 import com.patrykandpatryk.vico.core.DEF_MARKER_TICK_SIZE
 import com.patrykandpatryk.vico.core.component.shape.Shape
 import com.patrykandpatryk.vico.core.context.DrawContext
+import com.patrykandpatryk.vico.core.context.Extras
 import com.patrykandpatryk.vico.core.extension.doubled
 import com.patrykandpatryk.vico.core.extension.half
 
@@ -107,7 +108,7 @@ public open class MarkerCorneredShape(
         /**
          * Used to store and retrieve the _x_ coordinate of the tick.
          *
-         * @see com.patrykandpatryk.vico.core.context.Extras
+         * @see Extras
          */
         public const val tickXKey: String = "tickX"
     }

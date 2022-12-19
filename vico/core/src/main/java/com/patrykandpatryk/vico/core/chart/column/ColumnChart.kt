@@ -19,7 +19,9 @@ package com.patrykandpatryk.vico.core.chart.column
 import com.patrykandpatryk.vico.core.DefaultDimens
 import com.patrykandpatryk.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatryk.vico.core.axis.AxisPosition
+import com.patrykandpatryk.vico.core.axis.AxisRenderer
 import com.patrykandpatryk.vico.core.chart.BaseChart
+import com.patrykandpatryk.vico.core.chart.composed.ComposedChart
 import com.patrykandpatryk.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatryk.vico.core.chart.draw.segmentWidth
 import com.patrykandpatryk.vico.core.chart.forEachIn
@@ -52,9 +54,8 @@ import kotlin.math.abs
  * @param innerSpacingDp the spacing between the columns contained in chart segments. This has no effect on
  * segments that contain a single column only.
  * @param mergeMode defines how columns should be drawn in multi-column segments.
- * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
- * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
- * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+ * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
+ * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
  * @param dataLabel an optional [TextComponent] to use for data labels.
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
  * respective columns.
@@ -78,9 +79,8 @@ public open class ColumnChart(
      *
      * @param column a [LineComponent] defining the appearance of the columns.
      * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
-     * @param targetVerticalAxisPosition if this is set, any [com.patrykandpatryk.vico.core.axis.AxisRenderer] with an
-     * [AxisPosition] equal to the provided value will use the [ChartValues] provided by this chart.
-     * This is meant to be used with [com.patrykandpatryk.vico.core.chart.composed.ComposedChart].
+     * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
+     * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
      */
     public constructor(
         column: LineComponent,
