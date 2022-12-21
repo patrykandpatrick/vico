@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright 2022 Patryk Goworowski and Patryk Michalik
+ * Modifications copyright 2022 by Patryk Goworowski and Patrick Michalik.
  */
 
 package com.patrykandpatryk.vico.compose.extension
