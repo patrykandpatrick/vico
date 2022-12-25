@@ -56,6 +56,7 @@ internal fun Modifier.chartTouchEvent(
                     state = scrollableState,
                     orientation = Orientation.Horizontal,
                     interactionSource = interactionSource,
+                    reverseDirection = true,
                 )
             }
             setTouchPoint != null -> {

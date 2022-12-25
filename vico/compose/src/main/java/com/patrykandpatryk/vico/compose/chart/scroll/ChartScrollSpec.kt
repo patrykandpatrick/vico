@@ -19,7 +19,6 @@ package com.patrykandpatryk.vico.compose.chart.scroll
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
-import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.runtime.Composable
@@ -51,20 +50,18 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
     public suspend fun performAutoScroll(
         model: Model,
         oldModel: Model?,
-        currentScroll: Float,
-        maxScrollDistance: Float,
-        scrollableState: ScrollableState,
+        chartScrollState: ChartScrollState,
     ) {
         if (autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) {
 
-            if (scrollableState.isScrollInProgress) {
-                scrollableState.stopScroll(MutatePriority.PreventUserInput)
+            if (chartScrollState.isScrollInProgress) {
+                chartScrollState.stopScroll(MutatePriority.PreventUserInput)
             }
 
-            scrollableState.animateScrollBy(
+            chartScrollState.animateScrollBy(
                 value = when (initialScroll) {
-                    InitialScroll.Start -> currentScroll
-                    InitialScroll.End -> currentScroll - maxScrollDistance
+                    InitialScroll.Start -> -chartScrollState.value
+                    InitialScroll.End -> -chartScrollState.value + chartScrollState.maxValue
                 },
                 animationSpec = autoScrollAnimationSpec,
             )

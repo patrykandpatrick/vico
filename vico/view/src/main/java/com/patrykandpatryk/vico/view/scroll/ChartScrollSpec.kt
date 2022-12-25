@@ -64,10 +64,10 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
             addUpdateListener {
                 scrollHandler.handleScroll(
                     targetScroll = when (initialScroll) {
-                        InitialScroll.Start -> (1 - it.animatedFraction) * scrollHandler.currentScroll
+                        InitialScroll.Start -> (1 - it.animatedFraction) * scrollHandler.value
                         InitialScroll.End ->
-                            scrollHandler.currentScroll + it.animatedFraction *
-                                (scrollHandler.maxScrollDistance - scrollHandler.currentScroll)
+                            scrollHandler.value + it.animatedFraction *
+                                (scrollHandler.maxValue - scrollHandler.value)
                     },
                 )
             }
