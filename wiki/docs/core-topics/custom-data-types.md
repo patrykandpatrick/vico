@@ -1,10 +1,10 @@
-You may need to display different types of data on a chart: dates, temperatures, etc. You can achieve this by creating custom [`AxisValueFormatter`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter) and [`ChartEntry`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry) implementations.
+You may need to display different types of data on a chart: dates, temperatures, etc. You can achieve this by creating custom [`AxisValueFormatter`](https://patrykandpatrick.com/vico/api/vico/core/com.patrykandpatrick.vico.core.axis.formatter/-axis-value-formatter) and [`ChartEntry`](https://patrykandpatrick.com/vico/api/vico/core/com.patrykandpatrick.vico.core.entry/-chart-entry) implementations.
 
 ## Example overview
 
 In this example, we’ll display display values for four arbitrary dates.
 
-First, write a custom [`ChartEntry`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry) implementation with a `localDate` field. Then, build a map where consecutive integers are linked to instances of your custom [`ChartEntry`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry) implementation, and create a [`ChartEntryModelProducer`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.entry/-chart-entry-model-producer/) to provide this data.
+First, write a custom [`ChartEntry`](https://patrykandpatrick.com/vico/api/vico/core/com.patrykandpatrick.vico.core.entry/-chart-entry) implementation with a `localDate` field. Then, build a map where consecutive integers are linked to instances of your custom [`ChartEntry`](https://patrykandpatrick.com/vico/api/vico/core/com.patrykandpatrick.vico.core.entry/-chart-entry) implementation, and create a [`ChartEntryModelProducer`](https://patrykandpatrick.com/vico/api/vico/core/com.patrykandpatrick.vico.core.entry/-chart-entry-model-producer/) to provide this data.
 
 ```kotlin
 class Entry(
@@ -35,7 +35,7 @@ val chartEntryModelProducer = listOf(
 }.let { entryCollection -> ChartEntryModelProducer(entryCollection) }
 ```
 
-To display days of the month (rather than one of the consecutive integers used as the keys of the `entries` map) along the bottom axis, create an [`AxisValueFormatter`](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.axis.formatter/-axis-value-formatter). See [“`AxisValueFormatter`s” under “Chart axes”](/core-topics/chart-axes/#axisvalueformatters) for more information.
+To display days of the month (rather than one of the consecutive integers used as the keys of the `entries` map) along the bottom axis, create an [`AxisValueFormatter`](https://patrykandpatrick.com/vico/api/vico/core/com.patrykandpatrick.vico.core.axis.formatter/-axis-value-formatter). See [“`AxisValueFormatter`s” under “Chart axes”](/core-topics/chart-axes/#axisvalueformatters) for more information.
 
 ```kotlin
 AxisValueFormatter<AxisPosition.Horizontal> { value, chartValues ->
@@ -73,7 +73,7 @@ Chart(
 ### View system
 
 ```xml
-<com.patrykandpatryk.vico.view.chart.ChartView
+<com.patrykandpatrick.vico.views.chart.ChartView
     android:id="@+id/chart"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"

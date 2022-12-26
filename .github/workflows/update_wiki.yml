@@ -6,8 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          git clone https://github.com/patrykandpatryk/vico
-          git clone https://github.com/patrykandpatryk/patrykandpatryk.com
+          git clone https://github.com/patrykandpatrick/vico
+          git clone https://github.com/patrykandpatrick/patrykandpatrick.com
       - uses: actions/setup-java@v3
         with:
           java-version: 17
@@ -16,18 +16,18 @@ jobs:
         with:
           python-version: 3.x
       - run: |
-          git config --global user.email "96002241+patrykandpatrykbot@users.noreply.github.com"
-          git config --global user.name "Patryk & Patryk Bot"
+          git config --global user.email "96002241+patrykandpatrickbot@users.noreply.github.com"
+          git config --global user.name "Patryk & Patrick Bot"
           pip install --upgrade pip
           pip install mkdocs mkdocs-material
           cd ${{ github.workspace }}/vico
           git checkout ${GITHUB_REF##*/}
           cd wiki
           mkdocs build
-          rm -r ${{ github.workspace }}/patrykandpatryk.com/vico/wiki/*
-          cp -a ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
-          cd ${{ github.workspace }}/patrykandpatryk.com
-          git remote set-url origin https://patrykandpatrykbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
+          rm -r ${{ github.workspace }}/patrykandpatrick.com/vico/wiki/*
+          cp -a ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatrick.com/vico/wiki
+          cd ${{ github.workspace }}/patrykandpatrick.com
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
           git add vico/wiki
           git commit -m "Update Vico wiki"
           git push origin

@@ -142,7 +142,7 @@ ext {
     ]
 
     sample_dependencies = [
-            [configuration: "implementation", dependency: project(":vico:view")],
+            [configuration: "implementation", dependency: project(":vico:views")],
             [configuration: "implementation", dependency: project(":vico:compose")],
             [configuration: "implementation", dependency: project(":vico:compose-m3")],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
@@ -173,7 +173,7 @@ ext {
             [configuration: "testImplementation", dependency: test_libs.testCore],
     ]
 
-    vico_view_dependencies = [
+    vico_views_dependencies = [
             [configuration: "api", dependency: project("vico:core")],
             [configuration: "implementation", dependency: androidx_libs.appcompat],
             [configuration: "implementation", dependency: androidx_libs.core],

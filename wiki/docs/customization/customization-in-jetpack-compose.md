@@ -36,7 +36,7 @@ A `ChartStyle` instance comprises these fields:
 
 | Field | Description |
 | --- | --- |
-| `axis` | The appearance of chart axes (a [`ChartStyle.Axis`](https://patrykandpatryk.com/vico/api/vico/compose/com.patrykandpatryk.vico.compose.style/-chart-style/-axis/) instance). |
-| `columnChart` | The appearance of column charts (a [`ChartStyle.ColumnChart`](https://patrykandpatryk.com/vico/api/vico/compose/com.patrykandpatryk.vico.compose.style/-chart-style/-column-chart/) instance). |
-| `lineChart` | The appearance of line charts (a [`ChartStyle.LineChart`](https://patrykandpatryk.com/vico/api/vico/compose/com.patrykandpatryk.vico.compose.style/-chart-style/-line-chart/) instance). |
-| `marker` | The appearance of chart markers (a [`ChartStyle.Marker`](https://patrykandpatryk.com/vico/api/vico/compose/com.patrykandpatryk.vico.compose.style/-chart-style/-marker/) instance). |
+| `axis` | The appearance of chart axes (a [`ChartStyle.Axis`](https://patrykandpatrick.com/vico/api/vico/compose/com.patrykandpatrick.vico.compose.style/-chart-style/-axis/) instance). |
+| `columnChart` | The appearance of column charts (a [`ChartStyle.ColumnChart`](https://patrykandpatrick.com/vico/api/vico/compose/com.patrykandpatrick.vico.compose.style/-chart-style/-column-chart/) instance). |
+| `lineChart` | The appearance of line charts (a [`ChartStyle.LineChart`](https://patrykandpatrick.com/vico/api/vico/compose/com.patrykandpatrick.vico.compose.style/-chart-style/-line-chart/) instance). |
+| `marker` | The appearance of chart markers (a [`ChartStyle.Marker`](https://patrykandpatrick.com/vico/api/vico/compose/com.patrykandpatrick.vico.compose.style/-chart-style/-marker/) instance). |

@@ -18,7 +18,7 @@ rootProject.name = "Vico"
 
 include ":sample"
 include ":vico"
-include ":vico:view"
+include ":vico:views"
 include ":vico:compose"
 include ":vico:core"
 include ":vico:compose-m2"

@@ -1,4 +1,4 @@
-A [`Shape`](https://github.com/patrykandpatryk/vico/blob/master/vico/core/src/main/java/com/patrykandpatryk/vico/core/component/shape/Shape.kt) defines the appearance of a [`ShapeComponent`](https://github.com/patrykandpatryk/vico/blob/master/vico/core/src/main/java/com/patrykandpatryk/vico/core/component/shape/ShapeComponent.kt).  Most of the predefined `Shape` implementations are accessible via the `Shapes` object.
+A [`Shape`](https://github.com/patrykandpatrick/vico/blob/master/vico/core/src/main/java/com/patrykandpatrick/vico/core/component/shape/Shape.kt) defines the appearance of a [`ShapeComponent`](https://github.com/patrykandpatrick/vico/blob/master/vico/core/src/main/java/com/patrykandpatrick/vico/core/component/shape/ShapeComponent.kt).  Most of the predefined `Shape` implementations are accessible via the `Shapes` object.
 
 ## Rectangle
 
@@ -96,7 +96,7 @@ Examples:
 
 ## Dashed shape
 
-`DashedShape` draws a dashed line along a path by interchangeably drawing a provided shape and leaving a gap. It is used for the default axis guidelines, among other things. For all available parameters, [see the documentation](https://patrykandpatryk.com/vico/api/vico/core/com.patrykandpatryk.vico.core.component.shape/-dashed-shape/?query=class%20DashedShape(shape:%20Shape,%20dashLengthDp:%20Float,%20gapLengthDp:%20Float,%20fitStrategy:%20DashedShape.FitStrategy)%20:%20Shape).
+`DashedShape` draws a dashed line along a path by interchangeably drawing a provided shape and leaving a gap. It is used for the default axis guidelines, among other things. For all available parameters, [see the documentation](https://patrykandpatrick.com/vico/api/vico/core/com.patrykandpatrick.vico.core.component.shape/-dashed-shape/?query=class%20DashedShape(shape:%20Shape,%20dashLengthDp:%20Float,%20gapLengthDp:%20Float,%20fitStrategy:%20DashedShape.FitStrategy)%20:%20Shape).
 
 ```kotlin
 Shapes.dashedShape(

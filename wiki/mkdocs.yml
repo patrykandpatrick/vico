@@ -6,9 +6,9 @@ theme:
   font:
     text: Source Sans Pro
     code: Source Code Pro
-repo_url: https://github.com/patrykandpatryk/vico
+repo_url: https://github.com/patrykandpatrick/vico
 edit_uri: edit/master/wiki/docs/
-repo_name: patrykandpatryk/vico
+repo_name: patrykandpatrick/vico
 markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets

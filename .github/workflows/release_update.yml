@@ -4,7 +4,7 @@ on:
 jobs:
   release_update:
     runs-on: ubuntu-latest
-    if: github.repository == 'patrykandpatryk/vico'
+    if: github.repository == 'patrykandpatrick/vico'
     permissions:
       contents: write
     steps:
@@ -20,13 +20,13 @@ jobs:
         with:
           python-version: 3.x
       - run: |
-          git config --global user.email "96002241+patrykandpatrykbot@users.noreply.github.com"
-          git config --global user.name "Vico Chart Bot"
+          git config --global user.email "96002241+patrykandpatrickbot@users.noreply.github.com"
+          git config --global user.name "Patryk & Patrick Bot"
           pip install --upgrade pip
           pip install mkdocs mkdocs-material
-          git clone https://${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com
+          git clone https://${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com
           cd ${{ github.workspace }}/vico
-          OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatryk\.vico:view:).*(?=\")" README.md)
+          OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatrick\.vico:views:).*(?=\")" README.md)
           NEW_VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
           echo "OLD_VERSION_NAME=$OLD_VERSION_NAME" >> $GITHUB_ENV
           echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
@@ -48,16 +48,16 @@ jobs:
           true > "CHANGELOG.md"
           git add CHANGELOG.md
           git commit -m "Empty \`CHANGELOG.md\`"
-          git remote set-url origin https://patrykandpatrykbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/vico.git
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatrick/vico.git
           ./gradlew dokkaHtmlMultiModule
           cd wiki
           mkdocs build
-          rm -r ${{ github.workspace }}/patrykandpatryk.com/vico/api/*
-          rm -r ${{ github.workspace }}/patrykandpatryk.com/vico/wiki/*
-          cp -R ${{ github.workspace }}/vico/docs/. ${{ github.workspace }}/patrykandpatryk.com/vico/api
-          cp -R ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatryk.com/vico/wiki
-          cd ${{ github.workspace }}/patrykandpatryk.com
-          git remote set-url origin https://patrykandpatrykbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatryk/patrykandpatryk.com.git
+          rm -r ${{ github.workspace }}/patrykandpatrick.com/vico/api/*
+          rm -r ${{ github.workspace }}/patrykandpatrick.com/vico/wiki/*
+          cp -R ${{ github.workspace }}/vico/docs/. ${{ github.workspace }}/patrykandpatrick.com/vico/api
+          cp -R ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatrick.com/vico/wiki
+          cd ${{ github.workspace }}/patrykandpatrick.com
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
           git add vico/api
           git diff --staged --quiet HEAD || git commit -m "Update Vico API reference"
           git add vico/wiki

@@ -50,7 +50,7 @@ android {
         kotlinCompilerExtensionVersion versions.composeCompiler
     }
 
-    namespace "com.patrykandpatryk.vico"
+    namespace "com.patrykandpatrick.vico"
 }
 
 dependencies {

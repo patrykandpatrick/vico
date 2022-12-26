@@ -9,7 +9,7 @@ comments:
       - "**/jvmTest/**"
       - "**/jsTest/**"
       - "**/iosTest/**"
-      - "**/com/patrykandpatryk/vico/sample/**"
+      - "**/com/patrykandpatrick/vico/sample/**"
   UndocumentedPublicFunction:
     active: true
     excludes:
@@ -19,7 +19,7 @@ comments:
       - "**/jvmTest/**"
       - "**/jsTest/**"
       - "**/iosTest/**"
-      - "**/com/patrykandpatryk/vico/sample/**"
+      - "**/com/patrykandpatrick/vico/sample/**"
   UndocumentedPublicProperty:
     active: true
     excludes:
@@ -29,7 +29,7 @@ comments:
       - "**/jvmTest/**"
       - "**/jsTest/**"
       - "**/iosTest/**"
-      - "**/com/patrykandpatryk/vico/sample/**"
+      - "**/com/patrykandpatrick/vico/sample/**"
 complexity:
   LongMethod:
     threshold: 90
