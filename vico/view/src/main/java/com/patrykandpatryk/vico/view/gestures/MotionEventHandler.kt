@@ -98,7 +98,7 @@ public open class MotionEventHandler(
                 onTouchPoint(null)
                 velocityTracker.get().apply {
                     computeCurrentVelocity(velocityUnits)
-                    val currentX = scrollHandler.currentScroll.toInt()
+                    val currentX = scrollHandler.value.toInt()
                     scroller.fling(startX = currentX, velocityX = -xVelocity.toInt())
                     requestInvalidate()
                 }

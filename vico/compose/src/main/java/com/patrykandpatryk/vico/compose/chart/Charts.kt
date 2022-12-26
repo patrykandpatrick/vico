@@ -19,7 +19,6 @@ package com.patrykandpatryk.vico.compose.chart
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -43,7 +42,9 @@ import com.patrykandpatryk.vico.compose.chart.entry.collectAsState
 import com.patrykandpatryk.vico.compose.chart.entry.defaultDiffAnimationSpec
 import com.patrykandpatryk.vico.compose.chart.line.lineChart
 import com.patrykandpatryk.vico.compose.chart.scroll.ChartScrollSpec
+import com.patrykandpatryk.vico.compose.chart.scroll.ChartScrollState
 import com.patrykandpatryk.vico.compose.chart.scroll.rememberChartScrollSpec
+import com.patrykandpatryk.vico.compose.chart.scroll.rememberChartScrollState
 import com.patrykandpatryk.vico.compose.extension.chartTouchEvent
 import com.patrykandpatryk.vico.compose.gesture.OnZoom
 import com.patrykandpatryk.vico.compose.layout.getMeasureContext
@@ -69,7 +70,7 @@ import com.patrykandpatryk.vico.core.legend.Legend
 import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
-import com.patrykandpatryk.vico.core.scroll.ScrollHandler
+import com.patrykandpatryk.vico.core.scroll.ScrollListener
 
 /**
  * Displays a chart.
@@ -94,6 +95,7 @@ import com.patrykandpatryk.vico.core.scroll.ScrollHandler
  * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
  * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
  * the chart.
+ * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -113,6 +115,7 @@ public fun <Model : ChartEntryModel> Chart(
     runInitialAnimation: Boolean = true,
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
+    chartScrollState: ChartScrollState = rememberChartScrollState(),
 ) {
     val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
         chartKey = chart,
@@ -138,6 +141,7 @@ public fun <Model : ChartEntryModel> Chart(
                 isZoomEnabled = isZoomEnabled,
                 fadingEdges = fadingEdges,
                 autoScaleUp = autoScaleUp,
+                chartScrollState = chartScrollState,
             )
         }
     }
@@ -165,6 +169,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
  * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
  * the chart.
+ * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  */
 @Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.")
 @Composable
@@ -183,6 +188,7 @@ public fun <Model : ChartEntryModel> Chart(
     isZoomEnabled: Boolean = true,
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
+    chartScrollState: ChartScrollState = rememberChartScrollState(),
 ) {
     ChartBox(modifier = modifier) {
         ChartImpl(
@@ -199,6 +205,7 @@ public fun <Model : ChartEntryModel> Chart(
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
             fadingEdges = fadingEdges,
             autoScaleUp = autoScaleUp,
+            chartScrollState = chartScrollState,
         )
     }
 }
@@ -228,6 +235,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
  * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
  * the chart.
+ * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -246,6 +254,7 @@ public fun <Model : ChartEntryModel> Chart(
     oldModel: Model? = null,
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
+    chartScrollState: ChartScrollState = rememberChartScrollState(),
 ) {
     ChartBox(modifier = modifier) {
         ChartImpl(
@@ -263,6 +272,7 @@ public fun <Model : ChartEntryModel> Chart(
             oldModel = oldModel,
             fadingEdges = fadingEdges,
             autoScaleUp = autoScaleUp,
+            chartScrollState = chartScrollState,
         )
     }
 }
@@ -283,34 +293,36 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     oldModel: Model? = null,
     fadingEdges: FadingEdges?,
     autoScaleUp: AutoScaleUp,
+    chartScrollState: ChartScrollState = rememberChartScrollState(),
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
-    val horizontalScroll = remember { mutableStateOf(0f) }
     val zoom = remember { mutableStateOf(1f) }
     val measureContext = getMeasureContext(chartScrollSpec.isScrollEnabled, zoom.value, bounds)
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
+    val scrollListener = rememberScrollListener(markerTouchPoint, interaction)
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
+    chartScrollState.registerScrollListener(scrollListener)
 
-    val setHorizontalScroll = rememberSetHorizontalScroll(horizontalScroll, markerTouchPoint, interaction)
-    val scrollHandler = remember { ScrollHandler(setHorizontalScroll) }
-    val scrollableState = rememberScrollableState(scrollHandler::handleScrollDelta)
-    val onZoom = rememberZoomState(zoom, scrollHandler, chart.bounds)
     val virtualLayout = remember { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
-
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
+
+    val onZoom = rememberZoomState(
+        zoom = zoom,
+        getScroll = { chartScrollState.value },
+        setScroll = { value -> chartScrollState.value = value },
+        chartBounds = chart.bounds,
+    )
 
     LaunchedEffect(key1 = model.id) {
         chartScrollSpec.performAutoScroll(
             model = model,
             oldModel = oldModel,
-            currentScroll = horizontalScroll.value,
-            maxScrollDistance = scrollHandler.maxScrollDistance,
-            scrollableState = scrollableState,
+            chartScrollState = chartScrollState,
         )
     }
 
@@ -321,7 +333,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
                 setTouchPoint = markerTouchPoint
                     .component2()
                     .takeIf { marker != null },
-                scrollableState = scrollableState.takeIf { chartScrollSpec.isScrollEnabled },
+                scrollableState = chartScrollState.takeIf { chartScrollSpec.isScrollEnabled },
                 onZoom = onZoom.takeIf { isZoomEnabled },
                 interactionSource = interactionSource,
             ),
@@ -340,12 +352,12 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             marker,
         )
 
-        scrollHandler.maxScrollDistance = measureContext.getMaxScrollDistance(
+        chartScrollState.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
             segmentProperties = segmentProperties,
         )
 
-        scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
+        chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
         val chartDrawContext = chartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
@@ -354,7 +366,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             markerTouchPoint = markerTouchPoint.value,
             segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
-            horizontalScroll = horizontalScroll.value,
+            horizontalScroll = chartScrollState.value,
             autoScaleUp = autoScaleUp,
         )
 
@@ -399,38 +411,40 @@ internal fun ChartBox(
 }
 
 @Composable
-internal fun rememberSetHorizontalScroll(
-    scroll: MutableState<Float>,
+internal fun rememberScrollListener(
     touchPoint: MutableState<Point?>,
     interaction: State<Interaction?>,
-): (Float) -> Unit = remember {
-    var canClearTouchPoint = false
-    return@remember { newScroll: Float ->
-        touchPoint.value?.let { point ->
-            if (interaction.value is DragInteraction.Stop && canClearTouchPoint) {
-                touchPoint.value = null
-                canClearTouchPoint = false
-            } else {
-                touchPoint.value = point.copy(x = point.x + scroll.value - newScroll)
-                canClearTouchPoint = true
+): ScrollListener = remember {
+    object : ScrollListener {
+        var shouldClearTouchPoint = false
+
+        override fun onValueChanged(oldValue: Float, newValue: Float) {
+            touchPoint.value?.let { point ->
+                if (interaction.value is DragInteraction.Stop && shouldClearTouchPoint) {
+                    touchPoint.value = null
+                    shouldClearTouchPoint = false
+                } else {
+                    touchPoint.value = point.copy(x = point.x + oldValue - newValue)
+                    shouldClearTouchPoint = true
+                }
             }
         }
-        scroll.value = newScroll
     }
 }
 
 @Composable
 internal fun rememberZoomState(
     zoom: MutableState<Float>,
-    scrollHandler: ScrollHandler,
+    getScroll: () -> Float,
+    setScroll: (value: Float) -> Unit,
     chartBounds: RectF,
 ): OnZoom = remember {
     onZoom@{ centroid, zoomChange ->
         val newZoom = zoom.value * zoomChange
         if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return@onZoom
-        val transformationAxisX = scrollHandler.currentScroll + centroid.x - chartBounds.left
+        val transformationAxisX = getScroll() + centroid.x - chartBounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         zoom.value = newZoom
-        scrollHandler.currentScroll += zoomedTransformationAxisX - transformationAxisX
+        setScroll(getScroll() + zoomedTransformationAxisX - transformationAxisX)
     }
 }

@@ -53,6 +53,8 @@ import com.patrykandpatryk.vico.core.marker.Marker
 import com.patrykandpatryk.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatryk.vico.core.model.Point
 import com.patrykandpatryk.vico.core.scroll.ScrollHandler
+import com.patrykandpatryk.vico.core.scroll.ScrollListener
+import com.patrykandpatryk.vico.core.scroll.ScrollListenerHost
 import com.patrykandpatryk.vico.view.extension.defaultColors
 import com.patrykandpatryk.vico.view.extension.density
 import com.patrykandpatryk.vico.view.extension.dpInt
@@ -78,7 +80,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     chartType: ThemeHandler.ChartType,
-) : View(context, attrs, defStyleAttr) {
+) : View(context, attrs, defStyleAttr), ScrollListenerHost {
 
     private val contentBounds = RectF()
 
@@ -122,6 +124,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         interpolator = FastOutSlowInInterpolator()
         addUpdateListener { progressModelOnAnimationProgress(it.animatedFraction) }
     }
+
+    private val scrollValueAnimator: ValueAnimator =
+        ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
+            duration = Animation.ANIMATED_SCROLL_DURATION.toLong()
+            interpolator = FastOutSlowInInterpolator()
+        }
 
     private var markerTouchPoint: Point? = null
 
@@ -322,10 +330,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val chart = chart ?: return
         val newZoom = measureContext.chartScale * zoomChange
         if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return
-        val transformationAxisX = scrollHandler.currentScroll + focusX - chart.bounds.left
+        val transformationAxisX = scrollHandler.value + focusX - chart.bounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         measureContext.chartScale = newZoom
-        scrollHandler.currentScroll += zoomedTransformationAxisX - transformationAxisX
+        scrollHandler.value += zoomedTransformationAxisX - transformationAxisX
         invalidate()
     }
 
@@ -343,7 +351,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
         val segmentProperties = chart.getSegmentProperties(measureContext, model)
 
-        scrollHandler.maxScrollDistance = measureContext.getMaxScrollDistance(
+        scrollHandler.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
             segmentProperties = segmentProperties,
         )
@@ -357,7 +365,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             markerTouchPoint = markerTouchPoint,
             segmentProperties = segmentProperties,
             chartBounds = chart.bounds,
-            horizontalScroll = scrollHandler.currentScroll,
+            horizontalScroll = scrollHandler.value,
             autoScaleUp = autoScaleUp,
         )
 
@@ -444,6 +452,52 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      */
     public fun setDiffAnimationInterpolator(interpolator: Interpolator) {
         animator.interpolator = interpolator
+    }
+
+    /**
+     * Sets the duration (in milliseconds) of animated scrolls ([animateScrollBy]).
+     */
+    public fun setAnimatedScrollDuration(durationMillis: Long) {
+        scrollValueAnimator.duration = durationMillis
+    }
+
+    /**
+     * Sets the [Interpolator] for animated scrolls ([animateScrollBy]).
+     */
+    public fun setAnimatedScrollInterpolator(interpolator: Interpolator) {
+        scrollValueAnimator.interpolator = interpolator
+    }
+
+    public override fun registerScrollListener(scrollListener: ScrollListener) {
+        scrollHandler.registerScrollListener(scrollListener)
+    }
+
+    public override fun removeScrollListener(scrollListener: ScrollListener) {
+        scrollHandler.removeScrollListener(scrollListener)
+    }
+
+    /**
+     * Invokes the provided function block, passing to it the current scroll amount and the maximum scroll amount, and
+     * scrolls the chart by the number of pixels returned by the function block.
+     */
+    public fun scrollBy(getDelta: (value: Float, maxValue: Float) -> Float) {
+        scrollHandler.handleScrollDelta(getDelta(scrollHandler.value, scrollHandler.maxValue))
+    }
+
+    /**
+     * Invokes the provided function block, passing to it the current scroll amount and the maximum scroll amount, and
+     * scrolls the chart by the number of pixels returned by the function block, using a [ValueAnimator]. Customize the
+     * animation with [setAnimatedScrollDuration] and [setAnimatedScrollInterpolator].
+     */
+    public fun animateScrollBy(getDelta: (value: Float, maxValue: Float) -> Float) {
+        val initialValue = scrollHandler.value
+        val delta = getDelta(initialValue, scrollHandler.maxValue)
+        with(scrollValueAnimator) {
+            cancel()
+            removeAllUpdateListeners()
+            addUpdateListener { scrollHandler.handleScroll(initialValue + it.animatedFraction * delta) }
+            start()
+        }
     }
 
     override fun onRtlPropertiesChanged(layoutDirection: Int) {

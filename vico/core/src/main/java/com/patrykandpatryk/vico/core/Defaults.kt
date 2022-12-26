@@ -82,6 +82,12 @@ public object Animation {
      * The default duration for difference animations.
      */
     public const val DIFF_DURATION: Int = 500
+
+    /**
+     * The default duration for animated scrolls (in milliseconds;
+     * [com.patrykandpatryk.vico.view.chart.BaseChartView.animateScrollBy]).
+     */
+    public const val ANIMATED_SCROLL_DURATION: Int = 300
 }
 
 /**
