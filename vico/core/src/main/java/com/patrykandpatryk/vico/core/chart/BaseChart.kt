@@ -103,14 +103,14 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
             bottom = context.canvas.height.toFloat(),
         ) {
             drawDecorationAboveChart(context)
-            persistentMarkers.forEach { (x, marker) ->
-                entryLocationMap.getEntryModel(x)?.also { markerModel ->
-                    marker.draw(
-                        context = context,
-                        bounds = bounds,
-                        markedEntries = markerModel,
-                    )
-                }
+        }
+        persistentMarkers.forEach { (x, marker) ->
+            entryLocationMap.getEntryModel(x)?.also { markerModel ->
+                marker.draw(
+                    context = context,
+                    bounds = bounds,
+                    markedEntries = markerModel,
+                )
             }
         }
     }

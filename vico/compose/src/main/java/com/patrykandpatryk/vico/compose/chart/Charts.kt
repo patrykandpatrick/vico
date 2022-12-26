@@ -380,8 +380,8 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             chartDrawContext.restoreCanvasToCount(count)
         }
 
-        chart.drawNonScrollableContent(chartDrawContext, model)
         axisManager.drawAboveChart(chartDrawContext)
+        chart.drawNonScrollableContent(chartDrawContext, model)
         legend?.draw(chartDrawContext)
 
         if (marker != null) {

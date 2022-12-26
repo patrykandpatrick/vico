@@ -379,8 +379,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             chartDrawContext.restoreCanvasToCount(count)
         }
 
-        chart.drawNonScrollableContent(chartDrawContext, model)
         axisManager.drawAboveChart(chartDrawContext)
+        chart.drawNonScrollableContent(chartDrawContext, model)
         legend?.draw(chartDrawContext)
 
         marker?.also { marker ->
