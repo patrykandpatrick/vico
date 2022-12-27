@@ -110,8 +110,8 @@ void setUpRepositories(RepositoryHandler handler) {
         url = isReleaseVersion() ? releaseUrl : snapshotUrl
 
         credentials {
-            username = findProperty("vicoUserName")
-            password = findProperty("vicoUserPassword")
+            username = "patrykandpatrick"
+            password = findProperty("OSSRH_PASSWORD")
         }
     }
 }
@@ -121,9 +121,9 @@ void setUpSigning(SigningExtension signing, MavenPublication publication) {
         isReleaseVersion() && gradle.taskGraph.allTasks.any { it.is(PublishToMavenRepository) }
     }
 
-    def signingPassword = findProperty("vicoSigningPassword")
-    def signingKey = findProperty("vicoSigningKey")
+    def gpgKey = findProperty("GPG_KEY")
+    def gpgKeyPassword = findProperty("GPG_KEY_PASSWORD")
 
-    signing.useInMemoryPgpKeys(signingKey, signingPassword)
+    signing.useInMemoryPgpKeys(gpgKey, gpgKeyPassword)
     signing.sign publication
 }

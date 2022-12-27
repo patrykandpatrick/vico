@@ -27,7 +27,7 @@ jobs:
           rm -r ${{ github.workspace }}/patrykandpatrick.com/vico/wiki/*
           cp -a ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatrick.com/vico/wiki
           cd ${{ github.workspace }}/patrykandpatrick.com
-          git remote set-url origin https://patrykandpatrickbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
           git add vico/wiki
           git commit -m "Update Vico wiki"
           git push origin

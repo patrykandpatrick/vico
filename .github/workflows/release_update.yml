@@ -24,7 +24,7 @@ jobs:
           git config --global user.name "Patryk & Patrick Bot"
           pip install --upgrade pip
           pip install mkdocs mkdocs-material
-          git clone https://${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com
+          git clone https://${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com
           cd ${{ github.workspace }}/vico
           OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatrick\.vico:views:).*(?=\")" README.md)
           NEW_VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
@@ -32,7 +32,7 @@ jobs:
           echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
           sed -i "s/$OLD_VERSION_NAME/$NEW_VERSION_NAME/g" README.md
           git add README.md
-          git commit -m "Update README"
+          git diff --staged --quiet HEAD || git commit -m "Update README"
           echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
           IS_PRERELEASE=false
           echo $NEW_VERSION_NAME | grep -q "alpha\|beta" && IS_PRERELEASE=true
@@ -40,15 +40,12 @@ jobs:
       - uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG_NAME }}
-          token: ${{ secrets.VICO_CHART_BOT_PAT }}
-          body_path: ${{ github.workspace }}/vico/CHANGELOG.md
+          token: ${{ secrets.BOT_PAT }}
           prerelease: ${{ env.IS_PRERELEASE }}
+          draft: true
       - run: |
           cd ${{ github.workspace }}/vico
-          true > "CHANGELOG.md"
-          git add CHANGELOG.md
-          git commit -m "Empty \`CHANGELOG.md\`"
-          git remote set-url origin https://patrykandpatrickbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatrick/vico.git
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico.git
           ./gradlew dokkaHtmlMultiModule
           cd wiki
           mkdocs build
@@ -57,7 +54,7 @@ jobs:
           cp -R ${{ github.workspace }}/vico/docs/. ${{ github.workspace }}/patrykandpatrick.com/vico/api
           cp -R ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatrick.com/vico/wiki
           cd ${{ github.workspace }}/patrykandpatrick.com
-          git remote set-url origin https://patrykandpatrickbot:${{ secrets.VICO_CHART_BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
+          git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
           git add vico/api
           git diff --staged --quiet HEAD || git commit -m "Update Vico API reference"
           git add vico/wiki
@@ -67,7 +64,22 @@ jobs:
           git push origin
           ./gradlew publish
         env:
-          ORG_GRADLE_PROJECT_vicoSigningKey: ${{ secrets.VICO_SIGNING_KEY }}
-          ORG_GRADLE_PROJECT_vicoSigningPassword: ${{ secrets.VICO_SIGNING_PASSWORD }}
-          ORG_GRADLE_PROJECT_vicoUserName: ${{ secrets.VICO_USER_NAME }}
-          ORG_GRADLE_PROJECT_vicoUserPassword: ${{ secrets.VICO_USER_PASSWORD }}
+          ORG_GRADLE_PROJECT_GPG_KEY: ${{ secrets.GPG_KEY }}
+          ORG_GRADLE_PROJECT_GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
+          ORG_GRADLE_PROJECT_OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      - run: |
+          cd "${{ github.workspace }}/vico"
+          ./gradlew clean
+          rm -r wiki sample README.md logo-styles.css .github
+          find . -not -path "*/.*" -type d -name patrykandpatrick | while read path; do mv "$path" "$(sed s/patrykandpatrick/patrykandpatryk/ <<< "$path")"; done
+          mv vico/views vico/view
+          mv vico/view/src/main/java/com/patrykandpatryk/vico/views vico/view/src/main/java/com/patrykandpatryk/vico/view
+          find . -not -path "*/.*" -type f | while read path; do sed -i "s/com\.patrykandpatrick/com\.patrykandpatryk/" "$path"; done
+          find . -not -path "*/.*" -type f | while read path; do sed -i "s/vico\.views/vico\.view/" "$path"; done
+          sed -i s/:vico:views/:vico:view/ *.gradle
+          sed -i "s/\(username\s*=\s*\)\"patrykandpatrick\"/\1\"patrykandpatryk\"/" common-scripts.gradle
+          ./gradlew publish
+        env:
+          ORG_GRADLE_PROJECT_GPG_KEY: ${{ secrets.LEGACY_GPG_KEY }}
+          ORG_GRADLE_PROJECT_GPG_KEY_PASSWORD: ${{ secrets.LEGACY_GPG_KEY_PASSWORD }}
+          ORG_GRADLE_PROJECT_OSSRH_PASSWORD: ${{ secrets.LEGACY_OSSRH_PASSWORD }}
