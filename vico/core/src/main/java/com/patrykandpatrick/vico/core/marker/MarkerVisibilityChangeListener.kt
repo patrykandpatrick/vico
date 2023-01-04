@@ -36,6 +36,11 @@ public interface MarkerVisibilityChangeListener {
         onMarkerVisibilityChanged(isVisible = true, marker = marker)
     }
 
+    public fun onMarkerMove(
+        marker: Marker,
+        markerEntryModels: List<Marker.EntryModel>,
+    ): Unit = Unit
+
     /**
      * Called when the linked [Marker] is hidden.
      *
