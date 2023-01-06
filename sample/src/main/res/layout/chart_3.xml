@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
-  ~ Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -25,10 +23,12 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:chart="column"
+        app:bottomAxisStyle="@style/Chart3BottomAxisStyle"
+        app:chart="line"
+        app:fadingEdgeVisibilityInterpolator="androidx.interpolator.view.animation.FastOutSlowInInterpolator"
+        app:fadingEdgeWidth="32dp"
+        app:lineChartStyle="@style/Chart3LineChartStyle"
         app:showBottomAxis="true"
         app:showStartAxis="true"
-        app:axisStyle="@style/StackedColumnChartAxisStyle"
-        app:columnChartStyle="@style/StackedColumnChartColumnChartStyle" />
-
+        app:startAxisStyle="@style/Chart3StartAxisStyle" />
 </FrameLayout>

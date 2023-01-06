@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.sample.util.SampleChart
 import com.patrykandpatrick.vico.sample.util.Tab
 import kotlinx.coroutines.launch
@@ -71,14 +72,14 @@ internal fun ChartPager(
                             .padding(vertical = 32.dp, horizontal = 16.dp),
                     ) {
                         Text(
-                            text = stringResource(id = sampleCharts[targetState].labelResourceId),
+                            text = stringResource(id = R.string.chart_x, targetState + 1),
                             style = MaterialTheme.typography.headlineSmall,
                             color = MaterialTheme.colorScheme.onSurface,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth(),
                         )
                         Text(
-                            text = stringResource(id = sampleCharts[targetState].descriptionResourceId),
+                            text = stringResource(id = sampleCharts[targetState].descriptionResourceID),
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             textAlign = TextAlign.Center,

@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
-  ~ Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -26,8 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:chart="line"
+        app:lineChartStyle="@style/Chart7LineChartStyle"
         app:showBottomAxis="true"
-        app:showStartAxis="true"
-        app:lineChartStyle="@style/LineChartWithLabelsInsideLineChartStyle" />
-
+        app:showStartAxis="true" />
 </FrameLayout>

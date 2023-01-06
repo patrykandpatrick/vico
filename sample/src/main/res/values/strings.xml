@@ -1,5 +1,5 @@
-<!--
-  ~ Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -20,21 +20,16 @@
     <string name="views">Views</string>
     <string name="swipe_hint">Swipe here</string>
     <string name="x_of_y">%1$d of %2$d</string>
-    <string name="line_chart_label">Line chart</string>
-    <string name="line_chart_description">Persistent marker &amp; customized guidelines</string>
-    <string name="line_chart_with_fading_edges_label">Line chart with fading edges</string>
-    <string name="line_chart_with_fading_edges_description">Adaptive y-axis values, axis labels on inside &amp; start-aligned line</string>
-    <string name="column_chart_label">Column chart</string>
-    <string name="column_chart_description">Percentages, threshold line &amp; custom tick\u00A0position</string>
-    <string name="composed_chart_label">Composed chart</string>
-    <string name="composed_chart_description">Axes at top and end</string>
-    <string name="stacked_column_chart_label">Stacked column chart</string>
-    <string name="stacked_column_chart_description">Rotated axis labels</string>
-    <string name="grouped_column_chart_label">Grouped column chart</string>
-    <string name="grouped_column_chart_description">Threshold line for range &amp; days of week along\u00A0axis</string>
-    <string name="line_chart_with_labels_inside_label">Complex line chart</string>
-    <string name="line_chart_with_labels_inside_description">Axis labels on inside &amp; vertical legend</string>
-    <string name="line_chart_with_labels_inside_label_legend">Data set %d</string>
-    <string name="complex_composed_chart_label">Complex composed chart</string>
-    <string name="complex_composed_chart_description">Independent charts &amp; vertical axes</string>
+    <string name="chart_1_description">Persistent marker, customized guidelines</string>
+    <string name="chart_2_description">Percentages, threshold line, custom tick position</string>
+    <string name="chart_3_description">Adaptive y-axis values, axis labels on inside, start-aligned line</string>
+    <string name="chart_4_description">Axes at top and end</string>
+    <string name="chart_5_description">Rotated axis labels</string>
+    <string name="chart_6_description">Threshold line for range, days of week along axis</string>
+    <string name="chart_7_description">Axis labels on inside, vertical legend</string>
+    <string name="chart_8_description">Independent charts and vertical axes</string>
+    <string name="data_set_x">Data set %d</string>
+    <string name="chart_x">Chart %d</string>
+    <string name="x_axis">x-axis</string>
+    <string name="y_axis">y-axis</string>
 </resources>

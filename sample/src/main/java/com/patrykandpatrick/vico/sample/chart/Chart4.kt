@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,54 +17,59 @@
 package com.patrykandpatrick.vico.sample.chart
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.topAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.style.ChartStyle
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
-import com.patrykandpatrick.vico.databinding.ComposedChartBinding
-import com.patrykandpatrick.vico.sample.extension.fromEntityColors
-import com.patrykandpatrick.vico.sample.util.marker
+import com.patrykandpatrick.vico.databinding.Chart4Binding
+import com.patrykandpatrick.vico.sample.util.rememberChartStyle
+import com.patrykandpatrick.vico.sample.util.rememberMarker
 
 @Composable
-internal fun ComposeComposedChart(
+internal fun ComposeChart4(
     composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
     modifier: Modifier = Modifier,
 ) {
-    val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
-    ProvideChartStyle(chartStyle = chartStyle) {
+    ProvideChartStyle(rememberChartStyle(entityColors)) {
+        val columnChart = columnChart()
+        val lineChart = lineChart()
         Chart(
-            chart = columnChart() + lineChart(),
+            chart = remember(columnChart, lineChart) { columnChart + lineChart },
             chartModelProducer = composedChartEntryModelProducer,
+            modifier = modifier,
             topAxis = topAxis(),
             endAxis = endAxis(),
-            modifier = modifier,
-            marker = marker(),
+            marker = rememberMarker(),
         )
     }
 }
 
 @Composable
-internal fun ViewComposedChart(
+internal fun ViewChart4(
     composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
     modifier: Modifier = Modifier,
 ) {
-    val marker = marker()
-    AndroidViewBinding(
-        factory = ComposedChartBinding::inflate,
-        modifier = modifier,
-    ) {
+    val marker = rememberMarker()
+    AndroidViewBinding(Chart4Binding::inflate, modifier) {
         chartView.entryProducer = composedChartEntryModelProducer
         chartView.marker = marker
     }
 }
 
-@Suppress("MagicNumber")
-private val entityColors = longArrayOf(0xFF3D84A8, 0xFF46CDCF, 0xFFABEDD8)
+private const val COLOR_1_CODE = 0xff3a82a6
+private const val COLOR_2_CODE = 0xff45d0d0
+private const val COLOR_3_CODE = 0xffabedd7
+
+private val color1 = Color(COLOR_1_CODE)
+private val color2 = Color(COLOR_2_CODE)
+private val color3 = Color(COLOR_3_CODE)
+private val entityColors = listOf(color1, color2, color3)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,26 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.sample.extension
+package com.patrykandpatrick.vico.sample.util
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.vico.compose.style.ChartStyle
 import com.patrykandpatrick.vico.core.DefaultColors
 
 @Composable
-internal fun ChartStyle.Companion.fromEntityColors(entityColors: LongArray): ChartStyle {
-    val defaultColors = if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light
-    return fromColors(
-        axisLabelColor = Color(defaultColors.axisLabelColor),
-        axisGuidelineColor = Color(defaultColors.axisGuidelineColor),
-        axisLineColor = Color(defaultColors.axisLineColor),
-        entityColors = entityColors.map(::Color),
-        elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
-    )
+internal fun rememberChartStyle(entityColors: List<Color>): ChartStyle {
+    val isSystemInDarkTheme = isSystemInDarkTheme()
+    return remember(entityColors, isSystemInDarkTheme) {
+        val defaultColors = if (isSystemInDarkTheme) DefaultColors.Dark else DefaultColors.Light
+        ChartStyle.fromColors(
+            axisLabelColor = Color(defaultColors.axisLabelColor),
+            axisGuidelineColor = Color(defaultColors.axisGuidelineColor),
+            axisLineColor = Color(defaultColors.axisLineColor),
+            entityColors = entityColors,
+            elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
+        )
+    }
 }

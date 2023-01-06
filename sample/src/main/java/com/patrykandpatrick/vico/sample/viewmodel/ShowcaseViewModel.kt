@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,23 +47,23 @@ internal class ShowcaseViewModel : ViewModel() {
 
     internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
-    internal val chartStepEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
+    internal val customStepChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
-    internal val multiChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
+    internal val multiDataSetChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
     internal val composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel> =
-        multiChartEntryModelProducer + chartEntryModelProducer
+        multiDataSetChartEntryModelProducer + chartEntryModelProducer
 
     init {
         viewModelScope.launch {
             while (currentCoroutineContext().isActive) {
                 chartEntryModelProducer.setEntries(generator.generateRandomEntries())
-                multiChartEntryModelProducer.setEntries(
+                multiDataSetChartEntryModelProducer.setEntries(
                     entries = List(size = MULTI_ENTRIES_COMBINED) {
                         multiGenerator.generateRandomEntries()
                     },
                 )
-                chartStepEntryModelProducer.setEntries(customStepGenerator.generateRandomEntries())
+                customStepChartEntryModelProducer.setEntries(customStepGenerator.generateRandomEntries())
                 delay(UPDATE_FREQUENCY)
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,20 +29,21 @@ import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.entry.entryModelOf
-import com.patrykandpatrick.vico.sample.util.marker
+import com.patrykandpatrick.vico.sample.util.rememberMarker
 
 private val model = entryModelOf(2f, -1f, 4f, -2f, 1f, 5f, -3f)
 
 @Preview
 @Composable
 public fun SingleColumnChartWithNegativeValues() {
+    val marker = rememberMarker()
     Surface {
         Chart(
             modifier = Modifier.height(250.dp),
             chart = columnChart(
                 persistentMarkers = mapOf(
-                    2f to marker(),
-                    3f to marker(),
+                    2f to marker,
+                    3f to marker,
                 ),
             ),
             model = model,

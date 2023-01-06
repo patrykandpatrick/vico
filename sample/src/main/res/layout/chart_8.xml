@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
-  ~ Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -21,13 +19,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <com.patrykandpatrick.vico.views.chart.ChartView
+    <com.patrykandpatrick.vico.views.chart.ComposedChartView
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:chart="line"
-        app:showBottomAxis="true"
-        app:showStartAxis="true"
-        app:lineChartStyle="@style/LineChartLineChartStyle" />
-
+        app:charts="line|column"
+        app:columnChartStyle="@style/Chart8ColumnChartStyle"
+        app:lineChartStyle="@style/Chart8LineChartStyle"
+        app:showEndAxis="true"
+        app:showStartAxis="true" />
 </FrameLayout>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,15 @@
 package com.patrykandpatrick.vico.sample.chart
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.style.ChartStyle
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -34,47 +35,39 @@ import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
-import com.patrykandpatrick.vico.databinding.ComplexComposedChartBinding
-import com.patrykandpatrick.vico.sample.extension.fromEntityColors
-import com.patrykandpatrick.vico.sample.util.marker
+import com.patrykandpatrick.vico.databinding.Chart8Binding
+import com.patrykandpatrick.vico.sample.util.rememberChartStyle
+import com.patrykandpatrick.vico.sample.util.rememberMarker
 
 @Composable
-internal fun ComposeComplexComposedChart(
+internal fun ComposeChart8(
     composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
     modifier: Modifier = Modifier,
 ) {
-    val chartStyle = ChartStyle.fromEntityColors(entityColors = entityColors)
-    val startAxis = startAxis(guideline = null)
-    ProvideChartStyle(chartStyle = chartStyle) {
-        val lineChart = lineChart(targetVerticalAxisPosition = AxisPosition.Vertical.End)
+    ProvideChartStyle(rememberChartStyle(entityColors)) {
         val columnChart = columnChart(
-            targetVerticalAxisPosition = AxisPosition.Vertical.Start,
             mergeMode = ColumnChart.MergeMode.Stack,
+            targetVerticalAxisPosition = AxisPosition.Vertical.Start,
         )
+        val lineChart = lineChart(targetVerticalAxisPosition = AxisPosition.Vertical.End)
         Chart(
-            chart = columnChart + lineChart,
+            chart = remember(columnChart, lineChart) { columnChart + lineChart },
             chartModelProducer = composedChartEntryModelProducer,
-            startAxis = startAxis,
-            endAxis = endAxis(),
             modifier = modifier,
-            marker = marker(),
+            startAxis = startAxis(guideline = null),
+            endAxis = endAxis(),
+            marker = rememberMarker(),
         )
     }
 }
 
 @Composable
-internal fun ViewComplexComposedChart(
+internal fun ViewChart8(
     composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
     modifier: Modifier = Modifier,
 ) {
-    val marker = marker()
-    AndroidViewBinding(
-        factory = ComplexComposedChartBinding::inflate,
-        modifier = modifier,
-    ) {
-        chartView.entryProducer = composedChartEntryModelProducer
-        chartView.marker = marker
-        (chartView.startAxis as Axis).guideline = null
+    val marker = rememberMarker()
+    AndroidViewBinding(Chart8Binding::inflate, modifier) {
         with(chartView.chart as ComposedChart) {
             with(charts[0] as ColumnChart) {
                 mergeMode = ColumnChart.MergeMode.Stack
@@ -82,8 +75,17 @@ internal fun ViewComplexComposedChart(
             }
             (charts[1] as LineChart).targetVerticalAxisPosition = AxisPosition.Vertical.End
         }
+        chartView.entryProducer = composedChartEntryModelProducer
+        (chartView.startAxis as Axis).guideline = null
+        chartView.marker = marker
     }
 }
 
-@Suppress("MagicNumber")
-private val entityColors = longArrayOf(0xFF68A7AD, 0xFF99C4C8, 0xFFE5CB9F)
+private const val COLOR_1_CODE = 0xff68a8ad
+private const val COLOR_2_CODE = 0xff95c3c6
+private const val COLOR_3_CODE = 0xffe4cba0
+
+private val color1 = Color(COLOR_1_CODE)
+private val color2 = Color(COLOR_2_CODE)
+private val color3 = Color(COLOR_3_CODE)
+private val entityColors = listOf(color1, color2, color3)

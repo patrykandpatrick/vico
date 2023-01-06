@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.entry.entriesOf
 import com.patrykandpatrick.vico.core.entry.entryModelOf
-import com.patrykandpatrick.vico.sample.util.marker
+import com.patrykandpatrick.vico.sample.util.rememberMarker
 
 private val model = entryModelOf(
     entriesOf(2f, -1f, -4f, 2f, 1f, -5f, -2f, -3f),
@@ -53,14 +53,15 @@ private val columns: List<LineComponent>
 @Preview
 @Composable
 public fun StackedColumnChartWithNegativeValues() {
+    val marker = rememberMarker()
     Surface {
         Chart(
             modifier = Modifier.height(250.dp),
             chart = columnChart(
                 columns = columns,
                 persistentMarkers = mapOf(
-                    2f to marker(),
-                    3f to marker(),
+                    2f to marker,
+                    3f to marker,
                 ),
                 mergeMode = Stack,
             ),

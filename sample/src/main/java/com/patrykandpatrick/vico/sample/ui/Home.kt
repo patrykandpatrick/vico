@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.patrykandpatrick.vico.sample.extension.remember
 import com.patrykandpatrick.vico.sample.util.Tab
-import com.patrykandpatrick.vico.sample.util.getSampleCharts
+import com.patrykandpatrick.vico.sample.util.rememberSampleCharts
 import com.patrykandpatrick.vico.sample.viewmodel.ShowcaseViewModel
 
 @Composable
@@ -52,12 +51,12 @@ internal fun Home() {
     val composeShowcaseState = rememberSwipeableState(initialValue = 0)
     val viewShowcaseState = rememberSwipeableState(initialValue = 0)
     val showcaseViewModel = viewModel<ShowcaseViewModel>()
-    val sampleCharts = getSampleCharts(
+    val sampleCharts = rememberSampleCharts(
         chartEntryModelProducer = showcaseViewModel.chartEntryModelProducer,
-        chartStepEntryModelProducer = showcaseViewModel.chartStepEntryModelProducer,
+        customStepChartEntryModelProducer = showcaseViewModel.customStepChartEntryModelProducer,
         composedChartEntryModelProducer = showcaseViewModel.composedChartEntryModelProducer,
-        multiChartEntryModelProducer = showcaseViewModel.multiChartEntryModelProducer,
-    ).remember()
+        multiDataSetChartEntryModelProducer = showcaseViewModel.multiDataSetChartEntryModelProducer,
+    )
     Scaffold(
         bottomBar = {
             NavigationBar(
