@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.sample.util.rememberMarker
 @Composable
 internal fun ComposeChart1(chartEntryModelProducer: ChartEntryModelProducer, modifier: Modifier = Modifier) {
     val marker = rememberMarker()
-    ProvideChartStyle(rememberChartStyle(entityColors)) {
+    ProvideChartStyle(rememberChartStyle(chartColors)) {
         Chart(
             chart = lineChart(persistentMarkers = remember(marker) { mapOf(PERSISTENT_MARKER_X to marker) }),
             chartModelProducer = chartEntryModelProducer,
@@ -60,8 +60,8 @@ internal fun ViewChart1(chartEntryModelProducer: ChartEntryModelProducer, modifi
     }
 }
 
-private const val COLOR_1_CODE = 0xffa68cd9
-private const val PERSISTENT_MARKER_X = 6f
+private const val COLOR_1_CODE = 0xffa485e0
+private const val PERSISTENT_MARKER_X = 10f
 
 private val color1 = Color(COLOR_1_CODE)
-private val entityColors = listOf(color1)
+private val chartColors = listOf(color1)

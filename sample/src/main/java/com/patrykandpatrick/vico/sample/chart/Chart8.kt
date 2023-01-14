@@ -44,7 +44,7 @@ internal fun ComposeChart8(
     composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
     modifier: Modifier = Modifier,
 ) {
-    ProvideChartStyle(rememberChartStyle(entityColors)) {
+    ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
         val columnChart = columnChart(
             mergeMode = ColumnChart.MergeMode.Stack,
             targetVerticalAxisPosition = AxisPosition.Vertical.Start,
@@ -81,11 +81,14 @@ internal fun ViewChart8(
     }
 }
 
-private const val COLOR_1_CODE = 0xff68a8ad
-private const val COLOR_2_CODE = 0xff95c3c6
-private const val COLOR_3_CODE = 0xffe4cba0
+private const val COLOR_1_CODE = 0xffa55a5a
+private const val COLOR_2_CODE = 0xffd3756b
+private const val COLOR_3_CODE = 0xfff09b7d
+private const val COLOR_4_CODE = 0xffffc3a1
 
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val color3 = Color(COLOR_3_CODE)
-private val entityColors = listOf(color1, color2, color3)
+private val color4 = Color(COLOR_4_CODE)
+private val columnChartColors = listOf(color1, color2, color3)
+private val lineChartColors = listOf(color4)

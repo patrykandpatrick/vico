@@ -19,16 +19,37 @@
     <color name="chart_5_color_2">#3490de</color>
     <color name="chart_5_color_3">#73e8dc</color>
 
+    <style name="Chart5Column1ShapeStyle">
+        <item name="topStartCornerSize">0dp</item>
+        <item name="topEndCornerSize">0dp</item>
+        <item name="bottomEndCornerSize">40%</item>
+        <item name="bottomStartCornerSize">40%</item>
+    </style>
+
+    <style name="Chart5Column2ShapeStyle">
+        <item name="cornerSize">0dp</item>
+    </style>
+
+    <style name="Chart5Column3ShapeStyle">
+        <item name="topStartCornerSize">40%</item>
+        <item name="topEndCornerSize">40%</item>
+        <item name="bottomEndCornerSize">0dp</item>
+        <item name="bottomStartCornerSize">0dp</item>
+    </style>
+
     <style name="Chart5Column1Style">
         <item name="color">@color/chart_5_color_1</item>
+        <item name="shapeStyle">@style/Chart5Column1ShapeStyle</item>
     </style>
 
     <style name="Chart5Column2Style">
         <item name="color">@color/chart_5_color_2</item>
+        <item name="shapeStyle">@style/Chart5Column2ShapeStyle</item>
     </style>
 
     <style name="Chart5Column3Style">
         <item name="color">@color/chart_5_color_3</item>
+        <item name="shapeStyle">@style/Chart5Column3ShapeStyle</item>
     </style>
 
     <style name="Chart5AxisStyle">

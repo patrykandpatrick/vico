@@ -27,16 +27,17 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.databinding.Chart6Binding
@@ -46,9 +47,19 @@ import com.patrykandpatrick.vico.sample.util.rememberMarker
 @Composable
 internal fun ComposeChart6(chartEntryModelProducer: ChartEntryModelProducer, modifier: Modifier = Modifier) {
     val thresholdLine = rememberThresholdLine()
-    ProvideChartStyle(rememberChartStyle(entityColors)) {
+    ProvideChartStyle(rememberChartStyle(chartColors)) {
+        val defaultColumns = currentChartStyle.columnChart.columns
         Chart(
             chart = columnChart(
+                columns = remember(defaultColumns) {
+                    defaultColumns.map { defaultColumn ->
+                        LineComponent(
+                            defaultColumn.color,
+                            defaultColumn.thicknessDp,
+                            Shapes.cutCornerShape(topLeftPercent = COLUMN_CORNER_CUT_SIZE_PERCENT),
+                        )
+                    }
+                },
                 mergeMode = ColumnChart.MergeMode.Grouped,
                 decorations = remember(thresholdLine) { listOf(thresholdLine) },
             ),
@@ -81,8 +92,8 @@ internal fun ViewChart6(
 @Composable
 private fun rememberThresholdLine(): ThresholdLine {
     val label = textComponent(
-        color = Color.White,
-        background = shapeComponent(Shapes.roundedCornerShape(thresholdLineLabelBackgroundCornerRadius), color1),
+        color = Color.Black,
+        background = shapeComponent(Shapes.rectShape, color4),
         padding = thresholdLineLabelPadding,
         margins = thresholdLineLabelMargins,
         typeface = Typeface.MONOSPACE,
@@ -93,24 +104,28 @@ private fun rememberThresholdLine(): ThresholdLine {
     }
 }
 
-private const val COLOR_1_CODE = 0xff68a8ad
-private const val COLOR_2_CODE = 0xff95c1c6
-private const val COLOR_3_CODE = 0xffe4cba0
+private const val COLOR_1_CODE = 0xff3e6558
+private const val COLOR_2_CODE = 0xff5e836a
+private const val COLOR_3_CODE = 0xffa5ba8e
+private const val COLOR_4_CODE = 0xffe9e5af
 private const val THRESHOLD_LINE_VALUE_RANGE_START = 7f
 private const val THRESHOLD_LINE_VALUE_RANGE_END = 14f
-private const val THRESHOLD_LINE_ALPHA = .16f
+private const val THRESHOLD_LINE_ALPHA = .36f
+private const val COLUMN_CORNER_CUT_SIZE_PERCENT = 50
 
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val color3 = Color(COLOR_3_CODE)
-private val entityColors = listOf(color1, color2, color3)
+private val color4 = Color(COLOR_4_CODE)
+private val chartColors = listOf(color1, color2, color3)
 private val thresholdLineValueRange = THRESHOLD_LINE_VALUE_RANGE_START..THRESHOLD_LINE_VALUE_RANGE_END
-private val thresholdLineLabelBackgroundCornerRadius = 4.dp
-private val thresholdLineLabelPaddingValue = 4.dp
+private val thresholdLineLabelHorizontalPaddingValue = 8.dp
+private val thresholdLineLabelVerticalPaddingValue = 2.dp
 private val thresholdLineLabelMarginValue = 4.dp
-private val thresholdLineLabelPadding = dimensionsOf(thresholdLineLabelPaddingValue)
+private val thresholdLineLabelPadding =
+    dimensionsOf(thresholdLineLabelHorizontalPaddingValue, thresholdLineLabelVerticalPaddingValue)
 private val thresholdLineLabelMargins = dimensionsOf(thresholdLineLabelMarginValue)
-private val thresholdLineColor = color1.copy(THRESHOLD_LINE_ALPHA)
+private val thresholdLineColor = color4.copy(THRESHOLD_LINE_ALPHA)
 private val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 private val bottomAxisValueFormatter =
     AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _ -> daysOfWeek[x.toInt() % daysOfWeek.size] }

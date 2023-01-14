@@ -15,24 +15,34 @@
   -->
 
 <resources>
-    <color name="chart_4_color_1">#3a82a6</color>
-    <color name="chart_4_color_2">#45d0d0</color>
-    <color name="chart_4_color_3">#abedd7</color>
+    <color name="chart_4_color_1">#916cda</color>
+    <color name="chart_4_color_2">#d877d8</color>
+    <color name="chart_4_color_3">#f094bb</color>
+    <color name="chart_4_color_4">#fdc8c4</color>
 
-    <style name="Chart4Column1Style">
+    <style name="Chart4ColumnShapeStyle">
+        <item name="cornerSize">2dp</item>
+    </style>
+
+    <style name="Chart4ColumnStyle">
+        <item name="shapeStyle">@style/Chart4ColumnShapeStyle</item>
+    </style>
+
+    <style name="Chart4Column1Style" parent="@style/Chart4ColumnStyle">
         <item name="color">@color/chart_4_color_1</item>
     </style>
 
-    <style name="Chart4Column2Style">
+    <style name="Chart4Column2Style" parent="@style/Chart4ColumnStyle">
         <item name="color">@color/chart_4_color_2</item>
     </style>
 
-    <style name="Chart4Column3Style">
+    <style name="Chart4Column3Style" parent="@style/Chart4ColumnStyle">
         <item name="color">@color/chart_4_color_3</item>
     </style>
 
     <style name="Chart4Line1Style">
-        <item name="color">@color/chart_4_color_1</item>
+        <item name="color">@color/chart_4_color_4</item>
+        <item name="cubicStrength">0%</item>
     </style>
 
     <style name="Chart4ColumnChartStyle">

@@ -44,12 +44,13 @@ import com.patrykandpatrick.vico.sample.util.rememberMarker
 
 @Composable
 internal fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer, modifier: Modifier = Modifier) {
-    ProvideChartStyle(rememberChartStyle(entityColors)) {
+    ProvideChartStyle(rememberChartStyle(chartColors)) {
         Chart(
             chart = lineChart(pointPosition = LineChart.PointPosition.Start, axisValuesOverrider = axisValueOverrider),
             chartModelProducer = chartEntryModelProducer,
             modifier = modifier,
             startAxis = startAxis(
+                guideline = null,
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
                 titleComponent = textComponent(
                     color = Color.Black,
@@ -61,7 +62,6 @@ internal fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer, mod
                 title = stringResource(R.string.y_axis),
             ),
             bottomAxis = bottomAxis(
-                guideline = null,
                 titleComponent = textComponent(
                     background = shapeComponent(Shapes.pillShape, color2),
                     color = Color.White,
@@ -93,7 +93,7 @@ private const val AXIS_VALUE_OVERRIDER_Y_FRACTION = 1.2f
 
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
-private val entityColors = listOf(color1, color2)
+private val chartColors = listOf(color1, color2)
 private val axisValueOverrider =
     AxisValuesOverrider.adaptiveYValues(yFraction = AXIS_VALUE_OVERRIDER_Y_FRACTION, round = true)
 private val axisTitleHorizontalPaddingValue = 8.dp

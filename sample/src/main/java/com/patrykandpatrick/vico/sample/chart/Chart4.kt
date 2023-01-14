@@ -20,14 +20,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.topAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.composed.plus
+import com.patrykandpatrick.vico.core.chart.copy
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
+import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.databinding.Chart4Binding
@@ -39,9 +46,25 @@ internal fun ComposeChart4(
     composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
     modifier: Modifier = Modifier,
 ) {
-    ProvideChartStyle(rememberChartStyle(entityColors)) {
-        val columnChart = columnChart()
-        val lineChart = lineChart()
+    ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
+        val defaultColumns = currentChartStyle.columnChart.columns
+        val defaultLines = currentChartStyle.lineChart.lines
+        val columnChart = columnChart(
+            remember(defaultColumns) {
+                defaultColumns.map { defaultColumn ->
+                    LineComponent(
+                        defaultColumn.color,
+                        defaultColumn.thicknessDp,
+                        Shapes.roundedCornerShape(columnCornerRadius),
+                    )
+                }
+            },
+        )
+        val lineChart = lineChart(
+            remember(defaultLines) {
+                defaultLines.map { defaultLine -> defaultLine.copy(pointConnector = pointConnector) }
+            },
+        )
         Chart(
             chart = remember(columnChart, lineChart) { columnChart + lineChart },
             chartModelProducer = composedChartEntryModelProducer,
@@ -65,11 +88,16 @@ internal fun ViewChart4(
     }
 }
 
-private const val COLOR_1_CODE = 0xff3a82a6
-private const val COLOR_2_CODE = 0xff45d0d0
-private const val COLOR_3_CODE = 0xffabedd7
+private const val COLOR_1_CODE = 0xff916cda
+private const val COLOR_2_CODE = 0xffd877d8
+private const val COLOR_3_CODE = 0xfff094bb
+private const val COLOR_4_CODE = 0xfffdc8c4
 
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val color3 = Color(COLOR_3_CODE)
-private val entityColors = listOf(color1, color2, color3)
+private val color4 = Color(COLOR_4_CODE)
+private val columnChartColors = listOf(color1, color2, color3)
+private val lineChartColors = listOf(color4)
+private val columnCornerRadius = 2.dp
+private val pointConnector = DefaultPointConnector(cubicStrength = 0f)

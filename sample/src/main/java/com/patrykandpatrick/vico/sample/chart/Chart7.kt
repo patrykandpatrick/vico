@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
@@ -48,7 +49,7 @@ import com.patrykandpatrick.vico.sample.util.rememberMarker
 
 @Composable
 internal fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer, modifier: Modifier = Modifier) {
-    ProvideChartStyle(rememberChartStyle(entityColors)) {
+    ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultLines = currentChartStyle.lineChart.lines
         Chart(
             chart = lineChart(
@@ -92,14 +93,14 @@ private fun rememberStartAxisLabel() = axisLabelComponent(
     horizontalPadding = startAxisLabelHorizontalPaddingValue,
     verticalMargin = startAxisLabelMarginValue,
     horizontalMargin = startAxisLabelMarginValue,
-    background = shapeComponent(Shapes.pillShape, color4),
+    background = shapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
 )
 
 @Composable
 private fun rememberLegend() = verticalLegend(
-    items = entityColors.mapIndexed { index, entityColor ->
+    items = chartColors.mapIndexed { index, chartColor ->
         verticalLegendItem(
-            icon = shapeComponent(Shapes.pillShape, entityColor),
+            icon = shapeComponent(Shapes.pillShape, chartColor),
             label = textComponent(textSize = legendItemLabelTextSize, typeface = Typeface.MONOSPACE),
             labelText = stringResource(R.string.data_set_x, index + 1),
         )
@@ -119,10 +120,11 @@ private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val color3 = Color(COLOR_3_CODE)
 private val color4 = Color(COLOR_4_CODE)
-private val entityColors = listOf(color1, color2, color3)
-private val startAxisLabelVerticalPaddingValue = 4.dp
+private val chartColors = listOf(color1, color2, color3)
+private val startAxisLabelVerticalPaddingValue = 2.dp
 private val startAxisLabelHorizontalPaddingValue = 8.dp
 private val startAxisLabelMarginValue = 4.dp
+private val startAxisLabelBackgroundCornerRadius = 4.dp
 private val legendItemLabelTextSize = 12.sp
 private val legendItemIconSize = 8.dp
 private val legendItemIconPaddingValue = 10.dp

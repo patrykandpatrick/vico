@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
@@ -48,7 +47,7 @@ import com.patrykandpatrick.vico.sample.util.rememberMarker
 @Composable
 internal fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer, modifier: Modifier = Modifier) {
     val thresholdLine = rememberThresholdLine()
-    ProvideChartStyle(rememberChartStyle(entityColors)) {
+    ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultColumns = currentChartStyle.columnChart.columns
         Chart(
             chart = columnChart(
@@ -89,8 +88,8 @@ internal fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer, modifi
 private fun rememberThresholdLine(): ThresholdLine {
     val line = shapeComponent(strokeWidth = thresholdLineThickness, strokeColor = color2)
     val label = textComponent(
-        color = Color.White,
-        background = shapeComponent(Shapes.roundedCornerShape(thresholdLineLabelBackgroundCornerRadius), color2),
+        color = Color.Black,
+        background = shapeComponent(Shapes.pillShape, color2),
         padding = thresholdLineLabelPadding,
         margins = thresholdLineLabelMargins,
         typeface = Typeface.MONOSPACE,
@@ -100,8 +99,8 @@ private fun rememberThresholdLine(): ThresholdLine {
     }
 }
 
-private const val COLOR_1_CODE = 0xffff6f3c
-private const val COLOR_2_CODE = 0xff3dc0d4
+private const val COLOR_1_CODE = 0xffff5500
+private const val COLOR_2_CODE = 0xffd3d826
 private const val COLUMN_WIDTH_DP = 16f
 private const val THRESHOLD_LINE_VALUE = 13f
 private const val START_AXIS_LABEL_COUNT = 5
@@ -110,12 +109,13 @@ private const val BOTTOM_AXIS_TICK_SPACING = 3
 
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
-private val entityColors = listOf(color1)
-private val thresholdLineLabelBackgroundCornerRadius = 4.dp
+private val chartColors = listOf(color1)
 private val thresholdLineLabelMarginValue = 4.dp
-private val thresholdLineLabelPaddingValue = 4.dp
+private val thresholdLineLabelHorizontalPaddingValue = 8.dp
+private val thresholdLineLabelVerticalPaddingValue = 2.dp
 private val thresholdLineThickness = 2.dp
-private val thresholdLineLabelPadding = dimensionsOf(thresholdLineLabelPaddingValue)
+private val thresholdLineLabelPadding =
+    dimensionsOf(thresholdLineLabelHorizontalPaddingValue, thresholdLineLabelVerticalPaddingValue)
 private val thresholdLineLabelMargins = dimensionsOf(thresholdLineLabelMarginValue)
 private val startAxisValueFormatter = PercentageFormatAxisValueFormatter<AxisPosition.Vertical.Start>()
 private val bottomAxisTickPosition =

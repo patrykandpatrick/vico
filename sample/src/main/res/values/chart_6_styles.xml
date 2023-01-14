@@ -15,19 +15,28 @@
   -->
 
 <resources>
-    <color name="chart_6_color_1">#68a8ad</color>
-    <color name="chart_6_color_2">#95c1c6</color>
-    <color name="chart_6_color_3">#e4cba0</color>
+    <color name="chart_6_color_1">#3e6558</color>
+    <color name="chart_6_color_2">#5e836a</color>
+    <color name="chart_6_color_3">#a5ba8e</color>
 
-    <style name="Chart6Column1Style">
+    <style name="Chart6ColumnShapeStyle">
+        <item name="topStartCornerSize">50%</item>
+        <item name="topStartCornerTreatment">cut</item>
+    </style>
+
+    <style name="Chart6ColumnStyle">
+        <item name="shapeStyle">@style/Chart6ColumnShapeStyle</item>
+    </style>
+
+    <style name="Chart6Column1Style" parent="@style/Chart6ColumnStyle">
         <item name="color">@color/chart_6_color_1</item>
     </style>
 
-    <style name="Chart6Column2Style">
+    <style name="Chart6Column2Style" parent="@style/Chart6ColumnStyle">
         <item name="color">@color/chart_6_color_2</item>
     </style>
 
-    <style name="Chart6Column3Style">
+    <style name="Chart6Column3Style" parent="@style/Chart6ColumnStyle">
         <item name="color">@color/chart_6_color_3</item>
     </style>
 

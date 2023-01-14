@@ -15,9 +15,10 @@
   -->
 
 <resources>
-    <color name="chart_8_color_1">#68a8ad</color>
-    <color name="chart_8_color_2">#95c3c6</color>
-    <color name="chart_8_color_3">#e4cba0</color>
+    <color name="chart_8_color_1">#a55a5a</color>
+    <color name="chart_8_color_2">#d3756b</color>
+    <color name="chart_8_color_3">#f09b7d</color>
+    <color name="chart_8_color_4">#ffc3a1</color>
 
     <style name="Chart8Column1Style">
         <item name="color">@color/chart_8_color_1</item>
@@ -32,7 +33,7 @@
     </style>
 
     <style name="Chart8Line1Style">
-        <item name="color">@color/chart_8_color_1</item>
+        <item name="color">@color/chart_8_color_4</item>
     </style>
 
     <style name="Chart8ColumnChartStyle">

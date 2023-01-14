@@ -64,7 +64,6 @@
     </style>
 
     <style name="Chart3BottomAxisStyle" parent="Chart3AxisStyle">
-        <item name="showGuideline">false</item>
         <item name="titleStyle">@style/Chart3BottomAxisTitleStyle</item>
         <item name="title">@string/x_axis</item>
     </style>
@@ -75,6 +74,7 @@
     </style>
 
     <style name="Chart3StartAxisStyle" parent="Chart3AxisStyle">
+        <item name="showGuideline">false</item>
         <item name="verticalAxisHorizontalLabelPosition">inside</item>
         <item name="titleStyle">@style/Chart3StartAxisTitleStyle</item>
         <item name="title">@string/y_axis</item>

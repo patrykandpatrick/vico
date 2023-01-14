@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.sample.chart
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -25,8 +26,12 @@ import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
+import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.databinding.Chart5Binding
 import com.patrykandpatrick.vico.sample.util.rememberChartStyle
@@ -34,9 +39,29 @@ import com.patrykandpatrick.vico.sample.util.rememberMarker
 
 @Composable
 internal fun ComposeChart5(chartEntryModelProducer: ChartEntryModelProducer, modifier: Modifier = Modifier) {
-    ProvideChartStyle(rememberChartStyle(entityColors)) {
+    ProvideChartStyle(rememberChartStyle(chartColors)) {
+        val defaultColumns = currentChartStyle.columnChart.columns
         Chart(
-            chart = columnChart(mergeMode = ColumnChart.MergeMode.Stack),
+            chart = columnChart(
+                columns = remember(defaultColumns) {
+                    defaultColumns.mapIndexed { index, defaultColumn ->
+                        val topCornerRadiusPercent =
+                            if (index == defaultColumns.lastIndex) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
+                        val bottomCornerRadiusPercent = if (index == 0) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
+                        LineComponent(
+                            defaultColumn.color,
+                            defaultColumn.thicknessDp,
+                            Shapes.roundedCornerShape(
+                                topCornerRadiusPercent,
+                                topCornerRadiusPercent,
+                                bottomCornerRadiusPercent,
+                                bottomCornerRadiusPercent,
+                            ),
+                        )
+                    }
+                },
+                mergeMode = ColumnChart.MergeMode.Stack,
+            ),
             chartModelProducer = chartEntryModelProducer,
             modifier = modifier,
             startAxis = startAxis(
@@ -69,4 +94,4 @@ private const val AXIS_LABEL_ROTATION_DEGREES = 45f
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val color3 = Color(COLOR_3_CODE)
-private val entityColors = listOf(color1, color2, color3)
+private val chartColors = listOf(color1, color2, color3)
