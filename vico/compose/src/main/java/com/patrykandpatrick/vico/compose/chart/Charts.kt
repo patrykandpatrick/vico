@@ -53,12 +53,10 @@ import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
@@ -279,6 +277,7 @@ public fun <Model : ChartEntryModel> Chart(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 internal fun <Model : ChartEntryModel> ChartImpl(
     chart: Chart<Model>,
@@ -378,24 +377,27 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         axisManager.drawBehindChart(chartDrawContext)
         chart.drawScrollableContent(chartDrawContext, model)
 
-        fadingEdges?.applyFadingEdges(chartDrawContext, chart.bounds)
-        if (fadingEdges != null) chartDrawContext.restoreCanvasToCount(count)
+        fadingEdges?.apply {
+            applyFadingEdges(chartDrawContext, chart.bounds)
+            chartDrawContext.restoreCanvasToCount(count)
+        }
 
         axisManager.drawAboveChart(chartDrawContext)
         chart.drawNonScrollableContent(chartDrawContext, model)
         legend?.draw(chartDrawContext)
 
-        drawMarkerIfNecessary(
-            chartDrawContext = chartDrawContext,
-            marker = marker,
-            markerTouchPoint = markerTouchPoint.value,
-            chart = chart,
-            markerVisibilityChangeListener = markerVisibilityChangeListener,
-            wasMarkerVisible = wasMarkerVisible,
-            setWasMarkerVisible = setWasMarkerVisible,
-            lastMarkerEntryModels = lastMarkerEntryModels.value,
-            onMarkerEntryModelsChange = lastMarkerEntryModels.component2(),
-        )
+        if (marker != null) {
+            chartDrawContext.drawMarker(
+                marker = marker,
+                markerTouchPoint = markerTouchPoint.value,
+                chart = chart,
+                markerVisibilityChangeListener = markerVisibilityChangeListener,
+                wasMarkerVisible = wasMarkerVisible,
+                setWasMarkerVisible = setWasMarkerVisible,
+                lastMarkerEntryModels = lastMarkerEntryModels.value,
+                onMarkerEntryModelsChange = lastMarkerEntryModels.component2(),
+            )
+        }
 
         measureContext.reset()
     }
@@ -448,31 +450,5 @@ internal fun rememberZoomState(
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         zoom.value = newZoom
         setScroll(getScroll() + zoomedTransformationAxisX - transformationAxisX)
-    }
-}
-
-@LongParameterListDrawFunction
-private fun <Model : ChartEntryModel> drawMarkerIfNecessary(
-    chartDrawContext: ChartDrawContext,
-    marker: Marker?,
-    markerTouchPoint: Point?,
-    chart: Chart<Model>,
-    markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
-    wasMarkerVisible: Boolean,
-    setWasMarkerVisible: ((Boolean) -> Unit),
-    lastMarkerEntryModels: List<Marker.EntryModel>,
-    onMarkerEntryModelsChange: (List<Marker.EntryModel>) -> Unit,
-) {
-    if (marker != null) {
-        chartDrawContext.drawMarker(
-            marker = marker,
-            markerTouchPoint = markerTouchPoint,
-            chart = chart,
-            markerVisibilityChangeListener = markerVisibilityChangeListener,
-            wasMarkerVisible = wasMarkerVisible,
-            setWasMarkerVisible = setWasMarkerVisible,
-            lastMarkerEntryModels = lastMarkerEntryModels,
-            onMarkerEntryModelsChange = onMarkerEntryModelsChange,
-        )
     }
 }
