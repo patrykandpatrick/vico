@@ -29,10 +29,11 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.component.shape.chartShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.extension.pixelSize
-import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.OverlayingComponent
@@ -243,11 +244,11 @@ public fun overlayingComponent(
  */
 @Composable
 public fun textComponent(
-    color: Color = currentChartStyle.axis.axisLabelColor,
-    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
-    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    color: Color = Color.Black,
+    textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
+    background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    lineCount: Int = DEF_LABEL_LINE_COUNT,
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,

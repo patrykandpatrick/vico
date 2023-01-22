@@ -22,7 +22,9 @@ import android.text.TextUtils
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
-import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
+import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
@@ -44,11 +46,11 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 @Composable
 @Deprecated(message = "Use `com.patrykandpatrick.vico.compose.component.textComponent` instead.")
 public fun textComponent(
-    color: Color = currentChartStyle.axis.axisLabelColor,
-    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
-    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    color: Color = Color.Black,
+    textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
+    background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    lineCount: Int = DEF_LABEL_LINE_COUNT,
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,
