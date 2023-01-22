@@ -101,7 +101,11 @@ private fun rememberLegend() = verticalLegend(
     items = chartColors.mapIndexed { index, chartColor ->
         verticalLegendItem(
             icon = shapeComponent(Shapes.pillShape, chartColor),
-            label = textComponent(textSize = legendItemLabelTextSize, typeface = Typeface.MONOSPACE),
+            label = textComponent(
+                color = currentChartStyle.axis.axisLabelColor,
+                textSize = legendItemLabelTextSize,
+                typeface = Typeface.MONOSPACE,
+            ),
             labelText = stringResource(R.string.data_set_x, index + 1),
         )
     },
