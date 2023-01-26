@@ -24,9 +24,11 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatrick.vico.core.scroll.ScrollListener
 import com.patrykandpatrick.vico.core.scroll.ScrollListenerHost
+import kotlin.math.abs
 
 /**
  * Houses information on a [Chart]’s scroll state. Allows for programmatic scrolling.
@@ -57,13 +59,13 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
         internal set(newMaxValue) {
             val oldMaxValue = maxValue
             _maxValue.value = newMaxValue
-            if (newMaxValue < value) value = newMaxValue
+            if (abs(value) > abs(newMaxValue)) value = newMaxValue
             scrollListeners.forEach { scrollListener -> scrollListener.onMaxValueChanged(oldMaxValue, newMaxValue) }
         }
 
     private val scrollableState = ScrollableState { delta ->
         val unlimitedValue = value + delta
-        val limitedValue = unlimitedValue.coerceIn(0f..maxValue)
+        val limitedValue = unlimitedValue.coerceIn(0f.rangeWith(maxValue))
         val consumedValue = limitedValue - value
         value += consumedValue
         if (unlimitedValue != limitedValue) consumedValue else delta
