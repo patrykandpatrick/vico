@@ -287,7 +287,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val oldModel = this.model
         this.model = model
         tryInvalidate(chart = chart, model = model)
-        if (oldModel?.id != model.id && isInEditMode.not()) {
+        if (ViewCompat.isAttachedToWindow(this) && oldModel?.id != model.id && isInEditMode.not()) {
             handler.post {
                 chartScrollSpec.performAutoScroll(
                     model = model,
