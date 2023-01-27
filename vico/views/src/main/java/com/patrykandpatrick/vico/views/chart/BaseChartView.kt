@@ -500,7 +500,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
     }
 
+    @Suppress("UNNECESSARY_SAFE_CALL")
     override fun onRtlPropertiesChanged(layoutDirection: Int) {
-        measureContext.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
+        // This function may be invoked inside of the View’s constructor, before the measureContext is initialized.
+        // In this case, we can ignore this callback, as the layout direction will be determined when the MeasureContext
+        // instance is created.
+        measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
     }
 }
