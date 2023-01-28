@@ -131,7 +131,7 @@ In the view system, use [`ChartView`](https://patrykandpatrick.com/vico/api/vico
 ```
 
 ```kt
-findViewById<ChartView>(R.id.chart).model = entryModel
+findViewById<ChartView>(R.id.chart).setModel(entryModel)
 ```
 
 ## Dynamic data & data updates
