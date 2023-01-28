@@ -28,6 +28,7 @@
     <string name="chart_6_description">Customized columns, threshold line for range, days of week along axis</string>
     <string name="chart_7_description">Customized y-axis labels, vertical legend</string>
     <string name="chart_8_description">Axes at start and end, independent charts and axes</string>
+    <string name="chart_9_description">Candlestick chart</string>
     <string name="data_set_x">Data set %d</string>
     <string name="chart_x">Chart %d</string>
     <string name="x_axis">x-axis</string>

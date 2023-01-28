@@ -22,12 +22,12 @@ import com.patrykandpatrick.vico.core.chart.Chart
  * The base for a single chart entry rendered by [Chart] subclasses.
  * It holds information about the location of the chart entry on the x-axis and y-axis.
  */
-public interface ChartEntry {
+public interface ChartEntry : Entry {
 
     /**
      * The position of this [ChartEntry] on the x-axis.
      */
-    public val x: Float
+    public override val x: Float
 
     /**
      * The position of this [ChartEntry] on the y-axis.

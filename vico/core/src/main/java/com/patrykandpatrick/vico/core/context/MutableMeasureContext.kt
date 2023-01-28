@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.context
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 
 /**
@@ -35,6 +36,13 @@ public data class MutableMeasureContext(
 
     override fun reset() {
         clearExtras()
+        chartValuesManager.resetChartValues()
+    }
+
+    /**
+     * Resets the values stored in each of the [ChartValues] instances in the [ChartValuesManager.chartValues] map.
+     */
+    public fun resetChartValues() {
         chartValuesManager.resetChartValues()
     }
 }

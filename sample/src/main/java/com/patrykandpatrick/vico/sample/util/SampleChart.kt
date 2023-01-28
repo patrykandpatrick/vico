@@ -20,6 +20,7 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.R
+import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
@@ -31,6 +32,7 @@ import com.patrykandpatrick.vico.sample.chart.ComposeChart5
 import com.patrykandpatrick.vico.sample.chart.ComposeChart6
 import com.patrykandpatrick.vico.sample.chart.ComposeChart7
 import com.patrykandpatrick.vico.sample.chart.ComposeChart8
+import com.patrykandpatrick.vico.sample.chart.ComposeChart9
 import com.patrykandpatrick.vico.sample.chart.ViewChart1
 import com.patrykandpatrick.vico.sample.chart.ViewChart2
 import com.patrykandpatrick.vico.sample.chart.ViewChart3
@@ -39,6 +41,7 @@ import com.patrykandpatrick.vico.sample.chart.ViewChart5
 import com.patrykandpatrick.vico.sample.chart.ViewChart6
 import com.patrykandpatrick.vico.sample.chart.ViewChart7
 import com.patrykandpatrick.vico.sample.chart.ViewChart8
+import com.patrykandpatrick.vico.sample.chart.ViewChart9
 
 internal data class SampleChart(
     val composeBased: @Composable () -> Unit,
@@ -52,6 +55,7 @@ internal fun rememberSampleCharts(
     customStepChartEntryModelProducer: ChartEntryModelProducer,
     multiDataSetChartEntryModelProducer: ChartEntryModelProducer,
     composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>,
+    candlestickEntriesGenerator: CandlestickEntryModelProducer,
 ) = remember {
     listOf(
         SampleChart(
@@ -93,6 +97,11 @@ internal fun rememberSampleCharts(
             composeBased = { ComposeChart8(composedChartEntryModelProducer) },
             viewBased = { ViewChart8(composedChartEntryModelProducer) },
             descriptionResourceID = R.string.chart_8_description,
+        ),
+        SampleChart(
+            composeBased = { ComposeChart9(candlestickEntriesGenerator) },
+            viewBased = { ViewChart9(candlestickEntriesGenerator) },
+            descriptionResourceID = R.string.chart_9_description,
         ),
     )
 }

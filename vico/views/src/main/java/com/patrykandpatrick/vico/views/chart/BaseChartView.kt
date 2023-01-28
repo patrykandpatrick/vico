@@ -302,7 +302,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
-            measureContext.chartValuesManager.resetChartValues()
+            measureContext.resetChartValues()
             chart.updateChartValues(measureContext.chartValuesManager, model)
 
             if (ViewCompat.isAttachedToWindow(this)) {

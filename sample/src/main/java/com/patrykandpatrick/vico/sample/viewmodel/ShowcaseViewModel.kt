@@ -18,10 +18,12 @@ package com.patrykandpatrick.vico.sample.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.composed.plus
+import com.patrykandpatrick.vico.core.util.RandomCandlestickEntriesGenerator
 import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -40,6 +42,8 @@ internal class ShowcaseViewModel : ViewModel() {
         yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
     )
 
+    private val candlestickGenerator = RandomCandlestickEntriesGenerator()
+
     internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
     internal val customStepChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
@@ -48,6 +52,8 @@ internal class ShowcaseViewModel : ViewModel() {
 
     internal val composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel> =
         multiDataSetChartEntryModelProducer + chartEntryModelProducer
+
+    internal val candlestickChartEntryModelProducer: CandlestickEntryModelProducer = CandlestickEntryModelProducer()
 
     init {
         viewModelScope.launch {
@@ -59,6 +65,7 @@ internal class ShowcaseViewModel : ViewModel() {
                     },
                 )
                 customStepChartEntryModelProducer.setEntries(customStepGenerator.generateRandomEntries())
+                candlestickChartEntryModelProducer.setEntries(candlestickGenerator.generateRandomEntries())
                 delay(UPDATE_FREQUENCY)
             }
         }

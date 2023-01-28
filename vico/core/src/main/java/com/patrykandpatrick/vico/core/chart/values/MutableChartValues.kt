@@ -16,8 +16,7 @@
 
 package com.patrykandpatrick.vico.core.chart.values
 
-import com.patrykandpatrick.vico.core.entry.ChartEntry
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.extension.orZero
 
 /**
@@ -45,10 +44,10 @@ public class MutableChartValues : ChartValues {
     override val maxY: Float
         get() = _maxY.orZero
 
-    override var chartEntryModel: ChartEntryModel = emptyChartEntryModel()
+    override var entryModel: EntryModel<*>? = null
 
     override val stepX: Float
-        get() = chartEntryModel.stepX
+        get() = entryModel?.stepX ?: 1f
 
     /**
      * Returns `true` if all values have been set and at least one call to [tryUpdate] or [set] has been made.
@@ -60,20 +59,20 @@ public class MutableChartValues : ChartValues {
      * Attempts to update the stored values to the provided values.
      * [minX] and [minY] can be updated to a lower value.
      * [maxX] and [maxY] can be updated to a higher value.
-     * The [chartEntryModel] is always be updated.
+     * The [entryModel] is always be updated.
      */
     public fun tryUpdate(
         minX: Float? = null,
         maxX: Float? = null,
         minY: Float? = null,
         maxY: Float? = null,
-        chartEntryModel: ChartEntryModel = this.chartEntryModel,
+        entryModel: EntryModel<*>? = this.entryModel,
     ): MutableChartValues = apply {
         if (minX != null) _minX = if (_minX != null) minOf(this.minX, minX) else minX
         if (maxX != null) _maxX = if (_maxX != null) maxOf(this.maxX, maxX) else maxX
         if (minY != null) _minY = if (_minY != null) minOf(this.minY, minY) else minY
         if (maxY != null) _maxY = if (_maxY != null) maxOf(this.maxY, maxY) else maxY
-        this.chartEntryModel = chartEntryModel
+        this.entryModel = entryModel
     }
 
     /**
@@ -84,20 +83,6 @@ public class MutableChartValues : ChartValues {
         _maxX = null
         _minY = null
         _maxY = null
-        chartEntryModel = emptyChartEntryModel()
-    }
-
-    private companion object {
-
-        fun emptyChartEntryModel(): ChartEntryModel = object : ChartEntryModel {
-            override val entries: List<List<ChartEntry>> = emptyList()
-            override val minX: Float = 0f
-            override val maxX: Float = 0f
-            override val minY: Float = 0f
-            override val maxY: Float = 0f
-            override val stackedPositiveY: Float = 0f
-            override val stackedNegativeY: Float = 0f
-            override val stepX: Float = 1f
-        }
+        entryModel = null
     }
 }

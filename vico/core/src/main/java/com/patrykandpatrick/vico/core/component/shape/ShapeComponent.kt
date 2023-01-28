@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.alpha
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.extension.round
 import kotlin.properties.Delegates
 
 /**
@@ -96,20 +97,35 @@ public open class ShapeComponent(
         val strokeWidth = strokeWidthDp.pixels
         strokePaint.strokeWidth = strokeWidth
 
-        fun drawShape(paint: Paint) {
+        fun drawShape(paint: Paint, isStroke: Boolean) {
+
+            val strokeCompensation = if (isStroke) strokeWidth.half else 0f
+
             shape.drawShape(
                 context = context,
                 paint = paint,
                 path = path,
-                left = minOf(left + margins.startDp.pixels + strokeWidth.half, centerX),
-                top = minOf(top + margins.topDp.pixels + strokeWidth.half, centerY),
-                right = maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX),
-                bottom = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY),
+                left = minOf(
+                    left + margins.startDp.pixels + strokeWidth.half,
+                    centerX - strokeCompensation,
+                ).round,
+                top = minOf(
+                    top + margins.topDp.pixels + strokeWidth.half,
+                    centerY - strokeCompensation,
+                ).round,
+                right = maxOf(
+                    right - margins.endDp.pixels - strokeWidth.half,
+                    centerX + strokeCompensation,
+                ).round,
+                bottom = maxOf(
+                    bottom - margins.bottomDp.pixels - strokeWidth.half,
+                    centerY + strokeCompensation,
+                ).round,
             )
         }
 
-        drawShape(paint)
-        if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
+        drawShape(paint = paint, isStroke = false)
+        if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(paint = strokePaint, isStroke = true)
 
         DebugHelper.drawDebugBounds(
             context = context,

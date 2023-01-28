@@ -497,7 +497,7 @@ public open class LineChart(
             maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
             minY = axisValuesOverrider?.getMinY(model) ?: minY ?: min(model.minY, 0f),
             maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: model.maxY,
-            chartEntryModel = model,
+            model = model,
             axisPosition = targetVerticalAxisPosition,
         )
     }

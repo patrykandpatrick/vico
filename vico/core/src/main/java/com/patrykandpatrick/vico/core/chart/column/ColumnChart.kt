@@ -288,7 +288,7 @@ public open class ColumnChart(
                 x = columnCenterX,
                 y = columnTop.coerceIn(bounds.top, bounds.bottom),
                 entry = entry,
-                color = column.color,
+                color = column.solidOrStrokeColor,
             )
         }
     }
@@ -300,7 +300,7 @@ public open class ColumnChart(
             maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
             minY = axisValuesOverrider?.getMinY(model) ?: minY ?: mergeMode.getMinY(model),
             maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: mergeMode.getMaxY(model),
-            chartEntryModel = model,
+            model = model,
             axisPosition = targetVerticalAxisPosition,
         )
     }

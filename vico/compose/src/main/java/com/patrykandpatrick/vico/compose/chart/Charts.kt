@@ -64,6 +64,7 @@ import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
+import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
@@ -98,7 +99,7 @@ import com.patrykandpatrick.vico.core.scroll.ScrollListener
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  */
 @Composable
-public fun <Model : ChartEntryModel> Chart(
+public fun <Model : EntryModel<*>> Chart(
     chart: Chart<Model>,
     chartModelProducer: ChartModelProducer<Model>,
     modifier: Modifier = Modifier,
@@ -238,7 +239,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  */
 @Composable
-public fun <Model : ChartEntryModel> Chart(
+public fun <Model : EntryModel<*>> Chart(
     chart: Chart<Model>,
     model: Model,
     modifier: Modifier = Modifier,
@@ -279,7 +280,7 @@ public fun <Model : ChartEntryModel> Chart(
 
 @Suppress("LongMethod")
 @Composable
-internal fun <Model : ChartEntryModel> ChartImpl(
+internal fun <Model : EntryModel<*>> ChartImpl(
     chart: Chart<Model>,
     model: Model,
     startAxis: AxisRenderer<AxisPosition.Vertical.Start>?,

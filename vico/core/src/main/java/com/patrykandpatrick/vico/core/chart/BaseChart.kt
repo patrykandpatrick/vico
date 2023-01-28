@@ -23,7 +23,7 @@ import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.extension.getEntryModel
 import com.patrykandpatrick.vico.core.extension.inClip
 import com.patrykandpatrick.vico.core.extension.setAll
@@ -34,7 +34,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
  *
  * @see Chart
  */
-public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
+public abstract class BaseChart<Model : EntryModel<*>> : Chart<Model>, BoundsAware {
 
     private val decorations = ArrayList<Decoration>()
 
@@ -49,7 +49,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     override val chartInsetters: Collection<ChartInsetter> = persistentMarkers.values
 
-    override var axisValuesOverrider: AxisValuesOverrider<@UnsafeVariance Model>? = null
+    override var axisValuesOverrider: AxisValuesOverrider<Model>? = null
 
     @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
     override var minY: Float? = null

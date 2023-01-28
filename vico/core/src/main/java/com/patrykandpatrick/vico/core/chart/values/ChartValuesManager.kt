@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.EntryModel
 
 /**
  * Manages the [ChartValues] used by a chart. There may be many [ChartValues], but all of them have the same
@@ -54,7 +54,7 @@ public class ChartValuesManager {
      * Attempts to update the stored values to the provided values.
      * [minX] and [minY] can be updated to a lower value.
      * [maxX] and [maxY] can be updated to a higher value.
-     * The [chartEntryModel] is always updated.
+     * The [model] is always updated.
      * If [axisPosition] is null, only the main [ChartValues] are updated. Otherwise, both the main [ChartValues]
      * and the [ChartValues] associated with the given [axisPosition] are updated.
      */
@@ -63,7 +63,7 @@ public class ChartValuesManager {
         maxX: Float,
         minY: Float,
         maxY: Float,
-        chartEntryModel: ChartEntryModel,
+        model: EntryModel<*>,
         axisPosition: AxisPosition.Vertical? = null,
     ) {
         chartValues.getOrPut(axisPosition) { MutableChartValues() }
@@ -72,11 +72,11 @@ public class ChartValuesManager {
                 maxX = maxX,
                 minY = minY,
                 maxY = maxY,
-                chartEntryModel = chartEntryModel,
+                entryModel = model,
             )
 
         if (axisPosition != null) {
-            tryUpdate(minX, maxX, minY, maxY, chartEntryModel)
+            tryUpdate(minX, maxX, minY, maxY, model)
         } else {
             val mainValues = getChartValues(null)
             chartValues.forEach { (key, values) ->

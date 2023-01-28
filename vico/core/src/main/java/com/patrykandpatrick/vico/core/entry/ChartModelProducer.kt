@@ -21,7 +21,7 @@ package com.patrykandpatrick.vico.core.entry
  *
  * @see ChartEntryModel
  */
-public interface ChartModelProducer<Model : ChartEntryModel> {
+public interface ChartModelProducer<Model> {
 
     /**
      * Returns the [ChartEntryModel] for this [ChartModelProducer] synchronously.

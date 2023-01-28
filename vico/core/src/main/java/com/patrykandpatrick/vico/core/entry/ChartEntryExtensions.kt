@@ -85,25 +85,36 @@ public fun entriesOf(vararg yValues: Number): List<FloatEntry> =
 internal inline val Iterable<Iterable<ChartEntry>>.yRange: ClosedFloatingPointRange<Float>
     get() = flatten().rangeOfOrNull { it.y } ?: 0f..0f
 
-internal inline val Iterable<Iterable<ChartEntry>>.xRange: ClosedFloatingPointRange<Float>
-    get() = flatten().rangeOfOrNull { it.x } ?: 0f..0f
+internal inline val Iterable<Iterable<Entry>>.xRange: ClosedFloatingPointRange<Float>
+    get() = flatten().xRange
 
-internal fun Iterable<Iterable<ChartEntry>>.calculateStep(): Float {
+@get:JvmName("xRangeFlat")
+internal inline val Iterable<Entry>.xRange: ClosedFloatingPointRange<Float>
+    get() = rangeOfOrNull { it.x } ?: 0f..0f
+
+internal fun Iterable<Iterable<Entry>>.calculateStep(): Float {
     var step: Float? = null
     forEach { entryCollection ->
-        val iterator = entryCollection.iterator()
-        var currentEntry: ChartEntry
-        var previousEntry: ChartEntry? = null
-        while (iterator.hasNext()) {
-            currentEntry = iterator.next()
-            previousEntry?.let { prevEntry ->
-                val difference = abs(x = currentEntry.x - prevEntry.x)
-                step = step?.gcdWith(other = difference) ?: difference
-            }
-            previousEntry = currentEntry
-        }
-        if (step == -1f) step = 1f
+        step = entryCollection.calculateStep(step)
     }
+    return step ?: 1f
+}
+
+internal fun Iterable<Entry>.calculateStep(currentStep: Float? = null): Float {
+    var step: Float? = currentStep
+    val iterator = iterator()
+    var currentEntry: Entry
+    var previousEntry: Entry? = null
+    while (iterator.hasNext()) {
+        currentEntry = iterator.next()
+        previousEntry?.let { prevEntry ->
+            val difference = abs(x = currentEntry.x - prevEntry.x)
+            step = step?.gcdWith(other = difference) ?: difference
+        }
+        previousEntry = currentEntry
+    }
+    if (step == -1f) step = 1f
+
     return step ?: 1f
 }
 

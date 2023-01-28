@@ -24,7 +24,7 @@ import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 
@@ -37,7 +37,7 @@ import com.patrykandpatrick.vico.core.scroll.InitialScroll
  * @property autoScrollAnimationSpec the [AnimationSpec] to use for automatic scrolling.
  */
 @Stable
-public class ChartScrollSpec<in Model : ChartEntryModel>(
+public class ChartScrollSpec<in Model : EntryModel<*>>(
     public val isScrollEnabled: Boolean,
     public val initialScroll: InitialScroll,
     public val autoScrollCondition: AutoScrollCondition<Model>,
@@ -73,7 +73,7 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
  * Creates and remembers an instance of [ChartScrollSpec].
  */
 @Composable
-public fun <Model : ChartEntryModel> rememberChartScrollSpec(
+public fun <Model : EntryModel<*>> rememberChartScrollSpec(
     isScrollEnabled: Boolean = true,
     initialScroll: InitialScroll = InitialScroll.Start,
     autoScrollCondition: AutoScrollCondition<Model> = AutoScrollCondition.Never,

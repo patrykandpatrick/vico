@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.entry
+package com.patrykandpatrick.vico.core.candlestickentry
 
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.EntryModel
 
 /**
  * Contains the data for a [Chart]. Pre-calculates values needed for the rendering of the [Chart].
@@ -27,22 +27,9 @@ import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProd
  * The [Chart] may override [minX], [maxX], [minY], or [maxY] via [AxisValuesOverrider]. These overrides will be used
  * in the [Chart]’s [ChartValues] instance.
  *
- * It’s recommended to delegate the creation of [ChartEntryModel] to [ChartEntryModelProducer] or
- * [ComposedChartEntryModelProducer].
+ * It’s recommended to delegate the creation of [CandlestickEntryModel] to [CandlestickEntryModelProducer].
  *
  * @see [ChartValues]
- * @see [ChartEntryModelProducer]
- * @see [ComposedChartEntryModelProducer].
+ * @see [CandlestickEntryModelProducer]
  */
-public interface ChartEntryModel : EntryModel<List<ChartEntry>> {
-
-    /**
-     * The maximum cumulated y-axis value from among all sets of entries associated by [ChartEntry.x].
-     */
-    public val stackedPositiveY: Float
-
-    /**
-     * The minimum cumulated y-axis value from among all sets of entries associated by [ChartEntry.x].
-     */
-    public val stackedNegativeY: Float
-}
+public interface CandlestickEntryModel : EntryModel<CandlestickTypedEntry>

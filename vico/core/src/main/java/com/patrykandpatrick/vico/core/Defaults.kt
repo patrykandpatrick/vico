@@ -165,6 +165,31 @@ public object DefaultDimens {
     public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
 
     /**
+     * The default width of candle’s real body.
+     */
+    public const val REAL_BODY_WIDTH_DP: Float = 8f
+
+    /**
+     * The default minimum height of candle’s real body.
+     */
+    public const val REAL_BODY_MIN_HEIGHT_DP: Float = 4f
+
+    /**
+     * The default width of candle’s wick.
+     */
+    public const val WICK_DEFAULT_WIDTH_DP: Float = 2f
+
+    /**
+     * The default width of hollow’s candle stroke.
+     */
+    public const val HOLLOW_CANDLE_STROKE_WIDTH_DP: Float = 2f
+
+    /**
+     * The default spacing between candles in the candlestick chart.
+     */
+    public const val CANDLESTICK_CHART_DEFAULT_SPACING: Float = 16f
+
+    /**
      * The default cubic bezier strength for line charts.
      */
     public const val CUBIC_STRENGTH: Float = 1f
@@ -275,6 +300,21 @@ public interface DefaultColors {
     public val lineColor: Long
 
     /**
+     * The default color of green candles.
+     */
+    public val candlestickGreen: Int
+
+    /**
+     * The default color of gray candles.
+     */
+    public val candlestickGray: Int
+
+    /**
+     * The default color of red candles.
+     */
+    public val candlestickRed: Int
+
+    /**
      * The default chart colors for light mode.
      */
     public object Light : DefaultColors {
@@ -290,6 +330,10 @@ public interface DefaultColors {
         override val entity3Color: Long = 0xFF383838
 
         override val lineColor: Long = 0xFF1A1A1A
+
+        override val candlestickGreen: Int = 0xFF02C898.toInt()
+        override val candlestickGray: Int = 0xFF212121.toInt()
+        override val candlestickRed: Int = 0xFFEA284B.toInt()
     }
 
     /**
@@ -308,6 +352,10 @@ public interface DefaultColors {
         override val entity3Color: Long = 0xFF888888
 
         override val lineColor: Long = 0xFFEFEFEF
+
+        override val candlestickGreen: Int = 0xFF02C898.toInt()
+        override val candlestickGray: Int = 0xFF212121.toInt()
+        override val candlestickRed: Int = 0xFFEA284B.toInt()
     }
 }
 

@@ -49,6 +49,12 @@ public open class LineComponent(
         get() = thicknessDp.pixels
 
     /**
+     * TODO
+     */
+    public val solidOrStrokeColor: Int
+        get() = if (color == Color.TRANSPARENT) strokeColor else color
+
+    /**
      * A convenience function for [draw] that draws the [LineComponent] horizontally.
      */
     public open fun drawHorizontal(
@@ -143,4 +149,25 @@ public open class LineComponent(
             bottom,
         )
     }
+
+    /**
+     * TODO
+     */
+    public open fun copy(
+        color: Int = this.color,
+        thicknessDp: Float = this.thicknessDp,
+        shape: Shape = this.shape,
+        dynamicShader: DynamicShader? = this.dynamicShader,
+        margins: Dimensions = this.margins,
+        strokeWidthDp: Float = this.strokeWidthDp,
+        strokeColor: Int = this.strokeColor,
+    ): LineComponent = LineComponent(
+        color = color,
+        thicknessDp = thicknessDp,
+        shape = shape,
+        dynamicShader = dynamicShader,
+        margins = margins,
+        strokeWidthDp = strokeWidthDp,
+        strokeColor = strokeColor,
+    )
 }

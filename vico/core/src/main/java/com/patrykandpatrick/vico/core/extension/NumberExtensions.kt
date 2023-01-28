@@ -140,3 +140,10 @@ public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull
  */
 public fun Float.rangeWith(other: Float): ClosedFloatingPointRange<Float> =
     if (other > this) this..other else other..this
+
+/**
+ * Performs a linear progression between [start] and [end] values.
+ * [progress] is a fraction ranged between 0 and 1.
+ */
+public fun progressValues(start: Float, end: Float, progress: Float): Float =
+    start + (end - start) * progress

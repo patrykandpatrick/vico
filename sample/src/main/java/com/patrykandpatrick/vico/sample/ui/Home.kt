@@ -56,6 +56,7 @@ internal fun Home() {
         customStepChartEntryModelProducer = showcaseViewModel.customStepChartEntryModelProducer,
         composedChartEntryModelProducer = showcaseViewModel.composedChartEntryModelProducer,
         multiDataSetChartEntryModelProducer = showcaseViewModel.multiDataSetChartEntryModelProducer,
+        candlestickEntriesGenerator = showcaseViewModel.candlestickChartEntryModelProducer,
     )
     Scaffold(
         bottomBar = {

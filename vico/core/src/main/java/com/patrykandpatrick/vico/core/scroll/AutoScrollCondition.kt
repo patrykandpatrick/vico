@@ -17,12 +17,13 @@
 package com.patrykandpatrick.vico.core.scroll
 
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.extension.ifNotNull
 
 /**
  * Defines when an automatic scroll should be performed.
  */
-public fun interface AutoScrollCondition<in Model : ChartEntryModel> {
+public fun interface AutoScrollCondition<in Model : EntryModel<*>> {
 
     /**
      * Given a chart’s new and old models, defines whether an automatic scroll should be performed.
@@ -34,7 +35,7 @@ public fun interface AutoScrollCondition<in Model : ChartEntryModel> {
         /**
          * Prevents any automatic scrolling from occurring.
          */
-        public val Never: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition { _, _ -> false }
+        public val Never: AutoScrollCondition<EntryModel<*>> = AutoScrollCondition { _, _ -> false }
 
         /**
          * Triggers an automatic scroll when the size of the model increases (that is, the contents of the chart become
