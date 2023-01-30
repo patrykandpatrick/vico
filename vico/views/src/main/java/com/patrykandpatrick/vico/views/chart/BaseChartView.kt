@@ -137,7 +137,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private var scrollDirectionResolved = false
 
-    private var lastMarkerEntryModels: List<Marker.EntryModel> = emptyList()
+    private var lastMarkerEntryModels = emptyList<Marker.EntryModel>()
 
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
 
@@ -394,9 +394,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 wasMarkerVisible = wasMarkerVisible,
                 setWasMarkerVisible = { wasMarkerVisible = it },
                 lastMarkerEntryModels = lastMarkerEntryModels,
-                onMarkerEntryModelsChange = {
-                    lastMarkerEntryModels = it
-                },
+                onMarkerEntryModelsChange = { lastMarkerEntryModels = it },
             )
         }
         measureContext.clearExtras()

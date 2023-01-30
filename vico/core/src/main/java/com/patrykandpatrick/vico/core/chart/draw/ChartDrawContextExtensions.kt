@@ -125,12 +125,9 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
                 )
                 setWasMarkerVisible(true)
             }
-            if (lastMarkerEntryModels.containsAll(markerEntryModels).not()) {
+            if (wasMarkerVisible && markerEntryModels != lastMarkerEntryModels) {
                 onMarkerEntryModelsChange(markerEntryModels)
-                markerVisibilityChangeListener?.onMarkerMove(
-                    marker = marker,
-                    markerEntryModels = markerEntryModels,
-                )
+                markerVisibilityChangeListener?.onMarkerMoved(marker, markerEntryModels)
             }
         } ?: marker
         .takeIf { wasMarkerVisible }

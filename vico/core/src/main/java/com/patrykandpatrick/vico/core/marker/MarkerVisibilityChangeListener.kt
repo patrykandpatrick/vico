@@ -37,13 +37,13 @@ public interface MarkerVisibilityChangeListener {
     }
 
     /**
-     * Called when the linked [Marker] moved, i.e when it's dragged by the user
+     * Called when the linked [Marker] moves (that is, when there’s a change in which chart entries it highlights).
      *
-     * @param marker the linked [Marker], which has been shown.
+     * @param marker the linked [Marker], which moved.
      * @param markerEntryModels a list of [Marker.EntryModel]s, which contain information about the marked chart
      * entries.
      */
-    public fun onMarkerMove(
+    public fun onMarkerMoved(
         marker: Marker,
         markerEntryModels: List<Marker.EntryModel>,
     ): Unit = Unit

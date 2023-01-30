@@ -304,7 +304,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
     val scrollListener = rememberScrollListener(markerTouchPoint, interaction)
-    val lastMarkerEntryModels = remember { mutableStateOf<List<Marker.EntryModel>>(emptyList()) }
+    val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
     chartScrollState.registerScrollListener(scrollListener)
