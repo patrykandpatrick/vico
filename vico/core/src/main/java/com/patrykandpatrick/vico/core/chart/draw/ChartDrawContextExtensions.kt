@@ -107,6 +107,8 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
     markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
     wasMarkerVisible: Boolean,
     setWasMarkerVisible: (Boolean) -> Unit,
+    lastMarkerEntryModels: List<Marker.EntryModel>,
+    onMarkerEntryModelsChange: (List<Marker.EntryModel>) -> Unit,
 ) {
     markerTouchPoint
         ?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
@@ -122,6 +124,10 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
                     markerEntryModels = markerEntryModels,
                 )
                 setWasMarkerVisible(true)
+            }
+            if (wasMarkerVisible && markerEntryModels != lastMarkerEntryModels) {
+                onMarkerEntryModelsChange(markerEntryModels)
+                markerVisibilityChangeListener?.onMarkerMoved(marker, markerEntryModels)
             }
         } ?: marker
         .takeIf { wasMarkerVisible }

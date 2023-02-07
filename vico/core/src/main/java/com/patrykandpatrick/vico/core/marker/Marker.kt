@@ -45,7 +45,7 @@ public interface Marker : ChartInsetter {
      * @param entry the [ChartEntry].
      * @param color the color associated with the [ChartEntry].
      */
-    public class EntryModel(
+    public data class EntryModel(
         public val location: Point,
         public val entry: ChartEntry,
         public val color: Int,

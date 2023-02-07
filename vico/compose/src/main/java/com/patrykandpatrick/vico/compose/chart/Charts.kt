@@ -277,6 +277,7 @@ public fun <Model : ChartEntryModel> Chart(
     }
 }
 
+@Suppress("LongMethod")
 @Composable
 internal fun <Model : ChartEntryModel> ChartImpl(
     chart: Chart<Model>,
@@ -303,6 +304,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
     val scrollListener = rememberScrollListener(markerTouchPoint, interaction)
+    val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
     chartScrollState.registerScrollListener(scrollListener)
@@ -392,6 +394,8 @@ internal fun <Model : ChartEntryModel> ChartImpl(
                 markerVisibilityChangeListener = markerVisibilityChangeListener,
                 wasMarkerVisible = wasMarkerVisible,
                 setWasMarkerVisible = setWasMarkerVisible,
+                lastMarkerEntryModels = lastMarkerEntryModels.value,
+                onMarkerEntryModelsChange = lastMarkerEntryModels.component2(),
             )
         }
 
