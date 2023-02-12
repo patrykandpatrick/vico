@@ -18,12 +18,17 @@ package com.patrykandpatrick.vico.sample.chart
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.candlestick.hollow
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
+import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModelProducer
 import com.patrykandpatrick.vico.core.chart.candlestick.CandlestickChart
+import com.patrykandpatrick.vico.databinding.Chart9Binding
 import com.patrykandpatrick.vico.sample.util.rememberMarker
 
 @Composable
@@ -55,7 +60,18 @@ internal fun ViewChart9(
     modelProducer: CandlestickEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-    // TODO
+
+    val candlestickChart = CandlestickChart(
+        config = CandlestickChart.Config.hollow(),
+    )
+
+    AndroidViewBinding(Chart9Binding::inflate, modifier) {
+        with(chartView) {
+            chart = candlestickChart
+            (startAxis as VerticalAxis<AxisPosition.Vertical.Start>).maxLabelCount = MAX_LABEL_COUNT
+            entryProducer = modelProducer
+        }
+    }
 }
 
 private const val MAX_LABEL_COUNT = 5

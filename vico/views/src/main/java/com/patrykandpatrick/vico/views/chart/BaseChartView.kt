@@ -44,8 +44,8 @@ import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
+import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
@@ -75,11 +75,11 @@ import kotlin.properties.Delegates.observable
 /**
  * The base for [View]s that display a chart. Subclasses define a [Model] implementation they can handle.
  */
-public abstract class BaseChartView<Model : ChartEntryModel> internal constructor(
+public abstract class BaseChartView<Model : EntryModel<*>>(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-    chartType: ThemeHandler.ChartType,
+    chartType: ThemeHandler.ChartType? = null,
 ) : View(context, attrs, defStyleAttr), ScrollListenerHost {
 
     private val contentBounds = RectF()

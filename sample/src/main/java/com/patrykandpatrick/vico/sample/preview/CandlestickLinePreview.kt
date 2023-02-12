@@ -23,54 +23,8 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.candlestick.hollow
-import com.patrykandpatrick.vico.core.candlestickentry.CandlestickTypedEntry
-import com.patrykandpatrick.vico.core.candlestickentry.candlestickEntryModelOf
 import com.patrykandpatrick.vico.core.chart.candlestick.CandlestickChart
-
-private val model = candlestickEntryModelOf(
-    CandlestickTypedEntry(
-        x = 0f,
-        low = 2f,
-        open = 4f,
-        close = 8f,
-        high = 10f,
-    ),
-    CandlestickTypedEntry(
-        x = 1f,
-        low = 6f,
-        open = 8f,
-        close = 12f,
-        high = 14f,
-    ),
-    CandlestickTypedEntry(
-        x = 2f,
-        low = 10f,
-        open = 12f,
-        close = 14f,
-        high = 16f,
-    ),
-    CandlestickTypedEntry(
-        x = 3f,
-        low = 8f,
-        open = 16f,
-        close = 10f,
-        high = 18f,
-    ),
-    CandlestickTypedEntry(
-        x = 4f,
-        low = 14f,
-        open = 16f,
-        close = 16f,
-        high = 18f,
-    ),
-    CandlestickTypedEntry(
-        x = 5f,
-        low = 8f,
-        open = 16f,
-        close = 10f,
-        high = 18f,
-    ),
-)
+import com.patrykandpatrick.vico.core.util.SampleCandlestickEntryProvider
 
 @Preview(widthDp = 350)
 @Composable
@@ -84,7 +38,7 @@ public fun CandlestickLinePreview() {
 
         Chart(
             chart = candlestickChart,
-            model = model,
+            model = SampleCandlestickEntryProvider.sampleModel,
             startAxis = startAxis(),
             bottomAxis = bottomAxis(),
         )

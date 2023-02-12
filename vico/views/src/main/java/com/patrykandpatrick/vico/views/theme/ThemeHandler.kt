@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
+import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModel
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
@@ -45,10 +46,10 @@ import com.patrykandpatrick.vico.core.extension.hasFlag
 import com.patrykandpatrick.vico.views.R
 import java.lang.Exception
 
-internal class ThemeHandler(
+public class ThemeHandler(
     private val context: Context,
     attrs: AttributeSet?,
-    chartType: ChartType,
+    chartType: ChartType?,
 ) {
 
     public var startAxis: Axis<AxisPosition.Vertical.Start>? = null
@@ -73,6 +74,9 @@ internal class ThemeHandler(
         private set
 
     public var composedChart: Chart<ComposedChartEntryModel<ChartEntryModel>>? = null
+        private set
+
+    public var candlestickChart: Chart<CandlestickEntryModel>? = null
         private set
 
     public var fadingEdges: FadingEdges? = null
@@ -120,6 +124,9 @@ internal class ThemeHandler(
                 context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView).use { typedArray ->
                     composedChart = typedArray.getComposedChart()
                 }
+
+            ChartType.Candlestick -> Unit // TODO
+            null -> Unit
         }
     }
 
@@ -288,9 +295,10 @@ internal class ThemeHandler(
         } else null
     }
 
-    internal enum class ChartType {
+    public enum class ChartType {
         Single,
         Composed,
+        Candlestick,
     }
 
     private companion object {

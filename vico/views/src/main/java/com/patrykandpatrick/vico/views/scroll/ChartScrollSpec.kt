@@ -20,7 +20,7 @@ import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.Animation
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatrick.vico.core.scroll.ScrollHandler
@@ -34,7 +34,7 @@ import com.patrykandpatrick.vico.core.scroll.ScrollHandler
  * @property autoScrollInterpolator the [TimeInterpolator] to use for automatic scrolling.
  * @property autoScrollDuration the animation duration for automatic scrolling.
  */
-public class ChartScrollSpec<in Model : ChartEntryModel>(
+public class ChartScrollSpec<in Model : EntryModel<*>>(
     public val isScrollEnabled: Boolean = true,
     public val initialScroll: InitialScroll = InitialScroll.Start,
     public val autoScrollCondition: AutoScrollCondition<Model> = AutoScrollCondition.Never,
@@ -79,7 +79,7 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
 /**
  * Copies this [ChartScrollSpec], changing select values.
  */
-public fun <Model : ChartEntryModel> ChartScrollSpec<Model>.copy(
+public fun <Model : EntryModel<*>> ChartScrollSpec<Model>.copy(
     isScrollEnabled: Boolean = this.isScrollEnabled,
     initialScroll: InitialScroll = this.initialScroll,
     autoScrollCondition: AutoScrollCondition<Model> = this.autoScrollCondition,
