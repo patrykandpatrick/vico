@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.compose.chart
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,6 +34,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -71,6 +73,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.model.Point
 import com.patrykandpatrick.vico.core.scroll.ScrollListener
+import kotlinx.coroutines.launch
 
 /**
  * Displays a chart.
@@ -312,11 +315,12 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val virtualLayout = remember { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     val onZoom = rememberZoomState(
         zoom = zoom,
         getScroll = { chartScrollState.value },
-        setScroll = { value -> chartScrollState.value = value },
+        scrollBy = { value -> coroutineScope.launch { chartScrollState.scrollBy(value) } },
         chartBounds = chart.bounds,
     )
 
@@ -440,7 +444,7 @@ internal fun rememberScrollListener(
 internal fun rememberZoomState(
     zoom: MutableState<Float>,
     getScroll: () -> Float,
-    setScroll: (value: Float) -> Unit,
+    scrollBy: (value: Float) -> Unit,
     chartBounds: RectF,
 ): OnZoom = remember {
     onZoom@{ centroid, zoomChange ->
@@ -449,6 +453,6 @@ internal fun rememberZoomState(
         val transformationAxisX = getScroll() + centroid.x - chartBounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         zoom.value = newZoom
-        setScroll(getScroll() + zoomedTransformationAxisX - transformationAxisX)
+        scrollBy(zoomedTransformationAxisX - transformationAxisX)
     }
 }

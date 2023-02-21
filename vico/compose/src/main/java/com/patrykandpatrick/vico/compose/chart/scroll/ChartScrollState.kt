@@ -45,7 +45,7 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
      */
     public var value: Float
         get() = _value.value
-        internal set(newValue) {
+        private set(newValue) {
             val oldValue = value
             _value.value = newValue
             scrollListeners.forEach { scrollListener -> scrollListener.onValueChanged(oldValue, newValue) }
