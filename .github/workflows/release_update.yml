@@ -16,49 +16,35 @@ jobs:
           java-version: 17
           distribution: zulu
       - uses: gradle/gradle-build-action@v2
-      - uses: actions/setup-python@v4
-        with:
-          python-version: 3.x
       - run: |
           git config --global user.email "96002241+patrykandpatrickbot@users.noreply.github.com"
           git config --global user.name "Patryk & Patrick Bot"
-          pip install --upgrade pip
-          pip install mkdocs mkdocs-material
           git clone https://${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com
           cd ${{ github.workspace }}/vico
-          OLD_VERSION_NAME=$(grep -oP "(?<=com\.patrykandpatrick\.vico:views:).*(?=\")" README.md)
-          NEW_VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
-          echo "OLD_VERSION_NAME=$OLD_VERSION_NAME" >> $GITHUB_ENV
-          echo "NEW_VERSION_NAME=$NEW_VERSION_NAME" >> $GITHUB_ENV
-          sed -i "s/$OLD_VERSION_NAME/$NEW_VERSION_NAME/g" README.md
-          git add README.md
-          git diff --staged --quiet HEAD || git commit -m "Update README"
-          echo "TAG_NAME=v$NEW_VERSION_NAME" >> $GITHUB_ENV
+          VERSION_NAME=$(grep -oP "(?<=version_name).*(?=\",)" versions.gradle | grep -oP "(?<=\").*")
+          echo "VERSION_NAME=$VERSION_NAME" >> $GITHUB_ENV
+          echo "TAG_NAME=v$VERSION_NAME" >> $GITHUB_ENV
           IS_PRERELEASE=false
-          echo $NEW_VERSION_NAME | grep -q "alpha\|beta" && IS_PRERELEASE=true
+          echo $VERSION_NAME | grep -q "alpha\|beta" && IS_PRERELEASE=true
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
+          ./gradlew assembleDebug
       - uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.BOT_PAT }}
           prerelease: ${{ env.IS_PRERELEASE }}
           draft: true
+          files: ${{ github.workspace }}/vico/sample/build/outputs/apk/debug/*.apk
       - run: |
           cd ${{ github.workspace }}/vico
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico.git
           ./gradlew dokkaHtmlMultiModule
-          cd wiki
-          mkdocs build
-          rm -r ${{ github.workspace }}/patrykandpatrick.com/vico/api/*
-          rm -r ${{ github.workspace }}/patrykandpatrick.com/vico/wiki/*
-          cp -R ${{ github.workspace }}/vico/docs/. ${{ github.workspace }}/patrykandpatrick.com/vico/api
-          cp -R ${{ github.workspace }}/vico/wiki/site/. ${{ github.workspace }}/patrykandpatrick.com/vico/wiki
+          rm -r ${{ github.workspace }}/patrykandpatrick.com/src/vico/api/*
+          cp -R ${{ github.workspace }}/vico/docs/. ${{ github.workspace }}/patrykandpatrick.com/src/vico/api
           cd ${{ github.workspace }}/patrykandpatrick.com
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
-          git add vico/api
+          git add src/vico/api
           git diff --staged --quiet HEAD || git commit -m "Update Vico API reference"
-          git add vico/wiki
-          git diff --staged --quiet HEAD || git commit -m "Update Vico wiki"
           git push origin
           cd ${{ github.workspace }}/vico
           git push origin
@@ -70,7 +56,7 @@ jobs:
       - run: |
           cd "${{ github.workspace }}/vico"
           ./gradlew clean
-          rm -r wiki sample README.md logo-styles.css .github
+          rm -r sample README.md logo-styles.css .github
           find . -not -path "*/.*" -type d -name patrykandpatrick | while read path; do mv "$path" "$(sed s/patrykandpatrick/patrykandpatryk/ <<< "$path")"; done
           mv vico/views vico/view
           mv vico/view/src/main/java/com/patrykandpatryk/vico/views vico/view/src/main/java/com/patrykandpatryk/vico/view
