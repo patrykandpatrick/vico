@@ -239,7 +239,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
     ): List<CharSequence> {
         val chartValues = chartValuesManager.getChartValues(position)
-        val cacheKey = LABELS_KEY + position
+        val cacheKey = LABELS_KEY + position + maxLabelCount
         return getOrPutExtra(key = cacheKey) {
             labels.clear()
             val step = (chartValues.maxY - chartValues.minY) / maxLabelCount
