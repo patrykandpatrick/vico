@@ -79,7 +79,7 @@ public open class VirtualLayout(
             finalInsets.setValuesIfGreater(tempInsets)
         }
 
-        val availableHeight = contentBounds.height() - finalInsets.vertical
+        val availableHeight = contentBounds.height() - finalInsets.vertical - legendHeight
 
         tempInsetters.forEach { insetter ->
             insetter.getHorizontalInsets(context, availableHeight, tempInsets)
