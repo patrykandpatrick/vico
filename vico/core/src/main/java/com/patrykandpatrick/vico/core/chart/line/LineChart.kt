@@ -266,10 +266,20 @@ public open class LineChart(
         }
     }
 
-    private val linePath = Path()
-    private val lineBackgroundPath = Path()
+    /**
+     * A [Path] for all lines defined by [LineSpec]s.
+     */
+    protected val linePath: Path = Path()
 
-    private val segmentProperties = MutableSegmentProperties()
+    /**
+     * A [Path] for all lines’ backgrounds defined by [LineSpec]s.
+     */
+    protected val lineBackgroundPath: Path = Path()
+
+    /**
+     * A mutable [SegmentProperties] which holds information about segment properties.
+     */
+    protected val segmentProperties: MutableSegmentProperties = MutableSegmentProperties()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -359,7 +369,10 @@ public open class LineChart(
         }
     }
 
-    private fun ChartDrawContext.drawPointsAndDataLabels(
+    /**
+     * Draws points defined by [LineSpec.point] with corresponding data labels defined by [LineSpec.dataLabel].
+     */
+    protected fun ChartDrawContext.drawPointsAndDataLabels(
         lineSpec: LineSpec,
         entries: List<ChartEntry>,
         drawingStart: Float,
@@ -414,13 +427,19 @@ public open class LineChart(
         }
     }
 
-    private fun resetTempData() {
+    /**
+     * Resets temporary data used during single draw operation.
+     */
+    protected fun resetTempData() {
         entryLocationMap.clear()
         linePath.rewind()
         lineBackgroundPath.rewind()
     }
 
-    private fun DrawContext.forEachPointWithinBoundsIndexed(
+    /**
+     * Performs the given [action], for each element in [entries] which fits within visible bounds of the chart.
+     */
+    protected fun DrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
         segment: SegmentProperties,
         drawingStart: Float,
