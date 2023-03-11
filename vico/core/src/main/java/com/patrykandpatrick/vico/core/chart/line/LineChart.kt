@@ -372,7 +372,7 @@ public open class LineChart(
     /**
      * Draws points defined by [LineSpec.point] with corresponding data labels defined by [LineSpec.dataLabel].
      */
-    protected fun ChartDrawContext.drawPointsAndDataLabels(
+    protected open fun ChartDrawContext.drawPointsAndDataLabels(
         lineSpec: LineSpec,
         entries: List<ChartEntry>,
         drawingStart: Float,
@@ -439,7 +439,7 @@ public open class LineChart(
     /**
      * Performs the given [action], for each element in [entries] which fits within visible bounds of the chart.
      */
-    protected fun DrawContext.forEachPointWithinBoundsIndexed(
+    protected open fun DrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
         segment: SegmentProperties,
         drawingStart: Float,
