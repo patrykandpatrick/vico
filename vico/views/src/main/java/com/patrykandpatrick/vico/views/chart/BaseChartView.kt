@@ -344,7 +344,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
-        updateBounds(context = measureContext)
+        val chartBounds = updateBounds(measureContext, chart, model)
+
+        if (chartBounds.isEmpty) return@withChartAndModel
+
         motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
@@ -426,9 +429,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         )
     }
 
-    private fun updateBounds(context: MeasureContext) = withChartAndModel { chart, model ->
+    private fun updateBounds(
+        context: MeasureContext,
+        chart: Chart<Model>,
+        model: Model,
+    ): RectF {
         measureContext.clearExtras()
-        virtualLayout.setBounds(
+        return virtualLayout.setBounds(
             context = measureContext,
             contentBounds = contentBounds,
             chart = chart,

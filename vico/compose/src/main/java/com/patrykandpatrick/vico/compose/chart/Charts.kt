@@ -349,7 +349,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
         val segmentProperties = chart.getSegmentProperties(measureContext, model)
 
-        virtualLayout.setBounds(
+        val chartBounds = virtualLayout.setBounds(
             context = measureContext,
             contentBounds = bounds,
             chart = chart,
@@ -357,6 +357,8 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             segmentProperties = segmentProperties,
             marker,
         )
+
+        if (chartBounds.isEmpty) return@Canvas
 
         chartScrollState.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
