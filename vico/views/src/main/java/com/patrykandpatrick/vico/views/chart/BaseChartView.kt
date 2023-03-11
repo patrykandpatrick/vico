@@ -345,7 +345,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
-        val chartBounds = updateBounds(context = measureContext, chart, model)
+        val chartBounds = updateBounds(measureContext, chart, model)
 
         if (chartBounds.hasInvalidBounds) return@withChartAndModel
 
