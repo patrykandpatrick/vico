@@ -94,17 +94,8 @@ public open class ColumnChart(
      */
     public constructor() : this(emptyList())
 
-    /**
-     * When [mergeMode] is set to [MergeMode.Stack], this maps the x-axis value of every non-empty segment to a pair
-     * containing the bottom coordinate of the segment’s bottommost column and the top coordinate of the segment’s
-     * topmost column. This hash map is used by [drawChart] and [drawChartInternal].
-     */
-    protected val heightMap: HashMap<Float, Pair<Float, Float>> = HashMap()
-
-    /**
-     * The chart’s [MutableSegmentProperties] instance, which holds information about the segment properties.
-     */
-    protected val segmentProperties: MutableSegmentProperties = MutableSegmentProperties()
+    private val heightMap = HashMap<Float, Pair<Float, Float>>()
+    private val segmentProperties = MutableSegmentProperties()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -122,7 +113,7 @@ public open class ColumnChart(
         heightMap.clear()
     }
 
-    protected open fun ChartDrawContext.drawChartInternal(
+    private fun ChartDrawContext.drawChartInternal(
         chartValues: ChartValues,
         model: ChartEntryModel,
         cellWidth: Float,
@@ -198,7 +189,7 @@ public open class ColumnChart(
                     drawDataLabel(model.entries.size, column.thicknessDp, entry.y, columnCenterX, columnSignificantY)
                 } else if (index == model.entries.lastIndex) {
                     val yValues = heightMap[entry.x]
-                    drawStackedDataLabel(
+                    drawDataLabel(
                         model.entries.size, column.thicknessDp, yValues?.first, yValues?.second,
                         columnCenterX, zeroLinePosition, heightMultiplier,
                     )
@@ -208,7 +199,7 @@ public open class ColumnChart(
     }
 
     @LongParameterListDrawFunction
-    protected open fun ChartDrawContext.drawStackedDataLabel(
+    private fun ChartDrawContext.drawDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         negativeY: Float?,
@@ -228,7 +219,7 @@ public open class ColumnChart(
     }
 
     @LongParameterListDrawFunction
-    protected open fun ChartDrawContext.drawDataLabel(
+    private fun ChartDrawContext.drawDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         dataLabelValue: Float,
@@ -245,7 +236,6 @@ public open class ColumnChart(
                 canUseSegmentWidth -> segmentWidth
                 mergeMode == MergeMode.Grouped ->
                     (columnThicknessDp + 2 * minOf(spacingDp, innerSpacingDp.half)).wholePixels
-
                 else -> error(message = "Encountered an unexpected `MergeMode`.")
             } * chartScale
             val text = dataLabelValueFormatter.formatValue(
@@ -287,7 +277,7 @@ public open class ColumnChart(
         }
     }
 
-    protected open fun updateMarkerLocationMap(
+    private fun updateMarkerLocationMap(
         entry: ChartEntry,
         columnTop: Float,
         columnCenterX: Float,
@@ -322,17 +312,16 @@ public open class ColumnChart(
         segmentProperties.set(cellWidth = context.getCellWidth(model.entries.size), marginWidth = spacingDp.pixels)
     }
 
-    protected open fun MeasureContext.getCellWidth(
+    private fun MeasureContext.getCellWidth(
         entryCollectionSize: Int,
     ): Float = when (mergeMode) {
         MergeMode.Stack ->
             columns.maxOf { it.thicknessDp.pixels }
-
         MergeMode.Grouped ->
             getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
-    protected open fun MeasureContext.getDrawingStart(
+    private fun MeasureContext.getDrawingStart(
         entryCollectionIndex: Int,
         segmentCompensation: Float,
         columnWidth: Float,
@@ -350,7 +339,7 @@ public open class ColumnChart(
         }
     }
 
-    protected open fun MeasureContext.getCumulatedThickness(count: Int): Float {
+    private fun MeasureContext.getCumulatedThickness(count: Int): Float {
         var thickness = 0f
         for (i in 0 until count) {
             thickness += columns.getRepeating(i).thicknessDp * density
