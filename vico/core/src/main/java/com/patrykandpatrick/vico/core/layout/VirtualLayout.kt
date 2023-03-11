@@ -53,7 +53,7 @@ public open class VirtualLayout(
      * @param segmentProperties the [SegmentProperties] of the chart.
      * @param chartInsetter additional components that influence the chart layout, such as markers.
      *
-     * @return the bounds set to the [chart].
+     * @return the bounds applied to the chart.
      */
     @LongParameterListDrawFunction
     public open fun <Model : ChartEntryModel> setBounds(
