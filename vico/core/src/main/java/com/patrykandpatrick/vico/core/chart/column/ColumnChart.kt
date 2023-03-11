@@ -95,13 +95,14 @@ public open class ColumnChart(
     public constructor() : this(emptyList())
 
     /**
-     * A map holding information about bottom and top vertical positions of columns drawn at given x-axis value.
-     * It is used in [drawChart] and [drawChartInternal] when the [mergeMode] is set to [MergeMode.Stack].
+     * When [mergeMode] is set to [MergeMode.Stack], this maps the x-axis value of every non-empty segment to a pair
+     * containing the bottom coordinate of the segment’s bottommost column and the top coordinate of the segment’s
+     * topmost column. This hash map is used by [drawChart] and [drawChartInternal].
      */
     protected val heightMap: HashMap<Float, Pair<Float, Float>> = HashMap()
 
     /**
-     * A mutable [SegmentProperties] which holds information about segment properties.
+     * The chart’s [MutableSegmentProperties] instance, which holds information about the segment properties.
      */
     protected val segmentProperties: MutableSegmentProperties = MutableSegmentProperties()
 
