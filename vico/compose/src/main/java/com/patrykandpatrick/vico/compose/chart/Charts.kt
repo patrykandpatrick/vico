@@ -66,7 +66,6 @@ import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.extension.hasInvalidBounds
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
@@ -359,7 +358,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             marker,
         )
 
-        if (chartBounds.hasInvalidBounds) return@Canvas
+        if (chartBounds.isEmpty) return@Canvas
 
         chartScrollState.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),

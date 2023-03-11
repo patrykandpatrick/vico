@@ -46,7 +46,6 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.extension.hasInvalidBounds
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
@@ -347,7 +346,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
         val chartBounds = updateBounds(measureContext, chart, model)
 
-        if (chartBounds.hasInvalidBounds) return@withChartAndModel
+        if (chartBounds.isEmpty) return@withChartAndModel
 
         motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
         if (scroller.computeScrollOffset()) {
