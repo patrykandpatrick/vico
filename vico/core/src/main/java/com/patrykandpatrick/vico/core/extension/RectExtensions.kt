@@ -22,6 +22,12 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
+ * Defines whether bounds within this [RectF] are invalid and can’t be used to draw a content.
+ */
+public val RectF.hasInvalidBounds: Boolean
+    get() = top >= bottom || left >= right
+
+/**
  * Updates the coordinates of this [RectF].
  */
 public fun RectF.updateBounds(

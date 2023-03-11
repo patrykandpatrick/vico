@@ -66,6 +66,7 @@ import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
+import com.patrykandpatrick.vico.core.extension.hasInvalidBounds
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
@@ -349,7 +350,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
         val segmentProperties = chart.getSegmentProperties(measureContext, model)
 
-        virtualLayout.setBounds(
+        val chartBounds = virtualLayout.setBounds(
             context = measureContext,
             contentBounds = bounds,
             chart = chart,
@@ -357,6 +358,8 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             segmentProperties = segmentProperties,
             marker,
         )
+
+        if (chartBounds.hasInvalidBounds) return@Canvas
 
         chartScrollState.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
