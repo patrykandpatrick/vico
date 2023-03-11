@@ -1,7 +1,7 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: "[Bug] "
+title: ""
 labels: bug
 assignees: ''
 
@@ -12,17 +12,14 @@ A clear and concise description of what the bug is.
 
 **Module**
 <!-- Add an “x” between “[” and “]” where applicable. -->
-- [x] view
-- [ ] compose
-- [ ] compose-m2
-- [ ] compose-m3
+- [ ] `compose`
+- [ ] `views`
+- [ ] `compose-m2`
+- [ ] `compose-m3`
+- [ ] `core` (select if none of the above apply)
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+**To reproduce**
+Steps to reproduce the behavior.
 
 **Expected behavior**
 A clear and concise description of what you expected to happen.
