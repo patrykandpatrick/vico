@@ -94,8 +94,16 @@ public open class ColumnChart(
      */
     public constructor() : this(emptyList())
 
-    private val heightMap = HashMap<Float, Pair<Float, Float>>()
-    private val segmentProperties = MutableSegmentProperties()
+    /**
+     * A map holding information about bottom and top vertical positions of columns drawn at given x-axis value.
+     * It is used in [drawChart] and [drawChartInternal] when the [mergeMode] is set to [MergeMode.Stack].
+     */
+    protected val heightMap: HashMap<Float, Pair<Float, Float>> = HashMap()
+
+    /**
+     * A mutable [SegmentProperties] which holds information about segment properties.
+     */
+    protected val segmentProperties: MutableSegmentProperties = MutableSegmentProperties()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -113,7 +121,7 @@ public open class ColumnChart(
         heightMap.clear()
     }
 
-    private fun ChartDrawContext.drawChartInternal(
+    protected open fun ChartDrawContext.drawChartInternal(
         chartValues: ChartValues,
         model: ChartEntryModel,
         cellWidth: Float,
@@ -189,7 +197,7 @@ public open class ColumnChart(
                     drawDataLabel(model.entries.size, column.thicknessDp, entry.y, columnCenterX, columnSignificantY)
                 } else if (index == model.entries.lastIndex) {
                     val yValues = heightMap[entry.x]
-                    drawDataLabel(
+                    drawStackedDataLabel(
                         model.entries.size, column.thicknessDp, yValues?.first, yValues?.second,
                         columnCenterX, zeroLinePosition, heightMultiplier,
                     )
@@ -199,7 +207,7 @@ public open class ColumnChart(
     }
 
     @LongParameterListDrawFunction
-    private fun ChartDrawContext.drawDataLabel(
+    protected open fun ChartDrawContext.drawStackedDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         negativeY: Float?,
@@ -219,7 +227,7 @@ public open class ColumnChart(
     }
 
     @LongParameterListDrawFunction
-    private fun ChartDrawContext.drawDataLabel(
+    protected open fun ChartDrawContext.drawDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         dataLabelValue: Float,
@@ -236,6 +244,7 @@ public open class ColumnChart(
                 canUseSegmentWidth -> segmentWidth
                 mergeMode == MergeMode.Grouped ->
                     (columnThicknessDp + 2 * minOf(spacingDp, innerSpacingDp.half)).wholePixels
+
                 else -> error(message = "Encountered an unexpected `MergeMode`.")
             } * chartScale
             val text = dataLabelValueFormatter.formatValue(
@@ -277,7 +286,7 @@ public open class ColumnChart(
         }
     }
 
-    private fun updateMarkerLocationMap(
+    protected open fun updateMarkerLocationMap(
         entry: ChartEntry,
         columnTop: Float,
         columnCenterX: Float,
@@ -312,16 +321,17 @@ public open class ColumnChart(
         segmentProperties.set(cellWidth = context.getCellWidth(model.entries.size), marginWidth = spacingDp.pixels)
     }
 
-    private fun MeasureContext.getCellWidth(
+    protected open fun MeasureContext.getCellWidth(
         entryCollectionSize: Int,
     ): Float = when (mergeMode) {
         MergeMode.Stack ->
             columns.maxOf { it.thicknessDp.pixels }
+
         MergeMode.Grouped ->
             getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
-    private fun MeasureContext.getDrawingStart(
+    protected open fun MeasureContext.getDrawingStart(
         entryCollectionIndex: Int,
         segmentCompensation: Float,
         columnWidth: Float,
@@ -339,7 +349,7 @@ public open class ColumnChart(
         }
     }
 
-    private fun MeasureContext.getCumulatedThickness(count: Int): Float {
+    protected open fun MeasureContext.getCumulatedThickness(count: Int): Float {
         var thickness = 0f
         for (i in 0 until count) {
             thickness += columns.getRepeating(i).thicknessDp * density
