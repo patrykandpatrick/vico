@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.extension
 
+import android.graphics.Color
+
 private const val ALPHA_BIT_SHIFT = 24
 private const val RED_BIT_SHIFT = 16
 private const val GREEN_BIT_SHIFT = 8
@@ -63,6 +65,12 @@ public val Int.colorHex: String
  */
 public val Int.alpha: Int
     get() = extractColorChannel(ALPHA_BIT_SHIFT)
+
+/**
+ * Checks whether this color int is not transparent.
+ */
+public val Int.isNotTransparent: Boolean
+    get() = this != Color.TRANSPARENT
 
 private fun Int.extractColorChannel(bitShift: Int): Int =
     this shr bitShift and COLOR_MASK

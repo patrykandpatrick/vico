@@ -137,3 +137,21 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
  */
 public fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
     ArrayList<T>(sourceCollection.size).apply { addAll(sourceCollection) }
+
+/**
+ * Returns the largest value among all values produced by [selector] function
+ * applied to each element in the collection or `null` if there are no elements.
+ */
+public inline fun <T, R : Comparable<R>> Iterable<T>.maxOfOrNullIndexed(selector: (Int, T) -> R): R? {
+    val iterator = iterator()
+    var index = 0
+    if (!iterator.hasNext()) return null
+    var maxValue = selector(index++, iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(index++, iterator.next())
+        if (maxValue < v) {
+            maxValue = v
+        }
+    }
+    return maxValue
+}

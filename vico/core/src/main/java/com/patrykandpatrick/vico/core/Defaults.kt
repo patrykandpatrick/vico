@@ -223,6 +223,8 @@ public object DefaultDimens {
      * The default height for charts (in dp).
      */
     public const val CHART_HEIGHT: Float = 200f
+
+    public const val PIE_CHART_START_ANGLE: Float = -90f
 }
 
 /**
