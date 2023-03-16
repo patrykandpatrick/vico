@@ -17,8 +17,11 @@
 package com.patrykandpatrick.vico.core.chart
 
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens.PIE_CHART_START_ANGLE
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
@@ -42,12 +45,14 @@ import com.patrykandpatrick.vico.core.math.translateYByAngle
 private const val FULL_DEGREES = 360f
 
 public open class PieChart(
+    public val slices: List<Slice>,
+    public var spacingDp: Float = 0f,
     public var startAngle: Float = PIE_CHART_START_ANGLE,
-    protected val slices: List<Slice>,
 ) : BoundsAware {
 
     init {
         require(slices.isNotEmpty()) { "Slices cannot be empty." }
+        require(spacingDp >= 0f) { "The spacing cannot be negative." }
     }
 
     public open class Slice(
@@ -183,7 +188,17 @@ public open class PieChart(
 
     override val bounds: RectF = RectF()
 
+    protected val spacingPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+    }
+
     protected val oval: RectF = RectF()
+
+    protected val spacingPathBuilder: Path = Path()
+
+    protected val spacingPath: Path = Path()
+
+    protected val spacingMatrix: Matrix = Matrix()
 
     public open fun updateOvalBounds(
         context: MeasureContext,
@@ -211,6 +226,10 @@ public open class PieChart(
 
         updateOvalBounds(context, model)
 
+        val restoreCount = if (spacingDp > 0f) saveLayer() else -1
+
+        spacingPath.rewind()
+
         model.entries.foldIndexed(startAngle) { index, startAngle, entry ->
 
             val slice = slices.getRepeating(index)
@@ -225,7 +244,33 @@ public open class PieChart(
                 label = entry.label,
             )
 
+            if (spacingDp > 0f) {
+                addSpacingSegment(spacingPathBuilder, startAngle)
+            }
+
             startAngle + sweepAngle
+        }
+
+        canvas.drawPath(spacingPath, spacingPaint)
+        if (restoreCount >= 0) restoreCanvasToCount(restoreCount)
+    }
+
+    protected open fun DrawContext.addSpacingSegment(
+        pathBuilder: Path,
+        angle: Float,
+    ) {
+        val spacing = spacingDp.pixels
+        with(spacingPathBuilder) {
+            spacingMatrix.postRotate(angle, oval.centerX(), oval.centerY())
+            rewind()
+            moveTo(oval.centerX(), oval.centerY() + spacing.half)
+            lineTo(oval.right + spacing, oval.centerY() + spacing.half)
+            lineTo(oval.right + spacing, oval.centerY() - spacing.half)
+            lineTo(oval.centerX(), oval.centerY() - spacing.half)
+            close()
+            transform(spacingMatrix)
+            spacingPath.addPath(spacingPathBuilder)
+            spacingMatrix.reset()
         }
     }
 }
