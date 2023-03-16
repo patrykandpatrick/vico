@@ -18,14 +18,16 @@ package com.patrykandpatrick.vico.core.chart
 
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens.PIE_CHART_START_ANGLE
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
+import com.patrykandpatrick.vico.core.component.text.TextComponent
+import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.entry.PieEntryModel
-import com.patrykandpatrick.vico.core.extension.PI_RAD
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.isNotTransparent
@@ -33,8 +35,9 @@ import com.patrykandpatrick.vico.core.extension.maxOfOrNullIndexed
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.updateBy
-import kotlin.math.cos
-import kotlin.math.sin
+import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
+import com.patrykandpatrick.vico.core.math.translateXByAngle
+import com.patrykandpatrick.vico.core.math.translateYByAngle
 
 private const val FULL_DEGREES = 360f
 
@@ -53,7 +56,10 @@ public open class PieChart(
         public var strokeWidthDp: Float = 0f,
         public var strokeColor: Int = Color.TRANSPARENT,
         public var offsetFromCenterDp: Float = 0f,
+        public var textComponent: TextComponent = textComponent(),
     ) {
+
+        protected val layoutHelper: PieLayoutHelper = PieLayoutHelper()
 
         protected val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             this.color = color
@@ -61,60 +67,117 @@ public open class PieChart(
 
         protected val drawOval: RectF = RectF()
 
+        protected val slicePath: Path = Path()
+
         public open fun draw(
             context: DrawContext,
             oval: RectF,
             startAngle: Float,
             sweepAngle: Float,
+            label: CharSequence?,
         ): Unit = with(context) {
 
-            val strokeWidth = strokeWidthDp.pixels
-
             drawOval.set(oval)
-            applyOffset(context, drawOval, startAngle + sweepAngle.half)
+            applyOffset(drawOval, startAngle + sweepAngle.half)
 
             if (color.isNotTransparent) {
-
-                paint.style = Paint.Style.FILL
-                paint.color = color
-
-                canvas.drawArc(
-                    drawOval,
-                    startAngle,
-                    sweepAngle,
-                    true,
-                    paint,
-                )
+                drawFilledSlice(context, startAngle, sweepAngle)
             }
 
             if (strokeColor.isNotTransparent && strokeWidthDp > 0f) {
+                drawStrokedSlice(context, startAngle, sweepAngle)
+            }
 
-                paint.style = Paint.Style.STROKE
-                paint.color = strokeColor
-                paint.strokeWidth = strokeWidth
-
-                drawOval.updateBy(
-                    left = strokeWidth.half,
-                    top = strokeWidth.half,
-                    right = -strokeWidth.half,
-                    bottom = -strokeWidth.half,
-                )
-
-                canvas.drawArc(
-                    drawOval,
-                    startAngle,
-                    sweepAngle,
-                    true,
-                    paint,
-                )
+            if (label != null) {
+                drawLabel(context, drawOval, startAngle, sweepAngle, label)
             }
         }
 
-        public fun applyOffset(context: MeasureContext, rectF: RectF, angle: Float): Unit = with(context) {
-            val xOffset = (offsetFromCenterDp.pixels * cos(angle * Math.PI / PI_RAD)).toFloat()
-            val yOffset = (offsetFromCenterDp.pixels * sin(angle * Math.PI / PI_RAD)).toFloat()
+        protected open fun drawFilledSlice(
+            context: DrawContext,
+            startAngle: Float,
+            sweepAngle: Float,
+        ): Unit = with(context) {
 
-            rectF.offset(xOffset, yOffset)
+            paint.style = Paint.Style.FILL
+            paint.color = color
+
+            slicePath.rewind()
+
+            slicePath.addArc(drawOval, startAngle, sweepAngle)
+
+            slicePath.lineTo(drawOval.centerX(), drawOval.centerY())
+
+            slicePath.close()
+
+            canvas.drawPath(slicePath, paint)
+        }
+
+        protected open fun drawStrokedSlice(
+            context: DrawContext,
+            startAngle: Float,
+            sweepAngle: Float,
+        ): Unit = with(context) {
+            val strokeWidth = strokeWidthDp.pixels
+
+            paint.style = Paint.Style.STROKE
+            paint.color = strokeColor
+            paint.strokeWidth = strokeWidth
+
+            drawOval.updateBy(
+                left = strokeWidth.half,
+                top = strokeWidth.half,
+                right = -strokeWidth.half,
+                bottom = -strokeWidth.half,
+            )
+
+            slicePath.rewind()
+
+            slicePath.addArc(drawOval, startAngle, sweepAngle)
+
+            slicePath.lineTo(drawOval.centerX(), drawOval.centerY())
+
+            slicePath.close()
+
+            canvas.drawPath(slicePath, paint)
+        }
+
+        protected open fun drawLabel(
+            context: DrawContext,
+            drawOval: RectF,
+            startAngle: Float,
+            sweepAngle: Float,
+            label: CharSequence,
+        ): Unit = with(context) {
+
+            val radius = drawOval.width().half
+
+            val textX = drawOval.centerX() + radius.half.translateXByAngle(startAngle + sweepAngle.half)
+            val textY = drawOval.centerY() + radius.half.translateYByAngle(startAngle + sweepAngle.half)
+
+            val textBounds = textComponent.getTextBounds(context, label)
+
+            textBounds.offset(
+                textX - textBounds.width().toInt().half,
+                textY - textBounds.height().toInt().half,
+            )
+
+            layoutHelper.adjustTextBounds(textBounds, slicePath)
+
+            textComponent.drawText(
+                context = context,
+                text = label,
+                textX = textBounds.centerX(),
+                textY = textY,
+                maxTextWidth = textBounds.width().toInt(),
+            )
+        }
+
+        protected fun MeasureContext.applyOffset(rectF: RectF, angle: Float) {
+            rectF.offset(
+                offsetFromCenterDp.pixels.translateXByAngle(angle),
+                offsetFromCenterDp.pixels.translateYByAngle(angle),
+            )
         }
     }
 
@@ -159,6 +222,7 @@ public open class PieChart(
                 oval = oval,
                 startAngle = startAngle,
                 sweepAngle = sweepAngle,
+                label = entry.label,
             )
 
             startAngle + sweepAngle
