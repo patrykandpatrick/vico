@@ -445,7 +445,6 @@ public open class LineChart(
         drawingStart: Float,
         action: (index: Int, entry: ChartEntry, x: Float, y: Float) -> Unit,
     ) {
-
         val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
 
         val minX = chartValues.minX
@@ -528,8 +527,7 @@ public open class LineChart(
     ): Unit = with(context) {
         outInsets.setVertical(
             value = lines.maxOf {
-                if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp)
-                else it.lineThicknessDp
+                if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp) else it.lineThicknessDp
             }.pixels,
         )
     }

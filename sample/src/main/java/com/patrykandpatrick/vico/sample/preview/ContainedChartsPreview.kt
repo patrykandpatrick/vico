@@ -98,7 +98,6 @@ private val endAxis: Axis<End>
 @Composable
 @Preview("Chart with independent axes", widthDp = 350)
 public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
-
     val composedChart = getColumnChart(targetVerticalAxisPosition = Start) +
         getLineChart(targetVerticalAxisPosition = End)
 
@@ -117,7 +116,6 @@ public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
 @Composable
 @Preview("Chart with dependent axes", widthDp = 350)
 public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
-
     val composedChart = getColumnChart() + getLineChart()
 
     composedChart.setPersistentMarkers(markerMap)
@@ -135,7 +133,6 @@ public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
 @Composable
 @Preview("Column chart", widthDp = 350)
 public fun ColumnChart(modifier: Modifier = Modifier) {
-
     Chart(
         chart = getColumnChart(markerMap = markerMap),
         model = model1,
@@ -148,7 +145,6 @@ public fun ColumnChart(modifier: Modifier = Modifier) {
 @Composable
 @Preview("Line chart", widthDp = 350)
 public fun LineChart(modifier: Modifier = Modifier) {
-
     Chart(
         chart = getLineChart(markerMap = markerMap),
         model = model2,

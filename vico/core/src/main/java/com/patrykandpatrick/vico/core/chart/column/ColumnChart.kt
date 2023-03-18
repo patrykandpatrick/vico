@@ -128,7 +128,6 @@ public open class ColumnChart(
         cellWidth: Float,
         spacing: Float,
     ) {
-
         val yRange = (chartValues.maxY - chartValues.minY).takeIf { it != 0f } ?: return
         val heightMultiplier = bounds.height() / yRange
 
@@ -162,14 +161,20 @@ public open class ColumnChart(
                     MergeMode.Stack -> {
                         val (stackedNegY, stackedPosY) = heightMap.getOrElse(entry.x) { 0f to 0f }
                         columnBottom = zeroLinePosition +
-                            if (entry.y < 0f) height + abs(stackedNegY) * heightMultiplier
-                            else -stackedPosY * heightMultiplier
+                            if (entry.y < 0f) {
+                                height + abs(stackedNegY) * heightMultiplier
+                            } else {
+                                -stackedPosY * heightMultiplier
+                            }
 
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         columnCenterX += layoutDirectionMultiplier * cellWidth.half
                         heightMap[entry.x] =
-                            if (entry.y < 0f) stackedNegY + entry.y to stackedPosY
-                            else stackedNegY to stackedPosY + entry.y
+                            if (entry.y < 0f) {
+                                stackedNegY + entry.y to stackedPosY
+                            } else {
+                                stackedNegY to stackedPosY + entry.y
+                            }
                     }
 
                     MergeMode.Grouped -> {
@@ -199,8 +204,13 @@ public open class ColumnChart(
                 } else if (index == model.entries.lastIndex) {
                     val yValues = heightMap[entry.x]
                     drawStackedDataLabel(
-                        model.entries.size, column.thicknessDp, yValues?.first, yValues?.second,
-                        columnCenterX, zeroLinePosition, heightMultiplier,
+                        model.entries.size,
+                        column.thicknessDp,
+                        yValues?.first,
+                        yValues?.second,
+                        columnCenterX,
+                        zeroLinePosition,
+                        heightMultiplier,
                     )
                 }
             }
@@ -235,7 +245,6 @@ public open class ColumnChart(
         x: Float,
         y: Float,
     ) {
-
         dataLabel?.let { textComponent ->
 
             val canUseSegmentWidth =
@@ -258,9 +267,7 @@ public open class ColumnChart(
                 rotationDegrees = dataLabelRotationDegrees,
             ).coerceAtMost(maximumValue = maxWidth)
 
-            if (x - dataLabelWidth.half > bounds.right ||
-                x + dataLabelWidth.half < bounds.left
-            ) return
+            if (x - dataLabelWidth.half > bounds.right || x + dataLabelWidth.half < bounds.left) return
 
             val labelVerticalPosition =
                 if (dataLabelValue < 0f) dataLabelVerticalPosition.negative() else dataLabelVerticalPosition
@@ -371,7 +378,9 @@ public open class ColumnChart(
         /**
          * Columns with the same x-axis values will be placed on top of each other.
          */
-        Stack;
+        Stack,
+
+        ;
 
         /**
          * Returns the minimum y-axis value, taking into account the current [MergeMode].

@@ -1,4 +1,5 @@
 @file:Suppress("Deprecation")
+
 /*
  * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
  *

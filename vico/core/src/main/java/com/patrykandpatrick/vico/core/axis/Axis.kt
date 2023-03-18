@@ -206,9 +206,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
          */
         public class Fraction(public val fraction: Float) : SizeConstraint() {
             init {
-                if (fraction !in MIN..MAX) {
-                    throw IllegalArgumentException("Expected a value in the interval [$MIN, $MAX]. Got $fraction.")
-                }
+                require(fraction in MIN..MAX) { "Expected a value in the interval [$MIN, $MAX]. Got $fraction." }
             }
 
             private companion object {

@@ -92,12 +92,10 @@ public open class FadingEdges(
         context: ChartDrawContext,
         bounds: RectF,
     ): Unit = with(context) {
-
         val maxScroll = getMaxScrollDistance()
         var fadeAlphaFraction: Float
 
         if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
-
             fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
             drawFadingEdge(
@@ -111,7 +109,6 @@ public open class FadingEdges(
         }
 
         if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
-
             fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
             drawFadingEdge(
