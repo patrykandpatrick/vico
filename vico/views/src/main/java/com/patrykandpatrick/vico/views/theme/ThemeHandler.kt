@@ -127,7 +127,6 @@ internal class ThemeHandler(
         styleAttrId: Int,
         builder: Builder,
     ): Builder {
-
         fun TypedArray.getLineComponent(
             @StyleableRes resourceId: Int,
             @StyleableRes styleableResourceId: IntArray,
@@ -185,7 +184,9 @@ internal class ThemeHandler(
                     resourceId = R.styleable.Axis_titleStyle,
                     styleableResourceId = R.styleable.TextComponentStyle,
                 ).getTextComponent(context = context)
-            } else null
+            } else {
+                null
+            }
             title = axisStyle.getString(R.styleable.Axis_title)
 
             when (this) {
@@ -263,7 +264,6 @@ internal class ThemeHandler(
         )
 
         return if (startLength > 0f || endLength > 0f) {
-
             val interpolatorClassName = getString(R.styleable.BaseChartView_fadingEdgeVisibilityInterpolator)
 
             val interpolator = if (interpolatorClassName != null) {
@@ -277,7 +277,9 @@ internal class ThemeHandler(
                     )
                     null
                 }
-            } else null
+            } else {
+                null
+            }
 
             FadingEdges(
                 startEdgeWidthDp = startLength,
@@ -285,7 +287,9 @@ internal class ThemeHandler(
                 visibilityThresholdDp = threshold,
                 visibilityInterpolator = interpolator ?: AccelerateInterpolator(),
             )
-        } else null
+        } else {
+            null
+        }
     }
 
     internal enum class ChartType {

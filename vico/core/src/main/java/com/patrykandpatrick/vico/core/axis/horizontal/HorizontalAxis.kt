@@ -176,7 +176,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
 
         for (index in 0 until tickPosition.getTickCount(entryLength = entryLength)) {
-
             val firstEntityConditionsMet = segmentX != xRange.start ||
                 !segmentProperties.labelPositionOrDefault.skipFirstEntity ||
                 tickPosition.offset > 0
@@ -223,11 +222,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         segmentProperties: SegmentProperties,
     ): Float = with(context) {
-
         val labelWidth =
             if (isHorizontalScrollEnabled) {
                 segmentProperties.scaled(scale = chartScale).segmentWidth.toInt() * tickPosition.spacing
-            } else Int.MAX_VALUE
+            } else {
+                Int.MAX_VALUE
+            }
 
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
@@ -264,7 +264,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     private fun MeasureContext.getLabelsToMeasure(): List<CharSequence> {
-
         val chartValues = chartValuesManager.getChartValues()
 
         return listOf(

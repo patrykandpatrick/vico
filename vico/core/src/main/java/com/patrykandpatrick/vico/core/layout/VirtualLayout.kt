@@ -64,7 +64,6 @@ public open class VirtualLayout(
         segmentProperties: SegmentProperties,
         vararg chartInsetter: ChartInsetter?,
     ): RectF = with(context) {
-
         tempInsetters.clear()
         finalInsets.clear()
         tempInsets.clear()

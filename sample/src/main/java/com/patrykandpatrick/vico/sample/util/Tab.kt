@@ -31,5 +31,5 @@ internal enum class Tab(
     Views(
         labelResourceId = R.string.views,
         iconResourceId = R.drawable.ic_views,
-    )
+    ),
 }

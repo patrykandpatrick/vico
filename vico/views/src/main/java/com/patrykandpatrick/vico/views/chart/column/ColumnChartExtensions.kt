@@ -46,7 +46,6 @@ public fun columnLineComponent(
     @AttrRes attrRes: Int = R.attr.column1,
     @StyleRes styleResId: Int = 0,
 ): LineComponent {
-
     val tempArray = IntArray(1)
 
     tempArray[0] = attrRes
@@ -75,7 +74,6 @@ public fun columnChart(
     @StyleRes styleResId: Int = 0,
     mergeMode: ColumnChart.MergeMode = ColumnChart.MergeMode.Grouped,
 ): ColumnChart {
-
     val tempArray = IntArray(1)
 
     val columns = listOf(R.attr.column1, R.attr.column2, R.attr.column3)

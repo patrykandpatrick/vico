@@ -150,7 +150,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
         maxTextHeight: Int = Int.MAX_VALUE,
         rotationDegrees: Float = 0f,
     ): Unit = with(context) {
-
         if (text.isBlank()) return
         layout = getLayout(
             text = text,
@@ -165,7 +164,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
         val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layout.height.toFloat())
 
         context.withCanvas {
-
             save()
 
             val bounds = layout.getBounds(tempMeasureBounds)
@@ -182,7 +180,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
             var yCorrection = 0f
 
             if (shouldRotate) {
-
                 val boundsPostRotation = bounds.copy().rotate(rotationDegrees)
                 val heightDelta = bounds.height() - boundsPostRotation.height()
                 val widthDelta = bounds.width() - boundsPostRotation.width()
@@ -234,13 +231,11 @@ public open class TextComponent protected constructor() : Padding, Margins {
     ): Float = with(context) {
         when (this@getTextStartPosition) {
             HorizontalPosition.Start ->
-                if (isLtr) getTextRightPosition(baseXPosition, width)
-                else getTextLeftPosition(baseXPosition)
+                if (isLtr) getTextRightPosition(baseXPosition, width) else getTextLeftPosition(baseXPosition)
             HorizontalPosition.Center ->
                 baseXPosition - width.half
             HorizontalPosition.End ->
-                if (isLtr) getTextLeftPosition(baseXPosition)
-                else getTextRightPosition(baseXPosition, width)
+                if (isLtr) getTextLeftPosition(baseXPosition) else getTextRightPosition(baseXPosition, width)
         }
     }
 
@@ -317,7 +312,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
         includePaddingAndMargins: Boolean = true,
         rotationDegrees: Float = 0f,
     ): RectF = with(context) {
-
         getLayout(
             text = text,
             fontScale = fontScale,
@@ -344,7 +338,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
         height: Int = Int.MAX_VALUE,
         rotationDegrees: Float = 0f,
     ): StaticLayout {
-
         val widthWithoutMargins = width - margins.horizontalDp.wholePixels
         val heightWithoutMargins = height - margins.verticalDp.wholePixels
 

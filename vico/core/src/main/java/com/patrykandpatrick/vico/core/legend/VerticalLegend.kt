@@ -58,7 +58,6 @@ public open class VerticalLegend(
     }
 
     override fun draw(context: ChartDrawContext): Unit = with(context) {
-
         var currentTop = bounds.top + padding.topDp.pixels
 
         items.forEach { item ->

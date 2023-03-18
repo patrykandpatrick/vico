@@ -93,7 +93,6 @@ public fun RectF.copy(): RectF = RectF(this)
  * Creates a [RectF] representing the bounding box of this [RectF] rotated by the provided number of degrees.
  */
 public fun RectF.rotate(degrees: Float): RectF {
-
     when {
         degrees % PI_RAD == 0f -> Unit
         degrees % 0.5f.piRad == 0f -> {

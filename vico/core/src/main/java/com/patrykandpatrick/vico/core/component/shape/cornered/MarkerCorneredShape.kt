@@ -40,9 +40,7 @@ public open class MarkerCorneredShape(
     bottomRight: Corner,
     bottomLeft: Corner,
     public val tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
-) : CorneredShape(
-    topLeft, topRight, bottomRight, bottomLeft,
-) {
+) : CorneredShape(topLeft, topRight, bottomRight, bottomLeft) {
 
     public constructor(
         all: Corner,
