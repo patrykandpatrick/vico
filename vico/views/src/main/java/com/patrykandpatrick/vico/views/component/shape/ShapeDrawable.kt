@@ -124,6 +124,7 @@ public class ShapeDrawable(
         paint.color = tintList?.getColorForState(state, DEF_COLOR) ?: DEF_COLOR
     }
 
+    @Deprecated("`Drawable#getOpacity` is deprecated.")
     override fun getOpacity(): Int = PixelFormat.TRANSLUCENT
 
     override fun getIntrinsicWidth(): Int = width
