@@ -100,7 +100,7 @@ public object DefaultDimens {
     public const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
 
     /**
-     * The default maximum line count for axis labels (in dp).
+     * The default maximum line count for axis labels.
      */
     public const val AXIS_LABEL_MAX_LINES: Int = 1
 
