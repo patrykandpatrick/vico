@@ -144,3 +144,25 @@ public fun RectF.getStart(isLtr: Boolean): Float = if (isLtr) left else right
  * Returns [RectF.right] if [isLtr] is true, and [RectF.left] otherwise.
  */
 public fun RectF.getEnd(isLtr: Boolean): Float = if (isLtr) right else left
+
+/**
+ * Updates the coordinates of this [RectF] if the provided coordinates exceed the current ones.
+ */
+public fun RectF.updateIfExceeds(x: Float, y: Float) {
+    updateBounds(
+        left = left.coerceAtMost(x),
+        top = top.coerceAtMost(y),
+        right = right.coerceAtLeast(x),
+        bottom = bottom.coerceAtLeast(y),
+    )
+}
+
+/**
+ * Returns the radius of this [RectF], as if it were a circle.
+ * Throws an [IllegalArgumentException] if this [RectF] is not a square.
+ */
+public val RectF.radius: Float
+    get() {
+        require(width() == height()) { "RectF must be a square." }
+        return width().half
+    }

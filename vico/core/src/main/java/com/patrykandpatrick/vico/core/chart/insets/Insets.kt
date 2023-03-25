@@ -49,6 +49,12 @@ public class Insets(
         get() = top + bottom
 
     /**
+     * The largest of the four insets.
+     */
+    public val largestEdge: Float
+        get() = maxOf(start, top, end, bottom)
+
+    /**
      * Updates the size of each of the four insets to match the size of its corresponding inset from the provided
      * [Insets] instance.
      */

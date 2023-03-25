@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.entry
 
-import com.patrykandpatrick.vico.core.chart.PieChart
+import com.patrykandpatrick.vico.core.chart.pie.PieChart
 
 /**
  * The base for a single chart entry rendered by [PieChart] subclasses.
