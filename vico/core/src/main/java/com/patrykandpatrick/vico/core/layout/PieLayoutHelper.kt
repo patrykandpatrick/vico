@@ -20,6 +20,9 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.extension.updateBounds
 
+/**
+ * TODO
+ */
 public open class PieLayoutHelper {
 
     protected val textBoundPath: Path = Path()
@@ -32,6 +35,9 @@ public open class PieLayoutHelper {
 
     protected val textBoundsBottom: RectF = RectF()
 
+    /**
+     * TODO
+     */
     public open fun adjustTextBounds(
         textBounds: RectF,
         slicePath: Path,

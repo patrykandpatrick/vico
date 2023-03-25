@@ -16,12 +16,18 @@
 
 package com.patrykandpatrick.vico.core.entry
 
+/**
+ * TODO
+ */
 public open class PieEntryModelProducer(
     entries: List<PieEntry> = emptyList(),
 ) {
 
     private val entries: ArrayList<PieEntry> = ArrayList(entries)
 
+    /**
+     * TODO
+     */
     public fun getModel(): Model = Model(
         entries = entries,
         maxValue = entries.fold(0f) { sum, entry ->
@@ -29,6 +35,9 @@ public open class PieEntryModelProducer(
         },
     )
 
+    /**
+     * TODO
+     */
     public data class Model(
         override val entries: List<PieEntry>,
         override val maxValue: Float,

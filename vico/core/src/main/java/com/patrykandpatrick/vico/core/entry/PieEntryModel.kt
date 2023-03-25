@@ -16,9 +16,18 @@
 
 package com.patrykandpatrick.vico.core.entry
 
+/**
+ * TODO
+ */
 public interface PieEntryModel {
 
+    /**
+     * TODO
+     */
     public val entries: List<PieEntry>
 
+    /**
+     * TODO
+     */
     public val maxValue: Float
 }
