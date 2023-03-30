@@ -210,7 +210,7 @@ public object DefaultDimens {
     public const val POINT_SPACING: Float = 16f
 
     /**
-     * The default text size for [TextComponent].
+     * The default text size for [TextComponent] (in sp).
      */
     public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
 
