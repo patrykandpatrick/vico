@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 
 /**
- * Combines two [ChartEntryModel] instances into a [ComposedChartEntryModelProducer].
+ * Combines two [ChartModelProducer] implementations into a [ComposedChartEntryModelProducer].
  */
 public operator fun <Model : ChartEntryModel> ChartModelProducer<Model>.plus(
     other: ChartModelProducer<Model>,
