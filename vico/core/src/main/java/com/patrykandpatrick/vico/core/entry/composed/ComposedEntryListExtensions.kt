@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.entry.composed
 
+import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 
@@ -43,3 +44,9 @@ public operator fun <Model : ChartEntryModel> ComposedChartEntryModelProducer<Mo
     other: ComposedChartEntryModelProducer<Model>,
 ): ComposedChartEntryModelProducer<Model> =
     ComposedChartEntryModelProducer(chartModelProducers + other.chartModelProducers)
+
+/**
+ * Combines two [ChartEntryModel] implementations—the receiver and [other]—into a [ComposedChartEntryModel].
+ */
+public operator fun <Model : ChartEntryModel> Model.plus(other: Model): ComposedChartEntryModel<Model> =
+    ComposedChartEntryModelProducer.composedChartEntryModelOf(listOf(this, other))
