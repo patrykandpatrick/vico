@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -210,7 +210,7 @@ public object DefaultDimens {
     public const val POINT_SPACING: Float = 16f
 
     /**
-     * The default text size for [TextComponent].
+     * The default text size for [TextComponent] (in sp).
      */
     public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
 
