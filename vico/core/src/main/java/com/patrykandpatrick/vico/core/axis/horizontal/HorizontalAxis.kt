@@ -51,7 +51,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     /**
      * Defines the tick placement.
      */
-    @Deprecated(message = "The tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
+    @Deprecated(
+        message = "The tick type is now defined by `tickPosition`.",
+        replaceWith = ReplaceWith("tickPosition"),
+        level = DeprecationLevel.ERROR,
+    )
     @Suppress("DEPRECATION")
     public var tickType: TickType? = null
         set(value) {
@@ -442,6 +446,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         @Deprecated(
             message = "The tick type is now defined by `tickPosition`.",
             replaceWith = ReplaceWith("tickPosition"),
+            level = DeprecationLevel.ERROR,
         )
         @Suppress("DEPRECATION")
         public var tickType: TickType? = null
@@ -462,8 +467,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 else -> throw UnknownAxisPositionException(T::class.java)
             } as Position
             return setTo(HorizontalAxis(position = position)).also { axis ->
-                @Suppress("DEPRECATION")
-                tickType?.also { axis.tickType = it }
                 axis.tickPosition = tickPosition
             } as HorizontalAxis<T>
         }
