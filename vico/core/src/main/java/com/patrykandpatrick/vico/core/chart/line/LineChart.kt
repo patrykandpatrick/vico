@@ -155,6 +155,7 @@ public open class LineChart(
                     )""",
                 imports = arrayOf("com.patrykandpatrick.vico.core.chart.DefaultPointConnector"),
             ),
+            level = DeprecationLevel.ERROR,
         )
         public constructor(
             lineColor: Int = Color.LTGRAY,

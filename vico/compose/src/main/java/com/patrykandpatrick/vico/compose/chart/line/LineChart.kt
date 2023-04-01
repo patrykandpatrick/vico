@@ -219,6 +219,7 @@ public fun lineSpec(
             )""",
         imports = arrayOf("com.patrykandpatrick.vico.core.chart.DefaultPointConnector"),
     ),
+    level = DeprecationLevel.ERROR,
 )
 public fun lineSpec(
     lineColor: Color,

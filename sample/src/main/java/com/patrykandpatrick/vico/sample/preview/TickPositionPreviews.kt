@@ -98,9 +98,7 @@ public fun ColumnChartWithEdgeTickPositionDeprecated() {
         startAxis = startAxis(),
         bottomAxis = bottomAxis(
             valueFormatter = axisValueFormatter,
-        ).apply {
-            tickType = HorizontalAxis.TickType.Minor
-        },
+        ),
         chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
@@ -114,10 +112,9 @@ public fun ColumnChartWithCenterTickPositionDeprecated() {
         model = model,
         startAxis = startAxis(),
         bottomAxis = bottomAxis(
+            tickPosition = HorizontalAxis.TickPosition.Center(),
             valueFormatter = axisValueFormatter,
-        ).apply {
-            tickType = HorizontalAxis.TickType.Major
-        },
+        ),
         chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
     )
 }
