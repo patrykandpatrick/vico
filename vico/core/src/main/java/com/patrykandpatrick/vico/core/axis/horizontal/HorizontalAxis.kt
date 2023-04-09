@@ -132,7 +132,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
                     maxTextWidth = getMaxTextWidth(
-                        tickDrawStep = tickDrawStep.toInt(),
+                        tickDrawStep = tickDrawStep,
                         spacing = tickPosition.spacing,
                         textX = textCenter,
                         bounds = chartBounds,
@@ -476,7 +476,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         const val MAX_HEIGHT_DIVISOR = 3f
 
         private fun MeasureContext.getMaxTextWidth(
-            tickDrawStep: Int,
+            tickDrawStep: Float,
             spacing: Int,
             textX: Float,
             bounds: RectF,
