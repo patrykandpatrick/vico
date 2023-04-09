@@ -155,6 +155,7 @@ public open class LineChart(
                     )""",
                 imports = arrayOf("com.patrykandpatrick.vico.core.chart.DefaultPointConnector"),
             ),
+            level = DeprecationLevel.ERROR,
         )
         public constructor(
             lineColor: Int = Color.LTGRAY,
@@ -266,10 +267,20 @@ public open class LineChart(
         }
     }
 
-    private val linePath = Path()
-    private val lineBackgroundPath = Path()
+    /**
+     * The [Path] used to draw the lines, each of which corresponds to a [LineSpec].
+     */
+    protected val linePath: Path = Path()
 
-    private val segmentProperties = MutableSegmentProperties()
+    /**
+     * The [Path] used to draw the backgrounds of the lines, each of which corresponds to a [LineSpec].
+     */
+    protected val lineBackgroundPath: Path = Path()
+
+    /**
+     * The chart’s [MutableSegmentProperties] instance, which holds information about the segment properties.
+     */
+    protected val segmentProperties: MutableSegmentProperties = MutableSegmentProperties()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -359,7 +370,10 @@ public open class LineChart(
         }
     }
 
-    private fun ChartDrawContext.drawPointsAndDataLabels(
+    /**
+     * Draws a line’s points ([LineSpec.point]) and their corresponding data labels ([LineSpec.dataLabel]).
+     */
+    protected open fun ChartDrawContext.drawPointsAndDataLabels(
         lineSpec: LineSpec,
         entries: List<ChartEntry>,
         drawingStart: Float,
@@ -414,19 +428,24 @@ public open class LineChart(
         }
     }
 
-    private fun resetTempData() {
+    /**
+     * Clears the temporary data saved during a single [drawChart] run.
+     */
+    protected fun resetTempData() {
         entryLocationMap.clear()
         linePath.rewind()
         lineBackgroundPath.rewind()
     }
 
-    private fun DrawContext.forEachPointWithinBoundsIndexed(
+    /**
+     * Performs the given [action] for each [ChartEntry] in [entries] that lies within the chart’s bounds.
+     */
+    protected open fun DrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
         segment: SegmentProperties,
         drawingStart: Float,
         action: (index: Int, entry: ChartEntry, x: Float, y: Float) -> Unit,
     ) {
-
         val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
 
         val minX = chartValues.minX
@@ -509,8 +528,7 @@ public open class LineChart(
     ): Unit = with(context) {
         outInsets.setVertical(
             value = lines.maxOf {
-                if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp)
-                else it.lineThicknessDp
+                if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp) else it.lineThicknessDp
             }.pixels,
         )
     }

@@ -31,7 +31,9 @@ internal val Context.fontScale: Float
 internal val Context.isLtr: Boolean
     get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
         resources.configuration.layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
-    } else true
+    } else {
+        true
+    }
 
 internal val Context.isDarkMode: Boolean
     get() = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES

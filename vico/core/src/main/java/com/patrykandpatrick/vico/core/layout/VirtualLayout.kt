@@ -52,6 +52,8 @@ public open class VirtualLayout(
      * @param legend the legend for the chart.
      * @param segmentProperties the [SegmentProperties] of the chart.
      * @param chartInsetter additional components that influence the chart layout, such as markers.
+     *
+     * @return the bounds applied to the chart.
      */
     @LongParameterListDrawFunction
     public open fun <Model : ChartEntryModel> setBounds(
@@ -61,8 +63,7 @@ public open class VirtualLayout(
         legend: Legend?,
         segmentProperties: SegmentProperties,
         vararg chartInsetter: ChartInsetter?,
-    ): Unit = with(context) {
-
+    ): RectF = with(context) {
         tempInsetters.clear()
         finalInsets.clear()
         tempInsets.clear()
@@ -108,6 +109,8 @@ public open class VirtualLayout(
             right = contentBounds.right,
             bottom = chart.bounds.bottom + finalInsets.bottom + legendHeight,
         )
+
+        chartBounds
     }
 
     private companion object {

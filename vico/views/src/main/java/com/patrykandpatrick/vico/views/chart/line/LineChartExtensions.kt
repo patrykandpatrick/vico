@@ -44,7 +44,6 @@ public fun lineSpec(
     @AttrRes attrRes: Int = R.attr.line1Spec,
     @StyleRes styleResId: Int = 0,
 ): LineChart.LineSpec {
-
     val tempArray = IntArray(1)
 
     tempArray[0] = attrRes
@@ -72,7 +71,6 @@ public fun lineChart(
     context: Context,
     @StyleRes styleResId: Int = 0,
 ): LineChart {
-
     val tempArray = IntArray(1)
 
     val lineSpecs = listOf(R.attr.line1Spec, R.attr.line2Spec, R.attr.line3Spec)

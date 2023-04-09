@@ -60,9 +60,7 @@ public fun <T> Iterable<T>.transformToSpannable(
     var count = 0
     for (element in this) {
         if (++count > 1) buffer.append(separator)
-        if (limit < 0 || count <= limit) {
-            buffer.transform(element)
-        } else break
+        if (limit < 0 || count <= limit) buffer.transform(element) else break
     }
     if (limit in 0 until count) buffer.append(truncated)
     buffer.append(postfix)

@@ -55,8 +55,7 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
     override fun progressDiff(progress: Float): List<List<ChartEntry>> = synchronized(this) {
         progressMaps.mapNotNull { map ->
             map.mapNotNull { (_, model) ->
-                if (model.temporary && progress == 1f) null
-                else model.progressDiff(progress)
+                if (model.temporary && progress == 1f) null else model.progressDiff(progress)
             }.takeIf { list -> list.isNotEmpty() }
         }
     }

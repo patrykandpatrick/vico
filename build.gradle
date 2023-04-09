@@ -39,13 +39,13 @@ buildscript {
 
 plugins {
 
-    id "io.gitlab.arturbosch.detekt" version "1.21.0"
-    id "org.jetbrains.dokka" version "1.7.10"
+    id "io.gitlab.arturbosch.detekt" version "1.22.0"
+    id "org.jetbrains.dokka" version "1.8.10"
 }
 
 dependencies {
 
-    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.21.0"
+    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0"
 }
 
 detekt {

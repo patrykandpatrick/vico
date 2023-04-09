@@ -51,7 +51,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     /**
      * Defines the tick placement.
      */
-    @Deprecated(message = "The tick type is now defined by `tickPosition`.", replaceWith = ReplaceWith("tickPosition"))
+    @Deprecated(
+        message = "The tick type is now defined by `tickPosition`.",
+        replaceWith = ReplaceWith("tickPosition"),
+        level = DeprecationLevel.ERROR,
+    )
     @Suppress("DEPRECATION")
     public var tickType: TickType? = null
         set(value) {
@@ -93,10 +97,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         var tickCenter = getTickDrawCenter(tickPosition, horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
 
         forEachEntity(
-            startSegmentX = chartValues.minX + scrollAdjustment * step,
+            scrollAdjustment = scrollAdjustment,
             step = step,
             xRange = chartValues.minX..chartValues.maxX,
-        ) { segmentX, shouldDrawLines, shouldDrawLabel ->
+        ) { x, shouldDrawLines, shouldDrawLabel ->
 
             guideline
                 ?.takeIf {
@@ -123,7 +127,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 .takeIf { shouldDrawLabel }
                 ?.drawText(
                     context = context,
-                    text = valueFormatter.formatValue(segmentX, chartValues),
+                    text = valueFormatter.formatValue(x, chartValues),
                     textX = textCenter,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -167,31 +171,30 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         ceil(bounds.width() / segmentWidth).toInt() + 1
 
     private inline fun ChartDrawContext.forEachEntity(
-        startSegmentX: Float,
+        scrollAdjustment: Int,
         step: Float,
         xRange: ClosedFloatingPointRange<Float>,
-        action: (valueIndex: Float, shouldDrawLines: Boolean, shouldDrawLabel: Boolean) -> Unit,
+        action: (x: Float, shouldDrawLines: Boolean, shouldDrawLabel: Boolean) -> Unit,
     ) {
-        var segmentX = startSegmentX
         val entryLength = getEntryLength(segmentProperties.segmentWidth)
 
         for (index in 0 until tickPosition.getTickCount(entryLength = entryLength)) {
+            val relativeX = (scrollAdjustment + index) * step
+            val x = relativeX + xRange.start
 
-            val firstEntityConditionsMet = segmentX != xRange.start ||
+            val firstEntityConditionsMet = relativeX != 0f ||
                 !segmentProperties.labelPositionOrDefault.skipFirstEntity ||
                 tickPosition.offset > 0
 
-            val shouldDrawLines = segmentX / step >= tickPosition.offset &&
-                (segmentX / step - tickPosition.offset) % tickPosition.spacing == 0f &&
+            val shouldDrawLines = relativeX / step >= tickPosition.offset &&
+                (relativeX / step - tickPosition.offset) % tickPosition.spacing == 0f &&
                 firstEntityConditionsMet
 
             action(
-                segmentX,
+                x,
                 shouldDrawLines,
-                shouldDrawLines && segmentX in xRange && index < entryLength,
+                shouldDrawLines && x in xRange && index < entryLength,
             )
-
-            segmentX += step
         }
     }
 
@@ -223,11 +226,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         segmentProperties: SegmentProperties,
     ): Float = with(context) {
-
         val labelWidth =
             if (isHorizontalScrollEnabled) {
                 segmentProperties.scaled(scale = chartScale).segmentWidth.toInt() * tickPosition.spacing
-            } else Int.MAX_VALUE
+            } else {
+                Int.MAX_VALUE
+            }
 
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
@@ -264,7 +268,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     private fun MeasureContext.getLabelsToMeasure(): List<CharSequence> {
-
         val chartValues = chartValuesManager.getChartValues()
 
         return listOf(
@@ -443,6 +446,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         @Deprecated(
             message = "The tick type is now defined by `tickPosition`.",
             replaceWith = ReplaceWith("tickPosition"),
+            level = DeprecationLevel.ERROR,
         )
         @Suppress("DEPRECATION")
         public var tickType: TickType? = null
@@ -463,8 +467,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 else -> throw UnknownAxisPositionException(T::class.java)
             } as Position
             return setTo(HorizontalAxis(position = position)).also { axis ->
-                @Suppress("DEPRECATION")
-                tickType?.also { axis.tickType = it }
                 axis.tickPosition = tickPosition
             } as HorizontalAxis<T>
         }

@@ -22,25 +22,15 @@ private const val BYTE_MAX_VALUE: Int = 0xFF
 
 @Suppress("MagicNumber")
 internal val Long.alpha: Float
-    get() = if (this and 0x3fL == 0L) (this shr 56 and 0xff) / 255.0f
-    else (this shr 6 and 0x3ff) / 1023.0f
+    get() = if (this and 0x3fL == 0L) (this shr 56 and 0xff) / 255.0f else (this shr 6 and 0x3ff) / 1023.0f
 
 internal fun Int.overlayColor(overlayingColor: Int): Int {
     val bgAlpha = Color.alpha(this)
     val fgAlpha = Color.alpha(overlayingColor)
     val alpha = compositeAlpha(fgAlpha, bgAlpha)
-    val red = compositeComponent(
-        Color.red(overlayingColor), fgAlpha,
-        Color.red(this), bgAlpha, alpha,
-    )
-    val green = compositeComponent(
-        Color.green(overlayingColor), fgAlpha,
-        Color.green(this), bgAlpha, alpha,
-    )
-    val blue = compositeComponent(
-        Color.blue(overlayingColor), fgAlpha,
-        Color.blue(this), bgAlpha, alpha,
-    )
+    val red = compositeComponent(Color.red(overlayingColor), fgAlpha, Color.red(this), bgAlpha, alpha)
+    val green = compositeComponent(Color.green(overlayingColor), fgAlpha, Color.green(this), bgAlpha, alpha)
+    val blue = compositeComponent(Color.blue(overlayingColor), fgAlpha, Color.blue(this), bgAlpha, alpha)
     return Color.argb(alpha, red, green, blue)
 }
 

@@ -226,11 +226,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 getLabelHeight(chartValues.maxY),
             ).maxOrNull().orZero
 
-            var result = 0f
-            for (count in 0 until maxLabelCount) {
-                if (result + avgHeight > availableHeight) return count
-                result += avgHeight
-            }
+            return (availableHeight / avgHeight).toInt().coerceAtMost(maxLabelCount)
         }
         return maxLabelCount
     }
@@ -321,7 +317,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
         Outside -> label?.let { label ->
-            labels.maxOf { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
+            labels.maxOfOrNull { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
         }.orZero
         Inside -> 0f
     }
