@@ -37,6 +37,7 @@ import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
 import com.patrykandpatrick.vico.core.extension.isNotTransparent
 import com.patrykandpatrick.vico.core.extension.radius
+import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.updateBy
 import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
 import com.patrykandpatrick.vico.core.math.translateXByAngle
@@ -416,8 +417,8 @@ public open class Slice(
 
     protected fun MeasureContext.applyOffset(rectF: RectF, angle: Float) {
         rectF.offset(
-            offsetFromCenterDp.pixels.translateXByAngle(angle),
-            offsetFromCenterDp.pixels.translateYByAngle(angle),
+            offsetFromCenterDp.pixels.translateXByAngle(angle).round,
+            offsetFromCenterDp.pixels.translateYByAngle(angle).round,
         )
     }
 }

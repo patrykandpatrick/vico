@@ -128,12 +128,13 @@ public open class PieChart(
         }.orZero
 
         ovalRadius -= maxOffsetFromCenter + insets.largestEdge
+        ovalRadius = ovalRadius.round
 
         oval.set(
-            left = (bounds.centerX() - ovalRadius).round,
-            top = (bounds.centerY() - ovalRadius).round,
-            right = (bounds.centerX() + ovalRadius).round,
-            bottom = (bounds.centerY() + ovalRadius).round,
+            left = (bounds.centerX() - ovalRadius),
+            top = (bounds.centerY() - ovalRadius),
+            right = (bounds.centerX() + ovalRadius),
+            bottom = (bounds.centerY() + ovalRadius),
         )
     }
 
