@@ -17,10 +17,7 @@
 package com.patrykandpatrick.vico.core.chart.pie
 
 import android.graphics.Matrix
-import android.graphics.Paint
 import android.graphics.Path
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens.PIE_CHART_START_ANGLE
 import com.patrykandpatrick.vico.core.chart.insets.Insets
@@ -58,24 +55,12 @@ public open class PieChart(
     /**
      * TODO
      */
-    protected val spacingPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-    }
-
-    /**
-     * TODO
-     */
     protected val oval: RectF = RectF()
 
     /**
      * TODO
      */
     protected val spacingPathBuilder: Path = Path()
-
-    /**
-     * TODO
-     */
-    protected val spacingPath: Path = Path()
 
     /**
      * TODO
@@ -150,13 +135,18 @@ public open class PieChart(
 
         val restoreCount = if (spacingDp > 0f) saveLayer() else -1
 
-        spacingPath.rewind()
-
         model.entries.foldIndexed(startAngle) { index, startAngle, entry ->
 
             val slice = slices.getRepeating(index)
 
             val sweepAngle = entry.value / model.maxValue * FULL_DEGREES
+
+            spacingPathBuilder.rewind()
+
+            if (spacingDp > 0f) {
+                addSpacingSegment(spacingPathBuilder, sweepAngle)
+                addSpacingSegment(spacingPathBuilder, startAngle)
+            }
 
             slice.draw(
                 context = context,
@@ -165,16 +155,12 @@ public open class PieChart(
                 startAngle = startAngle,
                 sweepAngle = sweepAngle,
                 label = entry.label,
+                spacingPathBuilder,
             )
-
-            if (spacingDp > 0f) {
-                addSpacingSegment(spacingPathBuilder, startAngle)
-            }
 
             startAngle + sweepAngle
         }
 
-        canvas.drawPath(spacingPath, spacingPaint)
         if (restoreCount >= 0) restoreCanvasToCount(restoreCount)
     }
 
@@ -183,16 +169,14 @@ public open class PieChart(
         angle: Float,
     ) {
         val spacing = spacingDp.pixels
-        with(spacingPathBuilder) {
+        with(pathBuilder) {
             spacingMatrix.postRotate(angle, oval.centerX(), oval.centerY())
-            rewind()
             moveTo(oval.centerX(), oval.centerY() + spacing.half)
             lineTo(oval.right + spacing, oval.centerY() + spacing.half)
             lineTo(oval.right + spacing, oval.centerY() - spacing.half)
             lineTo(oval.centerX(), oval.centerY() - spacing.half)
             close()
             transform(spacingMatrix)
-            spacingPath.addPath(spacingPathBuilder)
             spacingMatrix.reset()
         }
     }

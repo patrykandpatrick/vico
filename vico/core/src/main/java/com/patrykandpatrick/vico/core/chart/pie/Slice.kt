@@ -341,17 +341,18 @@ public open class Slice(
         startAngle: Float,
         sweepAngle: Float,
         label: CharSequence?,
+        spacingPath: Path,
     ): Unit = with(context) {
 
         drawOval.set(oval)
         applyOffset(drawOval, startAngle + sweepAngle.half)
 
         if (color.isNotTransparent) {
-            drawFilledSlice(context, startAngle, sweepAngle)
+            drawFilledSlice(context, startAngle, sweepAngle, spacingPath)
         }
 
         if (strokeColor.isNotTransparent && strokeWidthDp > 0f) {
-            drawStrokedSlice(context, startAngle, sweepAngle)
+            drawStrokedSlice(context, startAngle, sweepAngle, spacingPath)
         }
 
         ifNotNull(this@Slice.label, label) { labelComponent, label ->
@@ -370,6 +371,7 @@ public open class Slice(
         context: DrawContext,
         startAngle: Float,
         sweepAngle: Float,
+        spacingPath: Path,
     ): Unit = with(context) {
 
         paint.style = Paint.Style.FILL
@@ -383,6 +385,10 @@ public open class Slice(
 
         slicePath.close()
 
+        if (spacingPath.isEmpty.not()) {
+            slicePath.op(spacingPath, Path.Op.DIFFERENCE)
+        }
+
         canvas.drawPath(slicePath, paint)
     }
 
@@ -390,6 +396,7 @@ public open class Slice(
         context: DrawContext,
         startAngle: Float,
         sweepAngle: Float,
+        spacingPath: Path,
     ): Unit = with(context) {
         val strokeWidth = strokeWidthDp.pixels
 
@@ -411,6 +418,10 @@ public open class Slice(
         slicePath.lineTo(drawOval.centerX(), drawOval.centerY())
 
         slicePath.close()
+
+        if (spacingPath.isEmpty.not()) {
+            slicePath.op(spacingPath, Path.Op.DIFFERENCE)
+        }
 
         canvas.drawPath(slicePath, paint)
     }
