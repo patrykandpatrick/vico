@@ -131,10 +131,10 @@ public open class PieChart(
         ovalRadius = ovalRadius.round
 
         oval.set(
-            left = (bounds.centerX() - ovalRadius),
-            top = (bounds.centerY() - ovalRadius),
-            right = (bounds.centerX() + ovalRadius),
-            bottom = (bounds.centerY() + ovalRadius),
+            left = bounds.centerX() - ovalRadius,
+            top = bounds.centerY() - ovalRadius,
+            right = bounds.centerX() + ovalRadius,
+            bottom = bounds.centerY() + ovalRadius,
         )
     }
 
