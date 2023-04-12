@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.extension
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -166,3 +167,9 @@ public val RectF.radius: Float
         require(width() == height()) { "RectF must be a square." }
         return width().half
     }
+
+/**
+ * Returns the center point of this [RectF].
+ */
+public val RectF.centerPoint: Point
+    get() = Point(centerX(), centerY())

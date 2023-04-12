@@ -16,18 +16,15 @@
 
 package com.patrykandpatrick.vico.core.math
 
-import com.patrykandpatrick.vico.core.extension.PI_RAD
+import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Translates [this] x-axis coordinate by the given [angle].
+ * Translates given [point] by the given [angle] (in radians) relative to the [center].
  */
-public fun Float.translateXByAngle(angle: Float): Float =
-    (this * cos(angle * Math.PI / PI_RAD)).toFloat()
-
-/**
- * Translates [this] y-axis coordinate by the given [angle].
- */
-public fun Float.translateYByAngle(angle: Float): Float =
-    (this * sin(angle * Math.PI / PI_RAD)).toFloat()
+public fun translatePointByAngle(center: Point, point: Point, angle: Double): Point =
+    Point(
+        ((point.x - center.x) * cos(angle) - (point.y - center.y) * sin(angle) + center.x).toFloat(),
+        ((point.y - center.y) * cos(angle) + (point.x - center.x) * sin(angle) + center.y).toFloat(),
+    )

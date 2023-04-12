@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.extension.centerPoint
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
 import com.patrykandpatrick.vico.core.extension.isNotTransparent
@@ -40,8 +41,7 @@ import com.patrykandpatrick.vico.core.extension.radius
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.updateBy
 import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
-import com.patrykandpatrick.vico.core.math.translateXByAngle
-import com.patrykandpatrick.vico.core.math.translateYByAngle
+import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.abs
 
@@ -117,8 +117,14 @@ public open class Slice(
 
                 val radius = oval.width().half
 
-                val textX = oval.centerX() + radius.half.translateXByAngle(angle)
-                val textY = oval.centerY() + radius.half.translateYByAngle(angle)
+                val (textX, textY) = translatePointByAngle(
+                    center = oval.centerPoint,
+                    point = Point(
+                        x = oval.centerX() + radius.half,
+                        y = oval.centerY(),
+                    ),
+                    angle = Math.toRadians(angle.toDouble()),
+                )
 
                 val textBounds = textComponent.getTextBounds(this, label)
 
@@ -192,10 +198,17 @@ public open class Slice(
 
                 val radius = oval.width().half
 
-                val arcEdgeX = oval.centerX() + radius.translateXByAngle(angle)
-                val arcEdgeY = oval.centerY() + radius.translateYByAngle(angle)
+                val (arcEdgeX, arcEdgeY) = translatePointByAngle(
+                    center = oval.centerPoint,
+                    point = Point(
+                        x = oval.centerX() + radius,
+                        y = oval.centerY(),
+                    ),
+                    angle = Math.toRadians(angle.toDouble()),
+                )
 
                 val labelWidth = abs(finalLinePoint.x - arcEdgeX) + textBounds.width()
+
                 val labelHeight = textBounds.height()
 
                 val radiusScale = (radius - labelWidth.coerceAtLeast(labelHeight)) / radius
@@ -273,11 +286,18 @@ public open class Slice(
             ): Point {
                 val radiusWithTranslation = drawOval.radius + angledSegmentThicknessDp.pixels
 
-                val baseX = drawOval.centerX() + radiusWithTranslation.translateXByAngle(angle)
+                val (baseX, y) = translatePointByAngle(
+                    center = drawOval.centerPoint,
+                    point = Point(
+                        x = drawOval.centerX() + radiusWithTranslation,
+                        y = drawOval.centerY(),
+                    ),
+                    angle = Math.toRadians(angle.toDouble()),
+                )
 
                 return Point(
                     x = baseX + horizontalSegmentThicknessDp.pixels * if (baseX < drawOval.centerX()) -1f else 1f,
-                    y = drawOval.centerY() + radiusWithTranslation.translateYByAngle(angle),
+                    y = y,
                 )
             }
 
@@ -286,20 +306,28 @@ public open class Slice(
                 angle: Float,
             ): Point {
 
-                var linePoint = Point(
-                    drawOval.centerX() + drawOval.radius.translateXByAngle(angle),
-                    drawOval.centerY() + drawOval.radius.translateYByAngle(angle),
+                var linePoint = translatePointByAngle(
+                    center = drawOval.centerPoint,
+                    point = Point(
+                        x = drawOval.centerX() + drawOval.radius,
+                        y = drawOval.centerY(),
+                    ),
+                    angle = Math.toRadians(angle.toDouble()),
                 )
 
                 line?.draw(this) {
 
                     moveTo(linePoint)
 
-                    val translation = angledSegmentThicknessDp.pixels
-
                     lineTo(
-                        x = drawOval.centerX() + (drawOval.radius + translation).translateXByAngle(angle),
-                        y = drawOval.centerY() + (drawOval.radius + translation).translateYByAngle(angle),
+                        point = translatePointByAngle(
+                            center = drawOval.centerPoint,
+                            point = Point(
+                                x = drawOval.centerX() + drawOval.radius + angledSegmentThicknessDp.pixels,
+                                y = drawOval.centerY(),
+                            ),
+                            angle = Math.toRadians(angle.toDouble()),
+                        ),
                     )
 
                     rLineTo(
@@ -427,9 +455,16 @@ public open class Slice(
     }
 
     protected fun MeasureContext.applyOffset(rectF: RectF, angle: Float) {
-        rectF.offset(
-            offsetFromCenterDp.pixels.translateXByAngle(angle).round,
-            offsetFromCenterDp.pixels.translateYByAngle(angle).round,
+
+        val (dx, dy) = translatePointByAngle(
+            center = Point(0, 0),
+            point = Point(
+                x = offsetFromCenterDp.pixels,
+                y = 0f,
+            ),
+            angle = Math.toRadians(angle.toDouble()),
         )
+
+        rectF.offset(dx.round, dy.round)
     }
 }
