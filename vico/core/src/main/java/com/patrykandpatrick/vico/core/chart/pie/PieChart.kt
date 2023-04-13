@@ -38,10 +38,12 @@ import com.patrykandpatrick.vico.core.extension.set
  * @param slices TODO
  * @param spacingDp TODO
  * @param startAngle TODO
+ * @param holeRadiusDp TODO
  */
 public open class PieChart(
     public val slices: List<Slice>,
     public var spacingDp: Float = 0f,
+    public var holeRadiusDp: Float = 0f,
     public var startAngle: Float = PIE_CHART_START_ANGLE,
 ) : BoundsAware {
 
@@ -146,6 +148,7 @@ public open class PieChart(
             if (spacingDp > 0f) {
                 addSpacingSegment(spacingPathBuilder, sweepAngle)
                 addSpacingSegment(spacingPathBuilder, startAngle)
+                addHole(spacingPathBuilder, slice.offsetFromCenterDp.pixels)
             }
 
             slice.draw(
@@ -154,8 +157,9 @@ public open class PieChart(
                 oval = oval,
                 startAngle = startAngle,
                 sweepAngle = sweepAngle,
+                holeRadius = holeRadiusDp.pixels,
                 label = entry.label,
-                spacingPathBuilder,
+                spacingPath = spacingPathBuilder,
             )
 
             startAngle + sweepAngle
@@ -179,5 +183,12 @@ public open class PieChart(
             transform(spacingMatrix)
             spacingMatrix.reset()
         }
+    }
+
+    protected open fun DrawContext.addHole(
+        pathBuilder: Path,
+        offsetFromCenter: Float,
+    ): Unit = with(pathBuilder) {
+        addCircle(oval.centerX(), oval.centerY(), holeRadiusDp.pixels, Path.Direction.CCW)
     }
 }

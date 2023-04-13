@@ -82,6 +82,7 @@ public open class Slice(
             contentBounds: RectF,
             oval: RectF,
             angle: Float,
+            offsetFromCenter: Float,
             slicePath: Path,
             label: CharSequence,
         )
@@ -111,6 +112,7 @@ public open class Slice(
                 contentBounds: RectF,
                 oval: RectF,
                 angle: Float,
+                offsetFromCenter: Float,
                 slicePath: Path,
                 label: CharSequence,
             ): Unit = with(context) {
@@ -120,7 +122,7 @@ public open class Slice(
                 val (textX, textY) = translatePointByAngle(
                     center = oval.centerPoint,
                     point = Point(
-                        x = oval.centerX() + radius.half,
+                        x = oval.centerX() + (radius + offsetFromCenter).half,
                         y = oval.centerY(),
                     ),
                     angle = Math.toRadians(angle.toDouble()),
@@ -252,6 +254,7 @@ public open class Slice(
                 contentBounds: RectF,
                 oval: RectF,
                 angle: Float,
+                offsetFromCenter: Float,
                 slicePath: Path,
                 label: CharSequence,
             ): Unit = with(context) {
@@ -368,6 +371,7 @@ public open class Slice(
         oval: RectF,
         startAngle: Float,
         sweepAngle: Float,
+        holeRadius: Float,
         label: CharSequence?,
         spacingPath: Path,
     ): Unit = with(context) {
@@ -389,6 +393,7 @@ public open class Slice(
                 contentBounds = contentBounds,
                 oval = drawOval,
                 angle = startAngle + sweepAngle.half,
+                offsetFromCenter = holeRadius - offsetFromCenterDp.pixels,
                 slicePath = slicePath,
                 label = label,
             )
