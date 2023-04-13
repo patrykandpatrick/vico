@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.centerPoint
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
@@ -142,7 +143,7 @@ public open class Slice(
                     text = label,
                     textX = textBounds.centerX(),
                     textY = textY,
-                    maxTextWidth = textBounds.width().toInt(),
+                    maxTextWidth = textBounds.width().ceil.toInt(),
                 )
             }
         }
@@ -171,7 +172,7 @@ public open class Slice(
             }
 
             protected fun getTextMaxWidth(contentBounds: RectF): Int =
-                (contentBounds.width() * maxWidthToBoundsRatio).toInt()
+                (contentBounds.width() * maxWidthToBoundsRatio).ceil.toInt()
 
             override fun getInsets(
                 context: DrawContext,
