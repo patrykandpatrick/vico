@@ -50,6 +50,7 @@ public open class PieChart(
     init {
         require(slices.isNotEmpty()) { "Slices cannot be empty." }
         require(spacingDp >= 0f) { "The spacing cannot be negative." }
+        require(holeRadiusDp >= 0f) { "The hole radius cannot be negative." }
     }
 
     override val bounds: RectF = RectF()
