@@ -28,3 +28,9 @@ public fun translatePointByAngle(center: Point, point: Point, angle: Double): Po
         ((point.x - center.x) * cos(angle) - (point.y - center.y) * sin(angle) + center.x).toFloat(),
         ((point.y - center.y) * cos(angle) + (point.x - center.x) * sin(angle) + center.y).toFloat(),
     )
+
+/**
+ * Converts an angle with value of [Number] to radians.
+ */
+public val Number.radians: Float
+    get() = Math.toRadians(this.toDouble()).toFloat()

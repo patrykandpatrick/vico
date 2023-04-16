@@ -173,3 +173,23 @@ public val RectF.radius: Float
  */
 public val RectF.centerPoint: Point
     get() = Point(centerX(), centerY())
+
+/**
+ * @see RectF.left
+ */
+public operator fun RectF.component1(): Float = left
+
+/**
+ * @see RectF.top
+ */
+public operator fun RectF.component2(): Float = top
+
+/**
+ * @see RectF.right
+ */
+public operator fun RectF.component3(): Float = right
+
+/**
+ * @see RectF.bottom
+ */
+public operator fun RectF.component4(): Float = bottom

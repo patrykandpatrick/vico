@@ -64,6 +64,9 @@ style:
       - "100"
   UnnecessaryParentheses:
     active: true
+  DestructuringDeclarationWithTooManyEntries:
+    active: true
+    maxDestructuringEntries: 4
 naming:
   FunctionNaming:
     ignoreAnnotated:

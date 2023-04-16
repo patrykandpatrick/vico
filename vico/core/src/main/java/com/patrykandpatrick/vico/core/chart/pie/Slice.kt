@@ -35,6 +35,10 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.centerPoint
+import com.patrykandpatrick.vico.core.extension.component1
+import com.patrykandpatrick.vico.core.extension.component2
+import com.patrykandpatrick.vico.core.extension.component3
+import com.patrykandpatrick.vico.core.extension.component4
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
 import com.patrykandpatrick.vico.core.extension.isNotTransparent
@@ -42,9 +46,11 @@ import com.patrykandpatrick.vico.core.extension.radius
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.updateBy
 import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
+import com.patrykandpatrick.vico.core.math.radians
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.abs
+import kotlin.math.sin
 
 /**
  * TODO
@@ -154,13 +160,13 @@ public open class Slice(
          * @param textComponent TODO
          * @param maxWidthToBoundsRatio TODO
          * @param line TODO
-         * @param angledSegmentThicknessDp the thickness of the angled line segment of the label.
+         * @param angledSegmentLengthDp the thickness of the angled line segment of the label.
          * @param horizontalSegmentThicknessDp the thickness of the horizontal line segment of the label.
          */
         public open class Outside(
             override var textComponent: TextComponent = textComponent(),
             public var line: PathComponent? = null,
-            public var angledSegmentThicknessDp: Float = SLICE_ANGLED_SEGMENT_THICKNESS,
+            public var angledSegmentLengthDp: Float = SLICE_ANGLED_SEGMENT_THICKNESS,
             public var horizontalSegmentThicknessDp: Float = SLICE_HORIZONTAL_SEGMENT_THICKNESS,
             public var maxWidthToBoundsRatio: Float = SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
         ) : Label() {
@@ -185,59 +191,48 @@ public open class Slice(
 
                 val finalLinePoint = getFinalLinePoint(oval, angle)
 
+                val (leftBound, topBound, rightBound, bottomBound) = contentBounds
+
                 val availableWidth = if (finalLinePoint.x < oval.centerX()) {
-                    finalLinePoint.x - contentBounds.left
+                    finalLinePoint.x - leftBound
                 } else {
-                    contentBounds.right - finalLinePoint.x
+                    rightBound - finalLinePoint.x
                 }.toInt()
 
                 measuredTextWidth = getTextMaxWidth(contentBounds).coerceAtLeast(availableWidth)
 
                 val textBounds = textComponent.getTextBounds(
-                    context,
+                    context = context,
                     text = label,
                     width = measuredTextWidth,
                 )
 
-                val radius = oval.width().half
-
-                val (arcEdgeX, arcEdgeY) = translatePointByAngle(
-                    center = oval.centerPoint,
-                    point = Point(
-                        x = oval.centerX() + radius,
-                        y = oval.centerY(),
-                    ),
-                    angle = Math.toRadians(angle.toDouble()),
-                )
-
-                val labelWidth = abs(finalLinePoint.x - arcEdgeX) + textBounds.width()
-
-                val labelHeight = textBounds.height()
-
-                val radiusScale = (radius - labelWidth.coerceAtLeast(labelHeight)) / radius
+                val alpha = angle.radians
 
                 val left = if (finalLinePoint.x < oval.centerX()) {
-                    labelWidth - (arcEdgeX - oval.left) * radiusScale
+                    val leftInset = (leftBound + finalLinePoint.x - textBounds.width()) / sin(-Math.PI.half - alpha)
+                    if (leftInset < 0) abs(leftInset).toFloat() else 0f
                 } else {
                     0f
                 }
 
                 val top = if (finalLinePoint.y < oval.centerY()) {
-                    abs(finalLinePoint.y - textBounds.height() - arcEdgeY)
-                    labelHeight - (arcEdgeY - oval.top) * radiusScale
+                    val topInset = (topBound + finalLinePoint.y - textBounds.height().half) / sin(-alpha)
+                    if (topInset < 0) abs(topInset) else 0f
                 } else {
                     0f
                 }
 
                 val right = if (finalLinePoint.x > oval.centerX()) {
-                    labelWidth - (oval.right - arcEdgeX) * radiusScale
+                    val rightInset = (finalLinePoint.x + textBounds.width() - rightBound) / sin(Math.PI.half - alpha)
+                    if (rightInset > 0) rightInset.toFloat() else 0f
                 } else {
                     0f
                 }
 
                 val bottom = if (finalLinePoint.y > oval.centerY()) {
-                    finalLinePoint.y + textBounds.height() - arcEdgeY
-                    labelHeight - (oval.bottom - arcEdgeY) * radiusScale
+                    val bottomInset = (finalLinePoint.y + textBounds.height().half - bottomBound) / sin(alpha)
+                    if (bottomInset > 0) bottomInset else 0f
                 } else {
                     0f
                 }
@@ -288,7 +283,7 @@ public open class Slice(
                 drawOval: RectF,
                 angle: Float,
             ): Point {
-                val radiusWithTranslation = drawOval.radius + angledSegmentThicknessDp.pixels
+                val radiusWithTranslation = drawOval.radius + angledSegmentLengthDp.pixels
 
                 val (baseX, y) = translatePointByAngle(
                     center = drawOval.centerPoint,
@@ -327,7 +322,7 @@ public open class Slice(
                         point = translatePointByAngle(
                             center = drawOval.centerPoint,
                             point = Point(
-                                x = drawOval.centerX() + drawOval.radius + angledSegmentThicknessDp.pixels,
+                                x = drawOval.centerX() + drawOval.radius + angledSegmentLengthDp.pixels,
                                 y = drawOval.centerY(),
                             ),
                             angle = Math.toRadians(angle.toDouble()),
