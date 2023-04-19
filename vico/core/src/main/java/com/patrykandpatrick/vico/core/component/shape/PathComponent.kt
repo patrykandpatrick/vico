@@ -20,6 +20,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.DEF_SHADOW_COLOR
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shadow.ComponentShadow
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -110,4 +111,42 @@ public open class PathComponent(
 
         pathBuilder.draw(context)
     }
+
+    /**
+     * Applies a drop shadow.
+     *
+     * @param radius the blur radius.
+     * @param dx the horizontal offset.
+     * @param dy the vertical offset.
+     * @param color the shadow color.
+     * @param applyElevationOverlay whether to apply an elevation overlay to the shape.
+     */
+    public fun setShadow(
+        radius: Float,
+        dx: Float = 0f,
+        dy: Float = 0f,
+        color: Int = DEF_SHADOW_COLOR,
+        applyElevationOverlay: Boolean = false,
+    ): PathComponent = apply {
+        shadowProperties.apply {
+            this.radius = radius
+            this.dx = dx
+            this.dy = dy
+            this.color = color
+            this.applyElevationOverlay = applyElevationOverlay
+        }
+    }
+
+    /**
+     * Removes this [ShapeComponent]’s drop shadow.
+     */
+    public fun clearShadow(): PathComponent = apply {
+        shadowProperties.apply {
+            this.radius = 0f
+            this.dx = 0f
+            this.dy = 0f
+            this.color = 0
+        }
+    }
+
 }
