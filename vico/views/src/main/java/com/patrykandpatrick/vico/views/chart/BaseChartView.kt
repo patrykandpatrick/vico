@@ -221,8 +221,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             },
             getOldModel = { model },
         ) { model ->
-            setModel(model = model)
-            postInvalidateOnAnimation()
+            post {
+                setModel(model = model)
+                postInvalidateOnAnimation()
+            }
         }
     }
 
