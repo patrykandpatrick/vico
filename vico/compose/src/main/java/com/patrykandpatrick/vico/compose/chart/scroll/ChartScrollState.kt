@@ -68,6 +68,10 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
         val limitedValue = unlimitedValue.coerceIn(0f.rangeWith(maxValue))
         val consumedValue = limitedValue - value
         value += consumedValue
+
+        val unconsumedScroll = delta - consumedValue
+        if (unconsumedScroll != 0f) notifyUnconsumedScroll(unconsumedScroll)
+
         if (unlimitedValue != limitedValue) consumedValue else delta
     }
 
@@ -99,6 +103,10 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
             InitialScroll.End -> maxValue
         }
         initialScrollHandled = true
+    }
+
+    private fun notifyUnconsumedScroll(delta: Float) {
+        scrollListeners.forEach { scrollListener -> scrollListener.onUnconsumedScroll(delta) }
     }
 }
 

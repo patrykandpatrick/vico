@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -336,10 +336,13 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         modifier = Modifier
             .fillMaxSize()
             .chartTouchEvent(
-                setTouchPoint = markerTouchPoint
-                    .component2()
-                    .takeIf { marker != null },
-                scrollableState = chartScrollState.takeIf { chartScrollSpec.isScrollEnabled },
+                setTouchPoint = remember(marker) {
+                    markerTouchPoint
+                        .component2()
+                        .takeIf { marker != null }
+                },
+                isScrollEnabled = chartScrollSpec.isScrollEnabled,
+                scrollableState = chartScrollState,
                 onZoom = onZoom.takeIf { isZoomEnabled },
                 interactionSource = interactionSource,
             ),
@@ -435,6 +438,18 @@ internal fun rememberScrollListener(
                     shouldClearTouchPoint = false
                 } else {
                     touchPoint.value = point.copy(x = point.x + oldValue - newValue)
+                    shouldClearTouchPoint = true
+                }
+            }
+        }
+
+        override fun onUnconsumedScroll(delta: Float) {
+            touchPoint.value?.let { point ->
+                if (interaction.value is DragInteraction.Stop && shouldClearTouchPoint) {
+                    touchPoint.value = null
+                    shouldClearTouchPoint = false
+                } else {
+                    touchPoint.value = point.copy(x = point.x - delta)
                     shouldClearTouchPoint = true
                 }
             }
