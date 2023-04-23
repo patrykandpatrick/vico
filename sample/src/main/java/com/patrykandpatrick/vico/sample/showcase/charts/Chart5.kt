@@ -95,7 +95,7 @@ private fun ViewChart5(chartEntryModelProducer: ChartEntryModelProducer) {
 private const val COLOR_1_CODE = 0xff6438a7
 private const val COLOR_2_CODE = 0xff3490de
 private const val COLOR_3_CODE = 0xff73e8dc
-private const val START_AXIS_LABEL_COUNT = 2
+private const val START_AXIS_LABEL_COUNT = 3
 private const val AXIS_LABEL_ROTATION_DEGREES = 45f
 
 private val color1 = Color(COLOR_1_CODE)

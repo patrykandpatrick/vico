@@ -86,13 +86,13 @@ private fun getLineChart(
 private val startAxis: Axis<Start>
     @Composable get() = startAxis(
         label = textComponent(color = Color.Black),
-        maxLabelCount = 4,
+        maxLabelCount = 5,
     )
 
 private val endAxis: Axis<End>
     @Composable get() = endAxis(
         label = textComponent(color = Color.DarkGray),
-        maxLabelCount = 6,
+        maxLabelCount = 7,
     )
 
 @Composable

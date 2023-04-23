@@ -27,7 +27,7 @@ public const val DEF_LABEL_LINE_COUNT: Int = 1
 /**
  * The default maximum label count for vertical axes.
  */
-public const val DEF_LABEL_COUNT: Int = 99
+public const val DEF_LABEL_COUNT: Int = 100
 
 /**
  * The default label spacing for vertical axes (in dp).

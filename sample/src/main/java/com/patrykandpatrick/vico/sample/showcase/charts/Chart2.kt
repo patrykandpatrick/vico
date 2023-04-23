@@ -110,7 +110,7 @@ private const val COLOR_1_CODE = 0xffff5500
 private const val COLOR_2_CODE = 0xffd3d826
 private const val COLUMN_WIDTH_DP = 16f
 private const val THRESHOLD_LINE_VALUE = 13f
-private const val START_AXIS_LABEL_COUNT = 5
+private const val START_AXIS_LABEL_COUNT = 6
 private const val BOTTOM_AXIS_TICK_OFFSET = 1
 private const val BOTTOM_AXIS_TICK_SPACING = 3
 
