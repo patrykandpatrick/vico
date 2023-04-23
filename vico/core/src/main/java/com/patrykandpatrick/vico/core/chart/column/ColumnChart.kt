@@ -155,7 +155,7 @@ public open class ColumnChart(
 
                 height = abs(entry.y) * heightMultiplier
                 columnCenterX = drawingStart + layoutDirectionMultiplier *
-                    (cellWidth + spacing) * (entry.x - chartValues.minX) / model.stepX
+                    (cellWidth + spacing) * (entry.x - chartValues.minX) / model.xStep
 
                 when (mergeMode) {
                     MergeMode.Stack -> {

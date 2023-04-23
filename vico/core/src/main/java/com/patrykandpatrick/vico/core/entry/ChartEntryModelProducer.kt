@@ -129,7 +129,7 @@ public class ChartEntryModelProducer(
             maxY = yRange.endInclusive,
             stackedPositiveY = stackedPositiveYRange.endInclusive,
             stackedNegativeY = stackedPositiveYRange.start,
-            stepX = entries.calculateStep(),
+            xStep = entries.calculateStep(),
             id = entriesHashCode,
         )
 
@@ -172,7 +172,7 @@ public class ChartEntryModelProducer(
         override val maxY: Float,
         override val stackedPositiveY: Float,
         override val stackedNegativeY: Float,
-        override val stepX: Float,
+        override val xStep: Float,
         override val id: Int,
     ) : ChartEntryModel
 }

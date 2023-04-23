@@ -47,8 +47,8 @@ public class MutableChartValues : ChartValues {
 
     override var chartEntryModel: ChartEntryModel = emptyChartEntryModel()
 
-    override val stepX: Float
-        get() = chartEntryModel.stepX
+    override val xStep: Float
+        get() = chartEntryModel.xStep
 
     /**
      * Returns `true` if all values have been set and at least one call to [tryUpdate] or [set] has been made.
@@ -97,7 +97,7 @@ public class MutableChartValues : ChartValues {
             override val maxY: Float = 0f
             override val stackedPositiveY: Float = 0f
             override val stackedNegativeY: Float = 0f
-            override val stepX: Float = 1f
+            override val xStep: Float = 1f
         }
     }
 }
