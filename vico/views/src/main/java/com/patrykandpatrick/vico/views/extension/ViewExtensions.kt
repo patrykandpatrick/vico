@@ -84,8 +84,10 @@ internal fun OverScroller.fling(
     startY: Int = 0,
     velocityX: Int = 0,
     velocityY: Int = 0,
+    minScrollX: Int = 0,
+    maxScrollX: Int = Int.MAX_VALUE,
 ) {
-    fling(startX, startY, velocityX, velocityY, Int.MIN_VALUE, Int.MAX_VALUE, Int.MIN_VALUE, Int.MAX_VALUE)
+    fling(startX, startY, velocityX, velocityY, minScrollX, maxScrollX, Int.MIN_VALUE, Int.MAX_VALUE)
 }
 
 /**

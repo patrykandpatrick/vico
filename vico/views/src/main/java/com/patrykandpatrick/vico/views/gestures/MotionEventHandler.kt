@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,7 +99,11 @@ public open class MotionEventHandler(
                 velocityTracker.get().apply {
                     computeCurrentVelocity(velocityUnits)
                     val currentX = scrollHandler.value.toInt()
-                    scroller.fling(startX = currentX, velocityX = -xVelocity.toInt())
+                    scroller.fling(
+                        startX = currentX,
+                        velocityX = -xVelocity.toInt(),
+                        maxScrollX = scrollHandler.maxValue.toInt(),
+                    )
                     requestInvalidate()
                 }
                 velocityTracker.clear()
