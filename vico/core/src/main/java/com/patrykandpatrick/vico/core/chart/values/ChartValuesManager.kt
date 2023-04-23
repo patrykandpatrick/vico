@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModel
  * @see ColumnChart.targetVerticalAxisPosition
  * @see LineChart.targetVerticalAxisPosition
  */
-public class ChartValuesManager {
+public class ChartValuesManager : ChartValuesProvider {
 
     private val chartValues: MutableMap<AxisPosition.Vertical?, MutableChartValues> = mutableMapOf()
 
@@ -49,6 +49,15 @@ public class ChartValuesManager {
         chartValues[axisPosition]
             ?.takeIf { it.hasValuesSet }
             ?: chartValues.getOrPut(null) { MutableChartValues() }
+
+    override fun getChartValues(): ChartValues = getChartValues(null)
+
+    override fun getChartValuesForAxisPosition(axisPosition: AxisPosition.Vertical): ChartValues? =
+        if (chartValues.containsKey(axisPosition)) {
+            getChartValues(axisPosition).takeIf { it.hasValuesSet }
+        } else {
+            null
+        }
 
     /**
      * Attempts to update the stored values to the provided values.

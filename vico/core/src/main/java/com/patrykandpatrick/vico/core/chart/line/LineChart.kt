@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -313,7 +313,7 @@ public open class LineChart(
                 entries = entries,
                 segment = segmentProperties,
                 drawingStart = drawingStart,
-            ) { _, entry, x, y ->
+            ) { index, entry, x, y ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
                     if (component.hasLineBackgroundShader) {
@@ -351,6 +351,7 @@ public open class LineChart(
                         y = y.coerceIn(bounds.top, bounds.bottom),
                         entry = entry,
                         color = component.lineColor,
+                        index = index,
                     )
                 }
             }
@@ -480,6 +481,7 @@ public open class LineChart(
                 isLtr && x < boundsStart || isLtr.not() && x > boundsStart -> {
                     prevEntry = entry
                 }
+
                 x in boundsStart.rangeWith(other = boundsEnd) -> {
                     prevEntry?.also {
                         action(index, it, getDrawX(it), getDrawY(it))
@@ -487,6 +489,7 @@ public open class LineChart(
                     }
                     action(index, entry, x, y)
                 }
+
                 (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
                     action(index, entry, x, y)
                     lastEntry = entry
