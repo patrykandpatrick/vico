@@ -75,7 +75,7 @@ internal fun Modifier.chartTouchEvent(
                 }
             }
 
-            if (onZoom != null) {
+            if (onZoom != null && isScrollEnabled) {
                 launch {
                     detectZoomGestures() { centroid, zoom ->
                         setTouchPoint?.invoke(null)
