@@ -44,9 +44,16 @@ public interface ChartValues {
     public val maxX: Float
 
     /**
-     * The value by which the associated [Chart] increments the _x_ value between each segment.
+     * The increment by which the [Chart] increases the _x_ value from one segment to the next.
      */
+    public val xStep: Float
+
+    /**
+     * The increment by which the [Chart] increases the _x_ value from one segment to the next.
+     */
+    @Deprecated("Use `xStep` instead.", ReplaceWith("xStep"))
     public val stepX: Float
+        get() = xStep
 
     /**
      * The minimum value displayed on the y-axis. By default, this is equal to [ChartEntryModel.minY] (the
@@ -84,5 +91,5 @@ public interface ChartValues {
      * The number of segments displayed on the associated [Chart].
      */
     public fun getDrawnEntryCount(): Int =
-        ((abs(maxX) - abs(minX)) / stepX + 1).toInt()
+        ((abs(maxX) - abs(minX)) / xStep + 1).toInt()
 }

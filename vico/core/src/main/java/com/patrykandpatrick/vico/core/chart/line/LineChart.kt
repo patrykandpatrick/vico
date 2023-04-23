@@ -434,7 +434,7 @@ public open class LineChart(
         val maxX = chartValues.maxX
         val minY = chartValues.minY
         val maxY = chartValues.maxY
-        val stepX = chartValues.stepX
+        val xStep = chartValues.xStep
 
         var x: Float
         var y: Float
@@ -448,12 +448,12 @@ public open class LineChart(
         val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
 
         fun getDrawX(entry: ChartEntry): Float = drawingStart + layoutDirectionMultiplier *
-            (segment.cellWidth + segment.marginWidth) * (entry.x - minX) / stepX
+            (segment.cellWidth + segment.marginWidth) * (entry.x - minX) / xStep
 
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (entry.y - minY) * heightMultiplier
 
-        entries.forEachInIndexed(minX - stepX..maxX + stepX) { index, entry ->
+        entries.forEachInIndexed(minX - xStep..maxX + xStep) { index, entry ->
 
             x = getDrawX(entry)
             y = getDrawY(entry)
