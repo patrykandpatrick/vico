@@ -309,8 +309,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val scaleHandled =
-            if (isZoomEnabled && event.pointerCount > 1) scaleGestureDetector.onTouchEvent(event) else false
+        val scaleHandled = if (isZoomEnabled && event.pointerCount > 1 && chartScrollSpec.isScrollEnabled) {
+            scaleGestureDetector.onTouchEvent(event)
+        } else {
+            false
+        }
         val touchHandled = motionEventHandler.handleMotionEvent(event)
 
         if (scrollDirectionResolved.not() && event.historySize > 0) {
