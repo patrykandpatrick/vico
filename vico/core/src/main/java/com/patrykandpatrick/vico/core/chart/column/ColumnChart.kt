@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.segmentWidth
-import com.patrykandpatrick.vico.core.chart.forEachIn
+import com.patrykandpatrick.vico.core.chart.forEachInIndexed
 import com.patrykandpatrick.vico.core.chart.put
 import com.patrykandpatrick.vico.core.chart.segment.MutableSegmentProperties
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
@@ -151,7 +151,7 @@ public open class ColumnChart(
                 columnWidth = column.thicknessDp.pixels * chartScale,
             ) - horizontalScroll
 
-            entryCollection.forEachIn(range = chartValues.minX..chartValues.maxX) { entry ->
+            entryCollection.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { entryIndex, entry ->
 
                 height = abs(entry.y) * heightMultiplier
                 columnCenterX = drawingStart + layoutDirectionMultiplier *
@@ -195,13 +195,13 @@ public open class ColumnChart(
                         thicknessScale = chartScale,
                     )
                 ) {
-                    updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column)
+                    updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column, entryIndex)
                     column.drawVertical(this, columnTop, columnBottom, columnCenterX, chartScale)
                 }
 
                 if (mergeMode == MergeMode.Grouped) {
                     drawDataLabel(model.entries.size, column.thicknessDp, entry.y, columnCenterX, columnSignificantY)
-                } else if (index == model.entries.lastIndex) {
+                } else if (entryIndex == model.entries.lastIndex) {
                     val yValues = heightMap[entry.x]
                     drawStackedDataLabel(
                         model.entries.size,
@@ -299,6 +299,7 @@ public open class ColumnChart(
         columnTop: Float,
         columnCenterX: Float,
         column: LineComponent,
+        index: Int,
     ) {
         if (columnCenterX in bounds.left..bounds.right) {
             entryLocationMap.put(
@@ -306,6 +307,7 @@ public open class ColumnChart(
                 y = columnTop.coerceIn(bounds.top, bounds.bottom),
                 entry = entry,
                 color = column.color,
+                index = index,
             )
         }
     }

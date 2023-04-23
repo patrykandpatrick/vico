@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
                     context = context,
                     bounds = bounds,
                     markedEntries = markerModel,
+                    chartValuesProvider = chartValuesManager,
                 )
             }
         }
