@@ -443,7 +443,7 @@ internal fun rememberScrollListener(
             }
         }
 
-        override fun onUnconsumedScroll(delta: Float) {
+        override fun onScrollNotConsumed(delta: Float) {
             touchPoint.value?.let { point ->
                 if (interaction.value is DragInteraction.Stop && shouldClearTouchPoint) {
                     touchPoint.value = null

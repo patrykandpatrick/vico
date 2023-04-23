@@ -106,7 +106,7 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
     }
 
     private fun notifyUnconsumedScroll(delta: Float) {
-        scrollListeners.forEach { scrollListener -> scrollListener.onUnconsumedScroll(delta) }
+        scrollListeners.forEach { scrollListener -> scrollListener.onScrollNotConsumed(delta) }
     }
 }
 

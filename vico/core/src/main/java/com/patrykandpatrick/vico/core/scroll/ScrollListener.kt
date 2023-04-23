@@ -34,5 +34,5 @@ public interface ScrollListener {
     /**
      * Called when the scroll has reached the limit and cannot be consumed further.
      */
-    public fun onUnconsumedScroll(delta: Float): Unit = Unit
+    public fun onScrollNotConsumed(delta: Float): Unit = Unit
 }
