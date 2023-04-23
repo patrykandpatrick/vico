@@ -337,6 +337,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         measureContext.chartScale = newZoom
         scrollHandler.value += zoomedTransformationAxisX - transformationAxisX
+        handleTouchEvent(null)
         invalidate()
     }
 
