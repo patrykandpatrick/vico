@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.component.marker
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -88,15 +89,16 @@ public open class MarkerComponent(
                 model.location.y + halfIndicatorSize,
             )
         }
-        drawLabel(context, bounds, markedEntries)
+        drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues())
     }
 
     private fun drawLabel(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
+        chartValues: ChartValues,
     ): Unit = with(context) {
-        val text = labelFormatter.getLabel(markedEntries)
+        val text = labelFormatter.getLabel(markedEntries, chartValues)
         val entryX = markedEntries.averageOf { it.location.x }
         val labelBounds = label.getTextBounds(context, text, outRect = tempBounds)
         val halfOfTextWidth = labelBounds.width().half

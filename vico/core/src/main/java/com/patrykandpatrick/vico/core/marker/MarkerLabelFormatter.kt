@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.marker
 
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
+
 /**
  * Formats marker labels.
  */
@@ -26,5 +28,6 @@ public fun interface MarkerLabelFormatter {
      */
     public fun getLabel(
         markedEntries: List<Marker.EntryModel>,
+        chartValues: ChartValues,
     ): CharSequence
 }
