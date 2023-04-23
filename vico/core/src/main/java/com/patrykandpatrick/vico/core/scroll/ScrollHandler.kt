@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,6 +90,8 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
     public fun handleScrollDelta(delta: Float): Float {
         val previousScroll = value
         value = getClampedScroll(value - delta)
+        val unconsumedScroll = previousScroll - value - delta
+        if (unconsumedScroll != 0f) notifyUnconsumedScroll(delta)
         return previousScroll - value
     }
 
@@ -125,5 +127,9 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
 
     public override fun removeScrollListener(scrollListener: ScrollListener) {
         scrollListeners.remove(scrollListener)
+    }
+
+    private fun notifyUnconsumedScroll(delta: Float) {
+        scrollListeners.forEach { scrollListener -> scrollListener.onScrollNotConsumed(delta) }
     }
 }
