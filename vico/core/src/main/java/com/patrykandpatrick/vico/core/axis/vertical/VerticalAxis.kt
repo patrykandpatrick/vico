@@ -86,11 +86,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     ): Unit = with(context) {
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
 
-        val axisStep = bounds.height() / drawLabelCount
+        val axisStep = bounds.height() / (drawLabelCount - 1)
 
         var centerY: Float
 
-        for (index in 0..drawLabelCount) {
+        for (index in 0 until drawLabelCount) {
             centerY = bounds.bottom - axisStep * index + guidelineThickness.half
 
             guideline?.takeIf {
@@ -129,8 +129,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         var tickCenterY: Float
 
-        (0..labelCount).forEach { index ->
-            tickCenterY = bounds.bottom - bounds.height() / labelCount * index + tickThickness.half
+        (0 until labelCount).forEach { index ->
+            tickCenterY = bounds.bottom - bounds.height() / (labelCount - 1) * index + tickThickness.half
 
             tick?.drawHorizontal(
                 context = context,
@@ -226,7 +226,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 getLabelHeight(chartValues.maxY),
             ).maxOrNull().orZero
 
-            return (availableHeight / avgHeight).toInt().coerceAtMost(maxLabelCount)
+            return (availableHeight / avgHeight + 1).toInt().coerceAtMost(maxLabelCount)
         }
         return maxLabelCount
     }
@@ -238,8 +238,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val cacheKey = LABELS_KEY + position + maxLabelCount
         return getOrPutExtra(key = cacheKey) {
             labels.clear()
-            val step = (chartValues.maxY - chartValues.minY) / maxLabelCount
-            for (index in 0..maxLabelCount) {
+            val step = (chartValues.maxY - chartValues.minY) / (maxLabelCount - 1)
+            for (index in 0 until maxLabelCount) {
                 val value = chartValues.minY + step * index
                 labels += valueFormatter.formatValue(value, chartValues)
             }

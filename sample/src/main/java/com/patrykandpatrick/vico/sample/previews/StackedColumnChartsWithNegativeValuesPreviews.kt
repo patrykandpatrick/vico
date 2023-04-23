@@ -66,7 +66,7 @@ public fun StackedColumnChartWithNegativeValues() {
                 mergeMode = Stack,
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 7),
+            startAxis = startAxis(maxLabelCount = 8),
             bottomAxis = bottomAxis(),
         )
     }
@@ -83,7 +83,7 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
                 mergeMode = Stack,
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 7),
+            startAxis = startAxis(maxLabelCount = 8),
             bottomAxis = bottomAxis(),
         )
     }
@@ -103,7 +103,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                 mergeMode = Stack,
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 3),
+            startAxis = startAxis(maxLabelCount = 4),
             bottomAxis = bottomAxis(),
         )
     }
@@ -123,7 +123,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                 mergeMode = Stack,
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 2),
+            startAxis = startAxis(maxLabelCount = 3),
             bottomAxis = bottomAxis(),
         )
     }
