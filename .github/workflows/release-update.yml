@@ -2,7 +2,7 @@ name: Release update
 on:
   workflow_dispatch:
 jobs:
-  release_update:
+  release-update:
     runs-on: ubuntu-latest
     if: github.repository == 'patrykandpatrick/vico'
     permissions:

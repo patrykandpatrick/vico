@@ -3,7 +3,7 @@ on:
   push:
   pull_request:
 jobs:
-  build_debug_apk:
+  build-debug-apk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
