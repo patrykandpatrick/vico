@@ -3,7 +3,7 @@ on:
   push:
   pull_request:
 jobs:
-  run_detekt:
+  run-detekt:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
