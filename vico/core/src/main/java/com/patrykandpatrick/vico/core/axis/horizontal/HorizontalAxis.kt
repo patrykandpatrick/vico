@@ -137,6 +137,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                         textX = textCenter,
                         bounds = chartBounds,
                     ),
+                    maxTextHeight = (bounds.height() - tickLength - axisThickness.half).toInt(),
                     rotationDegrees = labelRotationDegrees,
                 )
 
