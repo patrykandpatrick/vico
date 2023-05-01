@@ -282,11 +282,11 @@ public open class LineChart(
 
         val (cellWidth, spacing) = segmentProperties
 
-        model.entries.forEachIndexed { index, entries ->
+        model.entries.forEachIndexed { entryListIndex, entries ->
 
             linePath.rewind()
             lineBackgroundPath.rewind()
-            val component = lines.getRepeating(index)
+            val component = lines.getRepeating(entryListIndex)
 
             var prevX = bounds.getStart(isLtr = isLtr)
             var prevY = bounds.bottom
@@ -303,7 +303,7 @@ public open class LineChart(
                 entries = entries,
                 segment = segmentProperties,
                 drawingStart = drawingStart,
-            ) { index, entry, x, y ->
+            ) { entryIndex, entry, x, y ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
                     if (component.hasLineBackgroundShader) {
@@ -341,7 +341,7 @@ public open class LineChart(
                         y = y.coerceIn(bounds.top, bounds.bottom),
                         entry = entry,
                         color = component.lineColor,
-                        index = index,
+                        index = entryIndex,
                     )
                 }
             }
