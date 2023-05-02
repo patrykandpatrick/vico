@@ -17,20 +17,21 @@
 package com.patrykandpatrick.vico.core.chart.values
 
 import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.chart.Chart
 
 /**
- * Provides [ChartValues] used in a chart.
+ * Provides a [Chart]’s [ChartValues].
  */
 public interface ChartValuesProvider {
 
     /**
-     * Returns the main [ChartValues] used in a chart.
+     * Returns the [Chart]’s main [ChartValues].
      */
     public fun getChartValues(): ChartValues
 
     /**
-     * Returns the [ChartValues] used in a chart for a given [AxisPosition.Vertical],
-     * if the [ChartValues] are available.
+     * Returns the [ChartValues] associated with the specified [AxisPosition.Vertical] subclass, or `null` if there is
+     * no such association.
      */
     public fun getChartValuesForAxisPosition(axisPosition: AxisPosition.Vertical): ChartValues?
 }
