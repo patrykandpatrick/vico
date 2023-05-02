@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.marker
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
-import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
@@ -36,7 +36,7 @@ public interface Marker : ChartInsetter {
      * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
      */
     @Deprecated(
-        message = "Use the version of draw() that takes a ChartValuesProvider as a parameter.",
+        message = "Use the version of `draw` that takes a `ChartValuesProvider` as an argument.",
         replaceWith = ReplaceWith("draw(context, bounds, markedEntries, chartValuesProvider)"),
     )
     public fun draw(
@@ -50,7 +50,7 @@ public interface Marker : ChartInsetter {
      * @param context the [DrawContext] used to draw the marker.
      * @param bounds the bounds in which the marker is drawn.
      * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
-     * @param chartValuesProvider the [ChartValuesProvider] used to retrieve [ChartValues].
+     * @param chartValuesProvider the [Chart]’s [ChartValuesProvider].
      */
     @Suppress("DEPRECATION")
     public fun draw(
