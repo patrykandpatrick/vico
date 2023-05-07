@@ -21,6 +21,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens.PIE_CHART_START_ANGLE
 import com.patrykandpatrick.vico.core.chart.insets.Insets
+import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
@@ -41,16 +42,14 @@ import com.patrykandpatrick.vico.core.extension.set
  * @param holeRadiusDp TODO
  */
 public open class PieChart(
-    public val slices: List<Slice>,
+    public var slices: List<Slice>,
     public var spacingDp: Float = 0f,
     public var holeRadiusDp: Float = 0f,
     public var startAngle: Float = PIE_CHART_START_ANGLE,
 ) : BoundsAware {
 
     init {
-        require(slices.isNotEmpty()) { "Slices cannot be empty." }
-        require(spacingDp >= 0f) { "The spacing cannot be negative." }
-        require(holeRadiusDp >= 0f) { "The hole radius cannot be negative." }
+        checkParameters()
     }
 
     override val bounds: RectF = RectF()
@@ -72,6 +71,12 @@ public open class PieChart(
 
     protected val insets: Insets = Insets()
 
+    protected fun checkParameters() {
+        require(slices.isNotEmpty()) { "Slices cannot be empty." }
+        require(spacingDp >= 0f) { "The spacing cannot be negative." }
+        require(holeRadiusDp >= 0f) { "The hole radius cannot be negative." }
+    }
+
     /**
      * TODO
      */
@@ -80,6 +85,7 @@ public open class PieChart(
         model: PieEntryModel,
     ): Unit = with(context) {
 
+        checkParameters()
         insets.clear()
 
         var ovalRadius = bounds.width().coerceAtMost(bounds.height()).half
