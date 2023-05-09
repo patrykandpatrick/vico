@@ -25,10 +25,10 @@ import com.patrykandpatrick.vico.core.component.shape.shadow.PaintComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
- * TODO
+ * [PathComponent] is a type of component that allows drawing a path built outside of the component.
  *
  * @property color the background color.
- * @property dynamicShader an optional [DynamicShader] to apply to the line.
+ * @property dynamicShader an optional [DynamicShader] to apply to the path.
  * @property strokeWidthDp the stroke width.
  * @property strokeColor the stroke color.
  */
