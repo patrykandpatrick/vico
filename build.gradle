@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 
 import io.gitlab.arturbosch.detekt.Detekt
-import org.jetbrains.dokka.gradle.DokkaMultiModuleTask
 
 buildscript {
 
@@ -32,15 +31,13 @@ buildscript {
 
         classpath "com.android.tools.build:gradle:$versions.agp"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
-        classpath("org.jetbrains.dokka:dokka-gradle-plugin:$versions.dokka")
-        classpath("org.jetbrains.dokka:dokka-base:$versions.dokka")
     }
 }
 
 plugins {
 
     id "io.gitlab.arturbosch.detekt" version "1.22.0"
-    id "org.jetbrains.dokka" version "1.8.10"
+    id "org.jetbrains.dokka" version "1.8.10" apply false
 }
 
 dependencies {
@@ -83,15 +80,6 @@ tasks.withType(Detekt).configureEach {
             destination = file("build/reports/detekt/detekt.html")
         }
     }
-}
-
-tasks.withType(DokkaMultiModuleTask).configureEach {
-    pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase": """{ "customStyleSheets": ["$rootDir/logo-styles.css"] }"""])
-}
-
-tasks.dokkaHtmlMultiModule {
-
-    outputDirectory.set(file("docs"))
 }
 
 task clean(type: Delete) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,24 @@
  * limitations under the License.
  */
 
+import org.jetbrains.dokka.gradle.DokkaTaskPartial
+
 plugins {
     id "org.jetbrains.dokka"
     id "maven-publish"
     id "signing"
 }
 
-project.allprojects { project ->
-    project.version = library.version_name
+subprojects {
+    version = library.version_name
+    apply plugin: "org.jetbrains.dokka"
+    tasks.withType(DokkaTaskPartial.class).configureEach {
+        suppressInheritedMembers.set true
+        dokkaSourceSets.configureEach { includes.from "Module.md" }
+    }
+}
+
+dokkaHtmlMultiModule {
+    String dokkaBaseConfiguration = "{ \"customStyleSheets\": [\"$rootDir/logo-styles.css\"] }"
+    pluginsMapConfiguration.set(["org.jetbrains.dokka.base.DokkaBase": dokkaBaseConfiguration])
 }

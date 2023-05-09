@@ -40,7 +40,7 @@ jobs:
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico.git
           ./gradlew dokkaHtmlMultiModule
           rm -r ${{ github.workspace }}/patrykandpatrick.com/src/vico/api/*
-          cp -R ${{ github.workspace }}/vico/docs/. ${{ github.workspace }}/patrykandpatrick.com/src/vico/api
+          cp -R ${{ github.workspace }}/vico/vico/build/dokka/htmlMultiModule/. ${{ github.workspace }}/patrykandpatrick.com/src/vico/api
           cd ${{ github.workspace }}/patrykandpatrick.com
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
           git add src/vico/api
