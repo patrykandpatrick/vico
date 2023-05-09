@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,12 @@ public val Int.alpha: Int
  */
 public val Int.isNotTransparent: Boolean
     get() = this != Color.TRANSPARENT
+
+/**
+ * Checks whether this color int is transparent.
+ */
+public val Int.isTransparent: Boolean
+    get() = this == Color.TRANSPARENT
 
 private fun Int.extractColorChannel(bitShift: Int): Int =
     this shr bitShift and COLOR_MASK

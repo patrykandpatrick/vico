@@ -23,11 +23,13 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
+import com.patrykandpatrick.vico.core.component.shape.shadow.PaintComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
 import com.patrykandpatrick.vico.core.extension.isNotTransparent
+import com.patrykandpatrick.vico.core.extension.isTransparent
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.updateBy
 import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
@@ -51,12 +53,16 @@ public open class Slice(
     public var strokeColor: Int = Color.TRANSPARENT,
     public var offsetFromCenterDp: Float = 0f,
     public var label: SliceLabel? = null,
-) {
+) : PaintComponent<Slice>() {
 
     protected val layoutHelper: PieLayoutHelper = PieLayoutHelper()
 
-    protected val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+    protected val fillPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
         this.color = color
+    }
+
+    protected val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        this.color = strokeColor
     }
 
     protected val drawOval: RectF = RectF()
@@ -82,10 +88,17 @@ public open class Slice(
         applyOffset(drawOval, startAngle + sweepAngle.half)
 
         if (color.isNotTransparent) {
+
+            maybeUpdateShadowLayer(context, fillPaint, fillPaint.color)
             drawFilledSlice(context, startAngle, sweepAngle, spacingPath)
         }
 
         if (strokeColor.isNotTransparent && strokeWidthDp > 0f) {
+
+            if (color.isTransparent) {
+                maybeUpdateShadowLayer(context, strokePaint, strokePaint.color)
+            }
+
             drawStrokedSlice(context, startAngle, sweepAngle, spacingPath)
         }
 
@@ -109,8 +122,8 @@ public open class Slice(
         spacingPath: Path,
     ): Unit = with(context) {
 
-        paint.style = Paint.Style.FILL
-        paint.color = color
+        fillPaint.style = Paint.Style.FILL
+        fillPaint.color = color
 
         slicePath.rewind()
 
@@ -124,7 +137,7 @@ public open class Slice(
             slicePath.op(spacingPath, Path.Op.DIFFERENCE)
         }
 
-        canvas.drawPath(slicePath, paint)
+        canvas.drawPath(slicePath, fillPaint)
     }
 
     protected open fun drawStrokedSlice(
@@ -135,9 +148,9 @@ public open class Slice(
     ): Unit = with(context) {
         val strokeWidth = strokeWidthDp.pixels
 
-        paint.style = Paint.Style.STROKE
-        paint.color = strokeColor
-        paint.strokeWidth = strokeWidth
+        strokePaint.style = Paint.Style.STROKE
+        strokePaint.color = strokeColor
+        strokePaint.strokeWidth = strokeWidth
 
         drawOval.updateBy(
             left = strokeWidth.half,
@@ -158,7 +171,7 @@ public open class Slice(
             slicePath.op(spacingPath, Path.Op.DIFFERENCE)
         }
 
-        canvas.drawPath(slicePath, paint)
+        canvas.drawPath(slicePath, strokePaint)
     }
 
     protected fun MeasureContext.applyOffset(rectF: RectF, angle: Float) {
