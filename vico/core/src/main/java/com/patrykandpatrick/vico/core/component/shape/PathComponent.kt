@@ -20,9 +20,8 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.DEF_SHADOW_COLOR
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
-import com.patrykandpatrick.vico.core.component.shape.shadow.ComponentShadow
+import com.patrykandpatrick.vico.core.component.shape.shadow.PaintComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
@@ -38,13 +37,11 @@ public open class PathComponent(
     public var dynamicShader: DynamicShader? = null,
     public var strokeWidthDp: Float = 0f,
     public var strokeColor: Int = Color.TRANSPARENT,
-) {
+) : PaintComponent<PathComponent>() {
 
     protected val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     protected val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-
-    protected val shadowProperties: ComponentShadow = ComponentShadow()
 
     protected val path: Path = Path()
 
@@ -65,7 +62,7 @@ public open class PathComponent(
 
             override fun draw(context: DrawContext): Unit = with(context) {
                 applyShader(context, pathBuilderBounds)
-                shadowProperties.maybeUpdateShadowLayer(
+                componentShadow.maybeUpdateShadowLayer(
                     context = context,
                     paint = paint,
                     backgroundColor = color,
@@ -110,42 +107,5 @@ public open class PathComponent(
         if (pathBuilder.isEmpty) return
 
         pathBuilder.draw(context)
-    }
-
-    /**
-     * Applies a drop shadow.
-     *
-     * @param radius the blur radius.
-     * @param dx the horizontal offset.
-     * @param dy the vertical offset.
-     * @param color the shadow color.
-     * @param applyElevationOverlay whether to apply an elevation overlay to the shape.
-     */
-    public fun setShadow(
-        radius: Float,
-        dx: Float = 0f,
-        dy: Float = 0f,
-        color: Int = DEF_SHADOW_COLOR,
-        applyElevationOverlay: Boolean = false,
-    ): PathComponent = apply {
-        shadowProperties.apply {
-            this.radius = radius
-            this.dx = dx
-            this.dy = dy
-            this.color = color
-            this.applyElevationOverlay = applyElevationOverlay
-        }
-    }
-
-    /**
-     * Removes this [ShapeComponent]’s drop shadow.
-     */
-    public fun clearShadow(): PathComponent = apply {
-        shadowProperties.apply {
-            this.radius = 0f
-            this.dx = 0f
-            this.dy = 0f
-            this.color = 0
-        }
     }
 }

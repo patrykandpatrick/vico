@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,12 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Shader
-import com.patrykandpatrick.vico.core.DEF_SHADOW_COLOR
 import com.patrykandpatrick.vico.core.component.Component
+import com.patrykandpatrick.vico.core.component.dimension.DefaultMargins
+import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.component.dimension.setMargins
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
-import com.patrykandpatrick.vico.core.component.shape.shadow.ComponentShadow
+import com.patrykandpatrick.vico.core.component.shape.shadow.PaintComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.debug.DebugHelper
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
@@ -50,11 +51,10 @@ public open class ShapeComponent(
     margins: Dimensions = emptyDimensions(),
     public val strokeWidthDp: Float = 0f,
     strokeColor: Int = Color.TRANSPARENT,
-) : Component() {
+) : PaintComponent<ShapeComponent>(), Component, Margins by DefaultMargins() {
 
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
-    private val shadowProperties: ComponentShadow = ComponentShadow()
 
     protected val path: Path = Path()
 
@@ -91,7 +91,7 @@ public open class ShapeComponent(
         applyShader(context, left, top, right, bottom)
         val centerX = (left + right).half
         val centerY = (top + bottom).half
-        shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
+        componentShadow.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
 
         val strokeWidth = strokeWidthDp.pixels
         strokePaint.strokeWidth = strokeWidth
@@ -130,42 +130,5 @@ public open class ShapeComponent(
         dynamicShader
             ?.provideShader(context, left, top, right, bottom)
             ?.let { shader -> paint.shader = shader }
-    }
-
-    /**
-     * Applies a drop shadow.
-     *
-     * @param radius the blur radius.
-     * @param dx the horizontal offset.
-     * @param dy the vertical offset.
-     * @param color the shadow color.
-     * @param applyElevationOverlay whether to apply an elevation overlay to the shape.
-     */
-    public fun setShadow(
-        radius: Float,
-        dx: Float = 0f,
-        dy: Float = 0f,
-        color: Int = DEF_SHADOW_COLOR,
-        applyElevationOverlay: Boolean = false,
-    ): ShapeComponent = apply {
-        shadowProperties.apply {
-            this.radius = radius
-            this.dx = dx
-            this.dy = dy
-            this.color = color
-            this.applyElevationOverlay = applyElevationOverlay
-        }
-    }
-
-    /**
-     * Removes this [ShapeComponent]’s drop shadow.
-     */
-    public fun clearShadow(): ShapeComponent = apply {
-        shadowProperties.apply {
-            this.radius = 0f
-            this.dx = 0f
-            this.dy = 0f
-            this.color = 0
-        }
     }
 }

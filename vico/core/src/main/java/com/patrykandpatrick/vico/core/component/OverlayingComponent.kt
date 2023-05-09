@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.component
 
+import com.patrykandpatrick.vico.core.component.dimension.DefaultMargins
+import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.debug.DebugHelper
 
@@ -35,7 +37,7 @@ public class OverlayingComponent(
     public val innerPaddingTopDp: Float = 0f,
     public val innerPaddingEndDp: Float = 0f,
     public val innerPaddingBottomDp: Float = 0f,
-) : Component() {
+) : Component, Margins by DefaultMargins() {
 
     public constructor(
         outer: Component,
