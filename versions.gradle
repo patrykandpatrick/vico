@@ -35,7 +35,6 @@ ext {
             composeFoundation : "1.4.2",
             composeMaterial3  : "1.0.1",
             coroutines        : "1.6.4",
-            dokka             : "1.8.10",
             agp               : "8.0.1",
             junit             : "4.13.2",
             junitExt          : "1.1.5",
