@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.pie.PieChart
+import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 
 /**
@@ -31,18 +32,21 @@ import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 public fun pieChart(
     slices: List<Slice>,
     spacing: Dp = 0.dp,
-    holeRadius: Dp = 0.dp,
+    outerSize: Size.OuterSize = Size.OuterSize.fill(),
+    innerSize: Size.InnerSize = Size.InnerSize.zero(),
     startAngle: Float = DefaultDimens.PIE_CHART_START_ANGLE,
 ): PieChart = remember {
     PieChart(
         slices = slices,
         spacingDp = spacing.value,
-        holeRadiusDp = holeRadius.value,
+        innerSize = innerSize,
+        outerSize = outerSize,
         startAngle = startAngle,
     )
 }.apply {
     this.slices = slices
     this.spacingDp = spacing.value
-    this.holeRadiusDp = holeRadius.value
+    this.innerSize = innerSize
+    this.outerSize = outerSize
     this.startAngle = startAngle
 }

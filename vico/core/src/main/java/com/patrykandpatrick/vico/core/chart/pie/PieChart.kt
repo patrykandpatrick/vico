@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
 import com.patrykandpatrick.vico.core.extension.maxOfOrNullIndexed
 import com.patrykandpatrick.vico.core.extension.orZero
+import com.patrykandpatrick.vico.core.extension.radius
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.set
 
@@ -38,13 +39,15 @@ import com.patrykandpatrick.vico.core.extension.set
  * TODO
  * @param slices TODO
  * @param spacingDp TODO
+ * @param outerSize TODO
+ * @param innerSize TODO
  * @param startAngle TODO
- * @param holeRadiusDp TODO
  */
 public open class PieChart(
     public var slices: List<Slice>,
-    public var spacingDp: Float = 0f,
-    public var holeRadiusDp: Float = 0f,
+    public var spacingDp: Float,
+    public var outerSize: Size.OuterSize,
+    public var innerSize: Size.InnerSize,
     public var startAngle: Float = PIE_CHART_START_ANGLE,
 ) : BoundsAware {
 
@@ -74,7 +77,6 @@ public open class PieChart(
     protected fun checkParameters() {
         require(slices.isNotEmpty()) { "Slices cannot be empty." }
         require(spacingDp >= 0f) { "The spacing cannot be negative." }
-        require(holeRadiusDp >= 0f) { "The hole radius cannot be negative." }
     }
 
     /**
@@ -88,7 +90,7 @@ public open class PieChart(
         checkParameters()
         insets.clear()
 
-        var ovalRadius = bounds.width().coerceAtMost(bounds.height()).half
+        var ovalRadius = outerSize.getRadius(context, bounds.width(), bounds.height())
 
         var startAngle = startAngle
 
@@ -140,7 +142,11 @@ public open class PieChart(
         model: PieEntryModel,
     ): Unit = with(context) {
 
+        val innerRadius = innerSize.getRadius(context, bounds.width(), bounds.height())
+
         updateOvalBounds(context, model)
+
+        require(oval.radius > innerRadius) { "The outer size must be greater than the inner size." }
 
         val restoreCount = if (spacingDp > 0f) saveLayer() else -1
 
@@ -155,7 +161,7 @@ public open class PieChart(
             if (spacingDp > 0f) {
                 addSpacingSegment(spacingPathBuilder, sweepAngle)
                 addSpacingSegment(spacingPathBuilder, startAngle)
-                addHole(spacingPathBuilder, slice.offsetFromCenterDp.pixels)
+                addHole(spacingPathBuilder, innerRadius)
             }
 
             slice.draw(
@@ -164,7 +170,7 @@ public open class PieChart(
                 oval = oval,
                 startAngle = startAngle,
                 sweepAngle = sweepAngle,
-                holeRadius = holeRadiusDp.pixels,
+                holeRadius = innerRadius,
                 label = entry.label,
                 spacingPath = spacingPathBuilder,
             )
@@ -194,8 +200,8 @@ public open class PieChart(
 
     protected open fun DrawContext.addHole(
         pathBuilder: Path,
-        offsetFromCenter: Float,
+        innerRadius: Float,
     ): Unit = with(pathBuilder) {
-        addCircle(oval.centerX(), oval.centerY(), holeRadiusDp.pixels, Path.Direction.CCW)
+        addCircle(oval.centerX(), oval.centerY(), innerRadius, Path.Direction.CCW)
     }
 }
