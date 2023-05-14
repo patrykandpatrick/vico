@@ -75,11 +75,12 @@ public fun verticalLegendItem(
 }
 
 /**
- * Creates a [VerticalLegend].
+ * Creates a [HorizontalLegend].
  *
- * @param items a [Collection] of [Item]s to be displayed by this [VerticalLegend].
+ * @param items a [Collection] of [Item]s to be displayed by this [HorizontalLegend].
  * @param iconSize defines the size of all [Item.icon]s.
  * @param iconPadding defines the padding between each [Item.icon] and its corresponding [Item.label].
+ * @param lineSpacing defines the vertical spacing between each line of [Item]s.
  * @param spacing defines the vertical spacing between each [Item].
  * @param padding defines the padding of the content.
  */
