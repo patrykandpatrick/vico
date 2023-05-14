@@ -1,4 +1,7 @@
 /.idea/caches
+/.idea/compiler.xml
+/.idea/detekt.xml
+/.idea/kotlinc.xml
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
@@ -9,6 +12,8 @@
 /.idea/gradle.xml
 /.idea/jarRepositories.xml
 /.idea/other.xml
+/.idea/codeStyles/Project.xml
+/.idea/inspectionProfiles/Project_Default.xml
 
 *.iml
 .gradle
