@@ -51,14 +51,13 @@ import com.patrykandpatrick.vico.core.extension.set
 @Composable
 public fun PieChart(
     modifier: Modifier = Modifier,
-    slices: List<Slice>,
     model: PieEntryModel,
-    spacing: Dp = 0.dp,
-    outerSize: Size.OuterSize = Size.OuterSize.fill(),
-    innerSize: Size.InnerSize = Size.InnerSize.zero(),
-    startAngle: Float = DefaultDimens.PIE_CHART_START_ANGLE,
+    slices: List<Slice> = currentChartStyle.pieChart.slices,
+    spacing: Dp = currentChartStyle.pieChart.spacing,
+    outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
+    innerSize: Size.InnerSize = currentChartStyle.pieChart.innerSize,
+    startAngle: Float = currentChartStyle.pieChart.startAngle,
 ) {
-
     val bounds = remember { RectF() }
 
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb().toLong()

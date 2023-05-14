@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -243,6 +243,11 @@ public object DefaultDimens {
      * The default ratio of the maximum width of the outside label to the bounds of the pie chart.
      */
     public const val SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO: Float = 0.25f
+
+    /**
+     * The default spacing between pie chart slices (in dp).
+     */
+    public const val PIE_CHART_SPACING: Int = 0
 }
 
 /**

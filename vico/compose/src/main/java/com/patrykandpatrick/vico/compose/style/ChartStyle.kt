@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,8 @@ import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatrick.vico.core.chart.pie.Size
+import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -59,6 +61,7 @@ import com.patrykandpatrick.vico.core.formatter.ValueFormatter
  * @property lineChart the appearance of line charts.
  * @property marker the appearance of chart markers.
  * @property elevationOverlayColor the color used for elevation overlays.
+ * @property pieChart the appearance of pie charts.
  */
 public data class ChartStyle(
     val axis: Axis,
@@ -66,6 +69,7 @@ public data class ChartStyle(
     val lineChart: LineChart,
     val marker: Marker,
     val elevationOverlayColor: Color,
+    val pieChart: PieChart,
 ) {
     /**
      * Defines the appearance of chart axes.
@@ -176,6 +180,23 @@ public data class ChartStyle(
         val verticalPadding: Dp = DefaultDimens.MARKER_VERTICAL_PADDING.dp,
     )
 
+    /**
+     * Defines the appearance of pie charts.
+     *
+     * @property slices the [Slice]s to use for the pie chart.
+     * @property spacing the spacing between slices.
+     * @property outerSize the size of the pie chart.
+     * @property innerSize the size of the hole in the middle of the pie chart.
+     * @property startAngle the angle at which the first slice starts.
+     */
+    public data class PieChart(
+        val slices: List<Slice>,
+        val spacing: Dp = DefaultDimens.PIE_CHART_SPACING.dp,
+        val outerSize: Size.OuterSize = Size.OuterSize.fill(),
+        val innerSize: Size.InnerSize = Size.InnerSize.zero(),
+        val startAngle: Float = DefaultDimens.PIE_CHART_START_ANGLE,
+    )
+
     public companion object {
 
         /**
@@ -220,6 +241,13 @@ public data class ChartStyle(
             ),
             marker = Marker(),
             elevationOverlayColor = elevationOverlayColor,
+            pieChart = PieChart(
+                slices = entityColors.map { entityColor ->
+                    Slice(
+                        color = entityColor.toArgb(),
+                    )
+                },
+            ),
         )
 
         internal fun fromDefaultColors(defaultColors: DefaultColors) = fromColors(
