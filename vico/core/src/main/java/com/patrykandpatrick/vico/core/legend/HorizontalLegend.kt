@@ -25,43 +25,44 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.half
-import com.patrykandpatrick.vico.core.legend.VerticalLegend.Item
 
 /**
  * [HorizontalLegend] displays legend items in a line wrapping horizontal row.
  *
- * @param items a [Collection] of [Item]s to be displayed by this [HorizontalLegend].
- * @param iconSizeDp defines the size of all [Item.icon]s.
- * @param iconPaddingDp defines the padding between each [Item.icon] and its corresponding [Item.label].
+ * @param items a [Collection] of [LegendItem]s to be displayed by this [HorizontalLegend].
+ * @param iconSizeDp defines the size of all [LegendItem.icon]s.
+ * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
  * @param lineSpacingDp define the vertical spacing between lines.
- * @param spacingDp defines the horizon spacing between each [Item] in line.
+ * @param spacingDp defines the horizon spacing between each [LegendItem] in line.
  * @param padding defines the padding of the content.
  */
 public open class HorizontalLegend(
-    public var items: Collection<Item>,
+    public var items: Collection<LegendItem>,
     public var iconSizeDp: Float,
     public var iconPaddingDp: Float,
     public var lineSpacingDp: Float = 0f,
     public var spacingDp: Float = 0f,
     override val padding: MutableDimensions = emptyDimensions(),
 ) : Legend, Padding {
-    // Cache the height of each line
+
     private val heights = mutableListOf<Float>()
 
-    // Cache the items in each line
-    private val lines = mutableListOf<MutableList<Item>>(mutableListOf())
+    private val lines = mutableListOf<MutableList<LegendItem>>(mutableListOf())
+
     override val bounds: RectF = RectF()
+
     override fun getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
         if (items.isEmpty()) return@with 0f
         lines.clear()
         lines.add(mutableListOf())
         var height = maxOf(
-            items.first().getHeight(context, availableWidth),
+            items.first().getHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
             iconSizeDp.pixels,
         )
         heights.add(height)
         buildLines(context, availableWidth) {
-            val currentHeight = maxOf(it.getHeight(context, availableWidth), iconSizeDp.pixels)
+            val currentHeight =
+                maxOf(it.getHeight(context, availableWidth, iconPaddingDp, iconSizeDp), iconSizeDp.pixels)
             heights.add(currentHeight)
             height += currentHeight
         }
@@ -83,7 +84,8 @@ public open class HorizontalLegend(
 
         lines.forEachIndexed { index, item ->
             var currentStart = 0f
-            val currentLineHeight = heights.getOrElse(index) { item.first().getHeight(context, availableWidth) }
+            val currentLineHeight =
+                heights.getOrElse(index) { item.first().getHeight(context, availableWidth, iconPaddingDp, iconSizeDp) }
             val centerY = currentTop + currentLineHeight.half
 
             item.forEach {
@@ -110,62 +112,53 @@ public open class HorizontalLegend(
                     (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels).toInt(),
                 )
                 currentStart += if (isLtr) {
-                    it.getOriginalLabelWidth(context, availableWidth) + spacingDp.pixels
+                    it.getOriginalLabelWidth(context, availableWidth, iconPaddingDp, iconSizeDp) + spacingDp.pixels
                 } else {
-                    -(it.getOriginalLabelWidth(context, availableWidth) + spacingDp.pixels + iconSizeDp.pixels)
+                    -(
+                        it.getOriginalLabelWidth(
+                            context,
+                            availableWidth,
+                            iconPaddingDp,
+                            iconSizeDp,
+                        ) + spacingDp.pixels + iconSizeDp.pixels
+                        )
                 }
             }
             currentTop += currentLineHeight + lineSpacingDp.pixels
         }
     }
 
-    protected fun buildLines(context: MeasureContext, availableWidth: Float, callback: (it: Item) -> Unit = {}): Unit =
+    protected fun buildLines(
+        context: MeasureContext,
+        availableWidth: Float,
+        callback: (it: LegendItem) -> Unit = {},
+    ): Unit =
         with(context) {
             var remainWidth = availableWidth
             var currentLine = 0
             lines.clear()
             lines.add(mutableListOf())
             items.forEach {
-                remainWidth -= it.getOriginalWidth(context, availableWidth) - spacingDp.pixels
+                remainWidth -= it.getOriginalWidth(
+                    context,
+                    availableWidth,
+                    iconPaddingDp,
+                    iconSizeDp,
+                ) + spacingDp.pixels
                 if (remainWidth >= 0 || remainWidth == availableWidth) {
                     lines[currentLine].add(it)
                     return@forEach
                 }
-                if (remainWidth < 0) {
-                    // Line break
-                    currentLine++
-                    remainWidth = availableWidth - it.getOriginalWidth(context, availableWidth)
-                    lines.add(mutableListOf(it))
-                    callback(it)
-                }
+
+                currentLine++
+                remainWidth = availableWidth - it.getOriginalWidth(
+                    context,
+                    availableWidth,
+                    iconPaddingDp,
+                    iconSizeDp,
+                ) - spacingDp.pixels
+                lines.add(mutableListOf(it))
+                callback(it)
             }
         }
-    protected open fun Item.getHeight(
-        context: MeasureContext,
-        availableWidth: Float,
-    ): Float = with(context) {
-        label.getHeight(
-            context = context,
-            text = labelText,
-            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-        )
-    }
-
-    protected open fun Item.getOriginalLabelWidth(
-        context: MeasureContext,
-        availableWidth: Float,
-    ): Float = with(context) {
-        label.getWidth(
-            context = context,
-            text = labelText,
-            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-        )
-    }
-
-    protected open fun Item.getOriginalWidth(
-        context: MeasureContext,
-        availableWidth: Float,
-    ): Float = with(context) {
-        this@getOriginalWidth.getOriginalLabelWidth(context, availableWidth) + (iconSizeDp + iconPaddingDp).pixels
-    }
 }

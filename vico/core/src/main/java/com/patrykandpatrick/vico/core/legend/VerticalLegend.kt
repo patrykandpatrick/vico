@@ -18,10 +18,8 @@ package com.patrykandpatrick.vico.core.legend
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
-import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
@@ -30,21 +28,21 @@ import com.patrykandpatrick.vico.core.extension.half
 /**
  * [VerticalLegend] displays legend items in a vertical list.
  *
- * @param items a [Collection] of [Item]s to be displayed by this [VerticalLegend].
- * @param iconSizeDp defines the size of all [Item.icon]s.
- * @param iconPaddingDp defines the padding between each [Item.icon] and its corresponding [Item.label].
- * @param spacingDp defines the vertical spacing between each [Item].
+ * @param items a [Collection] of [LegendItem]s to be displayed by this [VerticalLegend].
+ * @param iconSizeDp defines the size of all [LegendItem.icon]s.
+ * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
+ * @param spacingDp defines the vertical spacing between each [LegendItem].
  * @param padding defines the padding of the content.
  */
 public open class VerticalLegend(
-    public var items: Collection<Item>,
+    public var items: Collection<LegendItem>,
     public var iconSizeDp: Float,
     public var iconPaddingDp: Float,
     public var spacingDp: Float = 0f,
     override val padding: MutableDimensions = emptyDimensions(),
 ) : Legend, Padding {
 
-    private val heights: HashMap<Item, Float> = HashMap()
+    private val heights: HashMap<LegendItem, Float> = HashMap()
 
     override val bounds: RectF = RectF()
 
@@ -52,7 +50,7 @@ public open class VerticalLegend(
         items.fold(0f) { sum, item ->
             sum + maxOf(
                 iconSizeDp.pixels,
-                item.getHeight(context, availableWidth),
+                item.getHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
             ).also { height -> heights[item] = height }
         } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
     }
@@ -62,7 +60,7 @@ public open class VerticalLegend(
 
         items.forEach { item ->
 
-            val height = heights.getOrPut(item) { item.getHeight(this, chartBounds.width()) }
+            val height = heights.getOrPut(item) { item.getHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp) }
             val centerY = currentTop + height.half
             var startX = if (isLtr) {
                 chartBounds.left + padding.startDp.pixels
@@ -97,28 +95,4 @@ public open class VerticalLegend(
             currentTop += height + spacingDp.pixels
         }
     }
-
-    protected open fun Item.getHeight(
-        context: MeasureContext,
-        availableWidth: Float,
-    ): Float = with(context) {
-        label.getHeight(
-            context = context,
-            text = labelText,
-            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-        )
-    }
-
-    /**
-     * Defines the appearance of an item of a [Legend].
-     *
-     * @param icon the [Component] used as the item’s icon.
-     * @param label the [TextComponent] used for the label.
-     * @param labelText the text content of the label.
-     */
-    public class Item(
-        public val icon: Component,
-        public val label: TextComponent,
-        public val labelText: CharSequence,
-    )
 }

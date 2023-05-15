@@ -26,8 +26,9 @@ import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.legend.HorizontalLegend
 import com.patrykandpatrick.vico.core.legend.Legend
+import com.patrykandpatrick.vico.core.legend.LegendItem
 import com.patrykandpatrick.vico.core.legend.VerticalLegend
-import com.patrykandpatrick.vico.core.legend.VerticalLegend.Item
+
 /**
  * Creates a [VerticalLegend].
  *
@@ -39,7 +40,7 @@ import com.patrykandpatrick.vico.core.legend.VerticalLegend.Item
  */
 @Composable
 public fun verticalLegend(
-    items: Collection<Item>,
+    items: Collection<LegendItem>,
     iconSize: Dp,
     iconPadding: Dp,
     spacing: Dp = 0.dp,
@@ -62,12 +63,12 @@ public fun verticalLegend(
  * @param labelText the text content of the label.
  */
 @Composable
-public fun verticalLegendItem(
+public fun LegendItem(
     icon: Component,
     label: TextComponent,
     labelText: CharSequence,
-): Item = remember(icon, label, labelText) {
-    Item(
+): LegendItem = remember(icon, label, labelText) {
+    LegendItem(
         icon = icon,
         label = label,
         labelText = labelText,
@@ -87,7 +88,7 @@ public fun verticalLegendItem(
 
 @Composable
 public fun horizontalLegend(
-    items: Collection<Item>,
+    items: Collection<LegendItem>,
     iconSize: Dp,
     iconPadding: Dp,
     lineSpacing: Dp = 0.dp,
@@ -101,25 +102,5 @@ public fun horizontalLegend(
         lineSpacingDp = lineSpacing.value,
         spacingDp = spacing.value,
         padding = padding,
-    )
-}
-
-/**
- * Defines the appearance of an item of a [Legend].
- *
- * @param icon the [Component] used as the item’s icon.
- * @param label the [TextComponent] used for the label.
- * @param labelText the text content of the label.
- */
-@Composable
-public fun horizontalLegendItem(
-    icon: Component,
-    label: TextComponent,
-    labelText: CharSequence,
-): Item = remember(icon, label, labelText) {
-    Item(
-        icon = icon,
-        label = label,
-        labelText = labelText,
     )
 }
