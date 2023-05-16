@@ -32,10 +32,10 @@ import com.patrykandpatrick.vico.core.legend.VerticalLegend
 /**
  * Creates a [VerticalLegend].
  *
- * @param items a [Collection] of [Item]s to be displayed by this [VerticalLegend].
- * @param iconSize defines the size of all [Item.icon]s.
- * @param iconPadding defines the padding between each [Item.icon] and its corresponding [Item.label].
- * @param spacing defines the vertical spacing between each [Item].
+ * @param items a [Collection] of [LegendItem]s to be displayed by this [VerticalLegend].
+ * @param iconSize defines the size of all [LegendItem.icon]s.
+ * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
+ * @param spacing defines the vertical spacing between each [LegendItem].
  * @param padding defines the padding of the content.
  */
 @Composable
@@ -63,7 +63,7 @@ public fun verticalLegend(
  * @param labelText the text content of the label.
  */
 @Composable
-public fun LegendItem(
+public fun legendItem(
     icon: Component,
     label: TextComponent,
     labelText: CharSequence,
@@ -78,11 +78,11 @@ public fun LegendItem(
 /**
  * Creates a [HorizontalLegend].
  *
- * @param items a [Collection] of [Item]s to be displayed by this [HorizontalLegend].
- * @param iconSize defines the size of all [Item.icon]s.
- * @param iconPadding defines the padding between each [Item.icon] and its corresponding [Item.label].
- * @param lineSpacing defines the vertical spacing between each line of [Item]s.
- * @param spacing defines the vertical spacing between each [Item].
+ * @param items a [Collection] of [LegendItem]s to be displayed by this [HorizontalLegend].
+ * @param iconSize defines the size of all [LegendItem.icon]s.
+ * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
+ * @param lineSpacing defines the vertical spacing between each line of [LegendItem]s.
+ * @param spacing defines the vertical spacing between each [LegendItem].
  * @param padding defines the padding of the content.
  */
 

@@ -17,8 +17,6 @@
 package com.patrykandpatrick.vico.core.legend
 
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.component.Component
-import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 
@@ -36,81 +34,4 @@ public interface Legend : BoundsAware {
      * Draws the legend.
      */
     public fun draw(context: ChartDrawContext)
-}
-
-/**
- * Defines the appearance of an item of a [Legend].
- *
- * @param icon the [Component] used as the item’s icon.
- * @param label the [TextComponent] used for the label.
- * @param labelText the text content of the label.
- */
-public class LegendItem(
-    public val icon: Component,
-    public val label: TextComponent,
-    public val labelText: CharSequence,
-)
-
-/**
- * Measures the height of an item of a [Legend].
- *
- * @param context the [MeasureContext] used to measure the height.
- * @param availableWidth the available width for the item.
- * @param iconPaddingDp the padding between the icon and the label.
- * @param iconSizeDp the size of the icon.
- */
-public fun LegendItem.getHeight(
-    context: MeasureContext,
-    availableWidth: Float,
-    iconPaddingDp: Float,
-    iconSizeDp: Float,
-): Float = with(context) {
-    label.getHeight(
-        context = context,
-        text = labelText,
-        width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-    )
-}
-
-/**
- * Measures the width of the Label of a [LegendItem].
- *
- * @param context the [MeasureContext] used to measure the height.
- * @param availableWidth the available width for the item.
- * @param iconPaddingDp the padding between the icon and the label.
- * @param iconSizeDp the size of the icon.
- */
-public fun LegendItem.getOriginalLabelWidth(
-    context: MeasureContext,
-    availableWidth: Float,
-    iconPaddingDp: Float,
-    iconSizeDp: Float,
-): Float = with(context) {
-    label.getWidth(
-        context = context,
-        text = labelText,
-        width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-    )
-}
-
-/**
- * Measures the width of a [LegendItem], including Icon, Label and Padding between them.
- *
- * @param context the [MeasureContext] used to measure the height.
- * @param availableWidth the available width for the item.
- * @param iconPaddingDp the padding between the icon and the label.
- * @param iconSizeDp the size of the icon.
- */
-public fun LegendItem.getOriginalWidth(
-    context: MeasureContext,
-    availableWidth: Float,
-    iconPaddingDp: Float,
-    iconSizeDp: Float,
-): Float = with(context) {
-    this@getOriginalWidth.getOriginalLabelWidth(
-        context,
-        availableWidth,
-        iconPaddingDp,
-        iconSizeDp,
-    ) + (iconSizeDp + iconPaddingDp).pixels
 }
