@@ -31,7 +31,6 @@ import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
-import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
@@ -57,12 +56,9 @@ import com.patrykandpatrick.vico.core.scroll.ScrollListener
 import com.patrykandpatrick.vico.core.scroll.ScrollListenerHost
 import com.patrykandpatrick.vico.views.extension.defaultColors
 import com.patrykandpatrick.vico.views.extension.density
-import com.patrykandpatrick.vico.views.extension.dpInt
 import com.patrykandpatrick.vico.views.extension.fontScale
+import com.patrykandpatrick.vico.views.extension.getWidthAndHeight
 import com.patrykandpatrick.vico.views.extension.isLtr
-import com.patrykandpatrick.vico.views.extension.measureDimension
-import com.patrykandpatrick.vico.views.extension.specSize
-import com.patrykandpatrick.vico.views.extension.verticalPadding
 import com.patrykandpatrick.vico.views.gestures.ChartScaleGestureListener
 import com.patrykandpatrick.vico.views.gestures.MotionEventHandler
 import com.patrykandpatrick.vico.views.gestures.movedXDistance
@@ -405,17 +401,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
-
-        val height = when (MeasureSpec.getMode(heightMeasureSpec)) {
-            MeasureSpec.UNSPECIFIED -> DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
-            MeasureSpec.AT_MOST -> minOf(
-                DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding,
-                heightMeasureSpec.specSize,
-            )
-
-            else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
-        }
+        val (width, height) = getWidthAndHeight(widthMeasureSpec, heightMeasureSpec)
         setMeasuredDimension(width, height)
 
         contentBounds.set(

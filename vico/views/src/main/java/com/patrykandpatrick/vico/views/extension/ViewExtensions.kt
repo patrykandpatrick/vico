@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,11 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
+import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.min
 
-internal fun View.measureDimension(desiredSize: Int, measureSpec: Int): Int {
+internal fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
     val specMode = View.MeasureSpec.getMode(measureSpec)
     val specSize = View.MeasureSpec.getSize(measureSpec)
     return when (specMode) {
@@ -33,6 +34,22 @@ internal fun View.measureDimension(desiredSize: Int, measureSpec: Int): Int {
         View.MeasureSpec.AT_MOST -> min(desiredSize, specSize)
         else -> desiredSize
     }
+}
+
+internal fun View.getWidthAndHeight(widthMeasureSpec: Int, heightMeasureSpec: Int): Pair<Int, Int> {
+    val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
+
+    val height = when (View.MeasureSpec.getMode(heightMeasureSpec)) {
+        View.MeasureSpec.UNSPECIFIED -> DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
+        View.MeasureSpec.AT_MOST -> minOf(
+            DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding,
+            heightMeasureSpec.specSize,
+        )
+
+        else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
+    }
+
+    return width to height
 }
 
 internal val Int.specSize: Int
