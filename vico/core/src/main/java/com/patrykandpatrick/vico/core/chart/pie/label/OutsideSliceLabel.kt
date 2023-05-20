@@ -49,14 +49,14 @@ import kotlin.math.sin
  * @param lineColor the color of the line.
  * @param lineWidthDp the thickness of the line.
  * @param angledSegmentLengthDp the thickness of the angled line segment of the label.
- * @param horizontalSegmentThicknessDp the thickness of the horizontal line segment of the label.
+ * @param horizontalSegmentWidthDp the thickness of the horizontal line segment of the label.
  */
 public open class OutsideSliceLabel(
     override var textComponent: TextComponent = textComponent(),
     lineColor: Int = Color.BLACK,
     lineWidthDp: Float = 1f,
-    public var angledSegmentLengthDp: Float = DefaultDimens.SLICE_ANGLED_SEGMENT_THICKNESS,
-    public var horizontalSegmentThicknessDp: Float = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_THICKNESS,
+    public var angledSegmentLengthDp: Float = DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH,
+    public var horizontalSegmentWidthDp: Float = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH,
     public var maxWidthToBoundsRatio: Float = DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
 ) : SliceLabel() {
 
@@ -200,7 +200,7 @@ public open class OutsideSliceLabel(
         )
 
         return Point(
-            x = baseX + horizontalSegmentThicknessDp.pixels * if (baseX < drawOval.centerX()) -1f else 1f,
+            x = baseX + horizontalSegmentWidthDp.pixels * if (baseX < drawOval.centerX()) -1f else 1f,
             y = y,
         )
     }
@@ -235,7 +235,7 @@ public open class OutsideSliceLabel(
             )
 
             rLineTo(
-                x = horizontalSegmentThicknessDp.pixels * if (lastX < drawOval.centerX()) -1f else 1f,
+                x = horizontalSegmentWidthDp.pixels * if (lastX < drawOval.centerX()) -1f else 1f,
                 y = 0f,
             )
 

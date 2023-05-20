@@ -232,12 +232,12 @@ public object DefaultDimens {
     /**
      * The default thickness for outside label’s angled line in pie chart slice (in dp).
      */
-    public const val SLICE_ANGLED_SEGMENT_THICKNESS: Float = 12f
+    public const val SLICE_ANGLED_SEGMENT_WIDTH: Float = 12f
 
     /**
      * The default thickness for outside label’s horizontal line in pie chart slice (in dp).
      */
-    public const val SLICE_HORIZONTAL_SEGMENT_THICKNESS: Float = 16f
+    public const val SLICE_HORIZONTAL_SEGMENT_WIDTH: Float = 16f
 
     /**
      * The default ratio of the maximum width of the outside label to the bounds of the pie chart.

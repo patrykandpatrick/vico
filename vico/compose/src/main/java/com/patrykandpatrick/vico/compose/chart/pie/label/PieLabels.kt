@@ -49,8 +49,8 @@ public fun SliceLabel.Companion.outside(
     textComponent: TextComponent = textComponent(),
     lineColor: Color = Color.Black,
     lineWidth: Dp = 1.dp,
-    angledSegmentLength: Dp = DefaultDimens.SLICE_ANGLED_SEGMENT_THICKNESS.dp,
-    horizontalSegmentThickness: Dp = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_THICKNESS.dp,
+    angledSegmentLength: Dp = DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH.dp,
+    horizontalSegmentLength: Dp = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH.dp,
     maxWidthToBoundsRatio: Float = DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
 ): OutsideSliceLabel = remember {
     OutsideSliceLabel(
@@ -58,7 +58,7 @@ public fun SliceLabel.Companion.outside(
         lineColor = lineColor.toArgb(),
         lineWidthDp = lineWidth.value,
         angledSegmentLengthDp = angledSegmentLength.value,
-        horizontalSegmentThicknessDp = horizontalSegmentThickness.value,
+        horizontalSegmentWidthDp = horizontalSegmentLength.value,
         maxWidthToBoundsRatio = maxWidthToBoundsRatio,
     )
 }.apply {
@@ -66,6 +66,6 @@ public fun SliceLabel.Companion.outside(
     this.lineColor = lineColor.toArgb()
     this.lineWidthDp = lineWidth.value
     this.angledSegmentLengthDp = angledSegmentLength.value
-    this.horizontalSegmentThicknessDp = horizontalSegmentThickness.value
+    this.horizontalSegmentWidthDp = horizontalSegmentLength.value
     this.maxWidthToBoundsRatio = maxWidthToBoundsRatio
 }
