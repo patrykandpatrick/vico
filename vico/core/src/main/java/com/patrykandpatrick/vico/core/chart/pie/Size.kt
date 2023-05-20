@@ -86,7 +86,9 @@ public interface Size {
     private class Fixed(public val maxDiameterDp: Float) : OuterSize, InnerSize {
 
         init {
-            require(maxDiameterDp >= 0f) { "The max diameter cannot be negative." }
+            require(maxDiameterDp >= 0f) {
+                "The max diameter cannot be negative, but was $maxDiameterDp."
+            }
         }
 
         override fun getRadius(

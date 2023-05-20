@@ -43,3 +43,21 @@ public open class PieEntryModelProducer(
         override val maxValue: Float,
     ) : PieEntryModel
 }
+/**
+ * Creates a [ChartEntryModel] out of the given pairs of numbers, treating the first number in each pair as the _x_
+ * value, and the second one as the _y_ value.
+ */
+
+/**
+ * Creates a [PieEntryModel] out of given numbers. Entries won’t have labels.
+ */
+public fun pieEntryModelOf(vararg entries: Number): PieEntryModel =
+    PieEntryModelProducer(
+        entries = entries.map { FloatPieEntry(it.toFloat()) },
+    ).getModel()
+
+/**
+ * Creates a [PieEntryModel] out of given [PieEntry]s.
+ */
+public fun pieEntryModelOf(vararg entries: PieEntry): PieEntryModel =
+    PieEntryModelProducer(entries = entries.toList()).getModel()

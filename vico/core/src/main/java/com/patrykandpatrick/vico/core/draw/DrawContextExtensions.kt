@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,8 +46,9 @@ public fun drawContext(
     fontScale: Float = 1f,
     isLtr: Boolean = true,
     elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
+    canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
-    override val canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
+    override val canvasBounds: RectF = canvasBounds
     override val elevationOverlayColor: Long = elevationOverlayColor
     override var canvas: Canvas = canvas
     override val density: Float = density
