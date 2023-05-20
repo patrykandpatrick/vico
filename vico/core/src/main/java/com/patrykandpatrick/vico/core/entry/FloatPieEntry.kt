@@ -25,5 +25,5 @@ public data class FloatPieEntry(
 ) : PieEntry {
 
     override fun withValue(value: Float): PieEntry =
-        copy(label = label)
+        copy(value = value)
 }
