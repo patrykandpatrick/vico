@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.draw.drawContext
+import com.patrykandpatrick.vico.core.entry.FloatPieEntry
 import com.patrykandpatrick.vico.core.entry.PieEntryModel
 import com.patrykandpatrick.vico.core.entry.pieEntryModelOf
 import com.patrykandpatrick.vico.core.extension.set
@@ -145,6 +146,11 @@ public open class PieChartView @JvmOverloads constructor(
     public companion object {
 
         @Suppress("MagicNumber")
-        internal val sampleModel = pieEntryModelOf(1f, 2f, 3f, 2f)
+        internal val sampleModel = pieEntryModelOf(
+            FloatPieEntry(value = 1f, label = "One"),
+            FloatPieEntry(value = 2f, label = "Two"),
+            FloatPieEntry(value = 3f, label = "Three"),
+            FloatPieEntry(value = 1f, label = "Four"),
+        )
     }
 }

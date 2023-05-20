@@ -20,9 +20,18 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
 import android.util.AttributeSet
+import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.DefaultColors
+import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH
+import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH
+import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO
 import com.patrykandpatrick.vico.core.chart.pie.Size
+import com.patrykandpatrick.vico.core.chart.pie.label.InsideSliceLabel
+import com.patrykandpatrick.vico.core.chart.pie.label.OutsideSliceLabel
+import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
+import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.extension.defaultColors
 
@@ -50,13 +59,23 @@ internal class PieChartStyleHandler(
 
         sliceSpacing = typedArray.getSliceSpacing()
 
-        startAngle = typedArray.getFloat(R.styleable.PieChartView_startAngle, 0f)
+        startAngle = typedArray.getFloat(
+            R.styleable.PieChartView_startAngle,
+            DefaultDimens.PIE_CHART_START_ANGLE,
+        )
 
         outerSize = typedArray.getOuterSize()
 
         innerSize = typedArray.getInnerSize()
 
-        slices = typedArray.getSlices()
+        val genericSliceLabel: SliceLabel? =
+            if (typedArray.hasValue(R.styleable.PieChartView_pieSliceLabelStyle)) {
+                typedArray.getSliceLabel(resourceId = R.styleable.PieChartView_pieSliceLabelStyle)
+            } else {
+                null
+            }
+
+        slices = typedArray.getSlices(genericSliceLabel)
 
         typedArray.recycle()
     }
@@ -90,7 +109,7 @@ internal class PieChartStyleHandler(
             defaultValue = 0f,
         ).let(Size.InnerSize::fixed)
 
-    private fun TypedArray.getSlices(): List<Slice> {
+    private fun TypedArray.getSlices(genericSliceLabel: SliceLabel?): List<Slice> {
         return listOf(
             R.styleable.PieChartView_pieSliceStyle1,
             R.styleable.PieChartView_pieSliceStyle2,
@@ -106,7 +125,7 @@ internal class PieChartStyleHandler(
                     context = context,
                     resourceId = index,
                     styleableResourceId = R.styleable.PieChartSliceStyle,
-                ).getSlice(index)
+                ).getSlice(genericSliceLabel)
             } else {
                 null
             }
@@ -121,7 +140,73 @@ internal class PieChartStyleHandler(
         }
     }
 
-    private fun TypedArray.getSlice(index: Int): Slice {
+    private fun TypedArray.getSliceLabel(
+        @StyleableRes resourceId: Int,
+    ): SliceLabel {
+
+        val typedArray = getNestedTypedArray(
+            context = context,
+            resourceId = resourceId,
+            styleableResourceId = R.styleable.PieChartSliceLabelStyle,
+        )
+
+        val type = typedArray.getInt(
+            R.styleable.PieChartSliceLabelStyle_pieSliceLabelType,
+            0,
+        )
+
+        val textComponent =
+            if (typedArray.hasValue(R.styleable.PieChartSliceLabelStyle_pieSliceLabelTextStyle)) {
+                typedArray.getNestedTypedArray(
+                    context = context,
+                    resourceId = R.styleable.PieChartSliceLabelStyle_pieSliceLabelTextStyle,
+                    styleableResourceId = R.styleable.TextComponentStyle,
+                ).getTextComponent(context)
+            } else {
+                textComponent()
+            }
+
+        return when (type) {
+            SLICE_LABEL_TYPE_INSIDE -> InsideSliceLabel(textComponent = textComponent)
+            SLICE_LABEL_TYPE_OUTSIDE -> OutsideSliceLabel(
+                textComponent = textComponent,
+                lineColor = typedArray.getColor(
+                    R.styleable.PieChartSliceLabelStyle_pieSliceLabelLineColor,
+                    Color.BLACK,
+                ),
+                lineWidthDp = typedArray.getRawDimension(
+                    context = context,
+                    index = R.styleable.PieChartSliceLabelStyle_pieSliceLabelLineWidth,
+                    defaultValue = 1f,
+                ),
+                angledSegmentLengthDp = typedArray.getRawDimension(
+                    context = context,
+                    index = R.styleable.PieChartSliceLabelStyle_pieSliceLabelAngledSegmentLength,
+                    defaultValue = SLICE_ANGLED_SEGMENT_WIDTH,
+                ),
+                horizontalSegmentWidthDp = typedArray.getRawDimension(
+                    context = context,
+                    index = R.styleable.PieChartSliceLabelStyle_pieSliceLabelHorizontalSegmentWidth,
+                    defaultValue = SLICE_HORIZONTAL_SEGMENT_WIDTH,
+                ),
+                maxWidthToBoundsRatio = typedArray.getFraction(
+                    R.styleable.PieChartSliceLabelStyle_pieSliceLabelMaxWidthToBoundsRatio,
+                    SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
+                ),
+            )
+
+            else -> throw IllegalArgumentException("Unknown slice label type: $type")
+        }
+    }
+
+    private fun TypedArray.getSlice(genericSliceLabel: SliceLabel?): Slice {
+
+        val label = if (hasValue(R.styleable.PieChartSliceStyle_pieSliceLabelStyle)) {
+            getSliceLabel(resourceId = R.styleable.PieChartSliceStyle_pieSliceLabelStyle)
+        } else {
+            genericSliceLabel
+        }
+
         return Slice(
             color = getColor(
                 R.styleable.PieChartSliceStyle_sliceColor,
@@ -141,6 +226,13 @@ internal class PieChartStyleHandler(
                 index = R.styleable.PieChartSliceStyle_sliceOffsetFromCenter,
                 defaultValue = 0f,
             ),
+            label = label,
         )
+    }
+
+    private companion object {
+
+        private const val SLICE_LABEL_TYPE_INSIDE = 0
+        private const val SLICE_LABEL_TYPE_OUTSIDE = 1
     }
 }

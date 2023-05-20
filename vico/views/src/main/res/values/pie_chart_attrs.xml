@@ -15,6 +15,9 @@
   -->
 
 <resources>
+
+    <attr name="pieSliceLabelStyle" format="reference" />
+
     <declare-styleable name="PieChartView">
         <attr name="sliceSpacing" format="dimension" />
         <attr name="startAngle" format="float" />
@@ -30,6 +33,7 @@
         <attr name="pieSliceStyle6" format="reference" />
         <attr name="pieSliceStyle7" format="reference" />
         <attr name="pieSliceStyle8" format="reference" />
+        <attr name="pieSliceLabelStyle" />
     </declare-styleable>
 
     <declare-styleable name="PieChartSliceStyle">
@@ -37,5 +41,19 @@
         <attr name="sliceStrokeWidth" format="dimension" />
         <attr name="sliceStrokeColor" format="color" />
         <attr name="sliceOffsetFromCenter" format="dimension" />
+        <attr name="pieSliceLabelStyle" />
+    </declare-styleable>
+
+    <declare-styleable name="PieChartSliceLabelStyle">
+        <attr name="pieSliceLabelType" format="enum">
+            <enum name="inside" value="0" />
+            <enum name="outside" value="1" />
+        </attr>
+        <attr name="pieSliceLabelTextStyle" format="reference" />
+        <attr name="pieSliceLabelLineColor" format="color" />
+        <attr name="pieSliceLabelLineWidth" format="dimension" />
+        <attr name="pieSliceLabelAngledSegmentLength" format="dimension" />
+        <attr name="pieSliceLabelHorizontalSegmentWidth" format="dimension" />
+        <attr name="pieSliceLabelMaxWidthToBoundsRatio" format="fraction" />
     </declare-styleable>
 </resources>
