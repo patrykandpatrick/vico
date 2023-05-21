@@ -47,6 +47,7 @@ import com.patrykandpatrick.vico.sample.showcase.charts.Chart5
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart6
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart7
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart8
+import com.patrykandpatrick.vico.sample.showcase.charts.PieChart1
 import com.patrykandpatrick.vico.sample.utils.plus
 
 @Composable
@@ -89,6 +90,7 @@ internal fun ShowcaseScreen(viewModel: ShowcaseViewModel = viewModel()) {
 }
 
 private fun LazyListScope.chartItems(uiSystem: UISystem, viewModel: ShowcaseViewModel) {
+    cardItem { PieChart1(uiSystem) }
     cardItem { Chart1(uiSystem, viewModel.customStepChartEntryModelProducer) }
     cardItem { Chart2(uiSystem, viewModel.chartEntryModelProducer) }
     cardItem { Chart3(uiSystem, viewModel.chartEntryModelProducer) }

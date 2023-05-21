@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+
+    <color name="pieChartSlice1Color">#FF6392F7</color>
+    <color name="pieChartSlice2Color">#FF63DEF7</color>
+    <color name="pieChartSlice3Color">#FF44D89A</color>
+    <color name="pieChartSlice4Color">#FFB4F763</color>
+
+    <style name="PieChartStyle">
+        <item name="sliceSpacing">10dp</item>
+        <item name="pieOuterSize">fill</item>
+        <item name="pieInnerSize">0dp</item>
+        <item name="pieSliceStyle1">@style/PieChartSliceStyle1</item>
+        <item name="pieSliceStyle2">@style/PieChartSliceStyle2</item>
+        <item name="pieSliceStyle3">@style/PieChartSliceStyle3</item>
+        <item name="pieSliceStyle4">@style/PieChartSliceStyle4</item>
+        <item name="pieSliceLabelStyle">@style/PieChartSliceInsideLabelStyle</item>
+    </style>
+
+    <style name="PieChartSliceStyle1">
+        <item name="sliceColor">@color/pieChartSlice1Color</item>
+    </style>
+
+    <style name="PieChartSliceStyle2">
+        <item name="sliceColor">@color/pieChartSlice2Color</item>
+    </style>
+
+    <style name="PieChartSliceStyle3">
+        <item name="sliceColor">@android:color/transparent</item>
+        <item name="sliceStrokeWidth">4dp</item>
+        <item name="sliceStrokeColor">@color/pieChartSlice3Color</item>
+    </style>
+
+    <style name="PieChartSliceStyle4">
+        <item name="sliceColor">@color/pieChartSlice4Color</item>
+        <item name="sliceOffsetFromCenter">18dp</item>
+        <item name="pieSliceLabelStyle">@style/PieSliceOutsideLabelStyle</item>
+    </style>
+
+    <style name="PieChartSliceInsideLabelStyle">
+        <item name="pieSliceLabelType">inside</item>
+        <item name="pieSliceLabelTextStyle">@style/PieChartSliceLabelInsideTextStyle</item>
+    </style>
+
+    <style name="PieChartSliceLabelInsideTextStyle">
+        <item name="labelColor">@android:color/white</item>
+        <item name="backgroundStyle">@style/PieChartSliceLabelInsideTextBackgroundStyle</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="typeface">monospace</item>
+    </style>
+
+    <style name="PieChartSliceLabelInsideTextBackgroundStyle">
+        <item name="shapeStyle">@style/PieChartSliceLabelOutsideTextBackgroundShapeStyle</item>
+        <item name="color">@android:color/black</item>
+    </style>
+
+    <style name="PieSliceOutsideLabelStyle">
+        <item name="pieSliceLabelType">outside</item>
+        <item name="pieSliceLabelLineColor">@android:color/darker_gray</item>
+        <item name="pieSliceLabelHorizontalSegmentWidth">24dp</item>
+        <item name="pieSliceLabelLineWidth">1dp</item>
+        <item name="pieSliceLabelTextStyle">@style/PieChartSliceLabelOutsideTextStyle</item>
+    </style>
+
+    <style name="PieChartSliceLabelOutsideTextStyle">
+        <item name="labelColor">@android:color/black</item>
+        <item name="backgroundStyle">@style/PieChartSliceLabelOutsideTextBackgroundStyle</item>
+        <item name="android:paddingStart">8dp</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingEnd">8dp</item>
+        <item name="android:paddingBottom">2dp</item>
+        <item name="marginHorizontal">4dp</item>
+        <item name="typeface">monospace</item>
+    </style>
+
+    <style name="PieChartSliceLabelOutsideTextBackgroundShapeStyle">
+        <item name="cornerSize">100%</item>
+        <item name="cornerTreatment">rounded</item>
+    </style>
+
+    <style name="PieChartSliceLabelOutsideTextBackgroundStyle">
+        <item name="shapeStyle">@style/PieChartSliceLabelOutsideTextBackgroundShapeStyle</item>
+        <item name="color">@color/pieChartSlice4Color</item>
+    </style>
+</resources>
