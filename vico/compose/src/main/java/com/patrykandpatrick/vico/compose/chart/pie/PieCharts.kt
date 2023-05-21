@@ -89,7 +89,6 @@ public fun PieChart(
             .fillMaxWidth()
             .height(DefaultDimens.CHART_HEIGHT.dp),
     ) {
-
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
         pieChart.setBounds(bounds.left, bounds.top, bounds.right, bounds.bottom)

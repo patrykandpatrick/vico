@@ -93,7 +93,6 @@ public open class OutsideSliceLabel(
         label: CharSequence,
         outInsets: Insets,
     ): Unit = with(context) {
-
         val finalLinePoint = getFinalLinePoint(oval, angle)
 
         val (leftBound, topBound, rightBound, bottomBound) = contentBounds
@@ -159,7 +158,6 @@ public open class OutsideSliceLabel(
         slicePath: Path,
         label: CharSequence,
     ): Unit = with(context) {
-
         val (textX, textY) = drawLine(oval, angle)
 
         val textBounds = textComponent.getTextBounds(this, label, measuredTextWidth)
@@ -209,7 +207,6 @@ public open class OutsideSliceLabel(
         drawOval: RectF,
         angle: Float,
     ): Point {
-
         var linePoint = translatePointByAngle(
             center = drawOval.centerPoint,
             point = Point(
@@ -220,7 +217,6 @@ public open class OutsideSliceLabel(
         )
 
         line.draw(this) {
-
             moveTo(linePoint)
 
             lineTo(

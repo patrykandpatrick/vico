@@ -83,18 +83,15 @@ public open class Slice(
         label: CharSequence?,
         spacingPath: Path,
     ): Unit = with(context) {
-
         drawOval.set(oval)
         applyOffset(drawOval, startAngle + sweepAngle.half)
 
         if (color.isNotTransparent) {
-
             maybeUpdateShadowLayer(context, fillPaint, fillPaint.color)
             drawFilledSlice(context, startAngle, sweepAngle, spacingPath)
         }
 
         if (strokeColor.isNotTransparent && strokeWidthDp > 0f) {
-
             if (color.isTransparent) {
                 maybeUpdateShadowLayer(context, strokePaint, strokePaint.color)
             }
@@ -121,7 +118,6 @@ public open class Slice(
         sweepAngle: Float,
         spacingPath: Path,
     ): Unit = with(context) {
-
         fillPaint.style = Paint.Style.FILL
         fillPaint.color = color
 
@@ -175,7 +171,6 @@ public open class Slice(
     }
 
     protected fun MeasureContext.applyOffset(rectF: RectF, angle: Float) {
-
         val (dx, dy) = translatePointByAngle(
             center = Point(0, 0),
             point = Point(

@@ -88,7 +88,6 @@ internal class PieChartStyleHandler(
         )
 
     private fun TypedArray.getOuterSize(): Size.OuterSize {
-
         val outerSizeValue = getRawDimension(
             context = context,
             index = R.styleable.PieChartView_pieOuterSize,
@@ -143,7 +142,6 @@ internal class PieChartStyleHandler(
     private fun TypedArray.getSliceLabel(
         @StyleableRes resourceId: Int,
     ): SliceLabel {
-
         val typedArray = getNestedTypedArray(
             context = context,
             resourceId = resourceId,
@@ -200,7 +198,6 @@ internal class PieChartStyleHandler(
     }
 
     private fun TypedArray.getSlice(genericSliceLabel: SliceLabel?): Slice {
-
         val label = if (hasValue(R.styleable.PieChartSliceStyle_pieSliceLabelStyle)) {
             getSliceLabel(resourceId = R.styleable.PieChartSliceStyle_pieSliceLabelStyle)
         } else {

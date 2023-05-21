@@ -43,7 +43,6 @@ public open class InsideSliceLabel(
         slicePath: Path,
         label: CharSequence,
     ): Unit = with(context) {
-
         val radius = oval.width().half
 
         val (textX, textY) = translatePointByAngle(

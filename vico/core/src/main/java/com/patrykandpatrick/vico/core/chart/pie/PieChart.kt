@@ -86,7 +86,6 @@ public open class PieChart(
         context: DrawContext,
         model: PieEntryModel,
     ): Unit = with(context) {
-
         checkParameters()
         insets.clear()
 
@@ -141,7 +140,6 @@ public open class PieChart(
         context: DrawContext,
         model: PieEntryModel,
     ): Unit = with(context) {
-
         val innerRadius = innerSize.getRadius(context, bounds.width(), bounds.height())
 
         updateOvalBounds(context, model)
