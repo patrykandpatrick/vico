@@ -69,6 +69,8 @@ public open class Slice(
 
     protected val slicePath: Path = Path()
 
+    protected val sliceBounds: RectF = RectF()
+
     /**
      * TODO
      */
@@ -128,6 +130,11 @@ public open class Slice(
         slicePath.lineTo(drawOval.centerX(), drawOval.centerY())
 
         slicePath.close()
+
+        if (dynamicShader != null) {
+            slicePath.computeBounds(sliceBounds, false)
+            fillPaint.shader = dynamicShader?.provideShader(context, sliceBounds)
+        }
 
         if (spacingPath.isEmpty.not()) {
             slicePath.op(spacingPath, Path.Op.DIFFERENCE)
