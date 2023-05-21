@@ -87,6 +87,11 @@ public open class PieChartView @JvmOverloads constructor(
     public var innerSize: Size.InnerSize by pieChart::innerSize
 
     /**
+     * Defines the start angle of the pie chart (in degrees).
+     */
+    public var startAngle: Float by pieChart::startAngle
+
+    /**
      * The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows.
      */
     public var elevationOverlayColor: Long = context.defaultColors.elevationOverlayColor
