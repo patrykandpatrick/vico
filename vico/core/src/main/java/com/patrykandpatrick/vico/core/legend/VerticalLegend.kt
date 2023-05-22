@@ -18,8 +18,10 @@ package com.patrykandpatrick.vico.core.legend
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
+import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
@@ -95,4 +97,18 @@ public open class VerticalLegend(
             currentTop += height + spacingDp.pixels
         }
     }
+
+    @Deprecated("Use LegendItem instead")
+    /**
+     * Defines the appearance of an item of a [VerticalLegend].
+     *
+     * @param icon the [Component] used as the item’s icon.
+     * @param label the [TextComponent] used for the label.
+     * @param labelText the text content of the label.
+     */
+    public class Item(
+        public val icon: Component,
+        public val label: TextComponent,
+        public val labelText: CharSequence,
+    )
 }

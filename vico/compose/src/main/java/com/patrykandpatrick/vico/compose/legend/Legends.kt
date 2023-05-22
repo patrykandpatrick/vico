@@ -56,6 +56,34 @@ public fun verticalLegend(
 }
 
 /**
+ * Creates a [VerticalLegend].
+ *
+ * @param items a [Collection] of [VerticalLegend.Item]s to be displayed by this [VerticalLegend].
+ * @param iconSize defines the size of all [LegendItem.icon]s.
+ * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
+ * @param spacing defines the vertical spacing between each [LegendItem].
+ * @param padding defines the padding of the content.
+ */
+@JvmName("verticalLegendWithItem")
+@Composable
+@Deprecated("verticalLegendItem and VerticalLegend.Item is deprecated. Use legendItem and LegendItem instead.")
+public fun verticalLegend(
+    items: Collection<VerticalLegend.Item>,
+    iconSize: Dp,
+    iconPadding: Dp,
+    spacing: Dp = 0.dp,
+    padding: MutableDimensions = emptyDimensions(),
+): VerticalLegend = remember(items, iconSize, iconPadding, spacing, padding) {
+    VerticalLegend(
+        items = items.map { LegendItem(it.icon, it.label, it.labelText) },
+        iconSizeDp = iconSize.value,
+        iconPaddingDp = iconPadding.value,
+        spacingDp = spacing.value,
+        padding = padding,
+    )
+}
+
+/**
  * Defines the appearance of an item of a [Legend].
  *
  * @param icon the [Component] used as the item’s icon.
@@ -64,6 +92,27 @@ public fun verticalLegend(
  */
 @Composable
 public fun legendItem(
+    icon: Component,
+    label: TextComponent,
+    labelText: CharSequence,
+): LegendItem = remember(icon, label, labelText) {
+    LegendItem(
+        icon = icon,
+        label = label,
+        labelText = labelText,
+    )
+}
+
+@Composable
+@Deprecated("Use legendItem instead.", ReplaceWith("legendItem(icon, label, labelText)"))
+/**
+ * Defines the appearance of an item of a [VerticalLegend].
+ *
+ * @param icon the [Component] used as the item’s icon.
+ * @param label the [TextComponent] used for the label.
+ * @param labelText the text content of the label.
+ */
+public fun verticalLegendItem(
     icon: Component,
     label: TextComponent,
     labelText: CharSequence,
