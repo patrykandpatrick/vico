@@ -108,7 +108,7 @@ private fun ComposePieChart1() {
             copy(
                 pieChart = pieChart.copy(
                     spacing = 12.dp,
-                    slices = listOf(),
+                    sliceLabel = labelInside,
                 ),
             )
         },
@@ -122,17 +122,14 @@ private fun ComposePieChart1() {
             slices = listOf(
                 slice(
                     color = colorResource(id = R.color.pieChartSlice1Color),
-                    label = labelInside,
                 ),
                 slice(
                     color = colorResource(id = R.color.pieChartSlice2Color),
-                    label = labelInside,
                 ),
                 slice(
                     color = Color.Transparent,
                     strokeColor = colorResource(id = R.color.pieChartSlice3Color),
                     strokeWidth = 2.dp,
-                    label = labelInside,
                 ),
                 slice(
                     color = colorResource(id = R.color.pieChartSlice4Color),
