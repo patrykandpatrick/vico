@@ -27,10 +27,10 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
  * @param label the [TextComponent] used for the label.
  * @param labelText the text content of the label.
  */
-public class LegendItem(
-    public val icon: Component,
-    public val label: TextComponent,
-    public val labelText: CharSequence,
+public open class LegendItem(
+    public open val icon: Component,
+    public open val label: TextComponent,
+    public open val labelText: CharSequence,
 ) {
     /**
      * Measures the height of an item of a [Legend].

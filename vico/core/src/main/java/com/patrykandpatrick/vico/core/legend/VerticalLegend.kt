@@ -107,8 +107,8 @@ public open class VerticalLegend(
      * @param labelText the text content of the label.
      */
     public class Item(
-        public val icon: Component,
-        public val label: TextComponent,
-        public val labelText: CharSequence,
-    )
+        public override val icon: Component,
+        public override val label: TextComponent,
+        public override val labelText: CharSequence,
+    ) : LegendItem(icon, label, labelText)
 }
