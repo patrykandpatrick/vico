@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.chart.pie.label.inside
+import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
@@ -37,7 +37,7 @@ public fun slice(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Black,
     offsetFromCenter: Dp = 0.dp,
-    label: SliceLabel? = SliceLabel.inside(),
+    label: SliceLabel? = currentChartStyle.pieChart.sliceLabel,
 ): Slice = remember {
     Slice(
         color = color.toArgb(),

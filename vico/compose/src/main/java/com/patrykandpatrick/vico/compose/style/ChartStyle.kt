@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.vico.compose.chart.pie.slice.slice
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.core.DefaultAlpha
@@ -42,6 +43,8 @@ import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueForma
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatrick.vico.core.chart.pie.Size
+import com.patrykandpatrick.vico.core.chart.pie.label.InsideSliceLabel
+import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shape
@@ -188,6 +191,7 @@ public data class ChartStyle(
      * @property outerSize the size of the pie chart.
      * @property innerSize the size of the hole in the middle of the pie chart.
      * @property startAngle the angle at which the first slice starts.
+     * @property sliceLabel the [SliceLabel] used as a default label style in [slice] function.
      */
     public data class PieChart(
         val slices: List<Slice>,
@@ -195,6 +199,7 @@ public data class ChartStyle(
         val outerSize: Size.OuterSize = Size.OuterSize.fill(),
         val innerSize: Size.InnerSize = Size.InnerSize.zero(),
         val startAngle: Float = DefaultDimens.PIE_CHART_START_ANGLE,
+        val sliceLabel: SliceLabel = InsideSliceLabel(),
     )
 
     public companion object {
