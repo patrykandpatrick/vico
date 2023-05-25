@@ -19,12 +19,10 @@ package com.patrykandpatrick.vico.core.chart.pie.label
 import android.graphics.Color
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.component.shape.PathComponent
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.ceil
@@ -49,15 +47,15 @@ import kotlin.math.sin
  * @param lineColor the color of the line.
  * @param lineWidthDp the thickness of the line.
  * @param angledSegmentLengthDp the thickness of the angled line segment of the label.
- * @param horizontalSegmentWidthDp the thickness of the horizontal line segment of the label.
+ * @param horizontalSegmentLengthDp the thickness of the horizontal line segment of the label.
  */
 public open class OutsideSliceLabel(
-    override var textComponent: TextComponent = textComponent(),
-    lineColor: Int = Color.BLACK,
-    lineWidthDp: Float = 1f,
-    public var angledSegmentLengthDp: Float = DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH,
-    public var horizontalSegmentWidthDp: Float = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH,
-    public var maxWidthToBoundsRatio: Float = DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
+    override var textComponent: TextComponent,
+    lineColor: Int,
+    lineWidthDp: Float,
+    public var angledSegmentLengthDp: Float,
+    public var horizontalSegmentLengthDp: Float,
+    public var maxWidthToBoundsRatio: Float,
 ) : SliceLabel() {
 
     protected var measuredTextWidth: Int = 0
@@ -198,7 +196,7 @@ public open class OutsideSliceLabel(
         )
 
         return Point(
-            x = baseX + horizontalSegmentWidthDp.pixels * if (baseX < drawOval.centerX()) -1f else 1f,
+            x = baseX + horizontalSegmentLengthDp.pixels * if (baseX < drawOval.centerX()) -1f else 1f,
             y = y,
         )
     }
@@ -231,7 +229,7 @@ public open class OutsideSliceLabel(
             )
 
             rLineTo(
-                x = horizontalSegmentWidthDp.pixels * if (lastX < drawOval.centerX()) -1f else 1f,
+                x = horizontalSegmentLengthDp.pixels * if (lastX < drawOval.centerX()) -1f else 1f,
                 y = 0f,
             )
 

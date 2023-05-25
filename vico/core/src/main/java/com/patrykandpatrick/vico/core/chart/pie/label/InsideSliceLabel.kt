@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.chart.pie.label
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.centerPoint
@@ -31,7 +30,7 @@ import com.patrykandpatrick.vico.core.model.Point
  * TODO
  */
 public open class InsideSliceLabel(
-    override var textComponent: TextComponent = textComponent(),
+    override var textComponent: TextComponent,
 ) : SliceLabel() {
 
     public override fun drawLabel(

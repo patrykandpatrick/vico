@@ -58,7 +58,7 @@ public fun SliceLabel.Companion.outside(
         lineColor = lineColor.toArgb(),
         lineWidthDp = lineWidth.value,
         angledSegmentLengthDp = angledSegmentLength.value,
-        horizontalSegmentWidthDp = horizontalSegmentLength.value,
+        horizontalSegmentLengthDp = horizontalSegmentLength.value,
         maxWidthToBoundsRatio = maxWidthToBoundsRatio,
     )
 }.apply {
@@ -66,6 +66,6 @@ public fun SliceLabel.Companion.outside(
     this.lineColor = lineColor.toArgb()
     this.lineWidthDp = lineWidth.value
     this.angledSegmentLengthDp = angledSegmentLength.value
-    this.horizontalSegmentWidthDp = horizontalSegmentLength.value
+    this.horizontalSegmentLengthDp = horizontalSegmentLength.value
     this.maxWidthToBoundsRatio = maxWidthToBoundsRatio
 }

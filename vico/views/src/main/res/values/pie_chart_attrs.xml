@@ -53,7 +53,7 @@
         <attr name="pieSliceLabelLineColor" format="color" />
         <attr name="pieSliceLabelLineWidth" format="dimension" />
         <attr name="pieSliceLabelAngledSegmentLength" format="dimension" />
-        <attr name="pieSliceLabelHorizontalSegmentWidth" format="dimension" />
+        <attr name="pieSliceLabelHorizontalSegmentLength" format="dimension" />
         <attr name="pieSliceLabelMaxWidthToBoundsRatio" format="fraction" />
     </declare-styleable>
 </resources>

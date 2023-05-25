@@ -53,6 +53,7 @@ import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
+import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 
@@ -199,7 +200,7 @@ public data class ChartStyle(
         val outerSize: Size.OuterSize = Size.OuterSize.fill(),
         val innerSize: Size.InnerSize = Size.InnerSize.zero(),
         val startAngle: Float = DefaultDimens.PIE_CHART_START_ANGLE,
-        val sliceLabel: SliceLabel = InsideSliceLabel(),
+        val sliceLabel: SliceLabel = InsideSliceLabel(textComponent = textComponent()),
     )
 
     public companion object {

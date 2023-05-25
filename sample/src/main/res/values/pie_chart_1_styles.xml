@@ -75,7 +75,7 @@
     <style name="PieSliceOutsideLabelStyle">
         <item name="pieSliceLabelType">outside</item>
         <item name="pieSliceLabelLineColor">@android:color/darker_gray</item>
-        <item name="pieSliceLabelHorizontalSegmentWidth">24dp</item>
+        <item name="pieSliceLabelHorizontalSegmentLength">24dp</item>
         <item name="pieSliceLabelLineWidth">1dp</item>
         <item name="pieSliceLabelTextStyle">@style/PieChartSliceLabelOutsideTextStyle</item>
     </style>
