@@ -84,7 +84,7 @@ private fun ComposePieChart1() {
     val labelOutside = SliceLabel.outside(
         textComponent = textComponent(
             color = Color.Black,
-            padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
+            padding = dimensionsOf(horizontal = 8.dp, vertical = 2.dp),
             background = shapeComponent(
                 shape = Shapes.pillShape,
                 color = colorResource(id = R.color.pieChartSlice4Color),
