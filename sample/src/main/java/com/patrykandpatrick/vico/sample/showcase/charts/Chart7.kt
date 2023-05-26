@@ -34,8 +34,8 @@ import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
+import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
-import com.patrykandpatrick.vico.compose.legend.verticalLegendItem
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -106,7 +106,7 @@ private fun rememberStartAxisLabel() = axisLabelComponent(
 @Composable
 private fun rememberLegend() = verticalLegend(
     items = chartColors.mapIndexed { index, chartColor ->
-        verticalLegendItem(
+        legendItem(
             icon = shapeComponent(Shapes.pillShape, chartColor),
             label = textComponent(
                 color = currentChartStyle.axis.axisLabelColor,
