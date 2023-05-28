@@ -152,7 +152,6 @@ public open class OutsideSliceLabel(
         contentBounds: RectF,
         oval: RectF,
         angle: Float,
-        offsetFromCenter: Float,
         slicePath: Path,
         label: CharSequence,
     ): Unit = with(context) {

@@ -45,7 +45,6 @@ public abstract class SliceLabel {
         contentBounds: RectF,
         oval: RectF,
         angle: Float,
-        offsetFromCenter: Float,
         slicePath: Path,
         label: CharSequence,
     )

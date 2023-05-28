@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.chart.pie.label
 
+import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.component.text.TextComponent
@@ -33,26 +34,36 @@ public open class InsideSliceLabel(
     override var textComponent: TextComponent,
 ) : SliceLabel() {
 
+    protected val sliceBounds: RectF = RectF()
+
+    protected val transform: Matrix = Matrix()
+
     public override fun drawLabel(
         context: DrawContext,
         contentBounds: RectF,
         oval: RectF,
         angle: Float,
-        offsetFromCenter: Float,
         slicePath: Path,
         label: CharSequence,
     ): Unit = with(context) {
         val radius = oval.width().half
 
+        transform.setRotate(-angle, oval.centerX(), oval.centerY())
+        slicePath.transform(transform)
+        slicePath.computeBounds(sliceBounds, false)
+        transform.setRotate(angle, oval.centerX(), oval.centerY())
+        slicePath.transform(transform)
+
         val (textX, textY) = translatePointByAngle(
             center = oval.centerPoint,
             point = Point(
-                x = oval.centerX() + (radius + offsetFromCenter).half,
+                x = oval.centerX() + (sliceBounds.left - oval.centerX() + radius).half,
                 y = oval.centerY(),
             ),
             angle = Math.toRadians(angle.toDouble()),
         )
 
+        val minWidth = textComponent.getTextBounds(this, "…").width()
         val textBounds = textComponent.getTextBounds(this, label)
 
         textBounds.offset(
@@ -62,12 +73,16 @@ public open class InsideSliceLabel(
 
         layoutHelper.adjustTextBounds(textBounds, slicePath)
 
-        textComponent.drawText(
-            context = this,
-            text = label,
-            textX = textBounds.centerX(),
-            textY = textY,
-            maxTextWidth = textBounds.width().ceil.toInt(),
-        )
+        val maxTextWidth = textBounds.width().ceil.toInt()
+
+        if (maxTextWidth > minWidth) {
+            textComponent.drawText(
+                context = this,
+                text = label,
+                textX = textBounds.centerX(),
+                textY = textY,
+                maxTextWidth = textBounds.width().ceil.toInt(),
+            )
+        }
     }
 }

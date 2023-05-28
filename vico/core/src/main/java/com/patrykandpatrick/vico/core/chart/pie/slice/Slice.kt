@@ -107,7 +107,6 @@ public open class Slice(
                 contentBounds = contentBounds,
                 oval = drawOval,
                 angle = startAngle + sweepAngle.half,
-                offsetFromCenter = holeRadius - offsetFromCenterDp.pixels,
                 slicePath = slicePath,
                 label = label,
             )
