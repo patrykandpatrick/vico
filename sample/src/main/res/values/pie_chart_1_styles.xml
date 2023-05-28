@@ -65,6 +65,7 @@
         <item name="android:paddingEnd">8dp</item>
         <item name="android:paddingBottom">2dp</item>
         <item name="typeface">monospace</item>
+        <item name="marginHorizontal">2dp</item>
     </style>
 
     <style name="PieChartSliceLabelInsideTextBackgroundStyle">

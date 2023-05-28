@@ -53,6 +53,7 @@ private val model = pieEntryModelOf(
     FloatPieEntry(value = 2f, label = "Two"),
     FloatPieEntry(value = 3f, label = "Three"),
     FloatPieEntry(value = 1f, label = "Four"),
+    FloatPieEntry(value = 3f, label = "Five"),
 )
 
 @Composable
@@ -99,7 +100,7 @@ private fun ComposePieChart1() {
             color = Color.White,
             padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
             background = shapeComponent(shape = Shapes.pillShape, color = Color.Black),
-            margins = dimensionsOf(4.dp),
+            margins = dimensionsOf(2.dp),
         ),
     )
 
@@ -137,6 +138,7 @@ private fun ComposePieChart1() {
                     label = labelOutside,
                 ),
             ),
+//            innerSize = Size.InnerSize.fixed(88.dp),
         )
     }
 }
