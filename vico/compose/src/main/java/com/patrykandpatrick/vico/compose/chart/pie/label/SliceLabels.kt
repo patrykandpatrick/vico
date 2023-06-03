@@ -30,7 +30,11 @@ import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 
 /**
- * TODO
+ * The factory function for [InsideSliceLabel].
+ *
+ * @param textComponent the [TextComponent] to use for the label.
+ *
+ * @see InsideSliceLabel
  */
 @Composable
 public fun SliceLabel.Companion.inside(
@@ -42,7 +46,16 @@ public fun SliceLabel.Companion.inside(
 }
 
 /**
- * TODO
+ * The factory function for [OutsideSliceLabel].
+ *
+ * @param textComponent the [TextComponent] to use for the label.
+ * @param lineColor the color of the line connecting the label to the slice.
+ * @param lineWidth the width of the line connecting the label to the slice.
+ * @param angledSegmentLength the length of the angled segment of the line connecting the label to the slice.
+ * @param horizontalSegmentLength the length of the horizontal segment of the line connecting the label to the slice.
+ * @param maxWidthToBoundsRatio the maximum width of the label as a ratio of the bounds of the slice.
+ *
+ * @see OutsideSliceLabel
  */
 @Composable
 public fun SliceLabel.Companion.outside(

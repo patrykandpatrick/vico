@@ -29,7 +29,9 @@ import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.model.Point
 
 /**
- * TODO
+ * A label for a slice used in a pie chart. The label is drawn inside the slice.
+ *
+ * @param textComponent the [TextComponent] used to draw the label.
  */
 public open class InsideSliceLabel(
     public var textComponent: TextComponent,

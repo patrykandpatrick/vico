@@ -40,10 +40,11 @@ import kotlin.math.abs
 import kotlin.math.sin
 
 /**
- * TODO
+ * A label for a slice used in a pie chart. The label is drawn outside the slice. Its position can be customized with
+ * [angledSegmentLengthDp] and [horizontalSegmentLengthDp].
  *
- * @param textComponent TODO
- * @param maxWidthToBoundsRatio TODO
+ * @param textComponent the text component used to draw the label.
+ * @param maxWidthToBoundsRatio the maximum width of the label as a ratio of the bounds of the pie chart.
  * @param lineColor the color of the line.
  * @param lineWidthDp the thickness of the line.
  * @param angledSegmentLengthDp the thickness of the angled line segment of the label.

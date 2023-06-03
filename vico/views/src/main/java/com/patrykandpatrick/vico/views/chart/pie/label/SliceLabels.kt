@@ -25,14 +25,28 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.textComponent
 
 /**
- * TODO
+ * The factory function for [InsideSliceLabel].
+ *
+ * @param textComponent the [TextComponent] to use for the label.
+ *
+ * @see InsideSliceLabel
  */
 public fun SliceLabel.Companion.inside(
     textComponent: TextComponent = textComponent(),
 ): SliceLabel = InsideSliceLabel(textComponent = textComponent)
 
 /**
- * TODO
+ * The factory function for [OutsideSliceLabel].
+ *
+ * @param textComponent the [TextComponent] to use for the label.
+ * @param lineColor the color of the line connecting the label to the slice.
+ * @param lineWidthDp the width of the line connecting the label to the slice (in dp).
+ * @param angledSegmentLengthDp the length of the angled segment of the line connecting the label to the slice (in dp).
+ * @param horizontalSegmentLengthDp the length of the horizontal segment of the line connecting the label to the slice
+ * (in dp).
+ * @param maxWidthToBoundsRatio the maximum width of the label as a ratio of the bounds of the slice.
+ *
+ * @see OutsideSliceLabel
  */
 public fun SliceLabel.Companion.outside(
     textComponent: TextComponent = textComponent(),

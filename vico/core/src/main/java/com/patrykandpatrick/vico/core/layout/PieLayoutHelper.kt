@@ -21,7 +21,7 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.extension.updateBounds
 
 /**
- * TODO
+ * A layout helper class used to measure and adjust the bounds of a label placed inside of a slice.
  */
 public open class PieLayoutHelper {
 
@@ -36,7 +36,10 @@ public open class PieLayoutHelper {
     protected val textBoundsBottom: RectF = RectF()
 
     /**
-     * TODO
+     * Adjusts the bounds of the text to fit inside of the slice.
+     *
+     * @param textBounds the bounds of the text that will be adjusted.
+     * @param slicePath the path of the slice used to adjust the [textBounds].
      */
     public open fun adjustTextBounds(
         textBounds: RectF,
