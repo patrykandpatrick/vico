@@ -32,11 +32,6 @@ public abstract class SliceLabel {
     /**
      * TODO
      */
-    public abstract var textComponent: TextComponent
-
-    /**
-     * TODO
-     */
     @LongParameterListDrawFunction
     public abstract fun drawLabel(
         context: DrawContext,

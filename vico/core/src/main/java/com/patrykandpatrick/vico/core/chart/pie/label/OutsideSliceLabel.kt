@@ -50,7 +50,7 @@ import kotlin.math.sin
  * @param horizontalSegmentLengthDp the thickness of the horizontal line segment of the label.
  */
 public open class OutsideSliceLabel(
-    override var textComponent: TextComponent,
+    public var textComponent: TextComponent,
     lineColor: Int,
     lineWidthDp: Float,
     public var angledSegmentLengthDp: Float,

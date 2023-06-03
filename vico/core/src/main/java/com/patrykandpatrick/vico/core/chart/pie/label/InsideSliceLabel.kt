@@ -32,7 +32,7 @@ import com.patrykandpatrick.vico.core.model.Point
  * TODO
  */
 public open class InsideSliceLabel(
-    override var textComponent: TextComponent,
+    public var textComponent: TextComponent,
 ) : SliceLabel() {
 
     protected val layoutHelper: PieLayoutHelper = PieLayoutHelper()
