@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.centerPoint
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.model.Point
 
@@ -33,6 +34,8 @@ import com.patrykandpatrick.vico.core.model.Point
 public open class InsideSliceLabel(
     override var textComponent: TextComponent,
 ) : SliceLabel() {
+
+    protected val layoutHelper: PieLayoutHelper = PieLayoutHelper()
 
     protected val sliceBounds: RectF = RectF()
 

@@ -29,8 +29,6 @@ import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
  */
 public abstract class SliceLabel {
 
-    protected val layoutHelper: PieLayoutHelper = PieLayoutHelper()
-
     /**
      * TODO
      */
