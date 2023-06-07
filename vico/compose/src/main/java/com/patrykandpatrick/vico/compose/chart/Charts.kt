@@ -336,7 +336,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         modifier = Modifier
             .fillMaxSize()
             .chartTouchEvent(
-                setTouchPoint = remember(marker) {
+                setTouchPoint = remember(marker == null) {
                     markerTouchPoint
                         .component2()
                         .takeIf { marker != null }
