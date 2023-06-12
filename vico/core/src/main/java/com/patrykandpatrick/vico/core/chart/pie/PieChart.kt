@@ -25,7 +25,7 @@ import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
-import com.patrykandpatrick.vico.core.entry.PieEntryModel
+import com.patrykandpatrick.vico.core.entry.pie.PieEntryModel
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
@@ -150,6 +150,7 @@ public open class PieChart(
 
         model.entries.foldIndexed(startAngle) { index, startAngle, entry ->
 
+            if (entry.value <= 0f) return@foldIndexed startAngle
             val slice = slices.getRepeating(index)
 
             val sweepAngle = entry.value / model.maxValue * FULL_DEGREES
