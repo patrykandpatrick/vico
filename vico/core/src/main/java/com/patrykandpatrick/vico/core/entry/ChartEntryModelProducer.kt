@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.entry
 
 import com.patrykandpatrick.vico.core.DEF_THREAD_POOL_SIZE
+import com.patrykandpatrick.vico.core.entry.diff.CartesianChartDiffProcessor
 import com.patrykandpatrick.vico.core.entry.diff.DefaultDiffProcessor
-import com.patrykandpatrick.vico.core.entry.diff.DiffProcessor
 import com.patrykandpatrick.vico.core.extension.setToAllChildren
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -28,21 +28,22 @@ import java.util.concurrent.Executors
  *
  * @param entryCollections a two-dimensional list of [ChartEntry] instances used to generate the [ChartEntryModel].
  * @param backgroundExecutor an [Executor] used to generate instances of the [ChartEntryModel] off the main thread.
- * @param diffProcessor the [DiffProcessor] to use for difference animations.
+ * @param diffProcessor the [CartesianChartDiffProcessor] to use for difference animations.
  *
  * @see ChartModelProducer
  */
 public class ChartEntryModelProducer(
     entryCollections: List<List<ChartEntry>>,
     backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-    private val diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor(),
+    private val diffProcessor: CartesianChartDiffProcessor<List<ChartEntry>> = DefaultDiffProcessor(),
 ) : ChartModelProducer<ChartEntryModel> {
 
     private var cachedModel: ChartEntryModel? = null
 
     private var entriesHashCode: Int = 0
 
-    private val updateReceivers: HashMap<Any, UpdateReceiver> = HashMap()
+    private val updateReceivers:
+        HashMap<Any, UpdateReceiver<ChartEntryModel, CartesianChartDiffProcessor<List<ChartEntry>>>> = HashMap()
 
     private val executor: Executor = backgroundExecutor
 
@@ -54,7 +55,7 @@ public class ChartEntryModelProducer(
     public constructor(
         vararg entryCollections: List<ChartEntry>,
         backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-        diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor(),
+        diffProcessor: CartesianChartDiffProcessor<List<ChartEntry>> = DefaultDiffProcessor(),
     ) : this(entryCollections.toList(), backgroundExecutor, diffProcessor)
 
     init {
@@ -106,7 +107,7 @@ public class ChartEntryModelProducer(
     private fun progressModelSynchronously(
         progress: Float,
         modelReceiver: (ChartEntryModel) -> Unit,
-        diffProcessor: DiffProcessor<ChartEntry>,
+        diffProcessor: CartesianChartDiffProcessor<List<ChartEntry>>,
     ) {
         val model = getModel(
             entries = diffProcessor.progressDiff(progress),
@@ -156,13 +157,6 @@ public class ChartEntryModelProducer(
     }
 
     override fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key = key)
-
-    private data class UpdateReceiver(
-        val listener: () -> Unit,
-        val onModel: (ChartEntryModel) -> Unit,
-        val diffProcessor: DiffProcessor<ChartEntry>,
-        val getOldModel: () -> ChartEntryModel?,
-    )
 
     internal data class Model(
         override val entries: List<List<ChartEntry>>,

@@ -90,7 +90,7 @@ internal fun ShowcaseScreen(viewModel: ShowcaseViewModel = viewModel()) {
 }
 
 private fun LazyListScope.chartItems(uiSystem: UISystem, viewModel: ShowcaseViewModel) {
-    cardItem { PieChart1(uiSystem) }
+    cardItem { PieChart1(uiSystem, viewModel.pieChartEntryModelProducer) }
     cardItem { Chart1(uiSystem, viewModel.customStepChartEntryModelProducer) }
     cardItem { Chart2(uiSystem, viewModel.chartEntryModelProducer) }
     cardItem { Chart3(uiSystem, viewModel.chartEntryModelProducer) }

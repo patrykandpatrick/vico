@@ -66,7 +66,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
  * @see ChartModelProducer
  */
 @Composable
-public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
+public fun <Model> ChartModelProducer<Model>.collectAsState(
     chartKey: Any,
     producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,

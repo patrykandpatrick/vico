@@ -22,7 +22,6 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import androidx.core.view.updatePadding
-import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.min
 
@@ -34,22 +33,6 @@ internal fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
         View.MeasureSpec.AT_MOST -> min(desiredSize, specSize)
         else -> desiredSize
     }
-}
-
-internal fun View.getWidthAndHeight(widthMeasureSpec: Int, heightMeasureSpec: Int): Pair<Int, Int> {
-    val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
-
-    val height = when (View.MeasureSpec.getMode(heightMeasureSpec)) {
-        View.MeasureSpec.UNSPECIFIED -> DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
-        View.MeasureSpec.AT_MOST -> minOf(
-            DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding,
-            heightMeasureSpec.specSize,
-        )
-
-        else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
-    }
-
-    return width to height
 }
 
 internal val Int.specSize: Int
@@ -95,3 +78,6 @@ internal fun OverScroller.fling(
  */
 public val MotionEvent.point: Point
     get() = Point(x, y)
+
+internal val View.isAttachedToWindowCompat: Boolean
+    get() = ViewCompat.isAttachedToWindow(this)

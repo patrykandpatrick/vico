@@ -25,7 +25,9 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.composed.plus
+import com.patrykandpatrick.vico.core.entry.pie.PieEntryModelProducer
 import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator
+import com.patrykandpatrick.vico.core.util.RandomPieEntriesGenerator
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -43,6 +45,8 @@ internal class ShowcaseViewModel : ViewModel() {
         yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
     )
 
+    private val pieEntriesGenerator = RandomPieEntriesGenerator()
+
     internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
     internal val customStepChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
@@ -51,6 +55,8 @@ internal class ShowcaseViewModel : ViewModel() {
 
     internal val composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel> =
         multiDataSetChartEntryModelProducer + chartEntryModelProducer
+
+    internal val pieChartEntryModelProducer: PieEntryModelProducer = PieEntryModelProducer()
 
     var uiSystem by mutableStateOf(UISystem.Compose)
         private set
@@ -65,6 +71,7 @@ internal class ShowcaseViewModel : ViewModel() {
                     },
                 )
                 customStepChartEntryModelProducer.setEntries(customStepGenerator.generateRandomEntries())
+                pieChartEntryModelProducer.setEntries(pieEntriesGenerator.get())
                 delay(UPDATE_FREQUENCY)
             }
         }

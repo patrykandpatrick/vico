@@ -18,25 +18,22 @@ package com.patrykandpatrick.vico.views.chart.pie
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.view.ViewCompat
 import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.draw.drawContext
-import com.patrykandpatrick.vico.core.entry.FloatPieEntry
-import com.patrykandpatrick.vico.core.entry.PieEntryModel
-import com.patrykandpatrick.vico.core.entry.pieEntryModelOf
+import com.patrykandpatrick.vico.core.entry.pie.FloatPieEntry
+import com.patrykandpatrick.vico.core.entry.pie.PieEntryModel
+import com.patrykandpatrick.vico.core.entry.pie.pieEntryModelOf
 import com.patrykandpatrick.vico.core.extension.set
+import com.patrykandpatrick.vico.views.chart.BaseChartView
 import com.patrykandpatrick.vico.views.extension.defaultColors
-import com.patrykandpatrick.vico.views.extension.density
-import com.patrykandpatrick.vico.views.extension.fontScale
-import com.patrykandpatrick.vico.views.extension.getWidthAndHeight
-import com.patrykandpatrick.vico.views.extension.isLtr
+import com.patrykandpatrick.vico.views.extension.isAttachedToWindowCompat
+import com.patrykandpatrick.vico.views.extension.measureDimension
+import com.patrykandpatrick.vico.views.extension.specSize
 import com.patrykandpatrick.vico.views.theme.PieChartStyleHandler
 
 /**
@@ -46,14 +43,12 @@ public open class PieChartView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : View(context, attrs, defStyleAttr) {
+) : BaseChartView<PieEntryModel>(context, attrs, defStyleAttr) {
 
     private val pieChartStyleHandler: PieChartStyleHandler = PieChartStyleHandler(
         context = context,
         attrs = attrs,
     )
-
-    protected val contentBounds: RectF = RectF()
 
     protected val pieChart: PieChart = PieChart(
         slices = pieChartStyleHandler.slices,
@@ -63,45 +58,63 @@ public open class PieChartView @JvmOverloads constructor(
         startAngle = pieChartStyleHandler.startAngle,
     )
 
-    protected var model: PieEntryModel? = null
-        private set
-
     /**
      * The [List] of [Slice]s which define the appearance of each slice of the pie chart.
      */
-    public var slices: List<Slice> by pieChart::slices
+    public var slices: List<Slice>
+        get() = pieChart.slices
+        set(value) {
+            pieChart.slices = value
+            invalidate()
+        }
 
     /**
      * The spacing between each slice of the pie chart (in dp).
      */
-    public var sliceSpacingDp: Float by pieChart::spacingDp
+    public var sliceSpacingDp: Float
+        get() = pieChart.spacingDp
+        set(value) {
+            pieChart.spacingDp = value
+            invalidate()
+        }
 
     /**
      * Defines the outer size of the pie chart.
      */
-    public var outerSize: Size.OuterSize by pieChart::outerSize
+    public var pieOuterSize: Size.OuterSize
+        get() = pieChart.outerSize
+        set(value) {
+            pieChart.outerSize = value
+            invalidate()
+        }
 
     /**
      * Defines the inner size of the pie chart.
      */
-    public var innerSize: Size.InnerSize by pieChart::innerSize
+    public var pieInnerSize: Size.InnerSize
+        get() = pieChart.innerSize
+        set(value) {
+            pieChart.innerSize = value
+            invalidate()
+        }
 
     /**
      * Defines the start angle of the pie chart (in degrees).
      */
-    public var startAngle: Float by pieChart::startAngle
+    public var startAngle: Float
+        get() = pieChart.startAngle
+        set(value) {
+            pieChart.startAngle = value
+            invalidate()
+        }
 
     /**
      * The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows.
      */
     public var elevationOverlayColor: Long = context.defaultColors.elevationOverlayColor
 
-    protected val measureContext: MutableMeasureContext = MutableMeasureContext(
-        canvasBounds = contentBounds,
-        density = context.density,
-        fontScale = context.fontScale,
-        isLtr = context.isLtr,
-    )
+    final override var model: PieEntryModel? = null
+        private set
 
     init {
         if (isInEditMode) {
@@ -112,15 +125,22 @@ public open class PieChartView @JvmOverloads constructor(
     /**
      * Sets the [PieEntryModel] to display.
      */
-    public fun setModel(model: PieEntryModel) {
+    public final override fun setModel(model: PieEntryModel) {
         this.model = model
-        if (ViewCompat.isAttachedToWindow(this)) {
+        if (isAttachedToWindowCompat) {
             invalidate()
         }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val (width, height) = getWidthAndHeight(widthMeasureSpec, heightMeasureSpec)
+        val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
+
+        val height = when (MeasureSpec.getMode(heightMeasureSpec)) {
+            MeasureSpec.UNSPECIFIED -> width
+            MeasureSpec.AT_MOST -> minOf(width, heightMeasureSpec.specSize)
+            else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
+        }
+
         setMeasuredDimension(width, height)
 
         contentBounds.set(

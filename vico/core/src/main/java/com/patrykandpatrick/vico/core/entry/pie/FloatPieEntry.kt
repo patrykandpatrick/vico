@@ -14,27 +14,16 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.entry
-
-import com.patrykandpatrick.vico.core.chart.pie.PieChart
+package com.patrykandpatrick.vico.core.entry.pie
 
 /**
- * The base for a single chart entry rendered by [PieChart] subclasses.
+ * The default implementation of [PieEntry].
  */
-public interface PieEntry {
+public data class FloatPieEntry(
+    override val value: Float,
+    override val label: CharSequence? = null,
+) : PieEntry {
 
-    /**
-     * The value if this [PieEntry].
-     */
-    public val value: Float
-
-    /**
-     * An optional label for this [PieEntry].
-     */
-    public val label: CharSequence?
-
-    /**
-     * Creates a copy of this [PieEntry] implementation, but with a new [value].
-     */
-    public fun withValue(value: Float): PieEntry
+    override fun withValue(value: Float): PieEntry =
+        copy(value = value)
 }

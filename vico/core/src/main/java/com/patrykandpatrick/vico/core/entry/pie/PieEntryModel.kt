@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.entry
+package com.patrykandpatrick.vico.core.entry.pie
 
 /**
  * TODO

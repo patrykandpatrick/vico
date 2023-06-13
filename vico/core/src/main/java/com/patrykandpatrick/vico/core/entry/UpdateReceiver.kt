@@ -16,14 +16,14 @@
 
 package com.patrykandpatrick.vico.core.entry
 
-/**
- * The default implementation of [PieEntry].
- */
-public data class FloatPieEntry(
-    override val value: Float,
-    override val label: CharSequence? = null,
-) : PieEntry {
+import com.patrykandpatrick.vico.core.entry.diff.DiffProcessor
 
-    override fun withValue(value: Float): PieEntry =
-        copy(value = value)
+internal data class UpdateReceiver<Model, Processor : DiffProcessor<*>>(
+    val listener: () -> Unit,
+    val onModel: (Model) -> Unit,
+    val diffProcessor: Processor,
+    val getOldModel: () -> Model?,
+) {
+
+    var isRunningInitialUpdate = false
 }

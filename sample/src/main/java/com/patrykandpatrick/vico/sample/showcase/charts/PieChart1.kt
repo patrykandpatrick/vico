@@ -21,10 +21,8 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,29 +41,13 @@ import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.FloatPieEntry
-import com.patrykandpatrick.vico.core.entry.pieEntryModelOf
+import com.patrykandpatrick.vico.core.entry.pie.PieEntryModelProducer
 import com.patrykandpatrick.vico.databinding.PieChart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 
-private val model = pieEntryModelOf(
-    FloatPieEntry(value = 1f, label = "One"),
-    FloatPieEntry(value = 2f, label = "Two"),
-    FloatPieEntry(value = 3f, label = "Three"),
-    FloatPieEntry(value = 1f, label = "Four"),
-    FloatPieEntry(value = 3f, label = "Five"),
-)
-
 @Composable
-internal fun PieChart1(uiSystem: UISystem) {
-    when (uiSystem) {
-        UISystem.Compose -> ComposePieChart1()
-        UISystem.Views -> ViewPieChart1()
-    }
-}
-
-internal val startAngleInfiniteTransition: State<Float>
-    @Composable get() = rememberInfiniteTransition(label = "startAngle infinite transition")
+internal fun PieChart1(uiSystem: UISystem, pieEntryModelProducer: PieEntryModelProducer) {
+    val startAngle by rememberInfiniteTransition(label = "startAngle infinite transition")
         .animateFloat(
             label = "startAngle animation",
             initialValue = 0f,
@@ -78,10 +60,17 @@ internal val startAngleInfiniteTransition: State<Float>
             ),
         )
 
-@Composable
-private fun ComposePieChart1() {
-    val startAngle by startAngleInfiniteTransition
+    when (uiSystem) {
+        UISystem.Compose -> ComposePieChart1(startAngle, pieEntryModelProducer)
+        UISystem.Views -> ViewPieChart1(startAngle, pieEntryModelProducer)
+    }
+}
 
+@Composable
+private fun ComposePieChart1(
+    startAngle: Float,
+    pieEntryModelProducer: PieEntryModelProducer,
+) {
     val labelOutside = SliceLabel.outside(
         textComponent = textComponent(
             color = Color.Black,
@@ -116,9 +105,8 @@ private fun ComposePieChart1() {
     ) {
         PieChart(
             modifier = Modifier
-                .aspectRatio(1f)
-                .background(Color.White),
-            model = model,
+                .aspectRatio(1f),
+            pieEntryModelProducer = pieEntryModelProducer,
             startAngle = startAngle,
             slices = listOf(
                 slice(
@@ -138,17 +126,17 @@ private fun ComposePieChart1() {
                     label = labelOutside,
                 ),
             ),
-//            innerSize = Size.InnerSize.fixed(88.dp),
         )
     }
 }
 
 @Composable
-private fun ViewPieChart1() {
-    val startAngle by startAngleInfiniteTransition
-
+private fun ViewPieChart1(
+    startAngle: Float,
+    pieEntryModelProducer: PieEntryModelProducer,
+) {
     AndroidViewBinding(factory = PieChart1Binding::inflate) {
-        pieChartView.setModel(model)
+        pieChartView.entryProducer = pieEntryModelProducer
         pieChartView.startAngle = startAngle
     }
 }
