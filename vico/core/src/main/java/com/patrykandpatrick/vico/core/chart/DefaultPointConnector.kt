@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,10 @@ package com.patrykandpatrick.vico.core.chart
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.component.shape.extension.horizontalCubicTo
+import com.patrykandpatrick.vico.core.extension.half
 import kotlin.math.abs
 
 /**
@@ -41,7 +42,7 @@ public class DefaultPointConnector(
         prevY: Float,
         x: Float,
         y: Float,
-        segmentProperties: SegmentProperties,
+        horizontalDimensions: HorizontalDimensions,
         bounds: RectF,
     ) {
         path.horizontalCubicTo(
@@ -49,7 +50,7 @@ public class DefaultPointConnector(
             prevY = prevY,
             x = x,
             y = y,
-            curvature = segmentProperties.marginWidth * cubicStrength *
+            curvature = abs(x - prevX).half * cubicStrength *
                 (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(maximumValue = 1f),
         )
     }

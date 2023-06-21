@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.component.shape
 import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.ceil
 
@@ -57,7 +56,6 @@ public class DashedShape(
         }
     }
 
-    @LongParameterListDrawFunction
     private fun drawHorizontalDashes(
         context: DrawContext,
         paint: Paint,
@@ -91,7 +89,6 @@ public class DashedShape(
         }
     }
 
-    @LongParameterListDrawFunction
     private fun drawVerticalDashes(
         context: DrawContext,
         paint: Paint,

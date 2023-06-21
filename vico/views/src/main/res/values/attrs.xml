@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -64,6 +64,12 @@
         <attr name="endFadingEdgeWidth" format="dimension" />
         <attr name="fadingEdgeVisibilityThreshold" format="dimension" />
         <attr name="fadingEdgeVisibilityInterpolator" format="string" />
+        <attr name="horizontalLayout" format="enum">
+            <enum name="segmented" value="0" />
+            <enum name="fullWidth" value="1" />
+        </attr>
+        <attr name="startContentPadding" format="dimension" />
+        <attr name="endContentPadding" format="dimension" />
     </declare-styleable>
 
     <!-- Defines the appearance of chart axes. -->
@@ -90,12 +96,8 @@
         <attr name="titleStyle" format="reference" />
         <attr name="title" format="string|reference" />
         <attr name="showTitle" format="boolean|reference" />
-        <attr name="horizontalAxisTickPosition" format="enum">
-            <enum name="edge" value="0" />
-            <enum name="center" value="1" />
-        </attr>
-        <attr name="horizontalAxisTickOffset" format="integer" />
-        <attr name="horizontalAxisTickSpacing" format="integer" />
+        <attr name="horizontalAxisLabelSpacing" format="integer" />
+        <attr name="horizontalAxisLabelOffset" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="LineComponent">

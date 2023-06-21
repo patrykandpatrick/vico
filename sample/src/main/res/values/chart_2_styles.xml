@@ -23,9 +23,8 @@
     </style>
 
     <style name="Chart2AxisStyle">
-        <item name="horizontalAxisTickPosition">center</item>
-        <item name="horizontalAxisTickOffset">1</item>
-        <item name="horizontalAxisTickSpacing">3</item>
+        <item name="horizontalAxisLabelSpacing">3</item>
+        <item name="horizontalAxisLabelOffset">1</item>
     </style>
 
     <style name="Chart2ColumnChartStyle">

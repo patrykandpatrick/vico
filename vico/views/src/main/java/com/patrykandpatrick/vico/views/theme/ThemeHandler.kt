@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shape
@@ -78,6 +79,9 @@ internal class ThemeHandler(
     public var fadingEdges: FadingEdges? = null
         private set
 
+    lateinit var horizontalLayout: HorizontalLayout
+        private set
+
     init {
         context.obtainStyledAttributes(attrs, R.styleable.BaseChartView).use { typedArray ->
             if (typedArray.getBoolean(R.styleable.BaseChartView_showStartAxis, false)) {
@@ -109,6 +113,7 @@ internal class ThemeHandler(
             isChartZoomEnabled = typedArray
                 .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, true)
             fadingEdges = typedArray.getFadingEdges()
+            horizontalLayout = typedArray.getHorizontalLayout()
         }
         when (chartType) {
             ChartType.Single ->
@@ -207,13 +212,8 @@ internal class ThemeHandler(
                 }
 
                 is HorizontalAxis.Builder<*> -> {
-                    tickPosition = when (axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickPosition, 0)) {
-                        0 -> HorizontalAxis.TickPosition.Edge
-                        else -> HorizontalAxis.TickPosition.Center(
-                            offset = axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickOffset, 0),
-                            spacing = axisStyle.getInteger(R.styleable.Axis_horizontalAxisTickSpacing, 1),
-                        )
-                    }
+                    labelOffset = axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0)
+                    labelSpacing = axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1)
                 }
             }
         }.also { axisStyle.recycle() }
@@ -225,6 +225,15 @@ internal class ThemeHandler(
             STACKED_COLUMN_CHART -> getColumnChart(context, mergeMode = MergeMode.Stack)
             LINE_CHART -> getLineChart(context)
             else -> null
+        }
+
+    private fun TypedArray.getHorizontalLayout(): HorizontalLayout =
+        when (getInt(R.styleable.BaseChartView_horizontalLayout, 0)) {
+            0 -> HorizontalLayout.Segmented()
+            else -> HorizontalLayout.FullWidth(
+                getRawDimension(context, R.styleable.BaseChartView_startContentPadding, 0f),
+                getRawDimension(context, R.styleable.BaseChartView_endContentPadding, 0f),
+            )
         }
 
     private fun TypedArray.getComposedChart(): Chart<ComposedChartEntryModel<ChartEntryModel>>? {

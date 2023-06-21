@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.component.shape.cornered
 
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 
 /**
  * Defines a shape corner style.
@@ -33,7 +32,6 @@ public interface CornerTreatment {
      * @param cornerLocation the location of the corner.
      * @path the [Path] to use to draw the corner.
      */
-    @LongParameterListDrawFunction
     public fun createCorner(
         x1: Float,
         y1: Float,

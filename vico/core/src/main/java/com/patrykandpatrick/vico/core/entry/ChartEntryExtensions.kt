@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,8 +88,8 @@ internal inline val Iterable<Iterable<ChartEntry>>.yRange: ClosedFloatingPointRa
 internal inline val Iterable<Iterable<ChartEntry>>.xRange: ClosedFloatingPointRange<Float>
     get() = flatten().rangeOfOrNull { it.x } ?: 0f..0f
 
-internal fun Iterable<Iterable<ChartEntry>>.calculateStep(): Float {
-    var step: Float? = null
+internal fun Iterable<Iterable<ChartEntry>>.calculateXGcd(): Float {
+    var gcd: Float? = null
     forEach { entryCollection ->
         val iterator = entryCollection.iterator()
         var currentEntry: ChartEntry
@@ -98,13 +98,13 @@ internal fun Iterable<Iterable<ChartEntry>>.calculateStep(): Float {
             currentEntry = iterator.next()
             previousEntry?.let { prevEntry ->
                 val difference = abs(x = currentEntry.x - prevEntry.x)
-                step = step?.gcdWith(other = difference) ?: difference
+                gcd = gcd?.gcdWith(other = difference) ?: difference
             }
             previousEntry = currentEntry
         }
-        if (step == -1f) step = 1f
+        if (gcd == -1f) gcd = 1f
     }
-    return step ?: 1f
+    return gcd ?: 1f
 }
 
 internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =

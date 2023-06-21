@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.chart.values
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import kotlin.math.abs
+import kotlin.math.ceil
 
 /**
  * Where [Chart]s get their data from.
@@ -44,12 +45,12 @@ public interface ChartValues {
     public val maxX: Float
 
     /**
-     * The increment by which the [Chart] increases the _x_ value from one segment to the next.
+     * The difference between the _x_ values of neighboring major entries.
      */
     public val xStep: Float
 
     /**
-     * The increment by which the [Chart] increases the _x_ value from one segment to the next.
+     * The difference between the _x_ values of neighboring major entries.
      */
     @Deprecated("Use `xStep` instead.", ReplaceWith("xStep"))
     public val stepX: Float
@@ -88,8 +89,8 @@ public interface ChartValues {
         get() = maxY - minY
 
     /**
-     * The number of segments displayed on the associated [Chart].
+     * Returns the maximum number of major entries that can be present, based on [minX], [maxX], and [xStep].
      */
-    public fun getDrawnEntryCount(): Int =
-        ((abs(maxX) - abs(minX)) / xStep + 1).toInt()
+    public fun getMaxMajorEntryCount(): Int =
+        ceil(abs(maxX - minX) / xStep + 1).toInt()
 }

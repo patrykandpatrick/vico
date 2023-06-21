@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
+import com.patrykandpatrick.vico.core.extension.gcdWith
 import java.util.SortedMap
 import java.util.TreeMap
 import java.util.concurrent.Executor
@@ -132,7 +133,9 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
             override val maxY: Float = models.maxOf { it.maxY }
             override val stackedPositiveY: Float = models.maxOf { it.stackedPositiveY }
             override val stackedNegativeY: Float = models.minOf { it.stackedNegativeY }
-            override val xStep: Float = models.minOf { it.xStep }
+            override val xGcd: Float = models.fold<Model, Float?>(null) { gcd, model ->
+                gcd?.gcdWith(model.xGcd) ?: model.xGcd
+            } ?: 1f
             override val id: Int = models.map { it.id }.hashCode()
         }
     }

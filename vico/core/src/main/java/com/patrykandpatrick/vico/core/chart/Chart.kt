@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ package com.patrykandpatrick.vico.core.chart
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
@@ -178,21 +178,22 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
     public fun removePersistentMarker(x: Float)
 
     /**
-     * Called to get the [SegmentProperties] of this chart. The [SegmentProperties] influence the look of various
+     * Called to get the [HorizontalDimensions] of this chart. The [HorizontalDimensions] influence the look of various
      * parts of the chart.
      *
      * @param context holds data used for component measurements.
      * @param model holds data about the [Chart]’s entries.
      */
-    public fun getSegmentProperties(context: MeasureContext, model: Model): SegmentProperties
+    public fun getHorizontalDimensions(context: MeasureContext, model: Model): HorizontalDimensions
 
     /**
      * Updates the [ChartValues] stored in the provided [ChartValuesManager] instance to this [Chart]’s [ChartValues].
      *
      * @param chartValuesManager the [ChartValuesManager] whose properties will be updated.
      * @param model holds data about the [Chart]’s entries.
+     * @param xStep the overridden _x_ step (or `null` if no override has occurred).
      */
-    public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model)
+    public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model, xStep: Float?)
 }
 
 /**

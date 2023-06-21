@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ public class ChartEntryModelProducer(
             maxY = yRange.endInclusive,
             stackedPositiveY = stackedPositiveYRange.endInclusive,
             stackedNegativeY = stackedPositiveYRange.start,
-            xStep = entries.calculateStep(),
+            xGcd = entries.calculateXGcd(),
             id = entriesHashCode,
         )
 
@@ -172,7 +172,7 @@ public class ChartEntryModelProducer(
         override val maxY: Float,
         override val stackedPositiveY: Float,
         override val stackedNegativeY: Float,
-        override val xStep: Float,
+        override val xGcd: Float,
         override val id: Int,
     ) : ChartEntryModel
 }

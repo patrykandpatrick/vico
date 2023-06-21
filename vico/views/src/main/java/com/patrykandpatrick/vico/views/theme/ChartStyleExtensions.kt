@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,9 +136,5 @@ internal fun TypedArray.getLineChart(
             index = R.styleable.LineChartStyle_spacing,
             defaultValue = DefaultDimens.POINT_SPACING,
         ),
-        pointPosition = getInteger(R.styleable.LineChartStyle_pointPosition, 1).let { value ->
-            val values = LineChart.PointPosition.values()
-            values[value % values.size]
-        },
     )
 }

@@ -150,12 +150,12 @@ public object DefaultDimens {
     public const val COLUMN_WIDTH: Float = 8f
 
     /**
-     * The default spacing (in dp) between the columns in a chart segment.
+     * The default spacing (in dp) between neighboring grouped columns.
      */
     public const val COLUMN_INSIDE_SPACING: Float = 8f
 
     /**
-     * The default spacing (in dp) between the left and right edges of a chart segment and the columns it contains.
+     * The default spacing (in dp) between neighboring column collections.
      */
     public const val COLUMN_OUTSIDE_SPACING: Float = 32f
 
@@ -207,7 +207,7 @@ public object DefaultDimens {
     /**
      * The default spacing for line chart points (in dp).
      */
-    public const val POINT_SPACING: Float = 16f
+    public const val POINT_SPACING: Float = 32f
 
     /**
      * The default text size for [TextComponent] (in sp).
@@ -252,19 +252,19 @@ public interface DefaultColors {
     public val axisLineColor: Long
 
     /**
-     * The color for columns whose index in a segment is 3k (k ∈ N)
+     * The color for columns whose index in a column collection is 3k (k ∈ N)
      * and for lines whose index in the list of lines in a line chart is 3k (k ∈ N).
      */
     public val entity1Color: Long
 
     /**
-     * The color for columns whose index in a segment is 1 + 3k (k ∈ N)
+     * The color for columns whose index in a column collection is 1 + 3k (k ∈ N)
      * and for lines whose index in the list of lines in a line chart is 1 + 3k (k ∈ N).
      */
     public val entity2Color: Long
 
     /**
-     * The color for columns whose index in a segment is 2 + 3k (k ∈ N)
+     * The color for columns whose index in a column collection is 2 + 3k (k ∈ N)
      * and for lines whose index in the list of lines in a line chart is 2 + 3k (k ∈ N).
      */
     public val entity3Color: Long

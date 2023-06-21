@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,14 +85,7 @@ public interface ChartEntryModel {
     public val stackedNegativeY: Float
 
     /**
-     * The increment by which the [Chart] increases the _x_ value from one segment to the next.
+     * The greatest common divisor of the _x_ values.
      */
-    public val xStep: Float
-
-    /**
-     * The increment by which the [Chart] increases the _x_ value from one segment to the next.
-     */
-    @Deprecated("Use `xStep` instead.", ReplaceWith("xStep"))
-    public val stepX: Float
-        get() = xStep
+    public val xGcd: Float
 }

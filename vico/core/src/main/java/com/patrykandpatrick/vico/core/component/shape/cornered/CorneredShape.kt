@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.component.shape.cornered
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.context.DrawContext
 import kotlin.math.absoluteValue
@@ -76,7 +75,6 @@ public open class CorneredShape(
         context.canvas.drawPath(path, paint)
     }
 
-    @LongParameterListDrawFunction
     protected open fun createPath(
         context: DrawContext,
         path: Path,
@@ -105,7 +103,6 @@ public open class CorneredShape(
      * @param right the right edge of the [CorneredShape].
      * @param bottom the bottom edge of the [CorneredShape].
      */
-    @LongParameterListDrawFunction
     public open fun createPath(
         density: Float,
         path: Path,

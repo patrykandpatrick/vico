@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.horizontal.createHorizontalAxis
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 
@@ -39,14 +40,15 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
  * @param tickLength the length of ticks.
- * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
- * offset and spacing for both ticks and labels.
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
  * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
  * @param labelRotationDegrees the rotation of axis labels in degrees.
  * @param titleComponent an optional [TextComponent] use as the axis title.
  * @param title the axis title.
+ * @param labelSpacing how often labels (and their corresponding ticks and guidelines) should be drawn.
+ * @param labelOffset the number of labels (and, for [HorizontalLayout.FullWidth], their corresponding ticks and
+ * guidelines) to skip from the start.
  */
 @Composable
 public fun topAxis(
@@ -54,13 +56,14 @@ public fun topAxis(
     axis: LineComponent? = axisLineComponent(),
     tick: LineComponent? = axisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
-    tickPosition: HorizontalAxis.TickPosition = HorizontalAxis.TickPosition.Edge,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Top> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
+    labelSpacing: Int = 1,
+    labelOffset: Int = 0,
 ): HorizontalAxis<AxisPosition.Horizontal.Top> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -68,11 +71,12 @@ public fun topAxis(
     this.guideline = guideline
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
-    this.tickPosition = tickPosition
     this.sizeConstraint = sizeConstraint
     this.labelRotationDegrees = labelRotationDegrees
     this.titleComponent = titleComponent
     this.title = title
+    this.labelSpacing = labelSpacing
+    this.labelOffset = labelOffset
 }
 
 /**
@@ -82,14 +86,15 @@ public fun topAxis(
  * @param axis the [LineComponent] to use for the axis line.
  * @param tick the [LineComponent] to use for ticks.
  * @param tickLength the length of ticks.
- * @param tickPosition defines the position of ticks. [HorizontalAxis.TickPosition.Center] allows for using a custom
- * offset and spacing for both ticks and labels.
  * @param guideline the [LineComponent] to use for guidelines.
  * @param valueFormatter the [AxisValueFormatter] for the axis.
  * @param sizeConstraint the [Axis.SizeConstraint] for the axis. This determines its height.
  * @param labelRotationDegrees the rotation of axis labels in degrees.
  * @param titleComponent an optional [TextComponent] use as the axis title.
  * @param title the axis title.
+ * @param labelSpacing how often labels (and their corresponding ticks and guidelines) should be drawn.
+ * @param labelOffset the number of labels (and, for [HorizontalLayout.FullWidth], their corresponding ticks and
+ * guidelines) to skip from the start.
  */
 @Composable
 public fun bottomAxis(
@@ -97,13 +102,14 @@ public fun bottomAxis(
     axis: LineComponent? = axisLineComponent(),
     tick: LineComponent? = axisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
-    tickPosition: HorizontalAxis.TickPosition = HorizontalAxis.TickPosition.Edge,
     guideline: LineComponent? = axisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    labelSpacing: Int = 1,
+    labelOffset: Int = 0,
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> = createHorizontalAxis {
     this.label = label
     this.axis = axis
@@ -111,9 +117,10 @@ public fun bottomAxis(
     this.guideline = guideline
     this.valueFormatter = valueFormatter
     this.tickLengthDp = tickLength.value
-    this.tickPosition = tickPosition
     this.sizeConstraint = sizeConstraint
     this.labelRotationDegrees = labelRotationDegrees
     this.titleComponent = titleComponent
     this.title = title
+    this.labelSpacing = labelSpacing
+    this.labelOffset = labelOffset
 }

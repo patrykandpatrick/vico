@@ -61,9 +61,9 @@ public class ChartValuesManager : ChartValuesProvider {
 
     /**
      * Attempts to update the stored values to the provided values.
-     * [minX] and [minY] can be updated to a lower value.
-     * [maxX] and [maxY] can be updated to a higher value.
-     * The [chartEntryModel] is always updated.
+     * [MutableChartValues.minX] and [MutableChartValues.minY] can be updated to a lower value.
+     * [MutableChartValues.maxX] and [MutableChartValues.maxY] can be updated to a higher value.
+     * [MutableChartValues.chartEntryModel] and [MutableChartValues.xStep] are always updated.
      * If [axisPosition] is null, only the main [ChartValues] are updated. Otherwise, both the main [ChartValues]
      * and the [ChartValues] associated with the given [axisPosition] are updated.
      */
@@ -72,6 +72,7 @@ public class ChartValuesManager : ChartValuesProvider {
         maxX: Float,
         minY: Float,
         maxY: Float,
+        xStep: Float,
         chartEntryModel: ChartEntryModel,
         axisPosition: AxisPosition.Vertical? = null,
     ) {
@@ -81,11 +82,12 @@ public class ChartValuesManager : ChartValuesProvider {
                 maxX = maxX,
                 minY = minY,
                 maxY = maxY,
+                xStep = xStep,
                 chartEntryModel = chartEntryModel,
             )
 
         if (axisPosition != null) {
-            tryUpdate(minX, maxX, minY, maxY, chartEntryModel)
+            tryUpdate(minX, maxX, minY, maxY, xStep, chartEntryModel)
         } else {
             val mainValues = getChartValues(null)
             chartValues.forEach { (key, values) ->

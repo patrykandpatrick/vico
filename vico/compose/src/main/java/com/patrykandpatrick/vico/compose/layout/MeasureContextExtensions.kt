@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 
@@ -31,12 +32,14 @@ import com.patrykandpatrick.vico.core.context.MutableMeasureContext
  * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
  * @param chartScale the scale of the chart. Used to handle zooming in and out.
  * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
+ * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  */
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
     chartScale: Float,
     canvasBounds: RectF,
+    horizontalLayout: HorizontalLayout,
 ): MutableMeasureContext = remember {
     MutableMeasureContext(
         canvasBounds = canvasBounds,
@@ -45,6 +48,7 @@ public fun getMeasureContext(
         isLtr = true,
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
         chartScale = chartScale,
+        horizontalLayout = horizontalLayout,
     )
 }.apply {
     this.density = LocalDensity.current.density

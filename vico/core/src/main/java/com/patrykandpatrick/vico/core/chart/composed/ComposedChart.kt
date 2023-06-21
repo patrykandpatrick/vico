@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,16 +16,15 @@
 
 package com.patrykandpatrick.vico.core.chart.composed
 
-import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.chart.AXIS_VALUES_DEPRECATION_MESSAGE
 import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
-import com.patrykandpatrick.vico.core.chart.segment.MutableSegmentProperties
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
@@ -52,7 +51,7 @@ public class ComposedChart<Model : ChartEntryModel>(
 
     private val tempInsets = Insets()
 
-    private val segmentProperties = MutableSegmentProperties()
+    private val horizontalDimensions = MutableHorizontalDimensions()
 
     override val entryLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
 
@@ -98,48 +97,39 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun getSegmentProperties(
+    override fun getHorizontalDimensions(
         context: MeasureContext,
         model: ComposedChartEntryModel<Model>,
-    ): SegmentProperties {
-        segmentProperties.clear()
+    ): HorizontalDimensions {
+        horizontalDimensions.clear()
         model.forEachModelWithChart { item, chart ->
-            val chartSegmentProperties = chart.getSegmentProperties(context, item)
-            segmentProperties.apply {
-                cellWidth = maxOf(cellWidth, chartSegmentProperties.cellWidth)
-                marginWidth = maxOf(marginWidth, chartSegmentProperties.marginWidth)
-                labelPosition = getProperLabelPosition(labelPosition, chartSegmentProperties.labelPosition)
+            val chartHorizontalDimensions = chart.getHorizontalDimensions(context, item)
+            horizontalDimensions.apply {
+                xSpacing = maxOf(xSpacing, chartHorizontalDimensions.xSpacing)
+                startPadding = maxOf(startPadding, chartHorizontalDimensions.startPadding)
+                endPadding = maxOf(endPadding, chartHorizontalDimensions.endPadding)
             }
         }
-        return segmentProperties
+        return horizontalDimensions
     }
-
-    private fun getProperLabelPosition(
-        first: HorizontalAxis.LabelPosition?,
-        second: HorizontalAxis.LabelPosition?,
-    ): HorizontalAxis.LabelPosition =
-        if (first == null || first == second && second == HorizontalAxis.LabelPosition.Start) {
-            HorizontalAxis.LabelPosition.Start
-        } else {
-            HorizontalAxis.LabelPosition.Center
-        }
 
     override fun updateChartValues(
         chartValuesManager: ChartValuesManager,
         model: ComposedChartEntryModel<Model>,
+        xStep: Float?,
     ) {
         model.forEachModelWithChart { item, chart ->
-            chart.updateChartValues(chartValuesManager, item)
+            chart.updateChartValues(chartValuesManager, item, xStep)
         }
     }
 
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
-        segmentProperties: SegmentProperties,
+        horizontalDimensions: HorizontalDimensions,
     ) {
         charts.forEach { chart ->
-            chart.getInsets(context, tempInsets, segmentProperties)
+            chart.getInsets(context, tempInsets, horizontalDimensions)
             outInsets.setValuesIfGreater(tempInsets)
         }
     }

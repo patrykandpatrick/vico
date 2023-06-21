@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,8 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.padding
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.model.Point
@@ -34,9 +35,9 @@ public interface ChartDrawContext : DrawContext {
     public val chartBounds: RectF
 
     /**
-     * Holds information about the width of each individual chart segment.
+     * Holds information on the [Chart]’s horizontal dimensions.
      */
-    public val segmentProperties: SegmentProperties
+    public val horizontalDimensions: HorizontalDimensions
 
     /**
      * The point inside the chart’s coordinates where physical touch is occurring.
@@ -54,13 +55,16 @@ public interface ChartDrawContext : DrawContext {
  */
 public fun MeasureContext.getMaxScrollDistance(
     chartWidth: Float,
-    segmentProperties: SegmentProperties,
+    horizontalDimensions: HorizontalDimensions,
 ): Float {
-    val cumulatedSegmentWidth = segmentProperties.segmentWidth *
-        chartValuesManager.getChartValues().getDrawnEntryCount() *
-        chartScale
+    val contentWidth = (
+        horizontalLayout.getContentWidth(
+            horizontalDimensions.xSpacing,
+            chartValuesManager.getChartValues().getMaxMajorEntryCount(),
+        ) + horizontalDimensions.padding
+        ) * chartScale
 
-    return (layoutDirectionMultiplier * (cumulatedSegmentWidth - chartWidth)).run {
+    return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
         if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
     }
 }
@@ -71,5 +75,5 @@ public fun MeasureContext.getMaxScrollDistance(
 public fun ChartDrawContext.getMaxScrollDistance(): Float =
     getMaxScrollDistance(
         chartWidth = chartBounds.width(),
-        segmentProperties = segmentProperties,
+        horizontalDimensions = horizontalDimensions,
     )

@@ -27,12 +27,14 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
+import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.component.shape.Shapes
@@ -54,7 +56,7 @@ internal fun Chart3(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModel
 private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         Chart(
-            chart = lineChart(pointPosition = LineChart.PointPosition.Start, axisValuesOverrider = axisValueOverrider),
+            chart = lineChart(axisValuesOverrider = axisValueOverrider),
             chartModelProducer = chartEntryModelProducer,
             startAxis = startAxis(
                 guideline = null,
@@ -80,6 +82,7 @@ private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
             ),
             marker = rememberMarker(),
             fadingEdges = rememberFadingEdges(),
+            horizontalLayout = horizontalLayout,
         )
     }
 }
@@ -109,3 +112,4 @@ private val axisTitlePadding = dimensionsOf(axisTitleHorizontalPaddingValue, axi
 private val axisTitleMarginValue = 4.dp
 private val startAxisTitleMargins = dimensionsOf(end = axisTitleMarginValue)
 private val bottomAxisTitleMargins = dimensionsOf(top = axisTitleMarginValue)
+private val horizontalLayout = HorizontalLayout.fullWidth()

@@ -31,14 +31,17 @@ import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.PercentageFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
@@ -68,8 +71,9 @@ private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
             ),
             chartModelProducer = chartEntryModelProducer,
             startAxis = startAxis(valueFormatter = startAxisValueFormatter, maxLabelCount = START_AXIS_LABEL_COUNT),
-            bottomAxis = bottomAxis(tickPosition = bottomAxisTickPosition),
+            bottomAxis = bottomAxis(labelSpacing = BOTTOM_AXIS_LABEL_SPACING, labelOffset = BOTTOM_AXIS_LABEL_OFFSET),
             marker = rememberMarker(),
+            horizontalLayout = horizontalLayout,
         )
     }
 }
@@ -85,6 +89,10 @@ private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
             with(startAxis as VerticalAxis) {
                 maxLabelCount = START_AXIS_LABEL_COUNT
                 valueFormatter = startAxisValueFormatter
+            }
+            with(bottomAxis as HorizontalAxis) {
+                labelSpacing = BOTTOM_AXIS_LABEL_SPACING
+                labelOffset = BOTTOM_AXIS_LABEL_OFFSET
             }
             this.marker = marker
         }
@@ -111,8 +119,8 @@ private const val COLOR_2_CODE = 0xffd3d826
 private const val COLUMN_WIDTH_DP = 16f
 private const val THRESHOLD_LINE_VALUE = 13f
 private const val START_AXIS_LABEL_COUNT = 6
-private const val BOTTOM_AXIS_TICK_OFFSET = 1
-private const val BOTTOM_AXIS_TICK_SPACING = 3
+private const val BOTTOM_AXIS_LABEL_SPACING = 3
+private const val BOTTOM_AXIS_LABEL_OFFSET = 1
 
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
@@ -125,5 +133,7 @@ private val thresholdLineLabelPadding =
     dimensionsOf(thresholdLineLabelHorizontalPaddingValue, thresholdLineLabelVerticalPaddingValue)
 private val thresholdLineLabelMargins = dimensionsOf(thresholdLineLabelMarginValue)
 private val startAxisValueFormatter = PercentageFormatAxisValueFormatter<AxisPosition.Vertical.Start>()
-private val bottomAxisTickPosition =
-    HorizontalAxis.TickPosition.Center(BOTTOM_AXIS_TICK_OFFSET, BOTTOM_AXIS_TICK_SPACING)
+private val horizontalLayout = HorizontalLayout.FullWidth(
+    startPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+    endPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+)

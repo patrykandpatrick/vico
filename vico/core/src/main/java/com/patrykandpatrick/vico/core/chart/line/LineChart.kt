@@ -21,22 +21,20 @@ import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
-import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.chart.draw.segmentWidth
-import com.patrykandpatrick.vico.core.chart.forEachInIndexed
+import com.patrykandpatrick.vico.core.chart.forEachInRelativelyIndexed
 import com.patrykandpatrick.vico.core.chart.insets.Insets
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec.PointConnector
 import com.patrykandpatrick.vico.core.chart.put
-import com.patrykandpatrick.vico.core.chart.segment.MutableSegmentProperties
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.component.Component
@@ -48,6 +46,7 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
@@ -65,13 +64,11 @@ import kotlin.math.min
  * @param spacingDp the spacing between each [LineSpec.point] (in dp).
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
  * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
- * @param pointPosition the horizontal position of each point in its corresponding segment.
  */
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-    public var pointPosition: PointPosition = PointPosition.Center,
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -81,14 +78,12 @@ public open class LineChart(
      * @param spacingDp the spacing between each [LineSpec.point] (in dp).
      * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
      * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
-     * @param pointPosition the horizontal position of each point in its corresponding segment.
      */
     public constructor(
         line: LineSpec,
         spacingDp: Float,
         targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-        pointPosition: PointPosition = PointPosition.Center,
-    ) : this(listOf(line), spacingDp, targetVerticalAxisPosition, pointPosition)
+    ) : this(listOf(line), spacingDp, targetVerticalAxisPosition)
 
     /**
      * Defines the appearance of a line in a line chart.
@@ -150,7 +145,6 @@ public open class LineChart(
                         dataLabelVerticalPosition = dataLabelVerticalPosition,
                         dataLabelValueFormatter = dataLabelValueFormatter,
                         dataLabelRotationDegrees = dataLabelRotationDegrees,
-                        pointPosition = pointPosition,
                         pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
                     )""",
                 imports = arrayOf("com.patrykandpatrick.vico.core.chart.DefaultPointConnector"),
@@ -254,14 +248,13 @@ public open class LineChart(
             /**
              * Draws a line between two points.
              */
-            @LongParameterListDrawFunction
             public fun connect(
                 path: Path,
                 prevX: Float,
                 prevY: Float,
                 x: Float,
                 y: Float,
-                segmentProperties: SegmentProperties,
+                horizontalDimensions: HorizontalDimensions,
                 bounds: RectF,
             )
         }
@@ -278,9 +271,9 @@ public open class LineChart(
     protected val lineBackgroundPath: Path = Path()
 
     /**
-     * The chart’s [MutableSegmentProperties] instance, which holds information about the segment properties.
+     * Holds information on the [LineChart]’s horizontal dimensions.
      */
-    protected val segmentProperties: MutableSegmentProperties = MutableSegmentProperties()
+    protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -289,8 +282,6 @@ public open class LineChart(
         model: ChartEntryModel,
     ): Unit = with(context) {
         resetTempData()
-
-        val (cellWidth, spacing) = segmentProperties
 
         model.entries.forEachIndexed { entryListIndex, entries ->
 
@@ -302,18 +293,17 @@ public open class LineChart(
             var prevY = bounds.bottom
 
             val drawingStartAlignmentCorrection = layoutDirectionMultiplier *
-                when (pointPosition) {
-                    PointPosition.Start -> 0f
-                    PointPosition.Center -> (spacing + cellWidth).half
+                when (horizontalLayout) {
+                    is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
+                    is HorizontalLayout.FullWidth -> horizontalDimensions.startPadding
                 }
 
             val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
 
             forEachPointWithinBoundsIndexed(
                 entries = entries,
-                segment = segmentProperties,
                 drawingStart = drawingStart,
-            ) { entryIndex, entry, x, y ->
+            ) { entryIndex, entry, x, y, _, _ ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
                     if (component.hasLineBackgroundShader) {
@@ -327,7 +317,7 @@ public open class LineChart(
                         prevY = prevY,
                         x = x,
                         y = y,
-                        segmentProperties = segmentProperties,
+                        horizontalDimensions = horizontalDimensions,
                         bounds = bounds,
                     )
                     if (component.hasLineBackgroundShader) {
@@ -337,7 +327,7 @@ public open class LineChart(
                             prevY = prevY,
                             x = x,
                             y = y,
-                            segmentProperties = segmentProperties,
+                            horizontalDimensions = horizontalDimensions,
                             bounds = bounds,
                         )
                     }
@@ -380,16 +370,21 @@ public open class LineChart(
         drawingStart: Float,
     ) {
         if (lineSpec.point == null && lineSpec.dataLabel == null) return
+        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
 
         forEachPointWithinBoundsIndexed(
             entries = entries,
-            segment = segmentProperties,
             drawingStart = drawingStart,
-        ) { index, chartEntry, x, y ->
+        ) { _, chartEntry, x, y, previousX, nextX ->
 
             if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
 
-            lineSpec.dataLabel.takeIf { pointPosition.dataLabelsToSkip <= index }?.let { textComponent ->
+            lineSpec.dataLabel.takeIf {
+                horizontalLayout is HorizontalLayout.Segmented ||
+                    chartEntry.x != chartValues.minX && chartEntry.x != chartValues.maxX ||
+                    chartEntry.x == chartValues.minX && horizontalDimensions.startPadding > 0 ||
+                    chartEntry.x == chartValues.maxX && horizontalDimensions.endPadding > 0
+            }?.let { textComponent ->
 
                 val distanceFromLine = maxOf(
                     a = lineSpec.lineThicknessDp,
@@ -398,15 +393,16 @@ public open class LineChart(
 
                 val text = lineSpec.dataLabelValueFormatter.formatValue(
                     value = chartEntry.y,
-                    chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
+                    chartValues = chartValues,
                 )
+                val maxWidth = getMaxDataLabelWidth(chartEntry, x, previousX, nextX)
                 val verticalPosition = lineSpec.dataLabelVerticalPosition.inBounds(
                     bounds = bounds,
                     distanceFromPoint = distanceFromLine,
                     componentHeight = textComponent.getHeight(
                         context = this,
                         text = text,
-                        width = segmentWidth,
+                        width = maxWidth,
                         rotationDegrees = lineSpec.dataLabelRotationDegrees,
                     ),
                     y = y,
@@ -422,11 +418,46 @@ public open class LineChart(
                     textY = dataLabelY,
                     text = text,
                     verticalPosition = verticalPosition,
-                    maxTextWidth = segmentWidth,
+                    maxTextWidth = maxWidth,
                     rotationDegrees = lineSpec.dataLabelRotationDegrees,
                 )
             }
         }
+    }
+
+    protected fun ChartDrawContext.getMaxDataLabelWidth(
+        entry: ChartEntry,
+        x: Float,
+        previousX: Float?,
+        nextX: Float?,
+    ): Int {
+        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
+        return when {
+            previousX != null && nextX != null -> min(x - previousX, nextX - x)
+
+            previousX == null && nextX == null ->
+                min(horizontalDimensions.startPadding, horizontalDimensions.endPadding).doubled
+
+            nextX != null -> {
+                val extraSpace = when (horizontalLayout) {
+                    is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
+                    is HorizontalLayout.FullWidth -> horizontalDimensions.startPadding
+                }
+                ((entry.x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing + extraSpace)
+                    .doubled
+                    .coerceAtMost(nextX - x)
+            }
+
+            else -> {
+                val extraSpace = when (horizontalLayout) {
+                    is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
+                    is HorizontalLayout.FullWidth -> horizontalDimensions.endPadding
+                }
+                ((chartValues.maxX - entry.x) / chartValues.xStep * horizontalDimensions.xSpacing + extraSpace)
+                    .doubled
+                    .coerceAtMost(x - previousX!!)
+            }
+        }.toInt()
     }
 
     /**
@@ -441,11 +472,10 @@ public open class LineChart(
     /**
      * Performs the given [action] for each [ChartEntry] in [entries] that lies within the chart’s bounds.
      */
-    protected open fun DrawContext.forEachPointWithinBoundsIndexed(
+    protected open fun ChartDrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
-        segment: SegmentProperties,
         drawingStart: Float,
-        action: (index: Int, entry: ChartEntry, x: Float, y: Float) -> Unit,
+        action: (index: Int, entry: ChartEntry, x: Float, y: Float, previousX: Float?, nextX: Float?) -> Unit,
     ) {
         val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
 
@@ -455,7 +485,8 @@ public open class LineChart(
         val maxY = chartValues.maxY
         val xStep = chartValues.xStep
 
-        var x: Float
+        var x: Float = Float.NEGATIVE_INFINITY
+        var nextX: Float? = null
         var y: Float
 
         var prevEntry: ChartEntry? = null
@@ -467,14 +498,16 @@ public open class LineChart(
         val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
 
         fun getDrawX(entry: ChartEntry): Float = drawingStart + layoutDirectionMultiplier *
-            (segment.cellWidth + segment.marginWidth) * (entry.x - minX) / xStep
+            horizontalDimensions.xSpacing * (entry.x - minX) / xStep
 
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (entry.y - minY) * heightMultiplier
 
-        entries.forEachInIndexed(minX - xStep..maxX + xStep) { index, entry ->
+        entries.forEachInRelativelyIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
 
-            x = getDrawX(entry)
+            val previousX = x.takeIf { it.isFinite() }
+            x = nextX ?: getDrawX(entry)
+            nextX = next?.let(::getDrawX)
             y = getDrawY(entry)
 
             when {
@@ -484,41 +517,44 @@ public open class LineChart(
 
                 x in boundsStart.rangeWith(other = boundsEnd) -> {
                     prevEntry?.also {
-                        action(index, it, getDrawX(it), getDrawY(it))
+                        action(index, it, getDrawX(it), getDrawY(it), previousX, nextX)
                         prevEntry = null
                     }
-                    action(index, entry, x, y)
+                    action(index, entry, x, y, previousX, nextX)
                 }
 
                 (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
-                    action(index, entry, x, y)
+                    action(index, entry, x, y, previousX, nextX)
                     lastEntry = entry
                 }
             }
         }
     }
 
-    override fun getSegmentProperties(
+    override fun getHorizontalDimensions(
         context: MeasureContext,
         model: ChartEntryModel,
-    ): SegmentProperties = with(context) {
-        segmentProperties.set(
-            cellWidth = lines.maxOf { it.pointSizeDp.pixels },
-            marginWidth = spacingDp.pixels,
-            labelPosition = pointPosition.labelPosition,
+    ): HorizontalDimensions = with(context) {
+        val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
+        val basePadding = when (horizontalLayout) {
+            is HorizontalLayout.Segmented -> 0f
+            is HorizontalLayout.FullWidth -> maxPointSize.half
+        }
+        horizontalDimensions.set(
+            xSpacing = maxPointSize + spacingDp.pixels,
+            startPadding = basePadding + horizontalLayout.startPaddingDp.pixels,
+            endPadding = basePadding + horizontalLayout.endPaddingDp.pixels,
         )
     }
 
-    override fun updateChartValues(
-        chartValuesManager: ChartValuesManager,
-        model: ChartEntryModel,
-    ) {
+    override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel, xStep: Float?) {
         @Suppress("DEPRECATION")
         chartValuesManager.tryUpdate(
             minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
             maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
             minY = axisValuesOverrider?.getMinY(model) ?: minY ?: min(model.minY, 0f),
             maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: model.maxY,
+            xStep = xStep ?: model.xGcd,
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,
         )
@@ -527,29 +563,12 @@ public open class LineChart(
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
-        segmentProperties: SegmentProperties,
+        horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {
         outInsets.setVertical(
             value = lines.maxOf {
                 if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp) else it.lineThicknessDp
             }.pixels,
         )
-    }
-
-    /**
-     * Defines the horizontal position of each of a line chart’s points in its corresponding segment.
-     */
-    public enum class PointPosition(
-        internal val labelPosition: HorizontalAxis.LabelPosition,
-        internal val dataLabelsToSkip: Int,
-    ) {
-        Start(
-            labelPosition = HorizontalAxis.LabelPosition.Start,
-            dataLabelsToSkip = 1,
-        ),
-        Center(
-            labelPosition = HorizontalAxis.LabelPosition.Center,
-            dataLabelsToSkip = 0,
-        ),
     }
 }

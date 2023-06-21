@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.component.ChartShape
 import com.patrykandpatrick.vico.core.DEF_MARKER_TICK_SIZE
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.Shapes
@@ -130,7 +129,6 @@ public fun CorneredShape.composeShape(): ComposeShape = object : ComposeShape {
  * @param radii used to store the corner radii. This array must be mutable.
  */
 @Suppress("MagicNumber")
-@LongParameterListDrawFunction
 public fun Path.addRoundRect(
     left: Float,
     top: Float,

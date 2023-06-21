@@ -40,6 +40,7 @@ import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
@@ -71,6 +72,7 @@ import com.patrykandpatrick.vico.views.scroll.ChartScrollSpec
 import com.patrykandpatrick.vico.views.scroll.copy
 import com.patrykandpatrick.vico.views.theme.ThemeHandler
 import kotlin.properties.Delegates.observable
+import kotlin.properties.ReadWriteProperty
 
 /**
  * The base for [View]s that display a chart. Subclasses define a [Model] implementation they can handle.
@@ -163,9 +165,22 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * Houses scrolling-related settings.
      */
-    public var chartScrollSpec: ChartScrollSpec<Model> by observable(ChartScrollSpec()) { _, _, newValue ->
+    public var chartScrollSpec: ChartScrollSpec<Model> by invalidatingObservable(ChartScrollSpec()) { newValue ->
         measureContext.isHorizontalScrollEnabled = newValue.isScrollEnabled
     }
+
+    /**
+     * Defines how the chart’s content is positioned horizontally.
+     */
+    public var horizontalLayout: HorizontalLayout by invalidatingObservable(themeHandler.horizontalLayout) { newValue ->
+        measureContext.horizontalLayout = newValue
+    }
+
+    /**
+     * Overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this is null, the
+     * default _x_ step ([ChartEntryModel.xGcd]) is used.
+     */
+    public var getXStep: ((Model) -> Float)? by invalidatingObservable(null)
 
     /**
      * Whether the chart can be scrolled horizontally.
@@ -268,8 +283,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var fadingEdges: FadingEdges? = null
 
     /**
-     * Defines whether the content of a scrollable chart should be scaled up when the entry count and intrinsic segment
-     * width are such that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+     * Defines whether the content of a scrollable chart should be scaled up when the dimensions are such that, at a
+     * scale factor of 1, an empty space would be visible near the end edge of the chart.
      */
     public var autoScaleUp: AutoScaleUp = AutoScaleUp.Full
 
@@ -280,7 +295,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         bottomAxis = themeHandler.bottomAxis
         chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = themeHandler.isHorizontalScrollEnabled)
         isZoomEnabled = themeHandler.isChartZoomEnabled
-        fadingEdges = themeHandler.fadingEdges
     }
 
     /**
@@ -301,14 +315,25 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
     }
 
-    private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
+    protected fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
             measureContext.chartValuesManager.resetChartValues()
-            chart.updateChartValues(measureContext.chartValuesManager, model)
+            chart.updateChartValues(measureContext.chartValuesManager, model, getXStep?.invoke(model))
 
             if (ViewCompat.isAttachedToWindow(this)) {
                 invalidate()
             }
+        }
+    }
+
+    protected inline fun <T> invalidatingObservable(
+        initialValue: T,
+        crossinline onChange: (T) -> Unit = {},
+    ): ReadWriteProperty<Any?, T> {
+        onChange(initialValue)
+        return observable(initialValue) { _, _, newValue ->
+            tryInvalidate(chart, model)
+            onChange(newValue)
         }
     }
 
@@ -359,11 +384,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             ViewCompat.postInvalidateOnAnimation(this)
         }
 
-        val segmentProperties = chart.getSegmentProperties(measureContext, model)
+        val horizontalDimensions = chart.getHorizontalDimensions(measureContext, model)
 
         scrollHandler.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
-            segmentProperties = segmentProperties,
+            horizontalDimensions = horizontalDimensions,
         )
 
         scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
@@ -373,7 +398,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint,
-            segmentProperties = segmentProperties,
+            horizontalDimensions = horizontalDimensions,
             chartBounds = chart.bounds,
             horizontalScroll = scrollHandler.value,
             autoScaleUp = autoScaleUp,
@@ -445,7 +470,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             contentBounds = contentBounds,
             chart = chart,
             legend = legend,
-            segmentProperties = chart.getSegmentProperties(context = context, model = model),
+            horizontalDimensions = chart.getHorizontalDimensions(context = context, model = model),
             marker,
         )
     }

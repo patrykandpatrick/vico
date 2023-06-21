@@ -34,16 +34,15 @@ complexity:
   LongMethod:
     threshold: 90
   LongParameterList:
-    ignoreDefaultParameters: true
-    ignoreAnnotated:
-      - "Composable"
-      - "LongParameterListDrawFunction"
+    active: false
   TooManyFunctions:
     thresholdInFiles: 999
     ignoreDeprecated: true
     ignorePrivate: true
     ignoreOverridden: true
     thresholdInInterfaces: 20
+  CyclomaticComplexMethod:
+    threshold: 20
 style:
   MagicNumber:
     excludes:

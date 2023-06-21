@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.chart.scale
+package com.patrykandpatrick.vico.compose.chart.layout
+
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 
 /**
- * Defines whether the content of a scrollable chart should be scaled up when the dimensions are such that, at a scale
- * factor of 1, an empty space would be visible near the end edge of the chart.
+ * Creates an instance of [HorizontalLayout.Segmented].
  */
-public enum class AutoScaleUp {
+public fun HorizontalLayout.Companion.segmented(): HorizontalLayout.Segmented = HorizontalLayout.Segmented()
 
-    /**
-     * Scales up the chart to prevent any empty space from being visible.
-     */
-    Full,
-
-    /**
-     * Leaves the chart’s scale unaffected. Empty space may be visible.
-     */
-    None,
-}
+/**
+ * Creates an instance of [HorizontalLayout.FullWidth].
+ */
+public fun HorizontalLayout.Companion.fullWidth(
+    startPadding: Dp = 0.dp,
+    endPadding: Dp = 0.dp,
+): HorizontalLayout.FullWidth = HorizontalLayout.FullWidth(startPadding.value, endPadding.value)
