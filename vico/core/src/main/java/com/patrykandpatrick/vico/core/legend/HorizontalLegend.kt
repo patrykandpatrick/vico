@@ -56,13 +56,13 @@ public open class HorizontalLegend(
         lines.clear()
         lines.add(mutableListOf())
         var height = maxOf(
-            items.first().getHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
+            items.first().getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
             iconSizeDp.pixels,
         )
         heights.add(height)
         buildLines(context, availableWidth) {
             val currentHeight =
-                maxOf(it.getHeight(context, availableWidth, iconPaddingDp, iconSizeDp), iconSizeDp.pixels)
+                maxOf(it.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp), iconSizeDp.pixels)
             heights.add(currentHeight)
             height += currentHeight
         }
@@ -84,8 +84,9 @@ public open class HorizontalLegend(
 
         lines.forEachIndexed { index, item ->
             var currentStart = 0f
-            val currentLineHeight =
-                heights.getOrElse(index) { item.first().getHeight(context, availableWidth, iconPaddingDp, iconSizeDp) }
+            val currentLineHeight = heights.getOrElse(index) {
+                item.first().getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp)
+            }
             val centerY = currentTop + currentLineHeight.half
 
             item.forEach {
@@ -112,10 +113,10 @@ public open class HorizontalLegend(
                     (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels).toInt(),
                 )
                 currentStart += if (isLtr) {
-                    it.getOriginalLabelWidth(context, availableWidth, iconPaddingDp, iconSizeDp) + spacingDp.pixels
+                    it.getLabelWidth(context, availableWidth, iconPaddingDp, iconSizeDp) + spacingDp.pixels
                 } else {
                     -(
-                        it.getOriginalLabelWidth(
+                        it.getLabelWidth(
                             context,
                             availableWidth,
                             iconPaddingDp,
@@ -139,7 +140,7 @@ public open class HorizontalLegend(
             lines.clear()
             lines.add(mutableListOf())
             items.forEach {
-                remainWidth -= it.getOriginalWidth(
+                remainWidth -= it.getWidth(
                     context,
                     availableWidth,
                     iconPaddingDp,
@@ -151,7 +152,7 @@ public open class HorizontalLegend(
                 }
 
                 currentLine++
-                remainWidth = availableWidth - it.getOriginalWidth(
+                remainWidth = availableWidth - it.getWidth(
                     context,
                     availableWidth,
                     iconPaddingDp,

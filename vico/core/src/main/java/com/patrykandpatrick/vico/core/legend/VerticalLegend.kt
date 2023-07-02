@@ -52,7 +52,7 @@ public open class VerticalLegend(
         items.fold(0f) { sum, item ->
             sum + maxOf(
                 iconSizeDp.pixels,
-                item.getHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
+                item.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
             ).also { height -> heights[item] = height }
         } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
     }
@@ -62,7 +62,9 @@ public open class VerticalLegend(
 
         items.forEach { item ->
 
-            val height = heights.getOrPut(item) { item.getHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp) }
+            val height = heights.getOrPut(item) {
+                item.getLabelHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp)
+            }
             val centerY = currentTop + height.half
             var startX = if (isLtr) {
                 chartBounds.left + padding.startDp.pixels
@@ -98,7 +100,7 @@ public open class VerticalLegend(
         }
     }
 
-    @Deprecated("Use `LegendItem#getHeight` instead.")
+    @Deprecated("Use `LegendItem#getLabelHeight` instead.")
     @Suppress("DEPRECATION")
     protected open fun Item.getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
         label.getHeight(this, labelText, (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt())
