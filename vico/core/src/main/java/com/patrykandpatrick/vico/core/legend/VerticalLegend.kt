@@ -98,6 +98,12 @@ public open class VerticalLegend(
         }
     }
 
+    @Deprecated("Use `LegendItem#getHeight` instead.")
+    @Suppress("DEPRECATION")
+    protected open fun Item.getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
+        label.getHeight(this, labelText, (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt())
+    }
+
     @Deprecated("Use LegendItem instead")
     /**
      * Defines the appearance of an item of a [VerticalLegend].
