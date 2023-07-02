@@ -104,7 +104,6 @@ public open class VerticalLegend(
         label.getHeight(this, labelText, (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt())
     }
 
-    @Deprecated("Use LegendItem instead")
     /**
      * Defines the appearance of an item of a [VerticalLegend].
      *
@@ -112,6 +111,7 @@ public open class VerticalLegend(
      * @param label the [TextComponent] used for the label.
      * @param labelText the text content of the label.
      */
+    @Deprecated("Use `LegendItem` instead.")
     public class Item(
         public override val icon: Component,
         public override val label: TextComponent,

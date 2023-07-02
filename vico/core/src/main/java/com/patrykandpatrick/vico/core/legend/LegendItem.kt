@@ -33,7 +33,7 @@ public open class LegendItem(
     public open val labelText: CharSequence,
 ) {
     /**
-     * Measures the height of an item of a [Legend].
+     * Measures the height of the label.
      *
      * @param context the [MeasureContext] used to measure the height.
      * @param availableWidth the available width for the item.
@@ -54,7 +54,7 @@ public open class LegendItem(
     }
 
     /**
-     * Measures the width of the Label of a [LegendItem].
+     * Measures the width of the label.
      *
      * @param context the [MeasureContext] used to measure the height.
      * @param availableWidth the available width for the item.
@@ -75,7 +75,7 @@ public open class LegendItem(
     }
 
     /**
-     * Measures the width of a [LegendItem], including Icon, Label and Padding between them.
+     * Measures the width of this [LegendItem].
      *
      * @param context the [MeasureContext] used to measure the height.
      * @param availableWidth the available width for the item.

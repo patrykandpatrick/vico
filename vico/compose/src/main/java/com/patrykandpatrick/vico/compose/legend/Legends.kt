@@ -75,8 +75,6 @@ public fun legendItem(
     )
 }
 
-@Composable
-@Deprecated("Use legendItem instead.", ReplaceWith("legendItem(icon, label, labelText)"))
 /**
  * Defines the appearance of an item of a [VerticalLegend].
  *
@@ -84,6 +82,8 @@ public fun legendItem(
  * @param label the [TextComponent] used for the label.
  * @param labelText the text content of the label.
  */
+@Composable
+@Deprecated("Use `legendItem` instead.", ReplaceWith("legendItem(icon, label, labelText)"))
 public fun verticalLegendItem(
     icon: Component,
     label: TextComponent,
@@ -102,11 +102,10 @@ public fun verticalLegendItem(
  * @param items a [Collection] of [LegendItem]s to be displayed by this [HorizontalLegend].
  * @param iconSize defines the size of all [LegendItem.icon]s.
  * @param iconPadding defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
- * @param lineSpacing defines the vertical spacing between each line of [LegendItem]s.
- * @param spacing defines the vertical spacing between each [LegendItem].
+ * @param lineSpacing defines the spacing between adjacent lines.
+ * @param spacing defines the horizontal spacing between adjacent [LegendItem]s.
  * @param padding defines the padding of the content.
  */
-
 @Composable
 public fun horizontalLegend(
     items: Collection<LegendItem>,

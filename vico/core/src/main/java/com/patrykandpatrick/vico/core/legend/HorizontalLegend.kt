@@ -27,13 +27,13 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.half
 
 /**
- * [HorizontalLegend] displays legend items in a line wrapping horizontal row.
+ * [HorizontalLegend] displays legend items beside one another in lines.
  *
  * @param items a [Collection] of [LegendItem]s to be displayed by this [HorizontalLegend].
  * @param iconSizeDp defines the size of all [LegendItem.icon]s.
  * @param iconPaddingDp defines the padding between each [LegendItem.icon] and its corresponding [LegendItem.label].
- * @param lineSpacingDp define the vertical spacing between lines.
- * @param spacingDp defines the horizon spacing between each [LegendItem] in line.
+ * @param lineSpacingDp defines the spacing between adjacent lines.
+ * @param spacingDp defines the horizontal spacing between adjacent [LegendItem]s.
  * @param padding defines the padding of the content.
  */
 public open class HorizontalLegend(
