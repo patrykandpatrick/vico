@@ -19,7 +19,6 @@ import io.gitlab.arturbosch.detekt.Detekt
 buildscript {
 
     apply from: "versions.gradle"
-    apply from: "dependencies.gradle"
 
     repositories {
         google()
@@ -29,20 +28,20 @@ buildscript {
 
     dependencies {
 
-        classpath "com.android.tools.build:gradle:$versions.agp"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+        classpath libs.buildTools
+        classpath libs.kotlinGradlePlugin
     }
 }
 
 plugins {
 
-    id "io.gitlab.arturbosch.detekt" version "1.22.0"
-    id "org.jetbrains.dokka" version "1.8.10" apply false
+    alias libs.plugins.detekt
+    alias libs.plugins.dokka apply false
 }
 
 dependencies {
 
-    detektPlugins "io.gitlab.arturbosch.detekt:detekt-formatting:1.22.0"
+    detektPlugins libs.detektFormatting
 }
 
 detekt {

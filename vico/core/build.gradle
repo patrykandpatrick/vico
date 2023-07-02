@@ -60,7 +60,10 @@ afterEvaluate {
 
 dependencies {
 
-    vico_core_dependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation libs.kotlinStdLib
+    testImplementation libs.JUnit
+    testImplementation libs.JUnitExt
+    testImplementation libs.kotlinTest
+    testImplementation libs.mockK
+    testImplementation libs.testCore
 }

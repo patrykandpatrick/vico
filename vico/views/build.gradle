@@ -58,7 +58,11 @@ afterEvaluate {
 
 dependencies {
 
-    vico_views_dependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+    api project(":vico:core")
+    implementation libs.androidXCore
+    implementation libs.appcompat
+    implementation libs.kotlinStdLib
+    testImplementation libs.JUnit
+    testImplementation libs.JUnitExt
+    testImplementation libs.kotlinTest
 }

@@ -33,7 +33,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion versions.composeCompiler
+        kotlinCompilerExtensionVersion libs.versions.composeCompiler.get()
     }
 
     namespace = getNamespace(project)
@@ -72,7 +72,15 @@ afterEvaluate {
 
 dependencies {
 
-    vico_compose_dependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+    api project(":vico:core")
+    implementation platform(libs.composeBom)
+    implementation libs.androidXCore
+    implementation libs.appcompat
+    implementation libs.composeFoundation
+    implementation libs.composeUI
+    implementation libs.composeUITooling
+    implementation libs.kotlinStdLib
+    testImplementation libs.JUnit
+    testImplementation libs.JUnitExt
+    testImplementation libs.kotlinTest
 }
