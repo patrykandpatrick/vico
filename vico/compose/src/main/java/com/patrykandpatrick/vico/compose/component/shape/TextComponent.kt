@@ -44,7 +44,10 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
  * @param textAlign the text alignment.
  */
 @Composable
-@Deprecated(message = "Use `com.patrykandpatrick.vico.compose.component.textComponent` instead.")
+@Deprecated(
+    message = "Use `com.patrykandpatrick.vico.compose.component.textComponent` instead.",
+    level = DeprecationLevel.ERROR,
+)
 public fun textComponent(
     color: Color = Color.Black,
     textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,

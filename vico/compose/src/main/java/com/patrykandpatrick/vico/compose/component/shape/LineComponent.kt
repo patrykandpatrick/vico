@@ -39,7 +39,10 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
  * @param margins the margins of the line.
  */
 @Composable
-@Deprecated(message = "Use `com.patrykandpatrick.vico.compose.component.lineComponent` instead.")
+@Deprecated(
+    message = "Use `com.patrykandpatrick.vico.compose.component.lineComponent` instead.",
+    level = DeprecationLevel.ERROR,
+)
 public fun lineComponent(
     color: Color,
     thickness: Dp,
@@ -70,7 +73,10 @@ public fun lineComponent(
  * @param margins the margins of the line.
  */
 @Composable
-@Deprecated(message = "Use `com.patrykandpatrick.vico.compose.component.lineComponent` instead.")
+@Deprecated(
+    message = "Use `com.patrykandpatrick.vico.compose.component.lineComponent` instead.",
+    level = DeprecationLevel.ERROR,
+)
 public fun lineComponent(
     color: Color,
     thickness: Dp,

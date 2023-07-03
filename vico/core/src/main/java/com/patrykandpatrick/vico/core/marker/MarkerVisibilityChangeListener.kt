@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public interface MarkerVisibilityChangeListener {
         marker: Marker,
         markerEntryModels: List<Marker.EntryModel>,
     ) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         onMarkerVisibilityChanged(isVisible = true, marker = marker)
     }
 
@@ -54,7 +54,7 @@ public interface MarkerVisibilityChangeListener {
      * @param marker the linked [Marker], which has been hidden.
      */
     public fun onMarkerHidden(marker: Marker) {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         onMarkerVisibilityChanged(isVisible = false, marker = marker)
     }
 
@@ -64,7 +64,7 @@ public interface MarkerVisibilityChangeListener {
      * @param isVisible whether the linked [Marker] is visible.
      * @param marker the linked [Marker], whose visibility has changed.
      */
-    @Deprecated("Use `onMarkerShown` and `onMarkerHidden` instead.")
+    @Deprecated(message = "Use `onMarkerShown` and `onMarkerHidden` instead.", level = DeprecationLevel.ERROR)
     public fun onMarkerVisibilityChanged(
         isVisible: Boolean,
         marker: Marker,

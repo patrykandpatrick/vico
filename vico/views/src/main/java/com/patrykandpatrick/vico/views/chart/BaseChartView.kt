@@ -185,7 +185,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * Whether the chart can be scrolled horizontally.
      */
-    @Deprecated(message = "`isHorizontalScrollEnabled` is deprecated. Use `chartScrollSpec` instead.")
+    @Deprecated(
+        message = "`isHorizontalScrollEnabled` is deprecated. Use `chartScrollSpec` instead.",
+        level = DeprecationLevel.ERROR,
+    )
     public var isHorizontalScrollEnabled: Boolean
         get() = chartScrollSpec.isScrollEnabled
         set(value) {

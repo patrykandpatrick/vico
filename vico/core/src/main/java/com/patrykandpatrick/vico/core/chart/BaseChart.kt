@@ -51,16 +51,16 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     override var axisValuesOverrider: AxisValuesOverrider<@UnsafeVariance Model>? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     override var minY: Float? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     override var maxY: Float? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     override var minX: Float? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     override var maxX: Float? = null
 
     override fun addDecoration(decoration: Decoration): Boolean = decorations.add(decoration)

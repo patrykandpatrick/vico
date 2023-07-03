@@ -65,7 +65,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see ChartEntryModel.minY
      */
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     public var minY: Float?
 
     /**
@@ -74,7 +74,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see ChartEntryModel.maxY
      */
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     public var maxY: Float?
 
     /**
@@ -83,7 +83,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see ChartEntryModel.minX
      */
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     public var minX: Float?
 
     /**
@@ -92,7 +92,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      *
      * @see ChartEntryModel.maxX
      */
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     public var maxX: Float?
 
     /**

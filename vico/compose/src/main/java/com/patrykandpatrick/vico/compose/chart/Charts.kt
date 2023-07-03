@@ -184,7 +184,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
  * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
-@Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.")
+@Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.", level = DeprecationLevel.ERROR)
 @Composable
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
