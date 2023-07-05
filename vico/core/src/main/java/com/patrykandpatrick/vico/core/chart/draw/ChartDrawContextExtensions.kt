@@ -20,7 +20,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.dimensions.padding
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -79,10 +78,8 @@ public fun chartDrawContext(
     }
 
     private fun calculateDrawScale(): Float {
-        val contentWidth = horizontalLayout.getContentWidth(
-            horizontalDimensions.xSpacing,
-            chartValuesManager.getChartValues().getMaxMajorEntryCount(),
-        ) + horizontalDimensions.padding
+        val contentWidth =
+            horizontalDimensions.getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
         val upscalingPossibleButDisallowed = contentWidth < chartBounds.width() && autoScaleUp == AutoScaleUp.None
         val scrollEnabledAndUpscalingImpossible = isHorizontalScrollEnabled && contentWidth >= chartBounds.width()
         return if (upscalingPossibleButDisallowed || scrollEnabledAndUpscalingImpossible) {

@@ -292,11 +292,7 @@ public open class LineChart(
             var prevX = bounds.getStart(isLtr = isLtr)
             var prevY = bounds.bottom
 
-            val drawingStartAlignmentCorrection = layoutDirectionMultiplier *
-                when (horizontalLayout) {
-                    is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
-                    is HorizontalLayout.FullWidth -> horizontalDimensions.startPadding
-                }
+            val drawingStartAlignmentCorrection = layoutDirectionMultiplier * horizontalDimensions.startPadding
 
             val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
 
@@ -536,15 +532,18 @@ public open class LineChart(
         model: ChartEntryModel,
     ): HorizontalDimensions = with(context) {
         val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
-        val basePadding = when (horizontalLayout) {
-            is HorizontalLayout.Segmented -> 0f
-            is HorizontalLayout.FullWidth -> maxPointSize.half
+        horizontalDimensions.apply {
+            xSpacing = maxPointSize + spacingDp.pixels
+            when (horizontalLayout) {
+                is HorizontalLayout.Segmented -> scalableStartPadding = xSpacing.half
+                is HorizontalLayout.FullWidth -> {
+                    scalableStartPadding = horizontalLayout.startPaddingDp.pixels
+                    unscalableStartPadding = maxPointSize.half
+                    unscalableEndPadding = unscalableStartPadding
+                }
+            }
+            scalableEndPadding = scalableStartPadding
         }
-        horizontalDimensions.set(
-            xSpacing = maxPointSize + spacingDp.pixels,
-            startPadding = basePadding + horizontalLayout.startPaddingDp.pixels,
-            endPadding = basePadding + horizontalLayout.endPaddingDp.pixels,
-        )
     }
 
     override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel, xStep: Float?) {

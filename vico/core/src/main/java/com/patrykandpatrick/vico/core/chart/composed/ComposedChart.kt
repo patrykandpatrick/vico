@@ -106,8 +106,10 @@ public class ComposedChart<Model : ChartEntryModel>(
             val chartHorizontalDimensions = chart.getHorizontalDimensions(context, item)
             horizontalDimensions.apply {
                 xSpacing = maxOf(xSpacing, chartHorizontalDimensions.xSpacing)
-                startPadding = maxOf(startPadding, chartHorizontalDimensions.startPadding)
-                endPadding = maxOf(endPadding, chartHorizontalDimensions.endPadding)
+                scalableStartPadding = maxOf(scalableStartPadding, chartHorizontalDimensions.scalableStartPadding)
+                scalableEndPadding = maxOf(scalableEndPadding, chartHorizontalDimensions.scalableEndPadding)
+                unscalableStartPadding = maxOf(unscalableStartPadding, chartHorizontalDimensions.unscalableStartPadding)
+                unscalableEndPadding = maxOf(unscalableEndPadding, chartHorizontalDimensions.unscalableEndPadding)
             }
         }
         return horizontalDimensions

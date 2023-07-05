@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.chart.draw
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.dimensions.padding
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.model.Point
@@ -57,12 +56,9 @@ public fun MeasureContext.getMaxScrollDistance(
     chartWidth: Float,
     horizontalDimensions: HorizontalDimensions,
 ): Float {
-    val contentWidth = (
-        horizontalLayout.getContentWidth(
-            horizontalDimensions.xSpacing,
-            chartValuesManager.getChartValues().getMaxMajorEntryCount(),
-        ) + horizontalDimensions.padding
-        ) * chartScale
+    val contentWidth = horizontalDimensions
+        .scaled(chartScale)
+        .getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
 
     return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
         if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)

@@ -137,7 +137,7 @@ public open class ColumnChart(
         model.entries.forEachIndexed { index, entryCollection ->
 
             column = columns.getRepeating(index)
-            drawingStart = getDrawingStart(index) - horizontalScroll
+            drawingStart = getDrawingStart(index, model.entries.size) - horizontalScroll
 
             entryCollection.forEachInRelativelyIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry ->
 
@@ -336,15 +336,19 @@ public open class ColumnChart(
         model: ChartEntryModel,
     ): HorizontalDimensions = with(context) {
         val columnCollectionWidth = getColumnCollectionWidth(model.entries.size)
-        val basePadding = when (horizontalLayout) {
-            is HorizontalLayout.Segmented -> 0f
-            is HorizontalLayout.FullWidth -> columnCollectionWidth.half
+        horizontalDimensions.apply {
+            xSpacing = columnCollectionWidth + spacingDp.pixels
+            when (horizontalLayout) {
+                is HorizontalLayout.Segmented -> {
+                    scalableStartPadding = xSpacing.half
+                    scalableEndPadding = scalableStartPadding
+                }
+                is HorizontalLayout.FullWidth -> {
+                    scalableStartPadding = columnCollectionWidth.half + horizontalLayout.startPaddingDp.pixels
+                    scalableEndPadding = columnCollectionWidth.half + horizontalLayout.endPaddingDp.pixels
+                }
+            }
         }
-        horizontalDimensions.set(
-            xSpacing = columnCollectionWidth + spacingDp.pixels,
-            startPadding = basePadding + horizontalLayout.startPaddingDp.pixels,
-            endPadding = basePadding + horizontalLayout.endPaddingDp.pixels,
-        )
     }
 
     protected open fun MeasureContext.getColumnCollectionWidth(
@@ -357,18 +361,15 @@ public open class ColumnChart(
             getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
-    protected open fun MeasureContext.getDrawingStart(entryCollectionIndex: Int): Float {
-        val horizontalLayoutComponent = when (horizontalLayout) {
-            is HorizontalLayout.Segmented -> spacingDp.half.pixels
-            is HorizontalLayout.FullWidth -> horizontalLayout.startPaddingDp.pixels
-        }
+    protected open fun MeasureContext.getDrawingStart(entryCollectionIndex: Int, entryCollectionCount: Int): Float {
         val mergeModeComponent = when (mergeMode) {
             MergeMode.Grouped ->
                 getCumulatedThickness(entryCollectionIndex) + innerSpacingDp.pixels * entryCollectionIndex
 
             MergeMode.Stack -> 0f
         }
-        return bounds.getStart(isLtr) + (horizontalLayoutComponent + mergeModeComponent) * chartScale *
+        return bounds.getStart(isLtr) + horizontalDimensions.scaled(chartScale).startPadding +
+            (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * chartScale *
             layoutDirectionMultiplier
     }
 

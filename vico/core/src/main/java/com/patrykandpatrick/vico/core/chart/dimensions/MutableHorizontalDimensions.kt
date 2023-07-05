@@ -21,24 +21,52 @@ package com.patrykandpatrick.vico.core.chart.dimensions
  */
 public data class MutableHorizontalDimensions(
     override var xSpacing: Float = 0f,
-    override var startPadding: Float = 0f,
-    override var endPadding: Float = 0f,
+    override var scalableStartPadding: Float = 0f,
+    override var scalableEndPadding: Float = 0f,
+    override var unscalableStartPadding: Float = 0f,
+    override var unscalableEndPadding: Float = 0f,
 ) : HorizontalDimensions {
     /**
      * Updates the stored values.
      */
-    public fun set(xSpacing: Float, startPadding: Float, endPadding: Float): MutableHorizontalDimensions = apply {
+    public fun set(
+        xSpacing: Float,
+        scalableStartPadding: Float,
+        scalableEndPadding: Float,
+        unscalableStartPadding: Float,
+        unscalableEndPadding: Float,
+    ): MutableHorizontalDimensions = apply {
         this.xSpacing = xSpacing
-        this.startPadding = startPadding
-        this.endPadding = endPadding
+        this.scalableStartPadding = scalableStartPadding
+        this.scalableEndPadding = scalableEndPadding
+        this.unscalableStartPadding = unscalableStartPadding
+        this.unscalableEndPadding = unscalableEndPadding
     }
+
+    /**
+     * Updates the stored values.
+     */
+    @Deprecated(
+        """`startPadding` and `endPadding` have been replaced by `scalableStartPadding`, `scalableEndPadding`,
+            `unscalableStartPadding`, and `unscalableEndPadding`. Use the overload with these parameters instead.""",
+        ReplaceWith("set(xSpacing, startPadding, endPadding, 0f, 0f)"),
+    )
+    public fun set(xSpacing: Float, startPadding: Float, endPadding: Float): MutableHorizontalDimensions = set(
+        xSpacing = xSpacing,
+        scalableStartPadding = startPadding,
+        scalableEndPadding = endPadding,
+        unscalableStartPadding = 0f,
+        unscalableEndPadding = 0f,
+    )
 
     /**
      * Clears the stored values.
      */
     public fun clear() {
         xSpacing = 0f
-        startPadding = 0f
-        endPadding = 0f
+        scalableStartPadding = 0f
+        scalableEndPadding = 0f
+        unscalableStartPadding = 0f
+        unscalableEndPadding = 0f
     }
 }

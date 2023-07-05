@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.chart.layout
 
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.extension.half
 
 /**
@@ -36,18 +36,18 @@ public sealed class HorizontalLayout(public val startPaddingDp: Float, public va
     /**
      * Given a [HorizontalAxis]’s tick thickness, calculates the start inset required by the [HorizontalAxis].
      */
-    public abstract fun getStartHorizontalAxisInset(context: MeasureContext, tickThickness: Float): Float
+    public abstract fun getStartHorizontalAxisInset(
+        horizontalDimensions: HorizontalDimensions,
+        tickThickness: Float,
+    ): Float
 
     /**
      * Given a [HorizontalAxis]’s tick thickness, calculates the end inset required by the [HorizontalAxis].
      */
-    public abstract fun getEndHorizontalAxisInset(context: MeasureContext, tickThickness: Float): Float
-
-    /**
-     * Given a chart’s _x_ spacing and maximum number of major entries, calculates the width of the [Chart]’s content,
-     * excluding the padding.
-     */
-    public abstract fun getContentWidth(xSpacing: Float, maxMajorEntryCount: Int): Float
+    public abstract fun getEndHorizontalAxisInset(
+        horizontalDimensions: HorizontalDimensions,
+        tickThickness: Float,
+    ): Float
 
     /**
      * When this is applied, the [Chart] centers each major entry in a designated segment. Some empty space is visible
@@ -57,13 +57,15 @@ public sealed class HorizontalLayout(public val startPaddingDp: Float, public va
     public class Segmented : HorizontalLayout(0f, 0f) {
         override fun getHorizontalAxisLabelCount(maxMajorEntryCount: Int): Int = maxMajorEntryCount + 1
 
-        override fun getStartHorizontalAxisInset(context: MeasureContext, tickThickness: Float): Float =
-            tickThickness.half
+        override fun getStartHorizontalAxisInset(
+            horizontalDimensions: HorizontalDimensions,
+            tickThickness: Float,
+        ): Float = tickThickness.half
 
-        override fun getEndHorizontalAxisInset(context: MeasureContext, tickThickness: Float): Float =
-            tickThickness.half
-
-        override fun getContentWidth(xSpacing: Float, maxMajorEntryCount: Int): Float = xSpacing * maxMajorEntryCount
+        override fun getEndHorizontalAxisInset(
+            horizontalDimensions: HorizontalDimensions,
+            tickThickness: Float,
+        ): Float = tickThickness.half
     }
 
     /**
@@ -76,14 +78,15 @@ public sealed class HorizontalLayout(public val startPaddingDp: Float, public va
 
         override fun getHorizontalAxisLabelCount(maxMajorEntryCount: Int): Int = maxMajorEntryCount
 
-        override fun getStartHorizontalAxisInset(context: MeasureContext, tickThickness: Float): Float =
-            with(context) { (tickThickness.half - startPaddingDp.pixels).coerceAtLeast(0f) }
+        override fun getStartHorizontalAxisInset(
+            horizontalDimensions: HorizontalDimensions,
+            tickThickness: Float,
+        ): Float = (tickThickness.half - horizontalDimensions.startPadding).coerceAtLeast(0f)
 
-        override fun getEndHorizontalAxisInset(context: MeasureContext, tickThickness: Float): Float =
-            with(context) { (tickThickness.half - endPaddingDp.pixels).coerceAtLeast(0f) }
-
-        override fun getContentWidth(xSpacing: Float, maxMajorEntryCount: Int): Float =
-            xSpacing * (maxMajorEntryCount - 1)
+        override fun getEndHorizontalAxisInset(
+            horizontalDimensions: HorizontalDimensions,
+            tickThickness: Float,
+        ): Float = (tickThickness.half - horizontalDimensions.endPadding).coerceAtLeast(0f)
     }
 
     public companion object

@@ -67,9 +67,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val chartValues = chartValuesManager.getChartValues()
 
         canvas.clipRect(
-            bounds.left - horizontalLayout.getStartHorizontalAxisInset(context, tickThickness),
+            bounds.left - horizontalLayout.getStartHorizontalAxisInset(horizontalDimensions, tickThickness),
             minOf(bounds.top, chartBounds.top),
-            bounds.right + horizontalLayout.getEndHorizontalAxisInset(context, tickThickness),
+            bounds.right + horizontalLayout.getEndHorizontalAxisInset(horizontalDimensions, tickThickness),
             maxOf(bounds.bottom, chartBounds.bottom),
         )
 
@@ -78,14 +78,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             (abs((horizontalScroll - horizontalDimensions.startPadding).coerceAtLeast(0f)) / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
 
-        val labelPositionOffset = when (horizontalLayout) {
-            is HorizontalLayout.Segmented -> tickDrawStep.half
-            is HorizontalLayout.FullWidth -> 0f
-        }
-
-        var textCenter = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier *
-            (labelPositionOffset + tickDrawStep * scrollAdjustment) - horizontalScroll +
-            horizontalDimensions.startPadding
+        var textCenter = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier * tickDrawStep * scrollAdjustment -
+            horizontalScroll + horizontalDimensions.startPadding
 
         var tickCenter = getTickDrawCenter(horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
 
@@ -205,11 +199,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {
+        val scaledHorizontalDimensions = horizontalDimensions.scaled(chartScale)
         with(outInsets) {
-            start = horizontalLayout.getStartHorizontalAxisInset(context, tickThickness)
-            end = horizontalLayout.getEndHorizontalAxisInset(context, tickThickness)
-            top = if (position.isTop) getDesiredHeight(context, horizontalDimensions) else 0f
-            bottom = if (position.isBottom) getDesiredHeight(context, horizontalDimensions) else 0f
+            start = horizontalLayout.getStartHorizontalAxisInset(scaledHorizontalDimensions, tickThickness)
+            end = horizontalLayout.getEndHorizontalAxisInset(scaledHorizontalDimensions, tickThickness)
+            top = if (position.isTop) getDesiredHeight(context, scaledHorizontalDimensions) else 0f
+            bottom = if (position.isBottom) getDesiredHeight(context, scaledHorizontalDimensions) else 0f
         }
     }
 
@@ -219,7 +214,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ): Float = with(context) {
         val labelWidth =
             if (isHorizontalScrollEnabled) {
-                horizontalDimensions.scaled(scale = chartScale).xSpacing.toInt() * labelSpacing
+                horizontalDimensions.xSpacing.toInt() * labelSpacing
             } else {
                 Int.MAX_VALUE
             }

@@ -23,25 +23,63 @@ import com.patrykandpatrick.vico.core.chart.Chart
  */
 public interface HorizontalDimensions {
     /**
-     * The distance between neighboring major entries (in pixels).
+     * The distance between neighboring major entries (in pixels). This can be scaled.
      */
     public val xSpacing: Float
 
     /**
-     * The distance between the start of the content area and the first entry (in pixels).
+     * The scalable part of the distance between the start of the content area and the first entry (in pixels).
+     */
+    public val scalableStartPadding: Float
+
+    /**
+     * The scalable part of the distance between the end of the content area and the last entry (in pixels).
+     */
+    public val scalableEndPadding: Float
+
+    /**
+     * The unscalable part of the distance between the start of the content area and the first entry (in pixels).
+     */
+    public val unscalableStartPadding: Float
+
+    /**
+     * The unscalable part of the distance between the end of the content area and the last entry (in pixels).
+     */
+    public val unscalableEndPadding: Float
+
+    /**
+     * The total start padding (in pixels).
      */
     public val startPadding: Float
+        get() = scalableStartPadding + unscalableStartPadding
 
     /**
-     * The distance between the end of the content area and the last entry (in pixels).
+     * The total end padding (in pixels).
      */
     public val endPadding: Float
+        get() = scalableEndPadding + unscalableEndPadding
 
     /**
-     * Creates a new [HorizontalDimensions] instance by multiplying this one’s values by the given factor.
+     * The total horizontal padding (in pixels).
      */
-    public fun scaled(scale: Float): HorizontalDimensions =
-        HorizontalDimensions(xSpacing * scale, startPadding * scale, endPadding * scale)
+    public val padding: Float
+        get() = startPadding + endPadding
+
+    /**
+     * Given the chart’s maximum number of major entries, calculates the width of the [Chart]’s content (in pixels).
+     */
+    public fun getContentWidth(maxMajorEntryCount: Int): Float = xSpacing * (maxMajorEntryCount - 1) + padding
+
+    /**
+     * Creates a new [HorizontalDimensions] instance by multiplying this one’s scalable values by the given factor.
+     */
+    public fun scaled(scale: Float): HorizontalDimensions = HorizontalDimensions(
+        xSpacing * scale,
+        scalableStartPadding * scale,
+        scalableEndPadding * scale,
+        unscalableStartPadding,
+        unscalableEndPadding,
+    )
 }
 
 /**
@@ -49,16 +87,34 @@ public interface HorizontalDimensions {
  */
 public fun HorizontalDimensions(
     xSpacing: Float,
-    startPadding: Float,
-    endPadding: Float,
+    scalableStartPadding: Float,
+    scalableEndPadding: Float,
+    unscalableStartPadding: Float,
+    unscalableEndPadding: Float,
 ): HorizontalDimensions = object : HorizontalDimensions {
     override val xSpacing: Float = xSpacing
-    override val startPadding: Float = startPadding
-    override val endPadding: Float = endPadding
+    override val scalableStartPadding: Float = scalableStartPadding
+    override val scalableEndPadding: Float = scalableEndPadding
+    override val unscalableStartPadding: Float = unscalableStartPadding
+    override val unscalableEndPadding: Float = unscalableEndPadding
 }
 
 /**
- * The total horizontal padding (in pixels).
+ * Creates a [HorizontalDimensions] instance.
  */
-public val HorizontalDimensions.padding: Float
-    get() = startPadding + endPadding
+@Deprecated(
+    """`startPadding` and `endPadding` have been replaced by `scalableStartPadding`, `scalableEndPadding`,
+        `unscalableStartPadding`, and `unscalableEndPadding`. Use the overload with these parameters instead.""",
+    ReplaceWith("HorizontalDimensions(xSpacing, startPadding, endPadding, 0f, 0f)"),
+)
+public fun HorizontalDimensions(
+    xSpacing: Float,
+    startPadding: Float,
+    endPadding: Float,
+): HorizontalDimensions = HorizontalDimensions(
+    xSpacing = xSpacing,
+    scalableStartPadding = startPadding,
+    unscalableEndPadding = endPadding,
+    scalableEndPadding = 0f,
+    unscalableStartPadding = 0f,
+)
