@@ -81,6 +81,7 @@ private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
                 title = stringResource(R.string.x_axis),
             ),
             marker = rememberMarker(),
+            runInitialAnimation = false,
             fadingEdges = rememberFadingEdges(),
             horizontalLayout = horizontalLayout,
         )
@@ -91,9 +92,12 @@ private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
 private fun ViewChart3(chartEntryModelProducer: ChartEntryModelProducer) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart3Binding::inflate) {
-        (chartView.chart as LineChart).axisValuesOverrider = axisValueOverrider
-        chartView.entryProducer = chartEntryModelProducer
-        chartView.marker = marker
+        with(chartView) {
+            (chart as LineChart).axisValuesOverrider = axisValueOverrider
+            runInitialAnimation = false
+            entryProducer = chartEntryModelProducer
+            this.marker = marker
+        }
     }
 }
 

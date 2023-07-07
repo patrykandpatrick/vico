@@ -73,6 +73,7 @@ private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
             bottomAxis = bottomAxis(),
             marker = rememberMarker(),
             legend = rememberLegend(),
+            runInitialAnimation = false,
         )
     }
 }
@@ -83,13 +84,14 @@ private fun ViewChart7(chartEntryModelProducer: ChartEntryModelProducer) {
     val marker = rememberMarker()
     val legend = rememberLegend()
     AndroidViewBinding(Chart7Binding::inflate) {
-        chartView.entryProducer = chartEntryModelProducer
-        with(chartView.startAxis as VerticalAxis) {
-            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
-            label = startAxisLabel
+        with(chartView) {
+            runInitialAnimation = false
+            entryProducer = chartEntryModelProducer
+            (startAxis as VerticalAxis).horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
+            (startAxis as VerticalAxis).label = startAxisLabel
+            this.marker = marker
+            this.legend = legend
         }
-        chartView.marker = marker
-        chartView.legend = legend
     }
 }
 

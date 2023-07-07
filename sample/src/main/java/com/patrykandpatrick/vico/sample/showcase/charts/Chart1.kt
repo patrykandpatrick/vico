@@ -50,6 +50,7 @@ private fun ComposeChart1(chartEntryModelProducer: ChartEntryModelProducer) {
             startAxis = startAxis(),
             bottomAxis = bottomAxis(guideline = null),
             marker = marker,
+            runInitialAnimation = false,
         )
     }
 }
@@ -60,6 +61,7 @@ private fun ViewChart1(chartEntryModelProducer: ChartEntryModelProducer) {
     AndroidViewBinding(Chart1Binding::inflate) {
         with(chartView) {
             chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
+            runInitialAnimation = false
             entryProducer = chartEntryModelProducer
             (bottomAxis as Axis).guideline = null
             this.marker = marker

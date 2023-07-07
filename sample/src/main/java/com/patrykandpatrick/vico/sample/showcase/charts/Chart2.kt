@@ -73,6 +73,7 @@ private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
             startAxis = startAxis(valueFormatter = startAxisValueFormatter, maxLabelCount = START_AXIS_LABEL_COUNT),
             bottomAxis = bottomAxis(labelSpacing = BOTTOM_AXIS_LABEL_SPACING, labelOffset = BOTTOM_AXIS_LABEL_OFFSET),
             marker = rememberMarker(),
+            runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
         )
     }
@@ -85,6 +86,7 @@ private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
     AndroidViewBinding(Chart2Binding::inflate) {
         with(chartView) {
             chart?.addDecoration(thresholdLine)
+            runInitialAnimation = false
             entryProducer = chartEntryModelProducer
             with(startAxis as VerticalAxis) {
                 maxLabelCount = START_AXIS_LABEL_COUNT

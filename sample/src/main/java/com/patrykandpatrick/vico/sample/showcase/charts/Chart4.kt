@@ -76,6 +76,7 @@ private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProduc
             topAxis = topAxis(),
             endAxis = endAxis(),
             marker = rememberMarker(),
+            runInitialAnimation = false,
         )
     }
 }
@@ -84,8 +85,11 @@ private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProduc
 private fun ViewChart4(chartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart4Binding::inflate) {
-        chartView.entryProducer = chartEntryModelProducer
-        chartView.marker = marker
+        with(chartView) {
+            runInitialAnimation = false
+            entryProducer = chartEntryModelProducer
+            this.marker = marker
+        }
     }
 }
 

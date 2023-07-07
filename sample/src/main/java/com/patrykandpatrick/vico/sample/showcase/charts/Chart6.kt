@@ -75,6 +75,7 @@ private fun ComposeChart6(chartEntryModelProducer: ChartEntryModelProducer) {
             startAxis = startAxis(),
             bottomAxis = bottomAxis(valueFormatter = bottomAxisValueFormatter),
             marker = rememberMarker(),
+            runInitialAnimation = false,
         )
     }
 }
@@ -85,11 +86,13 @@ private fun ViewChart6(chartEntryModelProducer: ChartEntryModelProducer) {
     val decorations = remember(thresholdLine) { listOf(thresholdLine) }
     val marker = rememberMarker()
     AndroidViewBinding(Chart6Binding::inflate) {
-        chartView.chart?.setDecorations(decorations)
-        chartView.entryProducer = chartEntryModelProducer
-        (chartView.bottomAxis as? HorizontalAxis<AxisPosition.Horizontal.Bottom>)?.valueFormatter =
-            bottomAxisValueFormatter
-        chartView.marker = marker
+        with(chartView) {
+            chart?.setDecorations(decorations)
+            runInitialAnimation = false
+            entryProducer = chartEntryModelProducer
+            (bottomAxis as? HorizontalAxis<AxisPosition.Horizontal.Bottom>)?.valueFormatter = bottomAxisValueFormatter
+            this.marker = marker
+        }
     }
 }
 

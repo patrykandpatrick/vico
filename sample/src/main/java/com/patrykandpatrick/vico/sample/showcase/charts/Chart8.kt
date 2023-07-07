@@ -61,6 +61,7 @@ private fun ComposeChart8(chartEntryModelProducer: ComposedChartEntryModelProduc
             startAxis = startAxis(guideline = null),
             endAxis = endAxis(),
             marker = rememberMarker(),
+            runInitialAnimation = false,
         )
     }
 }
@@ -69,16 +70,15 @@ private fun ComposeChart8(chartEntryModelProducer: ComposedChartEntryModelProduc
 private fun ViewChart8(chartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart8Binding::inflate) {
-        with(chartView.chart as ComposedChart) {
-            with(charts[0] as ColumnChart) {
-                mergeMode = ColumnChart.MergeMode.Stack
-                targetVerticalAxisPosition = AxisPosition.Vertical.Start
-            }
-            (charts[1] as LineChart).targetVerticalAxisPosition = AxisPosition.Vertical.End
+        with(chartView) {
+            ((chart as ComposedChart).charts[0] as ColumnChart).mergeMode = ColumnChart.MergeMode.Stack
+            ((chart as ComposedChart).charts[0] as ColumnChart).targetVerticalAxisPosition = AxisPosition.Vertical.Start
+            ((chart as ComposedChart).charts[1] as LineChart).targetVerticalAxisPosition = AxisPosition.Vertical.End
+            runInitialAnimation = false
+            entryProducer = chartEntryModelProducer
+            (startAxis as Axis).guideline = null
+            this.marker = marker
         }
-        chartView.entryProducer = chartEntryModelProducer
-        (chartView.startAxis as Axis).guideline = null
-        chartView.marker = marker
     }
 }
 

@@ -77,6 +77,7 @@ private fun ComposeChart5(chartEntryModelProducer: ChartEntryModelProducer) {
             ),
             bottomAxis = bottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
             marker = rememberMarker(),
+            runInitialAnimation = false,
         )
     }
 }
@@ -85,10 +86,13 @@ private fun ComposeChart5(chartEntryModelProducer: ChartEntryModelProducer) {
 private fun ViewChart5(chartEntryModelProducer: ChartEntryModelProducer) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart5Binding::inflate) {
-        (chartView.chart as ColumnChart).mergeMode = ColumnChart.MergeMode.Stack
-        chartView.entryProducer = chartEntryModelProducer
-        (chartView.startAxis as VerticalAxis).maxLabelCount = START_AXIS_LABEL_COUNT
-        chartView.marker = marker
+        with(chartView) {
+            (chart as ColumnChart).mergeMode = ColumnChart.MergeMode.Stack
+            runInitialAnimation = false
+            entryProducer = chartEntryModelProducer
+            (startAxis as VerticalAxis).maxLabelCount = START_AXIS_LABEL_COUNT
+            this.marker = marker
+        }
     }
 }
 
