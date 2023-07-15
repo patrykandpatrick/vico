@@ -127,9 +127,15 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
                 )
                 setWasMarkerVisible(true)
             }
-            if (wasMarkerVisible && markerEntryModels != lastMarkerEntryModels) {
+            val didMarkerMove = lastMarkerEntryModels.hasMoved(markerEntryModels)
+            if (wasMarkerVisible && didMarkerMove) {
                 onMarkerEntryModelsChange(markerEntryModels)
-                markerVisibilityChangeListener?.onMarkerMoved(marker, markerEntryModels)
+                if (lastMarkerEntryModels.isNotEmpty()) {
+                    markerVisibilityChangeListener?.onMarkerMoved(
+                        marker = marker,
+                        markerEntryModels = markerEntryModels,
+                    )
+                }
             }
         } ?: marker
         .takeIf { wasMarkerVisible }
@@ -138,3 +144,7 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
             setWasMarkerVisible(false)
         }
 }
+
+private fun List<Marker.EntryModel>.xPosition(): Float? = firstOrNull()?.entry?.x
+private fun List<Marker.EntryModel>.hasMoved(other: List<Marker.EntryModel>): Boolean =
+    xPosition() != other.xPosition()

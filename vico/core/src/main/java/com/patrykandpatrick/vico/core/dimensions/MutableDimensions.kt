@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.dimensions
 /**
  * An implementation of [Dimensions] whose every property is mutable.
  */
-public class MutableDimensions(
+public data class MutableDimensions(
     override var startDp: Float,
     override var topDp: Float,
     override var endDp: Float,
