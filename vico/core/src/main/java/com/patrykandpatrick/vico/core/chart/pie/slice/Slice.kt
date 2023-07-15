@@ -104,8 +104,8 @@ public open class Slice(
         ifNotNull(this@Slice.label, label) { labelComponent, label ->
             labelComponent.drawLabel(
                 context = context,
-                contentBounds = contentBounds,
                 oval = drawOval,
+                holeRadius = holeRadius,
                 angle = startAngle + sweepAngle.half,
                 slicePath = slicePath,
                 label = label,

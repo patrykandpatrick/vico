@@ -33,8 +33,8 @@ public abstract class SliceLabel {
     @LongParameterListDrawFunction
     public abstract fun drawLabel(
         context: DrawContext,
-        contentBounds: RectF,
         oval: RectF,
+        holeRadius: Float,
         angle: Float,
         slicePath: Path,
         label: CharSequence,

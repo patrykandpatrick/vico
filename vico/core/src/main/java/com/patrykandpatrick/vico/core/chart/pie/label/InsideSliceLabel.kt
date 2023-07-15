@@ -45,8 +45,8 @@ public open class InsideSliceLabel(
 
     public override fun drawLabel(
         context: DrawContext,
-        contentBounds: RectF,
         oval: RectF,
+        holeRadius: Float,
         angle: Float,
         slicePath: Path,
         label: CharSequence,
@@ -62,7 +62,7 @@ public open class InsideSliceLabel(
         val (textX, textY) = translatePointByAngle(
             center = oval.centerPoint,
             point = Point(
-                x = oval.centerX() + (sliceBounds.left - oval.centerX() + radius).half,
+                x = oval.centerX() + holeRadius + (radius - holeRadius).half,
                 y = oval.centerY(),
             ),
             angle = Math.toRadians(angle.toDouble()),
