@@ -33,4 +33,10 @@ public fun translatePointByAngle(center: Point, point: Point, angle: Double): Po
  * Converts an angle with value of [Number] to radians.
  */
 public val Number.radians: Float
-    get() = Math.toRadians(this.toDouble()).toFloat()
+    get() = radiansDouble.toFloat()
+
+/**
+ * Converts an angle with value of [Number] to radians.
+ */
+public val Number.radiansDouble: Double
+    get() = Math.toRadians(this.toDouble())

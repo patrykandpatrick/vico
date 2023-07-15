@@ -22,10 +22,13 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens.PIE_CHART_START_ANGLE
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
+import com.patrykandpatrick.vico.core.component.shape.extension.moveTo
 import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.entry.pie.PieEntryModel
+import com.patrykandpatrick.vico.core.extension.PI_RAD
+import com.patrykandpatrick.vico.core.extension.centerPoint
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
@@ -34,6 +37,11 @@ import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.radius
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.set
+import com.patrykandpatrick.vico.core.math.radians
+import com.patrykandpatrick.vico.core.math.radiansDouble
+import com.patrykandpatrick.vico.core.math.translatePointByAngle
+import com.patrykandpatrick.vico.core.model.Point
+import kotlin.math.sin
 
 /**
  * TODO
@@ -158,8 +166,8 @@ public open class PieChart(
             spacingPathBuilder.rewind()
 
             if (spacingDp > 0f) {
-                addSpacingSegment(spacingPathBuilder, sweepAngle)
-                addSpacingSegment(spacingPathBuilder, startAngle)
+                addSpacingSegment(spacingPathBuilder, sweepAngle, sweepAngle)
+                addSpacingSegment(spacingPathBuilder, startAngle, sweepAngle)
                 addHole(spacingPathBuilder, innerRadius)
             }
 
@@ -182,14 +190,42 @@ public open class PieChart(
 
     protected open fun DrawContext.addSpacingSegment(
         pathBuilder: Path,
-        angle: Float,
+        startAngle: Float,
+        sweepAngle: Float,
     ) {
         val spacing = spacingDp.pixels
         with(pathBuilder) {
-            spacingMatrix.postRotate(angle, oval.centerX(), oval.centerY())
-            moveTo(oval.centerX(), oval.centerY() + spacing.half)
-            lineTo(oval.right + spacing, oval.centerY() + spacing.half)
-            lineTo(oval.right + spacing, oval.centerY() - spacing.half)
+            spacingMatrix.postRotate(startAngle, oval.centerX(), oval.centerY())
+
+            if (sweepAngle > PI_RAD.half) {
+                val correctedSpacing = spacing / sin(sweepAngle.half.radians)
+                val correctedAngle = if (sweepAngle == startAngle) {
+                    PI_RAD - sweepAngle.half
+                } else {
+                    sweepAngle.half
+                }
+                val correctedSpacingFactor = if (startAngle == sweepAngle && sweepAngle > PI_RAD) {
+                    -1f
+                } else {
+                    1f
+                }
+
+                moveTo(
+                    translatePointByAngle(
+                        center = oval.centerPoint,
+                        point = Point(
+                            x = oval.centerX() + correctedSpacing.half * correctedSpacingFactor,
+                            y = oval.centerY(),
+                        ),
+                        angle = correctedAngle.radiansDouble,
+                    ),
+                )
+                lineTo(oval.centerX(), oval.centerY() + spacing.half)
+            } else {
+                moveTo(oval.centerX(), oval.centerY() + spacing.half)
+            }
+            lineTo(bounds.right, oval.centerY() + spacing.half)
+            lineTo(bounds.right + spacing, oval.centerY() - spacing.half)
             lineTo(oval.centerX(), oval.centerY() - spacing.half)
             close()
             transform(spacingMatrix)
