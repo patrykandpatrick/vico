@@ -28,7 +28,14 @@ import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 
 /**
- * TODO
+ * A factory function for [Slice].
+ *
+ * @param color the color of the [Slice].
+ * @param dynamicShader an optional [DynamicShader] to apply to the slice.
+ * @param strokeWidth the width of the stroke.
+ * @param strokeColor the color of the stroke.
+ * @param offsetFromCenter the offset of the slice from the center of the pie chart.
+ * @param label the [SliceLabel] to use for the slice.
  */
 @Composable
 public fun slice(

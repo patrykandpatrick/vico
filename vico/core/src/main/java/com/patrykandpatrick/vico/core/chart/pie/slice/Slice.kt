@@ -37,14 +37,14 @@ import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.model.Point
 
 /**
- * TODO
+ * A component that defines an appearance of a slice in a pie chart.
  *
  * @param color the color of the slice.
- * @param dynamicShader TODO
- * @param strokeWidthDp TODO
- * @param strokeColor TODO
- * @param offsetFromCenterDp TODO
- * @param label TODO
+ * @param dynamicShader an optional [DynamicShader] to apply to the slice.
+ * @param strokeWidthDp the width of the stroke in dp.
+ * @param strokeColor the color of the stroke.
+ * @param offsetFromCenterDp the offset of the slice from the center of the pie chart in dp.
+ * @param label the [SliceLabel] to use for the slice.
  */
 public open class Slice(
     public var color: Int = Color.LTGRAY,
@@ -72,7 +72,16 @@ public open class Slice(
     protected val sliceBounds: RectF = RectF()
 
     /**
-     * TODO
+     * Draws the slice.
+     *
+     * @param context the [DrawContext] to use.
+     * @param contentBounds the bounds of the content.
+     * @param oval the oval of the pie chart.
+     * @param startAngle the start angle of the slice.
+     * @param sweepAngle the sweep angle of the slice.
+     * @param holeRadius the radius of the hole in the pie chart.
+     * @param label the label to draw.
+     * @param spacingPath the path of the spacing between slices.
      */
     @LongParameterListDrawFunction
     public open fun draw(

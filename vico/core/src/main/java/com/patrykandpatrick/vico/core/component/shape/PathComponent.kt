@@ -46,9 +46,9 @@ public open class PathComponent(
     protected val path: Path = Path()
 
     /**
-     * TODO
+     * The [PathBuilderHelper] used to build the path.
      */
-    public val pathBuilder: PathBuilderHelper by lazy {
+    protected val pathBuilder: PathBuilderHelper by lazy {
 
         object : PathBuilderHelper(path) {
 

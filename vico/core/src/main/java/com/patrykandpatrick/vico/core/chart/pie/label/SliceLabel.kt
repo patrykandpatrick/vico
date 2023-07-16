@@ -20,15 +20,24 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.chart.insets.Insets
+import com.patrykandpatrick.vico.core.chart.pie.PieChart
+import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
- * TODO
+ * A base class for a label for a [Slice].
  */
 public abstract class SliceLabel {
 
     /**
-     * TODO
+     * Draws the label for the [Slice].
+     *
+     * @param context the [DrawContext] used to draw the label.
+     * @param oval the oval used to draw the [PieChart].
+     * @param holeRadius the radius of the hole in the [PieChart].
+     * @param angle the angle of the [Slice].
+     * @param slicePath the [Path] of the [Slice].
+     * @param label the label to draw.
      */
     @LongParameterListDrawFunction
     public abstract fun drawLabel(
@@ -41,7 +50,14 @@ public abstract class SliceLabel {
     )
 
     /**
-     * TODO
+     * Fills the [outInsets] for the label. The insets have an effect on the final size of the [PieChart].
+     *
+     * @param context the [DrawContext] used to draw the label.
+     * @param contentBounds the bounds of the content of the [PieChart].
+     * @param oval the oval used to draw the [PieChart].
+     * @param angle the angle of the [Slice].
+     * @param label the label to draw.
+     * @param outInsets the [Insets] to fill with the insets.
      */
     @LongParameterListDrawFunction
     public open fun getInsets(

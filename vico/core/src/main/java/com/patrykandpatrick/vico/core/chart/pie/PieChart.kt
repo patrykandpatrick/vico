@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.chart.pie
 import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.DefaultDimens.PIE_CHART_START_ANGLE
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.extension.moveTo
@@ -44,19 +43,21 @@ import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.sin
 
 /**
- * TODO
- * @param slices TODO
- * @param spacingDp TODO
- * @param outerSize TODO
- * @param innerSize TODO
- * @param startAngle TODO
+ * A [PieChart] is a type of graph that represents the data in a circular graph.
+ * The slices of pie show the relative size of the data, and it is a type of pictorial representation of data.
+ *
+ * @param slices defines appearances of the slices in the pie chart.
+ * @param spacingDp the spacing between the slices in the pie chart.
+ * @param outerSize the outer size of the pie chart.
+ * @param innerSize the size of the hole in the pie chart.
+ * @param startAngle the angle at which the first slice starts.
  */
 public open class PieChart(
     public var slices: List<Slice>,
     public var spacingDp: Float,
     public var outerSize: Size.OuterSize,
     public var innerSize: Size.InnerSize,
-    public var startAngle: Float = PIE_CHART_START_ANGLE,
+    public var startAngle: Float,
 ) : BoundsAware {
 
     init {
@@ -66,17 +67,17 @@ public open class PieChart(
     override val bounds: RectF = RectF()
 
     /**
-     * TODO
+     * The bounds of the oval that the pie chart is drawn in.
      */
     protected val oval: RectF = RectF()
 
     /**
-     * TODO
+     * The [Path] used to construct a path for the spacing between the slices.
      */
     protected val spacingPathBuilder: Path = Path()
 
     /**
-     * TODO
+     * The [Matrix] used to transform the [spacingPathBuilder] to the correct position.
      */
     protected val spacingMatrix: Matrix = Matrix()
 
@@ -88,7 +89,7 @@ public open class PieChart(
     }
 
     /**
-     * TODO
+     * Updates the [oval] bounds which are later used to draw the pie chart.
      */
     public open fun updateOvalBounds(
         context: DrawContext,
@@ -142,7 +143,10 @@ public open class PieChart(
     }
 
     /**
-     * TODO
+     * Draws the pie chart.
+     *
+     * @param context the [DrawContext] used to draw the pie chart.
+     * @param model holds the data for the pie chart.
      */
     public fun draw(
         context: DrawContext,
