@@ -45,6 +45,8 @@ import com.patrykandpatrick.vico.core.entry.pie.PieEntryModelProducer
 import com.patrykandpatrick.vico.databinding.PieChart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 
+private const val ANGLE_ANIM_DURATION = 6_000
+
 @Composable
 internal fun PieChart1(uiSystem: UISystem, pieEntryModelProducer: PieEntryModelProducer) {
     val startAngle by rememberInfiniteTransition(label = "startAngle infinite transition")
@@ -54,7 +56,7 @@ internal fun PieChart1(uiSystem: UISystem, pieEntryModelProducer: PieEntryModelP
             targetValue = 360f,
             animationSpec = infiniteRepeatable(
                 tween(
-                    durationMillis = 8_000,
+                    durationMillis = ANGLE_ANIM_DURATION,
                     easing = LinearEasing,
                 ),
             ),
@@ -124,6 +126,18 @@ private fun ComposePieChart1(
                     color = colorResource(id = R.color.pieChartSlice4Color),
                     offsetFromCenter = 18.dp,
                     label = labelOutside,
+                ),
+                slice(
+                    color = colorResource(id = R.color.pieChartSlice5Color),
+                ),
+                slice(
+                    color = colorResource(id = R.color.pieChartSlice6Color),
+                ),
+                slice(
+                    color = colorResource(id = R.color.pieChartSlice7Color),
+                ),
+                slice(
+                    color = colorResource(id = R.color.pieChartSlice8Color),
                 ),
             ),
         )

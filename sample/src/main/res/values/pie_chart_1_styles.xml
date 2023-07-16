@@ -16,10 +16,14 @@
 
 <resources>
 
-    <color name="pieChartSlice1Color">#FF6392F7</color>
-    <color name="pieChartSlice2Color">#FF63DEF7</color>
-    <color name="pieChartSlice3Color">#FF44D89A</color>
-    <color name="pieChartSlice4Color">#FFB4F763</color>
+    <color name="pieChartSlice1Color">#0C0A3E</color>
+    <color name="pieChartSlice2Color">#7B1E7A</color>
+    <color name="pieChartSlice3Color">#B33F62</color>
+    <color name="pieChartSlice4Color">#F9564F</color>
+    <color name="pieChartSlice5Color">#F3C677</color>
+    <color name="pieChartSlice6Color">#FFD23F</color>
+    <color name="pieChartSlice7Color">#B892FF</color>
+    <color name="pieChartSlice8Color">#6E44FF</color>
 
     <style name="PieChartStyle">
         <item name="sliceSpacing">10dp</item>
@@ -29,6 +33,10 @@
         <item name="pieSliceStyle2">@style/PieChartSliceStyle2</item>
         <item name="pieSliceStyle3">@style/PieChartSliceStyle3</item>
         <item name="pieSliceStyle4">@style/PieChartSliceStyle4</item>
+        <item name="pieSliceStyle5">@style/PieChartSliceStyle5</item>
+        <item name="pieSliceStyle6">@style/PieChartSliceStyle6</item>
+        <item name="pieSliceStyle7">@style/PieChartSliceStyle7</item>
+        <item name="pieSliceStyle8">@style/PieChartSliceStyle8</item>
         <item name="pieSliceLabelStyle">@style/PieChartSliceInsideLabelStyle</item>
     </style>
 
@@ -50,6 +58,22 @@
         <item name="sliceColor">@color/pieChartSlice4Color</item>
         <item name="sliceOffsetFromCenter">18dp</item>
         <item name="pieSliceLabelStyle">@style/PieSliceOutsideLabelStyle</item>
+    </style>
+
+    <style name="PieChartSliceStyle5">
+        <item name="sliceColor">@color/pieChartSlice5Color</item>
+    </style>
+
+    <style name="PieChartSliceStyle6">
+        <item name="sliceColor">@color/pieChartSlice6Color</item>
+    </style>
+
+    <style name="PieChartSliceStyle7">
+        <item name="sliceColor">@color/pieChartSlice7Color</item>
+    </style>
+
+    <style name="PieChartSliceStyle8">
+        <item name="sliceColor">@color/pieChartSlice8Color</item>
     </style>
 
     <style name="PieChartSliceInsideLabelStyle">
