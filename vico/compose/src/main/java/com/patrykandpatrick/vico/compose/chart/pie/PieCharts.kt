@@ -56,8 +56,8 @@ import com.patrykandpatrick.vico.core.extension.set
  */
 @Composable
 public fun PieChart(
-    modifier: Modifier = Modifier,
     pieEntryModelProducer: PieEntryModelProducer,
+    modifier: Modifier = Modifier,
     slices: List<Slice> = currentChartStyle.pieChart.slices,
     spacing: Dp = currentChartStyle.pieChart.spacing,
     outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
@@ -102,8 +102,8 @@ public fun PieChart(
  */
 @Composable
 public fun PieChart(
-    modifier: Modifier = Modifier,
     model: PieEntryModel,
+    modifier: Modifier = Modifier,
     slices: List<Slice> = currentChartStyle.pieChart.slices,
     spacing: Dp = currentChartStyle.pieChart.spacing,
     outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
