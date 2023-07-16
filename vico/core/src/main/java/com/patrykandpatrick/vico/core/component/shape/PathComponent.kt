@@ -98,7 +98,7 @@ public open class PathComponent(
      * @param context the [DrawContext] to draw on.
      * @param buildPath a lambda that allows building the path.
      */
-    public inline fun draw(
+    public fun draw(
         context: DrawContext,
         buildPath: PathBuilder.() -> Unit,
     ) {
