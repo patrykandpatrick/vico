@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.extension
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import com.patrykandpatrick.vico.core.constants.ELLIPSIS
 
 /**
  * An SDK version-dependant compat function for appending text to [SpannableStringBuilder] and setting the span.
@@ -52,7 +53,7 @@ public fun <T> Iterable<T>.transformToSpannable(
     prefix: CharSequence = "",
     postfix: CharSequence = "",
     limit: Int = -1,
-    truncated: CharSequence = "…",
+    truncated: CharSequence = ELLIPSIS,
     transform: SpannableStringBuilder.(T) -> Unit,
 ): Spannable {
     val buffer = SpannableStringBuilder()

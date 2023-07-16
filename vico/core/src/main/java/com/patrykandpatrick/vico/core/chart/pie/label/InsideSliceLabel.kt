@@ -20,6 +20,7 @@ import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.component.text.TextComponent
+import com.patrykandpatrick.vico.core.constants.ELLIPSIS
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.centerPoint
@@ -69,7 +70,7 @@ public open class InsideSliceLabel(
             angle = angle.radiansDouble,
         )
 
-        val minWidth = textComponent.getTextBounds(this, "…").width()
+        val minWidth = textComponent.getTextBounds(this, ELLIPSIS).width()
         val textBounds = textComponent.getTextBounds(this, label)
 
         textBounds.offset(
