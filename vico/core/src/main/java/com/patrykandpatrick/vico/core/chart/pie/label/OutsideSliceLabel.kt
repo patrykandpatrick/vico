@@ -34,6 +34,7 @@ import com.patrykandpatrick.vico.core.extension.component4
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.radius
 import com.patrykandpatrick.vico.core.math.radians
+import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.abs
@@ -192,7 +193,7 @@ public open class OutsideSliceLabel(
                 x = drawOval.centerX() + radiusWithTranslation,
                 y = drawOval.centerY(),
             ),
-            angle = Math.toRadians(angle.toDouble()),
+            angle = angle.radiansDouble,
         )
 
         return Point(
@@ -211,7 +212,7 @@ public open class OutsideSliceLabel(
                 x = drawOval.centerX() + drawOval.radius,
                 y = drawOval.centerY(),
             ),
-            angle = Math.toRadians(angle.toDouble()),
+            angle = angle.radiansDouble,
         )
 
         line.draw(this) {
@@ -224,7 +225,7 @@ public open class OutsideSliceLabel(
                         x = drawOval.centerX() + drawOval.radius + angledSegmentLengthDp.pixels,
                         y = drawOval.centerY(),
                     ),
-                    angle = Math.toRadians(angle.toDouble()),
+                    angle = angle.radiansDouble,
                 ),
             )
 

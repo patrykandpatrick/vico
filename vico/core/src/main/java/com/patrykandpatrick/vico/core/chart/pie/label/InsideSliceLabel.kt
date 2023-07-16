@@ -25,6 +25,7 @@ import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.centerPoint
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
+import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.model.Point
 
@@ -65,7 +66,7 @@ public open class InsideSliceLabel(
                 x = oval.centerX() + holeRadius + (radius - holeRadius).half,
                 y = oval.centerY(),
             ),
-            angle = Math.toRadians(angle.toDouble()),
+            angle = angle.radiansDouble,
         )
 
         val minWidth = textComponent.getTextBounds(this, "…").width()

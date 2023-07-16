@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.extension.isTransparent
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.updateBy
 import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
+import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.model.Point
 
@@ -192,7 +193,7 @@ public open class Slice(
                 x = offsetFromCenterDp.pixels,
                 y = 0f,
             ),
-            angle = Math.toRadians(angle.toDouble()),
+            angle = angle.radiansDouble,
         )
 
         rectF.offset(dx.round, dy.round)
