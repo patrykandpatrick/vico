@@ -18,10 +18,12 @@ package com.patrykandpatrick.vico.compose.chart.pie.slice
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
@@ -62,3 +64,30 @@ public fun slice(
     this.offsetFromCenterDp = offsetFromCenter.value
     this.label = label
 }
+
+/**
+ * A factory function for [Slice].
+ *
+ * @param color the color of the [Slice].
+ * @param brush an optional [Brush] to apply to the slice.
+ * @param strokeWidth the width of the stroke.
+ * @param strokeColor the color of the stroke.
+ * @param offsetFromCenter the offset of the slice from the center of the pie chart.
+ * @param label the [SliceLabel] to use for the slice.
+ */
+@Composable
+public fun slice(
+    color: Color,
+    brush: Brush?,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Black,
+    offsetFromCenter: Dp = 0.dp,
+    label: SliceLabel? = currentChartStyle.pieChart.sliceLabel,
+): Slice = slice(
+    color = color,
+    dynamicShader = brush?.toDynamicShader(),
+    strokeWidth = strokeWidth,
+    strokeColor = strokeColor,
+    offsetFromCenter = offsetFromCenter,
+    label = label,
+)
