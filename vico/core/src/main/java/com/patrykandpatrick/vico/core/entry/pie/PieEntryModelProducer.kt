@@ -74,7 +74,7 @@ public open class PieEntryModelProducer(
         maxValueFraction: Float = 1f,
     ): PieEntryModel = Model(
         entries = entries,
-        maxValue = entries.fold(0f) { sum, entry ->
+        sumOfValues = entries.fold(0f) { sum, entry ->
             (sum + entry.value) / maxValueFraction
         },
     )
@@ -133,7 +133,7 @@ public open class PieEntryModelProducer(
 
     internal data class Model(
         override val entries: List<PieEntry>,
-        override val maxValue: Float,
+        override val sumOfValues: Float,
     ) : PieEntryModel
 }
 

@@ -16,18 +16,24 @@
 
 package com.patrykandpatrick.vico.core.entry.pie
 
+import com.patrykandpatrick.vico.core.chart.pie.PieChart
+
 /**
- * TODO
+ * Contains the data for a [PieChart]. Pre-calculates values needed for rendering of the [PieChart].
+ *
+ * It’s recommended to delegate the creation of [PieEntryModel] to [PieEntryModelProducer].
+ *
+ * @see [PieEntryModelProducer]
  */
 public interface PieEntryModel {
 
     /**
-     * TODO
+     * The pie chart entries ([PieEntry] instances).
      */
     public val entries: List<PieEntry>
 
     /**
-     * TODO
+     * The sum of all values of the [entries].
      */
-    public val maxValue: Float
+    public val sumOfValues: Float
 }

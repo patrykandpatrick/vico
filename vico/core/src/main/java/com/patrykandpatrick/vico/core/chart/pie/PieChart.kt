@@ -105,7 +105,7 @@ public open class PieChart(
         val maxOffsetFromCenter = model.entries.maxOfOrNullIndexed { index, entry ->
             val slice = slices.getRepeating(index)
 
-            val sweepAngle = entry.value / model.maxValue * FULL_DEGREES
+            val sweepAngle = entry.value / model.sumOfValues * FULL_DEGREES
 
             ifNotNull(slice.label, entry.label) { labelComponent, label ->
 
@@ -165,7 +165,7 @@ public open class PieChart(
             if (entry.value <= 0f) return@foldIndexed startAngle
             val slice = slices.getRepeating(index)
 
-            val sweepAngle = entry.value / model.maxValue * FULL_DEGREES
+            val sweepAngle = entry.value / model.sumOfValues * FULL_DEGREES
 
             spacingPathBuilder.rewind()
 
