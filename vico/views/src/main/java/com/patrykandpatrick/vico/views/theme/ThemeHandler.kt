@@ -26,6 +26,7 @@ import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.axis.Axis
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -212,8 +213,10 @@ internal class ThemeHandler(
                 }
 
                 is HorizontalAxis.Builder<*> -> {
-                    labelOffset = axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0)
-                    labelSpacing = axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1)
+                    itemPlacer = AxisItemPlacer.Horizontal.default(
+                        axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1),
+                        axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0),
+                    )
                 }
             }
         }.also { axisStyle.recycle() }

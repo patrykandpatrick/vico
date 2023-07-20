@@ -22,11 +22,6 @@
         <item name="thickness">16dp</item>
     </style>
 
-    <style name="Chart2AxisStyle">
-        <item name="horizontalAxisLabelSpacing">3</item>
-        <item name="horizontalAxisLabelOffset">1</item>
-    </style>
-
     <style name="Chart2ColumnChartStyle">
         <item name="column1">@style/Chart2Column1Style</item>
     </style>

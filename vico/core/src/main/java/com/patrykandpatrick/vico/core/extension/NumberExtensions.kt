@@ -47,6 +47,9 @@ internal fun Float.gcdWith(other: Float): Float = gcdWithImpl(
 
 internal fun Float.toPrettyString(): String = if (this < 0f) "−${-this}" else this.toString()
 
+internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>) =
+    this == range.start || this == range.endInclusive
+
 /**
  * Half of this value.
  */

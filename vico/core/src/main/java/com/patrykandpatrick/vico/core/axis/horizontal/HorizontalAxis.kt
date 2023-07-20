@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.axis.horizontal
 
 import com.patrykandpatrick.vico.core.axis.Axis
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.setTo
@@ -25,15 +26,13 @@ import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
-import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.extension.isBoundOf
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
-import kotlin.math.abs
-import kotlin.math.ceil
 import kotlin.math.min
 
 /**
@@ -52,13 +51,39 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     /**
      * How often labels (and their corresponding ticks and guidelines) should be drawn.
      */
+    @Deprecated(
+        """`labelSpacing` is being replaced by `AxisItemPlacer.Horizontal`. Create a base implementation with the
+            desired spacing via `AxisItemPlacer.Horizontal.default`, and use the `itemPlacer` field to apply it to this
+            `HorizontalAxis`.""",
+    )
     public var labelSpacing: Int = 1
+        set(value) {
+            field = value
+            @Suppress("DEPRECATION")
+            itemPlacer = AxisItemPlacer.Horizontal.default(spacing = value, offset = labelOffset)
+        }
 
     /**
      * The number of labels (and, for [HorizontalLayout.FullWidth], their corresponding ticks and guidelines) to skip
      * from the start.
      */
+    @Deprecated(
+        """`labelOffset` is being replaced by `AxisItemPlacer.Horizontal`. Create a base implementation with the desired
+            offset via `AxisItemPlacer.Horizontal.default`, and use the `itemPlacer` field to apply it to this
+            `HorizontalAxis`.""",
+    )
     public var labelOffset: Int = 0
+        set(value) {
+            field = value
+            @Suppress("DEPRECATION")
+            itemPlacer = AxisItemPlacer.Horizontal.default(spacing = labelSpacing, offset = value)
+        }
+
+    /**
+     * Determines for what _x_ values this [HorizontalAxis] is to display labels, ticks, and guidelines.
+     */
+    @Suppress("DEPRECATION")
+    public var itemPlacer: AxisItemPlacer.Horizontal = AxisItemPlacer.Horizontal.default(labelSpacing, labelOffset)
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
@@ -67,63 +92,55 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val chartValues = chartValuesManager.getChartValues()
 
         canvas.clipRect(
-            bounds.left - horizontalLayout.getStartHorizontalAxisInset(horizontalDimensions, tickThickness),
+            bounds.left - itemPlacer.getStartHorizontalAxisInset(this, horizontalDimensions, tickThickness),
             minOf(bounds.top, chartBounds.top),
-            bounds.right + horizontalLayout.getEndHorizontalAxisInset(horizontalDimensions, tickThickness),
+            bounds.right + itemPlacer.getEndHorizontalAxisInset(this, horizontalDimensions, tickThickness),
             maxOf(bounds.bottom, chartBounds.bottom),
         )
 
-        val tickDrawStep = horizontalDimensions.xSpacing
-        val scrollAdjustment =
-            (abs((horizontalScroll - horizontalDimensions.startPadding).coerceAtLeast(0f)) / tickDrawStep).toInt()
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
+        val fullXRange = getFullXRange(horizontalDimensions)
+        val baseCanvasX = bounds.getStart(isLtr) - horizontalScroll + horizontalDimensions.startPadding
+        val firstVisibleX = fullXRange.start + horizontalScroll / horizontalDimensions.xSpacing * chartValues.xStep
+        val lastVisibleX = firstVisibleX + bounds.width() / horizontalDimensions.xSpacing * chartValues.xStep
+        val visibleXRange = firstVisibleX..lastVisibleX
+        val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange)
+        val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange)
 
-        var textCenter = bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier * tickDrawStep * scrollAdjustment -
-            horizontalScroll + horizontalDimensions.startPadding
+        labelValues.forEachIndexed { index, x ->
+            val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing
+            val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
+            val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
+            val maxWidth = (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing).toInt()
 
-        var tickCenter = getTickDrawCenter(horizontalScroll, tickDrawStep, scrollAdjustment, textCenter)
+            label?.drawText(
+                context = context,
+                text = valueFormatter.formatValue(x, chartValues),
+                textX = canvasX,
+                textY = textY,
+                verticalPosition = position.textVerticalPosition,
+                maxTextWidth = maxWidth,
+                maxTextHeight = (bounds.height() - tickLength - axisThickness.half).toInt(),
+                rotationDegrees = labelRotationDegrees,
+            )
 
-        forEachEntity(
-            scrollAdjustment = scrollAdjustment,
-            xRange = chartValues.minX..chartValues.maxX,
-        ) { x, shouldDrawLines, shouldDrawLabel ->
-
-            guideline
-                ?.takeIf {
-                    shouldDrawLines &&
-                        it.fitsInVertical(
-                            context = context,
-                            top = chartBounds.top,
-                            bottom = chartBounds.bottom,
-                            centerX = tickCenter,
-                            boundingBox = chartBounds,
-                        )
-                }?.drawVertical(
-                    context = context,
-                    top = chartBounds.top,
-                    bottom = chartBounds.bottom,
-                    centerX = tickCenter,
+            if (lineValues == null) {
+                drawLines(
+                    canvasX = canvasX,
+                    tickTop = tickMarkTop,
+                    tickBottom = tickMarkBottom,
+                    skipGuideline = x.isBoundOf(fullXRange),
                 )
+            }
+        }
 
-            tick
-                .takeIf { shouldDrawLines }
-                ?.drawVertical(context = context, top = tickMarkTop, bottom = tickMarkBottom, centerX = tickCenter)
-
-            label
-                .takeIf { shouldDrawLabel }
-                ?.drawText(
-                    context = context,
-                    text = valueFormatter.formatValue(x, chartValues),
-                    textX = textCenter,
-                    textY = textY,
-                    verticalPosition = position.textVerticalPosition,
-                    maxTextWidth = getMaxLabelWidth(x),
-                    maxTextHeight = (bounds.height() - tickLength - axisThickness.half).toInt(),
-                    rotationDegrees = labelRotationDegrees,
-                )
-
-            tickCenter += layoutDirectionMultiplier * tickDrawStep
-            textCenter += layoutDirectionMultiplier * tickDrawStep
+        lineValues?.forEach { x ->
+            drawLines(
+                canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing,
+                tickTop = tickMarkTop,
+                tickBottom = tickMarkBottom,
+                skipGuideline = x.isBoundOf(fullXRange),
+            )
         }
 
         axisLine?.drawHorizontal(
@@ -149,51 +166,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
 
-    private fun getEntryLength(xSpacing: Float) =
-        ceil(bounds.width() / xSpacing).toInt() + 1
-
-    private inline fun ChartDrawContext.forEachEntity(
-        scrollAdjustment: Int,
-        xRange: ClosedFloatingPointRange<Float>,
-        action: (x: Float, shouldDrawLines: Boolean, shouldDrawLabel: Boolean) -> Unit,
-    ) {
-        val chartValues = chartValuesManager.getChartValues()
-        val entryLength = getEntryLength(horizontalDimensions.xSpacing)
-
-        for (index in 0 until horizontalLayout.getHorizontalAxisLabelCount(entryLength)) {
-            val relativeX = (scrollAdjustment + index) * chartValues.xStep
-            val x = relativeX + xRange.start
-
-            val firstLabelConditionsMet = relativeX != 0f || labelOffset == 0 &&
-                (horizontalDimensions.startPadding > 0 || horizontalLayout is HorizontalLayout.Segmented)
-
-            val lastLabelConditionsMet = x != xRange.endInclusive ||
-                horizontalDimensions.endPadding > 0 || horizontalLayout is HorizontalLayout.Segmented
-
-            val spacingAndOffsetConditionsMet = relativeX / chartValues.xStep >= labelOffset &&
-                (relativeX / chartValues.xStep - labelOffset) % labelSpacing == 0f
-
-            action(
-                x,
-                horizontalLayout is HorizontalLayout.Segmented || firstLabelConditionsMet && lastLabelConditionsMet &&
-                    spacingAndOffsetConditionsMet,
-                firstLabelConditionsMet && lastLabelConditionsMet && spacingAndOffsetConditionsMet && x in xRange,
-            )
-        }
-    }
-
-    private fun DrawContext.getTickDrawCenter(
-        scrollX: Float,
-        tickDrawStep: Float,
-        scrollAdjustment: Int,
-        textDrawCenter: Float,
-    ) = when (horizontalLayout) {
-        is HorizontalLayout.Segmented -> bounds.getStart(isLtr = isLtr) + tickDrawStep * labelOffset +
-            layoutDirectionMultiplier * tickDrawStep * scrollAdjustment - scrollX
-
-        is HorizontalLayout.FullWidth -> textDrawCenter
-    }
-
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
@@ -201,35 +173,55 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ): Unit = with(context) {
         val scaledHorizontalDimensions = horizontalDimensions.scaled(chartScale)
         with(outInsets) {
-            start = horizontalLayout.getStartHorizontalAxisInset(scaledHorizontalDimensions, tickThickness)
-            end = horizontalLayout.getEndHorizontalAxisInset(scaledHorizontalDimensions, tickThickness)
+            start = itemPlacer.getStartHorizontalAxisInset(context, scaledHorizontalDimensions, tickThickness)
+            end = itemPlacer.getEndHorizontalAxisInset(context, scaledHorizontalDimensions, tickThickness)
             top = if (position.isTop) getDesiredHeight(context, scaledHorizontalDimensions) else 0f
             bottom = if (position.isBottom) getDesiredHeight(context, scaledHorizontalDimensions) else 0f
         }
+    }
+
+    private fun MeasureContext.getFullXRange(
+        horizontalDimensions: HorizontalDimensions,
+    ): ClosedFloatingPointRange<Float> = with(horizontalDimensions) {
+        val chartValues = chartValuesManager.getChartValues()
+        val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
+        val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
+        start..end
+    }
+
+    private fun ChartDrawContext.drawLines(
+        canvasX: Float,
+        tickTop: Float,
+        tickBottom: Float,
+        skipGuideline: Boolean,
+    ) {
+        tick?.drawVertical(this, tickTop, tickBottom, canvasX)
+        guideline.takeUnless { skipGuideline }?.drawVertical(this, chartBounds.top, chartBounds.bottom, canvasX)
     }
 
     private fun getDesiredHeight(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
     ): Float = with(context) {
-        val labelWidth =
-            if (isHorizontalScrollEnabled) {
-                horizontalDimensions.xSpacing.toInt() * labelSpacing
-            } else {
-                Int.MAX_VALUE
-            }
+        val chartValues = chartValuesManager.getChartValues()
+        val fullXRange = getFullXRange(horizontalDimensions)
+        val labelClearance = itemPlacer.getMeasuredLabelClearance(this, horizontalDimensions, fullXRange)
+        val maxLabelWidth = (labelClearance * horizontalDimensions.xSpacing).toInt()
 
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
                 val labelHeight = label?.let { label ->
-                    getLabelsToMeasure().maxOf { labelText ->
-                        label.getHeight(
-                            context = this,
-                            text = labelText,
-                            width = labelWidth,
-                            rotationDegrees = labelRotationDegrees,
-                        ).orZero
-                    }
+                    itemPlacer
+                        .getMeasuredLabelValues(this, horizontalDimensions, fullXRange)
+                        .map { valueFormatter.formatValue(it, chartValues) }
+                        .maxOf { labelText ->
+                            label.getHeight(
+                                context = this,
+                                text = labelText,
+                                width = maxLabelWidth,
+                                rotationDegrees = labelRotationDegrees,
+                            ).orZero
+                        }
                 }.orZero
                 val titleComponentHeight = title?.let { title ->
                     titleComponent?.getHeight(
@@ -247,40 +239,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             is SizeConstraint.TextWidth -> label?.getHeight(
                 context = this,
                 text = constraint.text,
-                width = labelWidth,
+                width = maxLabelWidth,
                 rotationDegrees = labelRotationDegrees,
             ).orZero
         }
-    }
-
-    private fun MeasureContext.getLabelsToMeasure(): List<CharSequence> {
-        val chartValues = chartValuesManager.getChartValues()
-
-        return listOf(
-            chartValues.minX,
-            (chartValues.maxX - chartValues.minX).half,
-            chartValues.maxX,
-        ).map { x -> valueFormatter.formatValue(value = x, chartValues = chartValues) }
-    }
-
-    private fun ChartDrawContext.getMaxLabelWidth(x: Float): Int {
-        val chartValues = chartValuesManager.getChartValues()
-        val isFirst = ((x - chartValues.minX) / chartValues.xStep).toInt() == labelOffset
-        val isLast = (chartValues.maxX - x) / chartValues.xStep < labelSpacing
-        return when {
-            horizontalLayout is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing
-            isFirst && isLast -> min(horizontalDimensions.startPadding, horizontalDimensions.endPadding).doubled
-
-            isFirst -> (labelOffset * horizontalDimensions.xSpacing + horizontalDimensions.startPadding)
-                .doubled
-                .coerceAtMost(labelSpacing * horizontalDimensions.xSpacing)
-
-            isLast -> ((chartValues.maxX - x) * horizontalDimensions.xSpacing + horizontalDimensions.endPadding)
-                .doubled
-                .coerceAtMost(labelSpacing * horizontalDimensions.xSpacing)
-
-            else -> labelSpacing * horizontalDimensions.xSpacing
-        }.toInt()
     }
 
     /**
@@ -293,13 +255,39 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         /**
          * How often labels (and their corresponding ticks and guidelines) should be drawn.
          */
+        @Deprecated(
+            """`labelSpacing` is being replaced by `AxisItemPlacer.Horizontal`. Create a base implementation with the
+                desired spacing via `AxisItemPlacer.Horizontal.default`, and use the `itemPlacer` field to apply it to
+                this `HorizontalAxis.Builder`.""",
+        )
         public var labelSpacing: Int = 1
+            set(value) {
+                field = value
+                @Suppress("DEPRECATION")
+                itemPlacer = AxisItemPlacer.Horizontal.default(spacing = value, offset = labelOffset)
+            }
 
         /**
          * The number of labels (and, for [HorizontalLayout.FullWidth], their corresponding ticks and guidelines) to
          * skip from the start.
          */
+        @Deprecated(
+            """`labelOffset` is being replaced by `AxisItemPlacer.Horizontal`. Create a base implementation with the
+                desired offset via `AxisItemPlacer.Horizontal.default`, and use the `itemPlacer` field to apply it to
+                this `HorizontalAxis.Builder`.""",
+        )
         public var labelOffset: Int = 0
+            set(value) {
+                field = value
+                @Suppress("DEPRECATION")
+                itemPlacer = AxisItemPlacer.Horizontal.default(spacing = labelSpacing, offset = value)
+            }
+
+        /**
+         * Determines for what _x_ values the [HorizontalAxis] is to display labels, ticks, and guidelines.
+         */
+        @Suppress("DEPRECATION")
+        public var itemPlacer: AxisItemPlacer.Horizontal = AxisItemPlacer.Horizontal.default(labelSpacing, labelOffset)
 
         /**
          * Creates a [HorizontalAxis] instance with the properties from this [Builder].
@@ -311,9 +299,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 AxisPosition.Horizontal.Bottom::class.java -> AxisPosition.Horizontal.Bottom
                 else -> throw UnknownAxisPositionException(T::class.java)
             } as Position
+            @Suppress("DEPRECATION")
             return setTo(HorizontalAxis(position = position)).also { axis ->
                 axis.labelSpacing = labelSpacing
                 axis.labelOffset = labelOffset
+                axis.itemPlacer = itemPlacer
             } as HorizontalAxis<T>
         }
     }

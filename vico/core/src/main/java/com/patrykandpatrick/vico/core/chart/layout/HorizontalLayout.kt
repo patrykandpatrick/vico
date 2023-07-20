@@ -18,8 +18,6 @@ package com.patrykandpatrick.vico.core.chart.layout
 
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.extension.half
 
 /**
  * Defines how a chart’s content is positioned horizontally. This affects the [Chart] and the [HorizontalAxis]
@@ -28,45 +26,11 @@ import com.patrykandpatrick.vico.core.extension.half
  */
 public sealed class HorizontalLayout(public val startPaddingDp: Float, public val endPaddingDp: Float) {
     /**
-     * Given a chart’s maximum number of major entries, calculates the number of labels to be displayed by
-     * [HorizontalAxis] instances.
-     */
-    public abstract fun getHorizontalAxisLabelCount(maxMajorEntryCount: Int): Int
-
-    /**
-     * Given a [HorizontalAxis]’s tick thickness, calculates the start inset required by the [HorizontalAxis].
-     */
-    public abstract fun getStartHorizontalAxisInset(
-        horizontalDimensions: HorizontalDimensions,
-        tickThickness: Float,
-    ): Float
-
-    /**
-     * Given a [HorizontalAxis]’s tick thickness, calculates the end inset required by the [HorizontalAxis].
-     */
-    public abstract fun getEndHorizontalAxisInset(
-        horizontalDimensions: HorizontalDimensions,
-        tickThickness: Float,
-    ): Float
-
-    /**
      * When this is applied, the [Chart] centers each major entry in a designated segment. Some empty space is visible
      * at the start and end of the [Chart]. [HorizontalAxis] instances display ticks and guidelines at the edges of the
      * segments.
      */
-    public class Segmented : HorizontalLayout(0f, 0f) {
-        override fun getHorizontalAxisLabelCount(maxMajorEntryCount: Int): Int = maxMajorEntryCount + 1
-
-        override fun getStartHorizontalAxisInset(
-            horizontalDimensions: HorizontalDimensions,
-            tickThickness: Float,
-        ): Float = tickThickness.half
-
-        override fun getEndHorizontalAxisInset(
-            horizontalDimensions: HorizontalDimensions,
-            tickThickness: Float,
-        ): Float = tickThickness.half
-    }
+    public class Segmented : HorizontalLayout(0f, 0f)
 
     /**
      * When this is applied, the [Chart]’s content takes up the [Chart]’s entire width (unless padding is added).
@@ -74,20 +38,7 @@ public sealed class HorizontalLayout(public val startPaddingDp: Float, public va
      * vertically centered relative to one another.
      */
     public class FullWidth(startPaddingDp: Float = 0f, endPaddingDp: Float = 0f) :
-        HorizontalLayout(startPaddingDp, endPaddingDp) {
-
-        override fun getHorizontalAxisLabelCount(maxMajorEntryCount: Int): Int = maxMajorEntryCount
-
-        override fun getStartHorizontalAxisInset(
-            horizontalDimensions: HorizontalDimensions,
-            tickThickness: Float,
-        ): Float = (tickThickness.half - horizontalDimensions.startPadding).coerceAtLeast(0f)
-
-        override fun getEndHorizontalAxisInset(
-            horizontalDimensions: HorizontalDimensions,
-            tickThickness: Float,
-        ): Float = (tickThickness.half - horizontalDimensions.endPadding).coerceAtLeast(0f)
-    }
+        HorizontalLayout(startPaddingDp, endPaddingDp)
 
     public companion object
 }

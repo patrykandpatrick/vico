@@ -32,6 +32,7 @@ import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.PercentageFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
@@ -71,7 +72,7 @@ private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
             ),
             chartModelProducer = chartEntryModelProducer,
             startAxis = startAxis(valueFormatter = startAxisValueFormatter, maxLabelCount = START_AXIS_LABEL_COUNT),
-            bottomAxis = bottomAxis(labelSpacing = BOTTOM_AXIS_LABEL_SPACING, labelOffset = BOTTOM_AXIS_LABEL_OFFSET),
+            bottomAxis = bottomAxis(itemPlacer = bottomAxisItemPlacer),
             marker = rememberMarker(),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
@@ -92,10 +93,7 @@ private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
                 maxLabelCount = START_AXIS_LABEL_COUNT
                 valueFormatter = startAxisValueFormatter
             }
-            with(bottomAxis as HorizontalAxis) {
-                labelSpacing = BOTTOM_AXIS_LABEL_SPACING
-                labelOffset = BOTTOM_AXIS_LABEL_OFFSET
-            }
+            (bottomAxis as HorizontalAxis).itemPlacer = bottomAxisItemPlacer
             this.marker = marker
         }
     }
@@ -121,8 +119,8 @@ private const val COLOR_2_CODE = 0xffd3d826
 private const val COLUMN_WIDTH_DP = 16f
 private const val THRESHOLD_LINE_VALUE = 13f
 private const val START_AXIS_LABEL_COUNT = 6
-private const val BOTTOM_AXIS_LABEL_SPACING = 3
-private const val BOTTOM_AXIS_LABEL_OFFSET = 1
+private const val BOTTOM_AXIS_ITEM_SPACING = 3
+private const val BOTTOM_AXIS_ITEM_OFFSET = 1
 
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
@@ -139,3 +137,4 @@ private val horizontalLayout = HorizontalLayout.FullWidth(
     startPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
     endPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
 )
+private val bottomAxisItemPlacer = AxisItemPlacer.Horizontal.default(BOTTOM_AXIS_ITEM_SPACING, BOTTOM_AXIS_ITEM_OFFSET)

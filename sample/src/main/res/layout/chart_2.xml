@@ -23,7 +23,6 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:axisStyle="@style/Chart2AxisStyle"
         app:chart="column"
         app:columnChartStyle="@style/Chart2ColumnChartStyle"
         app:horizontalLayout="fullWidth"
