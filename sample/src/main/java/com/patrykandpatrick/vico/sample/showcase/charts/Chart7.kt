@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shapeComponent
@@ -59,7 +59,7 @@ internal fun Chart7(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModel
 private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultLines = currentChartStyle.lineChart.lines
-        Chart(
+        CartesianChartHost(
             chart = lineChart(
                 remember(defaultLines) {
                     defaultLines.map { defaultLine -> defaultLine.copy(lineBackgroundShader = null) }

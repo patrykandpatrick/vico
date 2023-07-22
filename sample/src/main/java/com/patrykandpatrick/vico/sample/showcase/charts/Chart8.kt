@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
@@ -55,7 +55,7 @@ private fun ComposeChart8(chartEntryModelProducer: ComposedChartEntryModelProduc
             targetVerticalAxisPosition = AxisPosition.Vertical.Start,
         )
         val lineChart = lineChart(targetVerticalAxisPosition = AxisPosition.Vertical.End)
-        Chart(
+        CartesianChartHost(
             chart = remember(columnChart, lineChart) { columnChart + lineChart },
             chartModelProducer = chartEntryModelProducer,
             startAxis = startAxis(guideline = null),

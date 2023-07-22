@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -47,7 +47,7 @@ private val axisValueFormatter = AxisValueFormatter<AxisPosition.Horizontal.Bott
 @Preview(widthDp = 400, backgroundColor = WHITE, showBackground = true)
 @Composable
 public fun ColumnChartEdgeTickPosition() {
-    Chart(
+    CartesianChartHost(
         chart = chart,
         model = model,
         startAxis = startAxis(),
@@ -62,7 +62,7 @@ public fun ColumnChartEdgeTickPosition() {
 @Preview(widthDp = 400, backgroundColor = WHITE, showBackground = true)
 @Composable
 public fun ColumnChartWithCustomEdgeTickPosition() {
-    Chart(
+    CartesianChartHost(
         chart = chart,
         model = model,
         startAxis = startAxis(),
@@ -77,7 +77,7 @@ public fun ColumnChartWithCustomEdgeTickPosition() {
 @Preview(widthDp = 400, backgroundColor = WHITE, showBackground = true)
 @Composable
 public fun ColumnChartWithEdgeTickPosition() {
-    Chart(
+    CartesianChartHost(
         chart = chart,
         model = model,
         startAxis = startAxis(),
@@ -92,7 +92,7 @@ public fun ColumnChartWithEdgeTickPosition() {
 @Preview(widthDp = 400, backgroundColor = WHITE, showBackground = true)
 @Composable
 public fun ColumnChartWithEdgeTickPositionDeprecated() {
-    Chart(
+    CartesianChartHost(
         chart = chart,
         model = model,
         startAxis = startAxis(),
@@ -106,7 +106,7 @@ public fun ColumnChartWithEdgeTickPositionDeprecated() {
 @Preview(widthDp = 400, backgroundColor = WHITE, showBackground = true)
 @Composable
 public fun ColumnChartWithCenterTickPositionDeprecated() {
-    Chart(
+    CartesianChartHost(
         modifier = Modifier,
         chart = chart,
         model = model,

@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode.Stack
@@ -55,7 +55,7 @@ private val columns: List<LineComponent>
 public fun StackedColumnChartWithNegativeValues() {
     val marker = rememberMarker()
     Surface {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier.height(250.dp),
             chart = columnChart(
                 columns = columns,
@@ -76,7 +76,7 @@ public fun StackedColumnChartWithNegativeValues() {
 @Composable
 public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart = columnChart(
                 columns = columns,
                 dataLabel = textComponent(),
@@ -93,7 +93,7 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
 @Composable
 public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart = columnChart(
                 columns = columns,
                 axisValuesOverrider = AxisValuesOverrider.fixed(
@@ -113,7 +113,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
 @Composable
 public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart = columnChart(
                 columns = columns,
                 axisValuesOverrider = AxisValuesOverrider.fixed(

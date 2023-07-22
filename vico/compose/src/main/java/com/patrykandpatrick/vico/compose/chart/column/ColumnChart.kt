@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.compose.chart.column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
@@ -56,7 +56,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
  * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
  *
- * @see Chart
+ * @see CartesianChartHost
  * @see ColumnChart
  */
 @Composable
@@ -111,7 +111,7 @@ public fun columnChart(
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
  *
- * @see Chart
+ * @see CartesianChartHost
  * @see ColumnChart
  */
 @Deprecated(message = "Axis values should be overridden `AxisValuesOverrider`.")

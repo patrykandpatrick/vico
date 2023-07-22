@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.line.lineSpec
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
@@ -49,7 +49,7 @@ public fun LineChartDark() {
         val yellow = Color(0xFFFFAA4A)
         val pink = Color(0xFFFF4AAA)
 
-        Chart(
+        CartesianChartHost(
             modifier = Modifier.padding(8.dp),
             chart = lineChart(
                 lines = listOf(
@@ -76,7 +76,7 @@ public fun LineChartDark() {
 @Preview("Line Chart", widthDp = 200)
 @Composable
 public fun RegularLineChart() {
-    Chart(
+    CartesianChartHost(
         chart = lineChart(),
         model = model1,
         startAxis = startAxis(),
@@ -86,7 +86,7 @@ public fun RegularLineChart() {
 @Preview("Line Chart Expanded", widthDp = 200)
 @Composable
 public fun RegularLineChartExpanded() {
-    Chart(
+    CartesianChartHost(
         chart = lineChart(
             axisValuesOverrider = AxisValuesOverrider.fixed(
                 minY = -1f,
@@ -101,7 +101,7 @@ public fun RegularLineChartExpanded() {
 @Preview("Line Chart Collapsed", widthDp = 200)
 @Composable
 public fun RegularLineChartCollapsed() {
-    Chart(
+    CartesianChartHost(
         chart = lineChart(
             axisValuesOverrider = AxisValuesOverrider.fixed(
                 minY = 1f,
@@ -116,7 +116,7 @@ public fun RegularLineChartCollapsed() {
 @Preview("Composed Chart", widthDp = 200)
 @Composable
 public fun ComposedLineChart() {
-    Chart(
+    CartesianChartHost(
         chart = lineChart() + lineChart(
             lines = listOf(
                 lineSpec(
@@ -138,7 +138,7 @@ public fun ComposedLineChart() {
 @Preview("Composed Chart Collapsed", widthDp = 200)
 @Composable
 public fun ComposedLineChartCollapsed() {
-    Chart(
+    CartesianChartHost(
         chart = lineChart(
             axisValuesOverrider = AxisValuesOverrider.fixed(
                 minY = 1f,

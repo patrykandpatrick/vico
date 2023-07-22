@@ -34,7 +34,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.line.lineSpec
@@ -64,7 +64,7 @@ public fun ColumnChartCard(): Unit = VicoTheme {
     val colors = MaterialTheme.colors
 
     SampleCard {
-        Chart(
+        CartesianChartHost(
             modifier = chartModifier,
             chart = columnChart(
                 columns = listOf(
@@ -109,7 +109,7 @@ public fun LineChartCard(): Unit = VicoTheme {
     val colors = MaterialTheme.colors
 
     SampleCard {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier.height(100.dp),
             chart = lineChart(
                 lines = listOf(

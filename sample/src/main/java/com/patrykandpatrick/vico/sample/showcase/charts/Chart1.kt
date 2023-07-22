@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.Axis
@@ -44,7 +44,7 @@ internal fun Chart1(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModel
 private fun ComposeChart1(chartEntryModelProducer: ChartEntryModelProducer) {
     val marker = rememberMarker()
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        Chart(
+        CartesianChartHost(
             chart = lineChart(persistentMarkers = remember(marker) { mapOf(PERSISTENT_MARKER_X to marker) }),
             chartModelProducer = chartEntryModelProducer,
             startAxis = startAxis(),

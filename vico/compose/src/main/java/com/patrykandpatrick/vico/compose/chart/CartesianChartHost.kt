@@ -96,7 +96,7 @@ import kotlinx.coroutines.launch
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  */
 @Composable
-public fun <Model : ChartEntryModel> Chart(
+public fun <Model : ChartEntryModel> CartesianChartHost(
     chart: Chart<Model>,
     chartModelProducer: ChartModelProducer<Model>,
     modifier: Modifier = Modifier,
@@ -124,7 +124,7 @@ public fun <Model : ChartEntryModel> Chart(
 
     ChartBox(modifier = modifier) {
         modelState.value?.also { model ->
-            ChartImpl(
+            CartesianChartHostImpl(
                 chart = chart,
                 model = model,
                 oldModel = modelState.previousValue,
@@ -171,7 +171,7 @@ public fun <Model : ChartEntryModel> Chart(
  */
 @Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.")
 @Composable
-public fun <Model : ChartEntryModel> Chart(
+public fun <Model : ChartEntryModel> CartesianChartHost(
     chart: Chart<Model>,
     model: Model,
     modifier: Modifier = Modifier,
@@ -189,7 +189,7 @@ public fun <Model : ChartEntryModel> Chart(
     chartScrollState: ChartScrollState = rememberChartScrollState(),
 ) {
     ChartBox(modifier = modifier) {
-        ChartImpl(
+        CartesianChartHostImpl(
             chart = chart,
             model = model,
             startAxis = startAxis,
@@ -236,7 +236,7 @@ public fun <Model : ChartEntryModel> Chart(
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  */
 @Composable
-public fun <Model : ChartEntryModel> Chart(
+public fun <Model : ChartEntryModel> CartesianChartHost(
     chart: Chart<Model>,
     model: Model,
     modifier: Modifier = Modifier,
@@ -255,7 +255,7 @@ public fun <Model : ChartEntryModel> Chart(
     chartScrollState: ChartScrollState = rememberChartScrollState(),
 ) {
     ChartBox(modifier = modifier) {
-        ChartImpl(
+        CartesianChartHostImpl(
             chart = chart,
             model = model,
             startAxis = startAxis,
@@ -277,7 +277,7 @@ public fun <Model : ChartEntryModel> Chart(
 
 @Suppress("LongMethod")
 @Composable
-internal fun <Model : ChartEntryModel> ChartImpl(
+internal fun <Model : ChartEntryModel> CartesianChartHostImpl(
     chart: Chart<Model>,
     model: Model,
     startAxis: AxisRenderer<AxisPosition.Vertical.Start>?,

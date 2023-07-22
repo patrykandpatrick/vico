@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
@@ -57,7 +57,7 @@ private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
     val thresholdLine = rememberThresholdLine()
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultColumns = currentChartStyle.columnChart.columns
-        Chart(
+        CartesianChartHost(
             chart = columnChart(
                 columns = remember(defaultColumns) {
                     defaultColumns.map { defaultColumn ->

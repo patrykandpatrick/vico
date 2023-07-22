@@ -25,7 +25,7 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.shapeComponent
@@ -53,7 +53,7 @@ internal fun Chart3(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModel
 @Composable
 private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        Chart(
+        CartesianChartHost(
             chart = lineChart(pointPosition = LineChart.PointPosition.Start, axisValuesOverrider = axisValueOverrider),
             chartModelProducer = chartEntryModelProducer,
             startAxis = startAxis(

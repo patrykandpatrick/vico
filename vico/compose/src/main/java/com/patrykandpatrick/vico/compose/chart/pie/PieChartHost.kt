@@ -55,7 +55,7 @@ import com.patrykandpatrick.vico.core.extension.set
  * @param startAngle defines the angle at which the first slice starts.
  */
 @Composable
-public fun PieChart(
+public fun PieChartHost(
     pieEntryModelProducer: PieEntryModelProducer,
     modifier: Modifier = Modifier,
     slices: List<Slice> = currentChartStyle.pieChart.slices,
@@ -76,7 +76,7 @@ public fun PieChart(
 
     ChartBox(modifier = modifier) {
         model.value?.also { model ->
-            PieChart(
+            PieChartHost(
                 modifier = modifier,
                 model = model,
                 slices = slices,
@@ -101,7 +101,7 @@ public fun PieChart(
  * @param startAngle defines the angle at which the first slice starts.
  */
 @Composable
-public fun PieChart(
+public fun PieChartHost(
     model: PieEntryModel,
     modifier: Modifier = Modifier,
     slices: List<Slice> = currentChartStyle.pieChart.slices,

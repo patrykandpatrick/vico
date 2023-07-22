@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.topAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
@@ -70,7 +70,7 @@ private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProduc
                 defaultLines.map { defaultLine -> defaultLine.copy(pointConnector = pointConnector) }
             },
         )
-        Chart(
+        CartesianChartHost(
             chart = remember(columnChart, lineChart) { columnChart + lineChart },
             chartModelProducer = chartEntryModelProducer,
             topAxis = topAxis(),

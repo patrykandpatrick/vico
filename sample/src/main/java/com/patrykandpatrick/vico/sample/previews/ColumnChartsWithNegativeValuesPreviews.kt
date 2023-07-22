@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.component.text.textComponent
@@ -38,7 +38,7 @@ private val model = entryModelOf(2f, -1f, 4f, -2f, 1f, 5f, -3f)
 public fun SingleColumnChartWithNegativeValues() {
     val marker = rememberMarker()
     Surface {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier.height(250.dp),
             chart = columnChart(
                 persistentMarkers = mapOf(
@@ -57,7 +57,7 @@ public fun SingleColumnChartWithNegativeValues() {
 @Composable
 public fun SingleColumnChartWithNegativeValuesAndDataLabels() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart = columnChart(
                 dataLabel = textComponent(),
             ),
@@ -72,7 +72,7 @@ public fun SingleColumnChartWithNegativeValuesAndDataLabels() {
 @Composable
 public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart = columnChart(
                 axisValuesOverrider = AxisValuesOverrider.fixed(
                     minY = 1f,
@@ -90,7 +90,7 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
 @Composable
 public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart = columnChart(
                 axisValuesOverrider = AxisValuesOverrider.fixed(
                     minY = -2f,

@@ -30,7 +30,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
-import com.patrykandpatrick.vico.compose.chart.pie.PieChart
+import com.patrykandpatrick.vico.compose.chart.pie.PieChartHost
 import com.patrykandpatrick.vico.compose.chart.pie.label.inside
 import com.patrykandpatrick.vico.compose.chart.pie.label.outside
 import com.patrykandpatrick.vico.compose.chart.pie.slice.slice
@@ -105,7 +105,7 @@ private fun ComposePieChart1(
             )
         },
     ) {
-        PieChart(
+        PieChartHost(
             modifier = Modifier
                 .aspectRatio(1f),
             pieEntryModelProducer = pieEntryModelProducer,
