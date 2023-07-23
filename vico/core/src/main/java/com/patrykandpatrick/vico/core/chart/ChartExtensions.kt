@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,16 @@ internal fun HashMap<Float, MutableList<Marker.EntryModel>>.put(
     y: Float,
     entry: ChartEntry,
     color: Int,
+    index: Int,
 ) {
     updateList(x) {
-        add(Marker.EntryModel(Point(x, y), entry, color))
+        add(
+            Marker.EntryModel(
+                location = Point(x = x, y = y),
+                entry = entry,
+                color = color,
+                index = index,
+            ),
+        )
     }
 }

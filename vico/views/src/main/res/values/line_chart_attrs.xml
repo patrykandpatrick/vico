@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -25,10 +25,6 @@
         <attr name="line2Spec" />
         <attr name="line3Spec" />
         <attr name="spacing" format="dimension" />
-        <attr name="pointPosition" format="enum">
-            <enum name="start" value="0" />
-            <enum name="center" value="1" />
-        </attr>
     </declare-styleable>
 
     <declare-styleable name="LineSpec">

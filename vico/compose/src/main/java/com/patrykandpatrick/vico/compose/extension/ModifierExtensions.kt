@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,58 +17,72 @@
 package com.patrykandpatrick.vico.compose.extension
 
 import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollState
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
-import com.patrykandpatrick.vico.compose.gesture.zoomable
 import com.patrykandpatrick.vico.core.model.Point
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 internal fun Modifier.chartTouchEvent(
     setTouchPoint: ((Point?) -> Unit)?,
-    scrollableState: ScrollableState?,
+    isScrollEnabled: Boolean,
+    scrollableState: ChartScrollState,
     onZoom: OnZoom?,
     interactionSource: MutableInteractionSource,
-): Modifier = addIfNotNull(setTouchPoint) { setPoint ->
-    pointerInput(Unit, Unit) {
-        detectTapGestures(
-            onPress = {
-                setPoint(it.point)
-                awaitRelease()
-                setPoint(null)
-            },
-        )
-    }
-}
-    .addIfNotNull(
-        value = onZoom,
-        factory = Modifier::zoomable,
-    )
-    .run {
-        when {
-            scrollableState != null -> {
-                scrollable(
-                    state = scrollableState,
-                    orientation = Orientation.Horizontal,
-                    interactionSource = interactionSource,
-                    reverseDirection = true,
-                )
-            }
-            setTouchPoint != null -> {
-                pointerInput(Unit, Unit) {
-                    detectDragGestures(
-                        onDragEnd = { setTouchPoint(null) },
-                        onDragCancel = { setTouchPoint(null) },
-                        onDrag = { change, _ -> setTouchPoint(change.position.point) },
+): Modifier =
+    scrollable(
+        state = scrollableState,
+        orientation = Orientation.Horizontal,
+        interactionSource = interactionSource,
+        reverseDirection = true,
+        enabled = isScrollEnabled,
+    ).pointerInput(scrollableState, setTouchPoint, onZoom) {
+        coroutineScope {
+            if (setTouchPoint != null) {
+                launch {
+                    detectTapGestures(
+                        onPress = {
+                            setTouchPoint(it.point)
+                            awaitRelease()
+                            setTouchPoint(null)
+                        },
                     )
                 }
             }
-            else -> this
+
+            if (isScrollEnabled.not() && setTouchPoint != null) {
+                launch {
+                    detectHorizontalDragGestures(
+                        onDragCancel = {
+                            setTouchPoint(null)
+                        },
+                        onDragEnd = {
+                            setTouchPoint(null)
+                        },
+                        onDragStart = { offset ->
+                            setTouchPoint(offset.point)
+                        },
+                    ) { change, _ ->
+                        setTouchPoint(change.position.point)
+                    }
+                }
+            }
+
+            if (onZoom != null && isScrollEnabled) {
+                launch {
+                    detectZoomGestures { centroid, zoom ->
+                        setTouchPoint?.invoke(null)
+                        onZoom(centroid, zoom)
+                    }
+                }
+            }
         }
     }
 

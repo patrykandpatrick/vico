@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.compose.chart
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -33,6 +34,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
 import com.patrykandpatrick.vico.compose.chart.entry.defaultDiffAnimationSpec
+import com.patrykandpatrick.vico.compose.chart.layout.segmented
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollSpec
 import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollState
@@ -61,6 +64,7 @@ import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
@@ -72,6 +76,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.model.Point
 import com.patrykandpatrick.vico.core.scroll.ScrollListener
+import kotlinx.coroutines.launch
 
 /**
  * Displays a chart.
@@ -93,10 +98,12 @@ import com.patrykandpatrick.vico.core.scroll.ScrollListener
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
- * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
- * the chart.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
+ * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
+ * @param horizontalLayout defines how the chart’s content is positioned horizontally.
+ * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
+ * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
 @Composable
 public fun <Model : EntryModel<*>> Chart(
@@ -117,6 +124,8 @@ public fun <Model : EntryModel<*>> Chart(
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
+    horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
+    getXStep: ((Model) -> Float)? = null,
 ) {
     val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
         chartKey = chart,
@@ -143,6 +152,8 @@ public fun <Model : EntryModel<*>> Chart(
                 fadingEdges = fadingEdges,
                 autoScaleUp = autoScaleUp,
                 chartScrollState = chartScrollState,
+                horizontalLayout = horizontalLayout,
+                getXStep = getXStep,
             )
         }
     }
@@ -167,12 +178,14 @@ public fun <Model : EntryModel<*>> Chart(
  * @param legend an optional legend for the chart.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
- * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
- * the chart.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
+ * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
+ * @param horizontalLayout defines how the chart’s content is positioned horizontally.
+ * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
+ * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
-@Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.")
+@Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.", level = DeprecationLevel.ERROR)
 @Composable
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
@@ -190,6 +203,8 @@ public fun <Model : ChartEntryModel> Chart(
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
+    horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
+    getXStep: ((Model) -> Float)? = null,
 ) {
     ChartBox(modifier = modifier) {
         ChartImpl(
@@ -207,6 +222,8 @@ public fun <Model : ChartEntryModel> Chart(
             fadingEdges = fadingEdges,
             autoScaleUp = autoScaleUp,
             chartScrollState = chartScrollState,
+            horizontalLayout = horizontalLayout,
+            getXStep = getXStep,
         )
     }
 }
@@ -233,10 +250,12 @@ public fun <Model : ChartEntryModel> Chart(
  * @param oldModel the chart’s previous [ChartEntryModel]. This is used to determine whether to perform an automatic
  * scroll.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
- * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
- * the chart.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
+ * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
+ * @param horizontalLayout defines how the chart’s content is positioned horizontally.
+ * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
+ * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
 @Composable
 public fun <Model : EntryModel<*>> Chart(
@@ -256,6 +275,8 @@ public fun <Model : EntryModel<*>> Chart(
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
+    horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
+    getXStep: ((Model) -> Float)? = null,
 ) {
     ChartBox(modifier = modifier) {
         ChartImpl(
@@ -274,6 +295,8 @@ public fun <Model : EntryModel<*>> Chart(
             fadingEdges = fadingEdges,
             autoScaleUp = autoScaleUp,
             chartScrollState = chartScrollState,
+            horizontalLayout = horizontalLayout,
+            getXStep = getXStep,
         )
     }
 }
@@ -296,12 +319,14 @@ internal fun <Model : EntryModel<*>> ChartImpl(
     fadingEdges: FadingEdges?,
     autoScaleUp: AutoScaleUp,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
+    horizontalLayout: HorizontalLayout,
+    getXStep: ((Model) -> Float)?,
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val zoom = remember { mutableStateOf(1f) }
-    val measureContext = getMeasureContext(chartScrollSpec.isScrollEnabled, zoom.value, bounds)
+    val measureContext = getMeasureContext(chartScrollSpec.isScrollEnabled, zoom.value, bounds, horizontalLayout)
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
     val scrollListener = rememberScrollListener(markerTouchPoint, interaction)
@@ -313,11 +338,12 @@ internal fun <Model : EntryModel<*>> ChartImpl(
     val virtualLayout = remember { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     val onZoom = rememberZoomState(
         zoom = zoom,
         getScroll = { chartScrollState.value },
-        setScroll = { value -> chartScrollState.value = value },
+        scrollBy = { value -> coroutineScope.launch { chartScrollState.scrollBy(value) } },
         chartBounds = chart.bounds,
     )
 
@@ -333,31 +359,36 @@ internal fun <Model : EntryModel<*>> ChartImpl(
         modifier = Modifier
             .fillMaxSize()
             .chartTouchEvent(
-                setTouchPoint = markerTouchPoint
-                    .component2()
-                    .takeIf { marker != null },
-                scrollableState = chartScrollState.takeIf { chartScrollSpec.isScrollEnabled },
+                setTouchPoint = remember(marker == null) {
+                    markerTouchPoint
+                        .component2()
+                        .takeIf { marker != null }
+                },
+                isScrollEnabled = chartScrollSpec.isScrollEnabled,
+                scrollableState = chartScrollState,
                 onZoom = onZoom.takeIf { isZoomEnabled },
                 interactionSource = interactionSource,
             ),
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
-        chart.updateChartValues(measureContext.chartValuesManager, model)
+        chart.updateChartValues(measureContext.chartValuesManager, model, getXStep?.invoke(model))
 
-        val segmentProperties = chart.getSegmentProperties(measureContext, model)
+        val horizontalDimensions = chart.getHorizontalDimensions(measureContext, model)
 
-        virtualLayout.setBounds(
+        val chartBounds = virtualLayout.setBounds(
             context = measureContext,
             contentBounds = bounds,
             chart = chart,
             legend = legend,
-            segmentProperties = segmentProperties,
+            horizontalDimensions = horizontalDimensions,
             marker,
         )
 
+        if (chartBounds.isEmpty) return@Canvas
+
         chartScrollState.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
-            segmentProperties = segmentProperties,
+            horizontalDimensions = horizontalDimensions,
         )
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
@@ -367,7 +398,7 @@ internal fun <Model : EntryModel<*>> ChartImpl(
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint.value,
-            segmentProperties = segmentProperties,
+            horizontalDimensions = horizontalDimensions,
             chartBounds = chart.bounds,
             horizontalScroll = chartScrollState.value,
             autoScaleUp = autoScaleUp,
@@ -434,6 +465,18 @@ internal fun rememberScrollListener(
                 }
             }
         }
+
+        override fun onScrollNotConsumed(delta: Float) {
+            touchPoint.value?.let { point ->
+                if (interaction.value is DragInteraction.Stop && shouldClearTouchPoint) {
+                    touchPoint.value = null
+                    shouldClearTouchPoint = false
+                } else {
+                    touchPoint.value = point.copy(x = point.x - delta)
+                    shouldClearTouchPoint = true
+                }
+            }
+        }
     }
 }
 
@@ -441,7 +484,7 @@ internal fun rememberScrollListener(
 internal fun rememberZoomState(
     zoom: MutableState<Float>,
     getScroll: () -> Float,
-    setScroll: (value: Float) -> Unit,
+    scrollBy: (value: Float) -> Unit,
     chartBounds: RectF,
 ): OnZoom = remember {
     onZoom@{ centroid, zoomChange ->
@@ -450,6 +493,6 @@ internal fun rememberZoomState(
         val transformationAxisX = getScroll() + centroid.x - chartBounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         zoom.value = newZoom
-        setScroll(getScroll() + zoomedTransformationAxisX - transformationAxisX)
+        scrollBy(zoomedTransformationAxisX - transformationAxisX)
     }
 }

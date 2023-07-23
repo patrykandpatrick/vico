@@ -18,19 +18,7 @@
     <string name="app_name">Vico</string>
     <string name="compose">Compose</string>
     <string name="views">Views</string>
-    <string name="swipe_hint">Swipe here</string>
-    <string name="x_of_y">%1$d of %2$d</string>
-    <string name="chart_1_description">Persistent marker, customized guidelines, custom x-axis step</string>
-    <string name="chart_2_description">Customized columns, percentages, custom tick position, threshold line</string>
-    <string name="chart_3_description">Start-aligned line, axis titles, y-axis labels on inside, adaptive y-axis values</string>
-    <string name="chart_4_description">Customized columns and line, axes at top and end</string>
-    <string name="chart_5_description">Customized columns, rotated axis labels</string>
-    <string name="chart_6_description">Customized columns, threshold line for range, days of week along axis</string>
-    <string name="chart_7_description">Customized y-axis labels, vertical legend</string>
-    <string name="chart_8_description">Axes at start and end, independent charts and axes</string>
-    <string name="chart_9_description">Candlestick chart</string>
     <string name="data_set_x">Data set %d</string>
-    <string name="chart_x">Chart %d</string>
     <string name="x_axis">x-axis</string>
     <string name="y_axis">y-axis</string>
 </resources>

@@ -53,7 +53,6 @@ public class ChartScrollSpec<in Model : EntryModel<*>>(
         chartScrollState: ChartScrollState,
     ) {
         if (autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) {
-
             if (chartScrollState.isScrollInProgress) {
                 chartScrollState.stopScroll(MutatePriority.PreventUserInput)
             }

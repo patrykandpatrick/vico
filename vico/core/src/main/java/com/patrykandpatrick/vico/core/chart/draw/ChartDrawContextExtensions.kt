@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
@@ -38,22 +37,20 @@ import com.patrykandpatrick.vico.core.model.Point
  * @param elevationOverlayColor the color of elevation overlays, applied to [ShapeComponent]s that cast shadows.
  * @param measureContext holds data used for component measurements.
  * @param markerTouchPoint the point inside the chart’s bounds where physical touch is occurring.
- * @param segmentProperties holds information about the width of each individual chart segment.
+ * @param horizontalDimensions holds information on the [Chart]’s horizontal dimensions.
  * @param chartBounds the bounds in which the [Chart] will be drawn.
  * @param horizontalScroll the horizontal scroll.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the entry count and
- * intrinsic segment width are such that, at a scale factor of 1, an empty space would be visible near the end edge of
- * the chart.
+ * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
+ * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
  *
  * @see [ShapeComponent.setShadow]
  */
-@LongParameterListDrawFunction
 public fun chartDrawContext(
     canvas: Canvas,
     elevationOverlayColor: Int,
     measureContext: MeasureContext,
     markerTouchPoint: Point?,
-    segmentProperties: SegmentProperties,
+    horizontalDimensions: HorizontalDimensions,
     chartBounds: RectF,
     horizontalScroll: Float,
     autoScaleUp: AutoScaleUp,
@@ -69,7 +66,7 @@ public fun chartDrawContext(
 
     override val chartScale: Float = calculateDrawScale()
 
-    override val segmentProperties: SegmentProperties = segmentProperties.scaled(chartScale)
+    override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(chartScale)
 
     override val horizontalScroll: Float = horizontalScroll
 
@@ -81,25 +78,22 @@ public fun chartDrawContext(
     }
 
     private fun calculateDrawScale(): Float {
-        val drawnEntryWidth = segmentProperties.segmentWidth * chartValuesManager.getChartValues().getDrawnEntryCount()
-        val upscalingPossibleButDisallowed = drawnEntryWidth < chartBounds.width() && autoScaleUp == AutoScaleUp.None
-        val scrollEnabledAndUpscalingImpossible = isHorizontalScrollEnabled && drawnEntryWidth >= chartBounds.width()
+        val contentWidth =
+            horizontalDimensions.getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
+        val upscalingPossibleButDisallowed = contentWidth < chartBounds.width() && autoScaleUp == AutoScaleUp.None
+        val scrollEnabledAndUpscalingImpossible = isHorizontalScrollEnabled && contentWidth >= chartBounds.width()
         return if (upscalingPossibleButDisallowed || scrollEnabledAndUpscalingImpossible) {
             measureContext.chartScale
         } else {
-            chartBounds.width() / drawnEntryWidth
+            chartBounds.width() / contentWidth
         }
     }
 }
-
-internal inline val ChartDrawContext.segmentWidth: Int
-    get() = segmentProperties.segmentWidth.pixels.toInt()
 
 /**
  * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the
  * [markerVisibilityChangeListener] about the [marker]’s visibility changes.
  */
-@LongParameterListDrawFunction
 public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
     marker: Marker,
     markerTouchPoint: Point?,
@@ -113,10 +107,12 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
     markerTouchPoint
         ?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
         ?.let { markerEntryModels ->
+            chartValuesManager.getChartValues()
             marker.draw(
                 context = this,
                 bounds = chart.bounds,
                 markedEntries = markerEntryModels,
+                chartValuesProvider = chartValuesManager,
             )
             if (wasMarkerVisible.not()) {
                 markerVisibilityChangeListener?.onMarkerShown(
@@ -125,9 +121,15 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
                 )
                 setWasMarkerVisible(true)
             }
-            if (wasMarkerVisible && markerEntryModels != lastMarkerEntryModels) {
+            val didMarkerMove = lastMarkerEntryModels.hasMoved(markerEntryModels)
+            if (wasMarkerVisible && didMarkerMove) {
                 onMarkerEntryModelsChange(markerEntryModels)
-                markerVisibilityChangeListener?.onMarkerMoved(marker, markerEntryModels)
+                if (lastMarkerEntryModels.isNotEmpty()) {
+                    markerVisibilityChangeListener?.onMarkerMoved(
+                        marker = marker,
+                        markerEntryModels = markerEntryModels,
+                    )
+                }
             }
         } ?: marker
         .takeIf { wasMarkerVisible }
@@ -136,3 +138,7 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
             setWasMarkerVisible(false)
         }
 }
+
+private fun List<Marker.EntryModel>.xPosition(): Float? = firstOrNull()?.entry?.x
+private fun List<Marker.EntryModel>.hasMoved(other: List<Marker.EntryModel>): Boolean =
+    xPosition() != other.xPosition()

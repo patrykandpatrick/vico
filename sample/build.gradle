@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion versions.composeCompiler
+        kotlinCompilerExtensionVersion libs.versions.composeCompiler.get()
     }
 
     namespace "com.patrykandpatrick.vico"
@@ -55,7 +55,24 @@ android {
 
 dependencies {
 
-    sample_dependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+    implementation project(":vico:compose-m3")
+    implementation project(":vico:views")
+    implementation platform(libs.composeBom)
+    implementation libs.activityCompose
+    implementation libs.androidXCore
+    implementation libs.appcompat
+    implementation libs.composeMaterial
+    implementation libs.composeMaterial3
+    implementation libs.composeUI
+    implementation libs.composeUITooling
+    implementation libs.composeViewBinding
+    implementation libs.coroutinesCore
+    implementation libs.kotlinStdLib
+    implementation libs.lifecycleRuntime
+    implementation libs.material
+    implementation libs.systemUIController
+    implementation libs.viewModelCompose
+    testImplementation libs.JUnit
+    testImplementation libs.JUnitExt
+    testImplementation libs.kotlinTest
 }

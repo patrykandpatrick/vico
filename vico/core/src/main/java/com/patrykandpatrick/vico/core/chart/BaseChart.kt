@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,16 +51,16 @@ public abstract class BaseChart<Model : EntryModel<*>> : Chart<Model>, BoundsAwa
 
     override var axisValuesOverrider: AxisValuesOverrider<Model>? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     override var minY: Float? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     override var maxY: Float? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     override var minX: Float? = null
 
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE)
+    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
     override var maxX: Float? = null
 
     override fun addDecoration(decoration: Decoration): Boolean = decorations.add(decoration)
@@ -88,7 +88,7 @@ public abstract class BaseChart<Model : EntryModel<*>> : Chart<Model>, BoundsAwa
         model: Model,
     ): Unit = with(context) {
         insets.clear()
-        getInsets(this, insets, segmentProperties)
+        getInsets(this, insets, horizontalDimensions)
         drawChartInternal(context, model)
     }
 
@@ -110,6 +110,7 @@ public abstract class BaseChart<Model : EntryModel<*>> : Chart<Model>, BoundsAwa
                     context = context,
                     bounds = bounds,
                     markedEntries = markerModel,
+                    chartValuesProvider = chartValuesManager,
                 )
             }
         }

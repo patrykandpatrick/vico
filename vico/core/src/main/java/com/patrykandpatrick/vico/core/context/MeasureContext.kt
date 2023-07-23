@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.context
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 
@@ -62,6 +63,11 @@ public interface MeasureContext : Extras {
      * The scale of the chart. Used to handle zooming in and out.
      */
     public val chartScale: Float
+
+    /**
+     * Defines how the chart’s content is positioned horizontally.
+     */
+    public val horizontalLayout: HorizontalLayout
 
     /**
      * A multiplier used to ensure support for both left-to-right and right-to-left layouts. Values such as translation

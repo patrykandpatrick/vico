@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,4 +30,9 @@ public interface ScrollListener {
      * Called when the maximum scroll amount changes.
      */
     public fun onMaxValueChanged(oldMaxValue: Float, newMaxValue: Float): Unit = Unit
+
+    /**
+     * Called when the scroll has reached the limit and cannot be consumed further.
+     */
+    public fun onScrollNotConsumed(delta: Float): Unit = Unit
 }

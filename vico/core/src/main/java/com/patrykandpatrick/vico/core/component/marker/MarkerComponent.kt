@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,10 @@
 package com.patrykandpatrick.vico.core.component.marker
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.insets.Insets
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -72,6 +74,7 @@ public open class MarkerComponent(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
+        chartValuesProvider: ChartValuesProvider,
     ): Unit = with(context) {
         drawGuideline(context, bounds, markedEntries)
         val halfIndicatorSize = indicatorSizeDp.half.pixels
@@ -86,15 +89,16 @@ public open class MarkerComponent(
                 model.location.y + halfIndicatorSize,
             )
         }
-        drawLabel(context, bounds, markedEntries)
+        drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues())
     }
 
     private fun drawLabel(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
+        chartValues: ChartValues,
     ): Unit = with(context) {
-        val text = labelFormatter.getLabel(markedEntries)
+        val text = labelFormatter.getLabel(markedEntries, chartValues)
         val entryX = markedEntries.averageOf { it.location.x }
         val labelBounds = label.getTextBounds(context, text, outRect = tempBounds)
         val halfOfTextWidth = labelBounds.width().half
@@ -141,7 +145,7 @@ public open class MarkerComponent(
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
-        segmentProperties: SegmentProperties,
+        horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {
         outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
     }

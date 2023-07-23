@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
     @Deprecated(
         message = """Use the primary constructor. `initialMaxValue` replaces `maxScrollDistance`, and you can register a
             `ScrollListener` instead of using `setScrollAmount`.""",
+        level = DeprecationLevel.ERROR,
     )
     public constructor(
         setScrollAmount: (Float) -> Unit = {},
@@ -69,7 +70,7 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
     /**
      * The current scroll amount (in pixels).
      */
-    @Deprecated("Use the `value` field instead.")
+    @Deprecated(message = "Use the `value` field instead.", level = DeprecationLevel.ERROR)
     public var currentScroll: Float
         get() = value
         set(newCurrentScroll) { value = newCurrentScroll }
@@ -77,7 +78,7 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
     /**
      * The maximum scroll amount (in pixels).
      */
-    @Deprecated("Use the `maxValue` field instead.")
+    @Deprecated(message = "Use the `maxValue` field instead.", level = DeprecationLevel.ERROR)
     public var maxScrollDistance: Float
         get() = maxValue
         set(newMaxScrollDistance) { maxValue = newMaxScrollDistance }
@@ -90,6 +91,8 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
     public fun handleScrollDelta(delta: Float): Float {
         val previousScroll = value
         value = getClampedScroll(value - delta)
+        val unconsumedScroll = previousScroll - value - delta
+        if (unconsumedScroll != 0f) notifyUnconsumedScroll(delta)
         return previousScroll - value
     }
 
@@ -125,5 +128,9 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
 
     public override fun removeScrollListener(scrollListener: ScrollListener) {
         scrollListeners.remove(scrollListener)
+    }
+
+    private fun notifyUnconsumedScroll(delta: Float) {
+        scrollListeners.forEach { scrollListener -> scrollListener.onScrollNotConsumed(delta) }
     }
 }

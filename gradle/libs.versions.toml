@@ -1,0 +1,49 @@
+[versions]
+accompanist = "0.30.1"
+activity = "1.7.2"
+agp = "8.0.2"
+androidXCore = "1.10.1"
+appcompat = "1.6.1"
+composeBom = "2023.06.01"
+composeCompiler = "1.4.8"
+coroutines = "1.7.2"
+detekt = "1.23.0"
+dokka = "1.8.20"
+jUnit = "4.13.2"
+jUnitExt = "1.1.5"
+kotlin = "1.8.22"
+lifecycle = "2.6.1"
+material = "1.9.0"
+mockK = "1.13.5"
+testCore = "1.5.0"
+
+[libraries]
+activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+androidXCore = { group = "androidx.core", name = "core-ktx", version.ref = "androidXCore" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+buildTools = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+composeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }
+composeFoundation = { group = "androidx.compose.foundation", name = "foundation" }
+composeMaterial = { group = "androidx.compose.material", name = "material" }
+composeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
+composeUI = { group = "androidx.compose.ui", name = "ui" }
+composeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
+composeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
+coroutinesAndroid = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
+detektFormatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
+jUnit = { group = "junit", name = "junit", version.ref = "jUnit" }
+jUnitExt = { group = "androidx.test.ext", name = "junit", version.ref = "jUnitExt" }
+kotlinGradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
+kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
+lifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
+systemUIController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
+testCore = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }
+viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
+
+[plugins]
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

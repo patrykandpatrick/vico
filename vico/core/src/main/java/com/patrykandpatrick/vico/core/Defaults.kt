@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ public const val DEF_LABEL_LINE_COUNT: Int = 1
 /**
  * The default maximum label count for vertical axes.
  */
-public const val DEF_LABEL_COUNT: Int = 99
+public const val DEF_LABEL_COUNT: Int = 100
 
 /**
  * The default label spacing for vertical axes (in dp).
@@ -100,7 +100,7 @@ public object DefaultDimens {
     public const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
 
     /**
-     * The default maximum line count for axis labels (in dp).
+     * The default maximum line count for axis labels.
      */
     public const val AXIS_LABEL_MAX_LINES: Int = 1
 
@@ -150,12 +150,12 @@ public object DefaultDimens {
     public const val COLUMN_WIDTH: Float = 8f
 
     /**
-     * The default spacing (in dp) between the columns in a chart segment.
+     * The default spacing (in dp) between neighboring grouped columns.
      */
     public const val COLUMN_INSIDE_SPACING: Float = 8f
 
     /**
-     * The default spacing (in dp) between the left and right edges of a chart segment and the columns it contains.
+     * The default spacing (in dp) between neighboring column collections.
      */
     public const val COLUMN_OUTSIDE_SPACING: Float = 32f
 
@@ -232,10 +232,10 @@ public object DefaultDimens {
     /**
      * The default spacing for line chart points (in dp).
      */
-    public const val POINT_SPACING: Float = 16f
+    public const val POINT_SPACING: Float = 32f
 
     /**
-     * The default text size for [TextComponent].
+     * The default text size for [TextComponent] (in sp).
      */
     public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
 
@@ -277,19 +277,19 @@ public interface DefaultColors {
     public val axisLineColor: Long
 
     /**
-     * The color for columns whose index in a segment is 3k (k ∈ N)
+     * The color for columns whose index in a column collection is 3k (k ∈ N)
      * and for lines whose index in the list of lines in a line chart is 3k (k ∈ N).
      */
     public val entity1Color: Long
 
     /**
-     * The color for columns whose index in a segment is 1 + 3k (k ∈ N)
+     * The color for columns whose index in a column collection is 1 + 3k (k ∈ N)
      * and for lines whose index in the list of lines in a line chart is 1 + 3k (k ∈ N).
      */
     public val entity2Color: Long
 
     /**
-     * The color for columns whose index in a segment is 2 + 3k (k ∈ N)
+     * The color for columns whose index in a column collection is 2 + 3k (k ∈ N)
      * and for lines whose index in the list of lines in a line chart is 2 + 3k (k ∈ N).
      */
     public val entity3Color: Long

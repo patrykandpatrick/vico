@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,6 +88,9 @@ internal inline val Iterable<Iterable<ChartEntry>>.yRange: ClosedFloatingPointRa
 internal inline val Iterable<Iterable<Entry>>.xRange: ClosedFloatingPointRange<Float>
     get() = flatten().xRange
 
+internal fun Iterable<Iterable<ChartEntry>>.calculateXGcd(): Float {
+    var gcd: Float? = null
+
 @get:JvmName("xRangeFlat")
 internal inline val Iterable<Entry>.xRange: ClosedFloatingPointRange<Float>
     get() = rangeOfOrNull { it.x } ?: 0f..0f
@@ -95,6 +98,20 @@ internal inline val Iterable<Entry>.xRange: ClosedFloatingPointRange<Float>
 internal fun Iterable<Iterable<Entry>>.calculateStep(): Float {
     var step: Float? = null
     forEach { entryCollection ->
+        val iterator = entryCollection.iterator()
+        var currentEntry: ChartEntry
+        var previousEntry: ChartEntry? = null
+        while (iterator.hasNext()) {
+            currentEntry = iterator.next()
+            previousEntry?.let { prevEntry ->
+                val difference = abs(x = currentEntry.x - prevEntry.x)
+                gcd = gcd?.gcdWith(other = difference) ?: difference
+            }
+            previousEntry = currentEntry
+        }
+        if (gcd == -1f) gcd = 1f
+    }
+    return gcd ?: 1f
         step = entryCollection.calculateStep(step)
     }
     return step ?: 1f

@@ -109,7 +109,6 @@ private fun TypedArray.getTypeface(context: Context): Typeface? {
 }
 
 private fun TypedArray.getPadding(context: Context): MutableDimensions {
-
     fun getDpDimension(@StyleableRes index: Int): Float =
         getRawDimension(context, index, -1f)
 
@@ -133,7 +132,6 @@ private fun TypedArray.getPadding(context: Context): MutableDimensions {
 }
 
 private fun TypedArray.getMargins(context: Context): MutableDimensions {
-
     fun getDpDimension(@StyleableRes index: Int): Float =
         getRawDimension(context, index, -1f)
 

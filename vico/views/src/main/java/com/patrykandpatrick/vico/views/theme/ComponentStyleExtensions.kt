@@ -130,7 +130,6 @@ internal fun TypedArray.getLineSpec(
     context: Context,
     defaultColor: Int = context.defaultColors.entity1Color.toInt(),
 ): LineChart.LineSpec {
-
     val lineColor = getColorExtended(
         index = R.styleable.LineSpec_color,
         defaultColor = defaultColor,
@@ -175,7 +174,9 @@ internal fun TypedArray.getLineSpec(
                 resourceId = R.styleable.LineSpec_dataLabelStyle,
                 styleableResourceId = R.styleable.TextComponentStyle,
             ).getTextComponent(context = context)
-        } else null,
+        } else {
+            null
+        },
         dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->
             val values = VerticalPosition.values()
             values[value % values.size]

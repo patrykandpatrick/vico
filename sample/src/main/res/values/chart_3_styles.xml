@@ -70,7 +70,6 @@
 
     <style name="Chart3LineChartStyle">
         <item name="line1Spec">@style/Chart3Line1Style</item>
-        <item name="pointPosition">start</item>
     </style>
 
     <style name="Chart3StartAxisStyle" parent="Chart3AxisStyle">

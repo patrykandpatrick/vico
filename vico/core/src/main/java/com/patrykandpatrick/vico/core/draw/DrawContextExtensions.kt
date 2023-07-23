@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.draw
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultColors
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.context.DefaultExtras
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -56,6 +57,7 @@ public fun drawContext(
     override val isHorizontalScrollEnabled: Boolean = false
     override val chartScale: Float = 1f
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()
+    override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented()
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
         val originalCanvas = this.canvas

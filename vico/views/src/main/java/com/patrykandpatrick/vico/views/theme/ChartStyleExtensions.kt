@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,7 +85,9 @@ internal fun TypedArray.getColumnChart(
                 resourceId = R.styleable.ColumnChartStyle_dataLabelStyle,
                 styleableResourceId = R.styleable.TextComponentStyle,
             ).getTextComponent(context = context)
-        } else null,
+        } else {
+            null
+        },
         dataLabelVerticalPosition = getInteger(R.styleable.ColumnChartStyle_dataLabelVerticalPosition, 0).let { value ->
             val values = VerticalPosition.values()
             values[value % values.size]
@@ -102,7 +104,6 @@ internal fun TypedArray.getLineChart(
     @StyleableRes resourceId: Int = R.styleable.BaseChartView_lineChartStyle,
     @StyleableRes styleableResourceId: IntArray = R.styleable.LineChartStyle,
 ): LineChart = getNestedTypedArray(context, resourceId, styleableResourceId).run {
-
     LineChart(
         lines = listOf(
             getNestedTypedArray(
@@ -135,9 +136,5 @@ internal fun TypedArray.getLineChart(
             index = R.styleable.LineChartStyle_spacing,
             defaultValue = DefaultDimens.POINT_SPACING,
         ),
-        pointPosition = getInteger(R.styleable.LineChartStyle_pointPosition, 1).let { value ->
-            val values = LineChart.PointPosition.values()
-            values[value % values.size]
-        },
     )
 }

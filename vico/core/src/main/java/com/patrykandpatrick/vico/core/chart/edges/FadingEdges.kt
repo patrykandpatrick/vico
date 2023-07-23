@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.FADING_EDGE_WIDTH_DP
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.extension.copyColor
@@ -92,12 +91,10 @@ public open class FadingEdges(
         context: ChartDrawContext,
         bounds: RectF,
     ): Unit = with(context) {
-
         val maxScroll = getMaxScrollDistance()
         var fadeAlphaFraction: Float
 
         if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
-
             fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
             drawFadingEdge(
@@ -111,7 +108,6 @@ public open class FadingEdges(
         }
 
         if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
-
             fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
             drawFadingEdge(
@@ -125,7 +121,6 @@ public open class FadingEdges(
         }
     }
 
-    @LongParameterListDrawFunction
     private fun ChartDrawContext.drawFadingEdge(
         left: Float,
         top: Float,

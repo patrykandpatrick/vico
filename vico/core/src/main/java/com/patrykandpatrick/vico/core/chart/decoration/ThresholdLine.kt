@@ -99,7 +99,6 @@ public data class ThresholdLine(
         context: ChartDrawContext,
         bounds: RectF,
     ): Unit = with(context) {
-
         val chartValues = chartValuesManager.getChartValues()
 
         val valueRange = chartValues.maxY - chartValues.minY

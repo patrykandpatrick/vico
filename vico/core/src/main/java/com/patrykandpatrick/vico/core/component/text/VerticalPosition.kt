@@ -22,7 +22,8 @@ package com.patrykandpatrick.vico.core.component.text
 public enum class VerticalPosition {
     Top,
     Center,
-    Bottom;
+    Bottom,
+    ;
 
     /**
      * Returns the inverse of this [VerticalPosition].

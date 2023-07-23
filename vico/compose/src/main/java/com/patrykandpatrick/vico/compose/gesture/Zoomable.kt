@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.gesture
 
-import androidx.compose.foundation.gestures.forEachGesture
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -46,10 +45,8 @@ public fun Modifier.zoomable(
     factory = {
         val block: suspend PointerInputScope.() -> Unit = remember {
             {
-                forEachGesture {
-                    detectZoomGestures { centroid, zoom ->
-                        onZoom(centroid, zoom)
-                    }
+                detectZoomGestures { centroid, zoom ->
+                    onZoom(centroid, zoom)
                 }
             }
         }

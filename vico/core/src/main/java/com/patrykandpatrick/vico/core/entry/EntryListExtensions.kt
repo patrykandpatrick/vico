@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public fun entryModelOf(vararg values: Number): ChartEntryModel =
 /**
  * Creates a [ChartEntryModel] out of the provided list of list of [FloatEntry] instances.
  *
- * This can be used to create [LineChart]s with multiple lines and [ColumnChart]s with multi-column segments.
+ * This can be used to create [LineChart]s with multiple lines and [ColumnChart]s with grouped or stacked columns.
  */
 public fun entryModelOf(vararg values: List<FloatEntry>): ChartEntryModel =
     ChartEntryModelProducer(values.toList()).getModel()

@@ -25,7 +25,6 @@ internal fun VerticalPosition.inBounds(
     componentHeight: Float,
     y: Float,
 ): VerticalPosition {
-
     val topFits = y - distanceFromPoint - componentHeight >= bounds.top
     val centerFits = y - componentHeight.half >= bounds.top && y + componentHeight.half <= bounds.bottom
     val bottomFits = y + distanceFromPoint + componentHeight <= bounds.bottom

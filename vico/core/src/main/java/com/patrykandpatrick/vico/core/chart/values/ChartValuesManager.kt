@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import com.patrykandpatrick.vico.core.entry.EntryModel
  * @see ColumnChart.targetVerticalAxisPosition
  * @see LineChart.targetVerticalAxisPosition
  */
-public class ChartValuesManager {
+public class ChartValuesManager : ChartValuesProvider {
 
     private val chartValues: MutableMap<AxisPosition.Vertical?, MutableChartValues> = mutableMapOf()
 
@@ -50,11 +50,20 @@ public class ChartValuesManager {
             ?.takeIf { it.hasValuesSet }
             ?: chartValues.getOrPut(null) { MutableChartValues() }
 
+    override fun getChartValues(): ChartValues = getChartValues(null)
+
+    override fun getChartValuesForAxisPosition(axisPosition: AxisPosition.Vertical): ChartValues? =
+        if (chartValues.containsKey(axisPosition)) {
+            getChartValues(axisPosition).takeIf { it.hasValuesSet }
+        } else {
+            null
+        }
+
     /**
      * Attempts to update the stored values to the provided values.
-     * [minX] and [minY] can be updated to a lower value.
-     * [maxX] and [maxY] can be updated to a higher value.
-     * The [model] is always updated.
+     * [MutableChartValues.minX] and [MutableChartValues.minY] can be updated to a lower value.
+     * [MutableChartValues.maxX] and [MutableChartValues.maxY] can be updated to a higher value.
+     * [MutableChartValues.model] and [MutableChartValues.xStep] are always updated.
      * If [axisPosition] is null, only the main [ChartValues] are updated. Otherwise, both the main [ChartValues]
      * and the [ChartValues] associated with the given [axisPosition] are updated.
      */
@@ -63,6 +72,7 @@ public class ChartValuesManager {
         maxX: Float,
         minY: Float,
         maxY: Float,
+        xStep: Float,
         model: EntryModel<*>,
         axisPosition: AxisPosition.Vertical? = null,
     ) {
@@ -72,11 +82,12 @@ public class ChartValuesManager {
                 maxX = maxX,
                 minY = minY,
                 maxY = maxY,
+                xStep = xStep,
                 entryModel = model,
             )
 
         if (axisPosition != null) {
-            tryUpdate(minX, maxX, minY, maxY, model)
+            tryUpdate(minX, maxX, minY, maxY, xStep, model)
         } else {
             val mainValues = getChartValues(null)
             chartValues.forEach { (key, values) ->

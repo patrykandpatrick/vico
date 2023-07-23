@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,11 +67,10 @@ internal fun OverScroller.fling(
     startY: Int = 0,
     velocityX: Int = 0,
     velocityY: Int = 0,
+    minScrollX: Int = 0,
+    maxScrollX: Int = Int.MAX_VALUE,
 ) {
-    fling(
-        startX, startY, velocityX, velocityY, Int.MIN_VALUE, Int.MAX_VALUE, Int.MIN_VALUE,
-        Int.MAX_VALUE,
-    )
+    fling(startX, startY, velocityX, velocityY, minScrollX, maxScrollX, Int.MIN_VALUE, Int.MAX_VALUE)
 }
 
 /**

@@ -50,7 +50,9 @@ public fun interface AutoScrollCondition<in Model : EntryModel<*>> {
                         t1 = new.maxOfOrNull { entries -> entries.size },
                         t2 = old.maxOfOrNull { entries -> entries.size },
                     ) { t1, t2 -> t1 > t2 } == true
-            } else false
+            } else {
+                false
+            }
         }
     }
 }

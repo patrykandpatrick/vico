@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
@@ -86,11 +86,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     ): Unit = with(context) {
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
 
-        val axisStep = bounds.height() / drawLabelCount
+        val axisStep = bounds.height() / (drawLabelCount - 1)
 
         var centerY: Float
 
-        for (index in 0..drawLabelCount) {
+        for (index in 0 until drawLabelCount) {
             centerY = bounds.bottom - axisStep * index + guidelineThickness.half
 
             guideline?.takeIf {
@@ -129,8 +129,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         var tickCenterY: Float
 
-        (0..labelCount).forEach { index ->
-            tickCenterY = bounds.bottom - bounds.height() / labelCount * index + tickThickness.half
+        (0 until labelCount).forEach { index ->
+            tickCenterY = bounds.bottom - bounds.height() / (labelCount - 1) * index + tickThickness.half
 
             tick?.drawHorizontal(
                 context = context,
@@ -226,11 +226,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 getLabelHeight(chartValues.maxY),
             ).maxOrNull().orZero
 
-            var result = 0f
-            for (count in 0 until maxLabelCount) {
-                if (result + avgHeight > availableHeight) return count
-                result += avgHeight
-            }
+            return (availableHeight / avgHeight + 1).toInt().coerceAtMost(maxLabelCount)
         }
         return maxLabelCount
     }
@@ -239,11 +235,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
     ): List<CharSequence> {
         val chartValues = chartValuesManager.getChartValues(position)
-        val cacheKey = LABELS_KEY + position
+        val cacheKey = LABELS_KEY + position + maxLabelCount
         return getOrPutExtra(key = cacheKey) {
             labels.clear()
-            val step = (chartValues.maxY - chartValues.minY) / maxLabelCount
-            for (index in 0..maxLabelCount) {
+            val step = (chartValues.maxY - chartValues.minY) / (maxLabelCount - 1)
+            for (index in 0 until maxLabelCount) {
                 val value = chartValues.minY + step * index
                 labels += valueFormatter.formatValue(value, chartValues)
             }
@@ -269,7 +265,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
-        segmentProperties: SegmentProperties,
+        horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {
         val labelHeight = label?.getHeight(context = context).orZero
         val lineThickness = maxOf(axisThickness, tickThickness)
@@ -321,7 +317,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
         Outside -> label?.let { label ->
-            labels.maxOf { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
+            labels.maxOfOrNull { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
         }.orZero
         Inside -> 0f
     }

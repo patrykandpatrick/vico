@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.chart.scale
 
 /**
- * Defines whether the content of a scrollable chart should be scaled up when the entry count and intrinsic segment
- * width are such that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+ * Defines whether the content of a scrollable chart should be scaled up when the dimensions are such that, at a scale
+ * factor of 1, an empty space would be visible near the end edge of the chart.
  */
 public enum class AutoScaleUp {
 

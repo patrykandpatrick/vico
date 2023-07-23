@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.marker
 
 import android.text.Spannable
 import android.text.style.ForegroundColorSpan
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.extension.appendCompat
 import com.patrykandpatrick.vico.core.extension.sumOf
 import com.patrykandpatrick.vico.core.extension.transformToSpannable
@@ -33,10 +34,9 @@ public object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
 
     override fun getLabel(
         markedEntries: List<Marker.EntryModel>,
+        chartValues: ChartValues,
     ): CharSequence = markedEntries.transformToSpannable(
-        prefix = if (markedEntries.size > 1) {
-            PATTERN.format(markedEntries.sumOf { it.entry.y }) + " ("
-        } else "",
+        prefix = if (markedEntries.size > 1) PATTERN.format(markedEntries.sumOf { it.entry.y }) + " (" else "",
         postfix = if (markedEntries.size > 1) ")" else "",
         separator = "; ",
     ) { model ->

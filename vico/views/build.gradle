@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ plugins {
 }
 
 apply from: "$rootDir/common-scripts.gradle"
-apply from: "$rootDir/dokka-common.gradle"
 
 android {
 
@@ -59,7 +58,11 @@ afterEvaluate {
 
 dependencies {
 
-    vico_views_dependencies.each {
-        add(it.configuration, it.dependency, it.options)
-    }
+    api project(":vico:core")
+    implementation libs.androidXCore
+    implementation libs.appcompat
+    implementation libs.kotlinStdLib
+    testImplementation libs.JUnit
+    testImplementation libs.JUnitExt
+    testImplementation libs.kotlinTest
 }

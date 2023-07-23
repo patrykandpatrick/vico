@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,10 +128,10 @@ public data class ChartStyle(
      * Defines the appearance of column charts.
      *
      * @property columns the [LineComponent] instances to use for columns. This list is iterated through as many times
-     * as necessary for each chart segment. If the list contains a single element, all columns have the same appearance.
-     * @property outsideSpacing the horizontal padding between the edges of chart segments and the columns they contain.
-     * @property innerSpacing the spacing between the columns contained in chart segments. This has no effect on
-     * segments that contain a single column only.
+     * as necessary for each column collection. If the list contains a single element, all columns have the same
+     * appearance.
+     * @property outsideSpacing the distance between neighboring column collections.
+     * @property innerSpacing the distance between neighboring grouped columns.
      * @property mergeMode defines the way multiple columns are rendered in [ColumnChart]s.
      * @property dataLabel an optional [TextComponent] to use for data labels.
      * @property dataLabelVerticalPosition the vertical position of data labels relative to the top of their
@@ -181,7 +181,6 @@ public data class ChartStyle(
         /**
          * Creates a base implementation of [ChartStyle] using the provided colors.
          */
-        @Suppress("LongParameterList")
         public fun fromColors(
             axisLabelColor: Color,
             axisGuidelineColor: Color,

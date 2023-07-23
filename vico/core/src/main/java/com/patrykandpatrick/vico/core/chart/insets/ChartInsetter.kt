@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.chart.insets
 
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.marker.Marker
 
@@ -35,12 +35,12 @@ public interface ChartInsetter {
      *
      * @param context holds data used for the measuring of components.
      * @param outInsets used to store the requested insets.
-     * @param segmentProperties the associated [Chart]’s [SegmentProperties].
+     * @param horizontalDimensions the associated [Chart]’s [HorizontalDimensions].
      */
     public fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
-        segmentProperties: SegmentProperties,
+        horizontalDimensions: HorizontalDimensions,
     ): Unit = Unit
 
     /**

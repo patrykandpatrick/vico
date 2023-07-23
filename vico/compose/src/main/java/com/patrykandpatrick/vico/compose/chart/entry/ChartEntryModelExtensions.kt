@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,9 +111,8 @@ public fun <Model : EntryModel<*>> ChartModelProducer<Model>.collectAsState(
 }
 
 /**
- * Creates a [ComposedChartEntryModel] instance with two [ChartEntryModel]s.
- *
- * @param other the [ChartEntryModel] that will be composed with the receiver [ChartEntryModel].
+ * Combines two [ChartEntryModel] implementations—the receiver and [other]—into a [ComposedChartEntryModel].
  */
+@Deprecated("Use `com.patrykandpatrick.vico.core.entry.composed.plus` instead.")
 public operator fun <Model : ChartEntryModel> Model.plus(other: Model): ComposedChartEntryModel<Model> =
     ComposedChartEntryModelProducer.composedChartEntryModelOf(listOf(this, other))

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,29 +20,51 @@ import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.Entry
 
 /**
- * For each [ChartEntry] the list, calls the [action] function block with the [ChartEntry] as the block’s argument if
- * [ChartEntry.x] belongs to the provided range.
+ * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
+ * block with the [ChartEntry] as the block’s argument.
  */
-public inline fun <E : Entry> List<E>.forEachIn(
+public inline fun <E : Entry> List<E>.forEachIn(range: ClosedFloatingPointRange<Float>, action: (E) -> Unit) {
+    forEach { if (it.x in range) action(it) }
+}
+
+/**
+ * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
+ * block with the [ChartEntry] and its index in the list as the block’s arguments.
+ */
+public inline fun <E : Entry> List<E>.forEachInAbsolutelyIndexed(
     range: ClosedFloatingPointRange<Float>,
-    action: (E) -> Unit,
+    action: (Int, E) -> Unit,
 ) {
-    for (entry in this) {
-        if (entry.x in range) action(entry)
+    var index = 0
+    forEach { entry ->
+        if (entry.x in range) action(index, entry)
+        index++
     }
 }
 
 /**
- * For each [ChartEntry] the list, calls the [action] function block with the [ChartEntry] and its index as the block’s
- * arguments if [ChartEntry.x] belongs to the provided range.
+ * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
+ * block with the [ChartEntry] and its index in the filtered list as the block’s arguments.
  */
-public inline fun List<ChartEntry>.forEachInIndexed(
+public inline fun <E : Entry> List<E>.forEachInRelativelyIndexed(
     range: ClosedFloatingPointRange<Float>,
-    action: (Int, ChartEntry) -> Unit,
+    action: (Int, E) -> Unit,
 ) {
     var index = 0
-    forEachIn(range = range) {
-        action(index, it)
-        index++
+    forEachIn(range) { action(index++, it) }
+}
+
+/**
+ * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
+ * block with the [ChartEntry], its index in the filtered list, and the next [ChartEntry] in the filtered list as the
+ * block’s arguments.
+ */
+public inline fun <E : Entry> List<E>.forEachInRelativelyIndexed(
+    range: ClosedFloatingPointRange<Float>,
+    action: (Int, E, E?) -> Unit,
+) {
+    var relativeIndex = 0
+    forEachInAbsolutelyIndexed(range) { absoluteIndex, entry ->
+        action(relativeIndex++, entry, getOrNull(absoluteIndex + 1)?.takeIf { it.x in range })
     }
 }
