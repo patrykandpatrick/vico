@@ -37,7 +37,6 @@ public fun Candle.Companion.sharpFilledCandle(
     color: Color,
     thickness: Dp = DefaultDimens.REAL_BODY_WIDTH_DP.dp,
 ): Candle {
-
     val filledBody = lineComponent(color, thickness)
 
     return remember(filledBody) {
@@ -54,7 +53,6 @@ public fun Candle.Companion.sharpHollowCandle(
     thickness: Dp = DefaultDimens.REAL_BODY_WIDTH_DP.dp,
     strokeWidth: Dp = DefaultDimens.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
 ): Candle {
-
     val hollowBody = lineComponent(
         color = Color.Transparent,
         thickness = thickness,

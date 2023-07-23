@@ -77,12 +77,18 @@ import kotlin.properties.ReadWriteProperty
 /**
  * The base for [View]s that display a chart. Subclasses define a [Model] implementation they can handle.
  */
-public abstract class BaseChartView<Model : EntryModel<*>>(
+public abstract class BaseChartView<Model : EntryModel<*>> internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     chartType: ThemeHandler.ChartType? = null,
 ) : View(context, attrs, defStyleAttr), ScrollListenerHost {
+
+    public constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : this(context, attrs, defStyleAttr, null)
 
     private val contentBounds = RectF()
 

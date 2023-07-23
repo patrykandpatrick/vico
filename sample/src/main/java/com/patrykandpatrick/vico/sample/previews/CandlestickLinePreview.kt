@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.sample.preview
+package com.patrykandpatrick.vico.sample.previews
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -29,9 +29,7 @@ import com.patrykandpatrick.vico.core.util.SampleCandlestickEntryProvider
 @Preview(widthDp = 350)
 @Composable
 public fun CandlestickLinePreview() {
-
     Surface {
-
         val candlestickChart = CandlestickChart(
             config = CandlestickChart.Config.hollow(),
         )

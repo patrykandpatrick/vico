@@ -25,11 +25,12 @@ import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModel
 import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryType
 import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
+import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.forEachIn
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.put
-import com.patrykandpatrick.vico.core.chart.segment.MutableSegmentProperties
-import com.patrykandpatrick.vico.core.chart.segment.SegmentProperties
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -71,12 +72,26 @@ public open class CandlestickChart(
         public val lowerWick: LineComponent = upperWick,
     ) {
 
+        /**
+         * Returns the maximum thickness among all of the candle components.
+         */
+        val thicknessDp: Float
+            get() = maxOf(
+                realBody.thicknessDp,
+                upperWick.thicknessDp,
+                lowerWick.thicknessDp,
+            )
+
         // Empty companion object is needed for extension functions.
         public companion object
     }
 
     private val heightMap = HashMap<Float, Pair<Float, Float>>()
-    private val segmentProperties = MutableSegmentProperties()
+
+    /**
+     * Holds information on the [CandlestickChart]’s horizontal dimensions.
+     */
+    protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -88,8 +103,6 @@ public open class CandlestickChart(
         drawChartInternal(
             chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
             model = model,
-            cellWidth = segmentProperties.cellWidth,
-            spacing = segmentProperties.marginWidth,
         )
         heightMap.clear()
     }
@@ -97,15 +110,14 @@ public open class CandlestickChart(
     private fun ChartDrawContext.drawChartInternal(
         chartValues: ChartValues,
         model: CandlestickEntryModel,
-        cellWidth: Float,
-        spacing: Float,
     ) {
-
         val yRange = (chartValues.maxY - chartValues.minY).takeIf { it != 0f } ?: return
         val heightMultiplier = bounds.height() / yRange
 
-        val drawingStart: Float =
-            bounds.getStart(isLtr = isLtr) + layoutDirectionMultiplier * spacing.half - horizontalScroll
+        val drawingStart: Float = bounds.getStart(isLtr = isLtr) +
+            horizontalDimensions.scaled(chartScale).startPadding -
+            config.maxThicknessDp.half.pixels * layoutDirectionMultiplier * chartScale - horizontalScroll
+
         var bodyCenterX: Float
         var candle: Candle
         var bodyTop: Float
@@ -118,12 +130,12 @@ public open class CandlestickChart(
 
             candle = config.getCandle(entry.type)
 
-            bodyCenterX = drawingStart + layoutDirectionMultiplier *
-                (cellWidth + spacing) * (entry.x - chartValues.minX) / model.stepX
+            val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
+            bodyCenterX = drawingStart + layoutDirectionMultiplier * horizontalDimensions.xSpacing *
+                xSpacingMultiplier + candle.thicknessDp.half.pixels * chartScale
 
             bodyBottom = (zeroLinePosition - minOf(entry.close, entry.open) * heightMultiplier).round
             bodyTop = (zeroLinePosition - maxOf(entry.close, entry.open) * heightMultiplier).round
-            bodyCenterX += layoutDirectionMultiplier * cellWidth.half
 
             if (bodyBottom - bodyTop < minRealBodyHeight) {
                 bodyBottom = (bodyBottom + bodyTop).half + minRealBodyHeight.half
@@ -139,7 +151,6 @@ public open class CandlestickChart(
                     thicknessScale = chartScale,
                 )
             ) {
-
                 listOf(entry.low, entry.open, entry.close, entry.high)
                     .forEach { entryY ->
                         updateMarkerLocationMap(
@@ -183,29 +194,46 @@ public open class CandlestickChart(
                 y = columnTop.coerceIn(bounds.top, bounds.bottom),
                 entry = entry,
                 color = realBody.solidOrStrokeColor,
+                index = 0,
             )
         }
     }
 
-    override fun updateChartValues(chartValuesManager: ChartValuesManager, model: CandlestickEntryModel) {
+    override fun updateChartValues(
+        chartValuesManager: ChartValuesManager,
+        model: CandlestickEntryModel,
+        xStep: Float?,
+    ) {
         chartValuesManager.tryUpdate(
             minX = axisValuesOverrider?.getMinX(model) ?: model.minX,
             maxX = axisValuesOverrider?.getMaxX(model) ?: model.maxX,
             minY = axisValuesOverrider?.getMinY(model) ?: model.minY,
             maxY = axisValuesOverrider?.getMaxY(model) ?: model.maxY,
+            xStep = xStep ?: model.xGcd,
             model = model,
             axisPosition = targetVerticalAxisPosition,
         )
     }
 
-    override fun getSegmentProperties(
+    override fun getHorizontalDimensions(
         context: MeasureContext,
         model: CandlestickEntryModel,
-    ): SegmentProperties = with(context) {
-        segmentProperties.set(
-            cellWidth = config.maxThicknessDp.pixels,
-            marginWidth = spacingDp.pixels,
-        )
+    ): HorizontalDimensions = with(context) {
+        val columnCollectionWidth = config.maxThicknessDp.pixels
+        horizontalDimensions.apply {
+            xSpacing = columnCollectionWidth + spacingDp.pixels
+            when (horizontalLayout) {
+                is HorizontalLayout.Segmented -> {
+                    scalableStartPadding = xSpacing.half
+                    scalableEndPadding = scalableStartPadding
+                }
+
+                is HorizontalLayout.FullWidth -> {
+                    scalableStartPadding = columnCollectionWidth.half + horizontalLayout.startPaddingDp.pixels
+                    scalableEndPadding = columnCollectionWidth.half + horizontalLayout.endPaddingDp.pixels
+                }
+            }
+        }
     }
 
     /**
@@ -280,6 +308,7 @@ public open class CandlestickChart(
         public companion object
     }
 }
+
 private fun LineComponent.copyAsWick(): LineComponent =
     copy(
         color = if (color == Color.TRANSPARENT) strokeColor else color,

@@ -67,7 +67,6 @@ public sealed class CandlestickEntryType(public val color: Color) {
             currentClose: Float,
             currentOpen: Float,
         ): CandlestickEntryType {
-
             val previousCloseOrZero = previousClose.orZero
 
             val color = when {

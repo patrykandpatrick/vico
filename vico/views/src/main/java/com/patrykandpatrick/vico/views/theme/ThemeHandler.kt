@@ -47,7 +47,7 @@ import com.patrykandpatrick.vico.core.extension.hasFlag
 import com.patrykandpatrick.vico.views.R
 import java.lang.Exception
 
-public class ThemeHandler(
+internal class ThemeHandler(
     private val context: Context,
     attrs: AttributeSet?,
     chartType: ChartType?,

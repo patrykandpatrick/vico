@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.candlestickentry.diff.CandlestickDiffProce
 import com.patrykandpatrick.vico.core.candlestickentry.diff.DefaultCandlestickDiffProcessor
 import com.patrykandpatrick.vico.core.chart.candlestick.CandlestickChartType
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.entry.calculateStep
+import com.patrykandpatrick.vico.core.entry.calculateXGcd
 import com.patrykandpatrick.vico.core.entry.diff.DiffProcessor
 import com.patrykandpatrick.vico.core.entry.xRange
 import com.patrykandpatrick.vico.core.extension.setAll
@@ -123,7 +123,7 @@ public class CandlestickEntryModelProducer(
             maxX = entries.xRange.endInclusive,
             minY = yRange.start,
             maxY = yRange.endInclusive,
-            stepX = entries.calculateStep(),
+            xGcd = entries.calculateXGcd(),
             id = entriesHashCode,
         )
 
@@ -164,7 +164,7 @@ public class CandlestickEntryModelProducer(
         override val maxX: Float,
         override val minY: Float,
         override val maxY: Float,
-        override val stepX: Float,
+        override val xGcd: Float,
         override val id: Int,
     ) : CandlestickEntryModel
 }

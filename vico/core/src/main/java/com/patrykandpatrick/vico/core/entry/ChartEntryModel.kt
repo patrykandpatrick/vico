@@ -45,9 +45,4 @@ public interface ChartEntryModel : EntryModel<List<ChartEntry>> {
      * The minimum cumulated y-axis value from among all sets of entries associated by [ChartEntry.x].
      */
     public val stackedNegativeY: Float
-
-    /**
-     * The greatest common divisor of the _x_ values.
-     */
-    public val xGcd: Float
 }

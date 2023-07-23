@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.chart.values
 
+import com.patrykandpatrick.vico.core.entry.ChartEntry
+import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.extension.orZero
 

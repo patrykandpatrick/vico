@@ -57,7 +57,6 @@ public class DefaultCandlestickDiffProcessor : CandlestickDiffProcessor<Candlest
         entries: List<CandlestickEntry>,
         candlestickChartType: CandlestickChartType,
     ): List<CandlestickTypedEntry> {
-
         var previousClose: Float? = null
 
         return entries.map { entry ->
@@ -82,7 +81,6 @@ public class DefaultCandlestickDiffProcessor : CandlestickDiffProcessor<Candlest
         progress: Float,
         candlestickChartType: CandlestickChartType,
     ): List<CandlestickTypedEntry> = synchronized(this) {
-
         var previousClose: Float? = null
 
         progressMap.mapNotNull { (_, model) ->

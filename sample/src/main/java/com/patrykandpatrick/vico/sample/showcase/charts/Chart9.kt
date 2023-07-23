@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.sample.chart
+package com.patrykandpatrick.vico.sample.showcase.charts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,12 +24,20 @@ import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.candlestick.hollow
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModelProducer
 import com.patrykandpatrick.vico.core.chart.candlestick.CandlestickChart
 import com.patrykandpatrick.vico.databinding.Chart9Binding
-import com.patrykandpatrick.vico.sample.util.rememberMarker
+import com.patrykandpatrick.vico.sample.showcase.UISystem
+import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+
+@Composable
+internal fun Chart9(uiSystem: UISystem, modelProducer: CandlestickEntryModelProducer) {
+    when (uiSystem) {
+        UISystem.Compose -> ComposeChart9(modelProducer)
+        UISystem.Views -> ViewChart9(modelProducer)
+    }
+}
 
 @Composable
 internal fun ComposeChart9(
@@ -60,7 +68,6 @@ internal fun ViewChart9(
     modelProducer: CandlestickEntryModelProducer,
     modifier: Modifier = Modifier,
 ) {
-
     val candlestickChart = CandlestickChart(
         config = CandlestickChart.Config.hollow(),
     )

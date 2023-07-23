@@ -20,9 +20,9 @@ import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModel
 import com.patrykandpatrick.vico.core.candlestickentry.CandlestickTypedEntry
 import com.patrykandpatrick.vico.core.candlestickentry.candlestickEntryModelOf
 
-public object SampleCandlestickEntryProvider {
+internal object SampleCandlestickEntryProvider {
 
-    public val sampleModel: CandlestickEntryModel =
+    internal val sampleModel: CandlestickEntryModel =
         candlestickEntryModelOf(
             CandlestickTypedEntry(
                 x = 0f,

@@ -75,7 +75,7 @@ public interface EntryModel<Entries> {
     public val maxY: Float
 
     /**
-     * The value by which the [Chart] increments the x-axis value from one [ChartEntry] to the next.
+     * The greatest common divisor of the _x_ values.
      */
-    public val stepX: Float
+    public val xGcd: Float
 }
