@@ -21,12 +21,12 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 
 /**
- * Creates an instance of [HorizontalLayout.Segmented].
+ * Returns an instance of [HorizontalLayout.Segmented].
  */
-public fun HorizontalLayout.Companion.segmented(): HorizontalLayout.Segmented = HorizontalLayout.Segmented()
+public fun HorizontalLayout.Companion.segmented(): HorizontalLayout.Segmented = HorizontalLayout.Segmented
 
 /**
- * Creates an instance of [HorizontalLayout.FullWidth].
+ * Creates and returns an instance of [HorizontalLayout.FullWidth].
  */
 public fun HorizontalLayout.Companion.fullWidth(
     startPadding: Dp = 0.dp,

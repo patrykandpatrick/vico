@@ -30,7 +30,7 @@ public data class MutableMeasureContext(
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean = false,
     override var chartScale: Float = 1f,
-    override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented(),
+    override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
 ) : MeasureContext, Extras by DefaultExtras() {
 
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()

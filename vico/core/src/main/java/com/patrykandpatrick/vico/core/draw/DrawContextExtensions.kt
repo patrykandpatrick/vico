@@ -57,7 +57,7 @@ public fun drawContext(
     override val isHorizontalScrollEnabled: Boolean = false
     override val chartScale: Float = 1f
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()
-    override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented()
+    override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
         val originalCanvas = this.canvas

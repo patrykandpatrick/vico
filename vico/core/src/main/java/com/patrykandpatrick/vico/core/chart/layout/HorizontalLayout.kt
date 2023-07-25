@@ -21,24 +21,33 @@ import com.patrykandpatrick.vico.core.chart.Chart
 
 /**
  * Defines how a chart’s content is positioned horizontally. This affects the [Chart] and the [HorizontalAxis]
- * instances. [startPaddingDp] and [endPaddingDp] control the amount of empty space at the start and end of the [Chart],
- * respectively.
+ * instances.
  */
-public sealed class HorizontalLayout(public val startPaddingDp: Float, public val endPaddingDp: Float) {
+public sealed interface HorizontalLayout {
     /**
      * When this is applied, the [Chart] centers each major entry in a designated segment. Some empty space is visible
      * at the start and end of the [Chart]. [HorizontalAxis] instances display ticks and guidelines at the edges of the
      * segments.
      */
-    public class Segmented : HorizontalLayout(0f, 0f)
+    public object Segmented : HorizontalLayout {
+        /**
+         * Returns an instance of [HorizontalLayout.Segmented].
+         */
+        @Deprecated(
+            """`HorizontalLayout.Segmented` is now an object. Replace `HorizontalLayout.Segmented()` with
+                `HorizontalLayout.Segmented`.""",
+        )
+        public operator fun invoke(): Segmented = this
+    }
 
     /**
      * When this is applied, the [Chart]’s content takes up the [Chart]’s entire width (unless padding is added).
      * [HorizontalAxis] instances display a tick and a guideline for each label, with the tick, guideline, and label
-     * vertically centered relative to one another.
+     * vertically centered relative to one another. [startPaddingDp] and [endPaddingDp] control the amount of empty
+     * space at the start and end of the [Chart], respectively.
      */
-    public class FullWidth(startPaddingDp: Float = 0f, endPaddingDp: Float = 0f) :
-        HorizontalLayout(startPaddingDp, endPaddingDp)
+    public class FullWidth(public val startPaddingDp: Float = 0f, public val endPaddingDp: Float = 0f) :
+        HorizontalLayout
 
     public companion object
 }

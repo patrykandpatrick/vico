@@ -232,7 +232,7 @@ internal class ThemeHandler(
 
     private fun TypedArray.getHorizontalLayout(): HorizontalLayout =
         when (getInt(R.styleable.BaseChartView_horizontalLayout, 0)) {
-            0 -> HorizontalLayout.Segmented()
+            0 -> HorizontalLayout.Segmented
             else -> HorizontalLayout.FullWidth(
                 getRawDimension(context, R.styleable.BaseChartView_startContentPadding, 0f),
                 getRawDimension(context, R.styleable.BaseChartView_endContentPadding, 0f),

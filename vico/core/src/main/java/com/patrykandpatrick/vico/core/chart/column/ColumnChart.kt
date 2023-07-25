@@ -338,7 +338,7 @@ public open class ColumnChart(
         val columnCollectionWidth = getColumnCollectionWidth(model.entries.size)
         horizontalDimensions.apply {
             xSpacing = columnCollectionWidth + spacingDp.pixels
-            when (horizontalLayout) {
+            when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> {
                     scalableStartPadding = xSpacing.half
                     scalableEndPadding = scalableStartPadding
