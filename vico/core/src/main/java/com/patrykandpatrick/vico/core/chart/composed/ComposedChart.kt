@@ -147,7 +147,7 @@ public class ComposedChart<Model : ChartEntryModel>(
         action: (item: Model, chart: Chart<Model>) -> Unit,
     ) {
         val minSize = minOf(composedEntryCollections.size, charts.size)
-        for (index in 0 until minSize) {
+        for (index in 0..<minSize) {
             action(
                 composedEntryCollections[index],
                 charts[index],

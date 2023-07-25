@@ -375,7 +375,7 @@ public open class ColumnChart(
 
     protected open fun MeasureContext.getCumulatedThickness(count: Int): Float {
         var thickness = 0f
-        for (i in 0 until count) {
+        for (i in 0..<count) {
             thickness += columns.getRepeating(i).thicknessDp * density
         }
         return thickness

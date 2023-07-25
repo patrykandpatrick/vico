@@ -87,6 +87,6 @@ internal fun Layout.getBounds(outBounds: RectF): RectF =
 
 internal val Layout.widestLineWidth: Float
     get() =
-        (0 until lineCount).maxOf { lineIndex ->
+        (0..<lineCount).maxOf { lineIndex ->
             getLineWidth(lineIndex)
         }

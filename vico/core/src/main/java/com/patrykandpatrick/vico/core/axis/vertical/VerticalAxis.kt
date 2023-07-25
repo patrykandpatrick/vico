@@ -90,7 +90,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         var centerY: Float
 
-        for (index in 0 until drawLabelCount) {
+        for (index in 0..<drawLabelCount) {
             centerY = bounds.bottom - axisStep * index + guidelineThickness.half
 
             guideline?.takeIf {
@@ -129,7 +129,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         var tickCenterY: Float
 
-        (0 until labelCount).forEach { index ->
+        (0..<labelCount).forEach { index ->
             tickCenterY = bounds.bottom - bounds.height() / (labelCount - 1) * index + tickThickness.half
 
             tick?.drawHorizontal(
@@ -239,7 +239,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         return getOrPutExtra(key = cacheKey) {
             labels.clear()
             val step = (chartValues.maxY - chartValues.minY) / (maxLabelCount - 1)
-            for (index in 0 until maxLabelCount) {
+            for (index in 0..<maxLabelCount) {
                 val value = chartValues.minY + step * index
                 labels += valueFormatter.formatValue(value, chartValues)
             }

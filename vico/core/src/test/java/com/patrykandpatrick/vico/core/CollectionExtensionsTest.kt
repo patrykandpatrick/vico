@@ -27,7 +27,7 @@ public class CollectionExtensionsTest {
 
     @Test
     public fun `test forEachIndexedExtended with 1 value`() {
-        (0 until 1).forEachIndexedExtended { index, isFirst, isLast, int ->
+        (0..<1).forEachIndexedExtended { index, isFirst, isLast, int ->
             val actual = format.format(index, isFirst, isLast, int)
             when (int) {
                 0 -> assertEquals(
@@ -41,7 +41,7 @@ public class CollectionExtensionsTest {
 
     @Test
     public fun `test forEachIndexedExtended with 2 values`() {
-        (0 until 2).forEachIndexedExtended { index, isFirst, isLast, int ->
+        (0..<2).forEachIndexedExtended { index, isFirst, isLast, int ->
             val actual = format.format(index, isFirst, isLast, int)
             when (int) {
                 0 -> assertEquals(
@@ -59,7 +59,7 @@ public class CollectionExtensionsTest {
 
     @Test
     public fun `test forEachIndexedExtended with 3 values`() {
-        (0 until 3).forEachIndexedExtended { index, isFirst, isLast, int ->
+        (0..<3).forEachIndexedExtended { index, isFirst, isLast, int ->
             val actual = format.format(index, isFirst, isLast, int)
             when (int) {
                 0 -> assertEquals(

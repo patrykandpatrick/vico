@@ -85,7 +85,7 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
     private fun updateProgressMap() {
         progressMaps.clear()
         val maxListSize = maxOf(oldEntries.size, newEntries.size)
-        for (i in 0 until maxListSize) {
+        for (i in 0..<maxListSize) {
             val map = TreeMap<Float, ChartEntryProgressModel>()
             oldEntries
                 .getOrNull(i)
