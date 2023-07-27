@@ -335,7 +335,7 @@ public open class ColumnChart(
         context: MeasureContext,
         model: ChartEntryModel,
     ): HorizontalDimensions = with(context) {
-        val columnCollectionWidth = getColumnCollectionWidth(model.entries.size)
+        val columnCollectionWidth = getColumnCollectionWidth(if (model.entries.isNotEmpty()) model.entries.size else 1)
         horizontalDimensions.apply {
             xSpacing = columnCollectionWidth + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
@@ -355,7 +355,7 @@ public open class ColumnChart(
         entryCollectionSize: Int,
     ): Float = when (mergeMode) {
         MergeMode.Stack ->
-            columns.maxOf { it.thicknessDp.pixels }
+            columns.take(entryCollectionSize).maxOf { it.thicknessDp.pixels }
 
         MergeMode.Grouped ->
             getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
