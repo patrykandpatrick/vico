@@ -144,8 +144,9 @@ public open class ColumnChart(
                 height = abs(entry.y) * heightMultiplier
                 val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
                 check(xSpacingMultiplier % 1f == 0f) { "Each entry’s x value must be a multiple of the x step." }
-                columnCenterX = drawingStart + layoutDirectionMultiplier * horizontalDimensions.xSpacing *
-                    xSpacingMultiplier + column.thicknessDp.half.pixels * chartScale
+                columnCenterX = drawingStart +
+                    (horizontalDimensions.xSpacing * xSpacingMultiplier + column.thicknessDp.half.pixels * chartScale) *
+                    layoutDirectionMultiplier
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
@@ -368,9 +369,10 @@ public open class ColumnChart(
 
             MergeMode.Stack -> 0f
         }
-        return bounds.getStart(isLtr) + horizontalDimensions.scaled(chartScale).startPadding +
-            (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * chartScale *
-            layoutDirectionMultiplier
+        return bounds.getStart(isLtr) + (
+            horizontalDimensions.scaled(chartScale).startPadding +
+                (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * chartScale
+            ) * layoutDirectionMultiplier
     }
 
     protected open fun MeasureContext.getCumulatedThickness(count: Int): Float {

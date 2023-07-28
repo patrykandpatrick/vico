@@ -100,15 +100,18 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
         val fullXRange = getFullXRange(horizontalDimensions)
-        val baseCanvasX = bounds.getStart(isLtr) - horizontalScroll + horizontalDimensions.startPadding
-        val firstVisibleX = fullXRange.start + horizontalScroll / horizontalDimensions.xSpacing * chartValues.xStep
+        val baseCanvasX = bounds.getStart(isLtr) - horizontalScroll + horizontalDimensions.startPadding *
+            layoutDirectionMultiplier
+        val firstVisibleX = fullXRange.start + horizontalScroll / horizontalDimensions.xSpacing * chartValues.xStep *
+            layoutDirectionMultiplier
         val lastVisibleX = firstVisibleX + bounds.width() / horizontalDimensions.xSpacing * chartValues.xStep
         val visibleXRange = firstVisibleX..lastVisibleX
         val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange)
         val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange)
 
         labelValues.forEachIndexed { index, x ->
-            val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing
+            val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing *
+                layoutDirectionMultiplier
             val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
             val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
             val maxWidth = (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing).toInt()
@@ -136,7 +139,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         lineValues?.forEach { x ->
             drawLines(
-                canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing,
+                canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing *
+                    layoutDirectionMultiplier,
                 tickTop = tickMarkTop,
                 tickBottom = tickMarkBottom,
                 skipGuideline = x.isBoundOf(fullXRange),
