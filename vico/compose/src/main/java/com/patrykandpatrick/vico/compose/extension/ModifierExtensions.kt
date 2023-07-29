@@ -18,11 +18,10 @@ package com.patrykandpatrick.vico.compose.extension
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollState
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
@@ -35,25 +34,25 @@ internal fun Modifier.chartTouchEvent(
     isScrollEnabled: Boolean,
     scrollableState: ChartScrollState,
     onZoom: OnZoom?,
-    interactionSource: MutableInteractionSource,
 ): Modifier =
     scrollable(
         state = scrollableState,
         orientation = Orientation.Horizontal,
-        interactionSource = interactionSource,
         reverseDirection = true,
         enabled = isScrollEnabled,
     ).pointerInput(scrollableState, setTouchPoint, onZoom) {
         coroutineScope {
             if (setTouchPoint != null) {
                 launch {
-                    detectTapGestures(
-                        onPress = {
-                            setTouchPoint(it.point)
-                            awaitRelease()
-                            setTouchPoint(null)
-                        },
-                    )
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            when (event.type) {
+                                PointerEventType.Press -> setTouchPoint(event.changes.first().position.point)
+                                PointerEventType.Release -> setTouchPoint(null)
+                            }
+                        }
+                    }
                 }
             }
 

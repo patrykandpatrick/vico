@@ -20,9 +20,6 @@ import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.interaction.DragInteraction
-import androidx.compose.foundation.interaction.Interaction
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,8 +27,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -326,9 +321,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val zoom = remember { mutableStateOf(1f) }
     val measureContext = getMeasureContext(chartScrollSpec.isScrollEnabled, zoom.value, bounds, horizontalLayout)
-    val interactionSource = remember { MutableInteractionSource() }
-    val interaction = interactionSource.interactions.collectAsState(initial = null)
-    val scrollListener = rememberScrollListener(markerTouchPoint, interaction)
+    val scrollListener = rememberScrollListener(markerTouchPoint)
     val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }
 
     axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
@@ -366,7 +359,6 @@ internal fun <Model : ChartEntryModel> ChartImpl(
                 isScrollEnabled = chartScrollSpec.isScrollEnabled,
                 scrollableState = chartScrollState,
                 onZoom = onZoom.takeIf { isZoomEnabled },
-                interactionSource = interactionSource,
             ),
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
@@ -446,34 +438,17 @@ internal fun ChartBox(
 }
 
 @Composable
-internal fun rememberScrollListener(
-    touchPoint: MutableState<Point?>,
-    interaction: State<Interaction?>,
-): ScrollListener = remember {
+internal fun rememberScrollListener(touchPoint: MutableState<Point?>): ScrollListener = remember {
     object : ScrollListener {
-        var shouldClearTouchPoint = false
-
         override fun onValueChanged(oldValue: Float, newValue: Float) {
             touchPoint.value?.let { point ->
-                if (interaction.value is DragInteraction.Stop && shouldClearTouchPoint) {
-                    touchPoint.value = null
-                    shouldClearTouchPoint = false
-                } else {
-                    touchPoint.value = point.copy(x = point.x + oldValue - newValue)
-                    shouldClearTouchPoint = true
-                }
+                touchPoint.value = point.copy(x = point.x + oldValue - newValue)
             }
         }
 
         override fun onScrollNotConsumed(delta: Float) {
             touchPoint.value?.let { point ->
-                if (interaction.value is DragInteraction.Stop && shouldClearTouchPoint) {
-                    touchPoint.value = null
-                    shouldClearTouchPoint = false
-                } else {
-                    touchPoint.value = point.copy(x = point.x - delta)
-                    shouldClearTouchPoint = true
-                }
+                touchPoint.value = point.copy(x = point.x - delta)
             }
         }
     }
