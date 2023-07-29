@@ -108,7 +108,15 @@ public open class TextComponent protected constructor() : Padding, Margins {
     /**
      * The text alignment.
      */
-    public var textAlign: Paint.Align by textPaint::textAlign
+    @Deprecated("Use `textAlignment` instead.")
+    public var textAlign: Paint.Align
+        get() = textAlignment.equivLtrPaintAlign
+        set(value) { textAlignment = value.equivLtrLayoutAlignment }
+
+    /**
+     * The text alignment.
+     */
+    public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL
 
     /**
      * The padding between the text and the background. This is applied even if [background] is null.
@@ -167,7 +175,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             save()
 
             val bounds = layout.getBounds(tempMeasureBounds)
-            val textAlignCorrection = textAlign.getXCorrection(width = bounds.width())
+            val textAlignmentCorrection = getTextAlignmentCorrection(bounds.width())
 
             with(receiver = bounds) {
                 left -= padding.getLeftDp(isLtr).pixels
@@ -215,7 +223,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             )
 
             translate(
-                bounds.left + padding.getLeftDp(isLtr).pixels + textAlignCorrection,
+                bounds.left + padding.getLeftDp(isLtr).pixels + textAlignmentCorrection,
                 bounds.top + padding.topDp.pixels,
             )
 
@@ -247,10 +255,21 @@ public open class TextComponent protected constructor() : Padding, Margins {
         width: Float,
     ): Float = baseXPosition - padding.getRightDp(isLtr).pixels - margins.getRightDp(isLtr).pixels - width
 
-    private fun Paint.Align.getXCorrection(width: Float): Float = when (this) {
-        Paint.Align.LEFT -> 0f
-        Paint.Align.CENTER -> width.half
-        Paint.Align.RIGHT -> width
+    private fun getTextAlignmentCorrection(width: Float): Float {
+        val ltrAlignment = if (layout.getParagraphDirection(0) == Layout.DIR_LEFT_TO_RIGHT) {
+            textAlignment
+        } else {
+            when (textAlignment) {
+                Layout.Alignment.ALIGN_NORMAL -> Layout.Alignment.ALIGN_OPPOSITE
+                Layout.Alignment.ALIGN_OPPOSITE -> Layout.Alignment.ALIGN_NORMAL
+                Layout.Alignment.ALIGN_CENTER -> Layout.Alignment.ALIGN_CENTER
+            }
+        }
+        return when (ltrAlignment) {
+            Layout.Alignment.ALIGN_NORMAL -> 0f
+            Layout.Alignment.ALIGN_OPPOSITE -> width - layout.width
+            Layout.Alignment.ALIGN_CENTER -> (width - layout.width).half
+        }
     }
 
     @JvmName("getTextTopPositionExt")
@@ -366,6 +385,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 width = correctedWidth,
                 maxLines = lineCount,
                 ellipsize = ellipsize,
+                align = textAlignment,
             )
         }
     }
@@ -409,7 +429,15 @@ public open class TextComponent protected constructor() : Padding, Margins {
         /**
          * @see [TextComponent.textAlign]
          */
-        public var textAlign: Paint.Align = Paint.Align.LEFT
+        @Deprecated("Use `textAlignment` instead.")
+        public var textAlign: Paint.Align
+            get() = textAlignment.equivLtrPaintAlign
+            set(value) { textAlignment = value.equivLtrLayoutAlignment }
+
+        /**
+         * @see TextComponent.textAlignment
+         */
+        public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL
 
         /**
          * @see [TextComponent.padding]
@@ -431,7 +459,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             ellipsize = this@Builder.ellipsize
             lineCount = this@Builder.lineCount
             background = this@Builder.background
-            textAlign = this@Builder.textAlign
+            textAlignment = this@Builder.textAlignment
             padding.set(this@Builder.padding)
             margins.set(this@Builder.margins)
         }
@@ -452,3 +480,17 @@ public open class TextComponent protected constructor() : Padding, Margins {
  */
 public inline fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
     TextComponent.Builder().apply(block).build()
+
+private val Paint.Align.equivLtrLayoutAlignment
+    get() = when (this) {
+        Paint.Align.LEFT -> Layout.Alignment.ALIGN_NORMAL
+        Paint.Align.CENTER -> Layout.Alignment.ALIGN_CENTER
+        Paint.Align.RIGHT -> Layout.Alignment.ALIGN_OPPOSITE
+    }
+
+private val Layout.Alignment.equivLtrPaintAlign
+    get() = when (this) {
+        Layout.Alignment.ALIGN_NORMAL -> Paint.Align.LEFT
+        Layout.Alignment.ALIGN_OPPOSITE -> Paint.Align.RIGHT
+        Layout.Alignment.ALIGN_CENTER -> Paint.Align.CENTER
+    }

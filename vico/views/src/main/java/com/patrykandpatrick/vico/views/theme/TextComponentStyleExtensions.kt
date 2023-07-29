@@ -21,6 +21,7 @@ import android.content.res.TypedArray
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Build
+import android.text.Layout
 import android.text.TextUtils
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
@@ -61,7 +62,9 @@ internal fun TypedArray.getTextComponent(
         this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
         this.ellipsize = getTruncateAt()
         getTypeface(context)?.let { this.typeface = it }
-        this.textAlign = getTextAlign()
+        @Suppress("DEPRECATION")
+        getTextAlign()?.let { this.textAlign = it }
+        this.textAlignment = getTextAlignment()
     }
 }
 
@@ -150,11 +153,11 @@ private fun TypedArray.getMargins(context: Context): MutableDimensions {
     )
 }
 
-private fun TypedArray.getTextAlign(): Paint.Align {
-    val values = Paint.Align.values()
-    val index = getInt(
-        R.styleable.TextComponentStyle_textAlign,
-        Paint.Align.LEFT.ordinal,
-    ).coerceAtMost(maximumValue = Paint.Align.RIGHT.ordinal)
-    return values[index]
-}
+private fun TypedArray.getTextAlign(): Paint.Align? =
+    Paint.Align.values().getOrNull(getInt(R.styleable.TextComponentStyle_textAlign, -1))
+
+private fun TypedArray.getTextAlignment(): Layout.Alignment =
+    Layout.Alignment
+        .values()
+        .getOrNull(getInt(R.styleable.TextComponentStyle_textAlignment, Layout.Alignment.ALIGN_NORMAL.ordinal))
+        ?: Layout.Alignment.ALIGN_NORMAL

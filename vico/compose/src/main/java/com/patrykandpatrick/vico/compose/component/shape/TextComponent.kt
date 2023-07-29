@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
  *
  * @param color the text color.
  * @param textSize the text size.
- * @param background an optional [ShapeComponent] to display behind the text.
+ * @param background an optional [ShapeComponent] to be displayed behind the text.
  * @param ellipsize the text truncation behavior.
  * @param lineCount the line count.
  * @param padding the padding between the text and the background.

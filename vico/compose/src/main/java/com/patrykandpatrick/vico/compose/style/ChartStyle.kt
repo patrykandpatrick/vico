@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.style
 
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.text.Layout
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -83,6 +84,7 @@ public data class ChartStyle(
      * @property axisLabelRotationDegrees the number of degrees by which axis labels are rotated.
      * @property axisLabelTypeface the typeface used for axis labels.
      * @property axisLabelTextAlign the text alignment for axis labels.
+     * @property axisLabelTextAlignment the text alignment for axis labels.
      * @property axisGuidelineColor the color of axis guidelines.
      * @property axisGuidelineWidth the width of axis guidelines.
      * @property axisGuidelineShape the [Shape] used for axis guidelines.
@@ -106,7 +108,9 @@ public data class ChartStyle(
         val axisLabelHorizontalMargin: Dp = DefaultDimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
         val axisLabelRotationDegrees: Float = DefaultDimens.AXIS_LABEL_ROTATION_DEGREES,
         val axisLabelTypeface: Typeface = Typeface.MONOSPACE,
+        @Deprecated("Use `axisLabelTextAlignment` instead.")
         val axisLabelTextAlign: Paint.Align = Paint.Align.LEFT,
+        val axisLabelTextAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
         val axisGuidelineShape: Shape = Shapes.dashedShape(
