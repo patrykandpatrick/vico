@@ -101,7 +101,7 @@ private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
 
 @Composable
 private fun rememberThresholdLine(): ThresholdLine {
-    val line = shapeComponent(strokeWidth = thresholdLineThickness, strokeColor = color2)
+    val line = shapeComponent(color = color2)
     val label = textComponent(
         color = Color.Black,
         background = shapeComponent(Shapes.pillShape, color2),
@@ -128,7 +128,6 @@ private val chartColors = listOf(color1)
 private val thresholdLineLabelMarginValue = 4.dp
 private val thresholdLineLabelHorizontalPaddingValue = 8.dp
 private val thresholdLineLabelVerticalPaddingValue = 2.dp
-private val thresholdLineThickness = 2.dp
 private val thresholdLineLabelPadding =
     dimensionsOf(thresholdLineLabelHorizontalPaddingValue, thresholdLineLabelVerticalPaddingValue)
 private val thresholdLineLabelMargins = dimensionsOf(thresholdLineLabelMarginValue)
