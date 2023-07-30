@@ -212,8 +212,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         return when {
             onLeft && horizontalLabelPosition == Outside -> base - axisThickness - tickLength
             onLeft && horizontalLabelPosition == Inside -> base - axisThickness
-            onLeft.not() && horizontalLabelPosition == Outside -> base
-            onLeft.not() && horizontalLabelPosition == Inside -> base - tickLength
+            horizontalLabelPosition == Outside -> base
+            horizontalLabelPosition == Inside -> base - tickLength
             else -> error("Unexpected combination of axis position and label position")
         }
     }

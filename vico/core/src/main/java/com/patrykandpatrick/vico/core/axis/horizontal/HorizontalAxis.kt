@@ -217,16 +217,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ): Float =
         when {
             itemPlacer.getShiftExtremeTicks(this).not() -> 0f
-            else -> {
-                val isFirstLine = entryX == fullXRange.start
-                val isLastLine = entryX == fullXRange.endInclusive
-
-                when {
-                    isFirstLine -> -tickThickness.half
-                    isLastLine -> tickThickness.half
-                    else -> 0f
-                }
-            }
+            entryX == fullXRange.start -> -tickThickness.half
+            entryX == fullXRange.endInclusive -> tickThickness.half
+            else -> 0f
         }
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
