@@ -110,8 +110,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         axisLine?.drawVertical(
             context = context,
             top = bounds.top,
-            bottom = bounds.bottom + axisThickness,
-            centerX = if (position.isLeft(isLtr = isLtr)) bounds.right else bounds.left,
+            bottom = bounds.bottom,
+            centerX = if (position.isLeft(isLtr = isLtr)) {
+                bounds.right - axisThickness.half
+            } else {
+                bounds.left + axisThickness.half
+            },
         )
     }
 
@@ -123,7 +127,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
         val tickLeftX = getTickLeftX()
 
-        val tickRightX = tickLeftX + axisThickness.half + tickLength
+        val tickRightX = tickLeftX + axisThickness + tickLength
 
         val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
 
@@ -196,7 +200,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 maxTextWidth = when (sizeConstraint) {
                     // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
                     is SizeConstraint.Auto -> Int.MAX_VALUE
-                    else -> (bounds.width() - tickLength - axisThickness.half).toInt()
+                    else -> (bounds.width() - tickLength - axisThickness).toInt()
                 },
             )
         }
@@ -205,7 +209,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     private fun MeasureContext.getTickLeftX(): Float {
         val onLeft = position.isLeft(isLtr = isLtr)
         val base = if (onLeft) bounds.right else bounds.left
-        return if (onLeft == (horizontalLabelPosition == Outside)) base - axisThickness.half - tickLength else base
+        return when {
+            onLeft && horizontalLabelPosition == Outside -> base - axisThickness - tickLength
+            onLeft && horizontalLabelPosition == Inside -> base - axisThickness
+            onLeft.not() && horizontalLabelPosition == Outside -> base
+            onLeft.not() && horizontalLabelPosition == Inside -> base - tickLength
+            else -> error("Unexpected combination of axis position and label position")
+        }
     }
 
     private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
@@ -302,7 +312,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                         height = bounds.height().toInt(),
                     )
                 }.orZero
-                (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness.half + tickLength)
+                (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness + tickLength)
                     .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
             }
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
