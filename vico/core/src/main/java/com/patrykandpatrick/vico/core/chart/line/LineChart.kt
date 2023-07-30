@@ -535,14 +535,17 @@ public open class LineChart(
         horizontalDimensions.apply {
             xSpacing = maxPointSize + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
-                is HorizontalLayout.Segmented -> scalableStartPadding = xSpacing.half
+                is HorizontalLayout.Segmented -> {
+                    scalableStartPadding = xSpacing.half
+                    scalableEndPadding = scalableStartPadding
+                }
                 is HorizontalLayout.FullWidth -> {
                     scalableStartPadding = horizontalLayout.startPaddingDp.pixels
+                    scalableEndPadding = horizontalLayout.endPaddingDp.pixels
                     unscalableStartPadding = maxPointSize.half
                     unscalableEndPadding = unscalableStartPadding
                 }
             }
-            scalableEndPadding = scalableStartPadding
         }
     }
 
