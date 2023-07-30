@@ -128,29 +128,35 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             )
 
             if (lineValues == null) {
-                drawLines(
-                    canvasX = canvasX,
-                    tickTop = tickMarkTop,
-                    tickBottom = tickMarkBottom,
-                    skipGuideline = x.isBoundOf(fullXRange),
+                tick?.drawVertical(
+                    context = this,
+                    top = tickMarkTop,
+                    bottom = tickMarkBottom,
+                    centerX = canvasX + getLinesCorrectionX(x, fullXRange),
                 )
             }
         }
 
         lineValues?.forEach { x ->
-            drawLines(
-                canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing *
-                    layoutDirectionMultiplier,
-                tickTop = tickMarkTop,
-                tickBottom = tickMarkBottom,
-                skipGuideline = x.isBoundOf(fullXRange),
+            tick?.drawVertical(
+                context = this,
+                top = tickMarkTop,
+                bottom = tickMarkBottom,
+                centerX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing +
+                    getLinesCorrectionX(x, fullXRange) * layoutDirectionMultiplier,
             )
+        }
+
+        val axisLineExtend = if (itemPlacer.getShiftExtremeTicks(context)) {
+            tickThickness
+        } else {
+            tickThickness.half
         }
 
         axisLine?.drawHorizontal(
             context = context,
-            left = chartBounds.left,
-            right = chartBounds.right,
+            left = chartBounds.left - axisLineExtend,
+            right = chartBounds.right + axisLineExtend,
             centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half,
         )
 
@@ -166,7 +172,62 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
 
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
+
+        drawGuidelines(baseCanvasX, fullXRange, labelValues, lineValues)
     }
+
+    private fun ChartDrawContext.drawGuidelines(
+        baseCanvasX: Float,
+        fullXRange: ClosedFloatingPointRange<Float>,
+        labelValues: List<Float>,
+        lineValues: List<Float>?,
+    ) {
+        val guideline = guideline ?: return
+        val clipRestoreCount = canvas.save()
+        canvas.clipRect(chartBounds)
+
+        val chartValues = chartValuesManager.getChartValues()
+
+        if (lineValues == null) {
+            labelValues.forEach { x ->
+                val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing *
+                    layoutDirectionMultiplier
+
+                guideline
+                    .takeUnless { x.isBoundOf(fullXRange) }
+                    ?.drawVertical(this, chartBounds.top, chartBounds.bottom, canvasX)
+            }
+        } else {
+            lineValues.forEach { x ->
+                val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing +
+                    getLinesCorrectionX(x, fullXRange) * layoutDirectionMultiplier
+
+                guideline
+                    .takeUnless { x.isBoundOf(fullXRange) }
+                    ?.drawVertical(this, chartBounds.top, chartBounds.bottom, canvasX)
+            }
+        }
+
+        if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
+    }
+
+    private fun ChartDrawContext.getLinesCorrectionX(
+        entryX: Float,
+        fullXRange: ClosedFloatingPointRange<Float>,
+    ): Float =
+        when {
+            itemPlacer.getShiftExtremeTicks(this).not() -> 0f
+            else -> {
+                val isFirstLine = entryX == fullXRange.start
+                val isLastLine = entryX == fullXRange.endInclusive
+
+                when {
+                    isFirstLine -> -tickThickness.half
+                    isLastLine -> tickThickness.half
+                    else -> 0f
+                }
+            }
+        }
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
 
@@ -191,16 +252,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
         val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
         start..end
-    }
-
-    private fun ChartDrawContext.drawLines(
-        canvasX: Float,
-        tickTop: Float,
-        tickBottom: Float,
-        skipGuideline: Boolean,
-    ) {
-        tick?.drawVertical(this, tickTop, tickBottom, canvasX)
-        guideline.takeUnless { skipGuideline }?.drawVertical(this, chartBounds.top, chartBounds.bottom, canvasX)
     }
 
     private fun getDesiredHeight(

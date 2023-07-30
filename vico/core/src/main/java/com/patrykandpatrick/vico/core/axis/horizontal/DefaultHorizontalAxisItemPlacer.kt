@@ -27,7 +27,10 @@ import com.patrykandpatrick.vico.core.extension.round
 internal class DefaultHorizontalAxisItemPlacer(
     private val spacing: Int = 1,
     private val offset: Int = 0,
+    private val shiftExtremeTicks: Boolean = true,
 ) : AxisItemPlacer.Horizontal {
+
+    override fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = shiftExtremeTicks
 
     @Suppress("LoopWithTooManyJumpStatements")
     override fun getLabelValues(
@@ -98,7 +101,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         horizontalDimensions: HorizontalDimensions,
         tickThickness: Float,
     ): Float = when (context.horizontalLayout) {
-        is HorizontalLayout.Segmented -> tickThickness.half
+        is HorizontalLayout.Segmented -> if (shiftExtremeTicks) tickThickness else tickThickness.half
         is HorizontalLayout.FullWidth -> (tickThickness.half - horizontalDimensions.startPadding).coerceAtLeast(0f)
     }
 
@@ -107,7 +110,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         horizontalDimensions: HorizontalDimensions,
         tickThickness: Float,
     ): Float = when (context.horizontalLayout) {
-        is HorizontalLayout.Segmented -> tickThickness.half
+        is HorizontalLayout.Segmented -> if (shiftExtremeTicks) tickThickness else tickThickness.half
         is HorizontalLayout.FullWidth -> (tickThickness.half - horizontalDimensions.endPadding).coerceAtLeast(0f)
     }
 

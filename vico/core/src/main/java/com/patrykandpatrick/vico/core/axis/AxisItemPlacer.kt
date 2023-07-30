@@ -32,6 +32,15 @@ public interface AxisItemPlacer {
      * An [AxisItemPlacer] subinterface for [HorizontalAxis] instances.
      */
     public interface Horizontal : AxisItemPlacer {
+
+        /**
+         * Whether ticks whose _x_ values are bounds of _x-axis_ value range should be shifted to the edges of the axis
+         * bounds, to be aligned with the vertical axes.
+         */
+        public fun getShiftExtremeTicks(
+            context: ChartDrawContext,
+        ): Boolean = true
+
         /**
          * Returns, as a list, the _x_ values for which labels are to be displayed, restricted to [visibleXRange] and
          * with two extra values on either side (if applicable).
@@ -97,9 +106,11 @@ public interface AxisItemPlacer {
              * Creates a base [AxisItemPlacer.Horizontal] implementation. [spacing] defines how often items should be
              * drawn (relative to [ChartValues.xStep]). [offset] is the number of labels (and, for
              * [HorizontalLayout.FullWidth], their corresponding ticks and guidelines) to skip from the start.
+             * [shiftExtremeTicks] defines whether ticks whose _x_ values are bounds of _x-axis_ value range should be
+             * shifted to the edges of the axis bounds, to be aligned with the vertical axes.
              */
-            public fun default(spacing: Int = 1, offset: Int = 0): Horizontal =
-                DefaultHorizontalAxisItemPlacer(spacing, offset)
+            public fun default(spacing: Int = 1, offset: Int = 0, shiftExtremeTicks: Boolean = true): Horizontal =
+                DefaultHorizontalAxisItemPlacer(spacing, offset, shiftExtremeTicks)
         }
     }
 }
