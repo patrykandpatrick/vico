@@ -58,14 +58,16 @@ public fun textComponent(
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,
     textAlign: Paint.Align = Paint.Align.LEFT,
-): TextComponent = com.patrykandpatrick.vico.compose.component.textComponent(
-    color = color,
-    textSize = textSize,
-    background = background,
-    ellipsize = ellipsize,
-    lineCount = lineCount,
-    padding = padding,
-    margins = margins,
-    typeface = typeface,
-    textAlign = textAlign,
-)
+): TextComponent =
+    @Suppress("DEPRECATION")
+    com.patrykandpatrick.vico.compose.component.textComponent(
+        color = color,
+        textSize = textSize,
+        background = background,
+        ellipsize = ellipsize,
+        lineCount = lineCount,
+        padding = padding,
+        margins = margins,
+        typeface = typeface,
+        textAlign = textAlign,
+    )
