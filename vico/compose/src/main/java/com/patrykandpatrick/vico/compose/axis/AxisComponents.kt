@@ -77,8 +77,8 @@ public fun axisLabelComponent(
     background,
     ellipsize,
     lineCount,
-    dimensionsOf(verticalPadding, horizontalPadding),
-    dimensionsOf(verticalMargin, horizontalMargin),
+    dimensionsOf(horizontalPadding, verticalPadding),
+    dimensionsOf(horizontalMargin, verticalMargin),
     typeface,
     textAlignment,
 )
@@ -120,8 +120,8 @@ public fun axisLabelComponent(
         background,
         ellipsize,
         lineCount,
-        dimensionsOf(verticalPadding, horizontalPadding),
-        dimensionsOf(verticalMargin, horizontalMargin),
+        dimensionsOf(horizontalPadding, verticalPadding),
+        dimensionsOf(horizontalMargin, verticalMargin),
         typeface,
         textAlign,
     )
