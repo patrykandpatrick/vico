@@ -52,6 +52,10 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      */
     public val chartInsetters: Collection<ChartInsetter>
 
+
+    public val markerMoveWithPoint: Boolean
+
+
     /**
      * Overrides the minimum and maximum x-axis and y-axis values. In the case of [ColumnChart]s and [LineChart]s
      * contained in [ComposedChart]s, these overrides can be applied to one vertical axis instead of both. Use

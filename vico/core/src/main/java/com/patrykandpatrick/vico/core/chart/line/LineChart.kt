@@ -68,7 +68,7 @@ import kotlin.math.min
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
-    public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    public var targetVerticalAxisPosition: AxisPosition.Vertical? = null
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -276,6 +276,7 @@ public open class LineChart(
     protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
+    override var markerMoveWithPoint: Boolean = false
 
     override fun drawChart(
         context: ChartDrawContext,

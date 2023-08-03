@@ -419,6 +419,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
                 setWasMarkerVisible = setWasMarkerVisible,
                 lastMarkerEntryModels = lastMarkerEntryModels.value,
                 onMarkerEntryModelsChange = lastMarkerEntryModels.component2(),
+                markerMoveWithPoint = chart.markerMoveWithPoint
             )
         }
 

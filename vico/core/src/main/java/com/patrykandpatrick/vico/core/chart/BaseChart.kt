@@ -111,6 +111,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
                     bounds = bounds,
                     markedEntries = markerModel,
                     chartValuesProvider = chartValuesManager,
+                    markerMoveWithPoint = markerMoveWithPoint
                 )
             }
         }

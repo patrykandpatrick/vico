@@ -431,6 +431,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 setWasMarkerVisible = { wasMarkerVisible = it },
                 lastMarkerEntryModels = lastMarkerEntryModels,
                 onMarkerEntryModelsChange = { lastMarkerEntryModels = it },
+                markerMoveWithPoint = chart.markerMoveWithPoint
             )
         }
         measureContext.clearExtras()

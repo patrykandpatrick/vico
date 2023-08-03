@@ -54,6 +54,7 @@ public class ComposedChart<Model : ChartEntryModel>(
     private val horizontalDimensions = MutableHorizontalDimensions()
 
     override val entryLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
+    override val markerMoveWithPoint: Boolean = false
 
     override val chartInsetters: Collection<ChartInsetter>
         get() = charts.map { it.chartInsetters }.flatten() + persistentMarkers.values

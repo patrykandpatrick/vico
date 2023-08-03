@@ -47,6 +47,7 @@ public open class MarkerComponent(
     public val label: TextComponent,
     public val indicator: Component?,
     public val guideline: LineComponent?,
+    public val markerMoveAlongPoint: Boolean = false,
 ) : Marker {
 
     private val tempBounds = RectF()
@@ -75,6 +76,7 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValuesProvider: ChartValuesProvider,
+        markerMoveWithPoint: Boolean,
     ): Unit = with(context) {
         drawGuideline(context, bounds, markedEntries)
         val halfIndicatorSize = indicatorSizeDp.half.pixels
@@ -89,7 +91,7 @@ public open class MarkerComponent(
                 model.location.y + halfIndicatorSize,
             )
         }
-        drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues())
+        drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues(), markerMoveWithPoint)
     }
 
     private fun drawLabel(
@@ -97,19 +99,23 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValues: ChartValues,
+        markerMoveWithPoint: Boolean,
     ): Unit = with(context) {
         val text = labelFormatter.getLabel(markedEntries, chartValues)
         val entryX = markedEntries.averageOf { it.location.x }
         val labelBounds = label.getTextBounds(context, text, outRect = tempBounds)
         val halfOfTextWidth = labelBounds.width().half
         val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
+        val y = if (markerMoveWithPoint)
+            markedEntries[0].location.y - labelBounds.height() else
+                bounds.top - labelBounds.height() - label.tickSizeDp.pixels
         this[MarkerCorneredShape.tickXKey] = entryX
 
         label.drawText(
             context = context,
             text = text,
             textX = x,
-            textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
+            textY = y,
             verticalPosition = VerticalPosition.Bottom,
         )
     }

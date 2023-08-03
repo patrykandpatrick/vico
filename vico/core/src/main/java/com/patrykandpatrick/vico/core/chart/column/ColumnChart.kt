@@ -70,7 +70,7 @@ public open class ColumnChart(
     public var dataLabel: TextComponent? = null,
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
-    public var dataLabelRotationDegrees: Float = 0f,
+    public var dataLabelRotationDegrees: Float = 0f
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -106,6 +106,7 @@ public open class ColumnChart(
     protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
+    override var markerMoveWithPoint: Boolean = false
 
     override fun drawChart(
         context: ChartDrawContext,

@@ -100,6 +100,7 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
     chart: Chart<Model>,
     markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
     wasMarkerVisible: Boolean,
+    markerMoveWithPoint: Boolean,
     setWasMarkerVisible: (Boolean) -> Unit,
     lastMarkerEntryModels: List<Marker.EntryModel>,
     onMarkerEntryModelsChange: (List<Marker.EntryModel>) -> Unit,
@@ -113,6 +114,7 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
                 bounds = chart.bounds,
                 markedEntries = markerEntryModels,
                 chartValuesProvider = chartValuesManager,
+                markerMoveWithPoint = markerMoveWithPoint
             )
             if (wasMarkerVisible.not()) {
                 markerVisibilityChangeListener?.onMarkerShown(
