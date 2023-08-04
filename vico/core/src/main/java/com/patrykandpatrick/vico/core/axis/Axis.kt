@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
+    @Deprecated("This is no longer used.")
     protected val labels: ArrayList<CharSequence> = ArrayList()
 
     override val bounds: RectF = RectF()

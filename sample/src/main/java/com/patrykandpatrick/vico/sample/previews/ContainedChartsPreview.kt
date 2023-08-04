@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.sample.previews
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.Axis
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.End
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.Start
@@ -86,13 +88,13 @@ private fun getLineChart(
 private val startAxis: Axis<Start>
     @Composable get() = startAxis(
         label = textComponent(color = Color.Black),
-        maxLabelCount = 5,
+        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 5) },
     )
 
 private val endAxis: Axis<End>
     @Composable get() = endAxis(
         label = textComponent(color = Color.DarkGray),
-        maxLabelCount = 7,
+        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 7) },
     )
 
 @Composable

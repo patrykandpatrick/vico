@@ -71,7 +71,7 @@ private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
                 decorations = remember(thresholdLine) { listOf(thresholdLine) },
             ),
             chartModelProducer = chartEntryModelProducer,
-            startAxis = startAxis(valueFormatter = startAxisValueFormatter, maxLabelCount = START_AXIS_LABEL_COUNT),
+            startAxis = startAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
             bottomAxis = bottomAxis(itemPlacer = bottomAxisItemPlacer),
             marker = rememberMarker(),
             runInitialAnimation = false,
@@ -90,7 +90,7 @@ private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
             runInitialAnimation = false
             entryProducer = chartEntryModelProducer
             with(startAxis as VerticalAxis) {
-                maxLabelCount = START_AXIS_LABEL_COUNT
+                itemPlacer = startAxisItemPlacer
                 valueFormatter = startAxisValueFormatter
             }
             (bottomAxis as HorizontalAxis).itemPlacer = bottomAxisItemPlacer
@@ -118,7 +118,7 @@ private const val COLOR_1_CODE = 0xffff5500
 private const val COLOR_2_CODE = 0xffd3d826
 private const val COLUMN_WIDTH_DP = 16f
 private const val THRESHOLD_LINE_VALUE = 13f
-private const val START_AXIS_LABEL_COUNT = 6
+private const val MAX_START_AXIS_ITEM_COUNT = 6
 private const val BOTTOM_AXIS_ITEM_SPACING = 3
 private const val BOTTOM_AXIS_ITEM_OFFSET = 1
 
@@ -136,4 +136,5 @@ private val horizontalLayout = HorizontalLayout.FullWidth(
     startPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
     endPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
 )
+private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(MAX_START_AXIS_ITEM_COUNT)
 private val bottomAxisItemPlacer = AxisItemPlacer.Horizontal.default(BOTTOM_AXIS_ITEM_SPACING, BOTTOM_AXIS_ITEM_OFFSET)

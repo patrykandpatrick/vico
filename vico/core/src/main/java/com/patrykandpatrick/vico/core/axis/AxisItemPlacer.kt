@@ -16,8 +16,12 @@
 
 package com.patrykandpatrick.vico.core.axis
 
+import com.patrykandpatrick.vico.core.DEF_LABEL_COUNT
 import com.patrykandpatrick.vico.core.axis.horizontal.DefaultHorizontalAxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
+import com.patrykandpatrick.vico.core.axis.vertical.DefaultVerticalAxisItemPlacer
+import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
+import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -81,7 +85,7 @@ public interface AxisItemPlacer {
             context: ChartDrawContext,
             visibleXRange: ClosedFloatingPointRange<Float>,
             fullXRange: ClosedFloatingPointRange<Float>,
-        ): List<Float>?
+        ): List<Float>? = null
 
         /**
          * Returns the start inset required by the [HorizontalAxis].
@@ -111,6 +115,90 @@ public interface AxisItemPlacer {
              */
             public fun default(spacing: Int = 1, offset: Int = 0, shiftExtremeTicks: Boolean = true): Horizontal =
                 DefaultHorizontalAxisItemPlacer(spacing, offset, shiftExtremeTicks)
+        }
+    }
+
+    /**
+     * An [AxisItemPlacer] subinterface for [VerticalAxis] instances.
+     */
+    public interface Vertical {
+        /**
+         * Returns a boolean indicating whether to shift the lines whose _y_ values are equal to [ChartValues.maxY], if
+         * such lines are present, such that they’re immediately above the [Chart]’s bounds. If the chart has a top
+         * axis, the shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
+         */
+        public fun getShiftTopLines(chartDrawContext: ChartDrawContext): Boolean = true
+
+        /**
+         * Returns, as a list, the _y_ values for which labels are to be displayed.
+         */
+        public fun getLabelValues(
+            context: ChartDrawContext,
+            axisHeight: Float,
+            maxLabelHeight: Float,
+            position: AxisPosition.Vertical,
+        ): List<Float>
+
+        /**
+         * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and measure their heights
+         * during the measuring phase. The height of the tallest label is passed to [getWidthMeasurementLabelValues] and
+         * [getLabelValues].
+         */
+        public fun getHeightMeasurementLabelValues(
+            context: MeasureContext,
+            position: AxisPosition.Vertical,
+        ): List<Float>
+
+        /**
+         * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and measure their widths
+         * during the measuring phase. This affects how much horizontal space the [VerticalAxis] requests.
+         */
+        public fun getWidthMeasurementLabelValues(
+            context: MeasureContext,
+            axisHeight: Float,
+            maxLabelHeight: Float,
+            position: AxisPosition.Vertical,
+        ): List<Float>
+
+        /**
+         * Returns, as a list, the _y_ values for which ticks and guidelines are to be displayed.
+         */
+        public fun getLineValues(
+            context: ChartDrawContext,
+            axisHeight: Float,
+            maxLabelHeight: Float,
+            position: AxisPosition.Vertical,
+        ): List<Float>? = null
+
+        /**
+         * Returns the top inset required by the [VerticalAxis].
+         */
+        public fun getTopVerticalAxisInset(
+            verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
+            maxLabelHeight: Float,
+            maxLineThickness: Float,
+        ): Float
+
+        /**
+         * Returns the bottom inset required by the [VerticalAxis].
+         */
+        public fun getBottomVerticalAxisInset(
+            verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
+            maxLabelHeight: Float,
+            maxLineThickness: Float,
+        ): Float
+
+        public companion object {
+            /**
+             * Creates a base [AxisItemPlacer.Vertical] implementation. [maxItemCount] is the maximum number of labels
+             * (and their corresponding line pairs) to be displayed. The actual item count is the greatest number
+             * smaller than or equal to [maxItemCount] for which no overlaps occur. [shiftTopLines] defines whether
+             * to shift the lines whose _y_ values are equal to [ChartValues.maxY], if such lines are present, such that
+             * they’re immediately above the [Chart]’s bounds. If the chart has a top axis, the shifted tick will then
+             * be aligned with this axis, and the shifted guideline will be hidden.
+             */
+            public fun default(maxItemCount: Int = DEF_LABEL_COUNT, shiftTopLines: Boolean = true): Vertical =
+                DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
         }
     }
 }

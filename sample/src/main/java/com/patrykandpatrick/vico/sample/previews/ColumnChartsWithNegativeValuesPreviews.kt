@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.sample.previews
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,7 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.entry.entryModelOf
@@ -47,7 +49,7 @@ public fun SingleColumnChartWithNegativeValues() {
                 ),
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 9),
+            startAxis = startAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 9) }),
             bottomAxis = bottomAxis(),
         )
     }
@@ -80,7 +82,7 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                 ),
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 4),
+            startAxis = startAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
             bottomAxis = bottomAxis(),
         )
     }
@@ -98,7 +100,7 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                 ),
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 3),
+            startAxis = startAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
             bottomAxis = bottomAxis(),
         )
     }
