@@ -28,6 +28,10 @@ internal class DefaultVerticalAxisItemPlacer(
     private val shiftTopLines: Boolean,
 ) : AxisItemPlacer.Vertical {
 
+    init {
+        require(maxItemCount >= 0) { "`maxItemCount` must be nonnegative." }
+    }
+
     override fun getShiftTopLines(chartDrawContext: ChartDrawContext): Boolean = shiftTopLines
 
     override fun getLabelValues(
@@ -43,10 +47,39 @@ internal class DefaultVerticalAxisItemPlacer(
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
     ): List<Float> {
-        val itemCount = ((axisHeight / maxLabelHeight).toInt() + 1).coerceAtMost(maxItemCount)
+        val values = mutableListOf<Float>()
+        if (maxItemCount == 0) return values
         val chartValues = context.chartValuesManager.getChartValues(position)
-        val step = chartValues.lengthY / (itemCount - 1)
-        return List(itemCount) { chartValues.minY + it * step }
+        if (chartValues.minY * chartValues.maxY < 0) {
+            val topHeight = chartValues.maxY / chartValues.lengthY * axisHeight
+            val bottomHeight = -chartValues.minY / chartValues.lengthY * axisHeight
+            val maxTopItemCount = (maxItemCount - 1) * topHeight / axisHeight
+            val maxBottomItemCount = (maxItemCount - 1) * bottomHeight / axisHeight
+            val topItemCountByHeight = topHeight / maxLabelHeight
+            val bottomItemCountByHeight = bottomHeight / maxLabelHeight
+            var topItemCount = topItemCountByHeight.coerceAtMost(maxTopItemCount).toInt()
+            var bottomItemCount = bottomItemCountByHeight.coerceAtMost(maxBottomItemCount).toInt()
+            if (maxTopItemCount % 1f != 0f) {
+                val isTopNotDenser = topItemCount / topHeight <= bottomItemCount / bottomHeight
+                val isTopFillable = topItemCountByHeight - topItemCount >= 1
+                val isBottomFillable = bottomItemCountByHeight - bottomItemCount >= 1
+                if (isTopFillable && (isTopNotDenser || !isBottomFillable)) {
+                    topItemCount++
+                } else if (isBottomFillable) {
+                    bottomItemCount++
+                }
+            }
+            val topStep = chartValues.maxY / topItemCount
+            val bottomStep = chartValues.minY / bottomItemCount
+            values += 0f
+            repeat(topItemCount) { values += (it + 1) * topStep }
+            repeat(bottomItemCount) { values += (it + 1) * bottomStep }
+        } else {
+            val itemCount = ((axisHeight / maxLabelHeight).toInt() + 1).coerceAtMost(maxItemCount)
+            val step = chartValues.lengthY / (itemCount - 1)
+            repeat(itemCount) { values += chartValues.minY + it * step }
+        }
+        return values
     }
 
     public override fun getHeightMeasurementLabelValues(
