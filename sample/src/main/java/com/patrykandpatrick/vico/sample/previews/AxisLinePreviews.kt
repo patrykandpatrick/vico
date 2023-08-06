@@ -25,7 +25,7 @@ import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.shapeComponent
@@ -88,7 +88,7 @@ public fun HorizontalAxisTextInside() {
             verticalMargin = 4.dp,
             horizontalMargin = 4.dp,
         )
-        Chart(
+        CartesianChartHost(
             chart = columnChart(),
             model = model,
             startAxis = startAxis(
@@ -118,7 +118,7 @@ public fun HorizontalAxisTextInsideAndBottomAxis() {
             verticalMargin = 4.dp,
             horizontalMargin = 4.dp,
         )
-        Chart(
+        CartesianChartHost(
             chart = columnChart(),
             model = model,
             startAxis = startAxis(
@@ -139,7 +139,7 @@ public fun HorizontalAxisTextInsideAndBottomAxis() {
 @Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisTextOutside() {
     ProvidePreviewChartStyle {
-        Chart(
+        CartesianChartHost(
             chart = columnChart(),
             model = model,
             startAxis = startAxis(
@@ -157,7 +157,7 @@ public fun HorizontalAxisTextOutside() {
 @Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
     ProvidePreviewChartStyle {
-        Chart(
+        CartesianChartHost(
             chart = columnChart(),
             model = model,
             startAxis = startAxis(

@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -67,7 +66,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
  * @see ChartModelProducer
  */
 @Composable
-public fun <Model : EntryModel<*>> ChartModelProducer<Model>.collectAsState(
+public fun <Model> ChartModelProducer<Model>.collectAsState(
     chartKey: Any,
     producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,

@@ -23,10 +23,7 @@ import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -38,7 +35,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
 import com.patrykandpatrick.vico.compose.chart.entry.defaultDiffAnimationSpec
@@ -55,7 +51,6 @@ import com.patrykandpatrick.vico.compose.state.MutableSharedState
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
-import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
@@ -86,7 +81,7 @@ import kotlinx.coroutines.launch
  * @param chartModelProducer creates and updates the [ChartEntryModel] for the chart.
  * @param modifier the modifier to be applied to the chart.
  * @param startAxis the axis displayed at the start of the chart.
- * @param topAxis the axis displayed at the top of the chart.
+chartentrym * @param topAxis the axis displayed at the top of the chart.
  * @param endAxis the axis displayed at the end of the chart.
  * @param bottomAxis the axis displayed at the bottom of the chart.
  * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
@@ -106,7 +101,7 @@ import kotlinx.coroutines.launch
  * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
 @Composable
-public fun <Model : EntryModel<*>> Chart(
+public fun <Model : ChartEntryModel> CartesianChartHost(
     chart: Chart<Model>,
     chartModelProducer: ChartModelProducer<Model>,
     modifier: Modifier = Modifier,
@@ -136,7 +131,7 @@ public fun <Model : EntryModel<*>> Chart(
 
     ChartBox(modifier = modifier) {
         modelState.value?.also { model ->
-            ChartImpl(
+            CartesianChartHostImpl(
                 chart = chart,
                 model = model,
                 oldModel = modelState.previousValue,
@@ -187,7 +182,7 @@ public fun <Model : EntryModel<*>> Chart(
  */
 @Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.", level = DeprecationLevel.ERROR)
 @Composable
-public fun <Model : ChartEntryModel> Chart(
+public fun <Model : ChartEntryModel> CartesianChartHost(
     chart: Chart<Model>,
     model: Model,
     modifier: Modifier = Modifier,
@@ -207,7 +202,7 @@ public fun <Model : ChartEntryModel> Chart(
     getXStep: ((Model) -> Float)? = null,
 ) {
     ChartBox(modifier = modifier) {
-        ChartImpl(
+        CartesianChartHostImpl(
             chart = chart,
             model = model,
             startAxis = startAxis,
@@ -258,7 +253,7 @@ public fun <Model : ChartEntryModel> Chart(
  * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
 @Composable
-public fun <Model : EntryModel<*>> Chart(
+public fun <Model : ChartEntryModel> CartesianChartHost(
     chart: Chart<Model>,
     model: Model,
     modifier: Modifier = Modifier,
@@ -279,7 +274,7 @@ public fun <Model : EntryModel<*>> Chart(
     getXStep: ((Model) -> Float)? = null,
 ) {
     ChartBox(modifier = modifier) {
-        ChartImpl(
+        CartesianChartHostImpl(
             chart = chart,
             model = model,
             startAxis = startAxis,
@@ -303,7 +298,7 @@ public fun <Model : EntryModel<*>> Chart(
 
 @Suppress("LongMethod")
 @Composable
-internal fun <Model : EntryModel<*>> ChartImpl(
+internal fun <Model : ChartEntryModel> CartesianChartHostImpl(
     chart: Chart<Model>,
     model: Model,
     startAxis: AxisRenderer<AxisPosition.Vertical.Start>?,
@@ -433,17 +428,6 @@ internal fun <Model : EntryModel<*>> ChartImpl(
 
         measureContext.reset()
     }
-}
-
-@Composable
-internal fun ChartBox(
-    modifier: Modifier,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    Box(
-        modifier = modifier.height(DefaultDimens.CHART_HEIGHT.dp),
-        content = content,
-    )
 }
 
 @Composable

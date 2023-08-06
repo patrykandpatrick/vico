@@ -248,6 +248,31 @@ public object DefaultDimens {
      * The default height for charts (in dp).
      */
     public const val CHART_HEIGHT: Float = 200f
+
+    /**
+     * The starting angle for pie charts (in degrees).
+     */
+    public const val PIE_CHART_START_ANGLE: Float = -90f
+
+    /**
+     * The default thickness for outside label’s angled line in pie chart slice (in dp).
+     */
+    public const val SLICE_ANGLED_SEGMENT_WIDTH: Float = 12f
+
+    /**
+     * The default thickness for outside label’s horizontal line in pie chart slice (in dp).
+     */
+    public const val SLICE_HORIZONTAL_SEGMENT_WIDTH: Float = 16f
+
+    /**
+     * The default ratio of the maximum width of the outside label to the bounds of the pie chart.
+     */
+    public const val SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO: Float = 0.25f
+
+    /**
+     * The default spacing between pie chart slices (in dp).
+     */
+    public const val PIE_CHART_SPACING: Int = 0
 }
 
 /**

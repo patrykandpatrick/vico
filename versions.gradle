@@ -21,7 +21,7 @@ ext {
             version_name   : "1.7.1",
             version_code   : 1,
             target_sdk     : 33,
-            min_sdk        : 16,
+            min_sdk        : 19,
             compose_min_sdk: 21,
     ]
 }

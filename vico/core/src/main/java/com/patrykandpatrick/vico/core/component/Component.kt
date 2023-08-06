@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.component
 
-import com.patrykandpatrick.vico.core.component.dimension.DefaultMargins
 import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.context.DrawContext
 
@@ -24,12 +23,12 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  * [Component] is a generic concept of an object that can be drawn on a canvas at a given pair of coordinates.
  * Its subclasses are used throughout the library.
  */
-public abstract class Component : Margins by DefaultMargins() {
+public interface Component : Margins {
 
     /**
      * Instructs the [Component] to draw itself at the given coordinates.
      */
-    public abstract fun draw(
+    public fun draw(
         context: DrawContext,
         left: Float,
         top: Float,

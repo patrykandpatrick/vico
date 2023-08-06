@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.component.shape.extension
 
 import android.graphics.Path
+import com.patrykandpatrick.vico.core.model.Point
 
 /**
  * A convenience function for [Path.cubicTo] that helps with adding a cubic curve with a certain [curvature].
@@ -30,4 +31,18 @@ public fun Path.horizontalCubicTo(
 ) {
     val directionMultiplier = if (x >= prevX) 1f else -1f
     cubicTo(prevX + directionMultiplier * curvature, prevY, x - directionMultiplier * curvature, y, x, y)
+}
+
+/**
+ * A convenience function for [Path.moveTo] that accepts a [Point].
+ */
+public fun Path.moveTo(point: Point) {
+    moveTo(point.x, point.y)
+}
+
+/**
+ * A convenience function for [Path.lineTo] that accepts a [Point].
+ */
+public fun Path.lineTo(point: Point) {
+    lineTo(point.x, point.y)
 }

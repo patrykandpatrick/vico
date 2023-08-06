@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,13 +23,13 @@ import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator
 import com.patrykandpatrick.vico.views.theme.ThemeHandler
 
 /**
- * A subclass of [BaseChartView] that displays charts that use [ChartEntryModel].
+ * A subclass of [BaseCartesianChartView] that displays charts that use [ChartEntryModel].
  */
 public class ChartView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
-) : BaseChartView<ChartEntryModel>(
+) : BaseCartesianChartView<ChartEntryModel>(
     context = context,
     attrs = attrs,
     defStyleAttr = defStyleAttr,

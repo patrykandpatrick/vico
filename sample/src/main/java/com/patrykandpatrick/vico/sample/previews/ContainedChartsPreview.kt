@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.line.lineSpec
@@ -103,7 +103,7 @@ public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
 
     composedChart.setPersistentMarkers(markerMap)
 
-    Chart(
+    CartesianChartHost(
         chart = composedChart,
         model = model1 + model2,
         startAxis = startAxis,
@@ -120,7 +120,7 @@ public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
 
     composedChart.setPersistentMarkers(markerMap)
 
-    Chart(
+    CartesianChartHost(
         chart = composedChart,
         model = model1 + model2,
         startAxis = startAxis,
@@ -133,7 +133,7 @@ public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
 @Composable
 @Preview("Column chart", widthDp = 350)
 public fun ColumnChart(modifier: Modifier = Modifier) {
-    Chart(
+    CartesianChartHost(
         chart = getColumnChart(markerMap = markerMap),
         model = model1,
         startAxis = startAxis,
@@ -145,7 +145,7 @@ public fun ColumnChart(modifier: Modifier = Modifier) {
 @Composable
 @Preview("Line chart", widthDp = 350)
 public fun LineChart(modifier: Modifier = Modifier) {
-    Chart(
+    CartesianChartHost(
         chart = getLineChart(markerMap = markerMap),
         model = model2,
         startAxis = startAxis,

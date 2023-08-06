@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.style.ChartStyle
+import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.core.DefaultAlpha
 import com.patrykandpatrick.vico.core.DefaultColors
 import com.patrykandpatrick.vico.core.DefaultDimens
@@ -33,11 +34,15 @@ import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 
 @Composable
-internal fun rememberChartStyle(columnChartColors: List<Color>, lineChartColors: List<Color>): ChartStyle {
+internal fun rememberChartStyle(
+    columnChartColors: List<Color>,
+    lineChartColors: List<Color>,
+): ChartStyle {
     val isSystemInDarkTheme = isSystemInDarkTheme()
+    val chartStyle = LocalChartStyle.current
     return remember(columnChartColors, lineChartColors, isSystemInDarkTheme) {
         val defaultColors = if (isSystemInDarkTheme) DefaultColors.Dark else DefaultColors.Light
-        ChartStyle(
+        chartStyle.copy(
             ChartStyle.Axis(
                 axisLabelColor = Color(defaultColors.axisLabelColor),
                 axisGuidelineColor = Color(defaultColors.axisGuidelineColor),

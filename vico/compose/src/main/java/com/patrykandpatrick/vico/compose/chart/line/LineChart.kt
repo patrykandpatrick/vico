@@ -25,7 +25,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultAlpha
@@ -61,7 +61,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
  * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
  *
- * @see Chart
+ * @see CartesianChartHost
  * @see ColumnChart
  */
 @Composable
@@ -95,7 +95,7 @@ public fun lineChart(
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
  * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
  *
- * @see Chart
+ * @see CartesianChartHost
  * @see ColumnChart
  */
 @Deprecated(message = "Axis values should be overridden via `AxisValuesOverrider`.", level = DeprecationLevel.ERROR)

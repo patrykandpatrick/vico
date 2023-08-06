@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,4 +16,11 @@
 
 package com.patrykandpatrick.vico.core.constants
 
+/**
+ * A constant representing the full circle in degrees.
+ */
+public const val FULL_DEGREES: Float = 360f
+
 internal const val ERR_REPEATING_COLLECTION_EMPTY = "Cannot get repeated item from empty collection."
+
+internal const val ELLIPSIS: String = "…"

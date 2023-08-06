@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package com.patrykandpatrick.vico.core.extension
+
+import android.graphics.Color
 
 private const val ALPHA_BIT_SHIFT = 24
 private const val RED_BIT_SHIFT = 16
@@ -63,6 +65,18 @@ public val Int.colorHex: String
  */
 public val Int.alpha: Int
     get() = extractColorChannel(ALPHA_BIT_SHIFT)
+
+/**
+ * Checks whether this color int is not transparent.
+ */
+public val Int.isNotTransparent: Boolean
+    get() = this != Color.TRANSPARENT
+
+/**
+ * Checks whether this color int is transparent.
+ */
+public val Int.isTransparent: Boolean
+    get() = this == Color.TRANSPARENT
 
 private fun Int.extractColorChannel(bitShift: Int): Int =
     this shr bitShift and COLOR_MASK

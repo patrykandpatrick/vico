@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatrick.vico.compose.component.lineComponent
@@ -83,7 +83,7 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
 @Composable
 public fun ThresholdLine() {
     ProvidePreviewChartStyle {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier,
             chart = columnChart().apply {
                 addDecoration(
@@ -106,7 +106,7 @@ public fun ThresholdLine() {
 @Composable
 public fun ThresholdLineWithCustomText() {
     ProvidePreviewChartStyle {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier,
             chart = columnChart().apply {
                 addDecoration(
@@ -167,7 +167,7 @@ public fun ThresholdLineWithCustomText() {
 @Composable
 public fun RangedThresholdLine() {
     ProvidePreviewChartStyle {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier,
             chart = columnChart().apply {
                 addDecoration(
@@ -190,7 +190,7 @@ public fun RangedThresholdLine() {
 @Composable
 public fun RangedThresholdLineWithBrushShader() {
     ProvidePreviewChartStyle {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier,
             chart = columnChart().apply {
                 addDecoration(
@@ -221,7 +221,7 @@ public fun RangedThresholdLineWithBrushShader() {
 @Composable
 public fun RangedThresholdLineWithComponentShader() {
     ProvidePreviewChartStyle {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier,
             chart = columnChart().apply {
                 addDecoration(

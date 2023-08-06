@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,5 +39,12 @@ public interface BoundsAware {
         bottom: Number,
     ) {
         bounds.set(left, top, right, bottom)
+    }
+
+    /**
+     * Sets the coordinates of the bounds to the provided bounds.
+     */
+    public fun setBounds(bounds: RectF) {
+        this.bounds.set(bounds)
     }
 }

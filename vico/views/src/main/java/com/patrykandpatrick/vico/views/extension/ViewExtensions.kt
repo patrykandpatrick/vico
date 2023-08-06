@@ -25,7 +25,7 @@ import androidx.core.view.updatePadding
 import com.patrykandpatrick.vico.core.model.Point
 import kotlin.math.min
 
-internal fun View.measureDimension(desiredSize: Int, measureSpec: Int): Int {
+internal fun measureDimension(desiredSize: Int, measureSpec: Int): Int {
     val specMode = View.MeasureSpec.getMode(measureSpec)
     val specSize = View.MeasureSpec.getSize(measureSpec)
     return when (specMode) {
@@ -78,3 +78,6 @@ internal fun OverScroller.fling(
  */
 public val MotionEvent.point: Point
     get() = Point(x, y)
+
+internal val View.isAttachedToWindowCompat: Boolean
+    get() = ViewCompat.isAttachedToWindow(this)
