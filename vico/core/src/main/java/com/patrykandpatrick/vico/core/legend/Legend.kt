@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.legend
 
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 
 /**
@@ -28,10 +28,10 @@ public interface Legend : BoundsAware {
     /**
      * Returns the height of the legend.
      */
-    public fun getHeight(context: MeasureContext, availableWidth: Float): Float
+    public fun getHeight(context: CartesianMeasureContext, availableWidth: Float): Float
 
     /**
      * Draws the legend.
      */
-    public fun draw(context: ChartDrawContext)
+    public fun draw(context: CartesianChartDrawContext)
 }

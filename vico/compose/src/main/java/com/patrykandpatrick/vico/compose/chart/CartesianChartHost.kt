@@ -46,7 +46,7 @@ import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
 import com.patrykandpatrick.vico.compose.extension.chartTouchEvent
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
-import com.patrykandpatrick.vico.compose.layout.getMeasureContext
+import com.patrykandpatrick.vico.compose.layout.getCartesianMeasureContext
 import com.patrykandpatrick.vico.compose.state.MutableSharedState
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
@@ -55,7 +55,7 @@ import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
@@ -101,7 +101,7 @@ chartentrym * @param topAxis the axis displayed at the top of the chart.
  * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
 @Composable
-public fun <Model : ChartEntryModel> CartesianChartHost(
+public fun <Model : EntryModel<*>> CartesianChartHost(
     chart: Chart<Model>,
     chartModelProducer: ChartModelProducer<Model>,
     modifier: Modifier = Modifier,
@@ -182,7 +182,7 @@ public fun <Model : ChartEntryModel> CartesianChartHost(
  */
 @Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.", level = DeprecationLevel.ERROR)
 @Composable
-public fun <Model : ChartEntryModel> CartesianChartHost(
+public fun <Model : EntryModel<*>> CartesianChartHost(
     chart: Chart<Model>,
     model: Model,
     modifier: Modifier = Modifier,
@@ -253,7 +253,7 @@ public fun <Model : ChartEntryModel> CartesianChartHost(
  * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
 @Composable
-public fun <Model : ChartEntryModel> CartesianChartHost(
+public fun <Model : EntryModel<*>> CartesianChartHost(
     chart: Chart<Model>,
     model: Model,
     modifier: Modifier = Modifier,
@@ -298,7 +298,7 @@ public fun <Model : ChartEntryModel> CartesianChartHost(
 
 @Suppress("LongMethod")
 @Composable
-internal fun <Model : ChartEntryModel> CartesianChartHostImpl(
+internal fun <Model : EntryModel<*>> CartesianChartHostImpl(
     chart: Chart<Model>,
     model: Model,
     startAxis: AxisRenderer<AxisPosition.Vertical.Start>?,
@@ -321,7 +321,8 @@ internal fun <Model : ChartEntryModel> CartesianChartHostImpl(
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val zoom = remember { mutableStateOf(1f) }
-    val measureContext = getMeasureContext(chartScrollSpec.isScrollEnabled, zoom.value, bounds, horizontalLayout)
+    val measureContext =
+        getCartesianMeasureContext(chartScrollSpec.isScrollEnabled, zoom.value, bounds, horizontalLayout)
     val interactionSource = remember { MutableInteractionSource() }
     val interaction = interactionSource.interactions.collectAsState(initial = null)
     val scrollListener = rememberScrollListener(markerTouchPoint, interaction)
@@ -388,7 +389,7 @@ internal fun <Model : ChartEntryModel> CartesianChartHostImpl(
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
-        val chartDrawContext = chartDrawContext(
+        val chartDrawContext = cartesianChartDrawContext(
             canvas = drawContext.canvas.nativeCanvas,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,

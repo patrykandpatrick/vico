@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,10 @@
 package com.patrykandpatrick.vico.core.chart.line
 
 import com.patrykandpatrick.vico.core.component.Component
-import com.patrykandpatrick.vico.core.context.DrawContext
+import com.patrykandpatrick.vico.core.context.CartesianDrawContext
 
 internal fun Component.drawPoint(
-    context: DrawContext,
+    context: CartesianDrawContext,
     x: Float,
     y: Float,
     halfPointSize: Float,

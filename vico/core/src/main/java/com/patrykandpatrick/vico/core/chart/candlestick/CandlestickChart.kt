@@ -27,14 +27,14 @@ import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.forEachIn
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.put
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.entryOf
 import com.patrykandpatrick.vico.core.extension.getStart
@@ -96,7 +96,7 @@ public open class CandlestickChart(
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         model: CandlestickEntryModel,
     ): Unit = with(context) {
         entryLocationMap.clear()
@@ -107,7 +107,7 @@ public open class CandlestickChart(
         heightMap.clear()
     }
 
-    private fun ChartDrawContext.drawChartInternal(
+    private fun CartesianChartDrawContext.drawChartInternal(
         chartValues: ChartValues,
         model: CandlestickEntryModel,
     ) {
@@ -216,7 +216,7 @@ public open class CandlestickChart(
     }
 
     override fun getHorizontalDimensions(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         model: CandlestickEntryModel,
     ): HorizontalDimensions = with(context) {
         val columnCollectionWidth = config.maxThicknessDp.pixels

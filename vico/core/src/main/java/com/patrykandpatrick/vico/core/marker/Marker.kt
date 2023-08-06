@@ -20,7 +20,7 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
-import com.patrykandpatrick.vico.core.context.DrawContext
+import com.patrykandpatrick.vico.core.context.CartesianDrawContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.model.Point
 
@@ -31,7 +31,7 @@ public interface Marker : ChartInsetter {
 
     /**
      * Draws the marker.
-     * @param context the [DrawContext] used to draw the marker.
+     * @param context the [CartesianDrawContext] used to draw the marker.
      * @param bounds the bounds in which the marker is drawn.
      * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
      */
@@ -40,21 +40,21 @@ public interface Marker : ChartInsetter {
         replaceWith = ReplaceWith("draw(context, bounds, markedEntries, chartValuesProvider)"),
     )
     public fun draw(
-        context: DrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
         markedEntries: List<EntryModel>,
     ): Unit = Unit
 
     /**
      * Draws the marker.
-     * @param context the [DrawContext] used to draw the marker.
+     * @param context the [CartesianDrawContext] used to draw the marker.
      * @param bounds the bounds in which the marker is drawn.
      * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
      * @param chartValuesProvider the [Chart]’s [ChartValuesProvider].
      */
     @Suppress("DEPRECATION")
     public fun draw(
-        context: DrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
         markedEntries: List<EntryModel>,
         chartValuesProvider: ChartValuesProvider,

@@ -36,7 +36,7 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.cornered.Corner
 import com.patrykandpatrick.vico.core.component.shape.cornered.MarkerCorneredShape
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.extension.copyColor
 import com.patrykandpatrick.vico.core.marker.Marker
 
@@ -87,7 +87,7 @@ internal fun rememberMarker(): Marker {
             }
 
             override fun getInsets(
-                context: MeasureContext,
+                context: CartesianMeasureContext,
                 outInsets: Insets,
                 horizontalDimensions: HorizontalDimensions,
             ) = with(context) {

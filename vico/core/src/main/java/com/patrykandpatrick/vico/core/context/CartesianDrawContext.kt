@@ -16,19 +16,10 @@
 
 package com.patrykandpatrick.vico.core.context
 
-import android.graphics.RectF
+import android.graphics.Canvas
 
 /**
- * A [MeasureContext] implementation that facilitates the mutation of some of its properties.
+ * [CartesianDrawContext] is an extension of [CartesianMeasureContext] that stores a [Canvas] and other properties.
+ * It also defines helpful drawing functions.
  */
-public data class MutableMeasureContext(
-    override val canvasBounds: RectF,
-    override var density: Float,
-    override var fontScale: Float,
-    override var isLtr: Boolean,
-) : MeasureContext, Extras by DefaultExtras() {
-
-    override fun reset() {
-        clearExtras()
-    }
-}
+public interface CartesianDrawContext : DrawContext, CartesianMeasureContext

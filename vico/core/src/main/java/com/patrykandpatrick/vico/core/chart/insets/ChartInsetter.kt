@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.chart.insets
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.marker.Marker
 
 /**
@@ -38,7 +38,7 @@ public interface ChartInsetter {
      * @param horizontalDimensions the associated [Chart]’s [HorizontalDimensions].
      */
     public fun getInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ): Unit = Unit
@@ -53,7 +53,7 @@ public interface ChartInsetter {
      * @param outInsets used to store the requested insets.
      */
     public fun getHorizontalInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         availableHeight: Float,
         outInsets: HorizontalInsets,
     ): Unit = Unit

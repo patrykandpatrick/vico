@@ -20,9 +20,15 @@ import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModel
 import com.patrykandpatrick.vico.core.candlestickentry.CandlestickTypedEntry
 import com.patrykandpatrick.vico.core.candlestickentry.candlestickEntryModelOf
 
-internal object SampleCandlestickEntryProvider {
+/**
+ * An object used to provide a sample [CandlestickEntryModel] instance. Used solely for previewing purposes.
+ */
+public object SampleCandlestickEntryProvider {
 
-    internal val sampleModel: CandlestickEntryModel =
+    /**
+     * The sample [CandlestickEntryModel] instance. Used solely for previewing purposes.
+     */
+    public val sampleModel: CandlestickEntryModel =
         candlestickEntryModelOf(
             CandlestickTypedEntry(
                 x = 0f,

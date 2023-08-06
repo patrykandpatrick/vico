@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.chart.decoration
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
@@ -96,7 +96,7 @@ public data class ThresholdLine(
     )
 
     override fun onDrawAboveChart(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         bounds: RectF,
     ): Unit = with(context) {
         val chartValues = chartValuesManager.getChartValues()

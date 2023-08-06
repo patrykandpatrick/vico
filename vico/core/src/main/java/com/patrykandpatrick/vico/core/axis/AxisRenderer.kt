@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 
@@ -40,14 +40,14 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
      *
      * @see drawAboveChart
      */
-    public fun drawBehindChart(context: ChartDrawContext)
+    public fun drawBehindChart(context: CartesianChartDrawContext)
 
     /**
      * Called after the [Chart] is drawn. Implementations can use this function to draw content above the [Chart].
      *
      * @param context holds the information needed to draw the axis.
      */
-    public fun drawAboveChart(context: ChartDrawContext)
+    public fun drawAboveChart(context: CartesianChartDrawContext)
 
     /**
      * The bounds ([RectF]) passed here define the area where the [AxisRenderer] shouldn’t draw anything.

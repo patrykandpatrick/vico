@@ -21,7 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.candlestick.hollow
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -52,7 +52,7 @@ internal fun ComposeChart9(
         config = CandlestickChart.Config.hollow(),
     )
 
-    Chart(
+    CartesianChartHost(
         modifier = modifier,
         chart = candlestickChart,
         chartModelProducer = modelProducer,

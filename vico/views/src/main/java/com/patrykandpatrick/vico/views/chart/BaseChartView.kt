@@ -26,7 +26,7 @@ import androidx.core.view.ViewCompat
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.context.MutableMeasureContext
+import com.patrykandpatrick.vico.core.context.MutableCartesianMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.views.extension.density
@@ -49,7 +49,7 @@ public abstract class BaseChartView<Model> internal constructor(
 
     protected val contentBounds: RectF = RectF()
 
-    protected val measureContext: MutableMeasureContext = MutableMeasureContext(
+    protected val measureContext: MutableCartesianMeasureContext = MutableCartesianMeasureContext(
         canvasBounds = contentBounds,
         density = context.density,
         fontScale = context.fontScale,

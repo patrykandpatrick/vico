@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,11 +18,11 @@ package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.collections.cacheInList
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 
 /**
  * Manages a chart’s axes, setting their bounds and drawing them.
@@ -89,7 +89,7 @@ public open class AxisManager {
      * properly, axes should take these insets into account while setting their bounds.
      */
     public fun setAxesBounds(
-        measureContext: MeasureContext,
+        measureContext: CartesianMeasureContext,
         contentBounds: RectF,
         chartBounds: RectF,
         insets: Insets,
@@ -125,7 +125,7 @@ public open class AxisManager {
     }
 
     private fun AxisRenderer<AxisPosition.Vertical.Start>.setStartAxisBounds(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         contentBounds: RectF,
         chartBounds: RectF,
         insets: Insets,
@@ -141,7 +141,7 @@ public open class AxisManager {
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Top>.setTopAxisBounds(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         contentBounds: RectF,
         insets: Insets,
     ) {
@@ -156,7 +156,7 @@ public open class AxisManager {
     }
 
     private fun AxisRenderer<AxisPosition.Vertical.End>.setEndAxisBounds(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         contentBounds: RectF,
         chartBounds: RectF,
         insets: Insets,
@@ -172,7 +172,7 @@ public open class AxisManager {
     }
 
     private fun AxisRenderer<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         contentBounds: RectF,
         chartBounds: RectF,
         insets: Insets,
@@ -202,7 +202,7 @@ public open class AxisManager {
      *
      * @see Axis.drawBehindChart
      */
-    public fun drawBehindChart(context: ChartDrawContext) {
+    public fun drawBehindChart(context: CartesianChartDrawContext) {
         axisCache.forEach { axis ->
             axis.drawBehindChart(context)
         }
@@ -216,7 +216,7 @@ public open class AxisManager {
      *
      * @see Axis.drawAboveChart
      */
-    public fun drawAboveChart(context: ChartDrawContext) {
+    public fun drawAboveChart(context: CartesianChartDrawContext) {
         axisCache.forEach { axis ->
             axis.drawAboveChart(context)
         }

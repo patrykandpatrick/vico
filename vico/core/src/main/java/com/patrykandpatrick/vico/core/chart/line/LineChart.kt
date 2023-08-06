@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.forEachInRelativelyIndexed
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -42,8 +42,8 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.inBounds
-import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianDrawContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.doubled
@@ -207,7 +207,7 @@ public open class LineChart(
          * @see Component
          */
         public fun drawPoint(
-            context: DrawContext,
+            context: CartesianDrawContext,
             x: Float,
             y: Float,
         ): Unit = with(context) {
@@ -217,7 +217,7 @@ public open class LineChart(
         /**
          * Draws the line.
          */
-        public fun drawLine(context: DrawContext, path: Path): Unit = with(context) {
+        public fun drawLine(context: CartesianDrawContext, path: Path): Unit = with(context) {
             linePaint.strokeWidth = lineThicknessDp.pixels
             canvas.drawPath(path, linePaint)
         }
@@ -225,7 +225,7 @@ public open class LineChart(
         /**
          * Draws the line background.
          */
-        public fun drawBackgroundLine(context: DrawContext, bounds: RectF, path: Path): Unit = with(context) {
+        public fun drawBackgroundLine(context: CartesianDrawContext, bounds: RectF, path: Path): Unit = with(context) {
             lineBackgroundPaint.shader = lineBackgroundShader
                 ?.provideShader(
                     context = context,
@@ -278,7 +278,7 @@ public open class LineChart(
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
         resetTempData()
@@ -360,7 +360,7 @@ public open class LineChart(
     /**
      * Draws a line’s points ([LineSpec.point]) and their corresponding data labels ([LineSpec.dataLabel]).
      */
-    protected open fun ChartDrawContext.drawPointsAndDataLabels(
+    protected open fun CartesianChartDrawContext.drawPointsAndDataLabels(
         lineSpec: LineSpec,
         entries: List<ChartEntry>,
         drawingStart: Float,
@@ -421,7 +421,7 @@ public open class LineChart(
         }
     }
 
-    protected fun ChartDrawContext.getMaxDataLabelWidth(
+    protected fun CartesianChartDrawContext.getMaxDataLabelWidth(
         entry: ChartEntry,
         x: Float,
         previousX: Float?,
@@ -468,7 +468,7 @@ public open class LineChart(
     /**
      * Performs the given [action] for each [ChartEntry] in [entries] that lies within the chart’s bounds.
      */
-    protected open fun ChartDrawContext.forEachPointWithinBoundsIndexed(
+    protected open fun CartesianChartDrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
         drawingStart: Float,
         action: (index: Int, entry: ChartEntry, x: Float, y: Float, previousX: Float?, nextX: Float?) -> Unit,
@@ -528,7 +528,7 @@ public open class LineChart(
     }
 
     override fun getHorizontalDimensions(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         model: ChartEntryModel,
     ): HorizontalDimensions = with(context) {
         val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
@@ -560,7 +560,7 @@ public open class LineChart(
     }
 
     override fun getInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {

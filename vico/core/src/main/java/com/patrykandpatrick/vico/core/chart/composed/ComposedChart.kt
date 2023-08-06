@@ -21,12 +21,12 @@ import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.updateAll
@@ -80,7 +80,7 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     override fun drawChart(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         model: ComposedChartEntryModel<Model>,
     ) {
         entryLocationMap.clear()
@@ -90,7 +90,7 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun drawChartInternal(context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
+    override fun drawChartInternal(context: CartesianChartDrawContext, model: ComposedChartEntryModel<Model>) {
         drawDecorationBehindChart(context)
         if (model.entries.isNotEmpty()) {
             drawChart(context, model)
@@ -98,7 +98,7 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     override fun getHorizontalDimensions(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         model: ComposedChartEntryModel<Model>,
     ): HorizontalDimensions {
         horizontalDimensions.clear()
@@ -126,7 +126,7 @@ public class ComposedChart<Model : ChartEntryModel>(
     }
 
     override fun getInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ) {
@@ -136,7 +136,11 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun getHorizontalInsets(context: MeasureContext, availableHeight: Float, outInsets: HorizontalInsets) {
+    override fun getHorizontalInsets(
+        context: CartesianMeasureContext,
+        availableHeight: Float,
+        outInsets: HorizontalInsets,
+    ) {
         charts.forEach { chart ->
             chart.getHorizontalInsets(context, availableHeight, tempInsets)
             outInsets.setValuesIfGreater(start = tempInsets.start, end = tempInsets.end)

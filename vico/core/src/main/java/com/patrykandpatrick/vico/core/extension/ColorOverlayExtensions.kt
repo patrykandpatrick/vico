@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.extension
 
 import android.graphics.Color
+import com.patrykandpatrick.vico.core.context.CartesianDrawContext
 import com.patrykandpatrick.vico.core.context.DrawContext
 
 @Suppress("MagicNumber")
@@ -44,8 +45,8 @@ private fun getElevationOverlayColorWithCorrectAlpha(
 }
 
 /**
- * Overlays the given [color] with [DrawContext.elevationOverlayColor], changing the opacity of
- * [DrawContext.elevationOverlayColor] depending on the value of [elevationDp].
+ * Overlays the given [color] with [CartesianDrawContext.elevationOverlayColor], changing the opacity of
+ * [CartesianDrawContext.elevationOverlayColor] depending on the value of [elevationDp].
  */
 public fun DrawContext.applyElevationOverlayToColor(color: Int, elevationDp: Float): Int =
     color.overlayColor(

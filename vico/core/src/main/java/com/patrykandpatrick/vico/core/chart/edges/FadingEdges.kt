@@ -26,7 +26,7 @@ import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.FADING_EDGE_WIDTH_DP
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.extension.copyColor
 
@@ -88,7 +88,7 @@ public open class FadingEdges(
      * @param bounds the bounds within which the fading edges will be drawn.
      */
     public fun applyFadingEdges(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         bounds: RectF,
     ): Unit = with(context) {
         val maxScroll = getMaxScrollDistance()
@@ -121,7 +121,7 @@ public open class FadingEdges(
         }
     }
 
-    private fun ChartDrawContext.drawFadingEdge(
+    private fun CartesianChartDrawContext.drawFadingEdge(
         left: Float,
         top: Float,
         right: Float,

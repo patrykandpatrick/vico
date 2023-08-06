@@ -27,8 +27,8 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.cornered.MarkerCorneredShape
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
-import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianDrawContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.extension.averageOf
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
@@ -71,7 +71,7 @@ public open class MarkerComponent(
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
 
     override fun draw(
-        context: DrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValuesProvider: ChartValuesProvider,
@@ -93,7 +93,7 @@ public open class MarkerComponent(
     }
 
     private fun drawLabel(
-        context: DrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValues: ChartValues,
@@ -125,7 +125,7 @@ public open class MarkerComponent(
     }
 
     private fun drawGuideline(
-        context: DrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
     ) {
@@ -143,7 +143,7 @@ public open class MarkerComponent(
     }
 
     override fun getInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {

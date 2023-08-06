@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.chart.decoration
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 
 /**
  * A [Decoration] presents additional information on a [Chart].
@@ -35,7 +35,7 @@ public interface Decoration {
      * @param [context] holds the information needed to draw the [Chart].
      * @param [bounds] the bounding box of the [Chart].
      */
-    public fun onDrawBehindChart(context: ChartDrawContext, bounds: RectF): Unit = Unit
+    public fun onDrawBehindChart(context: CartesianChartDrawContext, bounds: RectF): Unit = Unit
 
     /**
      * Called immediately after the [Chart] finishes drawing itself.
@@ -43,5 +43,5 @@ public interface Decoration {
      * @param [context] holds the information needed to draw the [Chart].
      * @param [bounds] the bounding box of the [Chart].
      */
-    public fun onDrawAboveChart(context: ChartDrawContext, bounds: RectF): Unit = Unit
+    public fun onDrawAboveChart(context: CartesianChartDrawContext, bounds: RectF): Unit = Unit
 }

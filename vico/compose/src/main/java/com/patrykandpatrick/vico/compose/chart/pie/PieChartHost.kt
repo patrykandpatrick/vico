@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
@@ -31,7 +32,9 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.ChartBox
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
 import com.patrykandpatrick.vico.compose.chart.entry.defaultDiffAnimationSpec
-import com.patrykandpatrick.vico.compose.layout.getMeasureContext
+import com.patrykandpatrick.vico.compose.layout.getDensity
+import com.patrykandpatrick.vico.compose.layout.getFontScale
+import com.patrykandpatrick.vico.compose.layout.getIsLtr
 import com.patrykandpatrick.vico.compose.state.MutableSharedState
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultDimens
@@ -64,6 +67,7 @@ public fun PieChartHost(
     innerSize: Size.InnerSize = currentChartStyle.pieChart.innerSize,
     startAngle: Float = currentChartStyle.pieChart.startAngle,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
+    elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
     runInitialAnimation: Boolean = true,
     onEmptyState: (@Composable () -> Unit)? = null,
 ) {
@@ -84,6 +88,7 @@ public fun PieChartHost(
                 outerSize = outerSize,
                 innerSize = innerSize,
                 startAngle = startAngle,
+                elevationOverlayColor = elevationOverlayColor,
             )
         } ?: onEmptyState?.invoke()
     }
@@ -109,16 +114,13 @@ public fun PieChartHost(
     outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
     innerSize: Size.InnerSize = currentChartStyle.pieChart.innerSize,
     startAngle: Float = currentChartStyle.pieChart.startAngle,
+    elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
 ) {
     val bounds = remember { RectF() }
 
-    val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb().toLong()
-
-    val measureContext = getMeasureContext(
-        isHorizontalScrollEnabled = false,
-        chartScale = 1f,
-        canvasBounds = bounds,
-    )
+    val density = getDensity()
+    val fontScale = getFontScale()
+    val isLtr = getIsLtr()
 
     val pieChart = remember {
         PieChart(
@@ -147,10 +149,10 @@ public fun PieChartHost(
 
         val drawContext = drawContext(
             canvas = drawContext.canvas.nativeCanvas,
-            density = measureContext.density,
-            fontScale = measureContext.fontScale,
-            isLtr = measureContext.isLtr,
-            elevationOverlayColor = elevationOverlayColor,
+            density = density,
+            fontScale = fontScale,
+            isLtr = isLtr,
+            elevationOverlayColor = elevationOverlayColor.toArgb().toLong(),
         )
 
         pieChart.draw(

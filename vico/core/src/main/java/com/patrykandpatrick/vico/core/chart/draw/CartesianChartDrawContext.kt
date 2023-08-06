@@ -19,14 +19,14 @@ package com.patrykandpatrick.vico.core.chart.draw
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianDrawContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.model.Point
 
 /**
- * An extension of [DrawContext] that holds additional data required to render a [Chart].
+ * An extension of [CartesianDrawContext] that holds additional data required to render a [Chart].
  */
-public interface ChartDrawContext : DrawContext {
+public interface CartesianChartDrawContext : CartesianDrawContext {
 
     /**
      * The bounds in which the [Chart] will be drawn.
@@ -52,7 +52,7 @@ public interface ChartDrawContext : DrawContext {
 /**
  * Returns the maximum scroll distance.
  */
-public fun MeasureContext.getMaxScrollDistance(
+public fun CartesianMeasureContext.getMaxScrollDistance(
     chartWidth: Float,
     horizontalDimensions: HorizontalDimensions,
 ): Float {
@@ -68,7 +68,7 @@ public fun MeasureContext.getMaxScrollDistance(
 /**
  * Returns the maximum scroll distance.
  */
-public fun ChartDrawContext.getMaxScrollDistance(): Float =
+public fun CartesianChartDrawContext.getMaxScrollDistance(): Float =
     getMaxScrollDistance(
         chartWidth = chartBounds.width(),
         horizontalDimensions = horizontalDimensions,

@@ -20,7 +20,6 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shadow.PaintComponent
@@ -84,7 +83,6 @@ public open class Slice(
      * @param label the label to draw.
      * @param spacingPath the path of the spacing between slices.
      */
-    @LongParameterListDrawFunction
     public open fun draw(
         context: DrawContext,
         contentBounds: RectF,

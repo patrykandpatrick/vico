@@ -21,12 +21,12 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
-import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianDrawContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
@@ -60,7 +60,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      */
     public var labelOffset: Int = 0
 
-    override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
+    override fun drawBehindChart(context: CartesianChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
@@ -147,12 +147,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
-    override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
+    override fun drawAboveChart(context: CartesianChartDrawContext): Unit = Unit
 
     private fun getEntryLength(xSpacing: Float) =
         ceil(bounds.width() / xSpacing).toInt() + 1
 
-    private inline fun ChartDrawContext.forEachEntity(
+    private inline fun CartesianChartDrawContext.forEachEntity(
         scrollAdjustment: Int,
         xRange: ClosedFloatingPointRange<Float>,
         action: (x: Float, shouldDrawLines: Boolean, shouldDrawLabel: Boolean) -> Unit,
@@ -182,7 +182,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    private fun DrawContext.getTickDrawCenter(
+    private fun CartesianDrawContext.getTickDrawCenter(
         scrollX: Float,
         tickDrawStep: Float,
         scrollAdjustment: Int,
@@ -195,7 +195,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     override fun getInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {
@@ -209,7 +209,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     }
 
     private fun getDesiredHeight(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: HorizontalDimensions,
     ): Float = with(context) {
         val labelWidth =
@@ -253,7 +253,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    private fun MeasureContext.getLabelsToMeasure(): List<CharSequence> {
+    private fun CartesianMeasureContext.getLabelsToMeasure(): List<CharSequence> {
         val chartValues = chartValuesManager.getChartValues()
 
         return listOf(
@@ -263,7 +263,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         ).map { x -> valueFormatter.formatValue(value = x, chartValues = chartValues) }
     }
 
-    private fun ChartDrawContext.getMaxLabelWidth(x: Float): Int {
+    private fun CartesianChartDrawContext.getMaxLabelWidth(x: Float): Int {
         val chartValues = chartValuesManager.getChartValues()
         val isFirst = ((x - chartValues.minX) / chartValues.xStep).toInt() == labelOffset
         val isLast = (chartValues.maxX - x) / chartValues.xStep < labelSpacing

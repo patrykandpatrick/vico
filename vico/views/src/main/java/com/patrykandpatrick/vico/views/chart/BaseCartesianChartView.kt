@@ -35,14 +35,16 @@ import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.EntryModel
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -61,11 +63,12 @@ import com.patrykandpatrick.vico.views.scroll.ChartScrollSpec
 import com.patrykandpatrick.vico.views.scroll.copy
 import com.patrykandpatrick.vico.views.theme.ThemeHandler
 import kotlin.properties.Delegates.observable
+import kotlin.properties.ReadWriteProperty
 
 /**
  * The base for [View]s that display a chart. Subclasses define a [Model] implementation they can handle.
  */
-public abstract class BaseCartesianChartView<Model : ChartEntryModel> internal constructor(
+public abstract class BaseCartesianChartView<Model : EntryModel<*>> internal constructor(
     context: Context,
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
@@ -131,6 +134,19 @@ public abstract class BaseCartesianChartView<Model : ChartEntryModel> internal c
      * The [AxisRenderer] for the bottom axis.
      */
     public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
+
+    /**
+     * Defines how the chart’s content is positioned horizontally.
+     */
+    public var horizontalLayout: HorizontalLayout by invalidatingObservable(themeHandler.horizontalLayout) { newValue ->
+        measureContext.horizontalLayout = newValue
+    }
+
+    /**
+     * Overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this is null, the
+     * default _x_ step ([ChartEntryModel.xGcd]) is used.
+     */
+    public var getXStep: ((Model) -> Float)? by invalidatingObservable(null)
 
     /**
      * Houses scrolling-related settings.
@@ -233,14 +249,25 @@ public abstract class BaseCartesianChartView<Model : ChartEntryModel> internal c
         }
     }
 
-    private fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
+    protected fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
         if (chart != null && model != null) {
             measureContext.chartValuesManager.resetChartValues()
-            chart.updateChartValues(measureContext.chartValuesManager, model)
+            chart.updateChartValues(measureContext.chartValuesManager, model, getXStep?.invoke(model))
 
             if (isAttachedToWindowCompat) {
                 invalidate()
             }
+        }
+    }
+
+    protected inline fun <T> invalidatingObservable(
+        initialValue: T,
+        crossinline onChange: (T) -> Unit = {},
+    ): ReadWriteProperty<Any?, T> {
+        onChange(initialValue)
+        return observable(initialValue) { _, _, newValue ->
+            tryInvalidate(chart, model)
+            onChange(newValue)
         }
     }
 
@@ -291,21 +318,21 @@ public abstract class BaseCartesianChartView<Model : ChartEntryModel> internal c
             ViewCompat.postInvalidateOnAnimation(this)
         }
 
-        val segmentProperties = chart.getSegmentProperties(measureContext, model)
+        val horizontalDimensions = chart.getHorizontalDimensions(measureContext, model)
 
         scrollHandler.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
-            segmentProperties = segmentProperties,
+            horizontalDimensions = horizontalDimensions,
         )
 
         scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
-        val chartDrawContext = chartDrawContext(
+        val chartDrawContext = cartesianChartDrawContext(
             canvas = canvas,
             elevationOverlayColor = elevationOverlayColor,
             measureContext = measureContext,
             markerTouchPoint = markerTouchPoint,
-            segmentProperties = segmentProperties,
+            horizontalDimensions = horizontalDimensions,
             chartBounds = chart.bounds,
             horizontalScroll = scrollHandler.value,
             autoScaleUp = autoScaleUp,
@@ -341,7 +368,7 @@ public abstract class BaseCartesianChartView<Model : ChartEntryModel> internal c
     }
 
     private fun updateBounds(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         chart: Chart<Model>,
         model: Model,
     ): RectF {
@@ -351,7 +378,7 @@ public abstract class BaseCartesianChartView<Model : ChartEntryModel> internal c
             contentBounds = contentBounds,
             chart = chart,
             legend = legend,
-            segmentProperties = chart.getSegmentProperties(context = context, model = model),
+            horizontalDimensions = chart.getHorizontalDimensions(context = context, model = model),
             marker,
         )
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,12 +17,12 @@
 package com.patrykandpatrick.vico.core.legend
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.half
@@ -48,7 +48,7 @@ public open class VerticalLegend(
 
     override val bounds: RectF = RectF()
 
-    override fun getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
+    override fun getHeight(context: CartesianMeasureContext, availableWidth: Float): Float = with(context) {
         items.fold(0f) { sum, item ->
             sum + maxOf(
                 iconSizeDp.pixels,
@@ -57,7 +57,7 @@ public open class VerticalLegend(
         } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
     }
 
-    override fun draw(context: ChartDrawContext): Unit = with(context) {
+    override fun draw(context: CartesianChartDrawContext): Unit = with(context) {
         var currentTop = bounds.top + padding.topDp.pixels
 
         items.forEach { item ->
@@ -102,7 +102,7 @@ public open class VerticalLegend(
 
     @Deprecated("Use `LegendItem#getLabelHeight` instead.")
     @Suppress("DEPRECATION")
-    protected open fun Item.getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
+    protected open fun Item.getHeight(context: CartesianMeasureContext, availableWidth: Float): Float = with(context) {
         label.getHeight(this, labelText, (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt())
     }
 

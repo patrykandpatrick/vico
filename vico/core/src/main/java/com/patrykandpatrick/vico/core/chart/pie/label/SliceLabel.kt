@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.chart.pie.label
 
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.annotation.LongParameterListDrawFunction
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
@@ -39,7 +38,6 @@ public abstract class SliceLabel {
      * @param slicePath the [Path] of the [Slice].
      * @param label the label to draw.
      */
-    @LongParameterListDrawFunction
     public abstract fun drawLabel(
         context: DrawContext,
         oval: RectF,
@@ -59,7 +57,6 @@ public abstract class SliceLabel {
      * @param label the label to draw.
      * @param outInsets the [Insets] to fill with the insets.
      */
-    @LongParameterListDrawFunction
     public open fun getInsets(
         context: DrawContext,
         contentBounds: RectF,

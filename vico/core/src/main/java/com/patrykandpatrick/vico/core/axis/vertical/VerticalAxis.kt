@@ -26,13 +26,13 @@ import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabel
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.context.getOrPutExtra
 import com.patrykandpatrick.vico.core.extension.getEnd
 import com.patrykandpatrick.vico.core.extension.getStart
@@ -82,7 +82,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
     override fun drawBehindChart(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
     ): Unit = with(context) {
         val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
 
@@ -115,7 +115,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         )
     }
 
-    override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
+    override fun drawAboveChart(context: CartesianChartDrawContext): Unit = with(context) {
         val label = label
         val labelCount = getDrawLabelCount(bounds.height().toInt())
 
@@ -163,7 +163,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun ChartDrawContext.drawLabel(
+    private fun CartesianChartDrawContext.drawLabel(
         label: TextComponent,
         labelText: CharSequence,
         labelX: Float,
@@ -202,13 +202,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun MeasureContext.getTickLeftX(): Float {
+    private fun CartesianMeasureContext.getTickLeftX(): Float {
         val onLeft = position.isLeft(isLtr = isLtr)
         val base = if (onLeft) bounds.right else bounds.left
         return if (onLeft == (horizontalLabelPosition == Outside)) base - axisThickness.half - tickLength else base
     }
 
-    private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
+    private fun CartesianMeasureContext.getDrawLabelCount(availableHeight: Int): Int {
         label?.let { label ->
 
             val chartValues = chartValuesManager.getChartValues(position)
@@ -231,7 +231,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         return maxLabelCount
     }
 
-    private fun MeasureContext.getLabels(
+    private fun CartesianMeasureContext.getLabels(
         maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
     ): List<CharSequence> {
         val chartValues = chartValuesManager.getChartValues(position)
@@ -248,7 +248,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     override fun getHorizontalInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         availableHeight: Float,
         outInsets: HorizontalInsets,
     ): Unit = with(context) {
@@ -263,7 +263,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     override fun getInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {
@@ -274,10 +274,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 top = labelHeight.half - lineThickness,
                 bottom = labelHeight.half,
             )
+
             VerticalLabelPosition.Top -> outInsets.set(
                 top = labelHeight - lineThickness,
                 bottom = lineThickness,
             )
+
             VerticalLabelPosition.Bottom -> outInsets.set(
                 top = lineThickness.half,
                 bottom = labelHeight,
@@ -289,7 +291,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      * Calculates the optimal width for this [VerticalAxis], accounting for the value of [sizeConstraint].
      */
     private fun getDesiredWidth(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         labels: List<CharSequence>,
     ): Float = with(context) {
         when (val constraint = sizeConstraint) {
@@ -305,6 +307,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness.half + tickLength)
                     .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
             }
+
             is SizeConstraint.Exact -> constraint.sizeDp.pixels
             is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
             is SizeConstraint.TextWidth -> label?.getWidth(
@@ -315,12 +318,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
-        Outside -> label?.let { label ->
-            labels.maxOfOrNull { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
-        }.orZero
-        Inside -> 0f
-    }
+    private fun CartesianMeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float =
+        when (horizontalLabelPosition) {
+            Outside -> label?.let { label ->
+                labels.maxOfOrNull { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
+            }.orZero
+
+            Inside -> 0f
+        }
 
     /**
      * Defines the horizontal position of each of a vertical axis’s labels relative to the axis line.

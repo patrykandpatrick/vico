@@ -20,13 +20,13 @@ import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -101,10 +101,10 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @param context holds the data needed to draw the [Chart].
      * @param model holds data about the [Chart]’s entries.
      *
-     * @see ChartDrawContext
+     * @see CartesianChartDrawContext
      */
     public fun drawScrollableContent(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         model: Model,
     )
 
@@ -114,10 +114,10 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @param context holds the data needed to draw the [Chart].
      * @param model holds data about the [Chart]’s entries.
      *
-     * @see ChartDrawContext
+     * @see CartesianChartDrawContext
      */
     public fun drawNonScrollableContent(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         model: Model,
     )
 
@@ -184,7 +184,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @param context holds data used for component measurements.
      * @param model holds data about the [Chart]’s entries.
      */
-    public fun getHorizontalDimensions(context: MeasureContext, model: Model): HorizontalDimensions
+    public fun getHorizontalDimensions(context: CartesianMeasureContext, model: Model): HorizontalDimensions
 
     /**
      * Updates the [ChartValues] stored in the provided [ChartValuesManager] instance to this [Chart]’s [ChartValues].

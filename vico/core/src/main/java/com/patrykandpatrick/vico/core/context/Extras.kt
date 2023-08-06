@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,8 @@
 
 package com.patrykandpatrick.vico.core.context
 
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import kotlin.collections.Map
-
 /**
- * An abstraction layer over [Map] used by [MeasureContext] and [ChartDrawContext] to store and retrieve data.
+ * An abstraction layer over [Map] used i.e. by [MeasureContext] and [DrawContext] to store and retrieve data.
  *
  * Extras are kept in memory while measuring or drawing is taking place. Afterwards, they are removed.
  */

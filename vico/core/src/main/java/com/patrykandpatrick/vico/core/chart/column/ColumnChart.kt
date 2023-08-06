@@ -23,7 +23,7 @@ import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.forEachInRelativelyIndexed
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.put
@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.inBounds
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.doubled
@@ -108,7 +108,7 @@ public open class ColumnChart(
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         model: ChartEntryModel,
     ): Unit = with(context) {
         entryLocationMap.clear()
@@ -119,7 +119,7 @@ public open class ColumnChart(
         heightMap.clear()
     }
 
-    protected open fun ChartDrawContext.drawChartInternal(
+    protected open fun CartesianChartDrawContext.drawChartInternal(
         chartValues: ChartValues,
         model: ChartEntryModel,
     ) {
@@ -215,7 +215,7 @@ public open class ColumnChart(
         }
     }
 
-    protected open fun ChartDrawContext.drawStackedDataLabel(
+    protected open fun CartesianChartDrawContext.drawStackedDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         negativeY: Float?,
@@ -236,7 +236,7 @@ public open class ColumnChart(
         }
     }
 
-    protected open fun ChartDrawContext.drawDataLabel(
+    protected open fun CartesianChartDrawContext.drawDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         dataLabelValue: Float,
@@ -332,7 +332,7 @@ public open class ColumnChart(
     }
 
     override fun getHorizontalDimensions(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         model: ChartEntryModel,
     ): HorizontalDimensions = with(context) {
         val columnCollectionWidth = getColumnCollectionWidth(model.entries.size)
@@ -343,6 +343,7 @@ public open class ColumnChart(
                     scalableStartPadding = xSpacing.half
                     scalableEndPadding = scalableStartPadding
                 }
+
                 is HorizontalLayout.FullWidth -> {
                     scalableStartPadding = columnCollectionWidth.half + horizontalLayout.startPaddingDp.pixels
                     scalableEndPadding = columnCollectionWidth.half + horizontalLayout.endPaddingDp.pixels
@@ -351,7 +352,7 @@ public open class ColumnChart(
         }
     }
 
-    protected open fun MeasureContext.getColumnCollectionWidth(
+    protected open fun CartesianMeasureContext.getColumnCollectionWidth(
         entryCollectionSize: Int,
     ): Float = when (mergeMode) {
         MergeMode.Stack ->
@@ -361,7 +362,10 @@ public open class ColumnChart(
             getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
-    protected open fun MeasureContext.getDrawingStart(entryCollectionIndex: Int, entryCollectionCount: Int): Float {
+    protected open fun CartesianMeasureContext.getDrawingStart(
+        entryCollectionIndex: Int,
+        entryCollectionCount: Int,
+    ): Float {
         val mergeModeComponent = when (mergeMode) {
             MergeMode.Grouped ->
                 getCumulatedThickness(entryCollectionIndex) + innerSpacingDp.pixels * entryCollectionIndex
@@ -373,7 +377,7 @@ public open class ColumnChart(
             layoutDirectionMultiplier
     }
 
-    protected open fun MeasureContext.getCumulatedThickness(count: Int): Float {
+    protected open fun CartesianMeasureContext.getCumulatedThickness(count: Int): Float {
         var thickness = 0f
         for (i in 0 until count) {
             thickness += columns.getRepeating(i).thicknessDp * density

@@ -19,27 +19,25 @@ package com.patrykandpatrick.vico.core.draw
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultColors
-import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.context.CartesianDrawContext
 import com.patrykandpatrick.vico.core.context.DefaultExtras
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.Extras
 
 /**
- * Calls the specified function block with [DrawContext.canvas] as its receiver.
+ * Calls the specified function block with [CartesianDrawContext.canvas] as its receiver.
  */
 public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
     canvas.block()
 }
 
 /**
- * Creates an anonymous implementation of [DrawContext].
+ * Creates an anonymous implementation of [CartesianDrawContext].
  *
  * @param canvas the canvas to draw the chart on.
  * @param density the pixel density of the screen (used in pixel size calculation).
  * @param fontScale the scale of fonts.
  * @param isLtr whether the device layout is left-to-right.
- * @param elevationOverlayColor the elevation overlay color. This is applied to components that cast shadows.
  */
 public fun drawContext(
     canvas: Canvas,
@@ -55,10 +53,6 @@ public fun drawContext(
     override val density: Float = density
     override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr
-    override val isHorizontalScrollEnabled: Boolean = false
-    override val chartScale: Float = 1f
-    override val chartValuesManager: ChartValuesManager = ChartValuesManager()
-    override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented()
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
         val originalCanvas = this.canvas
@@ -68,7 +62,6 @@ public fun drawContext(
     }
 
     override fun reset() {
-        chartValuesManager.resetChartValues()
         clearExtras()
     }
 }
