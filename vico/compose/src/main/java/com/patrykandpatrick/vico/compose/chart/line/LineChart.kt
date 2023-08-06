@@ -55,6 +55,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
  *
  * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
  * are lines.
+ * @param spacing the distance between neighboring major entries’ points.
  * @param decorations the list of [Decoration]s that will be added to the [LineChart].
  * @param persistentMarkers maps x-axis values to persistent [Marker]s.
  * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
@@ -86,6 +87,7 @@ public fun lineChart(
  *
  * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
  * are lines.
+ * @param spacing the distance between neighboring major entries’ points.
  * @param minX the minimum value shown on the x-axis. If not null, this overrides [ChartEntryModel.minX].
  * @param maxX the maximum value shown on the x-axis. If not null, this overrides [ChartEntryModel.maxX].
  * @param minY the minimum value shown on the y-axis. If not null, this overrides [ChartEntryModel.minY].
