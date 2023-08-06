@@ -98,6 +98,7 @@
         <attr name="showTitle" format="boolean|reference" />
         <attr name="horizontalAxisLabelSpacing" format="integer" />
         <attr name="horizontalAxisLabelOffset" format="integer" />
+        <attr name="shiftExtremeTicks" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="LineComponent">

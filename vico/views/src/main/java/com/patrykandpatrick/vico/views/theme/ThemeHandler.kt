@@ -216,6 +216,7 @@ internal class ThemeHandler(
                     itemPlacer = AxisItemPlacer.Horizontal.default(
                         axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1),
                         axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0),
+                        axisStyle.getBoolean(R.styleable.Axis_shiftExtremeTicks, true),
                     )
                 }
             }
