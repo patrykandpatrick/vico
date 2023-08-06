@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.line.lineSpec
@@ -79,7 +79,7 @@ public fun RegularLineChart() {
     Chart(
         chart = lineChart(),
         model = model1,
-        startAxis = startAxis(),
+        startAxis = rememberStartAxis(),
     )
 }
 
@@ -94,7 +94,7 @@ public fun RegularLineChartExpanded() {
             ),
         ),
         model = model1,
-        startAxis = startAxis(),
+        startAxis = rememberStartAxis(),
     )
 }
 
@@ -109,7 +109,7 @@ public fun RegularLineChartCollapsed() {
             ),
         ),
         model = model1,
-        startAxis = startAxis(),
+        startAxis = rememberStartAxis(),
     )
 }
 
@@ -131,7 +131,7 @@ public fun ComposedLineChart() {
             ),
         ),
         model = model1 + model2,
-        startAxis = startAxis(),
+        startAxis = rememberStartAxis(),
     )
 }
 
@@ -151,6 +151,6 @@ public fun ComposedLineChartCollapsed() {
             ),
         ),
         model = model1 + model2,
-        startAxis = startAxis(),
+        startAxis = rememberStartAxis(),
     )
 }

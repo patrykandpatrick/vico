@@ -21,8 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.patrykandpatrick.vico.compose.axis.horizontal.topAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberTopAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
@@ -73,8 +73,8 @@ private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProduc
         Chart(
             chart = remember(columnChart, lineChart) { columnChart + lineChart },
             chartModelProducer = chartEntryModelProducer,
-            topAxis = topAxis(),
-            endAxis = endAxis(),
+            topAxis = rememberTopAxis(),
+            endAxis = rememberEndAxis(),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )

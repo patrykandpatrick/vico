@@ -23,8 +23,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
@@ -58,7 +58,7 @@ private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
         Chart(
             chart = lineChart(axisValuesOverrider = axisValueOverrider),
             chartModelProducer = chartEntryModelProducer,
-            startAxis = startAxis(
+            startAxis = rememberStartAxis(
                 guideline = null,
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
                 titleComponent = textComponent(
@@ -70,7 +70,7 @@ private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
                 ),
                 title = stringResource(R.string.y_axis),
             ),
-            bottomAxis = bottomAxis(
+            bottomAxis = rememberBottomAxis(
                 titleComponent = textComponent(
                     background = shapeComponent(Shapes.pillShape, color2),
                     color = Color.White,

@@ -22,9 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
@@ -86,13 +86,13 @@ private fun getLineChart(
 )
 
 private val startAxis: Axis<Start>
-    @Composable get() = startAxis(
+    @Composable get() = rememberStartAxis(
         label = textComponent(color = Color.Black),
         itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 5) },
     )
 
 private val endAxis: Axis<End>
-    @Composable get() = endAxis(
+    @Composable get() = rememberEndAxis(
         label = textComponent(color = Color.DarkGray),
         itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 7) },
     )
@@ -109,7 +109,7 @@ public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
         chart = composedChart,
         model = model1 + model2,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = rememberBottomAxis(),
         endAxis = endAxis,
         modifier = modifier,
     )
@@ -126,7 +126,7 @@ public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
         chart = composedChart,
         model = model1 + model2,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = rememberBottomAxis(),
         endAxis = endAxis,
         modifier = modifier,
     )
@@ -139,7 +139,7 @@ public fun ColumnChart(modifier: Modifier = Modifier) {
         chart = getColumnChart(markerMap = markerMap),
         model = model1,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = rememberBottomAxis(),
         modifier = modifier,
     )
 }
@@ -151,7 +151,7 @@ public fun LineChart(modifier: Modifier = Modifier) {
         chart = getLineChart(markerMap = markerMap),
         model = model2,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = rememberBottomAxis(),
         modifier = modifier,
     )
 }

@@ -27,8 +27,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
@@ -95,8 +95,8 @@ public fun ThresholdLine() {
                 )
             },
             model = model,
-            startAxis = startAxis(),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
@@ -156,8 +156,8 @@ public fun ThresholdLineWithCustomText() {
                 )
             },
             model = model,
-            startAxis = startAxis(),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
@@ -179,8 +179,8 @@ public fun RangedThresholdLine() {
                 )
             },
             model = model,
-            startAxis = startAxis(),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
@@ -210,8 +210,8 @@ public fun RangedThresholdLineWithBrushShader() {
                 )
             },
             model = model,
-            startAxis = startAxis(),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
@@ -241,8 +241,8 @@ public fun RangedThresholdLineWithComponentShader() {
                 )
             },
             model = model,
-            startAxis = startAxis(),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }

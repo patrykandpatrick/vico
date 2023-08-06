@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.axisLineComponent
 import com.patrykandpatrick.vico.compose.axis.axisTickComponent
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.core.DEF_LABEL_COUNT
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -35,7 +36,7 @@ import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 
 /**
- * Creates a start axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.Start]).
+ * Creates and remembers a start axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.Start]).
  *
  * @param label the [TextComponent] to use for the labels.
  * @param axis the [LineComponent] to use for the axis line.
@@ -52,7 +53,7 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
  * @param title the axis title.
  */
 @Composable
-public fun startAxis(
+public fun rememberStartAxis(
     label: TextComponent? = axisLabelComponent(),
     axis: LineComponent? = axisLineComponent(),
     tick: LineComponent? = axisTickComponent(),
@@ -66,9 +67,9 @@ public fun startAxis(
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.Start> = createVerticalAxis {
+): VerticalAxis<AxisPosition.Vertical.Start> = remember { createVerticalAxis<AxisPosition.Vertical.Start>() }.apply {
     this.label = label
-    this.axis = axis
+    axisLine = axis
     this.tick = tick
     this.guideline = guideline
     this.valueFormatter = valueFormatter
@@ -83,7 +84,7 @@ public fun startAxis(
 }
 
 /**
- * Creates an end axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.End]).
+ * Creates and remembers an end axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.End]).
  *
  * @param label the [TextComponent] to use for the labels.
  * @param axis the [LineComponent] to use for the axis line.
@@ -100,7 +101,7 @@ public fun startAxis(
  * @param title the axis title.
  */
 @Composable
-public fun endAxis(
+public fun rememberEndAxis(
     label: TextComponent? = axisLabelComponent(),
     axis: LineComponent? = axisLineComponent(),
     tick: LineComponent? = axisTickComponent(),
@@ -114,13 +115,13 @@ public fun endAxis(
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.End> = createVerticalAxis {
+): VerticalAxis<AxisPosition.Vertical.End> = remember { createVerticalAxis<AxisPosition.Vertical.End>() }.apply {
     this.label = label
-    this.axis = axis
+    axisLine = axis
     this.tick = tick
     this.guideline = guideline
     this.valueFormatter = valueFormatter
-    this.tickLengthDp = tickLength.value
+    tickLengthDp = tickLength.value
     this.sizeConstraint = sizeConstraint
     this.horizontalLabelPosition = horizontalLabelPosition
     this.verticalLabelPosition = verticalLabelPosition
@@ -131,7 +132,7 @@ public fun endAxis(
 }
 
 /**
- * Creates a start axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.Start]).
+ * Creates and remembers a start axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.Start]).
  *
  * @param label the [TextComponent] to use for the labels.
  * @param axis the [LineComponent] to use for the axis line.
@@ -150,31 +151,11 @@ public fun endAxis(
 @Composable
 @Deprecated(
     """
-        `maxLabelCount` is being replaced by `AxisItemPlacer.Vertical`. Create a base implementation with the desired
-        maximum item count via `AxisItemPlacer.Vertical.default`, and use the `itemPlacer` parameter of the other
-        `startAxis` overload to apply it to the `VerticalAxis` being created.
+        `startAxis` is being replaced by `rememberStartAxis`. Also, `maxLabelCount` is being replaced by
+        `AxisItemPlacer.Vertical`. If using `maxLabelCount`, create a base `AxisItemPlacer.Vertical` implementation with
+        the desired maximum item count via `AxisItemPlacer.Vertical.default`, and use the `itemPlacer` parameter of
+        `rememberStartAxis` to apply it to the `VerticalAxis` being created.
     """,
-    ReplaceWith(
-        """
-            startAxis(
-                label = label,
-                axis = axis,
-                tick = tick,
-                tickLength = tickLength,
-                guideline = guideline,
-                valueFormatter = valueFormatter,
-                sizeConstraint = sizeConstraint,
-                horizontalLabelPosition = horizontalLabelPosition,
-                verticalLabelPosition = verticalLabelPosition,
-                itemPlacer = remember { AxisItemPlacer.Vertical.default(maxLabelCount) },
-                labelRotationDegrees = labelRotationDegrees,
-                titleComponent = titleComponent,
-                title = title,
-            )
-        """,
-        "com.patrykandpatrick.vico.core.axis.AxisItemPlacer",
-        "androidx.compose.runtime.remember",
-    ),
 )
 public fun startAxis(
     label: TextComponent? = axisLabelComponent(),
@@ -186,11 +167,11 @@ public fun startAxis(
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
     horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
-    maxLabelCount: Int,
+    maxLabelCount: Int = DEF_LABEL_COUNT,
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.Start> = startAxis(
+): VerticalAxis<AxisPosition.Vertical.Start> = rememberStartAxis(
     label,
     axis,
     tick,
@@ -207,7 +188,7 @@ public fun startAxis(
 )
 
 /**
- * Creates an end axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.End]).
+ * Creates and remembers an end axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.End]).
  *
  * @param label the [TextComponent] to use for the labels.
  * @param axis the [LineComponent] to use for the axis line.
@@ -226,31 +207,11 @@ public fun startAxis(
 @Composable
 @Deprecated(
     """
-        `maxLabelCount` is being replaced by `AxisItemPlacer.Vertical`. Create a base implementation with the desired
-        maximum item count via `AxisItemPlacer.Vertical.default`, and use the `itemPlacer` parameter of the other
-        `endAxis` overload to apply it to the `VerticalAxis` being created.
+        `endAxis` is being replaced by `rememberEndAxis`. Also, `maxLabelCount` is being replaced by
+        `AxisItemPlacer.Vertical`. If using `maxLabelCount`, create a base `AxisItemPlacer.Vertical` implementation with
+        the desired maximum item count via `AxisItemPlacer.Vertical.default`, and use the `itemPlacer` parameter of
+        `rememberEndAxis` to apply it to the `VerticalAxis` being created.
     """,
-    ReplaceWith(
-        """
-            endAxis(
-                label = label,
-                axis = axis,
-                tick = tick,
-                tickLength = tickLength,
-                guideline = guideline,
-                valueFormatter = valueFormatter,
-                sizeConstraint = sizeConstraint,
-                horizontalLabelPosition = horizontalLabelPosition,
-                verticalLabelPosition = verticalLabelPosition,
-                itemPlacer = remember { AxisItemPlacer.Vertical.default(maxLabelCount) },
-                labelRotationDegrees = labelRotationDegrees,
-                titleComponent = titleComponent,
-                title = title,
-            )
-        """,
-        "com.patrykandpatrick.vico.core.axis.AxisItemPlacer",
-        "androidx.compose.runtime.remember",
-    ),
 )
 public fun endAxis(
     label: TextComponent? = axisLabelComponent(),
@@ -262,11 +223,11 @@ public fun endAxis(
     sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
     horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
-    maxLabelCount: Int,
+    maxLabelCount: Int = DEF_LABEL_COUNT,
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.End> = endAxis(
+): VerticalAxis<AxisPosition.Vertical.End> = rememberEndAxis(
     label,
     axis,
     tick,

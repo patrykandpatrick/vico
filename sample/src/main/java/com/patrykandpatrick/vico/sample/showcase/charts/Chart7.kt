@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
@@ -66,11 +66,11 @@ private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
                 },
             ),
             chartModelProducer = chartEntryModelProducer,
-            startAxis = startAxis(
+            startAxis = rememberStartAxis(
                 label = rememberStartAxisLabel(),
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
             ),
-            bottomAxis = bottomAxis(),
+            bottomAxis = rememberBottomAxis(),
             marker = rememberMarker(),
             legend = rememberLegend(),
             runInitialAnimation = false,

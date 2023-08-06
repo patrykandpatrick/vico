@@ -23,8 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
@@ -49,8 +49,8 @@ public fun SingleColumnChartWithNegativeValues() {
                 ),
             ),
             model = model,
-            startAxis = startAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 9) }),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 9) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -64,8 +64,8 @@ public fun SingleColumnChartWithNegativeValuesAndDataLabels() {
                 dataLabel = textComponent(),
             ),
             model = model,
-            startAxis = startAxis(),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -82,8 +82,8 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                 ),
             ),
             model = model,
-            startAxis = startAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -100,8 +100,8 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                 ),
             ),
             model = model,
-            startAxis = startAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }

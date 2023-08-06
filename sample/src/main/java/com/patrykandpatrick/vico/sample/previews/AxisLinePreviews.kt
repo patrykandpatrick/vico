@@ -22,9 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
@@ -91,11 +91,11 @@ public fun HorizontalAxisTextInside() {
         Chart(
             chart = columnChart(),
             model = model,
-            startAxis = startAxis(
+            startAxis = rememberStartAxis(
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
                 label = label,
             ),
-            endAxis = endAxis(
+            endAxis = rememberEndAxis(
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
                 guideline = null,
                 label = label,
@@ -121,16 +121,16 @@ public fun HorizontalAxisTextInsideAndBottomAxis() {
         Chart(
             chart = columnChart(),
             model = model,
-            startAxis = startAxis(
+            startAxis = rememberStartAxis(
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
                 label = label,
             ),
-            endAxis = endAxis(
+            endAxis = rememberEndAxis(
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
                 guideline = null,
                 label = label,
             ),
-            bottomAxis = bottomAxis(),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -142,10 +142,10 @@ public fun HorizontalAxisTextOutside() {
         Chart(
             chart = columnChart(),
             model = model,
-            startAxis = startAxis(
+            startAxis = rememberStartAxis(
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
             ),
-            endAxis = endAxis(
+            endAxis = rememberEndAxis(
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
                 guideline = null,
             ),
@@ -160,10 +160,10 @@ public fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
         Chart(
             chart = columnChart(),
             model = model,
-            startAxis = startAxis(
+            startAxis = rememberStartAxis(
                 horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
             ),
-            bottomAxis = bottomAxis(),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }

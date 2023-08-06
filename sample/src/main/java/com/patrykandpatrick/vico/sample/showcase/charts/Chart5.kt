@@ -20,8 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
@@ -72,11 +72,11 @@ private fun ComposeChart5(chartEntryModelProducer: ChartEntryModelProducer) {
                 mergeMode = ColumnChart.MergeMode.Stack,
             ),
             chartModelProducer = chartEntryModelProducer,
-            startAxis = startAxis(
+            startAxis = rememberStartAxis(
                 itemPlacer = startAxisItemPlacer,
                 labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
             ),
-            bottomAxis = bottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
+            bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
