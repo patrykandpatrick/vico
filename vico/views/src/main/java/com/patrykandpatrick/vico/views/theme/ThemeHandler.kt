@@ -23,6 +23,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import androidx.annotation.StyleableRes
+import com.patrykandpatrick.vico.core.DEF_LABEL_COUNT
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.axis.Axis
@@ -210,13 +211,15 @@ internal class ThemeHandler(
                             val values = VerticalAxis.VerticalLabelPosition.values()
                             values[value % values.size]
                         }
+
+                    itemPlacer = axisStyle.getVerticalAxisItemPlacer()
                 }
 
                 is HorizontalAxis.Builder<*> -> {
                     itemPlacer = AxisItemPlacer.Horizontal.default(
                         axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1),
                         axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0),
-                        axisStyle.getBoolean(R.styleable.Axis_shiftExtremeTicks, true),
+                        axisStyle.getBoolean(R.styleable.Axis_shiftExtremeHorizontalAxisTicks, true),
                     )
                 }
             }
@@ -304,6 +307,12 @@ internal class ThemeHandler(
             null
         }
     }
+
+    private fun TypedArray.getVerticalAxisItemPlacer(): AxisItemPlacer.Vertical =
+        AxisItemPlacer.Vertical.default(
+            maxItemCount = getInteger(R.styleable.Axis_maxVerticalAxisItemCount, DEF_LABEL_COUNT),
+            shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true),
+        )
 
     internal enum class ChartType {
         Single,
