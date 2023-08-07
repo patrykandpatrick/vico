@@ -142,8 +142,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 context = this,
                 top = tickMarkTop,
                 bottom = tickMarkBottom,
-                centerX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing +
-                    getLinesCorrectionX(x, fullXRange) * layoutDirectionMultiplier,
+                centerX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                    layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange),
             )
         }
 
@@ -199,8 +199,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             }
         } else {
             lineValues.forEach { x ->
-                val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing +
-                    getLinesCorrectionX(x, fullXRange) * layoutDirectionMultiplier
+                val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                    layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange)
 
                 guideline
                     .takeUnless { x.isBoundOf(fullXRange) }
@@ -220,7 +220,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             entryX == fullXRange.start -> -tickThickness.half
             entryX == fullXRange.endInclusive -> tickThickness.half
             else -> 0f
-        }
+        } * layoutDirectionMultiplier
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
 
