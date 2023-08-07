@@ -110,7 +110,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange)
 
         labelValues.forEachIndexed { index, x ->
-            val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing *
+            val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
                 layoutDirectionMultiplier
             val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
             val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
@@ -142,7 +142,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 context = this,
                 top = tickMarkTop,
                 bottom = tickMarkBottom,
-                centerX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing +
+                centerX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing +
                     getLinesCorrectionX(x, fullXRange) * layoutDirectionMultiplier,
             )
         }
@@ -190,7 +190,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         if (lineValues == null) {
             labelValues.forEach { x ->
-                val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing *
+                val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
                     layoutDirectionMultiplier
 
                 guideline
@@ -199,7 +199,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             }
         } else {
             lineValues.forEach { x ->
-                val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing +
+                val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing +
                     getLinesCorrectionX(x, fullXRange) * layoutDirectionMultiplier
 
                 guideline
