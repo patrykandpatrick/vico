@@ -94,7 +94,7 @@ internal class DefaultVerticalAxisItemPlacer(
         if (maxItemCount == 1) return values
         val extraItemCount = (axisHeight / maxLabelHeight).toInt().coerceAtMost(maxItemCount - 1)
         val step = chartValues.lengthY / extraItemCount
-        repeat(extraItemCount) { values += (it + 1) * step }
+        repeat(extraItemCount) { values += chartValues.minY + (it + 1) * step }
         return values
     }
 
