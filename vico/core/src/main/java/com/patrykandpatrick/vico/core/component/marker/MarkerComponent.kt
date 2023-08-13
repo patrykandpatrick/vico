@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.averageOf
+import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.marker.DefaultMarkerLabelFormatter
@@ -100,7 +101,8 @@ public open class MarkerComponent(
     ): Unit = with(context) {
         val text = labelFormatter.getLabel(markedEntries, chartValues)
         val entryX = markedEntries.averageOf { it.location.x }
-        val labelBounds = label.getTextBounds(context, text, outRect = tempBounds)
+        val labelBounds =
+            label.getTextBounds(context = context, text = text, width = bounds.width().toInt(), outRect = tempBounds)
         val halfOfTextWidth = labelBounds.width().half
         val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
         this[MarkerCorneredShape.tickXKey] = entryX
@@ -111,6 +113,7 @@ public open class MarkerComponent(
             textX = x,
             textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
             verticalPosition = VerticalPosition.Bottom,
+            maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.toInt(),
         )
     }
 
