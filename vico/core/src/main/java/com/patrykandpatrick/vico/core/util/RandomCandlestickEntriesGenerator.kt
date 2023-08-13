@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.util
 
-import com.patrykandpatrick.vico.core.candlestickentry.CandlestickTypedEntry
+import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntry
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
@@ -31,11 +31,11 @@ public class RandomCandlestickEntriesGenerator(
     private val yRange: IntProgression = Y_RANGE_BOTTOM..Y_RANGE_TOP,
 ) {
     /**
-     * Generates a [List] of [CandlestickTypedEntry] instances with randomized _y_ values.
+     * Generates a [List] of [CandlestickEntry] instances with randomized _y_ values.
      * The size of the [List] is equal to the number of values in [xRange].
      */
-    public fun generateRandomEntries(): List<CandlestickTypedEntry> {
-        val result = ArrayList<CandlestickTypedEntry>()
+    public fun generateRandomEntries(): List<CandlestickEntry> {
+        val result = ArrayList<CandlestickEntry>()
         val yLength = yRange.last - yRange.first
         for (x in xRange) {
             val isRising = Random.nextBoolean()
@@ -56,7 +56,7 @@ public class RandomCandlestickEntriesGenerator(
             val low = min(open, close) - Random.nextFloat() * LOW_HIGH_FACTOR
             val high = max(open, close) + Random.nextFloat() * LOW_HIGH_FACTOR
 
-            result += CandlestickTypedEntry(
+            result += CandlestickEntry(
                 x = x.toFloat(),
                 low = low,
                 high = high,

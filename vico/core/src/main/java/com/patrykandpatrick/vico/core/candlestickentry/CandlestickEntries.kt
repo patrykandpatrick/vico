@@ -58,7 +58,7 @@ public fun CandlestickTypedEntry(
     high: Float,
     open: Float,
     close: Float,
-    type: CandlestickEntryType = CandlestickEntryType.standard(open, close),
+    type: CandlestickEntryType,
 ): CandlestickTypedEntry = object : CandlestickTypedEntry {
 
     override val x: Float = x

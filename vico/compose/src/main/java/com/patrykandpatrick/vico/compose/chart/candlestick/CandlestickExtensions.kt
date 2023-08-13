@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.compose.chart.candlestick
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -83,32 +84,32 @@ public fun Candle.copyWithColor(color: Color): Candle = remember(color) {
 public fun LineComponent.copyWithColor(color: Color): LineComponent =
     copy(
         color = if (this.color == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
-        strokeColor = if (this.color == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
+        strokeColor = if (this.strokeColor == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
     )
 
 /**
  * TODO
  */
 @Composable
-public fun CandlestickChart.Config.Companion.standard(
-    filledGreenCandle: Candle = Candle.sharpFilledCandle(color = Color(getDefaultColors().candlestickGreen)),
-    crossGrayCandle: Candle = filledGreenCandle.copyWithColor(color = Color(getDefaultColors().candlestickGray)),
-    filledRedCandle: Candle = filledGreenCandle.copyWithColor(color = Color(getDefaultColors().candlestickRed)),
+public fun CandlestickChart.Config.Companion.rememberStandard(
+    absolutelyIncreasing: Candle = Candle.sharpFilledCandle(color = Color(getDefaultColors().candlestickGreen)),
+    absolutelyZero: Candle = absolutelyIncreasing.copyWithColor(color = Color(getDefaultColors().candlestickGray)),
+    absolutelyDecreasing: Candle = absolutelyIncreasing.copyWithColor(color = Color(getDefaultColors().candlestickRed)),
 ): CandlestickChart.Config = remember(
-    filledGreenCandle,
-    crossGrayCandle,
-    filledRedCandle,
+    absolutelyIncreasing,
+    absolutelyZero,
+    absolutelyDecreasing,
 ) {
     CandlestickChart.Config(
-        filledGreenCandle = filledGreenCandle,
-        filledGrayCandle = crossGrayCandle,
-        filledRedCandle = filledRedCandle,
-        crossGreenCandle = filledGreenCandle,
-        crossGrayCandle = crossGrayCandle,
-        crossRedCandle = filledRedCandle,
-        hollowGreenCandle = filledGreenCandle,
-        hollowGrayCandle = crossGrayCandle,
-        hollowRedCandle = filledRedCandle,
+        absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasing,
+        absolutelyIncreasingRelativelyZero = absolutelyIncreasing,
+        absolutelyIncreasingRelativelyDecreasing = absolutelyIncreasing,
+        absolutelyZeroRelativelyIncreasing = absolutelyZero,
+        absolutelyZeroRelativelyZero = absolutelyZero,
+        absolutelyZeroRelativelyDecreasing = absolutelyZero,
+        absolutelyDecreasingRelativelyIncreasing = absolutelyDecreasing,
+        absolutelyDecreasingRelativelyZero = absolutelyDecreasing,
+        absolutelyDecreasingRelativelyDecreasing = absolutelyDecreasing,
     )
 }
 
@@ -116,24 +117,45 @@ public fun CandlestickChart.Config.Companion.standard(
  * TODO
  */
 @Composable
-public fun CandlestickChart.Config.Companion.hollow(
-    filledGreenCandle: Candle = Candle.sharpFilledCandle(color = Color(getDefaultColors().candlestickGreen)),
-    filledGrayCandle: Candle = filledGreenCandle.copyWithColor(color = Color(getDefaultColors().candlestickGray)),
-    filledRedCandle: Candle = filledGreenCandle.copyWithColor(color = Color(getDefaultColors().candlestickRed)),
-    crossGreenCandle: Candle = filledGreenCandle,
-    crossGrayCandle: Candle = filledGrayCandle,
-    crossRedCandle: Candle = filledRedCandle,
-    hollowGreenCandle: Candle = Candle.sharpHollowCandle(color = Color(getDefaultColors().candlestickGreen)),
-    hollowGrayCandle: Candle = hollowGreenCandle.copyWithColor(color = Color(getDefaultColors().candlestickGray)),
-    hollowRedCandle: Candle = hollowGreenCandle.copyWithColor(color = Color(getDefaultColors().candlestickRed)),
-): CandlestickChart.Config = CandlestickChart.Config(
-    filledGreenCandle = filledGreenCandle,
-    filledGrayCandle = filledGrayCandle,
-    filledRedCandle = filledRedCandle,
-    crossGreenCandle = crossGreenCandle,
-    crossGrayCandle = crossGrayCandle,
-    crossRedCandle = crossRedCandle,
-    hollowGreenCandle = hollowGreenCandle,
-    hollowGrayCandle = hollowGrayCandle,
-    hollowRedCandle = hollowRedCandle,
-)
+@Stable
+public fun CandlestickChart.Config.Companion.rememberHollow(
+    absolutelyIncreasingRelativelyIncreasing: Candle = getAbsolutelyIncreasingRelativelyIncreasing(),
+    absolutelyIncreasingRelativelyZero: Candle = absolutelyIncreasingRelativelyIncreasing.copyWithColor(color = Color(getDefaultColors().candlestickGray)),
+    absolutelyIncreasingRelativelyDecreasing: Candle = absolutelyIncreasingRelativelyIncreasing.copyWithColor(color = Color(getDefaultColors().candlestickRed)),
+    absolutelyZeroRelativelyIncreasing: Candle = absolutelyIncreasingRelativelyIncreasing,
+    absolutelyZeroRelativelyZero: Candle = absolutelyIncreasingRelativelyZero,
+    absolutelyZeroRelativelyDecreasing: Candle = absolutelyIncreasingRelativelyDecreasing,
+    absolutelyDecreasingRelativelyIncreasing: Candle = getAbsolutelyDecreasingRelativelyIncreasing(),
+    absolutelyDecreasingRelativelyZero: Candle = absolutelyDecreasingRelativelyIncreasing.copyWithColor(color = Color(getDefaultColors().candlestickGray)),
+    absolutelyDecreasingRelativelyDecreasing: Candle = absolutelyDecreasingRelativelyIncreasing.copyWithColor(color = Color(getDefaultColors().candlestickRed)),
+): CandlestickChart.Config = remember(
+    absolutelyIncreasingRelativelyIncreasing,
+    absolutelyIncreasingRelativelyZero,
+    absolutelyIncreasingRelativelyDecreasing,
+    absolutelyZeroRelativelyIncreasing,
+    absolutelyZeroRelativelyZero,
+    absolutelyZeroRelativelyDecreasing,
+    absolutelyDecreasingRelativelyIncreasing,
+    absolutelyDecreasingRelativelyZero,
+    absolutelyDecreasingRelativelyDecreasing,
+) {
+    CandlestickChart.Config(
+        absolutelyIncreasingRelativelyIncreasing = absolutelyDecreasingRelativelyIncreasing,
+        absolutelyIncreasingRelativelyZero = absolutelyDecreasingRelativelyZero,
+        absolutelyIncreasingRelativelyDecreasing = absolutelyDecreasingRelativelyDecreasing,
+        absolutelyZeroRelativelyIncreasing = absolutelyZeroRelativelyIncreasing,
+        absolutelyZeroRelativelyZero = absolutelyZeroRelativelyZero,
+        absolutelyZeroRelativelyDecreasing = absolutelyZeroRelativelyDecreasing,
+        absolutelyDecreasingRelativelyIncreasing = absolutelyIncreasingRelativelyIncreasing,
+        absolutelyDecreasingRelativelyZero = absolutelyIncreasingRelativelyZero,
+        absolutelyDecreasingRelativelyDecreasing = absolutelyIncreasingRelativelyDecreasing,
+    )
+}
+
+@Composable
+private fun getAbsolutelyIncreasingRelativelyIncreasing(): Candle =
+    Candle.sharpHollowCandle(color = Color(getDefaultColors().candlestickGreen))
+
+@Composable
+private fun getAbsolutelyDecreasingRelativelyIncreasing(): Candle =
+    Candle.sharpFilledCandle(color = Color(getDefaultColors().candlestickGreen))

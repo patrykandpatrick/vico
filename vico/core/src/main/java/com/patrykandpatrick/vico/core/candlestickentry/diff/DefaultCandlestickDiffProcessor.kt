@@ -66,7 +66,6 @@ public class DefaultCandlestickDiffProcessor : CandlestickDiffProcessor<Candlest
                 open = entry.open,
                 close = entry.close,
                 type = getType(
-                    candlestickChartType = candlestickChartType,
                     previousClose = previousClose,
                     currentClose = entry.close,
                     currentOpen = entry.open,
@@ -89,7 +88,6 @@ public class DefaultCandlestickDiffProcessor : CandlestickDiffProcessor<Candlest
             } else {
                 model.progressDiff(
                     progress = progress,
-                    candlestickChartType = candlestickChartType,
                     previousClose = previousClose,
                 ).also { entry ->
                     previousClose = entry.close
@@ -179,7 +177,6 @@ public class DefaultCandlestickDiffProcessor : CandlestickDiffProcessor<Candlest
     ) {
         fun progressDiff(
             progress: Float,
-            candlestickChartType: CandlestickChartType,
             previousClose: Float?,
         ): CandlestickTypedEntry = entry.withValuesAndType(
             low = progressValues(
@@ -203,7 +200,6 @@ public class DefaultCandlestickDiffProcessor : CandlestickDiffProcessor<Candlest
                 progress = progress,
             ),
             type = getType(
-                candlestickChartType = candlestickChartType,
                 previousClose = previousClose,
                 currentClose = newClose.orZero,
                 currentOpen = newOpen.orZero,
@@ -216,13 +212,9 @@ public class DefaultCandlestickDiffProcessor : CandlestickDiffProcessor<Candlest
         val ZERO_TO_ZERO = 0f..0f
 
         private fun getType(
-            candlestickChartType: CandlestickChartType,
             previousClose: Float?,
             currentClose: Float,
             currentOpen: Float,
-        ): CandlestickEntryType = when (candlestickChartType) {
-            CandlestickChartType.Standard -> CandlestickEntryType.standard(currentOpen, currentClose)
-            CandlestickChartType.Hollow -> CandlestickEntryType.hollow(previousClose, currentClose, currentOpen)
-        }
+        ): CandlestickEntryType = CandlestickEntryType.fromValues(previousClose, currentClose, currentOpen)
     }
 }

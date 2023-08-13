@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.candlestick.hollow
+import com.patrykandpatrick.vico.compose.chart.candlestick.rememberHollow
 import com.patrykandpatrick.vico.core.chart.candlestick.CandlestickChart
 import com.patrykandpatrick.vico.core.util.SampleCandlestickEntryProvider
 
@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.core.util.SampleCandlestickEntryProvider
 public fun CandlestickLinePreview() {
     Surface {
         val candlestickChart = CandlestickChart(
-            config = CandlestickChart.Config.hollow(),
+            config = CandlestickChart.Config.rememberHollow(),
         )
 
         CartesianChartHost(

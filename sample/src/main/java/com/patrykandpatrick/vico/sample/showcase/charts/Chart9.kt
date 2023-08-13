@@ -22,7 +22,7 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.candlestick.hollow
+import com.patrykandpatrick.vico.compose.chart.candlestick.rememberHollow
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModelProducer
@@ -49,7 +49,7 @@ internal fun ComposeChart9(
     )
 
     val candlestickChart = CandlestickChart(
-        config = CandlestickChart.Config.hollow(),
+        config = CandlestickChart.Config.rememberHollow(),
     )
 
     CartesianChartHost(
@@ -69,7 +69,7 @@ internal fun ViewChart9(
     modifier: Modifier = Modifier,
 ) {
     val candlestickChart = CandlestickChart(
-        config = CandlestickChart.Config.hollow(),
+        config = CandlestickChart.Config.rememberHollow(),
     )
 
     AndroidViewBinding(Chart9Binding::inflate, modifier) {

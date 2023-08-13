@@ -239,27 +239,27 @@ public open class CandlestickChart(
     /**
      * TODO
      *
-     * @param filledGreenCandle TODO
-     * @param filledGrayCandle TODO
-     * @param filledRedCandle TODO
-     * @param crossGreenCandle TODO
-     * @param crossGrayCandle TODO
-     * @param crossRedCandle TODO
-     * @param hollowGreenCandle TODO
-     * @param hollowGrayCandle TODO
-     * @param hollowRedCandle TODO
+     * @param absolutelyIncreasingRelativelyIncreasing TODO
+     * @param absolutelyIncreasingRelativelyZero TODO
+     * @param absolutelyIncreasingRelativelyDecreasing TODO
+     * @param absolutelyZeroRelativelyIncreasing TODO
+     * @param absolutelyZeroRelativelyZero TODO
+     * @param absolutelyZeroRelativelyDecreasing TODO
+     * @param absolutelyDecreasingRelativelyIncreasing TODO
+     * @param absolutelyDecreasingRelativelyZero TODO
+     * @param absolutelyDecreasingRelativelyDecreasing TODO
      */
     @Suppress("LongParameterList")
     public class Config(
-        public val filledGreenCandle: Candle,
-        public val filledGrayCandle: Candle,
-        public val filledRedCandle: Candle,
-        public val crossGreenCandle: Candle,
-        public val crossGrayCandle: Candle,
-        public val crossRedCandle: Candle,
-        public val hollowGreenCandle: Candle,
-        public val hollowGrayCandle: Candle,
-        public val hollowRedCandle: Candle,
+        public val absolutelyIncreasingRelativelyIncreasing: Candle,
+        public val absolutelyIncreasingRelativelyZero: Candle,
+        public val absolutelyIncreasingRelativelyDecreasing: Candle,
+        public val absolutelyZeroRelativelyIncreasing: Candle,
+        public val absolutelyZeroRelativelyZero: Candle,
+        public val absolutelyZeroRelativelyDecreasing: Candle,
+        public val absolutelyDecreasingRelativelyIncreasing: Candle,
+        public val absolutelyDecreasingRelativelyZero: Candle,
+        public val absolutelyDecreasingRelativelyDecreasing: Candle,
     ) {
 
         /**
@@ -267,42 +267,37 @@ public open class CandlestickChart(
          */
         public val maxThicknessDp: Float
             get() = maxOf(
-                filledGreenCandle.realBody.thicknessDp,
-                filledGrayCandle.realBody.thicknessDp,
-                filledRedCandle.realBody.thicknessDp,
-                crossGreenCandle.realBody.thicknessDp,
-                crossGrayCandle.realBody.thicknessDp,
-                crossRedCandle.realBody.thicknessDp,
-                hollowGreenCandle.realBody.thicknessDp,
-                hollowGrayCandle.realBody.thicknessDp,
-                hollowRedCandle.realBody.thicknessDp,
+                absolutelyIncreasingRelativelyIncreasing.realBody.thicknessDp,
+                absolutelyIncreasingRelativelyZero.realBody.thicknessDp,
+                absolutelyIncreasingRelativelyDecreasing.realBody.thicknessDp,
+                absolutelyZeroRelativelyIncreasing.realBody.thicknessDp,
+                absolutelyZeroRelativelyZero.realBody.thicknessDp,
+                absolutelyZeroRelativelyDecreasing.realBody.thicknessDp,
+                absolutelyDecreasingRelativelyIncreasing.realBody.thicknessDp,
+                absolutelyDecreasingRelativelyZero.realBody.thicknessDp,
+                absolutelyDecreasingRelativelyDecreasing.realBody.thicknessDp,
             )
 
         /**
          * TODO
          */
         public fun getCandle(type: CandlestickEntryType): Candle =
-            when (type) {
-                is CandlestickEntryType.Filled ->
-                    when (type.color) {
-                        CandlestickEntryType.Color.Green -> filledGreenCandle
-                        CandlestickEntryType.Color.Red -> filledRedCandle
-                        CandlestickEntryType.Color.Gray -> filledGrayCandle
-                    }
-
-                is CandlestickEntryType.Cross ->
-                    when (type.color) {
-                        CandlestickEntryType.Color.Green -> crossGreenCandle
-                        CandlestickEntryType.Color.Red -> crossRedCandle
-                        CandlestickEntryType.Color.Gray -> crossGrayCandle
-                    }
-
-                is CandlestickEntryType.Hollow ->
-                    when (type.color) {
-                        CandlestickEntryType.Color.Green -> hollowGreenCandle
-                        CandlestickEntryType.Color.Red -> hollowRedCandle
-                        CandlestickEntryType.Color.Gray -> hollowGrayCandle
-                    }
+            when(type.absoluteChange) {
+                CandlestickEntryType.Change.Increase -> when (type.relativeChange) {
+                    CandlestickEntryType.Change.Increase -> absolutelyIncreasingRelativelyIncreasing
+                    CandlestickEntryType.Change.Decrease -> absolutelyDecreasingRelativelyDecreasing
+                    CandlestickEntryType.Change.Zero -> absolutelyIncreasingRelativelyZero
+                }
+                CandlestickEntryType.Change.Decrease -> when (type.relativeChange) {
+                    CandlestickEntryType.Change.Increase -> absolutelyDecreasingRelativelyIncreasing
+                    CandlestickEntryType.Change.Decrease -> absolutelyDecreasingRelativelyDecreasing
+                    CandlestickEntryType.Change.Zero -> absolutelyDecreasingRelativelyZero
+                }
+                CandlestickEntryType.Change.Zero -> when (type.relativeChange) {
+                    CandlestickEntryType.Change.Increase -> absolutelyZeroRelativelyIncreasing
+                    CandlestickEntryType.Change.Decrease -> absolutelyDecreasingRelativelyZero
+                    CandlestickEntryType.Change.Zero -> absolutelyZeroRelativelyZero
+                }
             }
 
         public companion object

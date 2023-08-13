@@ -20,66 +20,37 @@ import com.patrykandpatrick.vico.core.extension.orZero
 
 /**
  * TODO
- * @param color TODO
  */
-public sealed class CandlestickEntryType(public val color: Color) {
+public data class CandlestickEntryType(
+    public val absoluteChange: Change,
+    public val relativeChange: Change,
+) {
 
-    /**
-     * TODO
-     */
-    public class Filled(color: Color) : CandlestickEntryType(color)
+    public enum class Change {
+        Increase,
+        Decrease,
+        Zero,
+        ;
 
-    /**
-     * TODO
-     */
-    public class Hollow(color: Color) : CandlestickEntryType(color)
+        public companion object {
 
-    /**
-     * TODO
-     */
-    public class Cross(color: Color) : CandlestickEntryType(color)
-
-    /**
-     * TODO
-     */
-    public enum class Color {
-        Green,
-        Red,
-        Gray,
+            public fun from(a: Float, b: Float): Change = when {
+                a < b -> Increase
+                a > b -> Decrease
+                else -> Zero
+            }
+        }
     }
 
     public companion object {
 
-        /**
-         * TODO
-         */
-        public fun standard(open: Float, close: Float): CandlestickEntryType = when {
-            close > open -> Filled(Color.Green)
-            close == open -> Cross(Color.Gray)
-            else -> Filled(Color.Red)
-        }
-
-        /**
-         * TODO
-         */
-        public fun hollow(
+        public fun fromValues(
             previousClose: Float?,
             currentClose: Float,
             currentOpen: Float,
-        ): CandlestickEntryType {
-            val previousCloseOrZero = previousClose.orZero
-
-            val color = when {
-                currentClose > previousCloseOrZero -> Color.Green
-                currentClose == previousCloseOrZero -> Color.Gray
-                else -> Color.Red
-            }
-
-            return when {
-                currentClose > currentOpen -> Hollow(color = color)
-                currentClose == currentOpen -> Cross(color = color)
-                else -> Filled(color = color)
-            }
-        }
+        ): CandlestickEntryType = CandlestickEntryType(
+            absoluteChange = Change.from(currentClose, currentOpen),
+            relativeChange = Change.from(currentClose, previousClose.orZero),
+        )
     }
 }
