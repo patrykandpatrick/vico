@@ -67,7 +67,7 @@ public interface Marker : ChartInsetter {
      * @param location the coordinates of the indicator.
      * @param entry the [ChartEntry].
      * @param color the color associated with the [ChartEntry].
-     * @param index the index of the [ChartEntry] in the model.
+     * @param index the index of the [ChartEntry] in its series.
      */
     public data class EntryModel(
         public val location: Point,

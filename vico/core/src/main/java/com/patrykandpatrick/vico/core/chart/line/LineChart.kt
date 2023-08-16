@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.chart.forEachInRelativelyIndexed
+import com.patrykandpatrick.vico.core.chart.forEachInAbsolutelyIndexed
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
@@ -331,7 +331,7 @@ public open class LineChart(
                 prevX = x
                 prevY = y
 
-                if (x in bounds.left..bounds.right) {
+                if (x > bounds.left - 1 && x < bounds.right + 1) {
                     entryLocationMap.put(
                         x = x,
                         y = y.coerceIn(bounds.top, bounds.bottom),
@@ -499,7 +499,7 @@ public open class LineChart(
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (entry.y - minY) * heightMultiplier
 
-        entries.forEachInRelativelyIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
+        entries.forEachInAbsolutelyIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
 
             val previousX = x.takeIf { it.isFinite() }
             x = nextX ?: getDrawX(entry)
