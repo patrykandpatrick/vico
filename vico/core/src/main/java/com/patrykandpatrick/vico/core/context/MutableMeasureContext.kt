@@ -26,11 +26,11 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 public data class MutableMeasureContext(
     override val canvasBounds: RectF,
     override var density: Float,
-    override var fontScale: Float,
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean = false,
     override var chartScale: Float = 1f,
     override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
+    private var spToPx: (Float) -> Float,
 ) : MeasureContext, Extras by DefaultExtras() {
 
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()
@@ -39,4 +39,6 @@ public data class MutableMeasureContext(
         clearExtras()
         chartValuesManager.resetChartValues()
     }
+
+    override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

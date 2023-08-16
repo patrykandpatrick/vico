@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-ext {
+package com.patrykandpatrick.vico.core.extension
 
-    library = [
-            groupId        : "com.patrykandpatrick.vico",
-            version_name   : "1.9.2",
-            version_code   : 1,
-            target_sdk     : 34,
-            min_sdk        : 16,
-            compose_min_sdk: 21,
-    ]
+import android.content.Context
+import android.os.Build
+import android.util.TypedValue
+
+/**
+ * Converts the provided dimension from sp to px.
+ */
+public fun Context.spToPx(sp: Float): Float = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+    TypedValue.convertDimensionToPixels(TypedValue.COMPLEX_UNIT_SP, sp, resources.displayMetrics)
+} else {
+    sp * resources.configuration.fontScale
 }

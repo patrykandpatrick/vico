@@ -26,8 +26,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollState
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
 import com.patrykandpatrick.vico.core.model.Point
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 
 internal fun Modifier.chartTouchEvent(
     setTouchPoint: ((Point?) -> Unit)?,
@@ -40,10 +38,10 @@ internal fun Modifier.chartTouchEvent(
         orientation = Orientation.Horizontal,
         reverseDirection = true,
         enabled = isScrollEnabled,
-    ).pointerInput(scrollableState, setTouchPoint, onZoom) {
-        coroutineScope {
+    )
+        .then(
             if (setTouchPoint != null) {
-                launch {
+                pointerInput(setTouchPoint) {
                     awaitPointerEventScope {
                         while (true) {
                             val event = awaitPointerEvent()
@@ -54,52 +52,35 @@ internal fun Modifier.chartTouchEvent(
                         }
                     }
                 }
-            }
-
-            if (isScrollEnabled.not() && setTouchPoint != null) {
-                launch {
+            } else {
+                Modifier
+            },
+        )
+        .then(
+            if (!isScrollEnabled && setTouchPoint != null) {
+                pointerInput(setTouchPoint) {
                     detectHorizontalDragGestures(
-                        onDragCancel = {
-                            setTouchPoint(null)
-                        },
-                        onDragEnd = {
-                            setTouchPoint(null)
-                        },
-                        onDragStart = { offset ->
-                            setTouchPoint(offset.point)
-                        },
-                    ) { change, _ ->
-                        setTouchPoint(change.position.point)
-                    }
+                        onDragStart = { setTouchPoint(it.point) },
+                        onDragEnd = { setTouchPoint(null) },
+                        onDragCancel = { setTouchPoint(null) },
+                    ) { change, _ -> setTouchPoint(change.position.point) }
                 }
-            }
-
-            if (onZoom != null && isScrollEnabled) {
-                launch {
+            } else {
+                Modifier
+            },
+        )
+        .then(
+            if (isScrollEnabled && onZoom != null) {
+                pointerInput(setTouchPoint, onZoom) {
                     detectZoomGestures { centroid, zoom ->
                         setTouchPoint?.invoke(null)
                         onZoom(centroid, zoom)
                     }
                 }
-            }
-        }
-    }
+            } else {
+                Modifier
+            },
+        )
 
 private val Offset.point: Point
     get() = Point(x, y)
-
-/**
- * Adds the provided modifier elements to this modifier chain if [condition] is true.
- */
-public inline fun Modifier.addIf(
-    condition: Boolean,
-    crossinline factory: Modifier.() -> Modifier,
-): Modifier = if (condition) factory() else this
-
-/**
- * Adds the provided modifier elements to this modifier chain if [value] is not null.
- */
-public inline fun <T> Modifier.addIfNotNull(
-    value: T?,
-    crossinline factory: Modifier.(T) -> Modifier,
-): Modifier = if (value != null) factory(value) else this

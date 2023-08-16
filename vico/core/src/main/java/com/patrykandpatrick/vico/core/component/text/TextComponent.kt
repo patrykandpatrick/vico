@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,13 +159,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         rotationDegrees: Float = 0f,
     ): Unit = with(context) {
         if (text.isBlank()) return
-        layout = getLayout(
-            text = text,
-            fontScale = fontScale,
-            width = maxTextWidth,
-            height = maxTextHeight,
-            rotationDegrees = rotationDegrees,
-        )
+        layout = getLayout(text, maxTextWidth, maxTextHeight, rotationDegrees)
 
         val shouldRotate = rotationDegrees % 2f.piRad != 0f
         val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
@@ -331,28 +325,25 @@ public open class TextComponent protected constructor() : Padding, Margins {
         includePaddingAndMargins: Boolean = true,
         rotationDegrees: Float = 0f,
     ): RectF = with(context) {
-        getLayout(
-            text = text,
-            fontScale = fontScale,
-            width = width,
-            height = height,
-            rotationDegrees = rotationDegrees,
-        ).getBounds(outRect).apply {
-            if (includePaddingAndMargins) {
-                right += padding.horizontalDp.pixels
-                bottom += padding.verticalDp.pixels
+        getLayout(text, width, height, rotationDegrees)
+            .getBounds(outRect)
+            .apply {
+                if (includePaddingAndMargins) {
+                    right += padding.horizontalDp.pixels
+                    bottom += padding.verticalDp.pixels
+                }
             }
-        }.rotate(rotationDegrees).apply {
-            if (includePaddingAndMargins) {
-                right += margins.horizontalDp.pixels
-                bottom += margins.verticalDp.pixels
+            .rotate(rotationDegrees)
+            .apply {
+                if (includePaddingAndMargins) {
+                    right += margins.horizontalDp.pixels
+                    bottom += margins.verticalDp.pixels
+                }
             }
-        }
     }
 
     private fun MeasureContext.getLayout(
         text: CharSequence,
-        fontScale: Float,
         width: Int = Int.MAX_VALUE,
         height: Int = Int.MAX_VALUE,
         rotationDegrees: Float = 0f,
@@ -378,7 +369,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
 
         val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode()
         return getOrPutExtra(key = key) {
-            textPaint.textSize = textSizeSp * fontScale
+            textPaint.textSize = spToPx(textSizeSp)
             staticLayout(
                 source = text,
                 paint = textPaint,

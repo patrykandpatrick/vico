@@ -37,22 +37,21 @@ public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
  *
  * @param canvas the canvas to draw the chart on.
  * @param density the pixel density of the screen (used in pixel size calculation).
- * @param fontScale the scale of fonts.
  * @param isLtr whether the device layout is left-to-right.
  * @param elevationOverlayColor the elevation overlay color. This is applied to components that cast shadows.
+ * @param spToPx converts dimensions from sp to px.
  */
 public fun drawContext(
     canvas: Canvas,
     density: Float = 1f,
-    fontScale: Float = 1f,
     isLtr: Boolean = true,
     elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
+    spToPx: (Float) -> Float = { it },
 ): DrawContext = object : DrawContext, Extras by DefaultExtras() {
     override val canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
     override val elevationOverlayColor: Long = elevationOverlayColor
     override var canvas: Canvas = canvas
     override val density: Float = density
-    override val fontScale: Float = fontScale
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
     override val chartScale: Float = 1f
@@ -70,4 +69,6 @@ public fun drawContext(
         chartValuesManager.resetChartValues()
         clearExtras()
     }
+
+    override fun spToPx(sp: Float): Float = spToPx(sp)
 }

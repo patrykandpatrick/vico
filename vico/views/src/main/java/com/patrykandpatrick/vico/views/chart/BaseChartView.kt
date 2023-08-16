@@ -48,6 +48,7 @@ import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.extension.set
+import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -59,7 +60,6 @@ import com.patrykandpatrick.vico.core.scroll.ScrollListenerHost
 import com.patrykandpatrick.vico.views.extension.defaultColors
 import com.patrykandpatrick.vico.views.extension.density
 import com.patrykandpatrick.vico.views.extension.dpInt
-import com.patrykandpatrick.vico.views.extension.fontScale
 import com.patrykandpatrick.vico.views.extension.isLtr
 import com.patrykandpatrick.vico.views.extension.measureDimension
 import com.patrykandpatrick.vico.views.extension.specSize
@@ -105,10 +105,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private val measureContext = MutableMeasureContext(
         canvasBounds = contentBounds,
         density = context.density,
-        fontScale = context.fontScale,
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
         chartScale = 1f,
+        spToPx = context::spToPx,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =

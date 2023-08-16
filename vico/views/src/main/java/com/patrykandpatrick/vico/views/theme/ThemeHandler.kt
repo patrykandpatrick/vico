@@ -284,7 +284,8 @@ internal class ThemeHandler(
 
             val interpolator = if (interpolatorClassName != null) {
                 try {
-                    context.classLoader.loadClass(interpolatorClassName).newInstance() as? TimeInterpolator
+                    context.classLoader.loadClass(interpolatorClassName).getDeclaredConstructor().newInstance()
+                        as? TimeInterpolator
                 } catch (e: Exception) {
                     Log.e(
                         "ChartView",

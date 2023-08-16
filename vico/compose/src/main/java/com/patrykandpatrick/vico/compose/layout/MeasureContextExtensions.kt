@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.context.MutableMeasureContext
  * @param chartScale the scale of the chart. Used to handle zooming in and out.
  * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
+ * @param spToPx converts dimensions from sp to px.
  */
 @Composable
 public fun getMeasureContext(
@@ -40,19 +41,19 @@ public fun getMeasureContext(
     chartScale: Float,
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,
+    spToPx: (Float) -> Float,
 ): MutableMeasureContext = remember {
     MutableMeasureContext(
         canvasBounds = canvasBounds,
         density = 0f,
-        fontScale = 0f,
         isLtr = true,
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
         chartScale = chartScale,
         horizontalLayout = horizontalLayout,
+        spToPx = spToPx,
     )
 }.apply {
     this.density = LocalDensity.current.density
-    this.fontScale = LocalDensity.current.fontScale * LocalDensity.current.density
     this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
     this.chartScale = chartScale

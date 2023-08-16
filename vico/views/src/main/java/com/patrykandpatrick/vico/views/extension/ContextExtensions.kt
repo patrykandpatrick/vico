@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,6 @@ import com.patrykandpatrick.vico.core.DefaultColors
 
 internal val Context.density: Float
     get() = resources.displayMetrics.density
-
-internal val Context.fontScale: Float
-    get() = resources.displayMetrics.scaledDensity
 
 internal val Context.isLtr: Boolean
     get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
