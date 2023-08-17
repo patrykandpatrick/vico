@@ -53,6 +53,7 @@ import kotlin.math.sin
 
 private const val TEXT_MEASUREMENT_CHAR = ""
 private const val LAYOUT_KEY_PREFIX = "layout_"
+private const val DEF_LAYOUT_SIZE = 100000
 
 /**
  * Uses [Canvas] to render text. This class utilizes [StaticLayout] and supports the following:
@@ -154,8 +155,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
         textY: Float,
         horizontalPosition: HorizontalPosition = HorizontalPosition.Center,
         verticalPosition: VerticalPosition = VerticalPosition.Center,
-        maxTextWidth: Int = Int.MAX_VALUE,
-        maxTextHeight: Int = Int.MAX_VALUE,
+        maxTextWidth: Int = DEF_LAYOUT_SIZE,
+        maxTextHeight: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
     ): Unit = with(context) {
         if (text.isBlank()) return
@@ -285,8 +286,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
     public fun getWidth(
         context: MeasureContext,
         text: CharSequence,
-        width: Int = Int.MAX_VALUE,
-        height: Int = Int.MAX_VALUE,
+        width: Int = DEF_LAYOUT_SIZE,
+        height: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
     ): Float = getTextBounds(
         context = context,
@@ -302,8 +303,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
     public fun getHeight(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
-        width: Int = Int.MAX_VALUE,
-        height: Int = Int.MAX_VALUE,
+        width: Int = DEF_LAYOUT_SIZE,
+        height: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
     ): Float = getTextBounds(
         context = context,
@@ -319,8 +320,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
     public fun getTextBounds(
         context: MeasureContext,
         text: CharSequence = TEXT_MEASUREMENT_CHAR,
-        width: Int = Int.MAX_VALUE,
-        height: Int = Int.MAX_VALUE,
+        width: Int = DEF_LAYOUT_SIZE,
+        height: Int = DEF_LAYOUT_SIZE,
         outRect: RectF = tempMeasureBounds,
         includePaddingAndMargins: Boolean = true,
         rotationDegrees: Float = 0f,
@@ -344,8 +345,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
 
     private fun MeasureContext.getLayout(
         text: CharSequence,
-        width: Int = Int.MAX_VALUE,
-        height: Int = Int.MAX_VALUE,
+        width: Int = DEF_LAYOUT_SIZE,
+        height: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
     ): StaticLayout {
         val widthWithoutMargins = width - margins.horizontalDp.wholePixels
