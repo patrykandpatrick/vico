@@ -17,14 +17,10 @@
 package com.patrykandpatrick.vico.core.extension
 
 import android.content.Context
-import android.os.Build
 import android.util.TypedValue
 
 /**
  * Converts the provided dimension from sp to px.
  */
-public fun Context.spToPx(sp: Float): Float = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-    TypedValue.convertDimensionToPixels(TypedValue.COMPLEX_UNIT_SP, sp, resources.displayMetrics)
-} else {
+public fun Context.spToPx(sp: Float): Float =
     TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, resources.displayMetrics)
-}
