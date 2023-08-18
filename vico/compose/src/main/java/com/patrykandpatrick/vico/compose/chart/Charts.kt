@@ -26,7 +26,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -321,10 +323,10 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
-    val zoom = remember { mutableStateOf(1f) }
+    val zoom = remember { mutableFloatStateOf(1f) }
     val measureContext = getMeasureContext(
         chartScrollSpec.isScrollEnabled,
-        zoom.value,
+        zoom.floatValue,
         bounds,
         horizontalLayout,
         with(LocalContext.current) { ::spToPx },
@@ -464,17 +466,17 @@ internal fun rememberScrollListener(touchPoint: MutableState<Point?>): ScrollLis
 
 @Composable
 internal fun rememberZoomState(
-    zoom: MutableState<Float>,
+    zoom: MutableFloatState,
     getScroll: () -> Float,
     scrollBy: (value: Float) -> Unit,
     chartBounds: RectF,
 ): OnZoom = remember {
     onZoom@{ centroid, zoomChange ->
-        val newZoom = zoom.value * zoomChange
+        val newZoom = zoom.floatValue * zoomChange
         if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return@onZoom
         val transformationAxisX = getScroll() + centroid.x - chartBounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
-        zoom.value = newZoom
+        zoom.floatValue = newZoom
         scrollBy(zoomedTransformationAxisX - transformationAxisX)
     }
 }
