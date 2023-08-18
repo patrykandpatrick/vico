@@ -26,5 +26,5 @@ import android.util.TypedValue
 public fun Context.spToPx(sp: Float): Float = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
     TypedValue.convertDimensionToPixels(TypedValue.COMPLEX_UNIT_SP, sp, resources.displayMetrics)
 } else {
-    sp * resources.configuration.fontScale * resources.displayMetrics.density
+    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, resources.displayMetrics)
 }
