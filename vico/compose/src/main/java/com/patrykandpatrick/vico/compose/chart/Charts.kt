@@ -117,7 +117,7 @@ public fun <Model : ChartEntryModel> Chart(
     legend: Legend? = null,
     chartScrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
-    diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
+    diffAnimationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
