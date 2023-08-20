@@ -40,7 +40,7 @@ public class ChartEntryModelProducer(
 
     private var cachedModel: ChartEntryModel? = null
 
-    private var entriesHashCode: Int = 0
+    private var entriesHashCode: Int? = null
 
     private val updateReceivers: HashMap<Any, UpdateReceiver> = HashMap()
 
@@ -130,7 +130,7 @@ public class ChartEntryModelProducer(
             stackedPositiveY = stackedPositiveYRange.endInclusive,
             stackedNegativeY = stackedPositiveYRange.start,
             xGcd = entries.calculateXGcd(),
-            id = entriesHashCode,
+            id = entriesHashCode ?: entries.hashCode().also { entriesHashCode = it },
         )
 
     override fun registerForUpdates(
