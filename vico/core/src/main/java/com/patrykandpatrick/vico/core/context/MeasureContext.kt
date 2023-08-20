@@ -55,11 +55,6 @@ public interface MeasureContext : Extras {
     public val isHorizontalScrollEnabled: Boolean
 
     /**
-     * The scale of the chart. Used to handle zooming in and out.
-     */
-    public val chartScale: Float
-
-    /**
      * Defines how the chart’s content is positioned horizontally.
      */
     public val horizontalLayout: HorizontalLayout

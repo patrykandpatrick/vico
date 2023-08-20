@@ -64,12 +64,6 @@ internal class DefaultHorizontalAxisItemPlacer(
         return listOf(chartValues.minX, (chartValues.minX + chartValues.maxX).half, chartValues.maxX)
     }
 
-    override fun getMeasuredLabelClearance(
-        context: MeasureContext,
-        horizontalDimensions: HorizontalDimensions,
-        fullXRange: ClosedFloatingPointRange<Float>,
-    ): Float = spacing.toFloat()
-
     @Suppress("LoopWithTooManyJumpStatements")
     override fun getLineValues(
         context: ChartDrawContext,
@@ -104,7 +98,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
         return when (context.horizontalLayout) {
             is HorizontalLayout.Segmented -> tickSpace
-            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.startPadding).coerceAtLeast(0f)
+            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.unscalableStartPadding).coerceAtLeast(0f)
         }
     }
 
@@ -116,7 +110,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
         return when (context.horizontalLayout) {
             is HorizontalLayout.Segmented -> tickSpace
-            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.endPadding).coerceAtLeast(0f)
+            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.unscalableEndPadding).coerceAtLeast(0f)
         }
     }
 

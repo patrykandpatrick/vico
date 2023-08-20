@@ -28,7 +28,6 @@ public data class MutableMeasureContext(
     override var density: Float,
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean = false,
-    override var chartScale: Float = 1f,
     override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
     private var spToPx: (Float) -> Float,
 ) : MeasureContext, Extras by DefaultExtras() {

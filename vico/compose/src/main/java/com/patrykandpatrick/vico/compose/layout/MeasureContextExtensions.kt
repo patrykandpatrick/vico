@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.core.context.MutableMeasureContext
  * The anonymous implementation of the [MeasureContext].
  *
  * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
- * @param chartScale the scale of the chart. Used to handle zooming in and out.
  * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param spToPx converts dimensions from sp to px.
@@ -38,7 +37,6 @@ import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 @Composable
 public fun getMeasureContext(
     isHorizontalScrollEnabled: Boolean,
-    chartScale: Float,
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,
     spToPx: (Float) -> Float,
@@ -48,7 +46,6 @@ public fun getMeasureContext(
         density = 0f,
         isLtr = true,
         isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-        chartScale = chartScale,
         horizontalLayout = horizontalLayout,
         spToPx = spToPx,
     )
@@ -56,5 +53,4 @@ public fun getMeasureContext(
     this.density = LocalDensity.current.density
     this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
-    this.chartScale = chartScale
 }

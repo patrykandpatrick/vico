@@ -17,8 +17,10 @@
 package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.model.Point
@@ -47,6 +49,11 @@ public interface ChartDrawContext : DrawContext {
      * The current amount of horizontal scroll.
      */
     public val horizontalScroll: Float
+
+    /**
+     * The zoom factor.
+     */
+    public val zoom: Float
 }
 
 /**
@@ -55,9 +62,10 @@ public interface ChartDrawContext : DrawContext {
 public fun MeasureContext.getMaxScrollDistance(
     chartWidth: Float,
     horizontalDimensions: HorizontalDimensions,
+    zoom: Float? = null,
 ): Float {
     val contentWidth = horizontalDimensions
-        .scaled(chartScale)
+        .run { if (zoom != null) scaled(zoom) else this }
         .getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
 
     return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
@@ -73,3 +81,21 @@ public fun ChartDrawContext.getMaxScrollDistance(): Float =
         chartWidth = chartBounds.width(),
         horizontalDimensions = horizontalDimensions,
     )
+
+/**
+ * Returns the automatic zoom factor for a chart.
+ */
+public fun MeasureContext.getAutoZoom(
+    horizontalDimensions: HorizontalDimensions,
+    chartBounds: RectF,
+    autoScaleUp: AutoScaleUp,
+): Float {
+    val contentWidth = horizontalDimensions.getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
+    return when {
+        contentWidth < chartBounds.width() ->
+            if (autoScaleUp == AutoScaleUp.Full) (chartBounds.width() / contentWidth).coerceAtMost(DEF_MAX_ZOOM) else 1f
+
+        !isHorizontalScrollEnabled -> chartBounds.width() / contentWidth
+        else -> 1f
+    }
+}

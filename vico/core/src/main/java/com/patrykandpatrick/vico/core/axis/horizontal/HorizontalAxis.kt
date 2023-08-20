@@ -228,14 +228,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
-    ): Unit = with(context) {
-        val scaledHorizontalDimensions = horizontalDimensions.scaled(chartScale)
-        with(outInsets) {
-            start = itemPlacer.getStartHorizontalAxisInset(context, scaledHorizontalDimensions, tickThickness)
-            end = itemPlacer.getEndHorizontalAxisInset(context, scaledHorizontalDimensions, tickThickness)
-            top = if (position.isTop) getDesiredHeight(context, scaledHorizontalDimensions) else 0f
-            bottom = if (position.isBottom) getDesiredHeight(context, scaledHorizontalDimensions) else 0f
-        }
+    ): Unit = with(outInsets) {
+        start = itemPlacer.getStartHorizontalAxisInset(context, horizontalDimensions, context.tickThickness)
+        end = itemPlacer.getEndHorizontalAxisInset(context, horizontalDimensions, context.tickThickness)
+        top = if (position.isTop) getDesiredHeight(context, horizontalDimensions) else 0f
+        bottom = if (position.isBottom) getDesiredHeight(context, horizontalDimensions) else 0f
     }
 
     private fun MeasureContext.getFullXRange(
@@ -253,8 +250,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ): Float = with(context) {
         val chartValues = chartValuesManager.getChartValues()
         val fullXRange = getFullXRange(horizontalDimensions)
-        val labelClearance = itemPlacer.getMeasuredLabelClearance(this, horizontalDimensions, fullXRange)
-        val maxLabelWidth = (labelClearance * horizontalDimensions.xSpacing).toInt()
 
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
@@ -266,8 +261,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                             label.getHeight(
                                 context = this,
                                 text = labelText,
-                                width = maxLabelWidth,
                                 rotationDegrees = labelRotationDegrees,
+                                pad = true,
                             ).orZero
                         }
                 }.orZero
@@ -287,7 +282,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             is SizeConstraint.TextWidth -> label?.getHeight(
                 context = this,
                 text = constraint.text,
-                width = maxLabelWidth,
                 rotationDegrees = labelRotationDegrees,
             ).orZero
         }
