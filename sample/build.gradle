@@ -19,12 +19,11 @@ plugins {
     id "kotlin-android"
 }
 
-apply from: "$rootDir/common-scripts.gradle"
-
 android {
     defaultConfig {
         minSdk library.compose_min_sdk
         targetSdk library.target_sdk
+        compileSdk library.target_sdk
         versionCode library.version_code
         versionName library.version_name
     }
@@ -44,6 +43,10 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
     }
 
     composeOptions {
