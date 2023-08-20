@@ -283,7 +283,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * Applies a horizontal fade to the edges of the chart area for scrollable charts.
      */
-    public var fadingEdges: FadingEdges? = null
+    public var fadingEdges: FadingEdges? by invalidatingObservable(themeHandler.fadingEdges)
 
     /**
      * Defines whether the content of a scrollable chart should be scaled up when the dimensions are such that, at a
