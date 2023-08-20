@@ -15,6 +15,7 @@ kotlin = "1.9.0"
 lifecycle = "2.6.1"
 material = "1.9.0"
 mockK = "1.13.5"
+paparazziGradlePlugin = "1.3.1"
 testCore = "1.5.0"
 
 [libraries]
@@ -39,6 +40,7 @@ kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref
 lifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
+paparazzi-gradle-plugin = { module = "app.cash.paparazzi:paparazzi-gradle-plugin", version.ref = "paparazziGradlePlugin" }
 systemUIController = { group = "com.google.accompanist", name = "accompanist-systemuicontroller", version.ref = "accompanist" }
 testCore = { group = "androidx.test", name = "core-ktx", version.ref = "testCore" }
 viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
