@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,14 +22,19 @@ import com.patrykandpatrick.vico.core.entry.ChartEntry
  * Processes the difference between two collections of [ChartEntry] instances and generates intermediate collections
  * for use in difference animations.
  */
-public interface DiffProcessor<Entry : ChartEntry> {
+public interface DiffProcessor<Entry> {
 
     /**
      * Sets the initial and target collections of [ChartEntry] instances.
      * @param old the initial collection.
      * @param new the target collection.
      */
-    public fun setEntries(old: List<List<Entry>>, new: List<List<Entry>>)
+    public fun setEntries(
+        old: List<List<Entry>>,
+        new: List<List<Entry>>,
+        oldYRange: ClosedFloatingPointRange<Float>,
+        oldAggregateYRange: ClosedFloatingPointRange<Float>,
+    )
 
     /**
      * Reuses the current target collection of [ChartEntry] instances as the initial collection and sets a new target

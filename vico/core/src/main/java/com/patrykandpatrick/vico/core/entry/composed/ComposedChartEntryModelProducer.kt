@@ -17,10 +17,12 @@
 package com.patrykandpatrick.vico.core.entry.composed
 
 import com.patrykandpatrick.vico.core.DEF_THREAD_POOL_SIZE
+import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
+import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 import com.patrykandpatrick.vico.core.extension.gcdWith
 import java.util.SortedMap
 import java.util.TreeMap
@@ -66,8 +68,11 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
 
     override fun registerForUpdates(
         key: Any,
-        updateListener: () -> Unit,
+        cancelProgressAnimation: (producerKey: Any) -> Unit,
+        startProgressAnimation: (producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
         getOldModel: () -> ComposedChartEntryModel<Model>?,
+        modelTransformerProvider: Chart.ModelTransformerProvider?,
+        drawingModelStore: MutableDrawingModelStore,
         onModel: (ComposedChartEntryModel<Model>) -> Unit,
     ) {
         val receiver = CompositeModelReceiver(onModel, executor)
@@ -75,8 +80,11 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
         chartModelProducers.forEachIndexed { index, producer ->
             producer.registerForUpdates(
                 key = key,
-                updateListener = updateListener,
+                cancelProgressAnimation = cancelProgressAnimation,
+                startProgressAnimation = startProgressAnimation,
                 getOldModel = { getOldModel()?.composedEntryCollections?.getOrNull(index) },
+                modelTransformerProvider = modelTransformerProvider,
+                drawingModelStore = drawingModelStore,
                 onModel = receiver.getModelReceiver(index),
             )
         }
@@ -89,18 +97,15 @@ public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
 
         private val modelReceivers: SortedMap<Int, Model?> = TreeMap()
 
-        internal fun getModelReceiver(index: Int): (Model) -> Unit {
-            val modelReceiver: (Model) -> Unit = { model ->
-                onModelUpdate(index, model)
-            }
+        fun getModelReceiver(index: Int): (Model) -> Unit {
             modelReceivers[index] = null
-            return modelReceiver
+            return { onModelUpdate(index, it) }
         }
 
-        private fun onModelUpdate(index: Int, model: Model) {
+        fun onModelUpdate(index: Int, model: Model) {
             modelReceivers[index] = model
             val models = modelReceivers.values.mapNotNull { it }
-            if (modelReceivers.values.size == models.size) {
+            if (modelReceivers.values.size == models.size) { // TODO verify if needed
                 executor.execute {
                     onModel(composedChartEntryModelOf(models))
                 }

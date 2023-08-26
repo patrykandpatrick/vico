@@ -17,8 +17,12 @@
 package com.patrykandpatrick.vico.core.entry
 
 import com.patrykandpatrick.vico.core.DEF_THREAD_POOL_SIZE
+import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.entry.diff.DefaultDiffProcessor
 import com.patrykandpatrick.vico.core.entry.diff.DiffProcessor
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.extension.orEmpty
 import com.patrykandpatrick.vico.core.extension.setToAllChildren
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -74,11 +78,19 @@ public class ChartEntryModelProducer(
         updateReceivers.values.forEach { updateReceiver ->
             executor.execute {
                 this.entriesHashCode = entriesHashCode
+                updateReceiver.cancelProgressAnimation(hashCode())
+                updateReceiver.transformer?.prepareForTransformation(
+                    updateReceiver.getOldModel(),
+                    getModel(),
+                    updateReceiver.drawingModelStore,
+                )
                 updateReceiver.diffProcessor.setEntries(
                     old = updateReceiver.getOldModel()?.entries.orEmpty(),
                     new = entries,
+                    oldYRange = updateReceiver.getOldModel()?.yRange.orEmpty,
+                    oldAggregateYRange = updateReceiver.getOldModel()?.aggregateYRange.orEmpty,
                 )
-                updateReceiver.listener()
+                updateReceiver.startProgressAnimation(hashCode(), ::progressModel)
             }
         }
     }
@@ -97,9 +109,9 @@ public class ChartEntryModelProducer(
         cachedModel ?: getModel(entries).also { cachedModel = it }
 
     override fun progressModel(key: Any, progress: Float) {
-        val (_, modelReceiver, diffProcessor) = updateReceivers[key] ?: return
+        val (_, _, modelReceiver, diffProcessor, store, transformer) = updateReceivers[key] ?: return
         executor.execute {
-            progressModelSynchronously(progress, modelReceiver, diffProcessor)
+            progressModelSynchronously(progress, modelReceiver, diffProcessor, store, transformer)
         }
     }
 
@@ -107,11 +119,15 @@ public class ChartEntryModelProducer(
         progress: Float,
         modelReceiver: (ChartEntryModel) -> Unit,
         diffProcessor: DiffProcessor<ChartEntry>,
+        drawingModelStore: MutableDrawingModelStore = MutableDrawingModelStore(),
+        modelTransformer: Chart.ModelTransformer<ChartEntryModel>?,
     ) {
+        modelTransformer?.transform(drawingModelStore, progress)
         val model = getModel(
             entries = diffProcessor.progressDiff(progress),
             yRange = diffProcessor.yRangeProgressDiff(progress),
             stackedPositiveYRange = diffProcessor.stackedYRangeProgressDiff(progress),
+            drawingModelStore = drawingModelStore,
         )
         modelReceiver(model)
     }
@@ -120,6 +136,7 @@ public class ChartEntryModelProducer(
         entries: List<List<ChartEntry>>,
         yRange: ClosedFloatingPointRange<Float> = entries.yRange,
         stackedPositiveYRange: ClosedFloatingPointRange<Float> = entries.calculateStackedYRange(),
+        drawingModelStore: DrawingModelStore = DrawingModelStore.Empty,
     ): ChartEntryModel =
         Model(
             entries = entries,
@@ -131,23 +148,42 @@ public class ChartEntryModelProducer(
             stackedNegativeY = stackedPositiveYRange.start,
             xGcd = entries.calculateXGcd(),
             id = entriesHashCode ?: entries.hashCode().also { entriesHashCode = it },
+            drawingModelStore = drawingModelStore,
         )
 
     override fun registerForUpdates(
         key: Any,
-        updateListener: () -> Unit,
+        cancelProgressAnimation: (producerKey: Any) -> Unit,
+        startProgressAnimation: (producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
         getOldModel: () -> ChartEntryModel?,
+        modelTransformerProvider: Chart.ModelTransformerProvider?,
+        drawingModelStore: MutableDrawingModelStore,
         onModel: (ChartEntryModel) -> Unit,
     ) {
+        val modelTransformer = modelTransformerProvider
+            ?.getModelTransformer<ChartEntryModel>()
+
         updateReceivers[key] = UpdateReceiver(
-            listener = updateListener,
+            cancelProgressAnimation = cancelProgressAnimation,
+            startProgressAnimation = startProgressAnimation,
             onModel = onModel,
             diffProcessor = diffProcessor,
+            drawingModelStore = drawingModelStore,
+            transformer = modelTransformer,
             getOldModel = getOldModel,
         )
         executor.execute {
-            diffProcessor.setEntries(old = getOldModel()?.entries.orEmpty(), new = entries)
-            updateListener()
+            cancelProgressAnimation(hashCode())
+            modelTransformer
+                ?.prepareForTransformation(getOldModel(), getModel(), drawingModelStore)
+
+            diffProcessor.setEntries(
+                old = getOldModel()?.entries.orEmpty(),
+                new = entries,
+                oldYRange = getOldModel()?.yRange.orEmpty,
+                oldAggregateYRange = getOldModel()?.aggregateYRange.orEmpty,
+            )
+            startProgressAnimation(hashCode(), ::progressModel)
         }
     }
 
@@ -158,9 +194,12 @@ public class ChartEntryModelProducer(
     override fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key = key)
 
     private data class UpdateReceiver(
-        val listener: () -> Unit,
+        val cancelProgressAnimation: (producerKey: Any) -> Unit,
+        val startProgressAnimation: (producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
         val onModel: (ChartEntryModel) -> Unit,
         val diffProcessor: DiffProcessor<ChartEntry>,
+        val drawingModelStore: MutableDrawingModelStore,
+        val transformer: Chart.ModelTransformer<ChartEntryModel>?,
         val getOldModel: () -> ChartEntryModel?,
     )
 
@@ -174,5 +213,6 @@ public class ChartEntryModelProducer(
         override val stackedNegativeY: Float,
         override val xGcd: Float,
         override val id: Int,
+        override val drawingModelStore: DrawingModelStore,
     ) : ChartEntryModel
 }

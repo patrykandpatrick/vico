@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.BaseChart
+import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
@@ -35,6 +36,7 @@ import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec.PointConnector
 import com.patrykandpatrick.vico.core.chart.put
+import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.component.Component
@@ -46,10 +48,18 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.entry.diff.DrawingInfo
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.asDrawingModel
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
@@ -70,6 +80,8 @@ public open class LineChart(
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
 ) : BaseChart<ChartEntryModel>() {
+
+    protected val key: DrawingModelStore.Key<PointInfo> = DrawingModelStore.Key()
 
     /**
      * Creates a [LineChart] with a common style for all lines.
@@ -539,6 +551,7 @@ public open class LineChart(
                     scalableStartPadding = xSpacing.half
                     scalableEndPadding = scalableStartPadding
                 }
+
                 is HorizontalLayout.FullWidth -> {
                     scalableStartPadding = horizontalLayout.startPaddingDp.pixels
                     scalableEndPadding = horizontalLayout.endPaddingDp.pixels
@@ -572,5 +585,61 @@ public open class LineChart(
                 if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp) else it.lineThicknessDp
             }.pixels,
         )
+    }
+
+    override val modelTransformerProvider: Chart.ModelTransformerProvider? =
+        object : Chart.ModelTransformerProvider {
+            override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> =
+                lineChartModelTransformer
+        }
+
+    private val lineChartModelTransformer = LineChartModelTransformer(
+        key = key,
+        getAxisValuesOverrider = { axisValuesOverrider },
+    )
+
+    protected class LineChartModelTransformer(
+        override val key: DrawingModelStore.Key<PointInfo>,
+        private val getAxisValuesOverrider: () -> AxisValuesOverrider<ChartEntryModel>?,
+        private val drawingModelInterpolator: DrawingModelInterpolator<PointInfo> = DefaultDrawingModelInterpolator(),
+    ) : Chart.ModelTransformer<ChartEntryModel>() {
+
+        override fun prepareForTransformation(
+            oldModel: ChartEntryModel?,
+            newModel: ChartEntryModel,
+            drawingModelStore: MutableDrawingModelStore,
+        ) {
+            drawingModelInterpolator.setItems(
+                drawingModelStore[key].orEmpty(),
+                newModel.toDrawingModel(),
+            )
+        }
+
+        override fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
+            drawingModelStore[key] = drawingModelInterpolator.transform(fraction).asDrawingModel()
+        }
+
+        private fun ChartEntryModel.toDrawingModel(): DrawingModel<PointInfo> {
+            val minY = getAxisValuesOverrider()?.getMinY(this) ?: minY.coerceAtMost(0f)
+            val maxY = getAxisValuesOverrider()?.getMaxY(this) ?: maxY
+            return entries.map { series ->
+                series.map { entry ->
+                    PointInfo(
+                        entry,
+                        (entry.y - minY) / (maxY - minY),
+                    )
+                }
+            }.asDrawingModel()
+        }
+    }
+
+    public class PointInfo(
+        override val entry: ChartEntry,
+        public val yFraction: Float,
+    ) : DrawingInfo {
+        override fun unsafeTransform(from: DrawingInfo?, fraction: Float): DrawingInfo {
+            val oldYFraction = (from as? PointInfo)?.yFraction.orZero
+            return PointInfo(entry, oldYFraction + (yFraction - oldYFraction) * fraction)
+        }
     }
 }

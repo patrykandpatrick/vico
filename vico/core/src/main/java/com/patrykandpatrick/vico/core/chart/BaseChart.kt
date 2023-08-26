@@ -34,7 +34,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
  *
  * @see Chart
  */
-public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
+public abstract class BaseChart<Model : ChartEntryModel> : Chart<Model>, BoundsAware {
 
     private val decorations = ArrayList<Decoration>()
 

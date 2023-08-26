@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.entry.diff
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.calculateStackedYRange
 import com.patrykandpatrick.vico.core.entry.yRange
+import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.setToAllChildren
 import java.util.TreeMap
@@ -35,51 +36,55 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
 
     private var oldYRange = 0f..0f
     private var newYRange = 0f..0f
-    private var oldStackedYRange = 0f..0f
-    private var newStackedYRange = 0f..0f
+    private var oldAggregateYRange = 0f..0f
+    private var newAggregateYRange = 0f..0f
 
     override fun setEntries(
         old: List<List<ChartEntry>>,
         new: List<List<ChartEntry>>,
+        oldYRange: ClosedFloatingPointRange<Float>,
+        oldAggregateYRange: ClosedFloatingPointRange<Float>,
     ): Unit = synchronized(this) {
         oldEntries.setToAllChildren(old)
         newEntries.setToAllChildren(new)
         updateProgressMap()
-        updateRanges()
+        updateRanges(oldYRange, oldAggregateYRange)
     }
 
     override fun setEntries(new: List<List<ChartEntry>>) {
-        setEntries(old = newEntries, new = new)
+        setEntries(old = newEntries, new = new, oldYRange = newYRange, oldAggregateYRange = newAggregateYRange)
     }
 
     override fun progressDiff(progress: Float): List<List<ChartEntry>> = synchronized(this) {
         progressMaps.mapNotNull { map ->
             map.mapNotNull { (_, model) ->
-                if (model.temporary && progress == 1f) null else model.progressDiff(progress)
+                when {
+                    oldYRange == 0f..0f -> model.transformFromZero(progress.coerceAtMost(.5f).doubled)
+
+                    newYRange == 0f..0f ->
+                        if (progress >= .5f) null else model.transformToZero(progress.coerceAtMost(.5f).doubled)
+
+                    progress >= .5f -> if (model.removed) null else model.transformFromZero((progress - .5f).doubled)
+                    else -> if (model.added) null else model.transformToZero(progress.doubled)
+                }
             }.takeIf { list -> list.isNotEmpty() }
         }
     }
 
-    override fun yRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float> = when {
-        oldYRange == ZERO_TO_ZERO -> newYRange
-        newYRange == ZERO_TO_ZERO -> if (progress == 1f) newYRange else oldYRange
-        else -> RangeProgressModel(
-            oldRange = oldYRange,
-            newRange = newYRange,
-        ).progressDiff(progress)
-    }
+    override fun yRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float> =
+        if (progress >= .5f || oldYRange == 0f..0f) newYRange else oldYRange
 
     override fun stackedYRangeProgressDiff(progress: Float): ClosedFloatingPointRange<Float> =
-        RangeProgressModel(
-            oldRange = oldStackedYRange,
-            newRange = newStackedYRange,
-        ).progressDiff(progress)
+        if (progress >= .5f || oldYRange == 0f..0f) newAggregateYRange else oldAggregateYRange
 
-    private fun updateRanges() {
-        oldYRange = oldEntries.yRange
+    private fun updateRanges(
+        oldYRange: ClosedFloatingPointRange<Float>,
+        oldAggregateYRange: ClosedFloatingPointRange<Float>,
+    ) {
+        this.oldYRange = oldYRange
+        this.oldAggregateYRange = oldAggregateYRange
         newYRange = newEntries.yRange
-        oldStackedYRange = oldEntries.calculateStackedYRange()
-        newStackedYRange = newEntries.calculateStackedYRange()
+        newAggregateYRange = newEntries.calculateStackedYRange()
     }
 
     private fun updateProgressMap() {
@@ -93,15 +98,18 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
                     map[chartEntry.x] = ChartEntryProgressModel(
                         oldY = chartEntry.y,
                         chartEntry = chartEntry,
+                        added = false,
                     )
                 }
             newEntries
                 .getOrNull(i)
                 ?.forEach { chartEntry ->
+                    val current = map[chartEntry.x]
                     map[chartEntry.x] = ChartEntryProgressModel(
-                        oldY = map[chartEntry.x]?.oldY,
+                        oldY = current?.oldY,
                         newY = chartEntry.y,
-                        temporary = false,
+                        removed = false,
+                        added = current?.added != false,
                         chartEntry = chartEntry,
                     )
                 }
@@ -109,51 +117,15 @@ public class DefaultDiffProcessor : DiffProcessor<ChartEntry> {
         }
     }
 
-    private data class RangeProgressModel(
-        val oldRange: ClosedFloatingPointRange<Float>,
-        val newRange: ClosedFloatingPointRange<Float>,
-    ) {
-        fun progressDiff(progress: Float): ClosedFloatingPointRange<Float> {
-            val minValue = ProgressModel(
-                oldY = oldRange.start,
-                newY = newRange.start,
-            ).progressDiff(progress)
-
-            val maxValue = ProgressModel(
-                oldY = oldRange.endInclusive,
-                newY = newRange.endInclusive,
-            ).progressDiff(progress)
-
-            return minValue..maxValue
-        }
-    }
-
     private data class ChartEntryProgressModel(
         val oldY: Float? = null,
         val newY: Float? = null,
-        val temporary: Boolean = true,
+        val removed: Boolean = true,
+        val added: Boolean = true,
         val chartEntry: ChartEntry,
     ) {
-        fun progressDiff(progress: Float): ChartEntry = chartEntry.withY(
-            y = ProgressModel(
-                oldY = oldY,
-                newY = newY,
-            ).progressDiff(progress = progress),
-        )
-    }
+        fun transformToZero(fraction: Float) = chartEntry.withY(oldY.orZero * (1 - fraction))
 
-    private data class ProgressModel(
-        val oldY: Float? = null,
-        val newY: Float? = null,
-    ) {
-        fun progressDiff(progress: Float): Float {
-            val oldY = oldY.orZero
-            val newY = newY.orZero
-            return oldY + (newY - oldY) * progress
-        }
-    }
-
-    private companion object {
-        val ZERO_TO_ZERO = 0f..0f
+        fun transformFromZero(fraction: Float) = chartEntry.withY(newY.orZero * fraction)
     }
 }

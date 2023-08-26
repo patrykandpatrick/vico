@@ -29,6 +29,8 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 import com.patrykandpatrick.vico.core.marker.Marker
 
 internal const val AXIS_VALUES_DEPRECATION_MESSAGE: String = "Axis values should be overridden via " +
@@ -194,6 +196,30 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @param xStep the overridden _x_ step (or `null` if no override has occurred).
      */
     public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model, xStep: Float?)
+
+    public val modelTransformerProvider: ModelTransformerProvider?
+        get() = null
+
+    public interface ModelTransformerProvider {
+
+        public fun <T : ChartEntryModel> getModelTransformer(): ModelTransformer<T>?
+    }
+
+    public abstract class ModelTransformer<in Model> {
+
+        protected abstract val key: DrawingModelStore.Key<*>
+
+        public abstract fun prepareForTransformation(
+            oldModel: Model?,
+            newModel: Model,
+            drawingModelStore: MutableDrawingModelStore,
+        )
+
+        public abstract fun transform(
+            drawingModelStore: MutableDrawingModelStore,
+            fraction: Float,
+        )
+    }
 }
 
 /**

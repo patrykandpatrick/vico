@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 
 package com.patrykandpatrick.vico.core.entry
+
+import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 
 /**
  * A [Model] producer that can deliver generated [Model]s asynchronously. It supports difference animations.
@@ -35,19 +38,19 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
     public fun progressModel(key: Any, progress: Float)
 
     /**
-     * Registers an update listener associated with a [key].
-     *
-     * @param key associates a receiver with its listeners. It’s later used to perform difference animations with
-     * [progressModel].
-     * @param updateListener is called immediately in this function, and when the [ChartModelProducer] receives a new
-     * list of entries. The [registerForUpdates] function caller may start an animator, which will order the
-     * [ChartModelProducer] to handle the difference animation with [progressModel].
-     * @param onModel called when the [ChartModelProducer] has generated the [Model].
+     * Registers an update listener associated with a [key]. [cancelProgressAnimation] and [startProgressAnimation] are
+     * called after a data update is requested, with [cancelProgressAnimation] being called before the update starts
+     * being processed (at which point [progressModel] should stop being used), and [startProgressAnimation] being
+     * called once the update has been processed (at which point it’s safe to use [progressModel]).
+     * [onModel] is called when a new [Model] has been generated.
      */
     public fun registerForUpdates(
         key: Any,
-        updateListener: () -> Unit,
+        cancelProgressAnimation: (producerKey: Any) -> Unit,
+        startProgressAnimation: (producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
         getOldModel: () -> Model?,
+        modelTransformerProvider: Chart.ModelTransformerProvider?,
+        drawingModelStore: MutableDrawingModelStore,
         onModel: (Model) -> Unit,
     )
 

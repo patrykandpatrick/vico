@@ -22,6 +22,7 @@ import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 
 /**
  * Contains the data for a [Chart]. Pre-calculates values needed for the rendering of the [Chart].
@@ -88,4 +89,13 @@ public interface ChartEntryModel {
      * The greatest common divisor of the _x_ values.
      */
     public val xGcd: Float
+
+    public val drawingModelStore: DrawingModelStore
+        get() = DrawingModelStore.Empty
 }
+
+internal val ChartEntryModel.yRange: ClosedFloatingPointRange<Float>
+    get() = minY..maxY
+
+internal val ChartEntryModel.aggregateYRange: ClosedFloatingPointRange<Float>
+    get() = stackedNegativeY..stackedPositiveY

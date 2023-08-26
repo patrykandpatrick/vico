@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.chart.composed
 import com.patrykandpatrick.vico.core.chart.AXIS_VALUES_DEPRECATION_MESSAGE
 import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.Chart.ModelTransformerProvider
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
@@ -28,6 +29,9 @@ import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.DrawingInfo
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.updateAll
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -152,6 +156,50 @@ public class ComposedChart<Model : ChartEntryModel>(
                 composedEntryCollections[index],
                 charts[index],
             )
+        }
+    }
+
+    override val modelTransformerProvider: ModelTransformerProvider = IteratorModelTransformerProvider()
+
+    private inner class IteratorModelTransformerProvider :
+        ModelTransformerProvider {
+
+        private var index = 0
+        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T>? {
+            return charts.getOrNull(index).let { chart ->
+                index++
+                if (index > charts.lastIndex) {
+                    index = 0
+                }
+                chart?.modelTransformerProvider?.getModelTransformer()
+            }
+        }
+    }
+
+    public class ComposedModelTransformer<Model : ChartEntryModel>(
+        private val chartModelTransformers: List<Chart.ModelTransformer<Model>>,
+    ) : Chart.ModelTransformer<ComposedChartEntryModel<Model>>() {
+
+        override val key: DrawingModelStore.Key<DrawingInfo> = DrawingModelStore.Key()
+
+        override fun prepareForTransformation(
+            oldModel: ComposedChartEntryModel<Model>?,
+            newModel: ComposedChartEntryModel<Model>,
+            drawingModelStore: MutableDrawingModelStore,
+        ) {
+            chartModelTransformers.forEachIndexed { index, transformer ->
+                transformer.prepareForTransformation(
+                    oldModel?.composedEntryCollections?.getOrNull(index),
+                    newModel.composedEntryCollections[index],
+                    drawingModelStore,
+                )
+            }
+        }
+
+        override fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
+            chartModelTransformers.forEach { transformer ->
+                transformer.transform(drawingModelStore, fraction)
+            }
         }
     }
 }

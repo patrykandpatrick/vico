@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,6 +49,9 @@ internal fun Float.toPrettyString(): String = if (this < 0f) "−${-this}" else 
 
 internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>) =
     this == range.start || this == range.endInclusive
+
+internal val ClosedFloatingPointRange<Float>?.orEmpty: ClosedFloatingPointRange<Float>
+    get() = this ?: 0f..0f
 
 /**
  * Half of this value.

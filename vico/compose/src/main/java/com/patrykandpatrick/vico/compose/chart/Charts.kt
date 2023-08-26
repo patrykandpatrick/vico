@@ -127,7 +127,7 @@ public fun <Model : ChartEntryModel> Chart(
     getXStep: ((Model) -> Float)? = null,
 ) {
     val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
-        chartKey = chart,
+        chart = chart,
         producerKey = chartModelProducer,
         animationSpec = diffAnimationSpec,
         runInitialAnimation = runInitialAnimation,

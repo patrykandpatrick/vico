@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.views.chart
 
+import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -48,6 +49,9 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
+import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.extension.doubled
+import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
@@ -122,7 +126,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private val animator: ValueAnimator =
         ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
             duration = Animation.DIFF_DURATION.toLong()
-            interpolator = FastOutSlowInInterpolator()
+            interpolator = getDefaultDiffInterpolator()
             addUpdateListener { progressModelOnAnimationProgress(it.animatedFraction) }
         }
 
@@ -131,6 +135,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             duration = Animation.ANIMATED_SCROLL_DURATION.toLong()
             interpolator = FastOutSlowInInterpolator()
         }
+
+    private val drawingModelStore = MutableDrawingModelStore()
 
     private var markerTouchPoint: Point? = null
 
@@ -238,7 +244,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private fun registerForUpdates() {
         entryProducer?.registerForUpdates(
             key = this,
-            updateListener = {
+            cancelProgressAnimation = { handler.post(animator::cancel) },
+            startProgressAnimation = { _, _ ->
                 if (model != null || runInitialAnimation) {
                     handler.post(animator::start)
                 } else {
@@ -246,6 +253,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 }
             },
             getOldModel = { model },
+            modelTransformerProvider = chart?.modelTransformerProvider,
+            drawingModelStore = drawingModelStore,
         ) { model ->
             post {
                 setModel(model = model)
@@ -563,5 +572,16 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         // In this case, we can ignore this callback, as the layout direction will be determined when the MeasureContext
         // instance is created.
         measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
+    }
+}
+
+private fun getDefaultDiffInterpolator(): TimeInterpolator {
+    val baseInterpolator = FastOutSlowInInterpolator()
+    return Interpolator { fraction ->
+        if (fraction >= .5f) {
+            .5f + baseInterpolator.getInterpolation((fraction - .5f).doubled).half
+        } else {
+            baseInterpolator.getInterpolation(fraction.doubled).half
+        }
     }
 }
