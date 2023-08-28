@@ -19,15 +19,17 @@ package com.patrykandpatrick.vico.sample.previews
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode.Stack
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -66,8 +68,8 @@ public fun StackedColumnChartWithNegativeValues() {
                 mergeMode = Stack,
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 8),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 8) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -83,8 +85,8 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
                 mergeMode = Stack,
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 8),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 8) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -103,8 +105,8 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                 mergeMode = Stack,
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 4),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -123,8 +125,8 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                 mergeMode = Stack,
             ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 3),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }

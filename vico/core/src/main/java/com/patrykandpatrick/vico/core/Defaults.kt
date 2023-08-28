@@ -32,6 +32,7 @@ public const val DEF_LABEL_COUNT: Int = 100
 /**
  * The default label spacing for vertical axes (in dp).
  */
+@Deprecated("This is unused. It’s a leftover constant from before the first release of Vico.")
 public const val DEF_LABEL_SPACING: Float = 16f
 
 /**

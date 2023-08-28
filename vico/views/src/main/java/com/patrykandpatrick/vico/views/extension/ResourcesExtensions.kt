@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,6 @@ internal inline val Float.dp: Float
 
 internal inline val Int.dp: Float
     get() = this * Resources.getSystem().displayMetrics.density
-
-internal inline val Float.sp: Float
-    get() = this * Resources.getSystem().displayMetrics.scaledDensity
-
-internal inline val Int.sp: Int
-    get() = (this * Resources.getSystem().displayMetrics.scaledDensity).toInt()
 
 internal inline val Float.dpInt: Int
     get() = dp.toInt()

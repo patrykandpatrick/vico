@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-ext {
+package com.patrykandpatrick.vico.core.extension
 
-    library = [
-            groupId        : "com.patrykandpatrick.vico",
-            version_name   : "1.11.1",
-            version_code   : 1,
-            target_sdk     : 34,
-            min_sdk        : 16,
-            compose_min_sdk: 21,
-    ]
-}
+import android.content.Context
+import android.util.TypedValue
+
+/**
+ * Converts the provided dimension from sp to px.
+ */
+public fun Context.spToPx(sp: Float): Float =
+    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, resources.displayMetrics)

@@ -69,7 +69,7 @@ public fun ComposeShape.chartShape(): Shape = object : Shape {
                 height = bottom - top,
             ),
             layoutDirection = if (context.isLtr) LayoutDirection.Ltr else LayoutDirection.Rtl,
-            density = Density(context.density, context.fontScale),
+            density = Density(context.density, 1f),
         )
         when (outline) {
             is Outline.Rectangle -> path.addRect(

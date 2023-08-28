@@ -25,9 +25,9 @@ import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.round
 
 internal class DefaultHorizontalAxisItemPlacer(
-    private val spacing: Int = 1,
-    private val offset: Int = 0,
-    private val shiftExtremeTicks: Boolean = true,
+    private val spacing: Int,
+    private val offset: Int,
+    private val shiftExtremeTicks: Boolean,
 ) : AxisItemPlacer.Horizontal {
 
     override fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = shiftExtremeTicks
@@ -64,12 +64,6 @@ internal class DefaultHorizontalAxisItemPlacer(
         return listOf(chartValues.minX, (chartValues.minX + chartValues.maxX).half, chartValues.maxX)
     }
 
-    override fun getMeasuredLabelClearance(
-        context: MeasureContext,
-        horizontalDimensions: HorizontalDimensions,
-        fullXRange: ClosedFloatingPointRange<Float>,
-    ): Float = spacing.toFloat()
-
     @Suppress("LoopWithTooManyJumpStatements")
     override fun getLineValues(
         context: ChartDrawContext,
@@ -100,18 +94,24 @@ internal class DefaultHorizontalAxisItemPlacer(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
         tickThickness: Float,
-    ): Float = when (context.horizontalLayout) {
-        is HorizontalLayout.Segmented -> if (shiftExtremeTicks) tickThickness else tickThickness.half
-        is HorizontalLayout.FullWidth -> (tickThickness.half - horizontalDimensions.startPadding).coerceAtLeast(0f)
+    ): Float {
+        val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
+        return when (context.horizontalLayout) {
+            is HorizontalLayout.Segmented -> tickSpace
+            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.unscalableStartPadding).coerceAtLeast(0f)
+        }
     }
 
     override fun getEndHorizontalAxisInset(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
         tickThickness: Float,
-    ): Float = when (context.horizontalLayout) {
-        is HorizontalLayout.Segmented -> if (shiftExtremeTicks) tickThickness else tickThickness.half
-        is HorizontalLayout.FullWidth -> (tickThickness.half - horizontalDimensions.endPadding).coerceAtLeast(0f)
+    ): Float {
+        val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
+        return when (context.horizontalLayout) {
+            is HorizontalLayout.Segmented -> tickSpace
+            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.unscalableEndPadding).coerceAtLeast(0f)
+        }
     }
 
     private companion object {

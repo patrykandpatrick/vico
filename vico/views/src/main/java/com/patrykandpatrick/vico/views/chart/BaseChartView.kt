@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
+import com.patrykandpatrick.vico.core.chart.draw.getAutoZoom
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -48,6 +49,7 @@ import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.extension.set
+import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -59,7 +61,6 @@ import com.patrykandpatrick.vico.core.scroll.ScrollListenerHost
 import com.patrykandpatrick.vico.views.extension.defaultColors
 import com.patrykandpatrick.vico.views.extension.density
 import com.patrykandpatrick.vico.views.extension.dpInt
-import com.patrykandpatrick.vico.views.extension.fontScale
 import com.patrykandpatrick.vico.views.extension.isLtr
 import com.patrykandpatrick.vico.views.extension.measureDimension
 import com.patrykandpatrick.vico.views.extension.specSize
@@ -105,10 +106,9 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private val measureContext = MutableMeasureContext(
         canvasBounds = contentBounds,
         density = context.density,
-        fontScale = context.fontScale,
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
-        chartScale = 1f,
+        spToPx = context::spToPx,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -139,6 +139,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private var scrollDirectionResolved = false
 
     private var lastMarkerEntryModels = emptyList<Marker.EntryModel>()
+
+    private var zoom = 0f
+
+    private var wasZoomOverridden = false
 
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
 
@@ -283,11 +287,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * Applies a horizontal fade to the edges of the chart area for scrollable charts.
      */
-    public var fadingEdges: FadingEdges? = null
+    public var fadingEdges: FadingEdges? by invalidatingObservable(themeHandler.fadingEdges)
 
     /**
-     * Defines whether the content of a scrollable chart should be scaled up when the dimensions are such that, at a
-     * scale factor of 1, an empty space would be visible near the end edge of the chart.
+     * Defines whether the content of the chart should be scaled up when the dimensions are such that, at a scale factor
+     * of 1, an empty space would be visible near the end edge of the chart.
      */
     public var autoScaleUp: AutoScaleUp = AutoScaleUp.Full
 
@@ -362,13 +366,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private fun handleZoom(focusX: Float, zoomChange: Float) {
         val chart = chart ?: return
-        val newZoom = measureContext.chartScale * zoomChange
+        val newZoom = zoom * zoomChange
         if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return
         val transformationAxisX = scrollHandler.value + focusX - chart.bounds.left
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
-        measureContext.chartScale = newZoom
-        scrollHandler.value += zoomedTransformationAxisX - transformationAxisX
+        zoom = newZoom
+        scrollHandler.handleScrollDelta(transformationAxisX - zoomedTransformationAxisX)
         handleTouchEvent(null)
+        wasZoomOverridden = true
         invalidate()
     }
 
@@ -389,9 +394,17 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
         val horizontalDimensions = chart.getHorizontalDimensions(measureContext, model)
 
+        var finalZoom = zoom
+
+        if (!wasZoomOverridden || !chartScrollSpec.isScrollEnabled) {
+            finalZoom = measureContext.getAutoZoom(horizontalDimensions, chart.bounds, autoScaleUp)
+            if (chartScrollSpec.isScrollEnabled) zoom = finalZoom
+        }
+
         scrollHandler.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
             horizontalDimensions = horizontalDimensions,
+            zoom = finalZoom,
         )
 
         scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
@@ -404,7 +417,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             horizontalDimensions = horizontalDimensions,
             chartBounds = chart.bounds,
             horizontalScroll = scrollHandler.value,
-            autoScaleUp = autoScaleUp,
+            zoom = finalZoom,
         )
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1

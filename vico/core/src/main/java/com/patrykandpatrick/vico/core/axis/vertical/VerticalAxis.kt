@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.axis.vertical
 import com.patrykandpatrick.vico.core.DEF_LABEL_COUNT
 import com.patrykandpatrick.vico.core.DEF_LABEL_SPACING
 import com.patrykandpatrick.vico.core.axis.Axis
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.setTo
@@ -33,7 +34,6 @@ import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.context.getOrPutExtra
 import com.patrykandpatrick.vico.core.extension.getEnd
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
@@ -41,7 +41,6 @@ import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.translate
 import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 
-private const val LABELS_KEY = "labels"
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 /**
@@ -64,11 +63,30 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     /**
      * The maximum label count.
      */
+    @Deprecated(
+        """
+            `maxLabelCount` is being replaced by `AxisItemPlacer.Vertical. Create a base implementation with the desired
+            maximum item count via `AxisItemPlacer.Vertical.default`, and use the `itemPlacer` field to apply it to this
+            `VerticalAxis`.
+        """,
+    )
     public var maxLabelCount: Int = DEF_LABEL_COUNT
+        set(value) {
+            field = value
+            itemPlacer = AxisItemPlacer.Vertical.default(value)
+        }
+
+    /**
+     * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
+     */
+    @Suppress("DEPRECATION")
+    public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default(maxLabelCount)
 
     /**
      * The label spacing (in dp).
      */
+    @Deprecated("This is unused. It’s a leftover field from before the first release of Vico.")
+    @Suppress("DEPRECATION")
     public var labelSpacing: Float = DEF_LABEL_SPACING
 
     /**
@@ -84,21 +102,22 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     override fun drawBehindChart(
         context: ChartDrawContext,
     ): Unit = with(context) {
-        val drawLabelCount = getDrawLabelCount(bounds.height().toInt())
-
-        val axisStep = bounds.height() / (drawLabelCount - 1)
-
         var centerY: Float
+        val chartValues = chartValuesManager.getChartValues(position)
+        val maxLabelHeight = getMaxLabelHeight()
+        val lineValues = itemPlacer.getLineValues(this, bounds.height(), maxLabelHeight, position)
+            ?: itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
 
-        for (index in 0..<drawLabelCount) {
-            centerY = bounds.bottom - axisStep * index + guidelineThickness.half
+        lineValues.forEach { lineValue ->
+            centerY = bounds.bottom - bounds.height() * (lineValue - chartValues.minY) / chartValues.lengthY +
+                getLineCanvasYCorrection(guidelineThickness, lineValue)
 
             guideline?.takeIf {
                 isNotInRestrictedBounds(
                     left = chartBounds.left,
                     top = centerY - guidelineThickness.half,
                     right = chartBounds.right,
-                    bottom = centerY - guidelineThickness.half,
+                    bottom = centerY + guidelineThickness.half,
                 )
             }?.drawHorizontal(
                 context = context,
@@ -107,10 +126,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 centerY = centerY,
             )
         }
+        val axisLineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
         axisLine?.drawVertical(
             context = context,
-            top = bounds.top,
-            bottom = bounds.bottom,
+            top = bounds.top - axisLineExtensionLength,
+            bottom = bounds.bottom + axisLineExtensionLength,
             centerX = if (position.isLeft(isLtr = isLtr)) {
                 bounds.right - axisThickness.half
             } else {
@@ -121,20 +141,16 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
         val label = label
-        val labelCount = getDrawLabelCount(bounds.height().toInt())
-
-        val labels = getLabels(labelCount)
-
+        val labelValues = itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
         val tickLeftX = getTickLeftX()
-
         val tickRightX = tickLeftX + axisThickness + tickLength
-
         val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
-
         var tickCenterY: Float
+        val chartValues = chartValuesManager.getChartValues(position)
 
-        (0..<labelCount).forEach { index ->
-            tickCenterY = bounds.bottom - bounds.height() / (labelCount - 1) * index + tickThickness.half
+        labelValues.forEach { labelValue ->
+            tickCenterY = bounds.bottom - bounds.height() * (labelValue - chartValues.minY) / chartValues.lengthY +
+                getLineCanvasYCorrection(tickThickness, labelValue)
 
             tick?.drawHorizontal(
                 context = context,
@@ -144,10 +160,9 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             )
 
             label ?: return@forEach
-            val labelText = labels.getOrNull(index) ?: return@forEach
             drawLabel(
                 label = label,
-                labelText = labelText,
+                labelText = valueFormatter.formatValue(labelValue, chartValues),
                 labelX = labelX,
                 tickCenterY = tickCenterY,
             )
@@ -218,53 +233,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
     }
 
-    private fun MeasureContext.getDrawLabelCount(availableHeight: Int): Int {
-        label?.let { label ->
-
-            val chartValues = chartValuesManager.getChartValues(position)
-
-            fun getLabelHeight(value: Float): Float =
-                label.getHeight(
-                    context = this,
-                    text = valueFormatter.formatValue(value, chartValues),
-                    rotationDegrees = labelRotationDegrees,
-                )
-
-            val avgHeight = arrayOf(
-                getLabelHeight(chartValues.minY),
-                getLabelHeight((chartValues.maxY + chartValues.minY) / 2),
-                getLabelHeight(chartValues.maxY),
-            ).maxOrNull().orZero
-
-            return (availableHeight / avgHeight + 1).toInt().coerceAtMost(maxLabelCount)
-        }
-        return maxLabelCount
-    }
-
-    private fun MeasureContext.getLabels(
-        maxLabelCount: Int = this@VerticalAxis.maxLabelCount,
-    ): List<CharSequence> {
-        val chartValues = chartValuesManager.getChartValues(position)
-        val cacheKey = LABELS_KEY + position + maxLabelCount
-        return getOrPutExtra(key = cacheKey) {
-            labels.clear()
-            val step = (chartValues.maxY - chartValues.minY) / (maxLabelCount - 1)
-            for (index in 0..<maxLabelCount) {
-                val value = chartValues.minY + step * index
-                labels += valueFormatter.formatValue(value, chartValues)
-            }
-            labels
-        }
-    }
-
     override fun getHorizontalInsets(
         context: MeasureContext,
         availableHeight: Float,
         outInsets: HorizontalInsets,
     ): Unit = with(context) {
-        val labels = getLabels(maxLabelCount = getDrawLabelCount(availableHeight.toInt()))
-
-        val desiredWidth = getDesiredWidth(context, labels)
+        val desiredWidth = getDesiredWidth(availableHeight)
 
         outInsets.set(
             start = if (position.isStart) desiredWidth else 0f,
@@ -277,59 +251,60 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ): Unit = with(context) {
-        val labelHeight = label?.getHeight(context = context).orZero
-        val lineThickness = maxOf(axisThickness, tickThickness)
-        when (verticalLabelPosition) {
-            Center -> outInsets.set(
-                top = labelHeight.half - lineThickness,
-                bottom = labelHeight.half,
-            )
-            VerticalLabelPosition.Top -> outInsets.set(
-                top = labelHeight - lineThickness,
-                bottom = lineThickness,
-            )
-            VerticalLabelPosition.Bottom -> outInsets.set(
-                top = lineThickness.half,
-                bottom = labelHeight,
-            )
-        }
+        val maxLabelHeight = getMaxLabelHeight()
+        val maxLineThickness = maxOf(axisThickness, tickThickness)
+        outInsets.set(
+            top = itemPlacer.getTopVerticalAxisInset(verticalLabelPosition, maxLabelHeight, maxLineThickness),
+            bottom = itemPlacer.getBottomVerticalAxisInset(verticalLabelPosition, maxLabelHeight, maxLineThickness),
+        )
     }
 
     /**
      * Calculates the optimal width for this [VerticalAxis], accounting for the value of [sizeConstraint].
      */
-    private fun getDesiredWidth(
-        context: MeasureContext,
-        labels: List<CharSequence>,
-    ): Float = with(context) {
-        when (val constraint = sizeConstraint) {
-            is SizeConstraint.Auto -> {
-                val titleComponentWidth = title?.let { title ->
-                    titleComponent?.getWidth(
-                        context = this,
-                        text = title,
-                        rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
-                        height = bounds.height().toInt(),
-                    )
-                }.orZero
-                (getMaxLabelWidth(labels = labels) + titleComponentWidth + axisThickness + tickLength)
-                    .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
+    private fun MeasureContext.getDesiredWidth(height: Float) = when (val constraint = sizeConstraint) {
+        is SizeConstraint.Auto -> {
+            val titleComponentWidth = title?.let { title ->
+                titleComponent?.getWidth(
+                    context = this,
+                    text = title,
+                    rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
+                    height = bounds.height().toInt(),
+                )
+            }.orZero
+            val labelSpace = when (horizontalLabelPosition) {
+                Outside -> getMaxLabelWidth(height)
+                Inside -> 0f
             }
-            is SizeConstraint.Exact -> constraint.sizeDp.pixels
-            is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
-            is SizeConstraint.TextWidth -> label?.getWidth(
-                context = this,
-                text = constraint.text,
-                rotationDegrees = labelRotationDegrees,
-            ).orZero + tickLength + axisThickness.half
+            (labelSpace + titleComponentWidth + axisThickness + tickLength)
+                .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
         }
+        is SizeConstraint.Exact -> constraint.sizeDp.pixels
+        is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
+        is SizeConstraint.TextWidth -> label?.getWidth(
+            context = this,
+            text = constraint.text,
+            rotationDegrees = labelRotationDegrees,
+        ).orZero + tickLength + axisThickness.half
     }
 
-    private fun MeasureContext.getMaxLabelWidth(labels: List<CharSequence>): Float = when (horizontalLabelPosition) {
-        Outside -> label?.let { label ->
-            labels.maxOfOrNull { label.getWidth(this, it, rotationDegrees = labelRotationDegrees) }
-        }.orZero
-        Inside -> 0f
+    private fun MeasureContext.getMaxLabelHeight() = label?.let { label ->
+        val chartValues = chartValuesManager.getChartValues(position)
+        itemPlacer
+            .getHeightMeasurementLabelValues(this, position)
+            .maxOfOrNull { value -> label.getHeight(this, valueFormatter.formatValue(value, chartValues)) }
+    }.orZero
+
+    private fun MeasureContext.getMaxLabelWidth(axisHeight: Float) = label?.let { label ->
+        val chartValues = chartValuesManager.getChartValues(position)
+        itemPlacer
+            .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
+            .maxOfOrNull { value -> label.getWidth(this, valueFormatter.formatValue(value, chartValues)) }
+    }.orZero
+
+    private fun ChartDrawContext.getLineCanvasYCorrection(thickness: Float, y: Float): Float {
+        val chartValues = chartValuesManager.getChartValues(position)
+        return if (y == chartValues.maxY && itemPlacer.getShiftTopLines(this)) -thickness.half else thickness.half
     }
 
     /**
@@ -361,11 +336,30 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         /**
          * The maximum label count.
          */
+        @Deprecated(
+            """
+                `maxLabelCount` is being replaced by `AxisItemPlacer.Vertical`. Create a base implementation with the
+                desired maximum item count via `AxisItemPlacer.Vertical.default`, and use the `itemPlacer` field to
+                apply it to this `VerticalAxis.Builder`.
+            """,
+        )
         public var maxLabelCount: Int = DEF_LABEL_COUNT
+            set(value) {
+                field = value
+                itemPlacer = AxisItemPlacer.Vertical.default(value)
+            }
+
+        /**
+         * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
+         */
+        @Suppress("DEPRECATION")
+        public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default(maxLabelCount)
 
         /**
          * The label spacing (in dp).
          */
+        @Deprecated("This is unused. It’s a leftover field from before the first release of Vico.")
+        @Suppress("DEPRECATION")
         public var labelSpacing: Float = DEF_LABEL_SPACING
 
         /**
@@ -388,8 +382,10 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
                 else -> throw UnknownAxisPositionException(T::class.java)
             } as Position
+            @Suppress("DEPRECATION")
             return setTo(VerticalAxis(position)).also { axis ->
                 axis.maxLabelCount = maxLabelCount
+                axis.itemPlacer = itemPlacer
                 axis.labelSpacing = labelSpacing
                 axis.horizontalLabelPosition = horizontalLabelPosition
                 axis.verticalLabelPosition = verticalLabelPosition

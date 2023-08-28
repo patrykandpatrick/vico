@@ -24,7 +24,7 @@ import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.chart.forEachInRelativelyIndexed
+import com.patrykandpatrick.vico.core.chart.forEachInAbsolutelyIndexed
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.put
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
@@ -140,13 +140,13 @@ public open class ColumnChart(
             column = columns.getRepeating(index)
             drawingStart = getDrawingStart(index, model.entries.size) - horizontalScroll
 
-            entryCollection.forEachInRelativelyIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry ->
+            entryCollection.forEachInAbsolutelyIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry ->
 
                 height = abs(entry.y) * heightMultiplier
                 val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
                 check(xSpacingMultiplier % 1f == 0f) { "Each entry’s x value must be a multiple of the x step." }
                 columnCenterX = drawingStart +
-                    (horizontalDimensions.xSpacing * xSpacingMultiplier + column.thicknessDp.half.pixels * chartScale) *
+                    (horizontalDimensions.xSpacing * xSpacingMultiplier + column.thicknessDp.half.pixels * zoom) *
                     layoutDirectionMultiplier
 
                 when (mergeMode) {
@@ -182,11 +182,11 @@ public open class ColumnChart(
                         bottom = columnBottom,
                         centerX = columnCenterX,
                         boundingBox = bounds,
-                        thicknessScale = chartScale,
+                        thicknessScale = zoom,
                     )
                 ) {
                     updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column, entryIndex)
-                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, chartScale)
+                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom)
                 }
 
                 if (mergeMode == MergeMode.Grouped) {
@@ -255,7 +255,7 @@ public open class ColumnChart(
             var maxWidth = when {
                 canUseXSpacing -> horizontalDimensions.xSpacing
                 mergeMode == MergeMode.Grouped ->
-                    (columnThicknessDp + minOf(spacingDp, innerSpacingDp).half).pixels * chartScale
+                    (columnThicknessDp + minOf(spacingDp, innerSpacingDp).half).pixels * zoom
 
                 else -> error(message = "Encountered an unexpected `MergeMode`.")
             }
@@ -309,7 +309,7 @@ public open class ColumnChart(
         column: LineComponent,
         index: Int,
     ) {
-        if (columnCenterX in bounds.left..bounds.right) {
+        if (columnCenterX > bounds.left - 1 && columnCenterX < bounds.right + 1) {
             entryLocationMap.put(
                 x = columnCenterX,
                 y = columnTop.coerceIn(bounds.top, bounds.bottom),
@@ -363,7 +363,7 @@ public open class ColumnChart(
             getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
-    protected open fun MeasureContext.getDrawingStart(entryCollectionIndex: Int, entryCollectionCount: Int): Float {
+    protected open fun ChartDrawContext.getDrawingStart(entryCollectionIndex: Int, entryCollectionCount: Int): Float {
         val mergeModeComponent = when (mergeMode) {
             MergeMode.Grouped ->
                 getCumulatedThickness(entryCollectionIndex) + innerSpacingDp.pixels * entryCollectionIndex
@@ -371,8 +371,8 @@ public open class ColumnChart(
             MergeMode.Stack -> 0f
         }
         return bounds.getStart(isLtr) + (
-            horizontalDimensions.scaled(chartScale).startPadding +
-                (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * chartScale
+            horizontalDimensions.startPadding +
+                (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * zoom
             ) * layoutDirectionMultiplier
     }
 

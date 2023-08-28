@@ -45,11 +45,6 @@ public interface MeasureContext : Extras {
     public val density: Float
 
     /**
-     * The font scale.
-     */
-    public val fontScale: Float
-
-    /**
      * Whether the layout direction is left-to-right.
      */
     public val isLtr: Boolean
@@ -58,11 +53,6 @@ public interface MeasureContext : Extras {
      * Whether horizontal scrolling is enabled.
      */
     public val isHorizontalScrollEnabled: Boolean
-
-    /**
-     * The scale of the chart. Used to handle zooming in and out.
-     */
-    public val chartScale: Float
 
     /**
      * Defines how the chart’s content is positioned horizontally.
@@ -90,14 +80,26 @@ public interface MeasureContext : Extras {
         get() = pixels.toInt()
 
     /**
-     * Returns the number of pixels corresponding to the provided number of density-independent pixels.
+     * Converts the provided dimension from dp to px.
      */
-    public fun toPixels(dp: Float): Float = dp * density
+    public fun dpToPx(dp: Float): Float = dp * density
 
     /**
-     * Returns the number of pixels corresponding to the provided number of scaled pixels.
+     * Converts the provided dimension from dp to px.
      */
-    public fun toFontSize(sp: Float): Float = sp * fontScale
+    @Deprecated("Use `dpToPx` instead.", ReplaceWith("dpToPx(dp)"))
+    public fun toPixels(dp: Float): Float = dpToPx(dp)
+
+    /**
+     * Converts the provided dimension from sp to px.
+     */
+    public fun spToPx(sp: Float): Float
+
+    /**
+     * Converts the provided dimension from sp to px.
+     */
+    @Deprecated("Use `spToPx` instead.", ReplaceWith("spToPx(sp)"))
+    public fun toFontSize(sp: Float): Float = spToPx(sp)
 
     /**
      * Removes all stored extras and resets [ChartValuesManager.chartValues].

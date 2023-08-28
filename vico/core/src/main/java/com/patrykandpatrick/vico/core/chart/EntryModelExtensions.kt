@@ -43,6 +43,20 @@ public inline fun List<ChartEntry>.forEachInAbsolutelyIndexed(
 
 /**
  * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
+ * block with the [ChartEntry], its index in the list, and the next [ChartEntry] in the filtered list as the block’s
+ * arguments.
+ */
+public inline fun List<ChartEntry>.forEachInAbsolutelyIndexed(
+    range: ClosedFloatingPointRange<Float>,
+    action: (Int, ChartEntry, ChartEntry?) -> Unit,
+) {
+    forEachInAbsolutelyIndexed(range) { index, entry ->
+        action(index, entry, getOrNull(index + 1)?.takeIf { it.x in range })
+    }
+}
+
+/**
+ * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
  * block with the [ChartEntry] and its index in the filtered list as the block’s arguments.
  */
 public inline fun List<ChartEntry>.forEachInRelativelyIndexed(

@@ -87,7 +87,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
-        val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - tickLength
+        val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - axisThickness - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
         val chartValues = chartValuesManager.getChartValues()
 
@@ -110,7 +110,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange)
 
         labelValues.forEachIndexed { index, x ->
-            val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing *
+            val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
                 layoutDirectionMultiplier
             val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
             val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
@@ -142,8 +142,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 context = this,
                 top = tickMarkTop,
                 bottom = tickMarkBottom,
-                centerX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing +
-                    getLinesCorrectionX(x, fullXRange) * layoutDirectionMultiplier,
+                centerX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                    layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange),
             )
         }
 
@@ -157,7 +157,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             context = context,
             left = chartBounds.left - axisLineExtend,
             right = chartBounds.right + axisLineExtend,
-            centerY = (if (position.isBottom) bounds.top else bounds.bottom) + axisThickness.half,
+            centerY = if (position.isBottom) bounds.top + axisThickness.half else bounds.bottom - axisThickness.half,
         )
 
         title?.let { title ->
@@ -190,7 +190,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         if (lineValues == null) {
             labelValues.forEach { x ->
-                val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing *
+                val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
                     layoutDirectionMultiplier
 
                 guideline
@@ -199,8 +199,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             }
         } else {
             lineValues.forEach { x ->
-                val canvasX = baseCanvasX + x / chartValues.xStep * horizontalDimensions.xSpacing +
-                    getLinesCorrectionX(x, fullXRange) * layoutDirectionMultiplier
+                val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                    layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange)
 
                 guideline
                     .takeUnless { x.isBoundOf(fullXRange) }
@@ -220,7 +220,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             entryX == fullXRange.start -> -tickThickness.half
             entryX == fullXRange.endInclusive -> tickThickness.half
             else -> 0f
-        }
+        } * layoutDirectionMultiplier
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
 
@@ -228,14 +228,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
-    ): Unit = with(context) {
-        val scaledHorizontalDimensions = horizontalDimensions.scaled(chartScale)
-        with(outInsets) {
-            start = itemPlacer.getStartHorizontalAxisInset(context, scaledHorizontalDimensions, tickThickness)
-            end = itemPlacer.getEndHorizontalAxisInset(context, scaledHorizontalDimensions, tickThickness)
-            top = if (position.isTop) getDesiredHeight(context, scaledHorizontalDimensions) else 0f
-            bottom = if (position.isBottom) getDesiredHeight(context, scaledHorizontalDimensions) else 0f
-        }
+    ): Unit = with(outInsets) {
+        start = itemPlacer.getStartHorizontalAxisInset(context, horizontalDimensions, context.tickThickness)
+        end = itemPlacer.getEndHorizontalAxisInset(context, horizontalDimensions, context.tickThickness)
+        top = if (position.isTop) getDesiredHeight(context, horizontalDimensions) else 0f
+        bottom = if (position.isBottom) getDesiredHeight(context, horizontalDimensions) else 0f
     }
 
     private fun MeasureContext.getFullXRange(
@@ -253,8 +250,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ): Float = with(context) {
         val chartValues = chartValuesManager.getChartValues()
         val fullXRange = getFullXRange(horizontalDimensions)
-        val labelClearance = itemPlacer.getMeasuredLabelClearance(this, horizontalDimensions, fullXRange)
-        val maxLabelWidth = (labelClearance * horizontalDimensions.xSpacing).toInt()
 
         when (val constraint = sizeConstraint) {
             is SizeConstraint.Auto -> {
@@ -266,8 +261,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                             label.getHeight(
                                 context = this,
                                 text = labelText,
-                                width = maxLabelWidth,
                                 rotationDegrees = labelRotationDegrees,
+                                pad = true,
                             ).orZero
                         }
                 }.orZero
@@ -287,7 +282,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             is SizeConstraint.TextWidth -> label?.getHeight(
                 context = this,
                 text = constraint.text,
-                width = maxLabelWidth,
                 rotationDegrees = labelRotationDegrees,
             ).orZero
         }
