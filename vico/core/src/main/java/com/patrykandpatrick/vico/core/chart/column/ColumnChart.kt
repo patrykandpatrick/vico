@@ -106,7 +106,6 @@ public open class ColumnChart(
     protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
-    override var markerMoveWithPoint: Boolean = false
 
     override fun drawChart(
         context: ChartDrawContext,

@@ -73,13 +73,11 @@ public fun lineChart(
     persistentMarkers: Map<Float, Marker>? = null,
     axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
     targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-    markerMoveWithPoint: Boolean = false
 ): LineChart = remember { LineChart() }.apply {
     this.lines = lines
     this.spacingDp = spacing.value
     this.axisValuesOverrider = axisValuesOverrider
     this.targetVerticalAxisPosition = targetVerticalAxisPosition
-    this.markerMoveWithPoint = markerMoveWithPoint
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }

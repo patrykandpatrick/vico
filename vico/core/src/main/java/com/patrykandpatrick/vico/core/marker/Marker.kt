@@ -58,7 +58,6 @@ public interface Marker : ChartInsetter {
         bounds: RectF,
         markedEntries: List<EntryModel>,
         chartValuesProvider: ChartValuesProvider,
-        markerMoveWithPoint: Boolean
     ) {
         draw(context, bounds, markedEntries)
     }

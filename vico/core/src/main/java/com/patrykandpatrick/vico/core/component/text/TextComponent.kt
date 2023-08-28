@@ -220,6 +220,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 bounds.left + padding.getLeftDp(isLtr).pixels + textAlignmentCorrection,
                 bounds.top + padding.topDp.pixels,
             )
+
             layout.draw(this)
             restore()
         }

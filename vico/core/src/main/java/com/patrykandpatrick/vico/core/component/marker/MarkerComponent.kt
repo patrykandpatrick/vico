@@ -47,8 +47,7 @@ import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
 public open class MarkerComponent(
     public val label: TextComponent,
     public val indicator: Component?,
-    public val guideline: LineComponent?,
-    public val markerMoveAlongPoint: Boolean = false,
+    public val guideline: LineComponent?
 ) : Marker {
 
     private val tempBounds = RectF()
@@ -77,7 +76,6 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValuesProvider: ChartValuesProvider,
-        markerMoveWithPoint: Boolean,
     ): Unit = with(context) {
         drawGuideline(context, bounds, markedEntries)
         val halfIndicatorSize = indicatorSizeDp.half.pixels
@@ -92,7 +90,7 @@ public open class MarkerComponent(
                 model.location.y + halfIndicatorSize,
             )
         }
-        drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues(), markerMoveWithPoint)
+        drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues())
     }
 
     private fun drawLabel(
@@ -100,7 +98,6 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValues: ChartValues,
-        markerMoveWithPoint: Boolean,
     ): Unit = with(context) {
         val text = labelFormatter.getLabel(markedEntries, chartValues)
         val entryX = markedEntries.averageOf { it.location.x }
@@ -108,16 +105,13 @@ public open class MarkerComponent(
             label.getTextBounds(context = context, text = text, width = bounds.width().toInt(), outRect = tempBounds)
         val halfOfTextWidth = labelBounds.width().half
         val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
-        val y = if (markerMoveWithPoint)
-            markedEntries[0].location.y - labelBounds.height() else
-                bounds.top - labelBounds.height() - label.tickSizeDp.pixels
         this[MarkerCorneredShape.tickXKey] = entryX
 
         label.drawText(
             context = context,
             text = text,
             textX = x,
-            textY = y,
+            textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
             verticalPosition = VerticalPosition.Bottom,
             maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.toInt(),
         )

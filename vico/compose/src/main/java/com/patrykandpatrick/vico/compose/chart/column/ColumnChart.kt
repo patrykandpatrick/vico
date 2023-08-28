@@ -71,8 +71,7 @@ public fun columnChart(
     dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnChart.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnChart.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = currentChartStyle.columnChart.dataLabelRotationDegrees,
-    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
-    markerMoveWithPoint: Boolean = false,
+    axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null
 ): ColumnChart = remember { ColumnChart() }.apply {
     this.columns = columns
     this.spacingDp = spacing.value
@@ -84,7 +83,6 @@ public fun columnChart(
     this.dataLabelRotationDegrees = dataLabelRotationDegrees
     this.axisValuesOverrider = axisValuesOverrider
     this.targetVerticalAxisPosition = targetVerticalAxisPosition
-    this.markerMoveWithPoint =markerMoveWithPoint
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }
