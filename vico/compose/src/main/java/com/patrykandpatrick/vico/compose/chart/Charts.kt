@@ -36,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
@@ -119,7 +120,7 @@ public fun <Model : ChartEntryModel> Chart(
     chartScrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
-    runInitialAnimation: Boolean = true,
+    runInitialAnimation: Boolean = !LocalInspectionMode.current,
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
