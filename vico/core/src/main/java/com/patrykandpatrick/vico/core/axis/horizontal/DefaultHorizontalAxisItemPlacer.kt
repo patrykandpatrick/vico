@@ -41,12 +41,13 @@ internal class DefaultHorizontalAxisItemPlacer(
         val chartValues = context.chartValuesManager.getChartValues()
         val remainder = ((visibleXRange.start - chartValues.minX) / chartValues.xStep - offset) % spacing
         val firstValue = visibleXRange.start + (spacing - remainder) % spacing * chartValues.xStep
+        val minXOffset = chartValues.minX % chartValues.xStep
         val values = mutableListOf<Float>()
         var multiplier = -LABEL_OVERFLOW_SIZE
         var hasEndOverflow = false
         while (true) {
             var potentialValue = firstValue + multiplier++ * spacing * chartValues.xStep
-            potentialValue = chartValues.xStep * (potentialValue / chartValues.xStep).round
+            potentialValue = chartValues.xStep * ((potentialValue - minXOffset) / chartValues.xStep).round + minXOffset
             if (potentialValue < chartValues.minX || potentialValue == fullXRange.start) continue
             if (potentialValue > chartValues.maxX || potentialValue == fullXRange.endInclusive) break
             values += potentialValue

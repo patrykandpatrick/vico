@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.averageOf
+import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
@@ -113,7 +114,7 @@ public open class MarkerComponent(
             textX = x,
             textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
             verticalPosition = VerticalPosition.Bottom,
-            maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.toInt(),
+            maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
         )
     }
 
