@@ -70,7 +70,7 @@ public open class MarkerComponent(
     /**
      * The [MarkerLabelFormatter] for this marker.
      */
-    public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter
+    public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter()
 
     override fun draw(
         context: DrawContext,

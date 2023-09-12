@@ -28,9 +28,7 @@ import com.patrykandpatrick.vico.core.extension.transformToSpannable
  *
  * @see MarkerLabelFormatter
  */
-public object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
-
-    private const val PATTERN = "%.02f"
+public class DefaultMarkerLabelFormatter : MarkerLabelFormatter {
 
     override fun getLabel(
         markedEntries: List<Marker.EntryModel>,
@@ -45,5 +43,9 @@ public object DefaultMarkerLabelFormatter : MarkerLabelFormatter {
             ForegroundColorSpan(model.color),
             Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
         )
+    }
+
+    private companion object {
+        const val PATTERN = "%.02f"
     }
 }
