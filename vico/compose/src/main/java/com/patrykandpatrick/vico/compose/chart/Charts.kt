@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.column.columnChart
 import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
@@ -96,7 +95,7 @@ import kotlinx.coroutines.launch
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param diffAnimationSpec the animation spec used for difference animations.
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
- * of each chart entry is animated from zero to the actual value.
+ * of each chart entry is animated from zero to the actual value. This animation isn’t run in previews.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
  * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
  * a scale factor of 1, an empty space would be visible near the end edge of the chart.
@@ -120,7 +119,7 @@ public fun <Model : ChartEntryModel> Chart(
     chartScrollSpec: ChartScrollSpec<Model> = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
-    runInitialAnimation: Boolean = !LocalInspectionMode.current,
+    runInitialAnimation: Boolean = true,
     fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
