@@ -24,11 +24,12 @@ import com.patrykandpatrick.vico.core.extension.sumOf
 import com.patrykandpatrick.vico.core.extension.transformToSpannable
 
 /**
- * The default label formatter used for markers.
+ * The default label formatter used for markers. [colorCode] specifies whether to color-code the _y_ values in the
+ * labels.
  *
  * @see MarkerLabelFormatter
  */
-public class DefaultMarkerLabelFormatter : MarkerLabelFormatter {
+public class DefaultMarkerLabelFormatter(private val colorCode: Boolean = true) : MarkerLabelFormatter {
 
     override fun getLabel(
         markedEntries: List<Marker.EntryModel>,
@@ -38,11 +39,15 @@ public class DefaultMarkerLabelFormatter : MarkerLabelFormatter {
         postfix = if (markedEntries.size > 1) ")" else "",
         separator = "; ",
     ) { model ->
-        appendCompat(
-            PATTERN.format(model.entry.y),
-            ForegroundColorSpan(model.color),
-            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
-        )
+        if (colorCode) {
+            appendCompat(
+                PATTERN.format(model.entry.y),
+                ForegroundColorSpan(model.color),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        } else {
+            append(PATTERN.format(model.entry.y))
+        }
     }
 
     private companion object {
