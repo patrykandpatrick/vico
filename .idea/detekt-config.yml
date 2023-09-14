@@ -43,6 +43,8 @@ complexity:
     thresholdInInterfaces: 20
   CyclomaticComplexMethod:
     threshold: 20
+  ComplexCondition:
+    threshold: 6
 style:
   MagicNumber:
     excludes:
