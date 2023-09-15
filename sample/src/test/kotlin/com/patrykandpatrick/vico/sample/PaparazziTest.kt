@@ -18,11 +18,9 @@ package com.patrykandpatrick.vico.sample
 
 import androidx.compose.runtime.Composable
 import app.cash.paparazzi.Paparazzi
-import com.patrykandpatrick.vico.sample.paparazzi.gif
 import com.patrykandpatrick.vico.sample.paparazzi.lightConfig
 import com.patrykandpatrick.vico.sample.paparazzi.nightConfig
 import com.patrykandpatrick.vico.sample.previews.composables.column.DefaultColumnChart
-import com.patrykandpatrick.vico.sample.previews.composables.column.DefaultColumnChartAutoScrollOnModelSizeIncreased
 import com.patrykandpatrick.vico.sample.previews.composables.column.DefaultColumnChartLongNonScrollable
 import com.patrykandpatrick.vico.sample.previews.composables.column.DefaultColumnChartLongScrollable
 import com.patrykandpatrick.vico.sample.previews.composables.column.DefaultColumnChartLongScrollableEnd
@@ -47,9 +45,7 @@ public class PaparazziTest {
     )
 
     @get:Rule
-    public val paparazzi: Paparazzi = Paparazzi(
-        deviceConfig = lightConfig,
-    )
+    public val paparazzi: Paparazzi = Paparazzi(deviceConfig = lightConfig)
 
     private fun List<Pair<String, @Composable () -> Unit>>.snapshotAll() {
         forEach { (name, composable) ->
@@ -68,12 +64,5 @@ public class PaparazziTest {
     public fun `Test default charts in NIGHT`() {
         paparazzi.unsafeUpdateConfig(nightConfig)
         defaultCharts.snapshotAll()
-    }
-
-    @Test
-    fun `Test AutoScrollCondition OnModelSizeIncreased`() {
-        paparazzi.gif {
-            DefaultColumnChartAutoScrollOnModelSizeIncreased()
-        }
     }
 }

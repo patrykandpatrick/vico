@@ -35,17 +35,16 @@ public fun DefaultLineChart(
     model: ChartEntryModel = shortEntryModel,
     scrollable: Boolean = true,
     initialScroll: InitialScroll = InitialScroll.Start,
-) = PreviewSurface {
-    Chart(
-        chart = lineChart(),
-        model = model,
-        startAxis = rememberStartAxis(),
-        bottomAxis = rememberBottomAxis(),
-        chartScrollSpec = rememberChartScrollSpec(
-            isScrollEnabled = scrollable,
-            initialScroll = initialScroll,
-        ),
-    )
+) {
+    PreviewSurface {
+        Chart(
+            chart = lineChart(),
+            model = model,
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
+            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = scrollable, initialScroll = initialScroll),
+        )
+    }
 }
 
 @ChartPreview

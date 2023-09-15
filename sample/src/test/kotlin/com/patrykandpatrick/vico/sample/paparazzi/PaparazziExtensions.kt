@@ -16,29 +16,9 @@
 
 package com.patrykandpatrick.vico.sample.paparazzi
 
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.ComposeView
 import app.cash.paparazzi.DeviceConfig
-import app.cash.paparazzi.Paparazzi
 import com.android.resources.NightMode
 
-internal val lightConfig = DeviceConfig(
-    screenWidth = 1080,
-    screenHeight = 800,
-)
+internal val lightConfig = DeviceConfig(screenWidth = 1080, screenHeight = 800)
 
-internal val nightConfig = lightConfig.copy(
-    nightMode = NightMode.NIGHT,
-)
-
-fun Paparazzi.gif(
-    name: String? = null,
-    start: Long = 0L,
-    end: Long = 500L,
-    fps: Int = 60,
-    composable: @Composable () -> Unit,
-) {
-    val hostView = ComposeView(context)
-    hostView.setContent(composable)
-    gif(hostView, name, start, end, fps)
-}
+internal val nightConfig = lightConfig.copy(nightMode = NightMode.NIGHT)

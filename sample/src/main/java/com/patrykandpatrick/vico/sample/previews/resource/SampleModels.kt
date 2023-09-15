@@ -19,11 +19,6 @@ package com.patrykandpatrick.vico.sample.previews.resource
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 
-public val shortEntryModel: ChartEntryModel =
-    entryModelOf(1, 2, 4, 8, 3)
+public val shortEntryModel: ChartEntryModel = entryModelOf(1, 2, 4, 8, 3)
 
-public val mediumEntryModel: ChartEntryModel =
-    entryModelOf(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8)
-
-public val longEntryModel: ChartEntryModel =
-    entryModelOf(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8, 9, 7, 4, 2, 5)
+public val mediumEntryModel: ChartEntryModel = entryModelOf(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8)

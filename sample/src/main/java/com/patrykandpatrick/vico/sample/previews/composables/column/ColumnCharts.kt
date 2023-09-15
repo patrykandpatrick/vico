@@ -17,11 +17,6 @@
 package com.patrykandpatrick.vico.sample.previews.composables.column
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
@@ -32,10 +27,8 @@ import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatrick.vico.sample.previews.annotation.ChartPreview
 import com.patrykandpatrick.vico.sample.previews.resource.PreviewSurface
-import com.patrykandpatrick.vico.sample.previews.resource.longEntryModel
 import com.patrykandpatrick.vico.sample.previews.resource.mediumEntryModel
 import com.patrykandpatrick.vico.sample.previews.resource.shortEntryModel
-import kotlinx.coroutines.delay
 
 @ChartPreview
 @Composable
@@ -45,19 +38,21 @@ public fun DefaultColumnChart(
     scrollable: Boolean = true,
     initialScroll: InitialScroll = InitialScroll.Start,
     autoScrollCondition: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition.Never,
-) = PreviewSurface {
-    Chart(
-        chart = columnChart(),
-        model = model,
-        oldModel = oldModel,
-        startAxis = rememberStartAxis(),
-        bottomAxis = rememberBottomAxis(),
-        chartScrollSpec = rememberChartScrollSpec(
-            isScrollEnabled = scrollable,
-            initialScroll = initialScroll,
-            autoScrollCondition = autoScrollCondition,
-        ),
-    )
+) {
+    PreviewSurface {
+        Chart(
+            chart = columnChart(),
+            model = model,
+            oldModel = oldModel,
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
+            chartScrollSpec = rememberChartScrollSpec(
+                isScrollEnabled = scrollable,
+                initialScroll = initialScroll,
+                autoScrollCondition = autoScrollCondition,
+            ),
+        )
+    }
 }
 
 @ChartPreview
@@ -70,24 +65,6 @@ public fun DefaultColumnChartLongScrollable() {
 @Composable
 public fun DefaultColumnChartLongScrollableEnd() {
     DefaultColumnChart(model = mediumEntryModel, initialScroll = InitialScroll.End)
-}
-
-@ChartPreview
-@Composable
-public fun DefaultColumnChartAutoScrollOnModelSizeIncreased() {
-    var model by remember { mutableStateOf(shortEntryModel) }
-
-    LaunchedEffect(key1 = Unit) {
-        delay(100)
-        model = longEntryModel
-    }
-
-    DefaultColumnChart(
-        model = model,
-        oldModel = shortEntryModel,
-        initialScroll = InitialScroll.End,
-        autoScrollCondition = AutoScrollCondition.OnModelSizeIncreased,
-    )
 }
 
 @ChartPreview

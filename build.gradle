@@ -30,7 +30,7 @@ buildscript {
 
         classpath libs.buildTools
         classpath libs.kotlinGradlePlugin
-        classpath libs.paparazzi.gradle.plugin
+        classpath libs.paparazziGradlePlugin
     }
 }
 
