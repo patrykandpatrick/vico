@@ -65,7 +65,6 @@ public fun drawContext(
     }
 
     override fun reset() {
-        chartValuesManager.resetChartValues()
         clearExtras()
     }
 

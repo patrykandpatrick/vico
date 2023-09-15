@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.alpha
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.extension.withOpacity
 import kotlin.properties.Delegates
 
 /**
@@ -85,6 +86,7 @@ public open class ShapeComponent(
         top: Float,
         right: Float,
         bottom: Float,
+        opacity: Float,
     ): Unit = with(context) {
         if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
         path.rewind()
@@ -108,8 +110,8 @@ public open class ShapeComponent(
             )
         }
 
-        drawShape(paint)
-        if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(strokePaint)
+        paint.withOpacity(opacity, ::drawShape)
+        if (strokeWidth > 0f && strokeColor.alpha > 0) strokePaint.withOpacity(opacity, ::drawShape)
 
         DebugHelper.drawDebugBounds(
             context = context,

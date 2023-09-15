@@ -22,6 +22,7 @@ import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 
 /**
@@ -90,12 +91,9 @@ public interface ChartEntryModel {
      */
     public val xGcd: Float
 
+    /**
+     * Houses [DrawingModel]s.
+     */
     public val drawingModelStore: DrawingModelStore
-        get() = DrawingModelStore.Empty
+        get() = DrawingModelStore.empty
 }
-
-internal val ChartEntryModel.yRange: ClosedFloatingPointRange<Float>
-    get() = minY..maxY
-
-internal val ChartEntryModel.aggregateYRange: ClosedFloatingPointRange<Float>
-    get() = stackedNegativeY..stackedPositiveY

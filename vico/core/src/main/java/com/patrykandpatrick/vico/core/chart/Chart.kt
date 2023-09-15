@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -197,28 +198,44 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      */
     public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model, xStep: Float?)
 
-    public val modelTransformerProvider: ModelTransformerProvider?
-        get() = null
+    /**
+     * Provides the [Chart]’s [ModelTransformer].
+     */
+    public val modelTransformerProvider: ModelTransformerProvider
 
+    /**
+     * Provides a [Chart]’s [ModelTransformer].
+     */
     public interface ModelTransformerProvider {
-
-        public fun <T : ChartEntryModel> getModelTransformer(): ModelTransformer<T>?
+        /**
+         * Returns the [ModelTransformer].
+         */
+        public fun <T : ChartEntryModel> getModelTransformer(): ModelTransformer<T>
     }
 
+    /**
+     * Transforms [Model]s into [DrawingModel]s.
+     */
     public abstract class ModelTransformer<in Model> {
-
+        /**
+         * Used for writing to and reading from the host’s [DrawingModelStore].
+         */
         protected abstract val key: DrawingModelStore.Key<*>
 
+        /**
+         * Prepares the [Chart] for a difference animation.
+         */
         public abstract fun prepareForTransformation(
             oldModel: Model?,
             newModel: Model,
             drawingModelStore: MutableDrawingModelStore,
+            chartValuesManager: ChartValuesManager,
         )
 
-        public abstract fun transform(
-            drawingModelStore: MutableDrawingModelStore,
-            fraction: Float,
-        )
+        /**
+         * Carries out the pending difference animation. [fraction] is the animation progress.
+         */
+        public abstract fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float)
     }
 }
 

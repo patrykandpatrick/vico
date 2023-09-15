@@ -30,13 +30,11 @@ public data class MutableMeasureContext(
     override var isHorizontalScrollEnabled: Boolean = false,
     override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
     private var spToPx: (Float) -> Float,
+    override val chartValuesManager: ChartValuesManager,
 ) : MeasureContext, Extras by DefaultExtras() {
-
-    override val chartValuesManager: ChartValuesManager = ChartValuesManager()
 
     override fun reset() {
         clearExtras()
-        chartValuesManager.resetChartValues()
     }
 
     override fun spToPx(sp: Float): Float = spToPx.invoke(sp)

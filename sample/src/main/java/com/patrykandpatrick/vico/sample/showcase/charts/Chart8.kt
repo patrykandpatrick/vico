@@ -32,7 +32,6 @@ import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.databinding.Chart8Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -40,7 +39,7 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart8(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>) {
+internal fun Chart8(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEntryModelProducer) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart8(chartEntryModelProducer)
         UISystem.Views -> ViewChart8(chartEntryModelProducer)
@@ -48,7 +47,7 @@ internal fun Chart8(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEn
 }
 
 @Composable
-private fun ComposeChart8(chartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>) {
+private fun ComposeChart8(chartEntryModelProducer: ComposedChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
         val columnChart = columnChart(
             mergeMode = ColumnChart.MergeMode.Stack,
@@ -67,7 +66,7 @@ private fun ComposeChart8(chartEntryModelProducer: ComposedChartEntryModelProduc
 }
 
 @Composable
-private fun ViewChart8(chartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>) {
+private fun ViewChart8(chartEntryModelProducer: ComposedChartEntryModelProducer) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart8Binding::inflate) {
         with(chartView) {

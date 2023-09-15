@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.views.chart
 
-import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
@@ -44,14 +43,13 @@ import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
-import com.patrykandpatrick.vico.core.extension.doubled
-import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
@@ -99,6 +97,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private val virtualLayout = VirtualLayout(axisManager)
 
+    private val chartValuesManager = ChartValuesManager()
+
     private val motionEventHandler = MotionEventHandler(
         scroller = scroller,
         scrollHandler = scrollHandler,
@@ -113,6 +113,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
         spToPx = context::spToPx,
+        chartValuesManager = chartValuesManager,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -126,7 +127,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private val animator: ValueAnimator =
         ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
             duration = Animation.DIFF_DURATION.toLong()
-            interpolator = getDefaultDiffInterpolator()
+            interpolator = FastOutSlowInInterpolator()
             addUpdateListener { progressModelOnAnimationProgress(it.animatedFraction) }
         }
 
@@ -220,7 +221,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      * The [Chart] displayed by this [View].
      */
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
-        tryInvalidate(chart, model)
+        tryInvalidate(chart = chart, model = model, updateChartValues = true)
     }
 
     /**
@@ -244,8 +245,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private fun registerForUpdates() {
         entryProducer?.registerForUpdates(
             key = this,
-            cancelProgressAnimation = { handler.post(animator::cancel) },
-            startProgressAnimation = { _, _ ->
+            cancelAnimation = { handler.post(animator::cancel) },
+            startAnimation = {
                 if (model != null || runInitialAnimation) {
                     handler.post(animator::start)
                 } else {
@@ -255,9 +256,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             getOldModel = { model },
             modelTransformerProvider = chart?.modelTransformerProvider,
             drawingModelStore = drawingModelStore,
+            updateChartValues = { model ->
+                chartValuesManager.resetChartValues()
+                chart?.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+                chartValuesManager
+            },
         ) { model ->
             post {
-                setModel(model = model)
+                setModel(model = model, updateChartValues = false)
                 postInvalidateOnAnimation()
             }
         }
@@ -317,9 +323,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
      * Sets the [Model] for this [BaseChartView]’s [Chart] instance ([chart]).
      */
     public fun setModel(model: Model) {
+        setModel(model = model, updateChartValues = true)
+    }
+
+    private fun setModel(model: Model, updateChartValues: Boolean) {
         val oldModel = this.model
         this.model = model
-        tryInvalidate(chart = chart, model = model)
+        tryInvalidate(chart, model, updateChartValues)
         if (ViewCompat.isAttachedToWindow(this) && oldModel?.id != model.id && isInEditMode.not()) {
             handler.post {
                 chartScrollSpec.performAutoScroll(
@@ -331,15 +341,13 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
     }
 
-    protected fun tryInvalidate(chart: Chart<Model>?, model: Model?) {
-        if (chart != null && model != null) {
-            measureContext.chartValuesManager.resetChartValues()
-            chart.updateChartValues(measureContext.chartValuesManager, model, getXStep?.invoke(model))
-
-            if (ViewCompat.isAttachedToWindow(this)) {
-                invalidate()
-            }
+    protected fun tryInvalidate(chart: Chart<Model>?, model: Model?, updateChartValues: Boolean) {
+        if (chart == null || model == null) return
+        if (updateChartValues) {
+            chartValuesManager.resetChartValues()
+            chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
         }
+        if (ViewCompat.isAttachedToWindow(this)) invalidate()
     }
 
     protected inline fun <T> invalidatingObservable(
@@ -348,7 +356,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     ): ReadWriteProperty<Any?, T> {
         onChange(initialValue)
         return observable(initialValue) { _, _, newValue ->
-            tryInvalidate(chart, model)
+            tryInvalidate(chart = chart, model = model, updateChartValues = false)
             onChange(newValue)
         }
     }
@@ -455,7 +463,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 onMarkerEntryModelsChange = { lastMarkerEntryModels = it },
             )
         }
-        measureContext.clearExtras()
+        measureContext.reset()
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {
@@ -572,16 +580,5 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         // In this case, we can ignore this callback, as the layout direction will be determined when the MeasureContext
         // instance is created.
         measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
-    }
-}
-
-private fun getDefaultDiffInterpolator(): TimeInterpolator {
-    val baseInterpolator = FastOutSlowInInterpolator()
-    return Interpolator { fraction ->
-        if (fraction >= .5f) {
-            .5f + baseInterpolator.getInterpolation((fraction - .5f).doubled).half
-        } else {
-            baseInterpolator.getInterpolation(fraction.doubled).half
-        }
     }
 }

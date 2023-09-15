@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ private const val RED_BIT_SHIFT = 16
 private const val GREEN_BIT_SHIFT = 8
 private const val BLUE_BIT_SHIFT = 0
 private const val COLOR_MASK = 0xff
-private const val MAX_HEX_VALUE = 255f
+internal const val MAX_HEX_VALUE = 255f
 
 /**
  * Copies this color, updating any or all of the color channels.

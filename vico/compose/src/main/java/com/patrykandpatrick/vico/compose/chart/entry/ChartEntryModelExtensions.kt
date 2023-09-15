@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.compose.chart.entry
 
 import androidx.compose.animation.core.AnimationSpec
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
@@ -29,13 +28,10 @@ import com.patrykandpatrick.vico.compose.state.MutableSharedState
 import com.patrykandpatrick.vico.compose.state.mutableSharedStateOf
 import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
-import com.patrykandpatrick.vico.core.extension.doubled
-import com.patrykandpatrick.vico.core.extension.half
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -46,16 +42,7 @@ import kotlinx.coroutines.runBlocking
  *
  * @see collect
  */
-public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(
-    durationMillis = Animation.DIFF_DURATION * 5,
-    easing = { fraction ->
-        if (fraction >= .5f) {
-            .5f + FastOutSlowInEasing.transform((fraction - .5f).doubled).half
-        } else {
-            FastOutSlowInEasing.transform(fraction.doubled).half
-        }
-    },
-)
+public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis = Animation.DIFF_DURATION)
 
 /**
  * Observes the data provided by this [ChartModelProducer] and launches an animation for each [ChartEntryModel] update.
@@ -68,11 +55,15 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
     producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
+    chartValuesManager: ChartValuesManager,
+    getXStep: (Model) -> Float,
 ): Model? = collectAsState(
     chart = chart,
     producerKey = producerKey,
     animationSpec = animationSpec,
     runInitialAnimation = runInitialAnimation,
+    chartValuesManager = chartValuesManager,
+    getXStep = getXStep,
 ).value
 
 /**
@@ -86,6 +77,8 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
     producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
+    chartValuesManager: ChartValuesManager,
+    getXStep: ((Model) -> Float)?,
 ): MutableSharedState<Model?, Model?> {
     val model: MutableSharedState<Model?, Model?> = remember(key1 = chart, key2 = producerKey) {
         mutableSharedStateOf(null)
@@ -96,19 +89,19 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
 
     val scope = rememberCoroutineScope()
     val isInPreview = LocalInspectionMode.current
-    val animationJobs = remember { mutableMapOf<Any, Job>() }
-    val animationRunningStates = remember { mutableMapOf<Any, Boolean>() }
+    var animationJob: Job? = null
+    var isAnimationRunning: Boolean?
     DisposableEffect(chart, producerKey, runInitialAnimation, isInPreview) {
-        val afterUpdate = { producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit ->
+        val afterUpdate = { progressModel: (chartKey: Any, progress: Float) -> Unit ->
             if (animationSpec != null && !isInPreview && (model.value != null || runInitialAnimation)) {
-                animationRunningStates[producerKey] = false
-                animationJobs[producerKey] = scope.launch {
+                isAnimationRunning = false
+                animationJob = scope.launch {
                     animate(
                         initialValue = Animation.range.start,
                         targetValue = Animation.range.endInclusive,
                         animationSpec = animationSpec,
                     ) { value, _ ->
-                        if (animationRunningStates[producerKey] == false) {
+                        if (isAnimationRunning == false) {
                             progressModel(chart, value)
                         }
                     }
@@ -119,29 +112,27 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
         }
         registerForUpdates(
             key = chart,
-            cancelProgressAnimation = { producerKey ->
-                runBlocking { animationJobs[producerKey]?.cancelAndJoin() }
-                animationRunningStates[producerKey] = true
+            cancelAnimation = {
+                runBlocking { animationJob?.cancelAndJoin() }
+                isAnimationRunning = true
             },
-            startProgressAnimation = afterUpdate,
+            startAnimation = afterUpdate,
             getOldModel = { model.value },
             modelTransformerProvider = modelTransformerProvider,
             drawingModelStore = drawingModelStore,
+            updateChartValues = { model ->
+                chartValuesManager.resetChartValues()
+                chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+                chartValuesManager
+            },
         ) { updatedModel ->
             model.value = updatedModel
         }
         onDispose {
             unregisterFromUpdates(chart)
-            animationJobs.clear()
-            animationRunningStates.clear()
+            animationJob = null
+            isAnimationRunning = null
         }
     }
     return model
 }
-
-/**
- * Combines two [ChartEntryModel] implementations—the receiver and [other]—into a [ComposedChartEntryModel].
- */
-@Deprecated("Use `com.patrykandpatrick.vico.core.entry.composed.plus` instead.")
-public operator fun <Model : ChartEntryModel> Model.plus(other: Model): ComposedChartEntryModel<Model> =
-    ComposedChartEntryModelProducer.composedChartEntryModelOf(listOf(this, other))

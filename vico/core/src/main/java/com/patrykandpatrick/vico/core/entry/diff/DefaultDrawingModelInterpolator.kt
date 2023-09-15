@@ -16,57 +16,58 @@
 
 package com.patrykandpatrick.vico.core.entry.diff
 
-import com.patrykandpatrick.vico.core.extension.setToAllChildren
-import java.util.TreeMap
+import com.patrykandpatrick.vico.core.extension.orZero
 import kotlin.math.max
 
-public class DefaultDrawingModelInterpolator<T : DrawingInfo> : DrawingModelInterpolator<T> {
+/**
+ * The default [DrawingModelInterpolator] implementation.
+ */
+@Suppress("UNCHECKED_CAST")
+public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : DrawingModel<T>> :
+    DrawingModelInterpolator<T, R> {
 
-    private val transformationMaps = ArrayList<TreeMap<Float, TransformationModel<T>>>()
-    private val oldDrawingInfo = ArrayList<ArrayList<T>>()
-    private val newDrawingInfo = ArrayList<ArrayList<T>>()
+    private val transformationMaps = mutableListOf<Map<Float, TransformationModel<T>>>()
+    private var oldDrawingModel: R? = null
+    private var newDrawingModel: R? = null
 
-    override fun setItems(old: List<List<T>>, new: List<List<T>>) {
+    override fun setModels(old: R?, new: R) {
         synchronized(this) {
-            oldDrawingInfo.setToAllChildren(old)
-            newDrawingInfo.setToAllChildren(new)
+            oldDrawingModel = old
+            newDrawingModel = new
             updateTransformationMap()
         }
     }
 
-    override fun setItems(new: List<List<T>>) {
-        setItems(newDrawingInfo, new)
-    }
-
-    override fun transform(progress: Float): List<List<T>> = synchronized(this) {
-        transformationMaps.mapNotNull { map ->
-            map
-                .mapNotNull { (_, model) -> model.transform(progress) }
-                .takeIf { list -> list.isNotEmpty() }
-        }
+    override fun transform(fraction: Float): R = synchronized(this) {
+        val newDrawingModel = newDrawingModel
+        check(newDrawingModel != null)
+        newDrawingModel.transform(
+            drawingInfo = transformationMaps.mapNotNull { map ->
+                map
+                    .mapNotNull { (x, model) -> model.transform(fraction)?.let { drawingInfo -> x to drawingInfo } }
+                    .takeIf { list -> list.isNotEmpty() }
+                    ?.toMap()
+            },
+            from = oldDrawingModel,
+            fraction = fraction,
+        ) as R
     }
 
     private fun updateTransformationMap() {
         transformationMaps.clear()
-        repeat(max(oldDrawingInfo.size, newDrawingInfo.size)) { i ->
-            val map = TreeMap<Float, TransformationModel<T>>()
-            oldDrawingInfo
-                .getOrNull(i)
-                ?.forEach { map[it.entry.x] = TransformationModel(it) }
-            newDrawingInfo
-                .getOrNull(i)
-                ?.forEach { item ->
-                    val current = map[item.entry.x]
-                    map[item.entry.x] = TransformationModel(current?.old, item)
-                }
+        repeat(max(oldDrawingModel?.size.orZero, newDrawingModel?.size.orZero)) { index ->
+            val map = mutableMapOf<Float, TransformationModel<T>>()
+            oldDrawingModel
+                ?.getOrNull(index)
+                ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(drawingInfo) }
+            newDrawingModel
+                ?.getOrNull(index)
+                ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(map[x]?.old, drawingInfo) }
             transformationMaps.add(map)
         }
     }
 
-    private class TransformationModel<T : DrawingInfo>(val old: T?, val new: T? = null) {
-        fun transform(fraction: Float): T? = new?.transform(old, fraction)
+    private class TransformationModel<T : DrawingModel.DrawingInfo>(val old: T?, val new: T? = null) {
+        fun transform(fraction: Float): T? = new?.transform(old, fraction) as T?
     }
 }
-
-@Suppress("UNCHECKED_CAST")
-public fun <T : DrawingInfo> T.transform(from: T?, fraction: Float): T = unsafeTransform(from, fraction) as T

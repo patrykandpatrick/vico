@@ -34,7 +34,6 @@ import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.copy
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.databinding.Chart4Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -42,7 +41,7 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart4(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>) {
+internal fun Chart4(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEntryModelProducer) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart4(chartEntryModelProducer)
         UISystem.Views -> ViewChart4(chartEntryModelProducer)
@@ -50,7 +49,7 @@ internal fun Chart4(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEn
 }
 
 @Composable
-private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>) {
+private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
         val defaultColumns = currentChartStyle.columnChart.columns
         val defaultLines = currentChartStyle.lineChart.lines
@@ -82,7 +81,7 @@ private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProduc
 }
 
 @Composable
-private fun ViewChart4(chartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel>) {
+private fun ViewChart4(chartEntryModelProducer: ComposedChartEntryModelProducer) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart4Binding::inflate) {
         with(chartView) {

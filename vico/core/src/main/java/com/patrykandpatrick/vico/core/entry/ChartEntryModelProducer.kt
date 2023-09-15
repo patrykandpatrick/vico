@@ -18,11 +18,9 @@ package com.patrykandpatrick.vico.core.entry
 
 import com.patrykandpatrick.vico.core.DEF_THREAD_POOL_SIZE
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.entry.diff.DefaultDiffProcessor
-import com.patrykandpatrick.vico.core.entry.diff.DiffProcessor
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
-import com.patrykandpatrick.vico.core.extension.orEmpty
 import com.patrykandpatrick.vico.core.extension.setToAllChildren
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -32,17 +30,15 @@ import java.util.concurrent.Executors
  *
  * @param entryCollections a two-dimensional list of [ChartEntry] instances used to generate the [ChartEntryModel].
  * @param backgroundExecutor an [Executor] used to generate instances of the [ChartEntryModel] off the main thread.
- * @param diffProcessor the [DiffProcessor] to use for difference animations.
  *
  * @see ChartModelProducer
  */
 public class ChartEntryModelProducer(
     entryCollections: List<List<ChartEntry>>,
     backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-    private val diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor(),
 ) : ChartModelProducer<ChartEntryModel> {
 
-    private var cachedModel: ChartEntryModel? = null
+    private var cachedInternalModel: InternalModel? = null
 
     private var entriesHashCode: Int? = null
 
@@ -58,8 +54,7 @@ public class ChartEntryModelProducer(
     public constructor(
         vararg entryCollections: List<ChartEntry>,
         backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-        diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor(),
-    ) : this(entryCollections.toList(), backgroundExecutor, diffProcessor)
+    ) : this(entryCollections.toList(), backgroundExecutor)
 
     init {
         setEntries(entryCollections)
@@ -73,24 +68,18 @@ public class ChartEntryModelProducer(
      */
     public fun setEntries(entries: List<List<ChartEntry>>) {
         this.entries.setToAllChildren(entries)
-        val entriesHashCode = entries.hashCode()
-        cachedModel = null
+        entriesHashCode = entries.hashCode()
+        cachedInternalModel = null
         updateReceivers.values.forEach { updateReceiver ->
             executor.execute {
-                this.entriesHashCode = entriesHashCode
-                updateReceiver.cancelProgressAnimation(hashCode())
-                updateReceiver.transformer?.prepareForTransformation(
-                    updateReceiver.getOldModel(),
-                    getModel(),
-                    updateReceiver.drawingModelStore,
+                updateReceiver.cancelAnimation()
+                updateReceiver.modelTransformer?.prepareForTransformation(
+                    oldModel = updateReceiver.getOldModel(),
+                    newModel = getModel(),
+                    drawingModelStore = updateReceiver.drawingModelStore,
+                    chartValuesManager = updateReceiver.updateChartValues(getModel()),
                 )
-                updateReceiver.diffProcessor.setEntries(
-                    old = updateReceiver.getOldModel()?.entries.orEmpty(),
-                    new = entries,
-                    oldYRange = updateReceiver.getOldModel()?.yRange.orEmpty,
-                    oldAggregateYRange = updateReceiver.getOldModel()?.aggregateYRange.orEmpty,
-                )
-                updateReceiver.startProgressAnimation(hashCode(), ::progressModel)
+                updateReceiver.startAnimation(::progressModel)
             }
         }
     }
@@ -105,85 +94,65 @@ public class ChartEntryModelProducer(
         setEntries(entries.toList())
     }
 
-    override fun getModel(): ChartEntryModel =
-        cachedModel ?: getModel(entries).also { cachedModel = it }
-
-    override fun progressModel(key: Any, progress: Float) {
-        val (_, _, modelReceiver, diffProcessor, store, transformer) = updateReceivers[key] ?: return
-        executor.execute {
-            progressModelSynchronously(progress, modelReceiver, diffProcessor, store, transformer)
-        }
-    }
-
-    private fun progressModelSynchronously(
-        progress: Float,
-        modelReceiver: (ChartEntryModel) -> Unit,
-        diffProcessor: DiffProcessor<ChartEntry>,
-        drawingModelStore: MutableDrawingModelStore = MutableDrawingModelStore(),
-        modelTransformer: Chart.ModelTransformer<ChartEntryModel>?,
-    ) {
-        modelTransformer?.transform(drawingModelStore, progress)
-        val model = getModel(
-            entries = diffProcessor.progressDiff(progress),
-            yRange = diffProcessor.yRangeProgressDiff(progress),
-            stackedPositiveYRange = diffProcessor.stackedYRangeProgressDiff(progress),
-            drawingModelStore = drawingModelStore,
-        )
-        modelReceiver(model)
-    }
-
-    private fun getModel(
-        entries: List<List<ChartEntry>>,
-        yRange: ClosedFloatingPointRange<Float> = entries.yRange,
-        stackedPositiveYRange: ClosedFloatingPointRange<Float> = entries.calculateStackedYRange(),
-        drawingModelStore: DrawingModelStore = DrawingModelStore.Empty,
-    ): ChartEntryModel =
-        Model(
+    private fun getInternalModel(drawingModelStore: DrawingModelStore = DrawingModelStore.empty): InternalModel {
+        cachedInternalModel.let { if (it != null) return it }
+        val xRange = entries.xRange
+        val yRange = entries.yRange
+        val aggregateYRange = entries.calculateStackedYRange()
+        return InternalModel(
             entries = entries,
-            minX = entries.xRange.start,
-            maxX = entries.xRange.endInclusive,
+            minX = xRange.start,
+            maxX = xRange.endInclusive,
             minY = yRange.start,
             maxY = yRange.endInclusive,
-            stackedPositiveY = stackedPositiveYRange.endInclusive,
-            stackedNegativeY = stackedPositiveYRange.start,
+            stackedPositiveY = aggregateYRange.endInclusive,
+            stackedNegativeY = aggregateYRange.start,
             xGcd = entries.calculateXGcd(),
             id = entriesHashCode ?: entries.hashCode().also { entriesHashCode = it },
             drawingModelStore = drawingModelStore,
         )
+    }
+
+    override fun getModel(): ChartEntryModel = getInternalModel()
+
+    override fun progressModel(key: Any, progress: Float) {
+        with(updateReceivers[key] ?: return) {
+            executor.execute {
+                modelTransformer?.transform(drawingModelStore, progress)
+                onModelCreated(getInternalModel(drawingModelStore.copy()))
+            }
+        }
+    }
 
     override fun registerForUpdates(
         key: Any,
-        cancelProgressAnimation: (producerKey: Any) -> Unit,
-        startProgressAnimation: (producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        cancelAnimation: () -> Unit,
+        startAnimation: (progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
         getOldModel: () -> ChartEntryModel?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        onModel: (ChartEntryModel) -> Unit,
+        updateChartValues: (ChartEntryModel) -> ChartValuesManager,
+        onModelCreated: (ChartEntryModel) -> Unit,
     ) {
-        val modelTransformer = modelTransformerProvider
-            ?.getModelTransformer<ChartEntryModel>()
-
+        val modelTransformer = modelTransformerProvider?.getModelTransformer<ChartEntryModel>()
         updateReceivers[key] = UpdateReceiver(
-            cancelProgressAnimation = cancelProgressAnimation,
-            startProgressAnimation = startProgressAnimation,
-            onModel = onModel,
-            diffProcessor = diffProcessor,
-            drawingModelStore = drawingModelStore,
-            transformer = modelTransformer,
-            getOldModel = getOldModel,
+            cancelAnimation,
+            startAnimation,
+            onModelCreated,
+            drawingModelStore,
+            modelTransformer,
+            getOldModel,
+            updateChartValues,
         )
         executor.execute {
-            cancelProgressAnimation(hashCode())
-            modelTransformer
-                ?.prepareForTransformation(getOldModel(), getModel(), drawingModelStore)
-
-            diffProcessor.setEntries(
-                old = getOldModel()?.entries.orEmpty(),
-                new = entries,
-                oldYRange = getOldModel()?.yRange.orEmpty,
-                oldAggregateYRange = getOldModel()?.aggregateYRange.orEmpty,
+            cancelAnimation()
+            modelTransformer?.prepareForTransformation(
+                oldModel = getOldModel(),
+                newModel = getModel(),
+                drawingModelStore = drawingModelStore,
+                chartValuesManager = updateChartValues(getModel()),
             )
-            startProgressAnimation(hashCode(), ::progressModel)
+            startAnimation(::progressModel)
         }
     }
 
@@ -194,16 +163,16 @@ public class ChartEntryModelProducer(
     override fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key = key)
 
     private data class UpdateReceiver(
-        val cancelProgressAnimation: (producerKey: Any) -> Unit,
-        val startProgressAnimation: (producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
-        val onModel: (ChartEntryModel) -> Unit,
-        val diffProcessor: DiffProcessor<ChartEntry>,
+        val cancelAnimation: () -> Unit,
+        val startAnimation: (progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        val onModelCreated: (ChartEntryModel) -> Unit,
         val drawingModelStore: MutableDrawingModelStore,
-        val transformer: Chart.ModelTransformer<ChartEntryModel>?,
+        val modelTransformer: Chart.ModelTransformer<ChartEntryModel>?,
         val getOldModel: () -> ChartEntryModel?,
+        val updateChartValues: (ChartEntryModel) -> ChartValuesManager,
     )
 
-    internal data class Model(
+    private data class InternalModel(
         override val entries: List<List<ChartEntry>>,
         override val minX: Float,
         override val maxX: Float,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,18 +59,16 @@ public class RandomEntriesGenerator(
      * [FloatEntry] instances with randomized y values. The size of each collection is equal to the number of values in
      * [xRange].
      */
-    public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> =
-        ComposedChartEntryModelProducer(
-            getChartEntryModelProducer(),
-            getChartEntryModelProducer(),
-            getChartEntryModelProducer(),
-        ).getModel()
+    public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> = ComposedChartEntryModelProducer
+        .build { repeat(MODEL_SIZE) { add(List(MODEL_SIZE) { generateRandomEntries() }) } }
+        .getModel()
 
     private companion object {
         const val X_RANGE_TOP = 10
         const val Y_RANGE_TOP = 20
+        const val MODEL_SIZE = 3
 
         fun RandomEntriesGenerator.getChartEntryModelProducer(): ChartModelProducer<ChartEntryModel> =
-            ChartEntryModelProducer(listOf(generateRandomEntries(), generateRandomEntries(), generateRandomEntries()))
+            ChartEntryModelProducer(List(MODEL_SIZE) { generateRandomEntries() })
     }
 }

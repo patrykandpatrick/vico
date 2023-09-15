@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core
 
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.diff.DefaultDiffProcessor
 import com.patrykandpatrick.vico.core.entry.entriesOf
 import org.junit.Test
 import kotlin.test.assertEquals
@@ -41,19 +40,5 @@ public class ChartValuesProducerTests {
         assertEquals(minY, entryList.minY)
         assertEquals(maxY, entryList.maxY)
         assertEquals(10f, entryList.stackedPositiveY)
-    }
-
-    @Test
-    public fun `Test entry update while diff animation is running`() {
-        val first = entriesOf(0f to 2f, 1f to 0f)
-        val second = entriesOf(0f to 0f, 1f to 2f)
-
-        val diffProcessor = DefaultDiffProcessor()
-        diffProcessor.setEntries(listOf(first))
-
-        assertEquals(first, diffProcessor.progressDiff(1f)[0])
-
-        diffProcessor.setEntries(listOf(second))
-        assertEquals(entriesOf(0f to 1f, 1f to 1f), diffProcessor.progressDiff(.5f)[0])
     }
 }

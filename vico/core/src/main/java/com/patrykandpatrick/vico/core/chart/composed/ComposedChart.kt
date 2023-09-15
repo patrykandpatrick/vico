@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
-import com.patrykandpatrick.vico.core.entry.diff.DrawingInfo
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 import com.patrykandpatrick.vico.core.extension.set
@@ -159,45 +158,38 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override val modelTransformerProvider: ModelTransformerProvider = IteratorModelTransformerProvider()
+    override val modelTransformerProvider: ModelTransformerProvider = object : ModelTransformerProvider {
+        private val modelTransformer =
+            ComposedModelTransformer { charts.map { it.modelTransformerProvider.getModelTransformer() } }
 
-    private inner class IteratorModelTransformerProvider :
-        ModelTransformerProvider {
-
-        private var index = 0
-        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T>? {
-            return charts.getOrNull(index).let { chart ->
-                index++
-                if (index > charts.lastIndex) {
-                    index = 0
-                }
-                chart?.modelTransformerProvider?.getModelTransformer()
-            }
-        }
+        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
     }
 
-    public class ComposedModelTransformer<Model : ChartEntryModel>(
-        private val chartModelTransformers: List<Chart.ModelTransformer<Model>>,
-    ) : Chart.ModelTransformer<ComposedChartEntryModel<Model>>() {
+    private class ComposedModelTransformer<T : ChartEntryModel>(
+        private val getModelTransformers: () -> List<Chart.ModelTransformer<T>>,
+    ) : Chart.ModelTransformer<T>() {
 
-        override val key: DrawingModelStore.Key<DrawingInfo> = DrawingModelStore.Key()
+        override val key: DrawingModelStore.Key<Nothing> = DrawingModelStore.Key()
 
         override fun prepareForTransformation(
-            oldModel: ComposedChartEntryModel<Model>?,
-            newModel: ComposedChartEntryModel<Model>,
+            oldModel: T?,
+            newModel: T,
             drawingModelStore: MutableDrawingModelStore,
+            chartValuesManager: ChartValuesManager,
         ) {
-            chartModelTransformers.forEachIndexed { index, transformer ->
+            getModelTransformers().forEachIndexed { index, transformer ->
+                @Suppress("UNCHECKED_CAST")
                 transformer.prepareForTransformation(
-                    oldModel?.composedEntryCollections?.getOrNull(index),
-                    newModel.composedEntryCollections[index],
+                    (oldModel as ComposedChartEntryModel<*>?)?.composedEntryCollections?.getOrNull(index) as T?,
+                    (newModel as ComposedChartEntryModel<*>).composedEntryCollections[index] as T,
                     drawingModelStore,
+                    chartValuesManager,
                 )
             }
         }
 
         override fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
-            chartModelTransformers.forEach { transformer ->
+            getModelTransformers().forEach { transformer ->
                 transformer.transform(drawingModelStore, fraction)
             }
         }

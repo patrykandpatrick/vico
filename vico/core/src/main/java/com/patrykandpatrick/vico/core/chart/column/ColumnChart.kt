@@ -20,6 +20,7 @@ import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.BaseChart
+import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
@@ -36,6 +37,10 @@ import com.patrykandpatrick.vico.core.component.text.inBounds
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
@@ -105,6 +110,8 @@ public open class ColumnChart(
      */
     protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
+    protected val drawingModelKey: DrawingModelStore.Key<ColumnChartDrawingModel> = DrawingModelStore.Key()
+
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
@@ -115,6 +122,7 @@ public open class ColumnChart(
         drawChartInternal(
             chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
             model = model,
+            drawingModel = model.drawingModelStore.getOrNull(drawingModelKey),
         )
         heightMap.clear()
     }
@@ -122,6 +130,7 @@ public open class ColumnChart(
     protected open fun ChartDrawContext.drawChartInternal(
         chartValues: ChartValues,
         model: ChartEntryModel,
+        drawingModel: ColumnChartDrawingModel?,
     ) {
         val yRange = (chartValues.maxY - chartValues.minY).takeIf { it != 0f } ?: return
         val heightMultiplier = bounds.height() / yRange
@@ -141,7 +150,8 @@ public open class ColumnChart(
 
             entryCollection.forEachInAbsolutelyIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry ->
 
-                height = abs(entry.y) * heightMultiplier
+                val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
+                height = (columnInfo?.height ?: (abs(entry.y) / chartValues.lengthY)) * bounds.height()
                 val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
                 check(xSpacingMultiplier % 1f == 0f) { "Each entry’s x value must be a multiple of the x step." }
                 columnCenterX = drawingStart +
@@ -150,20 +160,20 @@ public open class ColumnChart(
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
-                        val (stackedNegY, stackedPosY) = heightMap.getOrElse(entry.x) { 0f to 0f }
+                        val (stackedNegHeight, stackedPosHeight) = heightMap.getOrElse(entry.x) { 0f to 0f }
                         columnBottom = zeroLinePosition +
                             if (entry.y < 0f) {
-                                height + abs(stackedNegY) * heightMultiplier
+                                height + stackedNegHeight
                             } else {
-                                -stackedPosY * heightMultiplier
+                                -stackedPosHeight
                             }
 
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
                         heightMap[entry.x] =
                             if (entry.y < 0f) {
-                                stackedNegY + entry.y to stackedPosY
+                                stackedNegHeight + height to stackedPosHeight
                             } else {
-                                stackedNegY to stackedPosY + entry.y
+                                stackedNegHeight to stackedPosHeight + height
                             }
                     }
 
@@ -185,7 +195,7 @@ public open class ColumnChart(
                     )
                 ) {
                     updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column, entryIndex)
-                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom)
+                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom, drawingModel?.opacity ?: 1f)
                 }
 
                 if (mergeMode == MergeMode.Grouped) {
@@ -352,6 +362,12 @@ public open class ColumnChart(
         }
     }
 
+    override val modelTransformerProvider: Chart.ModelTransformerProvider = object : Chart.ModelTransformerProvider {
+        private val modelTransformer = ColumnChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition })
+
+        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
+    }
+
     protected open fun MeasureContext.getColumnCollectionWidth(
         entryCollectionSize: Int,
     ): Float = when (mergeMode) {
@@ -415,5 +431,39 @@ public open class ColumnChart(
             Grouped -> model.maxY
             Stack -> model.stackedPositiveY
         }
+    }
+
+    protected class ColumnChartModelTransformer(
+        override val key: DrawingModelStore.Key<ColumnChartDrawingModel>,
+        private val getTargetVerticalAxisPosition: () -> AxisPosition.Vertical?,
+        private val drawingModelInterpolator: DrawingModelInterpolator<
+            ColumnChartDrawingModel.ColumnInfo,
+            ColumnChartDrawingModel,
+            > = DefaultDrawingModelInterpolator(),
+    ) : Chart.ModelTransformer<ChartEntryModel>() {
+
+        override fun prepareForTransformation(
+            oldModel: ChartEntryModel?,
+            newModel: ChartEntryModel,
+            drawingModelStore: MutableDrawingModelStore,
+            chartValuesManager: ChartValuesManager,
+        ) {
+            drawingModelInterpolator.setModels(
+                drawingModelStore.getOrNull(key),
+                newModel.toDrawingModel(chartValuesManager.getChartValues(getTargetVerticalAxisPosition())),
+            )
+        }
+
+        override fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
+            drawingModelStore[key] = drawingModelInterpolator.transform(fraction)
+        }
+
+        private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): ColumnChartDrawingModel = entries
+            .map { series ->
+                series.associate { entry ->
+                    entry.x to ColumnChartDrawingModel.ColumnInfo(abs(entry.y) / chartValues.lengthY)
+                }
+            }
+            .let(::ColumnChartDrawingModel)
     }
 }

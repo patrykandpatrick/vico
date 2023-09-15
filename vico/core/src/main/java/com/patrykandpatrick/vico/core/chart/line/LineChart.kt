@@ -36,7 +36,6 @@ import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec.PointConnector
 import com.patrykandpatrick.vico.core.chart.put
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.component.Component
@@ -49,18 +48,15 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.diff.DefaultDrawingModelInterpolator
-import com.patrykandpatrick.vico.core.entry.diff.DrawingInfo
-import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
-import com.patrykandpatrick.vico.core.entry.diff.asDrawingModel
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
-import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.rangeWith
+import com.patrykandpatrick.vico.core.extension.withOpacity
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -80,8 +76,6 @@ public open class LineChart(
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
 ) : BaseChart<ChartEntryModel>() {
-
-    protected val key: DrawingModelStore.Key<PointInfo> = DrawingModelStore.Key()
 
     /**
      * Creates a [LineChart] with a common style for all lines.
@@ -229,25 +223,22 @@ public open class LineChart(
         /**
          * Draws the line.
          */
-        public fun drawLine(context: DrawContext, path: Path): Unit = with(context) {
-            linePaint.strokeWidth = lineThicknessDp.pixels
-            canvas.drawPath(path, linePaint)
+        public fun drawLine(context: DrawContext, path: Path, opacity: Float = 1f) {
+            with(context) {
+                linePaint.strokeWidth = lineThicknessDp.pixels
+                linePaint.withOpacity(opacity) { canvas.drawPath(path, it) }
+            }
         }
 
         /**
          * Draws the line background.
          */
-        public fun drawBackgroundLine(context: DrawContext, bounds: RectF, path: Path): Unit = with(context) {
-            lineBackgroundPaint.shader = lineBackgroundShader
-                ?.provideShader(
-                    context = context,
-                    left = bounds.left,
-                    top = bounds.top,
-                    right = bounds.right,
-                    bottom = bounds.bottom,
-                )
-
-            canvas.drawPath(path, lineBackgroundPaint)
+        public fun drawBackgroundLine(context: DrawContext, bounds: RectF, path: Path, opacity: Float = 1f) {
+            with(lineBackgroundPaint) {
+                shader =
+                    lineBackgroundShader?.provideShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
+                withOpacity(opacity) { context.canvas.drawPath(path, it) }
+            }
         }
 
         /**
@@ -287,6 +278,8 @@ public open class LineChart(
      */
     protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
+    protected val drawingModelKey: DrawingModelStore.Key<LineChartDrawingModel> = DrawingModelStore.Key()
+
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
     override fun drawChart(
@@ -295,7 +288,11 @@ public open class LineChart(
     ): Unit = with(context) {
         resetTempData()
 
+        val drawingModel = model.drawingModelStore.getOrNull(drawingModelKey)
+
         model.entries.forEachIndexed { entryListIndex, entries ->
+
+            val pointInfoMap = drawingModel?.getOrNull(entryListIndex)
 
             linePath.rewind()
             lineBackgroundPath.rewind()
@@ -311,6 +308,7 @@ public open class LineChart(
             forEachPointWithinBoundsIndexed(
                 entries = entries,
                 drawingStart = drawingStart,
+                pointInfoMap = pointInfoMap,
             ) { entryIndex, entry, x, y, _, _ ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
@@ -357,14 +355,15 @@ public open class LineChart(
             if (component.hasLineBackgroundShader) {
                 lineBackgroundPath.lineTo(prevX, bounds.bottom)
                 lineBackgroundPath.close()
-                component.drawBackgroundLine(context, bounds, lineBackgroundPath)
+                component.drawBackgroundLine(context, bounds, lineBackgroundPath, drawingModel?.opacity ?: 1f)
             }
-            component.drawLine(context, linePath)
+            component.drawLine(context, linePath, drawingModel?.opacity ?: 1f)
 
             drawPointsAndDataLabels(
                 lineSpec = component,
                 entries = entries,
                 drawingStart = drawingStart,
+                pointInfoMap = pointInfoMap,
             )
         }
     }
@@ -376,6 +375,7 @@ public open class LineChart(
         lineSpec: LineSpec,
         entries: List<ChartEntry>,
         drawingStart: Float,
+        pointInfoMap: Map<Float, LineChartDrawingModel.PointInfo>?,
     ) {
         if (lineSpec.point == null && lineSpec.dataLabel == null) return
         val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
@@ -383,6 +383,7 @@ public open class LineChart(
         forEachPointWithinBoundsIndexed(
             entries = entries,
             drawingStart = drawingStart,
+            pointInfoMap = pointInfoMap,
         ) { _, chartEntry, x, y, previousX, nextX ->
 
             if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
@@ -483,6 +484,7 @@ public open class LineChart(
     protected open fun ChartDrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
         drawingStart: Float,
+        pointInfoMap: Map<Float, LineChartDrawingModel.PointInfo>?,
         action: (index: Int, entry: ChartEntry, x: Float, y: Float, previousX: Float?, nextX: Float?) -> Unit,
     ) {
         val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
@@ -500,8 +502,6 @@ public open class LineChart(
         var prevEntry: ChartEntry? = null
         var lastEntry: ChartEntry? = null
 
-        val heightMultiplier = bounds.height() / (maxY - minY)
-
         val boundsStart = bounds.getStart(isLtr = isLtr)
         val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
 
@@ -509,7 +509,7 @@ public open class LineChart(
             horizontalDimensions.xSpacing * (entry.x - minX) / xStep
 
         fun getDrawY(entry: ChartEntry): Float =
-            bounds.bottom - (entry.y - minY) * heightMultiplier
+            bounds.bottom - (pointInfoMap?.get(entry.x)?.y ?: (entry.y / chartValues.lengthY)) * bounds.height()
 
         entries.forEachInAbsolutelyIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
 
@@ -587,59 +587,43 @@ public open class LineChart(
         )
     }
 
-    override val modelTransformerProvider: Chart.ModelTransformerProvider? =
-        object : Chart.ModelTransformerProvider {
-            override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> =
-                lineChartModelTransformer
-        }
+    override val modelTransformerProvider: Chart.ModelTransformerProvider = object : Chart.ModelTransformerProvider {
+        private val modelTransformer = LineChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition })
 
-    private val lineChartModelTransformer = LineChartModelTransformer(
-        key = key,
-        getAxisValuesOverrider = { axisValuesOverrider },
-    )
+        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
+    }
 
     protected class LineChartModelTransformer(
-        override val key: DrawingModelStore.Key<PointInfo>,
-        private val getAxisValuesOverrider: () -> AxisValuesOverrider<ChartEntryModel>?,
-        private val drawingModelInterpolator: DrawingModelInterpolator<PointInfo> = DefaultDrawingModelInterpolator(),
+        override val key: DrawingModelStore.Key<LineChartDrawingModel>,
+        private val getTargetVerticalAxisPosition: () -> AxisPosition.Vertical?,
+        private val drawingModelInterpolator: DrawingModelInterpolator<
+            LineChartDrawingModel.PointInfo,
+            LineChartDrawingModel,
+            > = DefaultDrawingModelInterpolator(),
     ) : Chart.ModelTransformer<ChartEntryModel>() {
 
         override fun prepareForTransformation(
             oldModel: ChartEntryModel?,
             newModel: ChartEntryModel,
             drawingModelStore: MutableDrawingModelStore,
+            chartValuesManager: ChartValuesManager,
         ) {
-            drawingModelInterpolator.setItems(
-                drawingModelStore[key].orEmpty(),
-                newModel.toDrawingModel(),
+            drawingModelInterpolator.setModels(
+                drawingModelStore.getOrNull(key),
+                newModel.toDrawingModel(chartValuesManager.getChartValues(getTargetVerticalAxisPosition())),
             )
         }
 
         override fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
-            drawingModelStore[key] = drawingModelInterpolator.transform(fraction).asDrawingModel()
+            drawingModelStore[key] = drawingModelInterpolator.transform(fraction)
         }
 
-        private fun ChartEntryModel.toDrawingModel(): DrawingModel<PointInfo> {
-            val minY = getAxisValuesOverrider()?.getMinY(this) ?: minY.coerceAtMost(0f)
-            val maxY = getAxisValuesOverrider()?.getMaxY(this) ?: maxY
-            return entries.map { series ->
-                series.map { entry ->
-                    PointInfo(
-                        entry,
-                        (entry.y - minY) / (maxY - minY),
-                    )
+        private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): LineChartDrawingModel = entries
+            .map { series ->
+                series.associate { entry ->
+                    entry.x to LineChartDrawingModel.PointInfo((entry.y - chartValues.minY) / chartValues.lengthY)
                 }
-            }.asDrawingModel()
-        }
-    }
-
-    public class PointInfo(
-        override val entry: ChartEntry,
-        public val yFraction: Float,
-    ) : DrawingInfo {
-        override fun unsafeTransform(from: DrawingInfo?, fraction: Float): DrawingInfo {
-            val oldYFraction = (from as? PointInfo)?.yFraction.orZero
-            return PointInfo(entry, oldYFraction + (yFraction - oldYFraction) * fraction)
-        }
+            }
+            .let(::LineChartDrawingModel)
     }
 }

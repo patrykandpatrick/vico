@@ -16,8 +16,36 @@
 
 package com.patrykandpatrick.vico.core.entry.diff
 
-public class DrawingModel<T : DrawingInfo>(
-    private val delegate: List<List<T>>,
-) : List<List<T>> by delegate
+import com.patrykandpatrick.vico.core.chart.Chart
 
-public fun <T : DrawingInfo> List<List<T>>.asDrawingModel(): DrawingModel<T> = DrawingModel(this)
+/**
+ * Houses drawing information for a [Chart].
+ */
+public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(private val drawingInfo: List<Map<Float, T>>) :
+    List<Map<Float, T>> by drawingInfo {
+
+    /**
+     * Returns an intermediate [DrawingModel] between this one and [from]. The returned drawing model includes the
+     * provided [DrawingInfo] list. [fraction] is the balance between [from] and this [DrawingModel], with 0
+     * corresponding to [from], and 1 corresponding to this [DrawingModel]. The returned object should be an instance
+     * of the [DrawingModel] subclass to which this function belongs.
+     */
+    public abstract fun transform(
+        drawingInfo: List<Map<Float, T>>,
+        from: DrawingModel<T>?,
+        fraction: Float,
+    ): DrawingModel<T>
+
+    /**
+     * Houses positional information for a single [Chart] entity (e.g., a column or a point).
+     */
+    public interface DrawingInfo {
+        /**
+         * Returns an intermediate [DrawingInfo] implementation between this one and [from]. [fraction] is the balance
+         * between [from] and this [DrawingInfo] implementation, with 0 corresponding to [from], and 1 corresponding to
+         * this [DrawingInfo] implementation. The returned object should be an instance of the [DrawingInfo]
+         * implementation to which this function belongs.
+         */
+        public fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo
+    }
+}

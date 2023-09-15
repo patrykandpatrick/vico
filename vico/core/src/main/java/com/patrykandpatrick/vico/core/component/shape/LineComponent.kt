@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,7 @@ public open class LineComponent(
         right: Float,
         centerY: Float,
         thicknessScale: Float = 1f,
+        opacity: Float = 1f,
     ): Unit = with(context) {
         draw(
             context,
@@ -64,6 +65,7 @@ public open class LineComponent(
             top = centerY - thickness * thicknessScale / 2,
             right = right,
             bottom = centerY + thickness * thicknessScale / 2,
+            opacity = opacity,
         )
     }
 
@@ -96,6 +98,7 @@ public open class LineComponent(
         bottom: Float,
         centerX: Float,
         thicknessScale: Float = 1f,
+        opacity: Float = 1f,
     ): Unit = with(context) {
         draw(
             context,
@@ -103,6 +106,7 @@ public open class LineComponent(
             top = top,
             right = centerX + thickness * thicknessScale / 2,
             bottom = bottom,
+            opacity = opacity,
         )
     }
 

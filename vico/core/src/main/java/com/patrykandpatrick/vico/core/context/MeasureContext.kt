@@ -102,10 +102,9 @@ public interface MeasureContext : Extras {
     public fun toFontSize(sp: Float): Float = spToPx(sp)
 
     /**
-     * Removes all stored extras and resets [ChartValuesManager.chartValues].
+     * Removes all stored extras.
      *
      * @see Extras.clearExtras
-     * @see ChartValuesManager.resetChartValues
      */
     public fun reset()
 }

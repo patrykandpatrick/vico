@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.compose.chart
 
+import android.annotation.SuppressLint
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
@@ -65,6 +66,7 @@ import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.extension.set
@@ -126,11 +128,14 @@ public fun <Model : ChartEntryModel> Chart(
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
     getXStep: ((Model) -> Float)? = null,
 ) {
+    val chartValuesManager = remember(chart) { ChartValuesManager() }
     val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
         chart = chart,
         producerKey = chartModelProducer,
         animationSpec = diffAnimationSpec,
         runInitialAnimation = runInitialAnimation,
+        chartValuesManager = chartValuesManager,
+        getXStep = getXStep,
     )
 
     ChartBox(modifier = modifier) {
@@ -152,78 +157,9 @@ public fun <Model : ChartEntryModel> Chart(
                 autoScaleUp = autoScaleUp,
                 chartScrollState = chartScrollState,
                 horizontalLayout = horizontalLayout,
-                getXStep = getXStep,
+                chartValuesManager = chartValuesManager,
             )
         }
-    }
-}
-
-/**
- * Displays a chart.
- *
- * This function accepts a [ChartEntryModel]. For dynamic data, use the function overload that accepts a
- * [ChartModelProducer] instance.
- *
- * @param chart the chart itself (excluding axes, markers, etc.). You can use [lineChart] or [columnChart], or provide a
- * custom [Chart] implementation.
- * @param model the [ChartEntryModel] for the chart.
- * @param modifier the modifier to be applied to the chart.
- * @param startAxis the axis displayed at the start of the chart.
- * @param topAxis the axis displayed at the top of the chart.
- * @param endAxis the axis displayed at the end of the chart.
- * @param bottomAxis the axis displayed at the bottom of the chart.
- * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
- * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
- * @param legend an optional legend for the chart.
- * @param isZoomEnabled whether zooming in and out is enabled.
- * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
- * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
- * a scale factor of 1, an empty space would be visible near the end edge of the chart.
- * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
- * @param horizontalLayout defines how the chart’s content is positioned horizontally.
- * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
- * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
- */
-@Deprecated(message = "Use `chartScrollSpec` to enable or disable scrolling.", level = DeprecationLevel.ERROR)
-@Composable
-public fun <Model : ChartEntryModel> Chart(
-    chart: Chart<Model>,
-    model: Model,
-    modifier: Modifier = Modifier,
-    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
-    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
-    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
-    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
-    marker: Marker? = null,
-    markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null,
-    legend: Legend? = null,
-    isHorizontalScrollEnabled: Boolean,
-    isZoomEnabled: Boolean = true,
-    fadingEdges: FadingEdges? = null,
-    autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
-    chartScrollState: ChartScrollState = rememberChartScrollState(),
-    horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
-    getXStep: ((Model) -> Float)? = null,
-) {
-    ChartBox(modifier = modifier) {
-        ChartImpl(
-            chart = chart,
-            model = model,
-            startAxis = startAxis,
-            topAxis = topAxis,
-            endAxis = endAxis,
-            bottomAxis = bottomAxis,
-            marker = marker,
-            markerVisibilityChangeListener = markerVisibilityChangeListener,
-            legend = legend,
-            isZoomEnabled = isZoomEnabled,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = isHorizontalScrollEnabled),
-            fadingEdges = fadingEdges,
-            autoScaleUp = autoScaleUp,
-            chartScrollState = chartScrollState,
-            horizontalLayout = horizontalLayout,
-            getXStep = getXStep,
-        )
     }
 }
 
@@ -257,6 +193,7 @@ public fun <Model : ChartEntryModel> Chart(
  * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
  */
 @Composable
+@SuppressLint("RememberReturnType")
 public fun <Model : ChartEntryModel> Chart(
     chart: Chart<Model>,
     model: Model,
@@ -277,6 +214,11 @@ public fun <Model : ChartEntryModel> Chart(
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
     getXStep: ((Model) -> Float)? = null,
 ) {
+    val chartValuesManager = remember(chart) { ChartValuesManager() }
+    remember(chartValuesManager, model, getXStep) {
+        chartValuesManager.resetChartValues()
+        chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+    }
     ChartBox(modifier = modifier) {
         ChartImpl(
             chart = chart,
@@ -295,7 +237,7 @@ public fun <Model : ChartEntryModel> Chart(
             autoScaleUp = autoScaleUp,
             chartScrollState = chartScrollState,
             horizontalLayout = horizontalLayout,
-            getXStep = getXStep,
+            chartValuesManager = chartValuesManager,
         )
     }
 }
@@ -319,7 +261,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     autoScaleUp: AutoScaleUp,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
     horizontalLayout: HorizontalLayout,
-    getXStep: ((Model) -> Float)?,
+    chartValuesManager: ChartValuesManager,
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
@@ -331,6 +273,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         bounds,
         horizontalLayout,
         with(LocalContext.current) { ::spToPx },
+        chartValuesManager,
     )
     val scrollListener = rememberScrollListener(markerTouchPoint)
     val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }
@@ -374,7 +317,6 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             ),
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
-        chart.updateChartValues(measureContext.chartValuesManager, model, getXStep?.invoke(model))
 
         val horizontalDimensions = chart.getHorizontalDimensions(measureContext, model)
 

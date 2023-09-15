@@ -21,10 +21,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.composed.plus
 import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -49,8 +47,7 @@ internal class ShowcaseViewModel : ViewModel() {
 
     internal val multiDataSetChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 
-    internal val composedChartEntryModelProducer: ComposedChartEntryModelProducer<ChartEntryModel> =
-        multiDataSetChartEntryModelProducer + chartEntryModelProducer
+    internal val composedChartEntryModelProducer = ComposedChartEntryModelProducer.build()
 
     var uiSystem by mutableStateOf(UISystem.Compose)
         private set
@@ -58,13 +55,15 @@ internal class ShowcaseViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             while (currentCoroutineContext().isActive) {
-                chartEntryModelProducer.setEntries(generator.generateRandomEntries())
-                multiDataSetChartEntryModelProducer.setEntries(
-                    entries = List(size = MULTI_ENTRIES_COMBINED) {
-                        generator.generateRandomEntries()
-                    },
-                )
+                val randomSeries = generator.generateRandomEntries()
+                val randomDataSet = List(MULTI_ENTRIES_COMBINED) { generator.generateRandomEntries() }
+                chartEntryModelProducer.setEntries(randomSeries)
+                multiDataSetChartEntryModelProducer.setEntries(randomDataSet)
                 customStepChartEntryModelProducer.setEntries(customStepGenerator.generateRandomEntries())
+                composedChartEntryModelProducer.runTransaction {
+                    add(randomDataSet)
+                    add(randomSeries)
+                }
                 delay(UPDATE_FREQUENCY)
             }
         }

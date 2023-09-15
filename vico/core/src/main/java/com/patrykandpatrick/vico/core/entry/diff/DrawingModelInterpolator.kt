@@ -16,10 +16,18 @@
 
 package com.patrykandpatrick.vico.core.entry.diff
 
-public interface DrawingModelInterpolator<T : DrawingInfo> {
-    public fun setItems(old: List<List<T>>, new: List<List<T>>)
+/**
+ * Interpolates two [DrawingModel]s.
+ */
+public interface DrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : DrawingModel<T>> {
+    /**
+     * Sets the initial and target [DrawingModel]s.
+     */
+    public fun setModels(old: R?, new: R)
 
-    public fun setItems(new: List<List<T>>)
-
-    public fun transform(progress: Float): List<List<T>>
+    /**
+     * Interpolates the two [DrawingModel]s. [fraction] is the balance between the initial and target [DrawingModel]s,
+     * with 0 corresponding to the initial [DrawingModel], and 1 corresponding to the target [DrawingModel].
+     */
+    public fun transform(fraction: Float): R
 }

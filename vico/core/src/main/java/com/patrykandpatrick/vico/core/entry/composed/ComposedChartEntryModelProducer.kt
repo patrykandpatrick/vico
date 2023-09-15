@@ -19,129 +19,252 @@ package com.patrykandpatrick.vico.core.entry.composed
 import com.patrykandpatrick.vico.core.DEF_THREAD_POOL_SIZE
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
+import com.patrykandpatrick.vico.core.entry.calculateStackedYRange
+import com.patrykandpatrick.vico.core.entry.calculateXGcd
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.xRange
+import com.patrykandpatrick.vico.core.entry.yRange
 import com.patrykandpatrick.vico.core.extension.gcdWith
-import java.util.SortedMap
-import java.util.TreeMap
+import com.patrykandpatrick.vico.core.extension.setAll
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 
 /**
  * A [ChartModelProducer] implementation that generates [ComposedChartEntryModel] instances.
  *
- * @property chartModelProducers the list of [ChartModelProducer]s to be composed by this
- * [ComposedChartEntryModelProducer].
- * @param backgroundExecutor an [Executor] used to generate instances of the [ComposedChartEntryModel] off the main
- * thread.
- *
  * @see ComposedChartEntryModel
  * @see ChartModelProducer
  */
-public class ComposedChartEntryModelProducer<Model : ChartEntryModel>(
-    public val chartModelProducers: List<ChartModelProducer<Model>>,
-    backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-) : ChartModelProducer<ComposedChartEntryModel<Model>> {
+public class ComposedChartEntryModelProducer private constructor(
+    private val backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
+) : ChartModelProducer<ComposedChartEntryModel<ChartEntryModel>> {
 
-    private val compositeModelReceivers: HashMap<Any, CompositeModelReceiver<Model>> = HashMap()
+    private var dataSets = mutableListOf<List<List<ChartEntry>>>()
+    private var cachedInternalModel: InternalModel? = null
+    private val updateReceivers = mutableMapOf<Any, UpdateReceiver>()
 
-    private val executor: Executor = backgroundExecutor
+    private fun setDataSets(entries: List<List<List<ChartEntry>>>) {
+        this.dataSets.setAll(entries)
+        cachedInternalModel = null
+        updateReceivers.values.forEach { updateReceiver ->
+            backgroundExecutor.execute {
+                updateReceiver.cancelAnimation()
+                updateReceiver.modelTransformer?.prepareForTransformation(
+                    oldModel = updateReceiver.getOldModel(),
+                    newModel = getModel(),
+                    drawingModelStore = updateReceiver.drawingModelStore,
+                    chartValuesManager = updateReceiver.getChartValuesManager(getModel()),
+                )
+                updateReceiver.startAnimation(::progressModel)
+            }
+        }
+    }
 
-    private var cachedModel: ComposedChartEntryModel<Model>? = null
+    private fun getInternalModel(drawingModelStore: DrawingModelStore = DrawingModelStore.empty): InternalModel {
+        cachedInternalModel.let { if (it != null) return it }
+        val models = dataSets.map { dataSet ->
+            val xRange = dataSet.xRange
+            val yRange = dataSet.yRange
+            val aggregateYRange = dataSet.calculateStackedYRange()
+            object : ChartEntryModel {
+                override val entries: List<List<ChartEntry>> = dataSet
+                override val minX: Float = xRange.start
+                override val maxX: Float = xRange.endInclusive
+                override val minY: Float = yRange.start
+                override val maxY: Float = yRange.endInclusive
+                override val stackedPositiveY: Float = aggregateYRange.endInclusive
+                override val stackedNegativeY: Float = aggregateYRange.start
+                override val xGcd: Float = dataSet.calculateXGcd()
+                override val drawingModelStore: DrawingModelStore = drawingModelStore
+            }
+        }
+        return InternalModel(
+            composedEntryCollections = models,
+            entries = models.map { it.entries }.flatten(),
+            minX = models.minOf { it.minX },
+            maxX = models.maxOf { it.maxX },
+            minY = models.minOf { it.minY },
+            maxY = models.maxOf { it.maxY },
+            stackedPositiveY = models.maxOf { it.stackedPositiveY },
+            stackedNegativeY = models.minOf { it.stackedNegativeY },
+            xGcd = models.fold<ChartEntryModel, Float?>(null) { gcd, model ->
+                gcd?.gcdWith(model.xGcd) ?: model.xGcd
+            } ?: 1f,
+            id = models.map { it.id }.hashCode(),
+            drawingModelStore = drawingModelStore,
+        )
+    }
 
-    public constructor(
-        vararg chartModelProducers: ChartModelProducer<Model>,
-        backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-    ) : this(chartModelProducers.toList(), backgroundExecutor)
-
-    override fun getModel(): ComposedChartEntryModel<Model> =
-        cachedModel ?: composedChartEntryModelOf(chartModelProducers.map { it.getModel() })
-            .also { cachedModel = it }
+    override fun getModel(): ComposedChartEntryModel<ChartEntryModel> = getInternalModel()
 
     override fun progressModel(key: Any, progress: Float) {
-        chartModelProducers.forEach { producer ->
-            producer.progressModel(key, progress)
+        with(updateReceivers[key] ?: return) {
+            backgroundExecutor.execute {
+                modelTransformer?.transform(drawingModelStore, progress)
+                onModelCreated(getInternalModel(drawingModelStore.copy()))
+            }
         }
     }
 
     override fun registerForUpdates(
         key: Any,
-        cancelProgressAnimation: (producerKey: Any) -> Unit,
-        startProgressAnimation: (producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
-        getOldModel: () -> ComposedChartEntryModel<Model>?,
+        cancelAnimation: () -> Unit,
+        startAnimation: (progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        getOldModel: () -> ComposedChartEntryModel<ChartEntryModel>?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        onModel: (ComposedChartEntryModel<Model>) -> Unit,
+        updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesManager,
+        onModelCreated: (ComposedChartEntryModel<ChartEntryModel>) -> Unit,
     ) {
-        val receiver = CompositeModelReceiver(onModel, executor)
-        compositeModelReceivers[key] = receiver
-        chartModelProducers.forEachIndexed { index, producer ->
-            producer.registerForUpdates(
-                key = key,
-                cancelProgressAnimation = cancelProgressAnimation,
-                startProgressAnimation = startProgressAnimation,
-                getOldModel = { getOldModel()?.composedEntryCollections?.getOrNull(index) },
-                modelTransformerProvider = modelTransformerProvider,
+        val modelTransformer = modelTransformerProvider?.getModelTransformer<ComposedChartEntryModel<ChartEntryModel>>()
+        updateReceivers[key] = UpdateReceiver(
+            cancelAnimation,
+            startAnimation,
+            onModelCreated,
+            drawingModelStore,
+            modelTransformer,
+            getOldModel,
+            updateChartValues,
+        )
+        backgroundExecutor.execute {
+            cancelAnimation()
+            modelTransformer?.prepareForTransformation(
+                oldModel = getOldModel(),
+                newModel = getModel(),
                 drawingModelStore = drawingModelStore,
-                onModel = receiver.getModelReceiver(index),
+                chartValuesManager = updateChartValues(getModel()),
             )
+            startAnimation(::progressModel)
         }
     }
 
-    private class CompositeModelReceiver<Model : ChartEntryModel>(
-        private val onModel: (ComposedChartEntryModel<Model>) -> Unit,
-        private val executor: Executor,
-    ) {
-
-        private val modelReceivers: SortedMap<Int, Model?> = TreeMap()
-
-        fun getModelReceiver(index: Int): (Model) -> Unit {
-            modelReceivers[index] = null
-            return { onModelUpdate(index, it) }
-        }
-
-        fun onModelUpdate(index: Int, model: Model) {
-            modelReceivers[index] = model
-            val models = modelReceivers.values.mapNotNull { it }
-            if (modelReceivers.values.size == models.size) { // TODO verify if needed
-                executor.execute {
-                    onModel(composedChartEntryModelOf(models))
-                }
-            }
-        }
-    }
+    override fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key)
 
     override fun unregisterFromUpdates(key: Any) {
-        compositeModelReceivers.remove(key)
-        chartModelProducers.forEach { producer ->
-            producer.unregisterFromUpdates(key)
+        updateReceivers.remove(key)
+    }
+
+    /**
+     * Creates a [Transaction] instance.
+     */
+    public fun createTransaction(): Transaction = Transaction()
+
+    /**
+     * Creates a [Transaction], runs [block], and calls [Transaction.commit].
+     */
+    public fun runTransaction(block: Transaction.() -> Unit) {
+        createTransaction().also(block).commit()
+    }
+
+    /**
+     * Handles data updates. An initially empty list of data sets is created and can be updated via the class’s
+     * functions. Each data set corresponds to a single nested [Chart].
+     */
+    public inner class Transaction internal constructor() {
+        private val newEntries = mutableListOf<List<List<ChartEntry>>>()
+
+        /**
+         * Populates the new list of data sets with the current data sets.
+         */
+        public fun populate() {
+            newEntries.setAll(dataSets)
+        }
+
+        /**
+         * Replaces the data set at the specified index ([Pair.first]) with the provided data set ([Pair.second]).
+         */
+        public fun set(pair: Pair<Int, List<List<ChartEntry>>>) {
+            set(pair.first, pair.second)
+        }
+
+        /**
+         * Removes the data set at the specified index.
+         */
+        public fun removeAt(index: Int) {
+            newEntries.removeAt(index)
+        }
+
+        /**
+         * Replaces the data set at the specified index with the provided data set.
+         */
+        public fun set(index: Int, dataSet: List<List<ChartEntry>>) {
+            newEntries[index] = dataSet
+        }
+
+        /**
+         * Adds a data set.
+         */
+        public fun add(dataSet: List<List<ChartEntry>>) {
+            newEntries.add(dataSet)
+        }
+
+        /**
+         * Adds a data set.
+         */
+        public fun add(index: Int, dataSet: List<List<ChartEntry>>) {
+            newEntries.add(index, dataSet)
+        }
+
+        /**
+         * Adds a data set comprising the provided series.
+         */
+        public fun add(vararg series: List<ChartEntry>) {
+            add(series.toList())
+        }
+
+        /**
+         * Clears the new list of data sets.
+         */
+        public fun clear() {
+            newEntries.clear()
+        }
+
+        /**
+         * Finalizes the data update.
+         */
+        public fun commit() {
+            setDataSets(newEntries)
         }
     }
 
-    override fun isRegistered(key: Any): Boolean = compositeModelReceivers.containsKey(key = key)
+    private data class UpdateReceiver(
+        val cancelAnimation: () -> Unit,
+        val startAnimation: (progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        val onModelCreated: (ComposedChartEntryModel<ChartEntryModel>) -> Unit,
+        val drawingModelStore: MutableDrawingModelStore,
+        val modelTransformer: Chart.ModelTransformer<ComposedChartEntryModel<ChartEntryModel>>?,
+        val getOldModel: () -> ComposedChartEntryModel<ChartEntryModel>?,
+        val getChartValuesManager: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesManager,
+    )
+
+    private data class InternalModel(
+        override val composedEntryCollections: List<ChartEntryModel>,
+        override val entries: List<List<ChartEntry>>,
+        override val minX: Float,
+        override val maxX: Float,
+        override val minY: Float,
+        override val maxY: Float,
+        override val stackedPositiveY: Float,
+        override val stackedNegativeY: Float,
+        override val xGcd: Float,
+        override val id: Int,
+        override val drawingModelStore: DrawingModelStore = DrawingModelStore.empty,
+    ) : ComposedChartEntryModel<ChartEntryModel>
 
     public companion object {
-
         /**
-         * Creates a [ComposedChartEntryModel] instance comprising the provided [Model]s.
+         * Creates a [ComposedChartEntryModelProducer], running an initial [Transaction]. [backgroundExecutor] is used
+         * to run calculations off the main thread.
          */
-        public fun <Model : ChartEntryModel> composedChartEntryModelOf(
-            models: List<Model>,
-        ): ComposedChartEntryModel<Model> = object : ComposedChartEntryModel<Model> {
-            override val composedEntryCollections: List<Model> = models
-            override val entries: List<List<ChartEntry>> = models.map { it.entries }.flatten()
-            override val minX: Float = models.minOf { it.minX }
-            override val maxX: Float = models.maxOf { it.maxX }
-            override val minY: Float = models.minOf { it.minY }
-            override val maxY: Float = models.maxOf { it.maxY }
-            override val stackedPositiveY: Float = models.maxOf { it.stackedPositiveY }
-            override val stackedNegativeY: Float = models.minOf { it.stackedNegativeY }
-            override val xGcd: Float = models.fold<Model, Float?>(null) { gcd, model ->
-                gcd?.gcdWith(model.xGcd) ?: model.xGcd
-            } ?: 1f
-            override val id: Int = models.map { it.id }.hashCode()
-        }
+        public fun build(
+            backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
+            transaction: Transaction.() -> Unit = {},
+        ): ComposedChartEntryModelProducer =
+            ComposedChartEntryModelProducer(backgroundExecutor).also { it.runTransaction(transaction) }
     }
 }

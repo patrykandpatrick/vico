@@ -17,6 +17,8 @@
 package com.patrykandpatrick.vico.core.entry
 
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 
 /**
@@ -38,20 +40,22 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
     public fun progressModel(key: Any, progress: Float)
 
     /**
-     * Registers an update listener associated with a [key]. [cancelProgressAnimation] and [startProgressAnimation] are
-     * called after a data update is requested, with [cancelProgressAnimation] being called before the update starts
-     * being processed (at which point [progressModel] should stop being used), and [startProgressAnimation] being
-     * called once the update has been processed (at which point it’s safe to use [progressModel]).
-     * [onModel] is called when a new [Model] has been generated.
+     * Registers an update listener associated with a [key]. [cancelAnimation] and [startAnimation] are
+     * called after a data update is requested, with [cancelAnimation] being called before the update starts
+     * being processed (at which point [progressModel] should stop being used), and [startAnimation] being
+     * called once the update has been processed (at which point it’s safe to use [progressModel]). [updateChartValues]
+     * updates the chart’s [ChartValues] and returns its [ChartValuesManager]. [onModelCreated] is called when a new
+     * [Model] has been generated.
      */
     public fun registerForUpdates(
         key: Any,
-        cancelProgressAnimation: (producerKey: Any) -> Unit,
-        startProgressAnimation: (producerKey: Any, progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        cancelAnimation: () -> Unit,
+        startAnimation: (progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
         getOldModel: () -> Model?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        onModel: (Model) -> Unit,
+        updateChartValues: (Model) -> ChartValuesManager,
+        onModelCreated: (Model) -> Unit,
     )
 
     /**
