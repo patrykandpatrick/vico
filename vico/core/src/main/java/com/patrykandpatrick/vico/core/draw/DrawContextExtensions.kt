@@ -54,7 +54,6 @@ public fun drawContext(
     override val density: Float = density
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
-    override val chartScale: Float = 1f
     override val chartValuesManager: ChartValuesManager = ChartValuesManager()
     override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented
 

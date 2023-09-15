@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalInspectionMode
 import com.patrykandpatrick.vico.compose.state.MutableSharedState
 import com.patrykandpatrick.vico.compose.state.mutableSharedStateOf
 import com.patrykandpatrick.vico.core.Animation
@@ -77,10 +78,11 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
     }
 
     val scope = rememberCoroutineScope()
-    DisposableEffect(key1 = chartKey, key2 = producerKey) {
+    val isInPreview = LocalInspectionMode.current
+    DisposableEffect(chartKey, producerKey, runInitialAnimation, isInPreview) {
         var animationJob: Job? = null
         val listener = {
-            if (animationSpec != null && (model.value != null || runInitialAnimation)) {
+            if (animationSpec != null && !isInPreview && (model.value != null || runInitialAnimation)) {
                 animationJob?.cancel()
                 animationJob = scope.launch {
                     animate(

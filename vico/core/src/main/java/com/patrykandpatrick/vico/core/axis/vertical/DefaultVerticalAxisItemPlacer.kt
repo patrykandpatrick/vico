@@ -109,7 +109,8 @@ internal class DefaultVerticalAxisItemPlacer(
         val bottomItemCountByHeight = bottomHeight / maxLabelHeight
         var topItemCount = topItemCountByHeight.coerceAtMost(maxTopItemCount).toInt()
         var bottomItemCount = bottomItemCountByHeight.coerceAtMost(maxBottomItemCount).toInt()
-        if (maxTopItemCount % 1f != 0f) {
+        val currentItemCount = topItemCount + bottomItemCount + 1 // +1 for zero label
+        if (currentItemCount < maxItemCount) {
             val isTopNotDenser = topItemCount / topHeight <= bottomItemCount / bottomHeight
             val isTopFillable = topItemCountByHeight - topItemCount >= 1
             val isBottomFillable = bottomItemCountByHeight - bottomItemCount >= 1

@@ -25,6 +25,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ProvidedValue
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -246,9 +247,12 @@ public object LocalChartStyle {
 
     internal val default: ChartStyle
         @Composable
-        get() = ChartStyle.fromDefaultColors(
-            defaultColors = if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light,
-        )
+        get() {
+            val isSystemInDarkTheme = isSystemInDarkTheme()
+            return remember(isSystemInDarkTheme) {
+                ChartStyle.fromDefaultColors(if (isSystemInDarkTheme) DefaultColors.Dark else DefaultColors.Light)
+            }
+        }
 
     private val LocalProvidedStyle: ProvidableCompositionLocal<ChartStyle?> =
         compositionLocalOf { null }

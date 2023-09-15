@@ -51,7 +51,6 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-private const val TEXT_MEASUREMENT_CHAR = ""
 private const val LAYOUT_KEY_PREFIX = "layout_"
 private const val DEF_LAYOUT_SIZE = 100000
 
@@ -281,52 +280,62 @@ public open class TextComponent protected constructor() : Padding, Margins {
     }
 
     /**
-     * Returns the width of this [TextComponent] for the given [text] and the available [width] and [height].
+     * Returns the width of this [TextComponent] for the given [text] and the available [width] and [height]. [pad]
+     * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getWidth(
         context: MeasureContext,
-        text: CharSequence,
+        text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
+        pad: Boolean = text == null,
     ): Float = getTextBounds(
         context = context,
         text = text,
         width = width,
         height = height,
         rotationDegrees = rotationDegrees,
+        pad = pad,
     ).width()
 
     /**
-     * Returns the height of this [TextComponent] for the given [text] and the available [width] and [height].
+     * Returns the height of this [TextComponent] for the given [text] and the available [width] and [height]. [pad]
+     * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getHeight(
         context: MeasureContext,
-        text: CharSequence = TEXT_MEASUREMENT_CHAR,
+        text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
+        pad: Boolean = text == null,
     ): Float = getTextBounds(
         context = context,
         text = text,
         width = width,
         height = height,
         rotationDegrees = rotationDegrees,
+        pad = pad,
     ).height()
 
     /**
      * Returns the bounds ([RectF]) of this [TextComponent] for the given [text] and the available [width] and [height].
+     * [pad] defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getTextBounds(
         context: MeasureContext,
-        text: CharSequence = TEXT_MEASUREMENT_CHAR,
+        text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
         outRect: RectF = tempMeasureBounds,
         includePaddingAndMargins: Boolean = true,
         rotationDegrees: Float = 0f,
+        pad: Boolean = text == null,
     ): RectF = with(context) {
-        getLayout(text, width, height, rotationDegrees)
+        var measuredText = text?.toString().orEmpty()
+        if (pad) repeat((lineCount - measuredText.lines().size).coerceAtLeast(0)) { measuredText += '\n' }
+        getLayout(measuredText, width, height, rotationDegrees)
             .getBounds(outRect)
             .apply {
                 if (includePaddingAndMargins) {

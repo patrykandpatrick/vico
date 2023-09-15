@@ -41,12 +41,13 @@ internal class DefaultHorizontalAxisItemPlacer(
         val chartValues = context.chartValuesManager.getChartValues()
         val remainder = ((visibleXRange.start - chartValues.minX) / chartValues.xStep - offset) % spacing
         val firstValue = visibleXRange.start + (spacing - remainder) % spacing * chartValues.xStep
+        val minXOffset = chartValues.minX % chartValues.xStep
         val values = mutableListOf<Float>()
         var multiplier = -LABEL_OVERFLOW_SIZE
         var hasEndOverflow = false
         while (true) {
             var potentialValue = firstValue + multiplier++ * spacing * chartValues.xStep
-            potentialValue = chartValues.xStep * (potentialValue / chartValues.xStep).round
+            potentialValue = chartValues.xStep * ((potentialValue - minXOffset) / chartValues.xStep).round + minXOffset
             if (potentialValue < chartValues.minX || potentialValue == fullXRange.start) continue
             if (potentialValue > chartValues.maxX || potentialValue == fullXRange.endInclusive) break
             values += potentialValue
@@ -63,12 +64,6 @@ internal class DefaultHorizontalAxisItemPlacer(
         val chartValues = context.chartValuesManager.getChartValues()
         return listOf(chartValues.minX, (chartValues.minX + chartValues.maxX).half, chartValues.maxX)
     }
-
-    override fun getMeasuredLabelClearance(
-        context: MeasureContext,
-        horizontalDimensions: HorizontalDimensions,
-        fullXRange: ClosedFloatingPointRange<Float>,
-    ): Float = spacing.toFloat()
 
     @Suppress("LoopWithTooManyJumpStatements")
     override fun getLineValues(
@@ -104,7 +99,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
         return when (context.horizontalLayout) {
             is HorizontalLayout.Segmented -> tickSpace
-            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.startPadding).coerceAtLeast(0f)
+            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.unscalableStartPadding).coerceAtLeast(0f)
         }
     }
 
@@ -116,7 +111,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
         return when (context.horizontalLayout) {
             is HorizontalLayout.Segmented -> tickSpace
-            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.endPadding).coerceAtLeast(0f)
+            is HorizontalLayout.FullWidth -> (tickSpace - horizontalDimensions.unscalableEndPadding).coerceAtLeast(0f)
         }
     }
 

@@ -145,7 +145,7 @@ public open class ColumnChart(
                 val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
                 check(xSpacingMultiplier % 1f == 0f) { "Each entry’s x value must be a multiple of the x step." }
                 columnCenterX = drawingStart +
-                    (horizontalDimensions.xSpacing * xSpacingMultiplier + column.thicknessDp.half.pixels * chartScale) *
+                    (horizontalDimensions.xSpacing * xSpacingMultiplier + column.thicknessDp.half.pixels * zoom) *
                     layoutDirectionMultiplier
 
                 when (mergeMode) {
@@ -181,11 +181,11 @@ public open class ColumnChart(
                         bottom = columnBottom,
                         centerX = columnCenterX,
                         boundingBox = bounds,
-                        thicknessScale = chartScale,
+                        thicknessScale = zoom,
                     )
                 ) {
                     updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column, entryIndex)
-                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, chartScale)
+                    column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom)
                 }
 
                 if (mergeMode == MergeMode.Grouped) {
@@ -254,7 +254,7 @@ public open class ColumnChart(
             var maxWidth = when {
                 canUseXSpacing -> horizontalDimensions.xSpacing
                 mergeMode == MergeMode.Grouped ->
-                    (columnThicknessDp + minOf(spacingDp, innerSpacingDp).half).pixels * chartScale
+                    (columnThicknessDp + minOf(spacingDp, innerSpacingDp).half).pixels * zoom
 
                 else -> error(message = "Encountered an unexpected `MergeMode`.")
             }
@@ -362,7 +362,7 @@ public open class ColumnChart(
             getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
     }
 
-    protected open fun MeasureContext.getDrawingStart(entryCollectionIndex: Int, entryCollectionCount: Int): Float {
+    protected open fun ChartDrawContext.getDrawingStart(entryCollectionIndex: Int, entryCollectionCount: Int): Float {
         val mergeModeComponent = when (mergeMode) {
             MergeMode.Grouped ->
                 getCumulatedThickness(entryCollectionIndex) + innerSpacingDp.pixels * entryCollectionIndex
@@ -370,8 +370,8 @@ public open class ColumnChart(
             MergeMode.Stack -> 0f
         }
         return bounds.getStart(isLtr) + (
-            horizontalDimensions.scaled(chartScale).startPadding +
-                (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * chartScale
+            horizontalDimensions.startPadding +
+                (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * zoom
             ) * layoutDirectionMultiplier
     }
 

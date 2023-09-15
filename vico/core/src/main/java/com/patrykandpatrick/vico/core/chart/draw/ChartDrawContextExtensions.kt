@@ -20,7 +20,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
@@ -40,8 +39,7 @@ import com.patrykandpatrick.vico.core.model.Point
  * @param horizontalDimensions holds information on the [Chart]’s horizontal dimensions.
  * @param chartBounds the bounds in which the [Chart] will be drawn.
  * @param horizontalScroll the horizontal scroll.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
- * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+ * @param zoom the zoom factor.
  *
  * @see [ShapeComponent.setShadow]
  */
@@ -53,7 +51,7 @@ public fun chartDrawContext(
     horizontalDimensions: HorizontalDimensions,
     chartBounds: RectF,
     horizontalScroll: Float,
-    autoScaleUp: AutoScaleUp,
+    zoom: Float,
 ): ChartDrawContext = object : ChartDrawContext, MeasureContext by measureContext {
 
     override val chartBounds: RectF = chartBounds
@@ -64,9 +62,9 @@ public fun chartDrawContext(
 
     override val markerTouchPoint: Point? = markerTouchPoint
 
-    override val chartScale: Float = calculateDrawScale()
+    override val zoom: Float = zoom
 
-    override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(chartScale)
+    override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(zoom)
 
     override val horizontalScroll: Float = horizontalScroll
 
@@ -75,18 +73,6 @@ public fun chartDrawContext(
         this.canvas = canvas
         block(this)
         this.canvas = originalCanvas
-    }
-
-    private fun calculateDrawScale(): Float {
-        val contentWidth =
-            horizontalDimensions.getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
-        val upscalingPossibleButDisallowed = contentWidth < chartBounds.width() && autoScaleUp == AutoScaleUp.None
-        val scrollEnabledAndUpscalingImpossible = isHorizontalScrollEnabled && contentWidth >= chartBounds.width()
-        return if (upscalingPossibleButDisallowed || scrollEnabledAndUpscalingImpossible) {
-            measureContext.chartScale
-        } else {
-            chartBounds.width() / contentWidth
-        }
     }
 }
 

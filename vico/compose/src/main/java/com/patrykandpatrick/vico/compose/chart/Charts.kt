@@ -60,6 +60,7 @@ import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
+import com.patrykandpatrick.vico.core.chart.draw.getAutoZoom
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -94,10 +95,10 @@ import kotlinx.coroutines.launch
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param diffAnimationSpec the animation spec used for difference animations.
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
- * of each chart entry is animated from zero to the actual value.
+ * of each chart entry is animated from zero to the actual value. This animation isn’t run in previews.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
- * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+ * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
+ * a scale factor of 1, an empty space would be visible near the end edge of the chart.
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
@@ -176,8 +177,8 @@ public fun <Model : ChartEntryModel> Chart(
  * @param legend an optional legend for the chart.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
- * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+ * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
+ * a scale factor of 1, an empty space would be visible near the end edge of the chart.
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
@@ -248,8 +249,8 @@ public fun <Model : ChartEntryModel> Chart(
  * @param oldModel the chart’s previous [ChartEntryModel]. This is used to determine whether to perform an automatic
  * scroll.
  * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
- * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+ * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
+ * a scale factor of 1, an empty space would be visible near the end edge of the chart.
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
@@ -323,10 +324,10 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
-    val zoom = remember { mutableFloatStateOf(1f) }
+    val zoom = remember { mutableFloatStateOf(0f) }
+    val wasZoomOverridden = remember { mutableStateOf(false) }
     val measureContext = getMeasureContext(
         chartScrollSpec.isScrollEnabled,
-        zoom.floatValue,
         bounds,
         horizontalLayout,
         with(LocalContext.current) { ::spToPx },
@@ -344,6 +345,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
     val onZoom = rememberZoomState(
         zoom = zoom,
+        wasZoomOverridden = wasZoomOverridden,
         getScroll = { chartScrollState.value },
         scrollBy = { value -> coroutineScope.launch { chartScrollState.scrollBy(value) } },
         chartBounds = chart.bounds,
@@ -387,9 +389,17 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
         if (chartBounds.isEmpty) return@Canvas
 
+        var finalZoom = zoom.floatValue
+
+        if (!wasZoomOverridden.value || !chartScrollSpec.isScrollEnabled) {
+            finalZoom = measureContext.getAutoZoom(horizontalDimensions, chart.bounds, autoScaleUp)
+            if (chartScrollSpec.isScrollEnabled) zoom.floatValue = finalZoom
+        }
+
         chartScrollState.maxValue = measureContext.getMaxScrollDistance(
             chartWidth = chart.bounds.width(),
             horizontalDimensions = horizontalDimensions,
+            zoom = finalZoom,
         )
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
@@ -402,7 +412,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             horizontalDimensions = horizontalDimensions,
             chartBounds = chart.bounds,
             horizontalScroll = chartScrollState.value,
-            autoScaleUp = autoScaleUp,
+            zoom = finalZoom,
         )
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
@@ -467,6 +477,7 @@ internal fun rememberScrollListener(touchPoint: MutableState<Point?>): ScrollLis
 @Composable
 internal fun rememberZoomState(
     zoom: MutableFloatState,
+    wasZoomOverridden: MutableState<Boolean>,
     getScroll: () -> Float,
     scrollBy: (value: Float) -> Unit,
     chartBounds: RectF,
@@ -478,5 +489,6 @@ internal fun rememberZoomState(
         val zoomedTransformationAxisX = transformationAxisX * zoomChange
         zoom.floatValue = newZoom
         scrollBy(zoomedTransformationAxisX - transformationAxisX)
+        wasZoomOverridden.value = true
     }
 }
