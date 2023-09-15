@@ -25,7 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-internal fun VicoTheme(content: @Composable () -> Unit) {
+fun VicoTheme(content: @Composable () -> Unit) {
     val darkColorScheme = darkColorScheme(
         surface = Color(color = DARK_SURFACE),
         background = Color.Black,
