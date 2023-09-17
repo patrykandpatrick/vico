@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.extension.copy
 import com.patrykandpatrick.vico.core.extension.setToAllChildren
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
@@ -100,7 +101,7 @@ public class ChartEntryModelProducer(
         val yRange = entries.yRange
         val aggregateYRange = entries.calculateStackedYRange()
         return InternalModel(
-            entries = entries,
+            entries = entries.copy(),
             minX = xRange.start,
             maxX = xRange.endInclusive,
             minY = yRange.start,
