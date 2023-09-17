@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,19 +29,19 @@ public class MutableSharedState<P, T : P>(
 
     private val backingState = mutableStateOf(value)
 
-    private var mutablePreviousValue: P = previousValue
+    private val previousBackingState = mutableStateOf(previousValue)
 
     /**
      * The previous value.
      */
     public val previousValue: P
-        get() = mutablePreviousValue
+        get() = previousBackingState.value
 
     override var value: T
         get() = backingState.value
         set(value) {
             if (value !== this.value) {
-                mutablePreviousValue = backingState.value
+                previousBackingState.value = this.value
             }
             backingState.value = value
         }
