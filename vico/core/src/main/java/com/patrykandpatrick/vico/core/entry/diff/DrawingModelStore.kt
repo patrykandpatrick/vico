@@ -45,30 +45,29 @@ public abstract class DrawingModelStore internal constructor() {
     /**
      * Creates a copy of this [DrawingModelStore].
      */
-    public fun copy(): DrawingModelStore = create(mapDelegate)
+    public abstract fun copy(): DrawingModelStore
 
     public companion object {
-        /**
-         * Creates a [DrawingModelStore].
-         */
-        public fun create(mapDelegate: Map<Key<*>, DrawingModel<*>>): DrawingModelStore = object : DrawingModelStore() {
-            override val mapDelegate: Map<Key<*>, DrawingModel<*>> = mapDelegate
-        }
 
         /**
          * An empty [DrawingModelStore].
          */
-        public val empty: DrawingModelStore = object : DrawingModelStore() {
-            override val mapDelegate: Map<Key<*>, DrawingModel<*>> = emptyMap()
-        }
+        public val empty: DrawingModelStore = MutableDrawingModelStore()
     }
 }
 
 /**
  * A [DrawingModelStore] subclass that allows for data updates.
  */
-public class MutableDrawingModelStore : DrawingModelStore() {
-    override val mapDelegate: MutableMap<Key<*>, DrawingModel<*>> = mutableMapOf()
+public class MutableDrawingModelStore internal constructor(
+    mapDelegate: Map<Key<*>, DrawingModel<*>>,
+) : DrawingModelStore() {
+    override val mapDelegate: MutableMap<Key<*>, DrawingModel<*>> = HashMap(mapDelegate)
+
+    /**
+     * Creates an empty [MutableDrawingModelStore].
+     */
+    public constructor() : this(emptyMap())
 
     /**
      * Saves the provided value to this [MutableDrawingModelStore], associating the value with the given key.
@@ -76,4 +75,6 @@ public class MutableDrawingModelStore : DrawingModelStore() {
     public operator fun <T : DrawingModel<*>> set(key: Key<T>, value: T) {
         mapDelegate[key] = value
     }
+
+    override fun copy(): DrawingModelStore = MutableDrawingModelStore(mapDelegate)
 }
