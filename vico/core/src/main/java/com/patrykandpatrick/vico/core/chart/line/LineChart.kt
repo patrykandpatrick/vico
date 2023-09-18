@@ -491,8 +491,6 @@ public open class LineChart(
 
         val minX = chartValues.minX
         val maxX = chartValues.maxX
-        val minY = chartValues.minY
-        val maxY = chartValues.maxY
         val xStep = chartValues.xStep
 
         var x: Float = Float.NEGATIVE_INFINITY
