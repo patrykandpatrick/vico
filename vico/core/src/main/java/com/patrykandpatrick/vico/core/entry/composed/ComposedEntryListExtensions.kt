@@ -19,13 +19,17 @@ package com.patrykandpatrick.vico.core.entry.composed
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 
+private fun ComposedChartEntryModelProducer.Transaction.add(chartEntryModels: List<ChartEntryModel>) {
+    chartEntryModels.forEach { add(it.entries) }
+}
+
 /**
  * Combines two [ChartEntryModel] implementations—the receiver and [other]—into a [ComposedChartEntryModel].
  */
 public operator fun <Model : ChartEntryModel> Model.plus(other: Model): ComposedChartEntryModel<ChartEntryModel> =
     ComposedChartEntryModelProducer
         .build {
-            add(entries)
-            add(other.entries)
+            if (this@plus is ComposedChartEntryModel<*>) add(composedEntryCollections) else add(entries)
+            if (other is ComposedChartEntryModel<*>) add(other.composedEntryCollections) else add(other.entries)
         }
         .getModel()
