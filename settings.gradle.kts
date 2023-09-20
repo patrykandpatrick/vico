@@ -16,16 +16,15 @@
 
 import org.gradle.api.initialization.resolve.RepositoriesMode
 
-pluginManagement {
-    repositories {
-        google()
-        gradlePluginPortal()
-        mavenCentral()
-    }
+pluginManagement.repositories {
+    google()
+    gradlePluginPortal()
+    mavenCentral()
 }
 
+@Suppress("UnstableApiUsage")
 dependencyResolutionManagement {
-    repositoriesMode.set RepositoriesMode.FAIL_ON_PROJECT_REPOS
+    repositoriesMode = RepositoriesMode.FAIL_ON_PROJECT_REPOS
     repositories {
         google()
         mavenCentral()
@@ -35,10 +34,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Vico"
 
-include ":sample"
-include ":vico"
-include ":vico:views"
-include ":vico:compose"
-include ":vico:core"
-include ":vico:compose-m2"
-include ":vico:compose-m3"
+include("sample", "vico", "vico:compose", "vico:compose-m2", "vico:compose-m3", "vico:core", "vico:views")
