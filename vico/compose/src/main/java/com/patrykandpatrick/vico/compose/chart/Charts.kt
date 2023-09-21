@@ -26,7 +26,6 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableFloatStateOf
@@ -50,7 +49,6 @@ import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
 import com.patrykandpatrick.vico.compose.extension.chartTouchEvent
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
 import com.patrykandpatrick.vico.compose.layout.getMeasureContext
-import com.patrykandpatrick.vico.compose.state.MutableSharedState
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
@@ -129,21 +127,16 @@ public fun <Model : ChartEntryModel> Chart(
     getXStep: ((Model) -> Float)? = null,
 ) {
     val chartValuesManager = remember(chart) { ChartValuesManager() }
-    val modelState: MutableSharedState<Model?, Model?> = chartModelProducer.collectAsState(
-        chart = chart,
-        producerKey = chartModelProducer,
-        animationSpec = diffAnimationSpec,
-        runInitialAnimation = runInitialAnimation,
-        chartValuesManager = chartValuesManager,
-        getXStep = getXStep,
-    )
+    val (model, oldModel) = chartModelProducer
+        .collectAsState(chart, chartModelProducer, diffAnimationSpec, runInitialAnimation, chartValuesManager, getXStep)
+        .value
 
     ChartBox(modifier = modifier) {
-        modelState.value?.also { model ->
+        model?.also { model ->
             ChartImpl(
                 chart = chart,
                 model = model,
-                oldModel = modelState.previousValue,
+                oldModel = oldModel,
                 startAxis = startAxis,
                 topAxis = topAxis,
                 endAxis = endAxis,
@@ -285,6 +278,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+    var previousModelID: Int? = remember { null }
 
     val onZoom = rememberZoomState(
         zoom = zoom,
@@ -293,14 +287,6 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         scrollBy = { value -> coroutineScope.launch { chartScrollState.scrollBy(value) } },
         chartBounds = chart.bounds,
     )
-
-    LaunchedEffect(key1 = model.id) {
-        chartScrollSpec.performAutoScroll(
-            model = model,
-            oldModel = oldModel,
-            chartScrollState = chartScrollState,
-        )
-    }
 
     Canvas(
         modifier = Modifier
@@ -343,6 +329,12 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             horizontalDimensions = horizontalDimensions,
             zoom = finalZoom,
         )
+
+        if (model.id != previousModelID) {
+            coroutineScope.launch { chartScrollSpec.performAutoScroll(model, oldModel, chartScrollState) }
+        }
+
+        previousModelID = model.id
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
