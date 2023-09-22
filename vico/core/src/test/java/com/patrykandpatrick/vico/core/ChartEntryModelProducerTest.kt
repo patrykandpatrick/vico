@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.entry.entriesOf
 import org.junit.Test
 import kotlin.test.assertEquals
 
-public class ChartValuesProducerTests {
+public class ChartEntryModelProducerTest {
 
     private val minX = 0f
     private val maxX = 3f
