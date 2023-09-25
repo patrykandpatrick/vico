@@ -29,8 +29,8 @@ internal class ChartEntryModelState<T : ChartEntryModel> : State<Pair<T?, T?>> {
         private set
 
     fun set(value: T) {
-        val currentChartEntryModel = this.value.first
-        if (value.id != currentChartEntryModel?.id) previousValue = currentChartEntryModel
+        val currentValue = this.value.first
+        if (value.id != currentValue?.id) previousValue = currentValue
         this.value = value to previousValue
     }
 }
