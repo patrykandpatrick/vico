@@ -104,7 +104,9 @@ internal fun Iterable<Iterable<ChartEntry>>.calculateXGcd(): Float {
         }
         if (gcd == -1f) gcd = 1f
     }
-    return gcd ?: 1f
+    return gcd?.also {
+        require(it != 0f) { "The precision of the x values is too large. The maximum precision is two decimal places." }
+    } ?: 1f
 }
 
 internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =
