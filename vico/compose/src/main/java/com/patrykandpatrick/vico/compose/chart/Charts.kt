@@ -132,7 +132,7 @@ public fun <Model : ChartEntryModel> Chart(
         .value
 
     ChartBox(modifier = modifier) {
-        model?.also { model ->
+        if (model != null) {
             ChartImpl(
                 chart = chart,
                 model = model,
