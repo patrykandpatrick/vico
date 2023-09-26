@@ -27,7 +27,7 @@ import kotlin.math.roundToInt
  */
 public const val PI_RAD: Float = 180f
 
-internal const val FLOAT_GCD_DECIMALS = 3
+internal const val FLOAT_GCD_DECIMALS = 2
 
 private fun Float.round(decimals: Int): Float {
     val multiplier = 10f.pow(n = decimals)
