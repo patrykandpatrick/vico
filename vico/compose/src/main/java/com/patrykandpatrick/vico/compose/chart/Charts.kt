@@ -75,6 +75,9 @@ import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.model.Point
 import com.patrykandpatrick.vico.core.scroll.ScrollListener
+import com.patrykandpatrick.vico.core.util.ValueWrapper
+import com.patrykandpatrick.vico.core.util.getValue
+import com.patrykandpatrick.vico.core.util.setValue
 import kotlinx.coroutines.launch
 
 /**
@@ -278,7 +281,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    var previousModelID: Int? = remember { null }
+    var previousModelID by remember { ValueWrapper(model.id) }
 
     val onZoom = rememberZoomState(
         zoom = zoom,
@@ -332,9 +335,8 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
         if (model.id != previousModelID) {
             coroutineScope.launch { chartScrollSpec.performAutoScroll(model, oldModel, chartScrollState) }
+            previousModelID = model.id
         }
-
-        previousModelID = model.id
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 

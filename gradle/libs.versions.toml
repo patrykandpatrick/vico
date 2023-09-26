@@ -2,6 +2,7 @@
 accompanist = "0.32.0"
 activity = "1.7.2"
 agp = "8.3.0-alpha05"
+androidXAnnotation = "1.7.0"
 androidXCore = "1.12.0"
 appcompat = "1.6.1"
 composeBom = "2023.09.01"
@@ -20,6 +21,7 @@ testCore = "1.5.0"
 
 [libraries]
 activityCompose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity" }
+androidXAnnotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidXAnnotation" }
 androidXCore = { group = "androidx.core", name = "core-ktx", version.ref = "androidXCore" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 buildTools = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
