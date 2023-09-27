@@ -61,6 +61,7 @@ afterEvaluate {
 dependencies {
 
     implementation libs.androidXAnnotation
+    implementation libs.coroutinesCore
     implementation libs.kotlinStdLib
     testImplementation libs.JUnit
     testImplementation libs.JUnitExt

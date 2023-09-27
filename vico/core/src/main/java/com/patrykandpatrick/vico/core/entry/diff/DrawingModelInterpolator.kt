@@ -29,5 +29,5 @@ public interface DrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : Draw
      * Interpolates the two [DrawingModel]s. [fraction] is the balance between the initial and target [DrawingModel]s,
      * with 0 corresponding to the initial [DrawingModel], and 1 corresponding to the target [DrawingModel].
      */
-    public fun transform(fraction: Float): R
+    public suspend fun transform(fraction: Float): R
 }

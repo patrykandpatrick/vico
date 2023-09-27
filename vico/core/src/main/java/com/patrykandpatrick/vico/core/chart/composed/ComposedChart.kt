@@ -188,7 +188,7 @@ public class ComposedChart<Model : ChartEntryModel>(
             }
         }
 
-        override fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
+        override suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
             getModelTransformers().forEach { transformer ->
                 transformer.transform(drawingModelStore, fraction)
             }

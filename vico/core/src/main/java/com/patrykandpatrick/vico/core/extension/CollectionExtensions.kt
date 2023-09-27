@@ -24,6 +24,12 @@ internal fun <T> List<T>.getRepeating(index: Int): T {
     return get(index % size.coerceAtLeast(1))
 }
 
+@JvmName("copyDouble")
+internal fun <T> List<List<T>>.copy() = map { it.toList() }
+
+@JvmName("copyTriple")
+internal fun <T> List<List<List<T>>>.copy() = map { it.copy() }
+
 /**
  * Replaces all of the elements of this [MutableList] with the elements of the provided collection.
  */

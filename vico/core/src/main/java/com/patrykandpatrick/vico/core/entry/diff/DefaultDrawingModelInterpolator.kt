@@ -17,6 +17,8 @@
 package com.patrykandpatrick.vico.core.entry.diff
 
 import com.patrykandpatrick.vico.core.extension.orZero
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
 import kotlin.math.max
 
 /**
@@ -26,7 +28,7 @@ import kotlin.math.max
 public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : DrawingModel<T>> :
     DrawingModelInterpolator<T, R> {
 
-    private val transformationMaps = mutableListOf<Map<Float, TransformationModel<T>>>()
+    private var transformationMaps = emptyList<Map<Float, TransformationModel<T>>>()
     private var oldDrawingModel: R? = null
     private var newDrawingModel: R? = null
 
@@ -38,13 +40,16 @@ public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : D
         }
     }
 
-    override fun transform(fraction: Float): R = synchronized(this) {
+    override suspend fun transform(fraction: Float): R {
         val newDrawingModel = newDrawingModel
         check(newDrawingModel != null)
-        newDrawingModel.transform(
+        return newDrawingModel.transform(
             drawingInfo = transformationMaps.mapNotNull { map ->
                 map
-                    .mapNotNull { (x, model) -> model.transform(fraction)?.let { drawingInfo -> x to drawingInfo } }
+                    .mapNotNull { (x, model) ->
+                        currentCoroutineContext().ensureActive()
+                        model.transform(fraction)?.let { drawingInfo -> x to drawingInfo }
+                    }
                     .takeIf { list -> list.isNotEmpty() }
                     ?.toMap()
             },
@@ -54,16 +59,17 @@ public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : D
     }
 
     private fun updateTransformationMap() {
-        transformationMaps.clear()
-        repeat(max(oldDrawingModel?.size.orZero, newDrawingModel?.size.orZero)) { index ->
-            val map = mutableMapOf<Float, TransformationModel<T>>()
-            oldDrawingModel
-                ?.getOrNull(index)
-                ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(drawingInfo) }
-            newDrawingModel
-                ?.getOrNull(index)
-                ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(map[x]?.old, drawingInfo) }
-            transformationMaps.add(map)
+        transformationMaps = buildList {
+            repeat(max(oldDrawingModel?.size.orZero, newDrawingModel?.size.orZero)) { index ->
+                val map = mutableMapOf<Float, TransformationModel<T>>()
+                oldDrawingModel
+                    ?.getOrNull(index)
+                    ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(drawingInfo) }
+                newDrawingModel
+                    ?.getOrNull(index)
+                    ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(map[x]?.old, drawingInfo) }
+                add(map)
+            }
         }
     }
 

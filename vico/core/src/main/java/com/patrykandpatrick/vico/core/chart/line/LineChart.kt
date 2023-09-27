@@ -613,7 +613,7 @@ public open class LineChart(
             )
         }
 
-        override fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
+        override suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
             drawingModelStore[key] = drawingModelInterpolator.transform(fraction)
         }
 

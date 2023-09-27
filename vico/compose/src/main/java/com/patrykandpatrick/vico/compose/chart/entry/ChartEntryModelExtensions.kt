@@ -32,6 +32,8 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -57,6 +59,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
     runInitialAnimation: Boolean = true,
     chartValuesManager: ChartValuesManager,
     getXStep: ((Model) -> Float)?,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ): State<Pair<Model?, Model?>> {
     val chartEntryModelState = remember(chart, producerKey) { ChartEntryModelState<Model>() }
 
@@ -65,52 +68,70 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
 
     val scope = rememberCoroutineScope()
     val isInPreview = LocalInspectionMode.current
-    var animationJob: Job? = null
-    var isAnimationRunning: Boolean?
+    var mainAnimationJob: Job? = null
+    var animationFrameJob: Job? = null
+    var finalAnimationFrameJob: Job? = null
+    var isAnimationRunning: Boolean
+    var isAnimationFrameGenerationRunning = false
     DisposableEffect(chart, producerKey, runInitialAnimation, isInPreview) {
-        val afterUpdate = { progressModel: (chartKey: Any, progress: Float) -> Unit ->
+        val afterUpdate: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit = { progressModel ->
             if (animationSpec != null && !isInPreview &&
                 (chartEntryModelState.value.first != null || runInitialAnimation)
             ) {
-                isAnimationRunning = false
-                animationJob = scope.launch {
+                isAnimationRunning = true
+                mainAnimationJob = scope.launch(dispatcher) {
                     animate(
                         initialValue = Animation.range.start,
                         targetValue = Animation.range.endInclusive,
                         animationSpec = animationSpec,
                     ) { value, _ ->
-                        if (isAnimationRunning == false) {
-                            progressModel(chart, value)
+                        when {
+                            !isAnimationRunning -> return@animate
+                            !isAnimationFrameGenerationRunning -> {
+                                isAnimationFrameGenerationRunning = true
+                                animationFrameJob = scope.launch(dispatcher) {
+                                    progressModel(chart, value)
+                                    isAnimationFrameGenerationRunning = false
+                                }
+                            }
+                            value == 1f -> {
+                                finalAnimationFrameJob = scope.launch(dispatcher) {
+                                    animationFrameJob?.cancelAndJoin()
+                                    progressModel(chart, value)
+                                    isAnimationFrameGenerationRunning = false
+                                }
+                            }
                         }
                     }
                 }
             } else {
-                progressModel(chart, Animation.range.endInclusive)
+                scope.launch(dispatcher) { progressModel(chart, Animation.range.endInclusive) }
             }
         }
-        registerForUpdates(
-            key = chart,
-            cancelAnimation = {
-                runBlocking { animationJob?.cancelAndJoin() }
-                isAnimationRunning = true
-            },
-            startAnimation = afterUpdate,
-            getOldModel = { chartEntryModelState.value.first },
-            modelTransformerProvider = modelTransformerProvider,
-            drawingModelStore = drawingModelStore,
-            updateChartValues = { model ->
-                chartValuesManager.resetChartValues()
-                chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
-                chartValuesManager
-            },
-        ) { updatedModel ->
-            chartEntryModelState.set(updatedModel)
+        scope.launch(dispatcher) {
+            registerForUpdates(
+                key = chart,
+                cancelAnimation = {
+                    runBlocking {
+                        mainAnimationJob?.cancelAndJoin()
+                        animationFrameJob?.cancelAndJoin()
+                        finalAnimationFrameJob?.cancelAndJoin()
+                    }
+                    isAnimationRunning = false
+                },
+                startAnimation = afterUpdate,
+                getOldModel = { chartEntryModelState.value.first },
+                modelTransformerProvider = modelTransformerProvider,
+                drawingModelStore = drawingModelStore,
+                updateChartValues = { model ->
+                    chartValuesManager.resetChartValues()
+                    chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+                    chartValuesManager
+                },
+                onModelCreated = chartEntryModelState::set,
+            )
         }
-        onDispose {
-            unregisterFromUpdates(chart)
-            animationJob = null
-            isAnimationRunning = null
-        }
+        onDispose { unregisterFromUpdates(chart) }
     }
     return chartEntryModelState
 }

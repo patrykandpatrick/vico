@@ -37,7 +37,7 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
      * Calculates an intermediate list of entries for difference animations for the associated [key], where [progress]
      * is the balance between the previous and current lists of entries.
      */
-    public fun progressModel(key: Any, progress: Float)
+    public suspend fun progressModel(key: Any, progress: Float)
 
     /**
      * Registers an update listener associated with a [key]. [cancelAnimation] and [startAnimation] are
@@ -50,7 +50,7 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
     public fun registerForUpdates(
         key: Any,
         cancelAnimation: () -> Unit,
-        startAnimation: (progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        startAnimation: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit,
         getOldModel: () -> Model?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,

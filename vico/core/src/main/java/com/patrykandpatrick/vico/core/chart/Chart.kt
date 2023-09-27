@@ -235,7 +235,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
         /**
          * Carries out the pending difference animation. [fraction] is the animation progress.
          */
-        public abstract fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float)
+        public abstract suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float)
     }
 }
 

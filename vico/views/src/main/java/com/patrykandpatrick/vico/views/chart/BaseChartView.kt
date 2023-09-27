@@ -74,6 +74,14 @@ import com.patrykandpatrick.vico.views.gestures.movedYDistance
 import com.patrykandpatrick.vico.views.scroll.ChartScrollSpec
 import com.patrykandpatrick.vico.views.scroll.copy
 import com.patrykandpatrick.vico.views.theme.ThemeHandler
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.properties.Delegates.observable
 import kotlin.properties.ReadWriteProperty
 
@@ -138,6 +146,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
 
     private val drawingModelStore = MutableDrawingModelStore()
+
+    private var coroutineScope: CoroutineScope? = null
+
+    private var mainAnimationJob: Job? = null
+
+    private var finalAnimationFrameJob: Job? = null
+
+    private var isAnimationFrameGenerationRunning: Boolean = false
 
     private var markerTouchPoint: Point? = null
 
@@ -218,6 +234,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var runInitialAnimation: Boolean = true
 
     /**
+     * The [CoroutineDispatcher] to be used for the handling of difference animations.
+     */
+    public var dispatcher: CoroutineDispatcher = Dispatchers.Default
+
+    /**
      * The [Chart] displayed by this [View].
      */
     public var chart: Chart<Model>? by observable(null) { _, _, _ ->
@@ -243,39 +264,47 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
 
     private fun registerForUpdates() {
-        entryProducer?.registerForUpdates(
-            key = this,
-            cancelAnimation = { handler.post(animator::cancel) },
-            startAnimation = {
-                if (model != null || runInitialAnimation) {
-                    handler.post(animator::start)
-                } else {
-                    progressModelOnAnimationProgress(progress = Animation.range.endInclusive)
+        coroutineScope?.launch(dispatcher) {
+            entryProducer?.registerForUpdates(
+                key = this@BaseChartView,
+                cancelAnimation = {
+                    handler.post(animator::cancel)
+                    mainAnimationJob?.cancel()
+                },
+                startAnimation = {
+                    if (model != null || runInitialAnimation) {
+                        handler.post(animator::start)
+                    } else {
+                        progressModelOnAnimationProgress(progress = Animation.range.endInclusive)
+                    }
+                },
+                getOldModel = { model },
+                modelTransformerProvider = chart?.modelTransformerProvider,
+                drawingModelStore = drawingModelStore,
+                updateChartValues = { model ->
+                    chartValuesManager.resetChartValues()
+                    chart?.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+                    chartValuesManager
+                },
+            ) { model ->
+                post {
+                    setModel(model = model, updateChartValues = false)
+                    postInvalidateOnAnimation()
                 }
-            },
-            getOldModel = { model },
-            modelTransformerProvider = chart?.modelTransformerProvider,
-            drawingModelStore = drawingModelStore,
-            updateChartValues = { model ->
-                chartValuesManager.resetChartValues()
-                chart?.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
-                chartValuesManager
-            },
-        ) { model ->
-            post {
-                setModel(model = model, updateChartValues = false)
-                postInvalidateOnAnimation()
             }
         }
     }
 
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
+        coroutineScope = CoroutineScope(EmptyCoroutineContext)
         if (entryProducer?.isRegistered(key = this) != true) registerForUpdates()
     }
 
     override fun onDetachedFromWindow() {
         super.onDetachedFromWindow()
+        coroutineScope?.cancel()
+        coroutineScope = null
         entryProducer?.unregisterFromUpdates(key = this)
     }
 
@@ -467,7 +496,19 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {
-        entryProducer?.progressModel(this, progress)
+        if (!isAnimationFrameGenerationRunning) {
+            isAnimationFrameGenerationRunning = true
+            mainAnimationJob = coroutineScope?.launch(dispatcher) {
+                entryProducer?.progressModel(this@BaseChartView, progress)
+                isAnimationFrameGenerationRunning = false
+            }
+        } else if (progress == 1f) {
+            finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
+                mainAnimationJob?.cancelAndJoin()
+                entryProducer?.progressModel(this@BaseChartView, progress)
+                isAnimationFrameGenerationRunning = false
+            }
+        }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {

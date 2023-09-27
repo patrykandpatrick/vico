@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.entry.composed
 
-import com.patrykandpatrick.vico.core.DEF_THREAD_POOL_SIZE
+import androidx.annotation.WorkerThread
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
@@ -29,10 +29,18 @@ import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 import com.patrykandpatrick.vico.core.entry.xRange
 import com.patrykandpatrick.vico.core.entry.yRange
+import com.patrykandpatrick.vico.core.extension.copy
 import com.patrykandpatrick.vico.core.extension.gcdWith
 import com.patrykandpatrick.vico.core.extension.setAll
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 
 /**
  * A [ChartModelProducer] implementation that generates [ComposedChartEntryModel] instances.
@@ -40,106 +48,136 @@ import java.util.concurrent.Executors
  * @see ComposedChartEntryModel
  * @see ChartModelProducer
  */
-public class ComposedChartEntryModelProducer private constructor(
-    private val backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-) : ChartModelProducer<ComposedChartEntryModel<ChartEntryModel>> {
+public class ComposedChartEntryModelProducer private constructor(dispatcher: CoroutineDispatcher) :
+    ChartModelProducer<ComposedChartEntryModel<ChartEntryModel>> {
 
-    private var dataSets = mutableListOf<List<List<ChartEntry>>>()
-    private var cachedInternalModel: InternalModel? = null
+    private var dataSets = emptyList<List<List<ChartEntry>>>()
+    private var cachedInternalComposedModel: InternalComposedModel? = null
+    private val mutex = Mutex()
+    private val coroutineScope = CoroutineScope(dispatcher)
     private val updateReceivers = mutableMapOf<Any, UpdateReceiver>()
 
-    private fun setDataSets(entries: List<List<List<ChartEntry>>>) {
-        this.dataSets.setAll(entries)
-        cachedInternalModel = null
-        updateReceivers.values.forEach { updateReceiver ->
-            backgroundExecutor.execute {
-                updateReceiver.cancelAnimation()
-                updateReceiver.modelTransformer?.prepareForTransformation(
-                    oldModel = updateReceiver.getOldModel(),
-                    newModel = getModel(),
-                    drawingModelStore = updateReceiver.drawingModelStore,
-                    chartValuesManager = updateReceiver.getChartValuesManager(getModel()),
-                )
-                updateReceiver.startAnimation(::progressModel)
+    private fun setDataSets(dataSets: List<List<List<ChartEntry>>>): Boolean {
+        if (!mutex.tryLock()) return false
+        this.dataSets = dataSets.copy()
+        cachedInternalComposedModel = null
+        var runningUpdateCount = 0
+        updateReceivers
+            .values
+            .takeIf { it.isNotEmpty() }
+            ?.forEach { updateReceiver ->
+                runningUpdateCount++
+                coroutineScope.launch {
+                    updateReceiver.handleUpdate()
+                    if (--runningUpdateCount == 0) mutex.unlock()
+                }
             }
-        }
+            ?: mutex.unlock()
+        return true
     }
 
-    private fun getInternalModel(drawingModelStore: DrawingModelStore = DrawingModelStore.empty): InternalModel {
-        cachedInternalModel.let { if (it != null) return it }
-        val models = dataSets.map { dataSet ->
-            val xRange = dataSet.xRange
-            val yRange = dataSet.yRange
-            val aggregateYRange = dataSet.calculateStackedYRange()
-            object : ChartEntryModel {
-                override val entries: List<List<ChartEntry>> = dataSet
-                override val minX: Float = xRange.start
-                override val maxX: Float = xRange.endInclusive
-                override val minY: Float = yRange.start
-                override val maxY: Float = yRange.endInclusive
-                override val stackedPositiveY: Float = aggregateYRange.endInclusive
-                override val stackedNegativeY: Float = aggregateYRange.start
-                override val xGcd: Float = dataSet.calculateXGcd()
-                override val drawingModelStore: DrawingModelStore = drawingModelStore
+    private suspend fun setDataSetsSuspending(dataSets: List<List<List<ChartEntry>>>): Deferred<Unit> {
+        mutex.lock()
+        this.dataSets = dataSets.copy()
+        cachedInternalComposedModel = null
+        val completableDeferred = CompletableDeferred<Unit>()
+        var runningUpdateCount = 0
+        updateReceivers
+            .values
+            .takeIf { it.isNotEmpty() }
+            ?.map { updateReceiver ->
+                runningUpdateCount++
+                coroutineScope.launch {
+                    updateReceiver.handleUpdate()
+                    if (--runningUpdateCount == 0) {
+                        mutex.unlock()
+                        completableDeferred.complete(Unit)
+                    }
+                }
             }
-        }
-        return InternalModel(
-            composedEntryCollections = models,
-            entries = models.map { it.entries }.flatten(),
-            minX = models.minOf { it.minX },
-            maxX = models.maxOf { it.maxX },
-            minY = models.minOf { it.minY },
-            maxY = models.maxOf { it.maxY },
-            stackedPositiveY = models.maxOf { it.stackedPositiveY },
-            stackedNegativeY = models.minOf { it.stackedNegativeY },
-            xGcd = models.fold<ChartEntryModel, Float?>(null) { gcd, model ->
-                gcd?.gcdWith(model.xGcd) ?: model.xGcd
-            } ?: 1f,
-            id = models.map { it.id }.hashCode(),
-            drawingModelStore = drawingModelStore,
-        )
+            ?: run {
+                mutex.unlock()
+                completableDeferred.complete(Unit)
+            }
+        return completableDeferred
     }
+
+    private fun getInternalModel(drawingModelStore: DrawingModelStore = DrawingModelStore.empty) =
+        cachedInternalComposedModel
+            ?.let { composedModel ->
+                composedModel.copy(
+                    composedEntryCollections = composedModel.composedEntryCollections
+                        .map { model -> model.copy(drawingModelStore = drawingModelStore) },
+                    drawingModelStore = drawingModelStore,
+                )
+            }
+            ?: run {
+                val models = dataSets.map { dataSet ->
+                    val xRange = dataSet.xRange
+                    val yRange = dataSet.yRange
+                    val aggregateYRange = dataSet.calculateStackedYRange()
+                    InternalModel(
+                        entries = dataSet,
+                        minX = xRange.start,
+                        maxX = xRange.endInclusive,
+                        minY = yRange.start,
+                        maxY = yRange.endInclusive,
+                        stackedPositiveY = aggregateYRange.endInclusive,
+                        stackedNegativeY = aggregateYRange.start,
+                        xGcd = dataSet.calculateXGcd(),
+                        drawingModelStore = drawingModelStore,
+                    )
+                }
+                InternalComposedModel(
+                    composedEntryCollections = models,
+                    entries = models.map { it.entries }.flatten(),
+                    minX = models.minOf { it.minX },
+                    maxX = models.maxOf { it.maxX },
+                    minY = models.minOf { it.minY },
+                    maxY = models.maxOf { it.maxY },
+                    stackedPositiveY = models.maxOf { it.stackedPositiveY },
+                    stackedNegativeY = models.minOf { it.stackedNegativeY },
+                    xGcd = models.fold<ChartEntryModel, Float?>(null) { gcd, model ->
+                        gcd?.gcdWith(model.xGcd) ?: model.xGcd
+                    } ?: 1f,
+                    id = models.map { it.id }.hashCode(),
+                    drawingModelStore = drawingModelStore,
+                ).also { cachedInternalComposedModel = it }
+            }
 
     override fun getModel(): ComposedChartEntryModel<ChartEntryModel> = getInternalModel()
 
-    override fun progressModel(key: Any, progress: Float) {
+    override suspend fun progressModel(key: Any, progress: Float) {
         with(updateReceivers[key] ?: return) {
-            backgroundExecutor.execute {
-                modelTransformer?.transform(drawingModelStore, progress)
-                onModelCreated(getInternalModel(drawingModelStore.copy()))
-            }
+            modelTransformer?.transform(drawingModelStore, progress)
+            val internalModel = getInternalModel(drawingModelStore.copy())
+            currentCoroutineContext().ensureActive()
+            onModelCreated(internalModel)
         }
     }
 
+    @WorkerThread
     override fun registerForUpdates(
         key: Any,
         cancelAnimation: () -> Unit,
-        startAnimation: (progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        startAnimation: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit,
         getOldModel: () -> ComposedChartEntryModel<ChartEntryModel>?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
         updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesManager,
         onModelCreated: (ComposedChartEntryModel<ChartEntryModel>) -> Unit,
     ) {
-        val modelTransformer = modelTransformerProvider?.getModelTransformer<ComposedChartEntryModel<ChartEntryModel>>()
-        updateReceivers[key] = UpdateReceiver(
+        UpdateReceiver(
             cancelAnimation,
             startAnimation,
             onModelCreated,
             drawingModelStore,
-            modelTransformer,
+            modelTransformerProvider?.getModelTransformer(),
             getOldModel,
             updateChartValues,
-        )
-        backgroundExecutor.execute {
-            cancelAnimation()
-            modelTransformer?.prepareForTransformation(
-                oldModel = getOldModel(),
-                newModel = getModel(),
-                drawingModelStore = drawingModelStore,
-                chartValuesManager = updateChartValues(getModel()),
-            )
-            startAnimation(::progressModel)
+        ).run {
+            updateReceivers[key] = this
+            handleUpdate()
         }
     }
 
@@ -155,24 +193,29 @@ public class ComposedChartEntryModelProducer private constructor(
     public fun createTransaction(): Transaction = Transaction()
 
     /**
-     * Creates a [Transaction], runs [block], and calls [Transaction.commit].
+     * Creates a [Transaction], runs [block], and calls [Transaction.commit], returning its output. For suspending
+     * behavior, use [runTransactionSuspending].
      */
-    public fun runTransaction(block: Transaction.() -> Unit) {
-        createTransaction().also(block).commit()
-    }
+    public fun runTransaction(block: Transaction.() -> Unit): Boolean = createTransaction().also(block).commit()
+
+    /**
+     * Creates a [Transaction], runs [block], and calls [Transaction.commitSuspending], returning its output.
+     */
+    public suspend fun runTransactionSuspending(block: Transaction.() -> Unit): Deferred<Unit> =
+        createTransaction().also(block).commitSuspending()
 
     /**
      * Handles data updates. An initially empty list of data sets is created and can be updated via the class’s
      * functions. Each data set corresponds to a single nested [Chart].
      */
     public inner class Transaction internal constructor() {
-        private val newEntries = mutableListOf<List<List<ChartEntry>>>()
+        private val newDataSets = mutableListOf<List<List<ChartEntry>>>()
 
         /**
          * Populates the new list of data sets with the current data sets.
          */
         public fun populate() {
-            newEntries.setAll(dataSets)
+            newDataSets.setAll(dataSets)
         }
 
         /**
@@ -186,28 +229,28 @@ public class ComposedChartEntryModelProducer private constructor(
          * Removes the data set at the specified index.
          */
         public fun removeAt(index: Int) {
-            newEntries.removeAt(index)
+            newDataSets.removeAt(index)
         }
 
         /**
          * Replaces the data set at the specified index with the provided data set.
          */
         public fun set(index: Int, dataSet: List<List<ChartEntry>>) {
-            newEntries[index] = dataSet
+            newDataSets[index] = dataSet
         }
 
         /**
          * Adds a data set.
          */
         public fun add(dataSet: List<List<ChartEntry>>) {
-            newEntries.add(dataSet)
+            newDataSets.add(dataSet)
         }
 
         /**
          * Adds a data set.
          */
         public fun add(index: Int, dataSet: List<List<ChartEntry>>) {
-            newEntries.add(index, dataSet)
+            newDataSets.add(index, dataSet)
         }
 
         /**
@@ -221,29 +264,59 @@ public class ComposedChartEntryModelProducer private constructor(
          * Clears the new list of data sets.
          */
         public fun clear() {
-            newEntries.clear()
+            newDataSets.clear()
         }
 
         /**
-         * Finalizes the data update.
+         * Requests a data update. If the update is accepted, `true` is returned. If the update is rejected, which
+         * occurs when there’s already an update in progress, `false` is returned. For suspending behavior, use
+         * [commitSuspending].
          */
-        public fun commit() {
-            setDataSets(newEntries)
-        }
+        public fun commit(): Boolean = setDataSets(newDataSets)
+
+        /**
+         * Runs a data update. Unlike [commit], this function suspends the current coroutine and waits until an update
+         * can be run, meaning the update cannot be rejected. The returned [Deferred] implementation is marked as
+         * completed once the update has been processed.
+         */
+        public suspend fun commitSuspending(): Deferred<Unit> = setDataSetsSuspending(newDataSets)
     }
 
-    private data class UpdateReceiver(
+    private inner class UpdateReceiver(
         val cancelAnimation: () -> Unit,
-        val startAnimation: (progressModel: (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        val startAnimation: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit,
         val onModelCreated: (ComposedChartEntryModel<ChartEntryModel>) -> Unit,
         val drawingModelStore: MutableDrawingModelStore,
         val modelTransformer: Chart.ModelTransformer<ComposedChartEntryModel<ChartEntryModel>>?,
         val getOldModel: () -> ComposedChartEntryModel<ChartEntryModel>?,
-        val getChartValuesManager: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesManager,
-    )
+        val updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesManager,
+    ) {
+        fun handleUpdate() {
+            cancelAnimation()
+            modelTransformer?.prepareForTransformation(
+                oldModel = getOldModel(),
+                newModel = getModel(),
+                drawingModelStore = drawingModelStore,
+                chartValuesManager = updateChartValues(getModel()),
+            )
+            startAnimation(::progressModel)
+        }
+    }
 
     private data class InternalModel(
-        override val composedEntryCollections: List<ChartEntryModel>,
+        override val entries: List<List<ChartEntry>>,
+        override val minX: Float,
+        override val maxX: Float,
+        override val minY: Float,
+        override val maxY: Float,
+        override val stackedPositiveY: Float,
+        override val stackedNegativeY: Float,
+        override val xGcd: Float,
+        override val drawingModelStore: DrawingModelStore,
+    ) : ChartEntryModel
+
+    private data class InternalComposedModel(
+        override val composedEntryCollections: List<InternalModel>,
         override val entries: List<List<ChartEntry>>,
         override val minX: Float,
         override val maxX: Float,
@@ -253,18 +326,18 @@ public class ComposedChartEntryModelProducer private constructor(
         override val stackedNegativeY: Float,
         override val xGcd: Float,
         override val id: Int,
-        override val drawingModelStore: DrawingModelStore = DrawingModelStore.empty,
+        override val drawingModelStore: DrawingModelStore,
     ) : ComposedChartEntryModel<ChartEntryModel>
 
     public companion object {
         /**
-         * Creates a [ComposedChartEntryModelProducer], running an initial [Transaction]. [backgroundExecutor] is used
-         * to run calculations off the main thread.
+         * Creates a [ComposedChartEntryModelProducer], running an initial [Transaction]. [dispatcher] is the
+         * [CoroutineDispatcher] to be used for update handling.
          */
         public fun build(
-            backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
+            dispatcher: CoroutineDispatcher = Dispatchers.Default,
             transaction: Transaction.() -> Unit = {},
         ): ComposedChartEntryModelProducer =
-            ComposedChartEntryModelProducer(backgroundExecutor).also { it.runTransaction(transaction) }
+            ComposedChartEntryModelProducer(dispatcher).also { it.runTransaction(transaction) }
     }
 }
