@@ -507,7 +507,8 @@ public open class LineChart(
             horizontalDimensions.xSpacing * (entry.x - minX) / xStep
 
         fun getDrawY(entry: ChartEntry): Float =
-            bounds.bottom - (pointInfoMap?.get(entry.x)?.y ?: (entry.y / chartValues.lengthY)) * bounds.height()
+            bounds.bottom - (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - chartValues.minY) / chartValues.lengthY)) *
+                bounds.height()
 
         entries.forEachInAbsolutelyIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
 
