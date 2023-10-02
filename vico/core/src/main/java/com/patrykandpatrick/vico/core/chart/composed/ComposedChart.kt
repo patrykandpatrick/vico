@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
@@ -175,7 +176,7 @@ public class ComposedChart<Model : ChartEntryModel>(
             oldModel: T?,
             newModel: T,
             drawingModelStore: MutableDrawingModelStore,
-            chartValuesManager: ChartValuesManager,
+            chartValuesProvider: ChartValuesProvider,
         ) {
             getModelTransformers().forEachIndexed { index, transformer ->
                 @Suppress("UNCHECKED_CAST")
@@ -183,7 +184,7 @@ public class ComposedChart<Model : ChartEntryModel>(
                     (oldModel as ComposedChartEntryModel<*>?)?.composedEntryCollections?.getOrNull(index) as T?,
                     (newModel as ComposedChartEntryModel<*>).composedEntryCollections[index] as T,
                     drawingModelStore,
-                    chartValuesManager,
+                    chartValuesProvider,
                 )
             }
         }

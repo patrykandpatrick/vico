@@ -103,7 +103,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         context: ChartDrawContext,
     ): Unit = with(context) {
         var centerY: Float
-        val chartValues = chartValuesManager.getChartValues(position)
+        val chartValues = chartValuesProvider.getChartValues(position)
         val maxLabelHeight = getMaxLabelHeight()
         val lineValues = itemPlacer.getLineValues(this, bounds.height(), maxLabelHeight, position)
             ?: itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
@@ -146,7 +146,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         val tickRightX = tickLeftX + axisThickness + tickLength
         val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
         var tickCenterY: Float
-        val chartValues = chartValuesManager.getChartValues(position)
+        val chartValues = chartValuesProvider.getChartValues(position)
 
         labelValues.forEach { labelValue ->
             tickCenterY = bounds.bottom - bounds.height() * (labelValue - chartValues.minY) / chartValues.lengthY +
@@ -289,21 +289,21 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     private fun MeasureContext.getMaxLabelHeight() = label?.let { label ->
-        val chartValues = chartValuesManager.getChartValues(position)
+        val chartValues = chartValuesProvider.getChartValues(position)
         itemPlacer
             .getHeightMeasurementLabelValues(this, position)
             .maxOfOrNull { value -> label.getHeight(this, valueFormatter.formatValue(value, chartValues)) }
     }.orZero
 
     private fun MeasureContext.getMaxLabelWidth(axisHeight: Float) = label?.let { label ->
-        val chartValues = chartValuesManager.getChartValues(position)
+        val chartValues = chartValuesProvider.getChartValues(position)
         itemPlacer
             .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
             .maxOfOrNull { value -> label.getWidth(this, valueFormatter.formatValue(value, chartValues)) }
     }.orZero
 
     private fun ChartDrawContext.getLineCanvasYCorrection(thickness: Float, y: Float): Float {
-        val chartValues = chartValuesManager.getChartValues(position)
+        val chartValues = chartValuesProvider.getChartValues(position)
         return if (y == chartValues.maxY && itemPlacer.getShiftTopLines(this)) -thickness.half else thickness.half
     }
 

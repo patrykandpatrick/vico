@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.entry
 
 import androidx.annotation.WorkerThread
 import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 import com.patrykandpatrick.vico.core.extension.copy
@@ -169,7 +169,7 @@ public class ChartEntryModelProducer(
         getOldModel: () -> ChartEntryModel?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        updateChartValues: (ChartEntryModel) -> ChartValuesManager,
+        updateChartValues: (ChartEntryModel) -> ChartValuesProvider,
         onModelCreated: (ChartEntryModel) -> Unit,
     ) {
         UpdateReceiver(
@@ -199,7 +199,7 @@ public class ChartEntryModelProducer(
         val drawingModelStore: MutableDrawingModelStore,
         val modelTransformer: Chart.ModelTransformer<ChartEntryModel>?,
         val getOldModel: () -> ChartEntryModel?,
-        val updateChartValues: (ChartEntryModel) -> ChartValuesManager,
+        val updateChartValues: (ChartEntryModel) -> ChartValuesProvider,
     ) {
         fun handleUpdate() {
             cancelAnimation()
@@ -207,7 +207,7 @@ public class ChartEntryModelProducer(
                 oldModel = getOldModel(),
                 newModel = getModel(),
                 drawingModelStore = drawingModelStore,
-                chartValuesManager = updateChartValues(getModel()),
+                chartValuesProvider = updateChartValues(getModel()),
             )
             startAnimation(::progressModel)
         }

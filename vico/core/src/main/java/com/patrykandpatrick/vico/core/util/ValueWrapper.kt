@@ -29,3 +29,9 @@ public operator fun <T> ValueWrapper<T>.getValue(thisObj: Any?, property: KPrope
 public operator fun <T> ValueWrapper<T>.setValue(thisObj: Any?, property: KProperty<*>, value: T) {
     this.value = value
 }
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public operator fun <T> ValueWrapper<T>.component1(): T = value
+
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public operator fun <T> ValueWrapper<T>.component2(): (T) -> Unit = { value = it }

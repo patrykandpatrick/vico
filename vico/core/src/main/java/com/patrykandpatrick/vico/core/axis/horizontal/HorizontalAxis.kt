@@ -89,7 +89,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val clipRestoreCount = canvas.save()
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - axisThickness - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-        val chartValues = chartValuesManager.getChartValues()
+        val chartValues = chartValuesProvider.getChartValues()
 
         canvas.clipRect(
             bounds.left - itemPlacer.getStartHorizontalAxisInset(this, horizontalDimensions, tickThickness),
@@ -186,7 +186,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val clipRestoreCount = canvas.save()
         canvas.clipRect(chartBounds)
 
-        val chartValues = chartValuesManager.getChartValues()
+        val chartValues = chartValuesProvider.getChartValues()
 
         if (lineValues == null) {
             labelValues.forEach { x ->
@@ -238,7 +238,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private fun MeasureContext.getFullXRange(
         horizontalDimensions: HorizontalDimensions,
     ): ClosedFloatingPointRange<Float> = with(horizontalDimensions) {
-        val chartValues = chartValuesManager.getChartValues()
+        val chartValues = chartValuesProvider.getChartValues()
         val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
         val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
         start..end
@@ -248,7 +248,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
     ): Float = with(context) {
-        val chartValues = chartValuesManager.getChartValues()
+        val chartValues = chartValuesProvider.getChartValues()
         val fullXRange = getFullXRange(horizontalDimensions)
 
         when (val constraint = sizeConstraint) {

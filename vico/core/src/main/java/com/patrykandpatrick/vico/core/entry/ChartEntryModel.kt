@@ -96,4 +96,9 @@ public interface ChartEntryModel {
      */
     public val drawingModelStore: DrawingModelStore
         get() = DrawingModelStore.empty
+
+    /**
+     * Returns an immutable copy of this [ChartEntryModel].
+     */
+    public fun toImmutable(): ChartEntryModel = this
 }

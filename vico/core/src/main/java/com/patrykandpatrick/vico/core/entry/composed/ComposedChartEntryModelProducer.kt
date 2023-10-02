@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.entry.composed
 import androidx.annotation.WorkerThread
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
@@ -164,7 +164,7 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
         getOldModel: () -> ComposedChartEntryModel<ChartEntryModel>?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesManager,
+        updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesProvider,
         onModelCreated: (ComposedChartEntryModel<ChartEntryModel>) -> Unit,
     ) {
         UpdateReceiver(
@@ -289,7 +289,7 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
         val drawingModelStore: MutableDrawingModelStore,
         val modelTransformer: Chart.ModelTransformer<ComposedChartEntryModel<ChartEntryModel>>?,
         val getOldModel: () -> ComposedChartEntryModel<ChartEntryModel>?,
-        val updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesManager,
+        val updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesProvider,
     ) {
         fun handleUpdate() {
             cancelAnimation()
@@ -297,7 +297,7 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
                 oldModel = getOldModel(),
                 newModel = getModel(),
                 drawingModelStore = drawingModelStore,
-                chartValuesManager = updateChartValues(getModel()),
+                chartValuesProvider = updateChartValues(getModel()),
             )
             startAnimation(::progressModel)
         }

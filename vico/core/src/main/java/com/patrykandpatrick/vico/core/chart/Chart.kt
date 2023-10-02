@@ -26,6 +26,7 @@ import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
@@ -229,7 +230,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
             oldModel: Model?,
             newModel: Model,
             drawingModelStore: MutableDrawingModelStore,
-            chartValuesManager: ChartValuesManager,
+            chartValuesProvider: ChartValuesProvider,
         )
 
         /**

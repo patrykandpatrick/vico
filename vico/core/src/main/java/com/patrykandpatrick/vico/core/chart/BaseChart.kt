@@ -110,7 +110,7 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
                     context = context,
                     bounds = bounds,
                     markedEntries = markerModel,
-                    chartValuesProvider = chartValuesManager,
+                    chartValuesProvider = chartValuesProvider,
                 )
             }
         }

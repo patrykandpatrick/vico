@@ -49,7 +49,7 @@ internal class DefaultVerticalAxisItemPlacer(
         position: AxisPosition.Vertical,
     ): List<Float> {
         if (maxItemCount == 0) return emptyList()
-        val chartValues = context.chartValuesManager.getChartValues(position)
+        val chartValues = context.chartValuesProvider.getChartValues(position)
         return if (chartValues.minY * chartValues.maxY >= 0) {
             getSimpleLabelValues(axisHeight, maxLabelHeight, chartValues)
         } else {
@@ -61,7 +61,7 @@ internal class DefaultVerticalAxisItemPlacer(
         context: MeasureContext,
         position: AxisPosition.Vertical,
     ): List<Float> {
-        val chartValues = context.chartValuesManager.getChartValues(position)
+        val chartValues = context.chartValuesProvider.getChartValues(position)
         return listOf(chartValues.minY, (chartValues.minY + chartValues.maxY).half, chartValues.maxY)
     }
 

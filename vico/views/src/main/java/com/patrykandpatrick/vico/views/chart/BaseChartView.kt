@@ -44,6 +44,8 @@ import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
+import com.patrykandpatrick.vico.core.chart.values.toChartValuesProvider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
@@ -121,7 +123,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         isLtr = context.isLtr,
         isHorizontalScrollEnabled = false,
         spToPx = context::spToPx,
-        chartValuesManager = chartValuesManager,
+        chartValuesProvider = ChartValuesProvider.Empty,
     )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
@@ -166,6 +168,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private var zoom = 0f
 
     private var wasZoomOverridden = false
+
+    private var chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
 
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
 
@@ -284,11 +288,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 updateChartValues = { model ->
                     chartValuesManager.resetChartValues()
                     chart?.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
-                    chartValuesManager
+                    chartValuesManager.toChartValuesProvider().also { provider -> chartValuesProvider = provider }
                 },
             ) { model ->
                 post {
                     setModel(model = model, updateChartValues = false)
+                    measureContext.chartValuesProvider = chartValuesProvider
                     postInvalidateOnAnimation()
                 }
             }

@@ -28,6 +28,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,9 @@ import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
 import com.patrykandpatrick.vico.compose.extension.chartTouchEvent
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
 import com.patrykandpatrick.vico.compose.layout.getMeasureContext
+import com.patrykandpatrick.vico.compose.state.component1
+import com.patrykandpatrick.vico.compose.state.component2
+import com.patrykandpatrick.vico.compose.state.component3
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
@@ -65,6 +69,8 @@ import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
+import com.patrykandpatrick.vico.core.chart.values.toChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.extension.set
@@ -130,16 +136,15 @@ public fun <Model : ChartEntryModel> Chart(
     getXStep: ((Model) -> Float)? = null,
 ) {
     val chartValuesManager = remember(chart) { ChartValuesManager() }
-    val (model, oldModel) = chartModelProducer
+    val chartEntryModelWrapper by chartModelProducer
         .collectAsState(chart, chartModelProducer, diffAnimationSpec, runInitialAnimation, chartValuesManager, getXStep)
-        .value
 
     ChartBox(modifier = modifier) {
-        if (model != null) {
+        chartEntryModelWrapper?.let { (chartEntryModel, previousChartEntryModel, chartValuesProvider) ->
             ChartImpl(
                 chart = chart,
-                model = model,
-                oldModel = oldModel,
+                model = chartEntryModel,
+                oldModel = previousChartEntryModel,
                 startAxis = startAxis,
                 topAxis = topAxis,
                 endAxis = endAxis,
@@ -153,7 +158,7 @@ public fun <Model : ChartEntryModel> Chart(
                 autoScaleUp = autoScaleUp,
                 chartScrollState = chartScrollState,
                 horizontalLayout = horizontalLayout,
-                chartValuesManager = chartValuesManager,
+                chartValuesProvider = chartValuesProvider,
             )
         }
     }
@@ -233,7 +238,7 @@ public fun <Model : ChartEntryModel> Chart(
             autoScaleUp = autoScaleUp,
             chartScrollState = chartScrollState,
             horizontalLayout = horizontalLayout,
-            chartValuesManager = chartValuesManager,
+            chartValuesProvider = chartValuesManager.toChartValuesProvider(),
         )
     }
 }
@@ -257,7 +262,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     autoScaleUp: AutoScaleUp,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
     horizontalLayout: HorizontalLayout,
-    chartValuesManager: ChartValuesManager,
+    chartValuesProvider: ChartValuesProvider,
 ) {
     val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
@@ -269,7 +274,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
         bounds,
         horizontalLayout,
         with(LocalContext.current) { ::spToPx },
-        chartValuesManager,
+        chartValuesProvider,
     )
     val scrollListener = rememberScrollListener(markerTouchPoint)
     val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }

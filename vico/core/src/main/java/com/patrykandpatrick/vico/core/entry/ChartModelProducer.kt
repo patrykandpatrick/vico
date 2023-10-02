@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.entry
 
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 
 /**
@@ -44,7 +44,7 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
      * called after a data update is requested, with [cancelAnimation] being called before the update starts
      * being processed (at which point [progressModel] should stop being used), and [startAnimation] being
      * called once the update has been processed (at which point it’s safe to use [progressModel]). [updateChartValues]
-     * updates the chart’s [ChartValues] and returns its [ChartValuesManager]. [onModelCreated] is called when a new
+     * updates the chart’s [ChartValues] and returns its [ChartValuesProvider]. [onModelCreated] is called when a new
      * [Model] has been generated.
      */
     public fun registerForUpdates(
@@ -54,7 +54,7 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
         getOldModel: () -> Model?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        updateChartValues: (Model) -> ChartValuesManager,
+        updateChartValues: (Model) -> ChartValuesProvider,
         onModelCreated: (Model) -> Unit,
     )
 

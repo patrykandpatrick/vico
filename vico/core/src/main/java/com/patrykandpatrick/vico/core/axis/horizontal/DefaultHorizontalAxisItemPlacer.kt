@@ -38,7 +38,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         visibleXRange: ClosedFloatingPointRange<Float>,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): List<Float> {
-        val chartValues = context.chartValuesManager.getChartValues()
+        val chartValues = context.chartValuesProvider.getChartValues()
         val remainder = ((visibleXRange.start - chartValues.minX) / chartValues.xStep - offset) % spacing
         val firstValue = visibleXRange.start + (spacing - remainder) % spacing * chartValues.xStep
         val minXOffset = chartValues.minX % chartValues.xStep
@@ -61,7 +61,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         horizontalDimensions: HorizontalDimensions,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): List<Float> {
-        val chartValues = context.chartValuesManager.getChartValues()
+        val chartValues = context.chartValuesProvider.getChartValues()
         return listOf(chartValues.minX, (chartValues.minX + chartValues.maxX).half, chartValues.maxX)
     }
 
@@ -71,7 +71,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         visibleXRange: ClosedFloatingPointRange<Float>,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): List<Float>? {
-        val chartValues = context.chartValuesManager.getChartValues()
+        val chartValues = context.chartValuesProvider.getChartValues()
         return when (context.horizontalLayout) {
             is HorizontalLayout.Segmented -> {
                 val remainder = (visibleXRange.start - fullXRange.start) % chartValues.xStep

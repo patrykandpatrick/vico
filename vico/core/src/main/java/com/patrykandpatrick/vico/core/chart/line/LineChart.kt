@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec.PointConnect
 import com.patrykandpatrick.vico.core.chart.put
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
@@ -378,7 +379,7 @@ public open class LineChart(
         pointInfoMap: Map<Float, LineChartDrawingModel.PointInfo>?,
     ) {
         if (lineSpec.point == null && lineSpec.dataLabel == null) return
-        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
+        val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
 
         forEachPointWithinBoundsIndexed(
             entries = entries,
@@ -440,7 +441,7 @@ public open class LineChart(
         previousX: Float?,
         nextX: Float?,
     ): Int {
-        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
+        val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
         return when {
             previousX != null && nextX != null -> min(x - previousX, nextX - x)
 
@@ -487,7 +488,7 @@ public open class LineChart(
         pointInfoMap: Map<Float, LineChartDrawingModel.PointInfo>?,
         action: (index: Int, entry: ChartEntry, x: Float, y: Float, previousX: Float?, nextX: Float?) -> Unit,
     ) {
-        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
+        val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
 
         val minX = chartValues.minX
         val maxX = chartValues.maxX
@@ -605,11 +606,11 @@ public open class LineChart(
             oldModel: ChartEntryModel?,
             newModel: ChartEntryModel,
             drawingModelStore: MutableDrawingModelStore,
-            chartValuesManager: ChartValuesManager,
+            chartValuesProvider: ChartValuesProvider,
         ) {
             drawingModelInterpolator.setModels(
                 drawingModelStore.getOrNull(key),
-                newModel.toDrawingModel(chartValuesManager.getChartValues(getTargetVerticalAxisPosition())),
+                newModel.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
             )
         }
 

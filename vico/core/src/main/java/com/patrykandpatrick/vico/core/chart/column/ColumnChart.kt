@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.put
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
@@ -120,7 +121,7 @@ public open class ColumnChart(
     ): Unit = with(context) {
         entryLocationMap.clear()
         drawChartInternal(
-            chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
+            chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
             model = model,
             drawingModel = model.drawingModelStore.getOrNull(drawingModelKey),
         )
@@ -276,7 +277,7 @@ public open class ColumnChart(
             }
             val text = dataLabelValueFormatter.formatValue(
                 value = dataLabelValue,
-                chartValues = chartValuesManager.getChartValues(axisPosition = targetVerticalAxisPosition),
+                chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
             )
             val dataLabelWidth = textComponent.getWidth(
                 context = this,
@@ -446,11 +447,11 @@ public open class ColumnChart(
             oldModel: ChartEntryModel?,
             newModel: ChartEntryModel,
             drawingModelStore: MutableDrawingModelStore,
-            chartValuesManager: ChartValuesManager,
+            chartValuesProvider: ChartValuesProvider,
         ) {
             drawingModelInterpolator.setModels(
                 drawingModelStore.getOrNull(key),
-                newModel.toDrawingModel(chartValuesManager.getChartValues(getTargetVerticalAxisPosition())),
+                newModel.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
             )
         }
 

@@ -25,10 +25,13 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalInspectionMode
-import com.patrykandpatrick.vico.compose.state.ChartEntryModelState
+import com.patrykandpatrick.vico.compose.state.ChartEntryModelWrapper
+import com.patrykandpatrick.vico.compose.state.ChartEntryModelWrapperState
 import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
+import com.patrykandpatrick.vico.core.chart.values.toChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
@@ -60,23 +63,22 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
     chartValuesManager: ChartValuesManager,
     getXStep: ((Model) -> Float)?,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-): State<Pair<Model?, Model?>> {
-    val chartEntryModelState = remember(chart, producerKey) { ChartEntryModelState<Model>() }
-
+): State<ChartEntryModelWrapper<Model>?> {
+    val chartEntryModelWrapperState = remember(chart, producerKey) { ChartEntryModelWrapperState<Model>() }
     val modelTransformerProvider = remember(chart) { chart.modelTransformerProvider }
     val drawingModelStore = remember(chart) { MutableDrawingModelStore() }
-
     val scope = rememberCoroutineScope()
     val isInPreview = LocalInspectionMode.current
-    var mainAnimationJob: Job? = null
-    var animationFrameJob: Job? = null
-    var finalAnimationFrameJob: Job? = null
-    var isAnimationRunning: Boolean
-    var isAnimationFrameGenerationRunning = false
     DisposableEffect(chart, producerKey, runInitialAnimation, isInPreview) {
+        var mainAnimationJob: Job? = null
+        var animationFrameJob: Job? = null
+        var finalAnimationFrameJob: Job? = null
+        var isAnimationRunning: Boolean
+        var isAnimationFrameGenerationRunning = false
+        var chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
         val afterUpdate: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit = { progressModel ->
             if (animationSpec != null && !isInPreview &&
-                (chartEntryModelState.value.first != null || runInitialAnimation)
+                (chartEntryModelWrapperState.value != null || runInitialAnimation)
             ) {
                 isAnimationRunning = true
                 mainAnimationJob = scope.launch(dispatcher) {
@@ -120,18 +122,24 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                     isAnimationRunning = false
                 },
                 startAnimation = afterUpdate,
-                getOldModel = { chartEntryModelState.value.first },
+                getOldModel = { chartEntryModelWrapperState.value?.chartEntryModel },
                 modelTransformerProvider = modelTransformerProvider,
                 drawingModelStore = drawingModelStore,
                 updateChartValues = { model ->
                     chartValuesManager.resetChartValues()
                     chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
-                    chartValuesManager
+                    chartValuesManager.toChartValuesProvider().also { provider -> chartValuesProvider = provider }
                 },
-                onModelCreated = chartEntryModelState::set,
-            )
+            ) { chartEntryModel ->
+                chartEntryModelWrapperState.set(chartEntryModel, chartValuesProvider)
+            }
         }
-        onDispose { unregisterFromUpdates(chart) }
+        onDispose {
+            mainAnimationJob?.cancel()
+            animationFrameJob?.cancel()
+            finalAnimationFrameJob?.cancel()
+            unregisterFromUpdates(chart)
+        }
     }
-    return chartEntryModelState
+    return chartEntryModelWrapperState
 }
