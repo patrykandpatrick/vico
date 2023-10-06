@@ -22,6 +22,11 @@
     <attr name="dataLabelRotationDegrees" format="float" />
     <attr name="showDataLabels" format="boolean" />
     <attr name="dataLabelStyle" format="reference" />
+    <attr name="previewSeriesCount" format="integer" />
+    <attr name="previewMinX" format="integer" />
+    <attr name="previewMaxX" format="integer" />
+    <attr name="previewMinY" format="integer" />
+    <attr name="previewMaxY" format="integer" />
 
     <attr name="dataLabelVerticalPosition" format="enum">
         <enum name="top" value="0" />
@@ -35,6 +40,11 @@
             <enum name="stackedColumn" value="2" />
             <enum name="line" value="4" />
         </attr>
+        <attr name="previewSeriesCount" />
+        <attr name="previewMinX" />
+        <attr name="previewMaxX" />
+        <attr name="previewMinY" />
+        <attr name="previewMaxY" />
     </declare-styleable>
 
     <declare-styleable name="ComposedChartView">
@@ -43,6 +53,12 @@
             <flag name="stackedColumn" value="2" />
             <flag name="line" value="4" />
         </attr>
+        <attr name="previewModelCount" format="integer" />
+        <attr name="previewSeriesCount" />
+        <attr name="previewMinX" />
+        <attr name="previewMaxX" />
+        <attr name="previewMinY" />
+        <attr name="previewMaxY" />
     </declare-styleable>
 
     <declare-styleable name="BaseChartView">

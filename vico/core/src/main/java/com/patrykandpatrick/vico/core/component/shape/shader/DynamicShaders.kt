@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,12 @@ package com.patrykandpatrick.vico.core.component.shape.shader
 
 import android.graphics.Bitmap
 import android.graphics.BitmapShader
+import android.graphics.BlendMode
+import android.graphics.ComposeShader
+import android.graphics.PorterDuff
 import android.graphics.Shader
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
@@ -41,5 +46,36 @@ public object DynamicShaders {
             right: Float,
             bottom: Float,
         ): Shader = BitmapShader(bitmap, tileXMode, tileYMode)
+    }
+
+    /**
+     * Creates a [ComposeShader] out of two [DynamicShader]s by using a [BlendMode].
+     */
+    @RequiresApi(Build.VERSION_CODES.Q)
+    public fun composeShader(
+        first: DynamicShader,
+        second: DynamicShader,
+        mode: BlendMode,
+    ): DynamicShader = DynamicShader { context, left, top, right, bottom ->
+        ComposeShader(
+            first.provideShader(context, left, top, right, bottom),
+            second.provideShader(context, left, top, right, bottom),
+            mode,
+        )
+    }
+
+    /**
+     * Creates a [ComposeShader] out of two [DynamicShader]s by using a [PorterDuff.Mode].
+     */
+    public fun composeShader(
+        first: DynamicShader,
+        second: DynamicShader,
+        mode: PorterDuff.Mode,
+    ): DynamicShader = DynamicShader { context, left, top, right, bottom ->
+        ComposeShader(
+            first.provideShader(context, left, top, right, bottom),
+            second.provideShader(context, left, top, right, bottom),
+            mode,
+        )
     }
 }

@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.util
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
@@ -29,10 +30,13 @@ import kotlin.random.Random
  * Generates randomized chart entries.
  * @param xRange the range of _x_ values.
  * @param yRange the range from which _y_ values are randomly selected.
+ * @param seriesCount the number of data series to generate.
  */
 public class RandomEntriesGenerator(
     private val xRange: IntProgression = 0..X_RANGE_TOP,
     private val yRange: IntProgression = 0..Y_RANGE_TOP,
+    private val seriesCount: Int = SERIES_COUNT,
+    private val modelCount: Int = MODEL_COUNT,
 ) {
     /**
      * Generates a [List] of [FloatEntry] instances with randomized _y_ values.
@@ -60,15 +64,17 @@ public class RandomEntriesGenerator(
      * [xRange].
      */
     public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> = ComposedChartEntryModelProducer
-        .build { repeat(MODEL_SIZE) { add(List(MODEL_SIZE) { generateRandomEntries() }) } }
+        .build { repeat(modelCount) { add(List(seriesCount) { generateRandomEntries() }) } }
         .requireModel()
 
-    private companion object {
-        const val X_RANGE_TOP = 10
-        const val Y_RANGE_TOP = 20
-        const val MODEL_SIZE = 3
+    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+    public companion object {
+        public const val X_RANGE_TOP: Int = 10
+        public const val Y_RANGE_TOP: Int = 20
+        public const val SERIES_COUNT: Int = 3
+        public const val MODEL_COUNT: Int = 3
 
-        fun RandomEntriesGenerator.getChartEntryModelProducer(): ChartModelProducer<ChartEntryModel> =
-            ChartEntryModelProducer(List(MODEL_SIZE) { generateRandomEntries() })
+        private fun RandomEntriesGenerator.getChartEntryModelProducer(): ChartModelProducer<ChartEntryModel> =
+            ChartEntryModelProducer(List(seriesCount) { generateRandomEntries() })
     }
 }

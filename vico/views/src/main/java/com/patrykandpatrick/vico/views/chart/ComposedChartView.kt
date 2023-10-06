@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,11 @@ import android.util.AttributeSet
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator
+import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator.Companion.MODEL_COUNT
+import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator.Companion.SERIES_COUNT
+import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator.Companion.X_RANGE_TOP
+import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator.Companion.Y_RANGE_TOP
+import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.theme.ThemeHandler
 
 /**
@@ -39,6 +44,25 @@ public class ComposedChartView @JvmOverloads constructor(
 
     init {
         chart = themeHandler.composedChart
-        if (isInEditMode) setModel(model = RandomEntriesGenerator().randomComposedEntryModel())
+        if (isInEditMode && attrs != null) setPreviewModel(attrs, defStyleAttr)
+    }
+
+    private fun setPreviewModel(attrs: AttributeSet, defStyleAttr: Int) {
+        context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView, defStyleAttr, 0).use { typedArray ->
+            val modelCount = typedArray.getInt(R.styleable.ComposedChartView_previewModelCount, MODEL_COUNT)
+            val seriesCount = typedArray.getInt(R.styleable.ComposedChartView_previewSeriesCount, SERIES_COUNT)
+            val minX = typedArray.getInt(R.styleable.ComposedChartView_previewMinX, 0)
+            val maxX = typedArray.getInt(R.styleable.ComposedChartView_previewMaxX, X_RANGE_TOP)
+            val minY = typedArray.getInt(R.styleable.ComposedChartView_previewMinY, 0)
+            val maxY = typedArray.getInt(R.styleable.ComposedChartView_previewMaxY, Y_RANGE_TOP)
+            setModel(
+                model = RandomEntriesGenerator(
+                    xRange = minX..maxX,
+                    yRange = minY..maxY,
+                    seriesCount = seriesCount,
+                    modelCount = modelCount,
+                ).randomComposedEntryModel(),
+            )
+        }
     }
 }

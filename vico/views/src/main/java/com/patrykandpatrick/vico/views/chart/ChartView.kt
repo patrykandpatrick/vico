@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,10 @@ import android.content.Context
 import android.util.AttributeSet
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator
+import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator.Companion.SERIES_COUNT
+import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator.Companion.X_RANGE_TOP
+import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator.Companion.Y_RANGE_TOP
+import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.theme.ThemeHandler
 
 /**
@@ -37,6 +41,23 @@ public class ChartView @JvmOverloads constructor(
 ) {
     init {
         chart = themeHandler.chart
-        if (isInEditMode) setModel(model = RandomEntriesGenerator().randomEntryModel())
+        if (isInEditMode && attrs != null) setPreviewModel(attrs, defStyleAttr)
+    }
+
+    private fun setPreviewModel(attrs: AttributeSet, defStyleAttr: Int) {
+        context.obtainStyledAttributes(attrs, R.styleable.ChartView, defStyleAttr, 0).use { typedArray ->
+            val seriesCount = typedArray.getInt(R.styleable.ChartView_previewSeriesCount, SERIES_COUNT)
+            val minX = typedArray.getInt(R.styleable.ChartView_previewMinX, 0)
+            val maxX = typedArray.getInt(R.styleable.ChartView_previewMaxX, X_RANGE_TOP)
+            val minY = typedArray.getInt(R.styleable.ChartView_previewMinY, 0)
+            val maxY = typedArray.getInt(R.styleable.ChartView_previewMaxY, Y_RANGE_TOP)
+            setModel(
+                model = RandomEntriesGenerator(
+                    xRange = minX..maxX,
+                    yRange = minY..maxY,
+                    seriesCount = seriesCount,
+                ).randomEntryModel(),
+            )
+        }
     }
 }

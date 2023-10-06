@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         app:chart="line"
         app:lineChartStyle="@style/Chart1LineChartStyle"
+        app:previewSeriesCount="1"
         app:showBottomAxis="true"
         app:showStartAxis="true" />
 </FrameLayout>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,34 +22,37 @@ import android.graphics.PorterDuff
 import android.os.Build
 import androidx.annotation.RequiresApi
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 
 /**
  * Creates a [ComposeShader] out of two [DynamicShader]s by using a [BlendMode].
  */
+@Deprecated(
+    message = "This function has been moved to the `core` module.",
+    replaceWith = ReplaceWith(
+        expression = "DynamicShaders.composeShader(first, second, mode)",
+        imports = ["com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders"],
+    ),
+)
 @RequiresApi(Build.VERSION_CODES.Q)
 public fun composeShader(
     first: DynamicShader,
     second: DynamicShader,
     mode: BlendMode,
-): DynamicShader = DynamicShader { context, left, top, right, bottom ->
-    ComposeShader(
-        first.provideShader(context, left, top, right, bottom),
-        second.provideShader(context, left, top, right, bottom),
-        mode,
-    )
-}
+): DynamicShader = DynamicShaders.composeShader(first, second, mode)
 
 /**
  * Creates a [ComposeShader] out of two [DynamicShader]s by using a [PorterDuff.Mode].
  */
+@Deprecated(
+    message = "This function has been moved to the `core` module.",
+    replaceWith = ReplaceWith(
+        expression = "DynamicShaders.composeShader(first, second, mode)",
+        imports = ["com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders"],
+    ),
+)
 public fun composeShader(
     first: DynamicShader,
     second: DynamicShader,
     mode: PorterDuff.Mode,
-): DynamicShader = DynamicShader { context, left, top, right, bottom ->
-    ComposeShader(
-        first.provideShader(context, left, top, right, bottom),
-        second.provideShader(context, left, top, right, bottom),
-        mode,
-    )
-}
+): DynamicShader = DynamicShaders.composeShader(first, second, mode)
