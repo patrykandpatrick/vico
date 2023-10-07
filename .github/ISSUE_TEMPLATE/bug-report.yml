@@ -1,0 +1,37 @@
+name: Bug report
+description: Report unexpected behavior.
+body:
+  - type: textarea
+    attributes:
+      label: How to reproduce
+      description: Please provide a detailed description of how to reproduce the bug.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Observed behavior
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Vico version(s)
+      description: If you’re using an outdated version, please try updating Vico first.
+      multiple: true
+      options:
+        - Latest stable version
+        - Latest unstable version
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Android version(s)
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional information
