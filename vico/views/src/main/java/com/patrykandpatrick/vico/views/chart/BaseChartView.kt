@@ -380,6 +380,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         if (updateChartValues) {
             chartValuesManager.resetChartValues()
             chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+            measureContext.chartValuesProvider = chartValuesManager.toChartValuesProvider()
         }
         if (ViewCompat.isAttachedToWindow(this)) invalidate()
     }
