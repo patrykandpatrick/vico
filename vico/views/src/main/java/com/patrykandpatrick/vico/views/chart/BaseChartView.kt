@@ -272,12 +272,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             entryProducer?.registerForUpdates(
                 key = this@BaseChartView,
                 cancelAnimation = {
-                    handler.post(animator::cancel)
+                    handler?.post(animator::cancel)
                     mainAnimationJob?.cancel()
                 },
                 startAnimation = {
                     if (model != null || runInitialAnimation) {
-                        handler.post(animator::start)
+                        handler?.post(animator::start)
                     } else {
                         progressModelOnAnimationProgress(progress = Animation.range.endInclusive)
                     }
