@@ -133,8 +133,8 @@ private val thresholdLineLabelPadding =
 private val thresholdLineLabelMargins = dimensionsOf(thresholdLineLabelMarginValue)
 private val startAxisValueFormatter = PercentageFormatAxisValueFormatter<AxisPosition.Vertical.Start>()
 private val horizontalLayout = HorizontalLayout.FullWidth(
-    startPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
-    endPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+    scalableStartPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+    scalableEndPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
 )
 private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(MAX_START_AXIS_ITEM_COUNT)
 private val bottomAxisItemPlacer = AxisItemPlacer.Horizontal.default(BOTTOM_AXIS_ITEM_SPACING, BOTTOM_AXIS_ITEM_OFFSET)

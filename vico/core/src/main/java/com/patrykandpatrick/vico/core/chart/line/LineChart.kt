@@ -553,10 +553,10 @@ public open class LineChart(
                 }
 
                 is HorizontalLayout.FullWidth -> {
-                    scalableStartPadding = horizontalLayout.startPaddingDp.pixels
-                    scalableEndPadding = horizontalLayout.endPaddingDp.pixels
-                    unscalableStartPadding = maxPointSize.half
-                    unscalableEndPadding = unscalableStartPadding
+                    scalableStartPadding = horizontalLayout.scalableStartPaddingDp.pixels
+                    scalableEndPadding = horizontalLayout.scalableEndPaddingDp.pixels
+                    unscalableStartPadding = maxPointSize.half + horizontalLayout.unscalableStartPaddingDp.pixels
+                    unscalableEndPadding = maxPointSize.half + horizontalLayout.unscalableEndPaddingDp.pixels
                 }
             }
         }

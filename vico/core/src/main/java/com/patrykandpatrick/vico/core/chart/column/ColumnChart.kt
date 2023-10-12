@@ -356,8 +356,10 @@ public open class ColumnChart(
                     scalableEndPadding = scalableStartPadding
                 }
                 is HorizontalLayout.FullWidth -> {
-                    scalableStartPadding = columnCollectionWidth.half + horizontalLayout.startPaddingDp.pixels
-                    scalableEndPadding = columnCollectionWidth.half + horizontalLayout.endPaddingDp.pixels
+                    scalableStartPadding = columnCollectionWidth.half + horizontalLayout.scalableStartPaddingDp.pixels
+                    scalableEndPadding = columnCollectionWidth.half + horizontalLayout.scalableEndPaddingDp.pixels
+                    unscalableStartPadding = horizontalLayout.unscalableStartPaddingDp.pixels
+                    unscalableEndPadding = horizontalLayout.unscalableEndPaddingDp.pixels
                 }
             }
         }

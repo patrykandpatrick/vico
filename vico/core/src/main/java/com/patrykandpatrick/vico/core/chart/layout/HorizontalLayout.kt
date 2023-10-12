@@ -43,11 +43,16 @@ public sealed interface HorizontalLayout {
     /**
      * When this is applied, the [Chart]’s content takes up the [Chart]’s entire width (unless padding is added).
      * [HorizontalAxis] instances display a tick and a guideline for each label, with the tick, guideline, and label
-     * vertically centered relative to one another. [startPaddingDp] and [endPaddingDp] control the amount of empty
-     * space at the start and end of the [Chart], respectively.
+     * vertically centered relative to one another. [scalableStartPaddingDp], [scalableEndPaddingDp],
+     * [unscalableStartPaddingDp], and [unscalableEndPaddingDp] control the amount of empty space at the start and end
+     * of the [Chart]. Scalable padding values are multiplied by the zoom factor, unlike unscalable ones.
      */
-    public class FullWidth(public val startPaddingDp: Float = 0f, public val endPaddingDp: Float = 0f) :
-        HorizontalLayout
+    public class FullWidth(
+        public val scalableStartPaddingDp: Float = 0f,
+        public val scalableEndPaddingDp: Float = 0f,
+        public val unscalableStartPaddingDp: Float = 0f,
+        public val unscalableEndPaddingDp: Float = 0f,
+    ) : HorizontalLayout
 
     public companion object
 }
