@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.fill.shader
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultAlpha
@@ -36,6 +37,7 @@ import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
+import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatrick.vico.core.chart.line.LineChartDrawingModel
@@ -127,9 +129,9 @@ public fun lineSpec(
     dataLabelRotationDegrees: Float = 0f,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
 ): LineSpec = LineSpec(
-    lineColor = lineColor.toArgb(),
+    lineFill = FillStyle.Solid(lineColor.toArgb()),
     lineThicknessDp = lineThickness.value,
-    lineBackgroundShader = lineBackgroundShader,
+    lineBackgroundFill = lineBackgroundShader?.let(FillStyle::shader),
     lineCap = lineCap.paintCap,
     point = point,
     pointSizeDp = pointSize.value,
@@ -147,62 +149,33 @@ public fun lineSpec(
  * @param lineThickness the thickness of the line.
  * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
  * @param lineCap the stroke cap for the line.
- * @param cubicStrength the strength of the cubic bezier curve between each key point on the line.
  * @param point an optional [Component] that can be drawn at a given point on the line.
  * @param pointSize the size of the [point].
  * @param dataLabel an optional [TextComponent] to use for data labels.
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+ * @param pointConnector the [LineSpec.PointConnector] for the line.
  *
  * @see LineChart
  * @see LineChart.LineSpec
  */
-@Deprecated(
-    message = """Rather than using this `lineSpec` function and its `cubicStrength` parameter, use the `lineSpec`
-        function with the `pointConnector` parameter and provide a `DefaultPointConnector` instance with a custom
-        `cubicStrength` via the `pointConnector` parameter.""",
-    replaceWith = ReplaceWith(
-        expression = """lineSpec(
-                lineColor = lineColor,
-                lineThickness = lineThickness,
-                lineBackgroundShader = lineBackgroundShader,
-                lineCap = lineCap,
-                point = point,
-                pointSize = pointSize,
-                dataLabel = dataLabel,
-                dataLabelVerticalPosition = dataLabelVerticalPosition,
-                dataLabelValueFormatter = dataLabelValueFormatter,
-                dataLabelRotationDegrees = dataLabelRotationDegrees,
-                pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
-            )""",
-        imports = arrayOf("com.patrykandpatrick.vico.core.chart.DefaultPointConnector"),
-    ),
-    level = DeprecationLevel.ERROR,
-)
 public fun lineSpec(
-    lineColor: Color,
+    lineFill: FillStyle,
     lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
-    lineBackgroundShader: DynamicShader? = DynamicShaders.fromBrush(
-        brush = Brush.verticalGradient(
-            listOf(
-                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-            ),
-        ),
-    ),
+    lineBackgroundFill: FillStyle? = lineFill.getBackwardCompatibleBackgroundFill(),
     lineCap: StrokeCap = StrokeCap.Round,
-    cubicStrength: Float,
     point: Component? = null,
     pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
     dataLabel: TextComponent? = null,
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
+    pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
 ): LineSpec = LineSpec(
-    lineColor = lineColor.toArgb(),
+    lineFill = lineFill,
     lineThicknessDp = lineThickness.value,
-    lineBackgroundShader = lineBackgroundShader,
+    lineBackgroundFill = lineBackgroundFill,
     lineCap = lineCap.paintCap,
     point = point,
     pointSizeDp = pointSize.value,
@@ -210,8 +183,51 @@ public fun lineSpec(
     dataLabelVerticalPosition = dataLabelVerticalPosition,
     dataLabelValueFormatter = dataLabelValueFormatter,
     dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
+    pointConnector = pointConnector,
 )
+
+private fun FillStyle.getBackwardCompatibleBackgroundFill(): FillStyle? =
+    when (this) {
+        is FillStyle.Solid -> FillStyle.SplitShader(
+            positiveShader = DynamicShaders.fromBrush(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                        Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                    ),
+                ),
+            ),
+            negativeShader = DynamicShaders.fromBrush(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                        Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                    ),
+                ),
+            ),
+        )
+
+        is FillStyle.Split -> FillStyle.SplitShader(
+            positiveShader = DynamicShaders.fromBrush(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        Color(positiveColor).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                        Color(positiveColor).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                    ),
+                ),
+            ),
+            negativeShader = DynamicShaders.fromBrush(
+                brush = Brush.verticalGradient(
+                    listOf(
+                        Color(negativeColor).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                        Color(negativeColor).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                    ),
+                ),
+            ),
+        )
+
+        else -> null
+    }
 
 private val StrokeCap.paintCap: Paint.Cap
     get() = when (this) {
