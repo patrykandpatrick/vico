@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import android.graphics.Color
 import com.patrykandpatrick.vico.core.DefaultAlpha
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
+import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.OverlayingComponent
@@ -130,28 +131,59 @@ internal fun TypedArray.getLineSpec(
     context: Context,
     defaultColor: Int = context.defaultColors.entity1Color.toInt(),
 ): LineChart.LineSpec {
-    val lineColor = getColorExtended(
-        index = R.styleable.LineSpec_color,
-        defaultColor = defaultColor,
+    val positiveLineColor = getColor(
+        R.styleable.LineSpec_positiveColor,
+        getColor(R.styleable.LineSpec_color, defaultColor),
     )
 
-    val shader = if (
+    val negativeLineColor = getColorExtended(R.styleable.LineSpec_negativeColor)
+
+    val lineFill = if (hasValue(R.styleable.LineSpec_negativeColor)) {
+        FillStyle.Split(positiveLineColor, negativeLineColor)
+    } else {
+        FillStyle.Solid(positiveLineColor)
+    }
+
+    val positiveShader = if (
         hasValue(R.styleable.LineSpec_gradientTopColor) ||
-        hasValue(R.styleable.LineSpec_gradientBottomColor)
+        hasValue(R.styleable.LineSpec_gradientBottomColor) ||
+        hasValue(R.styleable.LineSpec_positiveGradientTopColor) ||
+        hasValue(R.styleable.LineSpec_positiveGradientBottomColor)
     ) {
-        val gradientTopColor = getColorExtended(R.styleable.LineSpec_gradientTopColor)
-        val gradientBottomColor = getColorExtended(R.styleable.LineSpec_gradientBottomColor)
+        val gradientTopColor = getColorExtended(
+            index = R.styleable.LineSpec_positiveGradientTopColor,
+            defaultColor = getColorExtended(R.styleable.LineSpec_gradientTopColor),
+        )
+        val gradientBottomColor = getColorExtended(
+            index = R.styleable.LineSpec_positiveGradientBottomColor,
+            defaultColor = getColorExtended(R.styleable.LineSpec_gradientBottomColor),
+        )
 
         DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
     } else {
         DynamicShaders.verticalGradient(
-            lineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-            lineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+            positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+            positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+        )
+    }
+
+    val negativeShader = if (
+        hasValue(R.styleable.LineSpec_negativeGradientTopColor) ||
+        hasValue(R.styleable.LineSpec_negativeGradientBottomColor)
+    ) {
+        val gradientTopColor = getColorExtended(R.styleable.LineSpec_negativeGradientTopColor)
+        val gradientBottomColor = getColorExtended(R.styleable.LineSpec_negativeGradientBottomColor)
+
+        DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
+    } else {
+        DynamicShaders.verticalGradient(
+            negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+            negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
         )
     }
 
     return LineChart.LineSpec(
-        lineColor = lineColor,
+        lineFill = lineFill,
         point = getNestedTypedArray(
             context = context,
             resourceId = R.styleable.LineSpec_pointStyle,
@@ -167,7 +199,7 @@ internal fun TypedArray.getLineSpec(
             index = R.styleable.LineSpec_lineThickness,
             defaultValue = DefaultDimens.LINE_THICKNESS,
         ),
-        lineBackgroundShader = shader,
+        lineBackgroundFill = FillStyle.SplitShader(positiveShader, negativeShader),
         dataLabel = if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
             getNestedTypedArray(
                 context = context,
@@ -178,7 +210,7 @@ internal fun TypedArray.getLineSpec(
             null
         },
         dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->
-            val values = VerticalPosition.values()
+            val values = VerticalPosition.entries
             values[value % values.size]
         },
         dataLabelRotationDegrees = getFloat(

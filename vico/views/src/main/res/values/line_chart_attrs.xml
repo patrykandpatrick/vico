@@ -29,8 +29,14 @@
 
     <declare-styleable name="LineSpec">
         <attr name="color" />
+        <attr name="positiveColor" />
+        <attr name="negativeColor" />
         <attr name="gradientTopColor" format="color" />
         <attr name="gradientBottomColor" format="color" />
+        <attr name="positiveGradientTopColor" format="color" />
+        <attr name="positiveGradientBottomColor" format="color" />
+        <attr name="negativeGradientTopColor" format="color" />
+        <attr name="negativeGradientBottomColor" format="color" />
         <attr name="pointSize" format="dimension" />
         <attr name="lineThickness" format="dimension" />
         <attr name="pointStyle" format="reference" />

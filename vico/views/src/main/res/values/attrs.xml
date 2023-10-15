@@ -16,6 +16,8 @@
 
 <resources>
     <attr name="color" format="color" />
+    <attr name="positiveColor" format="color" />
+    <attr name="negativeColor" format="color" />
     <attr name="shapeStyle" format="reference" />
     <attr name="strokeColor" format="color" />
     <attr name="strokeWidth" format="dimension" />

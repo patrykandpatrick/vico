@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,8 +15,6 @@
   -->
 
 <resources>
-
-    <style name="Theme.Vico" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="android:backgroundTint">@color/background</item>
-    </style>
+    <color name="chart_9_color_positive">#C7FF6C</color>
+    <color name="chart_9_color_negative">#A46CFF</color>
 </resources>

@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.forEachInAbsolutelyIndexed
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -61,6 +62,8 @@ import com.patrykandpatrick.vico.core.extension.withOpacity
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 import com.patrykandpatrick.vico.core.marker.Marker
+import com.patrykandpatrick.vico.core.model.Point
+import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -100,9 +103,9 @@ public open class LineChart(
     /**
      * Defines the appearance of a line in a line chart.
      *
-     * @param lineColor the color of the line.
+     * @param lineFill the [FillStyle] for the line.
      * @param lineThicknessDp the thickness of the line (in dp).
-     * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
+     * @param lineBackgroundFill an optional [FillStyle] to use for the area below and above the line.
      * @param lineCap the stroke cap for the line.
      * @param point an optional [Component] that can be drawn at a given point on the line.
      * @param pointSizeDp the size of the [point] (in dp).
@@ -113,9 +116,9 @@ public open class LineChart(
      * @param pointConnector the [PointConnector] for the line.
      */
     public open class LineSpec(
-        lineColor: Int = Color.LTGRAY,
+        public var lineFill: FillStyle,
         public var lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
-        public var lineBackgroundShader: DynamicShader? = null,
+        public var lineBackgroundFill: FillStyle? = null,
         public var lineCap: Paint.Cap = Paint.Cap.ROUND,
         public var point: Component? = null,
         public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
@@ -127,58 +130,34 @@ public open class LineChart(
     ) {
 
         /**
-         * Defines the appearance of a line in a line chart.
-         *
          * @param lineColor the color of the line.
          * @param lineThicknessDp the thickness of the line (in dp).
          * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
          * @param lineCap the stroke cap for the line.
-         * @param cubicStrength the strength of the cubic bezier curve between each point on the line.
          * @param point an optional [Component] that can be drawn at a given point on the line.
          * @param pointSizeDp the size of the [point] (in dp).
          * @param dataLabel an optional [TextComponent] to use for data labels.
          * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
          * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
-         * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+         * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
+         * @param pointConnector the [PointConnector] for the line.
          */
-        @Deprecated(
-            message = """Rather than using this constructor and its `cubicStrength` parameter, use the primary
-                constructor and provide a `DefaultPointConnector` instance with a custom `cubicStrength` via the
-                `pointConnector` parameter.""",
-            replaceWith = ReplaceWith(
-                expression = """LineSpec(
-                        lineColor = lineColor,
-                        lineThicknessDp = lineThicknessDp,
-                        lineBackgroundShader = lineBackgroundShader,
-                        lineCap = lineCap,
-                        point = point,
-                        pointSizeDp = pointSizeDp,
-                        dataLabel = dataLabel,
-                        dataLabelVerticalPosition = dataLabelVerticalPosition,
-                        dataLabelValueFormatter = dataLabelValueFormatter,
-                        dataLabelRotationDegrees = dataLabelRotationDegrees,
-                        pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
-                    )""",
-                imports = arrayOf("com.patrykandpatrick.vico.core.chart.DefaultPointConnector"),
-            ),
-            level = DeprecationLevel.ERROR,
-        )
         public constructor(
             lineColor: Int = Color.LTGRAY,
             lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
             lineBackgroundShader: DynamicShader? = null,
             lineCap: Paint.Cap = Paint.Cap.ROUND,
-            cubicStrength: Float,
             point: Component? = null,
             pointSizeDp: Float = DefaultDimens.POINT_SIZE,
             dataLabel: TextComponent? = null,
             dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
             dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
             dataLabelRotationDegrees: Float = 0f,
+            pointConnector: PointConnector = DefaultPointConnector(),
         ) : this(
-            lineColor = lineColor,
+            lineFill = FillStyle.Solid(lineColor),
             lineThicknessDp = lineThicknessDp,
-            lineBackgroundShader = lineBackgroundShader,
+            lineBackgroundFill = lineBackgroundShader?.let(FillStyle::Shader),
             lineCap = lineCap,
             point = point,
             pointSizeDp = pointSizeDp,
@@ -186,27 +165,61 @@ public open class LineChart(
             dataLabelVerticalPosition = dataLabelVerticalPosition,
             dataLabelValueFormatter = dataLabelValueFormatter,
             dataLabelRotationDegrees = dataLabelRotationDegrees,
-            pointConnector = DefaultPointConnector(cubicStrength = cubicStrength),
+            pointConnector = pointConnector,
         )
+
+        /**
+         * An optional [DynamicShader] to use for the area below and above the line.
+         */
+        @Deprecated(
+            message = "There are two line background shaders now, one for positive values and one for negative " +
+                "values. Use `positiveLineBackgroundShader` instead.",
+            replaceWith = ReplaceWith("positiveLineBackgroundShader"),
+        )
+        public val lineBackgroundShader: DynamicShader?
+            get() = (lineBackgroundFill as? FillStyle.Shader<*>)?.dynamicShader
 
         /**
          * Returns `true` if the [lineBackgroundShader] is not null, and `false` otherwise.
          */
+        @Deprecated(
+            message = "`lineBackgroundShader` is deprecated. Use `hasLineBackgroundFill` instead.",
+            replaceWith = ReplaceWith("hasLineBackgroundFill"),
+        )
         public val hasLineBackgroundShader: Boolean
             get() = lineBackgroundShader != null
 
+        /**
+         * Returns `true` if the [lineBackgroundFill] is not null, and `false` otherwise.
+         */
+        public val hasLineBackgroundFill: Boolean
+            get() = lineBackgroundFill != null
+
         protected val linePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
-            color = lineColor
             strokeCap = lineCap
         }
 
         protected val lineBackgroundPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
+        protected val lineBackgroundPath: Path = Path()
+
+        protected val clipPath: Path = Path()
+
+        protected val pathBounds: RectF = RectF()
+
         /**
          * The color of the line.
          */
-        public var lineColor: Int by linePaint::color
+        @Deprecated(
+            message = "The line color, or shader is now defined by `lineFill",
+            replaceWith = ReplaceWith("lineFill"),
+        )
+        public var lineColor: Int
+            get() = (lineFill as? FillStyle.Solid)?.color ?: Color.TRANSPARENT
+            set(value) {
+                lineFill = FillStyle.Solid(value)
+            }
 
         /**
          * The stroke cap for the line.
@@ -229,9 +242,16 @@ public open class LineChart(
         /**
          * Draws the line.
          */
-        public fun drawLine(context: DrawContext, path: Path, opacity: Float = 1f) {
+        public fun drawLine(
+            context: DrawContext,
+            bounds: RectF,
+            zeroLineYFraction: Float,
+            path: Path,
+            opacity: Float = 1f,
+        ) {
             with(context) {
                 linePaint.strokeWidth = lineThicknessDp.pixels
+                lineFill.applyTo(linePaint, context, bounds, zeroLineYFraction)
                 linePaint.withOpacity(opacity) { canvas.drawPath(path, it) }
             }
         }
@@ -239,11 +259,42 @@ public open class LineChart(
         /**
          * Draws the line background.
          */
-        public fun drawBackgroundLine(context: DrawContext, bounds: RectF, path: Path, opacity: Float = 1f) {
+        public fun drawBackgroundLine(
+            context: DrawContext,
+            bounds: RectF,
+            zeroLineYFraction: Float,
+            path: Path,
+            opacity: Float = 1f,
+        ) {
+            val fill = lineBackgroundFill ?: return
             with(lineBackgroundPaint) {
-                shader =
-                    lineBackgroundShader?.provideShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
-                withOpacity(opacity) { context.canvas.drawPath(path, it) }
+                if (zeroLineYFraction > 0) {
+                    val zeroLineY = bounds.top + (zeroLineYFraction * bounds.height())
+                    fill.applyTo(this, context, bounds.left, bounds.top, bounds.right, zeroLineY, 1f)
+                    lineBackgroundPath.set(path)
+                    lineBackgroundPath.computeBounds(pathBounds, false)
+                    lineBackgroundPath.lineTo(pathBounds.right, bounds.bottom)
+                    lineBackgroundPath.lineTo(pathBounds.left, bounds.bottom)
+                    lineBackgroundPath.close()
+                    clipPath.rewind()
+                    clipPath.addRect(bounds.left, bounds.top, bounds.right, zeroLineY, Path.Direction.CW)
+                    lineBackgroundPath.op(clipPath, Path.Op.INTERSECT)
+                    withOpacity(opacity) { context.canvas.drawPath(lineBackgroundPath, it) }
+                }
+
+                if (zeroLineYFraction < 1f) {
+                    val zeroLineY = bounds.top + (zeroLineYFraction * bounds.height())
+                    fill.applyTo(this, context, bounds.left, zeroLineY, bounds.right, bounds.bottom, 0f)
+                    lineBackgroundPath.set(path)
+                    lineBackgroundPath.computeBounds(pathBounds, false)
+                    lineBackgroundPath.lineTo(pathBounds.right, bounds.top)
+                    lineBackgroundPath.lineTo(pathBounds.left, bounds.top)
+                    lineBackgroundPath.close()
+                    clipPath.rewind()
+                    clipPath.addRect(bounds.left, zeroLineY, bounds.right, bounds.bottom, Path.Direction.CW)
+                    lineBackgroundPath.op(clipPath, Path.Op.INTERSECT)
+                    withOpacity(opacity) { context.canvas.drawPath(lineBackgroundPath, it) }
+                }
             }
         }
 
@@ -290,6 +341,8 @@ public open class LineChart(
         resetTempData()
 
         val drawingModel = model.extraStore.getOrNull(drawingModelKey)
+        val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
+        val zeroLineYFraction = 1f - (drawingModel?.zeroY ?: abs(chartValues.minY / chartValues.lengthY))
 
         model.entries.forEachIndexed { entryListIndex, entries ->
 
@@ -313,9 +366,8 @@ public open class LineChart(
             ) { entryIndex, entry, x, y, _, _ ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
-                    if (component.hasLineBackgroundShader) {
-                        lineBackgroundPath.moveTo(x, bounds.bottom)
-                        lineBackgroundPath.lineTo(x, y)
+                    if (component.hasLineBackgroundFill) {
+                        lineBackgroundPath.moveTo(x, y)
                     }
                 } else {
                     component.pointConnector.connect(
@@ -327,7 +379,7 @@ public open class LineChart(
                         horizontalDimensions = horizontalDimensions,
                         bounds = bounds,
                     )
-                    if (component.hasLineBackgroundShader) {
+                    if (component.hasLineBackgroundFill) {
                         component.pointConnector.connect(
                             path = lineBackgroundPath,
                             prevX = prevX,
@@ -343,22 +395,29 @@ public open class LineChart(
                 prevY = y
 
                 if (x > bounds.left - 1 && x < bounds.right + 1) {
+                    val coercedY = y.coerceIn(bounds.top, bounds.bottom)
                     entryLocationMap.put(
                         x = x,
-                        y = y.coerceIn(bounds.top, bounds.bottom),
+                        y = coercedY,
                         entry = entry,
-                        color = component.lineColor,
+                        color = component.lineFill.getColorAt(Point(x, coercedY), context, bounds, zeroLineYFraction),
                         index = entryIndex,
                     )
                 }
             }
 
-            if (component.hasLineBackgroundShader) {
+            if (component.hasLineBackgroundFill) {
                 lineBackgroundPath.lineTo(prevX, bounds.bottom)
-                lineBackgroundPath.close()
-                component.drawBackgroundLine(context, bounds, lineBackgroundPath, drawingModel?.opacity ?: 1f)
+                component.drawBackgroundLine(
+                    context,
+                    bounds,
+                    zeroLineYFraction,
+                    lineBackgroundPath,
+                    drawingModel?.opacity ?: 1f,
+                )
             }
-            component.drawLine(context, linePath, drawingModel?.opacity ?: 1f)
+
+            component.drawLine(context, bounds, zeroLineYFraction, linePath, drawingModel?.opacity ?: 1f)
 
             drawPointsAndDataLabels(
                 lineSpec = component,

@@ -1,0 +1,168 @@
+/*
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatrick.vico.sample.showcase.charts
+
+import android.graphics.PorterDuff
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidViewBinding
+import com.patrykandpatrick.vico.R
+import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
+import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.fill.split
+import com.patrykandpatrick.vico.compose.chart.fill.splitShader
+import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
+import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.chart.line.lineSpec
+import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.shape.dashedShape
+import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
+import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
+import com.patrykandpatrick.vico.compose.component.shapeComponent
+import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
+import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.core.axis.Axis
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.chart.fill.FillStyle
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
+import com.patrykandpatrick.vico.core.component.shape.Shapes
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.databinding.Chart9Binding
+import com.patrykandpatrick.vico.sample.showcase.UISystem
+import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
+import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+
+@Composable
+internal fun Chart9(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+    when (uiSystem) {
+        UISystem.Compose -> ComposeChart9(chartEntryModelProducer)
+        UISystem.Views -> ViewChart9(chartEntryModelProducer)
+    }
+}
+
+@Composable
+private fun ComposeChart9(chartEntryModelProducer: ChartEntryModelProducer) {
+    val marker = rememberMarker()
+    ProvideChartStyle(rememberChartStyle(chartColors)) {
+        Chart(
+            chart = lineChart(
+                lines = listOf(
+                    lineSpec(
+                        lineFill = FillStyle.split(chartColors[0], chartColors[1]),
+//                        lineBackgroundFill = FillStyle.brush(
+//                        Brush.horizontalGradient(listOf(chartColors[0], chartColors[1]))
+//                        ),
+//                        lineBackgroundFill = FillStyle.split(chartColors[0], chartColors[1]),
+                        lineBackgroundFill = FillStyle.splitShader(
+                            DynamicShaders.composeShader(
+                                DynamicShaders.fromComponent(
+                                    componentSize = 6.dp,
+                                    component = shapeComponent(
+                                        shape = Shapes.pillShape,
+                                        color = chartColors[0],
+                                        margins = remember { dimensionsOf(1.dp) },
+                                    ),
+                                ),
+                                verticalGradient(arrayOf(Color.Black, Color.Transparent)),
+                                PorterDuff.Mode.DST_IN,
+                            ),
+                            DynamicShaders.composeShader(
+                                DynamicShaders.fromComponent(
+                                    componentSize = 5.dp,
+                                    component = shapeComponent(
+                                        shape = Shapes.rectShape,
+                                        color = chartColors[1],
+                                        margins = remember { dimensionsOf(horizontal = 2.dp) },
+                                    ),
+                                    checkeredArrangement = false,
+                                ),
+                                verticalGradient(arrayOf(Color.Transparent, Color.Black)),
+                                PorterDuff.Mode.DST_IN,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            chartModelProducer = chartEntryModelProducer,
+            startAxis = rememberStartAxis(
+                label = axisLabelComponent(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    background = shapeComponent(
+                        shape = Shapes.pillShape,
+                        color = MaterialTheme.colorScheme.background,
+                        strokeColor = MaterialTheme.colorScheme.outlineVariant,
+                        strokeWidth = 1.dp,
+                    ),
+                    padding = remember { dimensionsOf(horizontal = 6.dp, vertical = 2.dp) },
+                    margins = remember { dimensionsOf(end = 8.dp) },
+                ),
+                axis = null,
+                tick = null,
+                guideline = lineComponent(
+                    thickness = 1.dp,
+                    color = MaterialTheme.colorScheme.outlineVariant,
+                    shape = remember {
+                        Shapes.dashedShape(
+                            shape = Shapes.pillShape,
+                            dashLength = 4.dp,
+                            gapLength = 8.dp,
+                        )
+                    },
+                ),
+                itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
+            ),
+            bottomAxis = rememberBottomAxis(
+                guideline = null,
+                itemPlacer = AxisItemPlacer.Horizontal.default(
+                    spacing = 3,
+                ),
+            ),
+            marker = marker,
+            runInitialAnimation = false,
+            horizontalLayout = HorizontalLayout.fullWidth(),
+        )
+    }
+}
+
+@Composable
+private fun ViewChart9(chartEntryModelProducer: ChartEntryModelProducer) {
+    val marker = rememberMarker()
+    AndroidViewBinding(Chart9Binding::inflate) {
+        with(chartView) {
+            runInitialAnimation = false
+            entryProducer = chartEntryModelProducer
+            (bottomAxis as Axis).guideline = null
+            this.marker = marker
+        }
+    }
+}
+
+private val chartColors
+    @ReadOnlyComposable
+    @Composable
+    get() = listOf(
+        colorResource(id = R.color.chart_9_color_positive),
+        colorResource(id = R.color.chart_9_color_negative),
+    )
