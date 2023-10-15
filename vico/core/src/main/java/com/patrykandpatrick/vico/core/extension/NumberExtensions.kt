@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,3 +143,5 @@ public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull
  */
 public fun Float.rangeWith(other: Float): ClosedFloatingPointRange<Float> =
     if (other > this) this..other else other..this
+
+internal fun Float.lerp(to: Float, fraction: Float): Float = this + (to - this) * fraction

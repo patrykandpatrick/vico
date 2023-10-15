@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.chart.column
 
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
+import com.patrykandpatrick.vico.core.extension.lerp
 import com.patrykandpatrick.vico.core.extension.orZero
 
 /**
@@ -31,7 +32,7 @@ public class ColumnChartDrawingModel(entries: List<Map<Float, ColumnInfo>>, publ
         fraction: Float,
     ): DrawingModel<ColumnInfo> {
         val oldOpacity = (from as ColumnChartDrawingModel?)?.opacity.orZero
-        return ColumnChartDrawingModel(drawingInfo, oldOpacity + (opacity - oldOpacity) * fraction)
+        return ColumnChartDrawingModel(drawingInfo, oldOpacity.lerp(opacity, fraction))
     }
 
     /**
@@ -41,7 +42,7 @@ public class ColumnChartDrawingModel(entries: List<Map<Float, ColumnInfo>>, publ
     public class ColumnInfo(public val height: Float) : DrawingInfo {
         override fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo {
             val oldHeight = (from as? ColumnInfo)?.height.orZero
-            return ColumnInfo(oldHeight + (height - oldHeight) * fraction)
+            return ColumnInfo(oldHeight.lerp(height, fraction))
         }
     }
 }

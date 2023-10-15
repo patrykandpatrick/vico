@@ -17,12 +17,18 @@
 package com.patrykandpatrick.vico.core.chart.line
 
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
+import com.patrykandpatrick.vico.core.extension.lerp
 import com.patrykandpatrick.vico.core.extension.orZero
 
 /**
- * Houses drawing information for a [LineChart]. [opacity] is the lines’ opacity.
+ * Houses drawing information for a [LineChart]. [zeroY] is the y-axis position of the zero value.
+ * [opacity] is the lines’ opacity.
  */
-public class LineChartDrawingModel(pointInfo: List<Map<Float, PointInfo>>, public val opacity: Float = 1f) :
+public class LineChartDrawingModel(
+    pointInfo: List<Map<Float, PointInfo>>,
+    public val zeroY: Float,
+    public val opacity: Float = 1f,
+) :
     DrawingModel<LineChartDrawingModel.PointInfo>(pointInfo) {
 
     override fun transform(
@@ -31,7 +37,8 @@ public class LineChartDrawingModel(pointInfo: List<Map<Float, PointInfo>>, publi
         fraction: Float,
     ): DrawingModel<PointInfo> {
         val oldOpacity = (from as LineChartDrawingModel?)?.opacity.orZero
-        return LineChartDrawingModel(drawingInfo, oldOpacity + (opacity - oldOpacity) * fraction)
+        val oldZeroY = from?.zeroY ?: zeroY
+        return LineChartDrawingModel(drawingInfo, oldZeroY.lerp(zeroY, fraction), oldOpacity.lerp(opacity, fraction))
     }
 
     /**
@@ -41,7 +48,7 @@ public class LineChartDrawingModel(pointInfo: List<Map<Float, PointInfo>>, publi
     public class PointInfo(public val y: Float) : DrawingInfo {
         override fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo {
             val oldY = (from as? PointInfo)?.y.orZero
-            return PointInfo(oldY + (y - oldY) * fraction)
+            return PointInfo(oldY.lerp(y, fraction))
         }
     }
 }

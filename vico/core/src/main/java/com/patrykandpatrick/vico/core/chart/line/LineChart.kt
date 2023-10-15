@@ -693,6 +693,8 @@ public open class LineChart(
                     entry.x to LineChartDrawingModel.PointInfo((entry.y - chartValues.minY) / chartValues.lengthY)
                 }
             }
-            .let(::LineChartDrawingModel)
+            .let { pointInfo ->
+                LineChartDrawingModel(pointInfo, abs(chartValues.minY / chartValues.lengthY))
+            }
     }
 }
