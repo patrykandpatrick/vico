@@ -90,13 +90,15 @@ public fun MeasureContext.getAutoZoom(
     chartBounds: RectF,
     autoScaleUp: AutoScaleUp,
 ): Float {
-    val contentWidth =
-        horizontalDimensions.getContentWidth(chartValuesProvider.getChartValues().getMaxMajorEntryCount())
+    val scalableContentWidth =
+        horizontalDimensions.getScalableContentWidth(chartValuesProvider.getChartValues().getMaxMajorEntryCount())
+    val reducedChartWidth = chartBounds.width() - horizontalDimensions.unscalablePadding
+    val fillingZoom = reducedChartWidth / scalableContentWidth
     return when {
-        contentWidth < chartBounds.width() ->
-            if (autoScaleUp == AutoScaleUp.Full) (chartBounds.width() / contentWidth).coerceAtMost(DEF_MAX_ZOOM) else 1f
+        scalableContentWidth < reducedChartWidth ->
+            if (autoScaleUp == AutoScaleUp.Full) fillingZoom.coerceAtMost(DEF_MAX_ZOOM) else 1f
 
-        !isHorizontalScrollEnabled -> chartBounds.width() / contentWidth
+        !isHorizontalScrollEnabled -> fillingZoom
         else -> 1f
     }
 }

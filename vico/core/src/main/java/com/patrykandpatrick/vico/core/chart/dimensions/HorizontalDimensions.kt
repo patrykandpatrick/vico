@@ -50,25 +50,40 @@ public interface HorizontalDimensions {
     /**
      * The total start padding (in pixels).
      */
-    public val startPadding: Float
-        get() = scalableStartPadding + unscalableStartPadding
+    public val startPadding: Float get() = scalableStartPadding + unscalableStartPadding
 
     /**
      * The total end padding (in pixels).
      */
-    public val endPadding: Float
-        get() = scalableEndPadding + unscalableEndPadding
+    public val endPadding: Float get() = scalableEndPadding + unscalableEndPadding
+
+    /**
+     * The total scalable horizontal padding (in pixels).
+     */
+    public val scalablePadding: Float get() = scalableStartPadding + scalableEndPadding
+
+    /**
+     * The total unscalable horizontal padding (in pixels).
+     */
+    public val unscalablePadding: Float get() = unscalableStartPadding + unscalableEndPadding
 
     /**
      * The total horizontal padding (in pixels).
      */
-    public val padding: Float
-        get() = startPadding + endPadding
+    public val padding: Float get() = startPadding + endPadding
+
+    /**
+     * Given the chart’s maximum number of major entries, calculates the width of the [Chart]’s scalable content (in
+     * pixels).
+     */
+    public fun getScalableContentWidth(maxMajorEntryCount: Int): Float =
+        xSpacing * (maxMajorEntryCount - 1) + scalablePadding
 
     /**
      * Given the chart’s maximum number of major entries, calculates the width of the [Chart]’s content (in pixels).
      */
-    public fun getContentWidth(maxMajorEntryCount: Int): Float = xSpacing * (maxMajorEntryCount - 1) + padding
+    public fun getContentWidth(maxMajorEntryCount: Int): Float =
+        getScalableContentWidth(maxMajorEntryCount) + unscalablePadding
 
     /**
      * Creates a new [HorizontalDimensions] instance by multiplying this one’s scalable values by the given factor.
