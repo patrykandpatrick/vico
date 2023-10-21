@@ -366,9 +366,6 @@ public open class LineChart(
             ) { entryIndex, entry, x, y, _, _ ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
-                    if (component.hasLineBackgroundFill) {
-                        lineBackgroundPath.moveTo(x, y)
-                    }
                 } else {
                     component.pointConnector.connect(
                         path = linePath,
@@ -379,17 +376,6 @@ public open class LineChart(
                         horizontalDimensions = horizontalDimensions,
                         bounds = bounds,
                     )
-                    if (component.hasLineBackgroundFill) {
-                        component.pointConnector.connect(
-                            path = lineBackgroundPath,
-                            prevX = prevX,
-                            prevY = prevY,
-                            x = x,
-                            y = y,
-                            horizontalDimensions = horizontalDimensions,
-                            bounds = bounds,
-                        )
-                    }
                 }
                 prevX = x
                 prevY = y
@@ -407,6 +393,7 @@ public open class LineChart(
             }
 
             if (component.hasLineBackgroundFill) {
+                lineBackgroundPath.addPath(linePath)
                 lineBackgroundPath.lineTo(prevX, bounds.bottom)
                 component.drawBackgroundLine(
                     context,
