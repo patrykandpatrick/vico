@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -46,6 +47,8 @@ import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
+import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
@@ -71,10 +74,6 @@ private fun ComposeChart9(chartEntryModelProducer: ChartEntryModelProducer) {
                 lines = listOf(
                     lineSpec(
                         lineFill = FillStyle.split(chartColors[0], chartColors[1]),
-//                        lineBackgroundFill = FillStyle.brush(
-//                        Brush.horizontalGradient(listOf(chartColors[0], chartColors[1]))
-//                        ),
-//                        lineBackgroundFill = FillStyle.split(chartColors[0], chartColors[1]),
                         lineBackgroundFill = FillStyle.splitShader(
                             DynamicShaders.composeShader(
                                 DynamicShaders.fromComponent(
@@ -149,12 +148,50 @@ private fun ComposeChart9(chartEntryModelProducer: ChartEntryModelProducer) {
 @Composable
 private fun ViewChart9(chartEntryModelProducer: ChartEntryModelProducer) {
     val marker = rememberMarker()
+    val colors = chartColors
     AndroidViewBinding(Chart9Binding::inflate) {
         with(chartView) {
             runInitialAnimation = false
             entryProducer = chartEntryModelProducer
             (bottomAxis as Axis).guideline = null
             this.marker = marker
+            with(chart as LineChart) {
+                lines = listOf(
+                    LineChart.LineSpec(
+                        lineFill = FillStyle.Split(
+                            positiveColor = colors[0].toArgb(),
+                            negativeColor = colors[1].toArgb(),
+                        ),
+                        lineBackgroundFill = FillStyle.SplitShader(
+                            DynamicShaders.composeShader(
+                                DynamicShaders.fromComponent(
+                                    componentSize = 6.dp,
+                                    component = ShapeComponent(
+                                        shape = Shapes.pillShape,
+                                        color = colors[0].toArgb(),
+                                        margins = dimensionsOf(1.dp),
+                                    ),
+                                ),
+                                verticalGradient(arrayOf(Color.Black, Color.Transparent)),
+                                PorterDuff.Mode.DST_IN,
+                            ),
+                            DynamicShaders.composeShader(
+                                DynamicShaders.fromComponent(
+                                    componentSize = 5.dp,
+                                    component = ShapeComponent(
+                                        shape = Shapes.rectShape,
+                                        color = colors[1].toArgb(),
+                                        margins = dimensionsOf(horizontal = 2.dp),
+                                    ),
+                                    checkeredArrangement = false,
+                                ),
+                                verticalGradient(arrayOf(Color.Transparent, Color.Black)),
+                                PorterDuff.Mode.DST_IN,
+                            ),
+                        ),
+                    ),
+                )
+            }
         }
     }
 }
