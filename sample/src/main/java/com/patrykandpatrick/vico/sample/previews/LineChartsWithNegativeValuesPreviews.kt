@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.compose.axis.axisLineComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.fill.solid
 import com.patrykandpatrick.vico.compose.chart.fill.split
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
@@ -85,7 +86,7 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
     Surface {
         Chart(
             chart = lineChart(
-                lines = listOf(lineSpec(lineColor = Color.DarkGray, dataLabel = textComponent())),
+                lines = listOf(lineSpec(lineFill = FillStyle.solid(Color.DarkGray), dataLabel = textComponent())),
             ),
             model = model,
             startAxis = rememberStartAxis(),
