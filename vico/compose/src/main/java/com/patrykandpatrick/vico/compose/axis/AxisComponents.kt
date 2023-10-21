@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
+import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 
 public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Shape
@@ -79,6 +80,48 @@ public fun axisLabelComponent(
     lineCount,
     dimensionsOf(horizontalPadding, verticalPadding),
     dimensionsOf(horizontalMargin, verticalMargin),
+    typeface,
+    textAlignment,
+)
+
+/**
+ * Creates a [TextComponent] to be used for axis labels.
+ *
+ * @param color the text color.
+ * @param textSize the text size.
+ * @param background an optional [ShapeComponent] to be displayed behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param padding the padding between the text and the background.
+ * @param margins the margins around the background.
+ * @param typeface the [Typeface] for the text.
+ * @param textAlignment the text alignment.
+ */
+@Composable
+public fun axisLabelComponent(
+    color: Color = currentChartStyle.axis.axisLabelColor,
+    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
+    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    padding: MutableDimensions = dimensionsOf(
+        horizontal = currentChartStyle.axis.axisLabelHorizontalPadding,
+        vertical = currentChartStyle.axis.axisLabelVerticalPadding,
+    ),
+    margins: MutableDimensions = dimensionsOf(
+        horizontal = currentChartStyle.axis.axisLabelHorizontalMargin,
+        vertical = currentChartStyle.axis.axisLabelVerticalMargin,
+    ),
+    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
+    textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
+): TextComponent = textComponent(
+    color,
+    textSize,
+    background,
+    ellipsize,
+    lineCount,
+    padding,
+    margins,
     typeface,
     textAlignment,
 )
