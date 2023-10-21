@@ -145,9 +145,9 @@ public fun lineSpec(
 /**
  * Creates a [LineChart.LineSpec] for use in [LineChart]s.
  *
- * @param lineColor the color of the line.
+ * @param lineFill the [FillStyle] for the line.
  * @param lineThickness the thickness of the line.
- * @param lineBackgroundShader an optional [DynamicShader] to use for the area below the line.
+ * @param lineBackgroundFill an optional [FillStyle] to use for the area below and above the line.
  * @param lineCap the stroke cap for the line.
  * @param point an optional [Component] that can be drawn at a given point on the line.
  * @param pointSize the size of the [point].
