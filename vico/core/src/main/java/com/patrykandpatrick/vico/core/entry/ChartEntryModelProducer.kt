@@ -27,6 +27,9 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -69,18 +72,13 @@ public class ChartEntryModelProducer(
         if (!mutex.tryLock()) return false
         series = entries.copy()
         cachedInternalModel = null
-        var runningUpdateCount = 0
-        updateReceivers
-            .values
-            .takeIf { it.isNotEmpty() }
-            ?.forEach { updateReceiver ->
-                runningUpdateCount++
-                coroutineScope.launch {
-                    updateReceiver.handleUpdate()
-                    if (--runningUpdateCount == 0) mutex.unlock()
-                }
-            }
-            ?: mutex.unlock()
+        val deferredUpdates = updateReceivers.values.map { updateReceiver ->
+            coroutineScope.async { updateReceiver.handleUpdate() }
+        }
+        coroutineScope.launch {
+            deferredUpdates.awaitAll()
+            mutex.unlock()
+        }
         return true
     }
 
@@ -94,24 +92,14 @@ public class ChartEntryModelProducer(
         series = entries.copy()
         cachedInternalModel = null
         val completableDeferred = CompletableDeferred<Unit>()
-        var runningUpdateCount = 0
-        updateReceivers
-            .values
-            .takeIf { it.isNotEmpty() }
-            ?.map { updateReceiver ->
-                runningUpdateCount++
-                coroutineScope.launch {
-                    updateReceiver.handleUpdate()
-                    if (--runningUpdateCount == 0) {
-                        mutex.unlock()
-                        completableDeferred.complete(Unit)
-                    }
-                }
-            }
-            ?: run {
-                mutex.unlock()
-                completableDeferred.complete(Unit)
-            }
+        val deferredUpdates = updateReceivers.values.map { updateReceiver ->
+            coroutineScope.async { updateReceiver.handleUpdate() }
+        }
+        coroutineScope.launch {
+            deferredUpdates.awaitAll()
+            mutex.unlock()
+            completableDeferred.complete(Unit)
+        }
         return completableDeferred
     }
 
