@@ -36,6 +36,7 @@ import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getAutoZoom
@@ -47,7 +48,6 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.chart.values.toChartValuesProvider
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
@@ -170,6 +170,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private var wasZoomOverridden = false
 
     private var chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
+
+    private var horizontalDimensions = MutableHorizontalDimensions()
 
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
 
@@ -434,17 +436,35 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
-        val chartBounds = updateBounds(measureContext, chart, model)
+        measureContext.clearExtras()
+        horizontalDimensions.clear()
+        chart.updateHorizontalDimensions(measureContext, horizontalDimensions, model)
 
-        if (chartBounds.isEmpty) return@withChartAndModel
+        startAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+        topAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+        endAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+        bottomAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+
+        if (
+            virtualLayout
+                .setBounds(
+                    context = measureContext,
+                    contentBounds = contentBounds,
+                    chart = chart,
+                    legend = legend,
+                    horizontalDimensions = horizontalDimensions,
+                    marker,
+                )
+                .isEmpty
+        ) {
+            return@withChartAndModel
+        }
 
         motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
         if (scroller.computeScrollOffset()) {
             scrollHandler.handleScroll(scroller.currX.toFloat())
             ViewCompat.postInvalidateOnAnimation(this)
         }
-
-        val horizontalDimensions = chart.getHorizontalDimensions(measureContext, model)
 
         var finalZoom = zoom
 
@@ -536,22 +556,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             paddingTop,
             width - paddingRight,
             height - paddingBottom,
-        )
-    }
-
-    private fun updateBounds(
-        context: MeasureContext,
-        chart: Chart<Model>,
-        model: Model,
-    ): RectF {
-        measureContext.clearExtras()
-        return virtualLayout.setBounds(
-            context = measureContext,
-            contentBounds = contentBounds,
-            chart = chart,
-            legend = legend,
-            horizontalDimensions = chart.getHorizontalDimensions(context = context, model = model),
-            marker,
         )
     }
 

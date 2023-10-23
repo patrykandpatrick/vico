@@ -46,6 +46,20 @@ public interface AxisItemPlacer {
         ): Boolean = true
 
         /**
+         * Returns a boolean indicating whether the [HorizontalAxis] should reserve room for a label for
+         * [ChartValues.minX]. If `true` is returned, indicating that this behavior is desired, then [getLabelValues]
+         * should request a label for [ChartValues.minX].
+         */
+        public fun getAddFirstLabelPadding(context: MeasureContext): Boolean
+
+        /**
+         * Returns a boolean indicating whether the [HorizontalAxis] should reserve room for a label for
+         * [ChartValues.maxX]. If `true` is returned, indicating that this behavior is desired, then [getLabelValues]
+         * should request a label for [ChartValues.maxX].
+         */
+        public fun getAddLastLabelPadding(context: MeasureContext): Boolean
+
+        /**
          * Returns, as a list, the _x_ values for which labels are to be displayed, restricted to [visibleXRange] and
          * with two extra values on either side (if applicable).
          */
@@ -113,9 +127,15 @@ public interface AxisItemPlacer {
              * [HorizontalLayout.FullWidth], their corresponding ticks and guidelines) to skip from the start.
              * [shiftExtremeTicks] defines whether ticks whose _x_ values are bounds of the _x_-axis value range should
              * be shifted to the edges of the axis bounds, to be aligned with the vertical axes.
+             * [addExtremeLabelPadding] specifies whether, for [HorizontalLayout.FullWidth], padding should be added for
+             * the first and last labels, ensuring their visibility.
              */
-            public fun default(spacing: Int = 1, offset: Int = 0, shiftExtremeTicks: Boolean = true): Horizontal =
-                DefaultHorizontalAxisItemPlacer(spacing, offset, shiftExtremeTicks)
+            public fun default(
+                spacing: Int = 1,
+                offset: Int = 0,
+                shiftExtremeTicks: Boolean = true,
+                addExtremeLabelPadding: Boolean = false,
+            ): Horizontal = DefaultHorizontalAxisItemPlacer(spacing, offset, shiftExtremeTicks, addExtremeLabelPadding)
         }
     }
 

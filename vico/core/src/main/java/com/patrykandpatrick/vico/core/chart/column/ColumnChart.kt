@@ -22,7 +22,6 @@ import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.forEachInAbsolutelyIndexed
@@ -343,23 +342,32 @@ public open class ColumnChart(
         )
     }
 
-    override fun getHorizontalDimensions(
+    override fun updateHorizontalDimensions(
         context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
         model: ChartEntryModel,
-    ): HorizontalDimensions = with(context) {
-        val columnCollectionWidth = getColumnCollectionWidth(if (model.entries.isNotEmpty()) model.entries.size else 1)
-        horizontalDimensions.apply {
-            xSpacing = columnCollectionWidth + spacingDp.pixels
+    ) {
+        with(context) {
+            val columnCollectionWidth =
+                getColumnCollectionWidth(if (model.entries.isNotEmpty()) model.entries.size else 1)
+            val xSpacing = columnCollectionWidth + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> {
-                    scalableStartPadding = xSpacing.half
-                    scalableEndPadding = scalableStartPadding
+                    horizontalDimensions.ensureValuesAtLeast(
+                        xSpacing = xSpacing,
+                        scalableStartPadding = xSpacing.half,
+                        scalableEndPadding = xSpacing.half,
+                    )
                 }
                 is HorizontalLayout.FullWidth -> {
-                    scalableStartPadding = columnCollectionWidth.half + horizontalLayout.scalableStartPaddingDp.pixels
-                    scalableEndPadding = columnCollectionWidth.half + horizontalLayout.scalableEndPaddingDp.pixels
-                    unscalableStartPadding = horizontalLayout.unscalableStartPaddingDp.pixels
-                    unscalableEndPadding = horizontalLayout.unscalableEndPaddingDp.pixels
+                    horizontalDimensions.ensureValuesAtLeast(
+                        xSpacing = xSpacing,
+                        scalableStartPadding = columnCollectionWidth.half +
+                            horizontalLayout.scalableStartPaddingDp.pixels,
+                        scalableEndPadding = columnCollectionWidth.half + horizontalLayout.scalableEndPaddingDp.pixels,
+                        unscalableStartPadding = horizontalLayout.unscalableStartPaddingDp.pixels,
+                        unscalableEndPadding = horizontalLayout.unscalableEndPaddingDp.pixels,
+                    )
                 }
             }
         }

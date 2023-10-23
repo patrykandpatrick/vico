@@ -274,11 +274,6 @@ public open class LineChart(
      */
     protected val lineBackgroundPath: Path = Path()
 
-    /**
-     * Holds information on the [LineChart]’s horizontal dimensions.
-     */
-    protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
-
     protected val drawingModelKey: DrawingModelStore.Key<LineChartDrawingModel> = DrawingModelStore.Key()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
@@ -539,24 +534,30 @@ public open class LineChart(
         }
     }
 
-    override fun getHorizontalDimensions(
+    override fun updateHorizontalDimensions(
         context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
         model: ChartEntryModel,
-    ): HorizontalDimensions = with(context) {
-        val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
-        horizontalDimensions.apply {
-            xSpacing = maxPointSize + spacingDp.pixels
+    ) {
+        with(context) {
+            val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
+            val xSpacing = maxPointSize + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> {
-                    scalableStartPadding = xSpacing.half
-                    scalableEndPadding = scalableStartPadding
+                    horizontalDimensions.ensureValuesAtLeast(
+                        xSpacing = xSpacing,
+                        scalableStartPadding = xSpacing.half,
+                        scalableEndPadding = xSpacing.half,
+                    )
                 }
-
                 is HorizontalLayout.FullWidth -> {
-                    scalableStartPadding = horizontalLayout.scalableStartPaddingDp.pixels
-                    scalableEndPadding = horizontalLayout.scalableEndPaddingDp.pixels
-                    unscalableStartPadding = maxPointSize.half + horizontalLayout.unscalableStartPaddingDp.pixels
-                    unscalableEndPadding = maxPointSize.half + horizontalLayout.unscalableEndPaddingDp.pixels
+                    horizontalDimensions.ensureValuesAtLeast(
+                        xSpacing = xSpacing,
+                        scalableStartPadding = horizontalLayout.scalableStartPaddingDp.pixels,
+                        scalableEndPadding = horizontalLayout.scalableEndPaddingDp.pixels,
+                        unscalableStartPadding = maxPointSize.half + horizontalLayout.unscalableStartPaddingDp.pixels,
+                        unscalableEndPadding = maxPointSize.half + horizontalLayout.unscalableEndPaddingDp.pixels,
+                    )
                 }
             }
         }

@@ -99,6 +99,7 @@
         <attr name="horizontalAxisLabelSpacing" format="integer" />
         <attr name="horizontalAxisLabelOffset" format="integer" />
         <attr name="shiftExtremeHorizontalAxisTicks" format="boolean" />
+        <attr name="addExtremeHorizontalAxisLabelPadding" format="boolean" />
         <attr name="shiftTopVerticalAxisLines" format="boolean" />
         <attr name="maxVerticalAxisItemCount" format="integer" />
     </declare-styleable>

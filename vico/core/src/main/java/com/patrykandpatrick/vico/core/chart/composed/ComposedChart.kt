@@ -55,8 +55,6 @@ public class ComposedChart<Model : ChartEntryModel>(
 
     private val tempInsets = Insets()
 
-    private val horizontalDimensions = MutableHorizontalDimensions()
-
     override val entryLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
 
     override val chartInsetters: Collection<ChartInsetter>
@@ -101,22 +99,14 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun getHorizontalDimensions(
+    override fun updateHorizontalDimensions(
         context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
         model: ComposedChartEntryModel<Model>,
-    ): HorizontalDimensions {
-        horizontalDimensions.clear()
+    ) {
         model.forEachModelWithChart { item, chart ->
-            val chartHorizontalDimensions = chart.getHorizontalDimensions(context, item)
-            horizontalDimensions.apply {
-                xSpacing = maxOf(xSpacing, chartHorizontalDimensions.xSpacing)
-                scalableStartPadding = maxOf(scalableStartPadding, chartHorizontalDimensions.scalableStartPadding)
-                scalableEndPadding = maxOf(scalableEndPadding, chartHorizontalDimensions.scalableEndPadding)
-                unscalableStartPadding = maxOf(unscalableStartPadding, chartHorizontalDimensions.unscalableStartPadding)
-                unscalableEndPadding = maxOf(unscalableEndPadding, chartHorizontalDimensions.unscalableEndPadding)
-            }
+            chart.updateHorizontalDimensions(context, horizontalDimensions, item)
         }
-        return horizontalDimensions
     }
 
     override fun updateChartValues(

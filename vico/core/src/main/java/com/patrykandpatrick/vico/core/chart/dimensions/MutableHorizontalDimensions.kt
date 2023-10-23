@@ -60,6 +60,23 @@ public data class MutableHorizontalDimensions(
     )
 
     /**
+     * Ensures that the stored values are no smaller than the provided ones.
+     */
+    public fun ensureValuesAtLeast(
+        xSpacing: Float = 0f,
+        scalableStartPadding: Float = 0f,
+        scalableEndPadding: Float = 0f,
+        unscalableStartPadding: Float = 0f,
+        unscalableEndPadding: Float = 0f,
+    ): MutableHorizontalDimensions = set(
+        this.xSpacing.coerceAtLeast(xSpacing),
+        this.scalableStartPadding.coerceAtLeast(scalableStartPadding),
+        this.scalableEndPadding.coerceAtLeast(scalableEndPadding),
+        this.unscalableStartPadding.coerceAtLeast(unscalableStartPadding),
+        this.unscalableEndPadding.coerceAtLeast(unscalableEndPadding),
+    )
+
+    /**
      * Clears the stored values.
      */
     public fun clear() {

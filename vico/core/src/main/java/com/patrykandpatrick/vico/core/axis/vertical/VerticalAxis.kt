@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabel
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
@@ -181,6 +182,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             )
         }
     }
+
+    override fun updateHorizontalDimensions(
+        context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
+    ): Unit = Unit
 
     private fun ChartDrawContext.drawLabel(
         label: TextComponent,

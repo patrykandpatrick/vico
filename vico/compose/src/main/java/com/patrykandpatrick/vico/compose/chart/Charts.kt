@@ -61,6 +61,7 @@ import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getAutoZoom
@@ -287,6 +288,7 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     var previousModelID by remember { ValueWrapper(model.id) }
+    val horizontalDimensions = remember { MutableHorizontalDimensions() }
 
     val onZoom = rememberZoomState(
         zoom = zoom,
@@ -312,18 +314,28 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
-        val horizontalDimensions = chart.getHorizontalDimensions(measureContext, model)
+        horizontalDimensions.clear()
+        chart.updateHorizontalDimensions(measureContext, horizontalDimensions, model)
 
-        val chartBounds = virtualLayout.setBounds(
-            context = measureContext,
-            contentBounds = bounds,
-            chart = chart,
-            legend = legend,
-            horizontalDimensions = horizontalDimensions,
-            marker,
-        )
+        startAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+        topAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+        endAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+        bottomAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
 
-        if (chartBounds.isEmpty) return@Canvas
+        if (
+            virtualLayout
+                .setBounds(
+                    context = measureContext,
+                    contentBounds = bounds,
+                    chart = chart,
+                    legend = legend,
+                    horizontalDimensions = horizontalDimensions,
+                    marker,
+                )
+                .isEmpty
+        ) {
+            return@Canvas
+        }
 
         var finalZoom = zoom.floatValue
 

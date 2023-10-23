@@ -22,11 +22,13 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
@@ -114,7 +116,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 layoutDirectionMultiplier
             val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
             val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
-            val maxWidth = (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing).toInt()
+            val maxWidth =
+                (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing).ceil.toInt()
 
             label?.drawText(
                 context = context,
@@ -223,6 +226,33 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         } * layoutDirectionMultiplier
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
+
+    override fun updateHorizontalDimensions(
+        context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
+    ) {
+        val chartValues = context.chartValuesProvider.getChartValues()
+        horizontalDimensions.ensureValuesAtLeast(
+            unscalableStartPadding = label
+                .takeIf { itemPlacer.getAddFirstLabelPadding(context) }
+                ?.getWidth(
+                    context = context,
+                    text = valueFormatter.formatValue(chartValues.minX, chartValues),
+                    pad = true,
+                )
+                ?.half
+                .orZero,
+            unscalableEndPadding = label
+                .takeIf { itemPlacer.getAddLastLabelPadding(context) }
+                ?.getWidth(
+                    context = context,
+                    text = valueFormatter.formatValue(chartValues.maxX, chartValues),
+                    pad = true,
+                )
+                ?.half
+                .orZero,
+        )
+    }
 
     override fun getInsets(
         context: MeasureContext,

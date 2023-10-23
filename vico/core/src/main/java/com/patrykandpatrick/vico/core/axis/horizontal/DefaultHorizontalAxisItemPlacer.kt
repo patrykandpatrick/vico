@@ -28,9 +28,19 @@ internal class DefaultHorizontalAxisItemPlacer(
     private val spacing: Int,
     private val offset: Int,
     private val shiftExtremeTicks: Boolean,
+    private val addExtremeLabelPadding: Boolean,
 ) : AxisItemPlacer.Horizontal {
 
     override fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = shiftExtremeTicks
+
+    override fun getAddFirstLabelPadding(context: MeasureContext) =
+        context.horizontalLayout is HorizontalLayout.FullWidth && addExtremeLabelPadding && offset == 0
+
+    override fun getAddLastLabelPadding(context: MeasureContext): Boolean {
+        val chartValues = context.chartValuesProvider.getChartValues()
+        return context.horizontalLayout is HorizontalLayout.FullWidth && addExtremeLabelPadding &&
+            (chartValues.maxX - chartValues.minX - chartValues.xStep * offset) % (chartValues.xStep * spacing) == 0f
+    }
 
     @Suppress("LoopWithTooManyJumpStatements")
     override fun getLabelValues(

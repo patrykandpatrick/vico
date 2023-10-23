@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.chart
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.line.LineChart
@@ -182,13 +182,13 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
     public fun removePersistentMarker(x: Float)
 
     /**
-     * Called to get the [HorizontalDimensions] of this chart. The [HorizontalDimensions] influence the look of various
-     * parts of the chart.
-     *
-     * @param context holds data used for component measurements.
-     * @param model holds data about the [Chart]’s entries.
+     * Updates the chart’s [MutableHorizontalDimensions] instance.
      */
-    public fun getHorizontalDimensions(context: MeasureContext, model: Model): HorizontalDimensions
+    public fun updateHorizontalDimensions(
+        context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
+        model: Model,
+    )
 
     /**
      * Updates the [ChartValues] stored in the provided [ChartValuesManager] instance to this [Chart]’s [ChartValues].

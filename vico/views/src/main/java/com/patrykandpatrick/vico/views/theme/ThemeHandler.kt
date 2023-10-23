@@ -220,6 +220,7 @@ internal class ThemeHandler(
                         axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1),
                         axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0),
                         axisStyle.getBoolean(R.styleable.Axis_shiftExtremeHorizontalAxisTicks, true),
+                        axisStyle.getBoolean(R.styleable.Axis_addExtremeHorizontalAxisLabelPadding, false),
                     )
                 }
             }
