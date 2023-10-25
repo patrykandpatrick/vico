@@ -32,7 +32,7 @@ public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : D
     private var oldDrawingModel: R? = null
     private var newDrawingModel: R? = null
 
-    override fun setModels(old: R?, new: R) {
+    override fun setModels(old: R?, new: R?) {
         synchronized(this) {
             oldDrawingModel = old
             newDrawingModel = new
@@ -40,23 +40,19 @@ public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : D
         }
     }
 
-    override suspend fun transform(fraction: Float): R {
-        val newDrawingModel = newDrawingModel
-        check(newDrawingModel != null)
-        return newDrawingModel.transform(
-            drawingInfo = transformationMaps.mapNotNull { map ->
-                map
-                    .mapNotNull { (x, model) ->
-                        currentCoroutineContext().ensureActive()
-                        model.transform(fraction)?.let { drawingInfo -> x to drawingInfo }
-                    }
-                    .takeIf { list -> list.isNotEmpty() }
-                    ?.toMap()
-            },
-            from = oldDrawingModel,
-            fraction = fraction,
-        ) as R
-    }
+    override suspend fun transform(fraction: Float): R? = newDrawingModel?.transform(
+        drawingInfo = transformationMaps.mapNotNull { map ->
+            map
+                .mapNotNull { (x, model) ->
+                    currentCoroutineContext().ensureActive()
+                    model.transform(fraction)?.let { drawingInfo -> x to drawingInfo }
+                }
+                .takeIf { list -> list.isNotEmpty() }
+                ?.toMap()
+        },
+        from = oldDrawingModel,
+        fraction = fraction,
+    ) as R?
 
     private fun updateTransformationMap() {
         transformationMaps = buildList {

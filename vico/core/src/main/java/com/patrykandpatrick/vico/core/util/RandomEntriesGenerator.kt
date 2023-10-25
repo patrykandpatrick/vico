@@ -52,7 +52,7 @@ public class RandomEntriesGenerator(
      * The size of the collection is equal to the number of values in [xRange].
      */
     public fun randomEntryModel(): ChartEntryModel =
-        getChartEntryModelProducer().getModel()
+        getChartEntryModelProducer().requireModel()
 
     /**
      * Creates a [ComposedChartEntryModel] with three [ChartEntryModelProducer]s, each containing a collection of
@@ -61,7 +61,7 @@ public class RandomEntriesGenerator(
      */
     public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> = ComposedChartEntryModelProducer
         .build { repeat(MODEL_SIZE) { add(List(MODEL_SIZE) { generateRandomEntries() }) } }
-        .getModel()
+        .requireModel()
 
     private companion object {
         const val X_RANGE_TOP = 10

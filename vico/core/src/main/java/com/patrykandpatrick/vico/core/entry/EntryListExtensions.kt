@@ -27,7 +27,7 @@ public fun entryModelOf(vararg entries: Pair<Number, Number>): ChartEntryModel =
     entries
         .map { (x, y) -> entryOf(x.toFloat(), y.toFloat()) }
         .let { entryList -> ChartEntryModelProducer(listOf(entryList)) }
-        .getModel()
+        .requireModel()
 
 /**
  * Creates a [ChartEntryModel] out of the provided array of numbers, treating each number’s index as the _x_ value, and
@@ -37,7 +37,7 @@ public fun entryModelOf(vararg values: Number): ChartEntryModel =
     values
         .mapIndexed { index, value -> entryOf(index.toFloat(), value.toFloat()) }
         .let { entryList -> ChartEntryModelProducer(listOf(entryList)) }
-        .getModel()
+        .requireModel()
 
 /**
  * Creates a [ChartEntryModel] out of the provided list of list of [FloatEntry] instances.
@@ -45,4 +45,4 @@ public fun entryModelOf(vararg values: Number): ChartEntryModel =
  * This can be used to create [LineChart]s with multiple lines and [ColumnChart]s with grouped or stacked columns.
  */
 public fun entryModelOf(vararg values: List<FloatEntry>): ChartEntryModel =
-    ChartEntryModelProducer(values.toList()).getModel()
+    ChartEntryModelProducer(values.toList()).requireModel()

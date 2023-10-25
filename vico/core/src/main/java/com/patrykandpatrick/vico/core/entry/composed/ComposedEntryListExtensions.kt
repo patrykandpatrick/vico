@@ -32,4 +32,4 @@ public operator fun <Model : ChartEntryModel> Model.plus(other: Model): Composed
             if (this@plus is ComposedChartEntryModel<*>) add(composedEntryCollections) else add(entries)
             if (other is ComposedChartEntryModel<*>) add(other.composedEntryCollections) else add(other.entries)
         }
-        .getModel()
+        .requireModel()

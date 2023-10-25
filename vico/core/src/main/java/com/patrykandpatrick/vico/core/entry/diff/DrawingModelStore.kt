@@ -76,5 +76,12 @@ public class MutableDrawingModelStore internal constructor(
         mapDelegate[key] = value
     }
 
+    /**
+     * Removes the value associated with the provided key.
+     */
+    public fun <T : DrawingModel<*>> remove(key: Key<T>) {
+        mapDelegate.remove(key)
+    }
+
     override fun copy(): DrawingModelStore = MutableDrawingModelStore(mapDelegate)
 }

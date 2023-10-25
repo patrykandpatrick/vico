@@ -63,7 +63,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
     chartValuesManager: ChartValuesManager,
     getXStep: ((Model) -> Float)?,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
-): State<ChartEntryModelWrapper<Model>?> {
+): State<ChartEntryModelWrapper<Model>> {
     val chartEntryModelWrapperState = remember(chart, producerKey) { ChartEntryModelWrapperState<Model>() }
     val modelTransformerProvider = remember(chart) { chart.modelTransformerProvider }
     val drawingModelStore = remember(chart) { MutableDrawingModelStore() }
@@ -78,7 +78,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
         var chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
         val afterUpdate: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit = { progressModel ->
             if (animationSpec != null && !isInPreview &&
-                (chartEntryModelWrapperState.value != null || runInitialAnimation)
+                (chartEntryModelWrapperState.value.chartEntryModel != null || runInitialAnimation)
             ) {
                 isAnimationRunning = true
                 mainAnimationJob = scope.launch(dispatcher) {
@@ -122,13 +122,17 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                     isAnimationRunning = false
                 },
                 startAnimation = afterUpdate,
-                getOldModel = { chartEntryModelWrapperState.value?.chartEntryModel },
+                getOldModel = { chartEntryModelWrapperState.value.chartEntryModel },
                 modelTransformerProvider = modelTransformerProvider,
                 drawingModelStore = drawingModelStore,
                 updateChartValues = { model ->
                     chartValuesManager.resetChartValues()
-                    chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
-                    chartValuesManager.toChartValuesProvider().also { provider -> chartValuesProvider = provider }
+                    if (model != null) {
+                        chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+                        chartValuesManager.toChartValuesProvider()
+                    } else {
+                        ChartValuesProvider.Empty
+                    }.also { provider -> chartValuesProvider = provider }
                 },
             ) { chartEntryModel ->
                 chartEntryModelWrapperState.set(chartEntryModel, chartValuesProvider)

@@ -30,15 +30,15 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModel
  */
 @Immutable
 public class ChartEntryModelWrapper<T : ChartEntryModel>(
-    public val chartEntryModel: T,
-    public val previousChartEntryModel: T?,
-    public val chartValuesProvider: ChartValuesProvider,
+    public val chartEntryModel: T? = null,
+    public val previousChartEntryModel: T? = null,
+    public val chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty,
 )
 
 /**
  * Returns [ChartEntryModelWrapper.chartEntryModel].
  */
-public operator fun <T : ChartEntryModel> ChartEntryModelWrapper<T>.component1(): T = chartEntryModel
+public operator fun <T : ChartEntryModel> ChartEntryModelWrapper<T>.component1(): T? = chartEntryModel
 
 /**
  * Returns [ChartEntryModelWrapper.previousChartEntryModel].
@@ -51,15 +51,15 @@ public operator fun <T : ChartEntryModel> ChartEntryModelWrapper<T>.component2()
 public operator fun <T : ChartEntryModel> ChartEntryModelWrapper<T>.component3(): ChartValuesProvider =
     chartValuesProvider
 
-internal class ChartEntryModelWrapperState<T : ChartEntryModel> : State<ChartEntryModelWrapper<T>?> {
+internal class ChartEntryModelWrapperState<T : ChartEntryModel> : State<ChartEntryModelWrapper<T>> {
     private var previousChartEntryModel: T? = null
 
-    override var value by mutableStateOf<ChartEntryModelWrapper<T>?>(null)
+    override var value by mutableStateOf<ChartEntryModelWrapper<T>>(ChartEntryModelWrapper())
         private set
 
-    fun set(chartEntryModel: T, chartValuesProvider: ChartValuesProvider) {
-        val currentChartEntryModel = value?.chartEntryModel
-        if (chartEntryModel.id != currentChartEntryModel?.id) previousChartEntryModel = currentChartEntryModel
+    fun set(chartEntryModel: T?, chartValuesProvider: ChartValuesProvider) {
+        val currentChartEntryModel = value.chartEntryModel
+        if (chartEntryModel?.id != currentChartEntryModel?.id) previousChartEntryModel = currentChartEntryModel
         value = ChartEntryModelWrapper(chartEntryModel, previousChartEntryModel, chartValuesProvider)
     }
 }

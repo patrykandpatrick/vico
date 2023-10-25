@@ -34,7 +34,7 @@ public class ChartEntryModelProducerTest {
 
     @Test
     public fun `Test Min Max calculations`() {
-        val entryList = ChartEntryModelProducer(entries1, entries2, entries3).getModel()
+        val entryList = ChartEntryModelProducer(entries1, entries2, entries3).requireModel()
         assertEquals(minX, entryList.minX)
         assertEquals(maxX, entryList.maxX)
         assertEquals(minY, entryList.minY)

@@ -455,18 +455,21 @@ public open class ColumnChart(
 
         override fun prepareForTransformation(
             oldModel: ChartEntryModel?,
-            newModel: ChartEntryModel,
+            newModel: ChartEntryModel?,
             drawingModelStore: MutableDrawingModelStore,
             chartValuesProvider: ChartValuesProvider,
         ) {
             drawingModelInterpolator.setModels(
                 drawingModelStore.getOrNull(key),
-                newModel.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
+                newModel?.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
             )
         }
 
         override suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
-            drawingModelStore[key] = drawingModelInterpolator.transform(fraction)
+            drawingModelInterpolator
+                .transform(fraction)
+                ?.let { drawingModelStore[key] = it }
+                ?: drawingModelStore.remove(key)
         }
 
         private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): ColumnChartDrawingModel = entries

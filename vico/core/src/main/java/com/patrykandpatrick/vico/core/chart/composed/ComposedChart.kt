@@ -164,7 +164,7 @@ public class ComposedChart<Model : ChartEntryModel>(
 
         override fun prepareForTransformation(
             oldModel: T?,
-            newModel: T,
+            newModel: T?,
             drawingModelStore: MutableDrawingModelStore,
             chartValuesProvider: ChartValuesProvider,
         ) {

@@ -29,7 +29,6 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.launch
@@ -119,26 +118,30 @@ public class ChartEntryModelProducer(
         setEntriesSuspending(entries.toList())
 
     private fun getInternalModel(drawingModelStore: DrawingModelStore = DrawingModelStore.empty) =
-        cachedInternalModel?.copy(drawingModelStore = drawingModelStore)
-            ?: run {
-                val xRange = series.xRange
-                val yRange = series.yRange
-                val aggregateYRange = series.calculateStackedYRange()
-                InternalModel(
-                    entries = series,
-                    minX = xRange.start,
-                    maxX = xRange.endInclusive,
-                    minY = yRange.start,
-                    maxY = yRange.endInclusive,
-                    stackedPositiveY = aggregateYRange.endInclusive,
-                    stackedNegativeY = aggregateYRange.start,
-                    xGcd = series.calculateXGcd(),
-                    id = series.hashCode(),
-                    drawingModelStore = drawingModelStore,
-                ).also { cachedInternalModel = it }
-            }
+        if (series.isEmpty()) {
+            null
+        } else {
+            cachedInternalModel?.copy(drawingModelStore = drawingModelStore)
+                ?: run {
+                    val xRange = series.xRange
+                    val yRange = series.yRange
+                    val aggregateYRange = series.calculateStackedYRange()
+                    InternalModel(
+                        entries = series,
+                        minX = xRange.start,
+                        maxX = xRange.endInclusive,
+                        minY = yRange.start,
+                        maxY = yRange.endInclusive,
+                        stackedPositiveY = aggregateYRange.endInclusive,
+                        stackedNegativeY = aggregateYRange.start,
+                        xGcd = series.calculateXGcd(),
+                        id = series.hashCode(),
+                        drawingModelStore = drawingModelStore,
+                    ).also { cachedInternalModel = it }
+                }
+        }
 
-    override fun getModel(): ChartEntryModel = getInternalModel()
+    override fun getModel(): ChartEntryModel? = getInternalModel()
 
     override suspend fun progressModel(key: Any, progress: Float) {
         with(updateReceivers[key] ?: return) {
@@ -157,8 +160,8 @@ public class ChartEntryModelProducer(
         getOldModel: () -> ChartEntryModel?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        updateChartValues: (ChartEntryModel) -> ChartValuesProvider,
-        onModelCreated: (ChartEntryModel) -> Unit,
+        updateChartValues: (ChartEntryModel?) -> ChartValuesProvider,
+        onModelCreated: (ChartEntryModel?) -> Unit,
     ) {
         UpdateReceiver(
             cancelAnimation,
@@ -183,11 +186,11 @@ public class ChartEntryModelProducer(
     private inner class UpdateReceiver(
         val cancelAnimation: () -> Unit,
         val startAnimation: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit,
-        val onModelCreated: (ChartEntryModel) -> Unit,
+        val onModelCreated: (ChartEntryModel?) -> Unit,
         val drawingModelStore: MutableDrawingModelStore,
         val modelTransformer: Chart.ModelTransformer<ChartEntryModel>?,
         val getOldModel: () -> ChartEntryModel?,
-        val updateChartValues: (ChartEntryModel) -> ChartValuesProvider,
+        val updateChartValues: (ChartEntryModel?) -> ChartValuesProvider,
     ) {
         fun handleUpdate() {
             cancelAnimation()

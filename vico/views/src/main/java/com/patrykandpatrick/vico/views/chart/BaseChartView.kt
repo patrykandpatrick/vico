@@ -24,9 +24,12 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
+import android.view.ViewGroup
 import android.view.animation.Interpolator
+import android.widget.FrameLayout
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
+import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
@@ -66,7 +69,7 @@ import com.patrykandpatrick.vico.views.extension.defaultColors
 import com.patrykandpatrick.vico.views.extension.density
 import com.patrykandpatrick.vico.views.extension.dpInt
 import com.patrykandpatrick.vico.views.extension.isLtr
-import com.patrykandpatrick.vico.views.extension.measureDimension
+import com.patrykandpatrick.vico.views.extension.specMode
 import com.patrykandpatrick.vico.views.extension.specSize
 import com.patrykandpatrick.vico.views.extension.verticalPadding
 import com.patrykandpatrick.vico.views.gestures.ChartScaleGestureListener
@@ -95,7 +98,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     attrs: AttributeSet? = null,
     defStyleAttr: Int = 0,
     chartType: ThemeHandler.ChartType,
-) : View(context, attrs, defStyleAttr), ScrollListenerHost {
+) : FrameLayout(context, attrs, defStyleAttr), ScrollListenerHost {
 
     private val contentBounds = RectF()
 
@@ -155,6 +158,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private var finalAnimationFrameJob: Job? = null
 
+    private var isAnimationRunning = false
+
     private var isAnimationFrameGenerationRunning: Boolean = false
 
     private var markerTouchPoint: Point? = null
@@ -174,6 +179,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private var horizontalDimensions = MutableHorizontalDimensions()
 
     internal val themeHandler: ThemeHandler = ThemeHandler(context, attrs, chartType)
+
+    protected var placeholder: View? = null
 
     /**
      * The [AxisRenderer] for the start axis.
@@ -276,10 +283,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 cancelAnimation = {
                     handler?.post(animator::cancel)
                     mainAnimationJob?.cancel()
+                    isAnimationRunning = false
                 },
                 startAnimation = {
                     if (model != null || runInitialAnimation) {
-                        handler?.post(animator::start)
+                        handler?.post {
+                            isAnimationRunning = true
+                            animator.start()
+                        }
                     } else {
                         progressModelOnAnimationProgress(progress = Animation.range.endInclusive)
                     }
@@ -289,10 +300,15 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 drawingModelStore = drawingModelStore,
                 updateChartValues = { model ->
                     chartValuesManager.resetChartValues()
-                    chart?.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
-                    chartValuesManager.toChartValuesProvider().also { provider -> chartValuesProvider = provider }
+                    if (model != null) {
+                        chart?.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+                        chartValuesManager.toChartValuesProvider()
+                    } else {
+                        ChartValuesProvider.Empty
+                    }.also { provider -> chartValuesProvider = provider }
                 },
             ) { model ->
+                val chartValuesProvider = chartValuesProvider
                 post {
                     setModel(model = model, updateChartValues = false)
                     measureContext.chartValuesProvider = chartValuesProvider
@@ -312,6 +328,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         super.onDetachedFromWindow()
         coroutineScope?.cancel()
         coroutineScope = null
+        animator.cancel()
+        isAnimationRunning = false
         entryProducer?.unregisterFromUpdates(key = this)
     }
 
@@ -358,16 +376,17 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * Sets the [Model] for this [BaseChartView]’s [Chart] instance ([chart]).
      */
-    public fun setModel(model: Model) {
+    public fun setModel(model: Model?) {
         setModel(model = model, updateChartValues = true)
     }
 
-    private fun setModel(model: Model, updateChartValues: Boolean) {
+    private fun setModel(model: Model?, updateChartValues: Boolean) {
         val oldModel = this.model
         this.model = model
+        updatePlaceholderVisibility()
         tryInvalidate(chart, model, updateChartValues)
-        if (ViewCompat.isAttachedToWindow(this) && oldModel?.id != model.id && isInEditMode.not()) {
-            handler.post {
+        if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
+            handler?.post {
                 chartScrollSpec.performAutoScroll(
                     model = model,
                     oldModel = oldModel,
@@ -435,128 +454,157 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         markerTouchPoint = point
     }
 
-    override fun dispatchDraw(canvas: Canvas): Unit = withChartAndModel { chart, model ->
-        measureContext.clearExtras()
-        horizontalDimensions.clear()
-        chart.updateHorizontalDimensions(measureContext, horizontalDimensions, model)
+    override fun dispatchDraw(canvas: Canvas) {
+        super.dispatchDraw(canvas)
 
-        startAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-        topAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-        endAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-        bottomAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+        withChartAndModel { chart, model ->
+            measureContext.clearExtras()
+            horizontalDimensions.clear()
+            chart.updateHorizontalDimensions(measureContext, horizontalDimensions, model)
 
-        if (
-            virtualLayout
-                .setBounds(
-                    context = measureContext,
-                    contentBounds = contentBounds,
-                    chart = chart,
-                    legend = legend,
-                    horizontalDimensions = horizontalDimensions,
-                    marker,
-                )
-                .isEmpty
-        ) {
-            return@withChartAndModel
-        }
+            startAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+            topAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+            endAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
+            bottomAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
 
-        motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
-        if (scroller.computeScrollOffset()) {
-            scrollHandler.handleScroll(scroller.currX.toFloat())
-            ViewCompat.postInvalidateOnAnimation(this)
-        }
+            if (
+                virtualLayout
+                    .setBounds(
+                        context = measureContext,
+                        contentBounds = contentBounds,
+                        chart = chart,
+                        legend = legend,
+                        horizontalDimensions = horizontalDimensions,
+                        marker,
+                    )
+                    .isEmpty
+            ) {
+                return@withChartAndModel
+            }
 
-        var finalZoom = zoom
+            motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
+            if (scroller.computeScrollOffset()) {
+                scrollHandler.handleScroll(scroller.currX.toFloat())
+                ViewCompat.postInvalidateOnAnimation(this)
+            }
 
-        if (!wasZoomOverridden || !chartScrollSpec.isScrollEnabled) {
-            finalZoom = measureContext.getAutoZoom(horizontalDimensions, chart.bounds, autoScaleUp)
-            if (chartScrollSpec.isScrollEnabled) zoom = finalZoom
-        }
+            var finalZoom = zoom
 
-        scrollHandler.maxValue = measureContext.getMaxScrollDistance(
-            chartWidth = chart.bounds.width(),
-            horizontalDimensions = horizontalDimensions,
-            zoom = finalZoom,
-        )
+            if (!wasZoomOverridden || !chartScrollSpec.isScrollEnabled) {
+                finalZoom = measureContext.getAutoZoom(horizontalDimensions, chart.bounds, autoScaleUp)
+                if (chartScrollSpec.isScrollEnabled) zoom = finalZoom
+            }
 
-        scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
-
-        val chartDrawContext = chartDrawContext(
-            canvas = canvas,
-            elevationOverlayColor = elevationOverlayColor,
-            measureContext = measureContext,
-            markerTouchPoint = markerTouchPoint,
-            horizontalDimensions = horizontalDimensions,
-            chartBounds = chart.bounds,
-            horizontalScroll = scrollHandler.value,
-            zoom = finalZoom,
-        )
-
-        val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
-
-        axisManager.drawBehindChart(chartDrawContext)
-        chart.drawScrollableContent(chartDrawContext, model)
-
-        fadingEdges?.apply {
-            applyFadingEdges(chartDrawContext, chart.bounds)
-            chartDrawContext.restoreCanvasToCount(count)
-        }
-
-        axisManager.drawAboveChart(chartDrawContext)
-        chart.drawNonScrollableContent(chartDrawContext, model)
-        legend?.draw(chartDrawContext)
-
-        marker?.also { marker ->
-            chartDrawContext.drawMarker(
-                marker = marker,
-                markerTouchPoint = markerTouchPoint,
-                chart = chart,
-                markerVisibilityChangeListener = markerVisibilityChangeListener,
-                wasMarkerVisible = wasMarkerVisible,
-                setWasMarkerVisible = { wasMarkerVisible = it },
-                lastMarkerEntryModels = lastMarkerEntryModels,
-                onMarkerEntryModelsChange = { lastMarkerEntryModels = it },
+            scrollHandler.maxValue = measureContext.getMaxScrollDistance(
+                chartWidth = chart.bounds.width(),
+                horizontalDimensions = horizontalDimensions,
+                zoom = finalZoom,
             )
+
+            scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
+
+            val chartDrawContext = chartDrawContext(
+                canvas = canvas,
+                elevationOverlayColor = elevationOverlayColor,
+                measureContext = measureContext,
+                markerTouchPoint = markerTouchPoint,
+                horizontalDimensions = horizontalDimensions,
+                chartBounds = chart.bounds,
+                horizontalScroll = scrollHandler.value,
+                zoom = finalZoom,
+            )
+
+            val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
+
+            axisManager.drawBehindChart(chartDrawContext)
+            chart.drawScrollableContent(chartDrawContext, model)
+
+            fadingEdges?.apply {
+                applyFadingEdges(chartDrawContext, chart.bounds)
+                chartDrawContext.restoreCanvasToCount(count)
+            }
+
+            axisManager.drawAboveChart(chartDrawContext)
+            chart.drawNonScrollableContent(chartDrawContext, model)
+            legend?.draw(chartDrawContext)
+
+            marker?.also { marker ->
+                chartDrawContext.drawMarker(
+                    marker = marker,
+                    markerTouchPoint = markerTouchPoint,
+                    chart = chart,
+                    markerVisibilityChangeListener = markerVisibilityChangeListener,
+                    wasMarkerVisible = wasMarkerVisible,
+                    setWasMarkerVisible = { wasMarkerVisible = it },
+                    lastMarkerEntryModels = lastMarkerEntryModels,
+                    onMarkerEntryModelsChange = { lastMarkerEntryModels = it },
+                )
+            }
+            measureContext.reset()
         }
-        measureContext.reset()
     }
 
     private fun progressModelOnAnimationProgress(progress: Float) {
-        if (!isAnimationFrameGenerationRunning) {
-            isAnimationFrameGenerationRunning = true
-            mainAnimationJob = coroutineScope?.launch(dispatcher) {
-                entryProducer?.progressModel(this@BaseChartView, progress)
-                isAnimationFrameGenerationRunning = false
+        when {
+            !isAnimationRunning -> return
+            !isAnimationFrameGenerationRunning -> {
+                isAnimationFrameGenerationRunning = true
+                mainAnimationJob = coroutineScope?.launch(dispatcher) {
+                    entryProducer?.progressModel(this@BaseChartView, progress)
+                    isAnimationFrameGenerationRunning = false
+                }
             }
-        } else if (progress == 1f) {
-            finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
-                mainAnimationJob?.cancelAndJoin()
-                entryProducer?.progressModel(this@BaseChartView, progress)
-                isAnimationFrameGenerationRunning = false
+            progress == 1f -> {
+                finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
+                    mainAnimationJob?.cancelAndJoin()
+                    entryProducer?.progressModel(this@BaseChartView, progress)
+                    isAnimationFrameGenerationRunning = false
+                }
             }
         }
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
-
-        val height = when (MeasureSpec.getMode(heightMeasureSpec)) {
-            MeasureSpec.UNSPECIFIED -> DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
-            MeasureSpec.AT_MOST -> minOf(
-                DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding,
-                heightMeasureSpec.specSize,
-            )
-
-            else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
-        }
-        setMeasuredDimension(width, height)
-
-        contentBounds.set(
-            paddingLeft,
-            paddingTop,
-            width - paddingRight,
-            height - paddingBottom,
+        val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
+        val defaultHeight = DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
+        val height = when (heightMeasureSpec.specMode) {
+            MeasureSpec.EXACTLY -> heightMeasureSpec.specSize
+            MeasureSpec.AT_MOST -> defaultHeight.coerceAtMost(heightMeasureSpec.specSize)
+            else -> defaultHeight
+        }.coerceAtLeast(suggestedMinimumHeight)
+        super.onMeasure(
+            MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+            MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
         )
+        contentBounds
+            .set(left = paddingLeft, top = paddingTop, right = width - paddingRight, bottom = height - paddingBottom)
+    }
+
+    override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams?) {
+        check(childCount == 0) { "Only one placeholder can be added." }
+        super.addView(child, index, params)
+        placeholder = child
+        updatePlaceholderVisibility()
+    }
+
+    override fun onViewRemoved(child: View?) {
+        super.onViewRemoved(child)
+        placeholder = null
+    }
+
+    /**
+     * Updates the placeholder, which is shown when no [ChartEntryModel] is available.
+     */
+    public fun setPlaceholder(view: View?, params: LayoutParams? = null) {
+        if (view === placeholder) return
+        removeAllViews()
+        if (view != null) addView(view, params)
+        placeholder = view
+        updatePlaceholderVisibility()
+    }
+
+    protected fun updatePlaceholderVisibility() {
+        placeholder?.isVisible = model == null
     }
 
     private inline fun withChartAndModel(block: (chart: Chart<Model>, model: Model) -> Unit) {

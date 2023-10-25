@@ -228,7 +228,7 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
          */
         public abstract fun prepareForTransformation(
             oldModel: Model?,
-            newModel: Model,
+            newModel: Model?,
             drawingModelStore: MutableDrawingModelStore,
             chartValuesProvider: ChartValuesProvider,
         )

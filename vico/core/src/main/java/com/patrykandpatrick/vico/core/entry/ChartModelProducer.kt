@@ -29,9 +29,14 @@ import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 public interface ChartModelProducer<Model : ChartEntryModel> {
 
     /**
-     * Returns the [ChartEntryModel] for this [ChartModelProducer] synchronously.
+     * Returns the [ChartEntryModel] or, if no [ChartEntryModel] is available, `null`.
      */
-    public fun getModel(): Model
+    public fun getModel(): Model?
+
+    /**
+     * Returns the [ChartEntryModel] or, if no [ChartEntryModel] is available, throws an exception.
+     */
+    public fun requireModel(): Model = getModel()!!
 
     /**
      * Calculates an intermediate list of entries for difference animations for the associated [key], where [progress]
@@ -54,8 +59,8 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
         getOldModel: () -> Model?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        updateChartValues: (Model) -> ChartValuesProvider,
-        onModelCreated: (Model) -> Unit,
+        updateChartValues: (Model?) -> ChartValuesProvider,
+        onModelCreated: (Model?) -> Unit,
     )
 
     /**

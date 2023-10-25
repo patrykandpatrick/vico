@@ -24,6 +24,7 @@ import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableFloatState
@@ -113,6 +114,7 @@ import kotlinx.coroutines.launch
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
  * is null, the default _x_ step ([ChartEntryModel.xGcd]) is used.
+ * @param placeholder shown when no [ChartEntryModel] is available.
  */
 @Composable
 public fun <Model : ChartEntryModel> Chart(
@@ -135,13 +137,15 @@ public fun <Model : ChartEntryModel> Chart(
     chartScrollState: ChartScrollState = rememberChartScrollState(),
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
     getXStep: ((Model) -> Float)? = null,
+    placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
     val chartValuesManager = remember(chart) { ChartValuesManager() }
     val chartEntryModelWrapper by chartModelProducer
         .collectAsState(chart, chartModelProducer, diffAnimationSpec, runInitialAnimation, chartValuesManager, getXStep)
+    val (chartEntryModel, previousChartEntryModel, chartValuesProvider) = chartEntryModelWrapper
 
     ChartBox(modifier = modifier) {
-        chartEntryModelWrapper?.let { (chartEntryModel, previousChartEntryModel, chartValuesProvider) ->
+        if (chartEntryModel != null) {
             ChartImpl(
                 chart = chart,
                 model = chartEntryModel,
@@ -161,6 +165,8 @@ public fun <Model : ChartEntryModel> Chart(
                 horizontalLayout = horizontalLayout,
                 chartValuesProvider = chartValuesProvider,
             )
+        } else {
+            placeholder()
         }
     }
 }
@@ -405,7 +411,7 @@ internal fun ChartBox(
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
-        modifier = modifier.height(DefaultDimens.CHART_HEIGHT.dp),
+        modifier = modifier.height(DefaultDimens.CHART_HEIGHT.dp).fillMaxWidth(),
         content = content,
     )
 }

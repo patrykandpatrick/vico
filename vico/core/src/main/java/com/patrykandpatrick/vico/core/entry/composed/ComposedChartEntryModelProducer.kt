@@ -90,49 +90,53 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
     }
 
     private fun getInternalModel(drawingModelStore: DrawingModelStore = DrawingModelStore.empty) =
-        cachedInternalComposedModel
-            ?.let { composedModel ->
-                composedModel.copy(
-                    composedEntryCollections = composedModel.composedEntryCollections
-                        .map { model -> model.copy(drawingModelStore = drawingModelStore) },
-                    drawingModelStore = drawingModelStore,
-                )
-            }
-            ?: run {
-                val models = dataSets.map { dataSet ->
-                    val xRange = dataSet.xRange
-                    val yRange = dataSet.yRange
-                    val aggregateYRange = dataSet.calculateStackedYRange()
-                    InternalModel(
-                        entries = dataSet,
-                        minX = xRange.start,
-                        maxX = xRange.endInclusive,
-                        minY = yRange.start,
-                        maxY = yRange.endInclusive,
-                        stackedPositiveY = aggregateYRange.endInclusive,
-                        stackedNegativeY = aggregateYRange.start,
-                        xGcd = dataSet.calculateXGcd(),
+        if (dataSets.isEmpty()) {
+            null
+        } else {
+            cachedInternalComposedModel
+                ?.let { composedModel ->
+                    composedModel.copy(
+                        composedEntryCollections = composedModel.composedEntryCollections
+                            .map { model -> model.copy(drawingModelStore = drawingModelStore) },
                         drawingModelStore = drawingModelStore,
                     )
                 }
-                InternalComposedModel(
-                    composedEntryCollections = models,
-                    entries = models.map { it.entries }.flatten(),
-                    minX = models.minOf { it.minX },
-                    maxX = models.maxOf { it.maxX },
-                    minY = models.minOf { it.minY },
-                    maxY = models.maxOf { it.maxY },
-                    stackedPositiveY = models.maxOf { it.stackedPositiveY },
-                    stackedNegativeY = models.minOf { it.stackedNegativeY },
-                    xGcd = models.fold<ChartEntryModel, Float?>(null) { gcd, model ->
-                        gcd?.gcdWith(model.xGcd) ?: model.xGcd
-                    } ?: 1f,
-                    id = models.map { it.id }.hashCode(),
-                    drawingModelStore = drawingModelStore,
-                ).also { cachedInternalComposedModel = it }
-            }
+                ?: run {
+                    val models = dataSets.map { dataSet ->
+                        val xRange = dataSet.xRange
+                        val yRange = dataSet.yRange
+                        val aggregateYRange = dataSet.calculateStackedYRange()
+                        InternalModel(
+                            entries = dataSet,
+                            minX = xRange.start,
+                            maxX = xRange.endInclusive,
+                            minY = yRange.start,
+                            maxY = yRange.endInclusive,
+                            stackedPositiveY = aggregateYRange.endInclusive,
+                            stackedNegativeY = aggregateYRange.start,
+                            xGcd = dataSet.calculateXGcd(),
+                            drawingModelStore = drawingModelStore,
+                        )
+                    }
+                    InternalComposedModel(
+                        composedEntryCollections = models,
+                        entries = models.map { it.entries }.flatten(),
+                        minX = models.minOf { it.minX },
+                        maxX = models.maxOf { it.maxX },
+                        minY = models.minOf { it.minY },
+                        maxY = models.maxOf { it.maxY },
+                        stackedPositiveY = models.maxOf { it.stackedPositiveY },
+                        stackedNegativeY = models.minOf { it.stackedNegativeY },
+                        xGcd = models.fold<ChartEntryModel, Float?>(null) { gcd, model ->
+                            gcd?.gcdWith(model.xGcd) ?: model.xGcd
+                        } ?: 1f,
+                        id = models.map { it.id }.hashCode(),
+                        drawingModelStore = drawingModelStore,
+                    ).also { cachedInternalComposedModel = it }
+                }
+        }
 
-    override fun getModel(): ComposedChartEntryModel<ChartEntryModel> = getInternalModel()
+    override fun getModel(): ComposedChartEntryModel<ChartEntryModel>? = getInternalModel()
 
     override suspend fun progressModel(key: Any, progress: Float) {
         with(updateReceivers[key] ?: return) {
@@ -151,8 +155,8 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
         getOldModel: () -> ComposedChartEntryModel<ChartEntryModel>?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
-        updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesProvider,
-        onModelCreated: (ComposedChartEntryModel<ChartEntryModel>) -> Unit,
+        updateChartValues: (ComposedChartEntryModel<ChartEntryModel>?) -> ChartValuesProvider,
+        onModelCreated: (ComposedChartEntryModel<ChartEntryModel>?) -> Unit,
     ) {
         UpdateReceiver(
             cancelAnimation,
@@ -272,11 +276,11 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
     private inner class UpdateReceiver(
         val cancelAnimation: () -> Unit,
         val startAnimation: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit,
-        val onModelCreated: (ComposedChartEntryModel<ChartEntryModel>) -> Unit,
+        val onModelCreated: (ComposedChartEntryModel<ChartEntryModel>?) -> Unit,
         val drawingModelStore: MutableDrawingModelStore,
         val modelTransformer: Chart.ModelTransformer<ComposedChartEntryModel<ChartEntryModel>>?,
         val getOldModel: () -> ComposedChartEntryModel<ChartEntryModel>?,
-        val updateChartValues: (ComposedChartEntryModel<ChartEntryModel>) -> ChartValuesProvider,
+        val updateChartValues: (ComposedChartEntryModel<ChartEntryModel>?) -> ChartValuesProvider,
     ) {
         fun handleUpdate() {
             cancelAnimation()
