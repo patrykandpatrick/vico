@@ -86,6 +86,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.properties.Delegates.observable
 import kotlin.properties.ReadWriteProperty
@@ -141,7 +142,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
             duration = Animation.DIFF_DURATION.toLong()
             interpolator = FastOutSlowInInterpolator()
-            addUpdateListener { progressModelOnAnimationProgress(it.animatedFraction) }
+            addUpdateListener { transformModelForAnimation(it.animatedFraction) }
         }
 
     private val scrollValueAnimator: ValueAnimator =
@@ -154,7 +155,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private var coroutineScope: CoroutineScope? = null
 
-    private var mainAnimationJob: Job? = null
+    private var animationFrameJob: Job? = null
 
     private var finalAnimationFrameJob: Job? = null
 
@@ -282,17 +283,23 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 key = this@BaseChartView,
                 cancelAnimation = {
                     handler?.post(animator::cancel)
-                    mainAnimationJob?.cancel()
+                    runBlocking {
+                        animationFrameJob?.cancelAndJoin()
+                        finalAnimationFrameJob?.cancelAndJoin()
+                    }
                     isAnimationRunning = false
+                    isAnimationFrameGenerationRunning = false
                 },
-                startAnimation = {
+                startAnimation = { transformModel ->
                     if (model != null || runInitialAnimation) {
                         handler?.post {
                             isAnimationRunning = true
                             animator.start()
                         }
                     } else {
-                        progressModelOnAnimationProgress(progress = Animation.range.endInclusive)
+                        finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
+                            transformModel(this@BaseChartView, Animation.range.endInclusive)
+                        }
                     }
                 },
                 getOldModel = { model },
@@ -544,20 +551,20 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
     }
 
-    private fun progressModelOnAnimationProgress(progress: Float) {
+    private fun transformModelForAnimation(fraction: Float) {
         when {
             !isAnimationRunning -> return
             !isAnimationFrameGenerationRunning -> {
                 isAnimationFrameGenerationRunning = true
-                mainAnimationJob = coroutineScope?.launch(dispatcher) {
-                    entryProducer?.progressModel(this@BaseChartView, progress)
+                animationFrameJob = coroutineScope?.launch(dispatcher) {
+                    entryProducer?.progressModel(this@BaseChartView, fraction)
                     isAnimationFrameGenerationRunning = false
                 }
             }
-            progress == 1f -> {
+            fraction == 1f -> {
                 finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
-                    mainAnimationJob?.cancelAndJoin()
-                    entryProducer?.progressModel(this@BaseChartView, progress)
+                    animationFrameJob?.cancelAndJoin()
+                    entryProducer?.progressModel(this@BaseChartView, fraction)
                     isAnimationFrameGenerationRunning = false
                 }
             }

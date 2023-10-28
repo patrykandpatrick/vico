@@ -76,7 +76,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
         var isAnimationRunning: Boolean
         var isAnimationFrameGenerationRunning = false
         var chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
-        val afterUpdate: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit = { progressModel ->
+        val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit = { transformModel ->
             if (animationSpec != null && !isInPreview &&
                 (chartEntryModelWrapperState.value.chartEntryModel != null || runInitialAnimation)
             ) {
@@ -86,20 +86,20 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                         initialValue = Animation.range.start,
                         targetValue = Animation.range.endInclusive,
                         animationSpec = animationSpec,
-                    ) { value, _ ->
+                    ) { fraction, _ ->
                         when {
                             !isAnimationRunning -> return@animate
                             !isAnimationFrameGenerationRunning -> {
                                 isAnimationFrameGenerationRunning = true
                                 animationFrameJob = scope.launch(dispatcher) {
-                                    progressModel(chart, value)
+                                    transformModel(chart, fraction)
                                     isAnimationFrameGenerationRunning = false
                                 }
                             }
-                            value == 1f -> {
+                            fraction == 1f -> {
                                 finalAnimationFrameJob = scope.launch(dispatcher) {
                                     animationFrameJob?.cancelAndJoin()
-                                    progressModel(chart, value)
+                                    transformModel(chart, fraction)
                                     isAnimationFrameGenerationRunning = false
                                 }
                             }
@@ -107,7 +107,9 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                     }
                 }
             } else {
-                scope.launch(dispatcher) { progressModel(chart, Animation.range.endInclusive) }
+                finalAnimationFrameJob = scope.launch(dispatcher) {
+                    transformModel(chart, Animation.range.endInclusive)
+                }
             }
         }
         scope.launch(dispatcher) {
@@ -120,8 +122,9 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                         finalAnimationFrameJob?.cancelAndJoin()
                     }
                     isAnimationRunning = false
+                    isAnimationFrameGenerationRunning = false
                 },
-                startAnimation = afterUpdate,
+                startAnimation = startAnimation,
                 getOldModel = { chartEntryModelWrapperState.value.chartEntryModel },
                 modelTransformerProvider = modelTransformerProvider,
                 drawingModelStore = drawingModelStore,
