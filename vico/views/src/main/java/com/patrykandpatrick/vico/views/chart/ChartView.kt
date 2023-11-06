@@ -41,11 +41,11 @@ public class ChartView @JvmOverloads constructor(
 ) {
     init {
         chart = themeHandler.chart
-        if (isInEditMode && attrs != null) setPreviewModel(attrs, defStyleAttr)
+        if (isInEditMode && attrs != null) setPreviewModel(attrs)
     }
 
-    private fun setPreviewModel(attrs: AttributeSet, defStyleAttr: Int) {
-        context.obtainStyledAttributes(attrs, R.styleable.ChartView, defStyleAttr, 0).use { typedArray ->
+    private fun setPreviewModel(attrs: AttributeSet) {
+        context.obtainStyledAttributes(attrs, R.styleable.ChartView).use { typedArray ->
             val seriesCount = typedArray.getInt(R.styleable.ChartView_previewSeriesCount, SERIES_COUNT)
             val minX = typedArray.getInt(R.styleable.ChartView_previewMinX, 0)
             val maxX = typedArray.getInt(R.styleable.ChartView_previewMaxX, X_RANGE_TOP)

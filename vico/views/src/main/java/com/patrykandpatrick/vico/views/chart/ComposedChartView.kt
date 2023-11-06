@@ -44,11 +44,11 @@ public class ComposedChartView @JvmOverloads constructor(
 
     init {
         chart = themeHandler.composedChart
-        if (isInEditMode && attrs != null) setPreviewModel(attrs, defStyleAttr)
+        if (isInEditMode && attrs != null) setPreviewModel(attrs)
     }
 
-    private fun setPreviewModel(attrs: AttributeSet, defStyleAttr: Int) {
-        context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView, defStyleAttr, 0).use { typedArray ->
+    private fun setPreviewModel(attrs: AttributeSet) {
+        context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView).use { typedArray ->
             val modelCount = typedArray.getInt(R.styleable.ComposedChartView_previewModelCount, MODEL_COUNT)
             val seriesCount = typedArray.getInt(R.styleable.ComposedChartView_previewSeriesCount, SERIES_COUNT)
             val minX = typedArray.getInt(R.styleable.ComposedChartView_previewMinX, 0)
