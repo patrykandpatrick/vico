@@ -19,12 +19,14 @@ package com.patrykandpatrick.vico.core.entry
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
+import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
 
 /**
- * A [Model] producer that can deliver generated [Model]s asynchronously. It supports difference animations.
+ * Generates [ChartEntryModel]s and handles difference animations.
  *
- * @see ChartEntryModel
+ * @see ChartEntryModelProducer
+ * @see ComposedChartEntryModelProducer
  */
 public interface ChartModelProducer<Model : ChartEntryModel> {
 
@@ -39,23 +41,23 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
     public fun requireModel(): Model = getModel()!!
 
     /**
-     * Calculates an intermediate list of entries for difference animations for the associated [key], where [progress]
-     * is the balance between the previous and current lists of entries.
+     * Creates an intermediate [ChartEntryModel] for difference animations. [fraction] is the balance between the
+     * initial and target [ChartEntryModel]s.
      */
-    public suspend fun progressModel(key: Any, progress: Float)
+    public suspend fun transformModel(key: Any, fraction: Float)
 
     /**
      * Registers an update listener associated with a [key]. [cancelAnimation] and [startAnimation] are
      * called after a data update is requested, with [cancelAnimation] being called before the update starts
-     * being processed (at which point [progressModel] should stop being used), and [startAnimation] being
-     * called once the update has been processed (at which point it’s safe to use [progressModel]). [updateChartValues]
+     * being processed (at which point [transformModel] should stop being used), and [startAnimation] being
+     * called once the update has been processed (at which point it’s safe to use [transformModel]). [updateChartValues]
      * updates the chart’s [ChartValues] and returns its [ChartValuesProvider]. [onModelCreated] is called when a new
      * [Model] has been generated.
      */
     public fun registerForUpdates(
         key: Any,
         cancelAnimation: () -> Unit,
-        startAnimation: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
         getOldModel: () -> Model?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,

@@ -557,14 +557,14 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             !isAnimationFrameGenerationRunning -> {
                 isAnimationFrameGenerationRunning = true
                 animationFrameJob = coroutineScope?.launch(dispatcher) {
-                    entryProducer?.progressModel(this@BaseChartView, fraction)
+                    entryProducer?.transformModel(this@BaseChartView, fraction)
                     isAnimationFrameGenerationRunning = false
                 }
             }
             fraction == 1f -> {
                 finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
                     animationFrameJob?.cancelAndJoin()
-                    entryProducer?.progressModel(this@BaseChartView, fraction)
+                    entryProducer?.transformModel(this@BaseChartView, fraction)
                     isAnimationFrameGenerationRunning = false
                 }
             }

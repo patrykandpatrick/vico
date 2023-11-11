@@ -143,9 +143,9 @@ public class ChartEntryModelProducer(
 
     override fun getModel(): ChartEntryModel? = getInternalModel()
 
-    override suspend fun progressModel(key: Any, progress: Float) {
+    override suspend fun transformModel(key: Any, fraction: Float) {
         with(updateReceivers[key] ?: return) {
-            modelTransformer?.transform(drawingModelStore, progress)
+            modelTransformer?.transform(drawingModelStore, fraction)
             val internalModel = getInternalModel(drawingModelStore.copy())
             currentCoroutineContext().ensureActive()
             onModelCreated(internalModel)
@@ -156,7 +156,7 @@ public class ChartEntryModelProducer(
     override fun registerForUpdates(
         key: Any,
         cancelAnimation: () -> Unit,
-        startAnimation: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
         getOldModel: () -> ChartEntryModel?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         drawingModelStore: MutableDrawingModelStore,
@@ -185,7 +185,7 @@ public class ChartEntryModelProducer(
 
     private inner class UpdateReceiver(
         val cancelAnimation: () -> Unit,
-        val startAnimation: (progressModel: suspend (chartKey: Any, progress: Float) -> Unit) -> Unit,
+        val startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
         val onModelCreated: (ChartEntryModel?) -> Unit,
         val drawingModelStore: MutableDrawingModelStore,
         val modelTransformer: Chart.ModelTransformer<ChartEntryModel>?,
@@ -200,7 +200,7 @@ public class ChartEntryModelProducer(
                 drawingModelStore = drawingModelStore,
                 chartValuesProvider = updateChartValues(getModel()),
             )
-            startAnimation(::progressModel)
+            startAnimation(::transformModel)
         }
     }
 
