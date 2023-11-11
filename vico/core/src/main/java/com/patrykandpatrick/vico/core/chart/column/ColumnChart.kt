@@ -65,6 +65,7 @@ import kotlin.math.abs
  * respective columns.
  * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
+ * @param drawingModelInterpolator interpolates the [ColumnChart]’s [ColumnChartDrawingModel]s.
  */
 public open class ColumnChart(
     public var columns: List<LineComponent>,
@@ -76,6 +77,10 @@ public open class ColumnChart(
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     public var dataLabelRotationDegrees: Float = 0f,
+    public var drawingModelInterpolator: DrawingModelInterpolator<
+        ColumnChartDrawingModel.ColumnInfo,
+        ColumnChartDrawingModel,
+        > = DefaultDrawingModelInterpolator(),
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -374,7 +379,8 @@ public open class ColumnChart(
     }
 
     override val modelTransformerProvider: Chart.ModelTransformerProvider = object : Chart.ModelTransformerProvider {
-        private val modelTransformer = ColumnChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition })
+        private val modelTransformer =
+            ColumnChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition }, { drawingModelInterpolator })
 
         override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
     }
@@ -447,10 +453,10 @@ public open class ColumnChart(
     protected class ColumnChartModelTransformer(
         override val key: DrawingModelStore.Key<ColumnChartDrawingModel>,
         private val getTargetVerticalAxisPosition: () -> AxisPosition.Vertical?,
-        private val drawingModelInterpolator: DrawingModelInterpolator<
+        private val getDrawingModelInterpolator: () -> DrawingModelInterpolator<
             ColumnChartDrawingModel.ColumnInfo,
             ColumnChartDrawingModel,
-            > = DefaultDrawingModelInterpolator(),
+            >,
     ) : Chart.ModelTransformer<ChartEntryModel>() {
 
         override fun prepareForTransformation(
@@ -459,14 +465,14 @@ public open class ColumnChart(
             drawingModelStore: MutableDrawingModelStore,
             chartValuesProvider: ChartValuesProvider,
         ) {
-            drawingModelInterpolator.setModels(
+            getDrawingModelInterpolator().setModels(
                 drawingModelStore.getOrNull(key),
                 newModel?.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
             )
         }
 
         override suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
-            drawingModelInterpolator
+            getDrawingModelInterpolator()
                 .transform(fraction)
                 ?.let { drawingModelStore[key] = it }
                 ?: drawingModelStore.remove(key)

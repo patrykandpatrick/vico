@@ -71,11 +71,16 @@ import kotlin.math.min
  * @param spacingDp the spacing between each [LineSpec.point] (in dp).
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
  * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
+ * @param drawingModelInterpolator interpolates the [LineChart]’s [LineChartDrawingModel]s.
  */
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    public var drawingModelInterpolator: DrawingModelInterpolator<
+        LineChartDrawingModel.PointInfo,
+        LineChartDrawingModel,
+        > = DefaultDrawingModelInterpolator(),
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -589,7 +594,8 @@ public open class LineChart(
     }
 
     override val modelTransformerProvider: Chart.ModelTransformerProvider = object : Chart.ModelTransformerProvider {
-        private val modelTransformer = LineChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition })
+        private val modelTransformer =
+            LineChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition }, { drawingModelInterpolator })
 
         override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
     }
@@ -597,10 +603,10 @@ public open class LineChart(
     protected class LineChartModelTransformer(
         override val key: DrawingModelStore.Key<LineChartDrawingModel>,
         private val getTargetVerticalAxisPosition: () -> AxisPosition.Vertical?,
-        private val drawingModelInterpolator: DrawingModelInterpolator<
+        private val getDrawingModelInterpolator: () -> DrawingModelInterpolator<
             LineChartDrawingModel.PointInfo,
             LineChartDrawingModel,
-            > = DefaultDrawingModelInterpolator(),
+            >,
     ) : Chart.ModelTransformer<ChartEntryModel>() {
 
         override fun prepareForTransformation(
@@ -609,14 +615,14 @@ public open class LineChart(
             drawingModelStore: MutableDrawingModelStore,
             chartValuesProvider: ChartValuesProvider,
         ) {
-            drawingModelInterpolator.setModels(
+            getDrawingModelInterpolator().setModels(
                 drawingModelStore.getOrNull(key),
                 newModel?.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
             )
         }
 
         override suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
-            drawingModelInterpolator
+            getDrawingModelInterpolator()
                 .transform(fraction)
                 ?.let { drawingModelStore[key] = it }
                 ?: drawingModelStore.remove(key)
