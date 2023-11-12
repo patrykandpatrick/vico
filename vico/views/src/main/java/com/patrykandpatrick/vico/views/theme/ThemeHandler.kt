@@ -246,8 +246,18 @@ internal class ThemeHandler(
         when (getInt(R.styleable.BaseChartView_horizontalLayout, 0)) {
             0 -> HorizontalLayout.Segmented
             else -> HorizontalLayout.FullWidth(
-                getRawDimension(context, R.styleable.BaseChartView_startContentPadding, 0f),
-                getRawDimension(context, R.styleable.BaseChartView_endContentPadding, 0f),
+                getRawDimension(
+                    context,
+                    R.styleable.BaseChartView_scalableStartContentPadding,
+                    getRawDimension(context, R.styleable.BaseChartView_startContentPadding, 0f),
+                ),
+                getRawDimension(
+                    context,
+                    R.styleable.BaseChartView_scalableEndContentPadding,
+                    getRawDimension(context, R.styleable.BaseChartView_endContentPadding, 0f),
+                ),
+                getRawDimension(context, R.styleable.BaseChartView_unscalableStartContentPadding, 0f),
+                getRawDimension(context, R.styleable.BaseChartView_unscalableEndContentPadding, 0f),
             )
         }
 
