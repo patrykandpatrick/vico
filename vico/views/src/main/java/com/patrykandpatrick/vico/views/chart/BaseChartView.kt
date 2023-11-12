@@ -54,7 +54,7 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
@@ -151,7 +151,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             interpolator = FastOutSlowInInterpolator()
         }
 
-    private val drawingModelStore = MutableDrawingModelStore()
+    private val extraStore = MutableExtraStore()
 
     private var coroutineScope: CoroutineScope? = null
 
@@ -304,7 +304,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 },
                 getOldModel = { model },
                 modelTransformerProvider = chart?.modelTransformerProvider,
-                drawingModelStore = drawingModelStore,
+                extraStore = extraStore,
                 updateChartValues = { model ->
                     chartValuesManager.resetChartValues()
                     if (model != null) {

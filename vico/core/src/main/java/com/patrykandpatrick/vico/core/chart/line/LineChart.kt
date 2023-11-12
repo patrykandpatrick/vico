@@ -50,8 +50,8 @@ import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.diff.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelInterpolator
-import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
-import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
@@ -279,7 +279,7 @@ public open class LineChart(
      */
     protected val lineBackgroundPath: Path = Path()
 
-    protected val drawingModelKey: DrawingModelStore.Key<LineChartDrawingModel> = DrawingModelStore.Key()
+    protected val drawingModelKey: ExtraStore.Key<LineChartDrawingModel> = ExtraStore.Key()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -289,7 +289,7 @@ public open class LineChart(
     ): Unit = with(context) {
         resetTempData()
 
-        val drawingModel = model.drawingModelStore.getOrNull(drawingModelKey)
+        val drawingModel = model.extraStore.getOrNull(drawingModelKey)
 
         model.entries.forEachIndexed { entryListIndex, entries ->
 
@@ -601,7 +601,7 @@ public open class LineChart(
     }
 
     protected class LineChartModelTransformer(
-        override val key: DrawingModelStore.Key<LineChartDrawingModel>,
+        override val key: ExtraStore.Key<LineChartDrawingModel>,
         private val getTargetVerticalAxisPosition: () -> AxisPosition.Vertical?,
         private val getDrawingModelInterpolator: () -> DrawingModelInterpolator<
             LineChartDrawingModel.PointInfo,
@@ -612,20 +612,20 @@ public open class LineChart(
         override fun prepareForTransformation(
             oldModel: ChartEntryModel?,
             newModel: ChartEntryModel?,
-            drawingModelStore: MutableDrawingModelStore,
+            extraStore: MutableExtraStore,
             chartValuesProvider: ChartValuesProvider,
         ) {
             getDrawingModelInterpolator().setModels(
-                drawingModelStore.getOrNull(key),
+                extraStore.getOrNull(key),
                 newModel?.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
             )
         }
 
-        override suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
+        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
             getDrawingModelInterpolator()
                 .transform(fraction)
-                ?.let { drawingModelStore[key] = it }
-                ?: drawingModelStore.remove(key)
+                ?.let { extraStore[key] = it }
+                ?: extraStore.remove(key)
         }
 
         private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): LineChartDrawingModel = entries

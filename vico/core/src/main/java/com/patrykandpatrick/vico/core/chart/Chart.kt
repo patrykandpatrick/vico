@@ -31,8 +31,8 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
-import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
-import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.marker.Marker
 
 internal const val AXIS_VALUES_DEPRECATION_MESSAGE: String = "Axis values should be overridden via " +
@@ -219,9 +219,9 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      */
     public abstract class ModelTransformer<in Model> {
         /**
-         * Used for writing to and reading from the host’s [DrawingModelStore].
+         * Used for writing to and reading from the host’s [ExtraStore].
          */
-        protected abstract val key: DrawingModelStore.Key<*>
+        protected abstract val key: ExtraStore.Key<*>
 
         /**
          * Prepares the [Chart] for a difference animation.
@@ -229,14 +229,14 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
         public abstract fun prepareForTransformation(
             oldModel: Model?,
             newModel: Model?,
-            drawingModelStore: MutableDrawingModelStore,
+            extraStore: MutableExtraStore,
             chartValuesProvider: ChartValuesProvider,
         )
 
         /**
          * Carries out the pending difference animation. [fraction] is the animation progress.
          */
-        public abstract suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float)
+        public abstract suspend fun transform(extraStore: MutableExtraStore, fraction: Float)
     }
 }
 

@@ -39,8 +39,8 @@ import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.diff.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModelInterpolator
-import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
-import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
@@ -115,7 +115,7 @@ public open class ColumnChart(
      */
     protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
-    protected val drawingModelKey: DrawingModelStore.Key<ColumnChartDrawingModel> = DrawingModelStore.Key()
+    protected val drawingModelKey: ExtraStore.Key<ColumnChartDrawingModel> = ExtraStore.Key()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -127,7 +127,7 @@ public open class ColumnChart(
         drawChartInternal(
             chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
             model = model,
-            drawingModel = model.drawingModelStore.getOrNull(drawingModelKey),
+            drawingModel = model.extraStore.getOrNull(drawingModelKey),
         )
         heightMap.clear()
     }
@@ -451,7 +451,7 @@ public open class ColumnChart(
     }
 
     protected class ColumnChartModelTransformer(
-        override val key: DrawingModelStore.Key<ColumnChartDrawingModel>,
+        override val key: ExtraStore.Key<ColumnChartDrawingModel>,
         private val getTargetVerticalAxisPosition: () -> AxisPosition.Vertical?,
         private val getDrawingModelInterpolator: () -> DrawingModelInterpolator<
             ColumnChartDrawingModel.ColumnInfo,
@@ -462,20 +462,20 @@ public open class ColumnChart(
         override fun prepareForTransformation(
             oldModel: ChartEntryModel?,
             newModel: ChartEntryModel?,
-            drawingModelStore: MutableDrawingModelStore,
+            extraStore: MutableExtraStore,
             chartValuesProvider: ChartValuesProvider,
         ) {
             getDrawingModelInterpolator().setModels(
-                drawingModelStore.getOrNull(key),
+                extraStore.getOrNull(key),
                 newModel?.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
             )
         }
 
-        override suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
+        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
             getDrawingModelInterpolator()
                 .transform(fraction)
-                ?.let { drawingModelStore[key] = it }
-                ?: drawingModelStore.remove(key)
+                ?.let { extraStore[key] = it }
+                ?: extraStore.remove(key)
         }
 
         private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): ColumnChartDrawingModel = entries

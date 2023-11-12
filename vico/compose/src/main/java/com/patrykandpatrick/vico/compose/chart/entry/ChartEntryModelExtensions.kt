@@ -34,7 +34,7 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.chart.values.toChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -66,7 +66,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
 ): State<ChartEntryModelWrapper<Model>> {
     val chartEntryModelWrapperState = remember(chart, producerKey) { ChartEntryModelWrapperState<Model>() }
     val modelTransformerProvider = remember(chart) { chart.modelTransformerProvider }
-    val drawingModelStore = remember(chart) { MutableDrawingModelStore() }
+    val extraStore = remember(chart) { MutableExtraStore() }
     val scope = rememberCoroutineScope()
     val isInPreview = LocalInspectionMode.current
     DisposableEffect(chart, producerKey, runInitialAnimation, isInPreview) {
@@ -127,7 +127,7 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                 startAnimation = startAnimation,
                 getOldModel = { chartEntryModelWrapperState.value.chartEntryModel },
                 modelTransformerProvider = modelTransformerProvider,
-                drawingModelStore = drawingModelStore,
+                extraStore = extraStore,
                 updateChartValues = { model ->
                     chartValuesManager.resetChartValues()
                     if (model != null) {

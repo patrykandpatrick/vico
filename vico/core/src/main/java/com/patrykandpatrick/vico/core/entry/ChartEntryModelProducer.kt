@@ -19,8 +19,8 @@ package com.patrykandpatrick.vico.core.entry
 import androidx.annotation.WorkerThread
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
-import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
-import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.extension.copy
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
@@ -52,6 +52,7 @@ public class ChartEntryModelProducer(
     private val mutex = Mutex()
     private val coroutineScope = CoroutineScope(dispatcher)
     private val updateReceivers: HashMap<Any, UpdateReceiver> = HashMap()
+    private val extraStore = MutableExtraStore()
 
     public constructor(
         vararg entryCollections: List<ChartEntry>,
@@ -65,11 +66,13 @@ public class ChartEntryModelProducer(
     /**
      * Requests that the data set be updated to the provided one. If the update is accepted, `true` is returned. If the
      * update is rejected, which occurs when there’s already an update in progress, `false` is returned. For suspending
-     * behavior, use [setEntriesSuspending].
+     * behavior, use [setEntriesSuspending]. [updateExtras] allows for adding auxiliary data, which can later be
+     * retrieved via [ChartEntryModel.extraStore].
      */
-    public fun setEntries(entries: List<List<ChartEntry>>): Boolean {
+    public fun setEntries(entries: List<List<ChartEntry>>, updateExtras: (MutableExtraStore) -> Unit = {}): Boolean {
         if (!mutex.tryLock()) return false
         series = entries.copy()
+        updateExtras(extraStore)
         cachedInternalModel = null
         val deferredUpdates = updateReceivers.values.map { updateReceiver ->
             coroutineScope.async { updateReceiver.handleUpdate() }
@@ -84,11 +87,16 @@ public class ChartEntryModelProducer(
     /**
      * Updates the data set. Unlike [setEntries], this function suspends the current coroutine and waits until an update
      * can be run, meaning the update cannot be rejected. The returned [Deferred] implementation is marked as completed
-     * once the update has been processed.
+     * once the update has been processed. [updateExtras] allows for adding auxiliary data, which can later be retrieved
+     * via [ChartEntryModel.extraStore].
      */
-    public suspend fun setEntriesSuspending(entries: List<List<ChartEntry>>): Deferred<Unit> {
+    public suspend fun setEntriesSuspending(
+        entries: List<List<ChartEntry>>,
+        updateExtras: (MutableExtraStore) -> Unit = {},
+    ): Deferred<Unit> {
         mutex.lock()
         series = entries.copy()
+        updateExtras(extraStore)
         cachedInternalModel = null
         val completableDeferred = CompletableDeferred<Unit>()
         val deferredUpdates = updateReceivers.values.map { updateReceiver ->
@@ -105,23 +113,29 @@ public class ChartEntryModelProducer(
     /**
      * Requests that the data set be updated to the provided one. If the update is accepted, `true` is returned. If the
      * update is rejected, which occurs when there’s already an update in progress, `false` is returned. For suspending
-     * behavior, use [setEntriesSuspending].
+     * behavior, use [setEntriesSuspending]. [updateExtras] allows for adding auxiliary data, which can later be
+     * retrieved via [ChartEntryModel.extraStore].
      */
-    public fun setEntries(vararg entries: List<ChartEntry>): Boolean = setEntries(entries.toList())
+    public fun setEntries(vararg entries: List<ChartEntry>, updateExtras: (MutableExtraStore) -> Unit = {}): Boolean =
+        setEntries(entries.toList(), updateExtras)
 
     /**
      * Updates the data set. Unlike [setEntries], this function suspends the current coroutine and waits until an update
      * can be run, meaning the update cannot be rejected. The returned [Deferred] implementation is marked as completed
-     * once the update has been processed.
+     * once the update has been processed. [updateExtras] allows for adding auxiliary data, which can later be retrieved
+     * via [ChartEntryModel.extraStore].
      */
-    public suspend fun setEntriesSuspending(vararg entries: List<ChartEntry>): Deferred<Unit> =
-        setEntriesSuspending(entries.toList())
+    public suspend fun setEntriesSuspending(
+        vararg entries: List<ChartEntry>,
+        updateExtras: (MutableExtraStore) -> Unit = {},
+    ): Deferred<Unit> = setEntriesSuspending(entries.toList(), updateExtras)
 
-    private fun getInternalModel(drawingModelStore: DrawingModelStore = DrawingModelStore.empty) =
+    private fun getInternalModel(extraStore: ExtraStore? = null) =
         if (series.isEmpty()) {
             null
         } else {
-            cachedInternalModel?.copy(drawingModelStore = drawingModelStore)
+            val mergedExtraStore = this.extraStore.let { if (extraStore != null) it + extraStore else it }
+            cachedInternalModel?.copy(extraStore = mergedExtraStore)
                 ?: run {
                     val xRange = series.xRange
                     val yRange = series.yRange
@@ -136,7 +150,7 @@ public class ChartEntryModelProducer(
                         stackedNegativeY = aggregateYRange.start,
                         xGcd = series.calculateXGcd(),
                         id = series.hashCode(),
-                        drawingModelStore = drawingModelStore,
+                        extraStore = mergedExtraStore,
                     ).also { cachedInternalModel = it }
                 }
         }
@@ -145,8 +159,8 @@ public class ChartEntryModelProducer(
 
     override suspend fun transformModel(key: Any, fraction: Float) {
         with(updateReceivers[key] ?: return) {
-            modelTransformer?.transform(drawingModelStore, fraction)
-            val internalModel = getInternalModel(drawingModelStore.copy())
+            modelTransformer?.transform(extraStore, fraction)
+            val internalModel = getInternalModel(extraStore.copy())
             currentCoroutineContext().ensureActive()
             onModelCreated(internalModel)
         }
@@ -159,7 +173,7 @@ public class ChartEntryModelProducer(
         startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
         getOldModel: () -> ChartEntryModel?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
-        drawingModelStore: MutableDrawingModelStore,
+        extraStore: MutableExtraStore,
         updateChartValues: (ChartEntryModel?) -> ChartValuesProvider,
         onModelCreated: (ChartEntryModel?) -> Unit,
     ) {
@@ -167,7 +181,7 @@ public class ChartEntryModelProducer(
             cancelAnimation,
             startAnimation,
             onModelCreated,
-            drawingModelStore,
+            extraStore,
             modelTransformerProvider?.getModelTransformer(),
             getOldModel,
             updateChartValues,
@@ -187,7 +201,7 @@ public class ChartEntryModelProducer(
         val cancelAnimation: () -> Unit,
         val startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
         val onModelCreated: (ChartEntryModel?) -> Unit,
-        val drawingModelStore: MutableDrawingModelStore,
+        val extraStore: MutableExtraStore,
         val modelTransformer: Chart.ModelTransformer<ChartEntryModel>?,
         val getOldModel: () -> ChartEntryModel?,
         val updateChartValues: (ChartEntryModel?) -> ChartValuesProvider,
@@ -197,7 +211,7 @@ public class ChartEntryModelProducer(
             modelTransformer?.prepareForTransformation(
                 oldModel = getOldModel(),
                 newModel = getModel(),
-                drawingModelStore = drawingModelStore,
+                extraStore = extraStore,
                 chartValuesProvider = updateChartValues(getModel()),
             )
             startAnimation(::transformModel)
@@ -214,6 +228,6 @@ public class ChartEntryModelProducer(
         override val stackedNegativeY: Float,
         override val xGcd: Float,
         override val id: Int,
-        override val drawingModelStore: DrawingModelStore,
+        override val extraStore: ExtraStore,
     ) : ChartEntryModel
 }

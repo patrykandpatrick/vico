@@ -20,7 +20,7 @@ import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 
 /**
  * Generates [ChartEntryModel]s and handles difference animations.
@@ -60,7 +60,7 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
         startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
         getOldModel: () -> Model?,
         modelTransformerProvider: Chart.ModelTransformerProvider?,
-        drawingModelStore: MutableDrawingModelStore,
+        extraStore: MutableExtraStore,
         updateChartValues: (Model?) -> ChartValuesProvider,
         onModelCreated: (Model?) -> Unit,
     )

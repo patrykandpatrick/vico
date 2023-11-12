@@ -30,8 +30,8 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
-import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
-import com.patrykandpatrick.vico.core.entry.diff.MutableDrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.updateAll
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -160,12 +160,12 @@ public class ComposedChart<Model : ChartEntryModel>(
         private val getModelTransformers: () -> List<Chart.ModelTransformer<T>>,
     ) : Chart.ModelTransformer<T>() {
 
-        override val key: DrawingModelStore.Key<Nothing> = DrawingModelStore.Key()
+        override val key: ExtraStore.Key<Nothing> = ExtraStore.Key()
 
         override fun prepareForTransformation(
             oldModel: T?,
             newModel: T?,
-            drawingModelStore: MutableDrawingModelStore,
+            extraStore: MutableExtraStore,
             chartValuesProvider: ChartValuesProvider,
         ) {
             getModelTransformers().forEachIndexed { index, transformer ->
@@ -173,15 +173,15 @@ public class ComposedChart<Model : ChartEntryModel>(
                 transformer.prepareForTransformation(
                     (oldModel as ComposedChartEntryModel<*>?)?.composedEntryCollections?.getOrNull(index) as T?,
                     (newModel as ComposedChartEntryModel<*>).composedEntryCollections[index] as T,
-                    drawingModelStore,
+                    extraStore,
                     chartValuesProvider,
                 )
             }
         }
 
-        override suspend fun transform(drawingModelStore: MutableDrawingModelStore, fraction: Float) {
+        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
             getModelTransformers().forEach { transformer ->
-                transformer.transform(drawingModelStore, fraction)
+                transformer.transform(extraStore, fraction)
             }
         }
     }

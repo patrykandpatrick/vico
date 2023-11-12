@@ -23,7 +23,7 @@ import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
-import com.patrykandpatrick.vico.core.entry.diff.DrawingModelStore
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
 
 /**
  * Contains the data for a [Chart]. Pre-calculates values needed for the rendering of the [Chart].
@@ -92,10 +92,10 @@ public interface ChartEntryModel {
     public val xGcd: Float
 
     /**
-     * Houses [DrawingModel]s.
+     * Houses auxiliary data, including [DrawingModel]s.
      */
-    public val drawingModelStore: DrawingModelStore
-        get() = DrawingModelStore.empty
+    public val extraStore: ExtraStore
+        get() = ExtraStore.empty
 
     /**
      * Returns an immutable copy of this [ChartEntryModel].
