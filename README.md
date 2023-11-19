@@ -16,4 +16,4 @@ There are three primary learning resources for Vico:
   [a setup guide](https://patrykandpatrick.com/vico/wiki/getting-started) and outlines Vico’s features and structure.
 - [The sample app](https://github.com/patrykandpatrick/vico/tree/master/sample) demonstrates how to use Vico in Jetpack
   Compose and the view system. The charts showcased at the top of this document are implemented in the sample app.
-- [The API reference](https://patrykandpatrick.com/vico/api) is a comprehensive manual for Vico’s API.
+- [The API reference](https://patrykandpatrick.com/vico/wiki/#api-reference) is a comprehensive manual for Vico’s API.

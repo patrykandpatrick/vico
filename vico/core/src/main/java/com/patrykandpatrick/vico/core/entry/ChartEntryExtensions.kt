@@ -88,24 +88,11 @@ internal inline val Iterable<Iterable<ChartEntry>>.yRange: ClosedFloatingPointRa
 internal inline val Iterable<Iterable<ChartEntry>>.xRange: ClosedFloatingPointRange<Float>
     get() = flatten().rangeOfOrNull { it.x } ?: 0f..0f
 
-internal fun Iterable<Iterable<ChartEntry>>.calculateXGcd(): Float {
-    var gcd: Float? = null
-    forEach { entryCollection ->
-        val iterator = entryCollection.iterator()
-        var currentEntry: ChartEntry
-        var previousEntry: ChartEntry? = null
-        while (iterator.hasNext()) {
-            currentEntry = iterator.next()
-            previousEntry?.let { prevEntry ->
-                val difference = abs(x = currentEntry.x - prevEntry.x)
-                gcd = gcd?.gcdWith(other = difference) ?: difference
-            }
-            previousEntry = currentEntry
-        }
-        if (gcd == -1f) gcd = 1f
-    }
-    return gcd ?: 1f
-}
+internal fun Iterable<Iterable<ChartEntry>>.calculateXGcd() = flatten()
+    .zipWithNext { firstEntry, secondEntry -> abs(secondEntry.x - firstEntry.x) }
+    .fold<Float, Float?>(null) { gcd, delta -> gcd?.gcdWith(delta) ?: delta }
+    ?.also { require(it != 0f) { "The precision of the x values is too large. The maximum is two decimal places." } }
+    ?: 1f
 
 internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =
     flatten().fold(HashMap<Float, Pair<Float, Float>>()) { map, entry ->

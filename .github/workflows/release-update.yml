@@ -39,8 +39,9 @@ jobs:
           cd ${{ github.workspace }}/vico
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico.git
           ./gradlew dokkaHtmlMultiModule
-          rm -r ${{ github.workspace }}/patrykandpatrick.com/src/vico/api/*
-          cp -R ${{ github.workspace }}/vico/vico/build/dokka/htmlMultiModule/. ${{ github.workspace }}/patrykandpatrick.com/src/vico/api
+          API_REFERENCE_DESTINATION=${{ github.workspace }}/patrykandpatrick.com/src/vico/api/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo main; fi)
+          rm -fr $API_REFERENCE_DESTINATION/*
+          cp -R ${{ github.workspace }}/vico/vico/build/dokka/htmlMultiModule/. $API_REFERENCE_DESTINATION
           cd ${{ github.workspace }}/patrykandpatrick.com
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
           git add src/vico/api
@@ -62,7 +63,7 @@ jobs:
           mv vico/view/src/main/java/com/patrykandpatryk/vico/views vico/view/src/main/java/com/patrykandpatryk/vico/view
           find . -not -path "*/.*" -type f | while read path; do sed -i "s/com\.patrykandpatrick/com\.patrykandpatryk/" "$path"; done
           find . -not -path "*/.*" -type f | while read path; do sed -i "s/vico\.views/vico\.view/" "$path"; done
-          sed -i s/:vico:views/:vico:view/ *.gradle
+          find -type f \( -name "*.gradle" -o -name "*.gradle.kts" \) -exec sed -i s/vico:views/vico:view/ "{}" +
           sed -i "s/\(username\s*=\s*\)\"patrykandpatrick\"/\1\"patrykandpatryk\"/" common-scripts.gradle
           ./gradlew publish
         env:

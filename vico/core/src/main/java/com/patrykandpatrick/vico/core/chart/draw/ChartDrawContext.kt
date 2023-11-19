@@ -66,7 +66,7 @@ public fun MeasureContext.getMaxScrollDistance(
 ): Float {
     val contentWidth = horizontalDimensions
         .run { if (zoom != null) scaled(zoom) else this }
-        .getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
+        .getContentWidth(chartValuesProvider.getChartValues().getMaxMajorEntryCount())
 
     return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
         if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
@@ -90,12 +90,15 @@ public fun MeasureContext.getAutoZoom(
     chartBounds: RectF,
     autoScaleUp: AutoScaleUp,
 ): Float {
-    val contentWidth = horizontalDimensions.getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
+    val scalableContentWidth =
+        horizontalDimensions.getScalableContentWidth(chartValuesProvider.getChartValues().getMaxMajorEntryCount())
+    val reducedChartWidth = chartBounds.width() - horizontalDimensions.unscalablePadding
+    val fillingZoom = reducedChartWidth / scalableContentWidth
     return when {
-        contentWidth < chartBounds.width() ->
-            if (autoScaleUp == AutoScaleUp.Full) (chartBounds.width() / contentWidth).coerceAtMost(DEF_MAX_ZOOM) else 1f
+        scalableContentWidth < reducedChartWidth ->
+            if (autoScaleUp == AutoScaleUp.Full) fillingZoom.coerceAtMost(DEF_MAX_ZOOM) else 1f
 
-        !isHorizontalScrollEnabled -> chartBounds.width() / contentWidth
+        !isHorizontalScrollEnabled -> fillingZoom
         else -> 1f
     }
 }

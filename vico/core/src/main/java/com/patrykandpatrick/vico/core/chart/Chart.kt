@@ -19,16 +19,20 @@ package com.patrykandpatrick.vico.core.chart
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.marker.Marker
 
 internal const val AXIS_VALUES_DEPRECATION_MESSAGE: String = "Axis values should be overridden via " +
@@ -178,13 +182,13 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
     public fun removePersistentMarker(x: Float)
 
     /**
-     * Called to get the [HorizontalDimensions] of this chart. The [HorizontalDimensions] influence the look of various
-     * parts of the chart.
-     *
-     * @param context holds data used for component measurements.
-     * @param model holds data about the [Chart]’s entries.
+     * Updates the chart’s [MutableHorizontalDimensions] instance.
      */
-    public fun getHorizontalDimensions(context: MeasureContext, model: Model): HorizontalDimensions
+    public fun updateHorizontalDimensions(
+        context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
+        model: Model,
+    )
 
     /**
      * Updates the [ChartValues] stored in the provided [ChartValuesManager] instance to this [Chart]’s [ChartValues].
@@ -194,6 +198,46 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @param xStep the overridden _x_ step (or `null` if no override has occurred).
      */
     public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model, xStep: Float?)
+
+    /**
+     * Provides the [Chart]’s [ModelTransformer].
+     */
+    public val modelTransformerProvider: ModelTransformerProvider
+
+    /**
+     * Provides a [Chart]’s [ModelTransformer].
+     */
+    public interface ModelTransformerProvider {
+        /**
+         * Returns the [ModelTransformer].
+         */
+        public fun <T : ChartEntryModel> getModelTransformer(): ModelTransformer<T>
+    }
+
+    /**
+     * Transforms [Model]s into [DrawingModel]s.
+     */
+    public abstract class ModelTransformer<in Model> {
+        /**
+         * Used for writing to and reading from the host’s [ExtraStore].
+         */
+        protected abstract val key: ExtraStore.Key<*>
+
+        /**
+         * Prepares the [Chart] for a difference animation.
+         */
+        public abstract fun prepareForTransformation(
+            oldModel: Model?,
+            newModel: Model?,
+            extraStore: MutableExtraStore,
+            chartValuesProvider: ChartValuesProvider,
+        )
+
+        /**
+         * Carries out the pending difference animation. [fraction] is the animation progress.
+         */
+        public abstract suspend fun transform(extraStore: MutableExtraStore, fraction: Float)
+    }
 }
 
 /**

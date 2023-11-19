@@ -68,7 +68,13 @@
             <enum name="segmented" value="0" />
             <enum name="fullWidth" value="1" />
         </attr>
+        <attr name="scalableStartContentPadding" format="dimension" />
+        <attr name="scalableEndContentPadding" format="dimension" />
+        <attr name="unscalableStartContentPadding" format="dimension" />
+        <attr name="unscalableEndContentPadding" format="dimension" />
+        <!-- Deprecated. Use `scalableStartContentPadding` instead. -->
         <attr name="startContentPadding" format="dimension" />
+        <!-- Deprecated. Use `scalableEndContentPadding` instead. -->
         <attr name="endContentPadding" format="dimension" />
     </declare-styleable>
 
@@ -99,6 +105,7 @@
         <attr name="horizontalAxisLabelSpacing" format="integer" />
         <attr name="horizontalAxisLabelOffset" format="integer" />
         <attr name="shiftExtremeHorizontalAxisTicks" format="boolean" />
+        <attr name="addExtremeHorizontalAxisLabelPadding" format="boolean" />
         <attr name="shiftTopVerticalAxisLines" format="boolean" />
         <attr name="maxVerticalAxisItemCount" format="integer" />
     </declare-styleable>

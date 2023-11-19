@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,12 @@ internal fun <T> List<T>.getRepeating(index: Int): T {
     if (isEmpty()) throw IllegalStateException(ERR_REPEATING_COLLECTION_EMPTY)
     return get(index % size.coerceAtLeast(1))
 }
+
+@JvmName("copyDouble")
+internal fun <T> List<List<T>>.copy() = map { it.toList() }
+
+@JvmName("copyTriple")
+internal fun <T> List<List<List<T>>>.copy() = map { it.copy() }
 
 /**
  * Replaces all of the elements of this [MutableList] with the elements of the provided collection.
@@ -55,6 +61,12 @@ private fun <T> ArrayList<ArrayList<T>>.ensureSize(size: Int) {
         add(ArrayList())
     }
 }
+
+/**
+ * Creates a copy of this [ArrayList] and each child [ArrayList] contained in this [ArrayList].
+ */
+public fun <T> ArrayList<ArrayList<T>>.copy(): List<List<T>> =
+    List(size) { index -> ArrayList(get(index)) }
 
 /**
  * Replaces all of the elements of this [MutableMap] with the elements of the provided map.

@@ -38,26 +38,12 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModel
  */
 public class ChartValuesManager : ChartValuesProvider {
 
-    private val chartValues: MutableMap<AxisPosition.Vertical?, MutableChartValues> = mutableMapOf()
+    internal val chartValues: MutableMap<AxisPosition.Vertical?, MutableChartValues> = mutableMapOf()
 
-    /**
-     * Returns the [ChartValues] associated with the given [axisPosition].
-     * @param axisPosition if this is null, the main [ChartValues] instance is returned. Otherwise, the [ChartValues]
-     * instance associated with the given [AxisPosition.Vertical] is returned.
-     */
-    public fun getChartValues(axisPosition: AxisPosition.Vertical? = null): MutableChartValues =
+    override fun getChartValues(axisPosition: AxisPosition.Vertical?): ChartValues =
         chartValues[axisPosition]
             ?.takeIf { it.hasValuesSet }
             ?: chartValues.getOrPut(null) { MutableChartValues() }
-
-    override fun getChartValues(): ChartValues = getChartValues(null)
-
-    override fun getChartValuesForAxisPosition(axisPosition: AxisPosition.Vertical): ChartValues? =
-        if (chartValues.containsKey(axisPosition)) {
-            getChartValues(axisPosition).takeIf { it.hasValuesSet }
-        } else {
-            null
-        }
 
     /**
      * Attempts to update the stored values to the provided values.
@@ -104,4 +90,18 @@ public class ChartValuesManager : ChartValuesProvider {
     public fun resetChartValues() {
         chartValues.values.forEach { it.reset() }
     }
+}
+
+/**
+ * Creates and returns a [ChartValuesProvider] implementation with this [ChartValuesManager]’s [ChartValues]
+ * instances.
+ */
+public fun ChartValuesManager.toChartValuesProvider(): ChartValuesProvider = object : ChartValuesProvider {
+    val chartValues = this@toChartValuesProvider
+        .chartValues
+        .map { (axisPosition, chartValues) -> axisPosition to chartValues.toImmutable() }
+        .toMap()
+
+    override fun getChartValues(axisPosition: AxisPosition.Vertical?): ChartValues =
+        chartValues[axisPosition] ?: chartValues.getValue(null)
 }

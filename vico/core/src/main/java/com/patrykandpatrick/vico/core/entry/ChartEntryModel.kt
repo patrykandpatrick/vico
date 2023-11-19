@@ -22,6 +22,8 @@ import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModel
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
 
 /**
  * Contains the data for a [Chart]. Pre-calculates values needed for the rendering of the [Chart].
@@ -88,4 +90,15 @@ public interface ChartEntryModel {
      * The greatest common divisor of the _x_ values.
      */
     public val xGcd: Float
+
+    /**
+     * Houses auxiliary data, including [DrawingModel]s.
+     */
+    public val extraStore: ExtraStore
+        get() = ExtraStore.empty
+
+    /**
+     * Returns an immutable copy of this [ChartEntryModel].
+     */
+    public fun toImmutable(): ChartEntryModel = this
 }

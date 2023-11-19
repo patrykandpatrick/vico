@@ -17,21 +17,23 @@
 package com.patrykandpatrick.vico.core.chart.values
 
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.chart.Chart
 
 /**
- * Provides a [Chart]’s [ChartValues].
+ * Provides a chart’s [ChartValues] instances.
  */
 public interface ChartValuesProvider {
 
     /**
-     * Returns the [Chart]’s main [ChartValues].
+     * Returns the [ChartValues] instance associated with the specified [AxisPosition.Vertical] subclass. If
+     * [axisPosition] is `null`, the chart’s main [ChartValues] instance is returned.
      */
-    public fun getChartValues(): ChartValues
+    public fun getChartValues(axisPosition: AxisPosition.Vertical? = null): ChartValues
 
     /**
-     * Returns the [ChartValues] associated with the specified [AxisPosition.Vertical] subclass, or `null` if there is
-     * no such association.
+     * An empty [ChartValuesProvider] implementation. [getChartValues] throws an exception when called.
      */
-    public fun getChartValuesForAxisPosition(axisPosition: AxisPosition.Vertical): ChartValues?
+    public companion object Empty : ChartValuesProvider {
+        override fun getChartValues(axisPosition: AxisPosition.Vertical?): ChartValues =
+            error("`ChartValuesProvider.Empty#getChartValues` shouldn’t be used.")
+    }
 }

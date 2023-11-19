@@ -20,8 +20,7 @@ import androidx.compose.foundation.MutatePriority
 import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.core.extension.rangeWith
@@ -35,8 +34,8 @@ import kotlin.math.abs
  */
 public class ChartScrollState : ScrollableState, ScrollListenerHost {
 
-    private val _value: MutableState<Float> = mutableStateOf(0f)
-    private val _maxValue: MutableState<Float> = mutableStateOf(0f)
+    private val _value = mutableFloatStateOf(0f)
+    private val _maxValue = mutableFloatStateOf(0f)
     private val scrollListeners: MutableSet<ScrollListener> = mutableSetOf()
     private var initialScrollHandled: Boolean = false
 
@@ -44,10 +43,10 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
      * The current scroll amount (in pixels).
      */
     public var value: Float
-        get() = _value.value
+        get() = _value.floatValue
         private set(newValue) {
             val oldValue = value
-            _value.value = newValue
+            _value.floatValue = newValue
             scrollListeners.forEach { scrollListener -> scrollListener.onValueChanged(oldValue, newValue) }
         }
 
@@ -55,10 +54,10 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
      * The maximum scroll amount (in pixels).
      */
     public var maxValue: Float
-        get() = _maxValue.value
+        get() = _maxValue.floatValue
         internal set(newMaxValue) {
             val oldMaxValue = maxValue
-            _maxValue.value = newMaxValue
+            _maxValue.floatValue = newMaxValue
             if (abs(value) > abs(newMaxValue)) value = newMaxValue
             scrollListeners.forEach { scrollListener -> scrollListener.onMaxValueChanged(oldMaxValue, newMaxValue) }
         }

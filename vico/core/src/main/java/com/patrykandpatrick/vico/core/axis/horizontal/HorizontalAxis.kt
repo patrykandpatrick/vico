@@ -22,11 +22,13 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
@@ -89,7 +91,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val clipRestoreCount = canvas.save()
         val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - axisThickness - tickLength
         val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-        val chartValues = chartValuesManager.getChartValues()
+        val chartValues = chartValuesProvider.getChartValues()
 
         canvas.clipRect(
             bounds.left - itemPlacer.getStartHorizontalAxisInset(this, horizontalDimensions, tickThickness),
@@ -114,7 +116,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 layoutDirectionMultiplier
             val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
             val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
-            val maxWidth = (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing).toInt()
+            val maxWidth =
+                (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing).ceil.toInt()
 
             label?.drawText(
                 context = context,
@@ -186,7 +189,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val clipRestoreCount = canvas.save()
         canvas.clipRect(chartBounds)
 
-        val chartValues = chartValuesManager.getChartValues()
+        val chartValues = chartValuesProvider.getChartValues()
 
         if (lineValues == null) {
             labelValues.forEach { x ->
@@ -224,6 +227,33 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
     override fun drawAboveChart(context: ChartDrawContext): Unit = Unit
 
+    override fun updateHorizontalDimensions(
+        context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
+    ) {
+        val chartValues = context.chartValuesProvider.getChartValues()
+        horizontalDimensions.ensureValuesAtLeast(
+            unscalableStartPadding = label
+                .takeIf { itemPlacer.getAddFirstLabelPadding(context) }
+                ?.getWidth(
+                    context = context,
+                    text = valueFormatter.formatValue(chartValues.minX, chartValues),
+                    pad = true,
+                )
+                ?.half
+                .orZero,
+            unscalableEndPadding = label
+                .takeIf { itemPlacer.getAddLastLabelPadding(context) }
+                ?.getWidth(
+                    context = context,
+                    text = valueFormatter.formatValue(chartValues.maxX, chartValues),
+                    pad = true,
+                )
+                ?.half
+                .orZero,
+        )
+    }
+
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
@@ -238,7 +268,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     private fun MeasureContext.getFullXRange(
         horizontalDimensions: HorizontalDimensions,
     ): ClosedFloatingPointRange<Float> = with(horizontalDimensions) {
-        val chartValues = chartValuesManager.getChartValues()
+        val chartValues = chartValuesProvider.getChartValues()
         val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
         val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
         start..end
@@ -248,7 +278,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
     ): Float = with(context) {
-        val chartValues = chartValuesManager.getChartValues()
+        val chartValues = chartValuesProvider.getChartValues()
         val fullXRange = getFullXRange(horizontalDimensions)
 
         when (val constraint = sizeConstraint) {

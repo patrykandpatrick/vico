@@ -21,45 +21,33 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalInspectionMode
-import com.patrykandpatrick.vico.compose.state.MutableSharedState
-import com.patrykandpatrick.vico.compose.state.mutableSharedStateOf
+import com.patrykandpatrick.vico.compose.state.ChartEntryModelWrapper
+import com.patrykandpatrick.vico.compose.state.ChartEntryModelWrapperState
 import com.patrykandpatrick.vico.core.Animation
-import com.patrykandpatrick.vico.core.chart.composed.ComposedChartEntryModel
+import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
+import com.patrykandpatrick.vico.core.chart.values.toChartValuesProvider
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.entry.ChartModelProducer
-import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * The default [AnimationSpec] for difference animations.
  *
- * @see collect
+ * @see collectAsState
  */
-public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(
-    durationMillis = Animation.DIFF_DURATION,
-)
-
-/**
- * Observes the data provided by this [ChartModelProducer] and launches an animation for each [ChartEntryModel] update.
- *
- * @see ChartModelProducer
- */
-@Composable
-public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
-    chartKey: Any,
-    producerKey: Any,
-    animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
-    runInitialAnimation: Boolean = true,
-): Model? = collectAsState(
-    chartKey = chartKey,
-    producerKey = producerKey,
-    animationSpec = animationSpec,
-    runInitialAnimation = runInitialAnimation,
-).value
+public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis = Animation.DIFF_DURATION)
 
 /**
  * Observes the data provided by this [ChartModelProducer] and launches an animation for each [ChartEntryModel] update.
@@ -68,52 +56,97 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collect(
  */
 @Composable
 public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
-    chartKey: Any,
+    chart: Chart<Model>,
     producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
-): MutableSharedState<Model?, Model?> {
-    val model: MutableSharedState<Model?, Model?> = remember(key1 = chartKey, key2 = producerKey) {
-        mutableSharedStateOf(null)
-    }
-
+    chartValuesManager: ChartValuesManager,
+    getXStep: ((Model) -> Float)?,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+): State<ChartEntryModelWrapper<Model>> {
+    val chartEntryModelWrapperState = remember(chart, producerKey) { ChartEntryModelWrapperState<Model>() }
+    val modelTransformerProvider = remember(chart) { chart.modelTransformerProvider }
+    val extraStore = remember(chart) { MutableExtraStore() }
     val scope = rememberCoroutineScope()
     val isInPreview = LocalInspectionMode.current
-    DisposableEffect(chartKey, producerKey, runInitialAnimation, isInPreview) {
-        var animationJob: Job? = null
-        val listener = {
-            if (animationSpec != null && !isInPreview && (model.value != null || runInitialAnimation)) {
-                animationJob?.cancel()
-                animationJob = scope.launch {
+    DisposableEffect(chart, producerKey, runInitialAnimation, isInPreview) {
+        var mainAnimationJob: Job? = null
+        var animationFrameJob: Job? = null
+        var finalAnimationFrameJob: Job? = null
+        var isAnimationRunning: Boolean
+        var isAnimationFrameGenerationRunning = false
+        var chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
+        val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit = { transformModel ->
+            if (animationSpec != null && !isInPreview &&
+                (chartEntryModelWrapperState.value.chartEntryModel != null || runInitialAnimation)
+            ) {
+                isAnimationRunning = true
+                mainAnimationJob = scope.launch(dispatcher) {
                     animate(
                         initialValue = Animation.range.start,
                         targetValue = Animation.range.endInclusive,
                         animationSpec = animationSpec,
-                    ) { value, _ ->
-                        if (animationJob?.isActive == true) {
-                            progressModel(chartKey, value)
+                    ) { fraction, _ ->
+                        when {
+                            !isAnimationRunning -> return@animate
+                            !isAnimationFrameGenerationRunning -> {
+                                isAnimationFrameGenerationRunning = true
+                                animationFrameJob = scope.launch(dispatcher) {
+                                    transformModel(chart, fraction)
+                                    isAnimationFrameGenerationRunning = false
+                                }
+                            }
+                            fraction == 1f -> {
+                                finalAnimationFrameJob = scope.launch(dispatcher) {
+                                    animationFrameJob?.cancelAndJoin()
+                                    transformModel(chart, fraction)
+                                    isAnimationFrameGenerationRunning = false
+                                }
+                            }
                         }
                     }
                 }
             } else {
-                progressModel(chartKey, Animation.range.endInclusive)
+                finalAnimationFrameJob = scope.launch(dispatcher) {
+                    transformModel(chart, Animation.range.endInclusive)
+                }
             }
         }
-        registerForUpdates(
-            key = chartKey,
-            updateListener = listener,
-            getOldModel = { model.value },
-        ) { updatedModel ->
-            model.value = updatedModel
+        scope.launch(dispatcher) {
+            registerForUpdates(
+                key = chart,
+                cancelAnimation = {
+                    runBlocking {
+                        mainAnimationJob?.cancelAndJoin()
+                        animationFrameJob?.cancelAndJoin()
+                        finalAnimationFrameJob?.cancelAndJoin()
+                    }
+                    isAnimationRunning = false
+                    isAnimationFrameGenerationRunning = false
+                },
+                startAnimation = startAnimation,
+                getOldModel = { chartEntryModelWrapperState.value.chartEntryModel },
+                modelTransformerProvider = modelTransformerProvider,
+                extraStore = extraStore,
+                updateChartValues = { model ->
+                    chartValuesManager.resetChartValues()
+                    if (model != null) {
+                        chart.updateChartValues(chartValuesManager, model, getXStep?.invoke(model))
+                        chartValuesManager.toChartValuesProvider()
+                    } else {
+                        ChartValuesProvider.Empty
+                    }.also { provider -> chartValuesProvider = provider }
+                },
+            ) { chartEntryModel ->
+                chartEntryModelWrapperState.set(chartEntryModel, chartValuesProvider)
+            }
         }
-        onDispose { unregisterFromUpdates(chartKey) }
+        onDispose {
+            mainAnimationJob?.cancel()
+            animationFrameJob?.cancel()
+            finalAnimationFrameJob?.cancel()
+            unregisterFromUpdates(chart)
+        }
     }
-    return model
+    return chartEntryModelWrapperState
 }
-
-/**
- * Combines two [ChartEntryModel] implementations—the receiver and [other]—into a [ComposedChartEntryModel].
- */
-@Deprecated("Use `com.patrykandpatrick.vico.core.entry.composed.plus` instead.")
-public operator fun <Model : ChartEntryModel> Model.plus(other: Model): ComposedChartEntryModel<Model> =
-    ComposedChartEntryModelProducer.composedChartEntryModelOf(listOf(this, other))

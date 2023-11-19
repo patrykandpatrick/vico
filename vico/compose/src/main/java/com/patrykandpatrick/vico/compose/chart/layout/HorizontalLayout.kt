@@ -29,6 +29,13 @@ public fun HorizontalLayout.Companion.segmented(): HorizontalLayout.Segmented = 
  * Creates and returns an instance of [HorizontalLayout.FullWidth].
  */
 public fun HorizontalLayout.Companion.fullWidth(
-    startPadding: Dp = 0.dp,
-    endPadding: Dp = 0.dp,
-): HorizontalLayout.FullWidth = HorizontalLayout.FullWidth(startPadding.value, endPadding.value)
+    scalableStartPadding: Dp = 0.dp,
+    scalableEndPadding: Dp = 0.dp,
+    unscalableStartPadding: Dp = 0.dp,
+    unscalableEndPadding: Dp = 0.dp,
+): HorizontalLayout.FullWidth = HorizontalLayout.FullWidth(
+    scalableStartPadding.value,
+    scalableEndPadding.value,
+    unscalableStartPadding.value,
+    unscalableEndPadding.value,
+)

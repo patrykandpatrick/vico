@@ -20,7 +20,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultColors
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.context.DefaultExtras
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.Extras
@@ -54,7 +54,7 @@ public fun drawContext(
     override val density: Float = density
     override val isLtr: Boolean = isLtr
     override val isHorizontalScrollEnabled: Boolean = false
-    override val chartValuesManager: ChartValuesManager = ChartValuesManager()
+    override val chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
     override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented
 
     override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
@@ -65,7 +65,6 @@ public fun drawContext(
     }
 
     override fun reset() {
-        chartValuesManager.resetChartValues()
         clearExtras()
     }
 

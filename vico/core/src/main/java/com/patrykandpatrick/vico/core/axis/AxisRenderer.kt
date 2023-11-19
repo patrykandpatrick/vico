@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@ package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
+import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 
 /**
@@ -53,4 +55,9 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
      * The bounds ([RectF]) passed here define the area where the [AxisRenderer] shouldn’t draw anything.
      */
     public fun setRestrictedBounds(vararg bounds: RectF?)
+
+    /**
+     * Updates the chart’s [MutableHorizontalDimensions] instance.
+     */
+    public fun updateHorizontalDimensions(context: MeasureContext, horizontalDimensions: MutableHorizontalDimensions)
 }

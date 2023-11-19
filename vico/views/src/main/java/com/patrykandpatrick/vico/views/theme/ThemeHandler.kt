@@ -46,7 +46,6 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.hasAnyFlagOf
 import com.patrykandpatrick.vico.core.extension.hasFlag
 import com.patrykandpatrick.vico.views.R
-import java.lang.Exception
 
 internal class ThemeHandler(
     private val context: Context,
@@ -116,17 +115,22 @@ internal class ThemeHandler(
                 .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, true)
             fadingEdges = typedArray.getFadingEdges()
             horizontalLayout = typedArray.getHorizontalLayout()
-        }
-        when (chartType) {
-            ChartType.Single ->
-                context.obtainStyledAttributes(attrs, R.styleable.ChartView).use { typedArray ->
-                    chart = typedArray.getChart()
-                }
 
-            ChartType.Composed ->
-                context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView).use { typedArray ->
-                    composedChart = typedArray.getComposedChart()
-                }
+            when (chartType) {
+                ChartType.Single ->
+                    context
+                        .obtainStyledAttributes(attrs, R.styleable.ChartView)
+                        .use { chartViewTypedArray ->
+                            chart = getChart(chartViewTypedArray, typedArray)
+                        }
+
+                ChartType.Composed ->
+                    context
+                        .obtainStyledAttributes(attrs, R.styleable.ComposedChartView)
+                        .use { composedChartViewTypedArray ->
+                            composedChart = getComposedChart(composedChartViewTypedArray, typedArray)
+                        }
+            }
         }
     }
 
@@ -201,14 +205,14 @@ internal class ThemeHandler(
                     horizontalLabelPosition = axisStyle
                         .getInteger(R.styleable.Axis_verticalAxisHorizontalLabelPosition, 0)
                         .let { value ->
-                            val values = VerticalAxis.HorizontalLabelPosition.values()
+                            val values = VerticalAxis.HorizontalLabelPosition.entries
                             values[value % values.size]
                         }
 
                     verticalLabelPosition = axisStyle
                         .getInteger(R.styleable.Axis_verticalAxisVerticalLabelPosition, 0)
                         .let { value ->
-                            val values = VerticalAxis.VerticalLabelPosition.values()
+                            val values = VerticalAxis.VerticalLabelPosition.entries
                             values[value % values.size]
                         }
 
@@ -220,17 +224,21 @@ internal class ThemeHandler(
                         axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1),
                         axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0),
                         axisStyle.getBoolean(R.styleable.Axis_shiftExtremeHorizontalAxisTicks, true),
+                        axisStyle.getBoolean(R.styleable.Axis_addExtremeHorizontalAxisLabelPadding, false),
                     )
                 }
             }
         }.also { axisStyle.recycle() }
     }
 
-    private fun TypedArray.getChart(): Chart<ChartEntryModel>? =
-        when (getInt(R.styleable.ChartView_chart, 0)) {
-            COLUMN_CHART -> getColumnChart(context, mergeMode = MergeMode.Grouped)
-            STACKED_COLUMN_CHART -> getColumnChart(context, mergeMode = MergeMode.Stack)
-            LINE_CHART -> getLineChart(context)
+    private fun getChart(
+        chartViewTypedArray: TypedArray,
+        baseTypedArray: TypedArray,
+    ): Chart<ChartEntryModel>? =
+        when (chartViewTypedArray.getInt(R.styleable.ChartView_chart, 0)) {
+            COLUMN_CHART -> baseTypedArray.getColumnChart(context, mergeMode = MergeMode.Grouped)
+            STACKED_COLUMN_CHART -> baseTypedArray.getColumnChart(context, mergeMode = MergeMode.Stack)
+            LINE_CHART -> baseTypedArray.getLineChart(context)
             else -> null
         }
 
@@ -238,16 +246,29 @@ internal class ThemeHandler(
         when (getInt(R.styleable.BaseChartView_horizontalLayout, 0)) {
             0 -> HorizontalLayout.Segmented
             else -> HorizontalLayout.FullWidth(
-                getRawDimension(context, R.styleable.BaseChartView_startContentPadding, 0f),
-                getRawDimension(context, R.styleable.BaseChartView_endContentPadding, 0f),
+                getRawDimension(
+                    context,
+                    R.styleable.BaseChartView_scalableStartContentPadding,
+                    getRawDimension(context, R.styleable.BaseChartView_startContentPadding, 0f),
+                ),
+                getRawDimension(
+                    context,
+                    R.styleable.BaseChartView_scalableEndContentPadding,
+                    getRawDimension(context, R.styleable.BaseChartView_endContentPadding, 0f),
+                ),
+                getRawDimension(context, R.styleable.BaseChartView_unscalableStartContentPadding, 0f),
+                getRawDimension(context, R.styleable.BaseChartView_unscalableEndContentPadding, 0f),
             )
         }
 
-    private fun TypedArray.getComposedChart(): Chart<ComposedChartEntryModel<ChartEntryModel>>? {
-        val chartFlags = getInt(R.styleable.ComposedChartView_charts, 0)
+    private fun getComposedChart(
+        composedChartViewTypedArray: TypedArray,
+        baseTypedArray: TypedArray,
+    ): Chart<ComposedChartEntryModel<ChartEntryModel>>? {
+        val chartFlags = composedChartViewTypedArray.getInt(R.styleable.ComposedChartView_charts, 0)
 
         val columnChart: ColumnChart? = if (chartFlags.hasAnyFlagOf(COLUMN_CHART, STACKED_COLUMN_CHART)) {
-            getColumnChart(
+            baseTypedArray.getColumnChart(
                 context,
                 mergeMode = if (chartFlags.hasFlag(STACKED_COLUMN_CHART)) MergeMode.Stack else MergeMode.Grouped,
             )
@@ -255,7 +276,7 @@ internal class ThemeHandler(
             null
         }
         val lineChart = if (chartFlags.hasFlag(LINE_CHART)) {
-            getLineChart(context)
+            baseTypedArray.getLineChart(context)
         } else {
             null
         }

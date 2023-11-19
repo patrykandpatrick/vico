@@ -93,12 +93,11 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
     markerTouchPoint
         ?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
         ?.let { markerEntryModels ->
-            chartValuesManager.getChartValues()
             marker.draw(
                 context = this,
                 bounds = chart.bounds,
                 markedEntries = markerEntryModels,
-                chartValuesProvider = chartValuesManager,
+                chartValuesProvider = chartValuesProvider,
             )
             if (wasMarkerVisible.not()) {
                 markerVisibilityChangeListener?.onMarkerShown(

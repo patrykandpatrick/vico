@@ -10,6 +10,8 @@ comments:
       - "**/jsTest/**"
       - "**/iosTest/**"
       - "**/com/patrykandpatrick/vico/sample/**"
+    ignoreAnnotated:
+      - "RestrictTo"
   UndocumentedPublicFunction:
     active: true
     excludes:
@@ -20,6 +22,8 @@ comments:
       - "**/jsTest/**"
       - "**/iosTest/**"
       - "**/com/patrykandpatrick/vico/sample/**"
+    ignoreAnnotated:
+      - "RestrictTo"
   UndocumentedPublicProperty:
     active: true
     excludes:
@@ -30,21 +34,10 @@ comments:
       - "**/jsTest/**"
       - "**/iosTest/**"
       - "**/com/patrykandpatrick/vico/sample/**"
+    ignoreAnnotated:
+      - "RestrictTo"
 complexity:
-  LongMethod:
-    threshold: 90
-  LongParameterList:
-    active: false
-  TooManyFunctions:
-    thresholdInFiles: 999
-    ignoreDeprecated: true
-    ignorePrivate: true
-    ignoreOverridden: true
-    thresholdInInterfaces: 20
-  CyclomaticComplexMethod:
-    threshold: 20
-  ComplexCondition:
-    threshold: 6
+  active: false
 style:
   MagicNumber:
     excludes:

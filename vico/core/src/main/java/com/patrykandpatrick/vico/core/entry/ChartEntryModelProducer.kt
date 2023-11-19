@@ -16,138 +16,178 @@
 
 package com.patrykandpatrick.vico.core.entry
 
-import com.patrykandpatrick.vico.core.DEF_THREAD_POOL_SIZE
-import com.patrykandpatrick.vico.core.entry.diff.DefaultDiffProcessor
-import com.patrykandpatrick.vico.core.entry.diff.DiffProcessor
-import com.patrykandpatrick.vico.core.extension.setToAllChildren
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
+import androidx.annotation.WorkerThread
+import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
+import com.patrykandpatrick.vico.core.extension.copy
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 
 /**
  * A [ChartModelProducer] implementation that generates [ChartEntryModel] instances.
  *
- * @param entryCollections a two-dimensional list of [ChartEntry] instances used to generate the [ChartEntryModel].
- * @param backgroundExecutor an [Executor] used to generate instances of the [ChartEntryModel] off the main thread.
- * @param diffProcessor the [DiffProcessor] to use for difference animations.
+ * @param entryCollections the initial data set (list of series).
+ * @param dispatcher the [CoroutineDispatcher] to be used for update handling.
  *
  * @see ChartModelProducer
  */
 public class ChartEntryModelProducer(
     entryCollections: List<List<ChartEntry>>,
-    backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-    private val diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor(),
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ChartModelProducer<ChartEntryModel> {
 
-    private var cachedModel: ChartEntryModel? = null
-
-    private var entriesHashCode: Int? = null
-
+    private var series = emptyList<List<ChartEntry>>()
+    private var cachedInternalModel: InternalModel? = null
+    private val mutex = Mutex()
+    private val coroutineScope = CoroutineScope(dispatcher)
     private val updateReceivers: HashMap<Any, UpdateReceiver> = HashMap()
-
-    private val executor: Executor = backgroundExecutor
-
-    /**
-     * A mutable two-dimensional list of the [ChartEntry] instances used to generate the [ChartEntryModel].
-     */
-    private val entries: ArrayList<ArrayList<ChartEntry>> = ArrayList()
+    private val extraStore = MutableExtraStore()
 
     public constructor(
         vararg entryCollections: List<ChartEntry>,
-        backgroundExecutor: Executor = Executors.newFixedThreadPool(DEF_THREAD_POOL_SIZE),
-        diffProcessor: DiffProcessor<ChartEntry> = DefaultDiffProcessor(),
-    ) : this(entryCollections.toList(), backgroundExecutor, diffProcessor)
+        dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    ) : this(entryCollections.toList(), dispatcher)
 
     init {
         setEntries(entryCollections)
     }
 
     /**
-     * Updates the two-dimensional list of [ChartEntry] instances and notifies listeners about the update.
-     *
-     * @see entries
-     * @see registerForUpdates
+     * Requests that the data set be updated to the provided one. If the update is accepted, `true` is returned. If the
+     * update is rejected, which occurs when there’s already an update in progress, `false` is returned. For suspending
+     * behavior, use [setEntriesSuspending]. [updateExtras] allows for adding auxiliary data, which can later be
+     * retrieved via [ChartEntryModel.extraStore].
      */
-    public fun setEntries(entries: List<List<ChartEntry>>) {
-        this.entries.setToAllChildren(entries)
-        val entriesHashCode = entries.hashCode()
-        cachedModel = null
-        updateReceivers.values.forEach { updateReceiver ->
-            executor.execute {
-                this.entriesHashCode = entriesHashCode
-                updateReceiver.diffProcessor.setEntries(
-                    old = updateReceiver.getOldModel()?.entries.orEmpty(),
-                    new = entries,
-                )
-                updateReceiver.listener()
-            }
+    public fun setEntries(entries: List<List<ChartEntry>>, updateExtras: (MutableExtraStore) -> Unit = {}): Boolean {
+        if (!mutex.tryLock()) return false
+        series = entries.copy()
+        updateExtras(extraStore)
+        cachedInternalModel = null
+        val deferredUpdates = updateReceivers.values.map { updateReceiver ->
+            coroutineScope.async { updateReceiver.handleUpdate() }
         }
+        coroutineScope.launch {
+            deferredUpdates.awaitAll()
+            mutex.unlock()
+        }
+        return true
     }
 
     /**
-     * Updates the two-dimensional list of [ChartEntry] instances and notifies listeners about the update.
-     *
-     * @see entries
-     * @see registerForUpdates
+     * Updates the data set. Unlike [setEntries], this function suspends the current coroutine and waits until an update
+     * can be run, meaning the update cannot be rejected. The returned [Deferred] implementation is marked as completed
+     * once the update has been processed. [updateExtras] allows for adding auxiliary data, which can later be retrieved
+     * via [ChartEntryModel.extraStore].
      */
-    public fun setEntries(vararg entries: List<ChartEntry>) {
-        setEntries(entries.toList())
+    public suspend fun setEntriesSuspending(
+        entries: List<List<ChartEntry>>,
+        updateExtras: (MutableExtraStore) -> Unit = {},
+    ): Deferred<Unit> {
+        mutex.lock()
+        series = entries.copy()
+        updateExtras(extraStore)
+        cachedInternalModel = null
+        val completableDeferred = CompletableDeferred<Unit>()
+        val deferredUpdates = updateReceivers.values.map { updateReceiver ->
+            coroutineScope.async { updateReceiver.handleUpdate() }
+        }
+        coroutineScope.launch {
+            deferredUpdates.awaitAll()
+            mutex.unlock()
+            completableDeferred.complete(Unit)
+        }
+        return completableDeferred
     }
 
-    override fun getModel(): ChartEntryModel =
-        cachedModel ?: getModel(entries).also { cachedModel = it }
+    /**
+     * Requests that the data set be updated to the provided one. If the update is accepted, `true` is returned. If the
+     * update is rejected, which occurs when there’s already an update in progress, `false` is returned. For suspending
+     * behavior, use [setEntriesSuspending]. [updateExtras] allows for adding auxiliary data, which can later be
+     * retrieved via [ChartEntryModel.extraStore].
+     */
+    public fun setEntries(vararg entries: List<ChartEntry>, updateExtras: (MutableExtraStore) -> Unit = {}): Boolean =
+        setEntries(entries.toList(), updateExtras)
 
-    override fun progressModel(key: Any, progress: Float) {
-        val (_, modelReceiver, diffProcessor) = updateReceivers[key] ?: return
-        executor.execute {
-            progressModelSynchronously(progress, modelReceiver, diffProcessor)
+    /**
+     * Updates the data set. Unlike [setEntries], this function suspends the current coroutine and waits until an update
+     * can be run, meaning the update cannot be rejected. The returned [Deferred] implementation is marked as completed
+     * once the update has been processed. [updateExtras] allows for adding auxiliary data, which can later be retrieved
+     * via [ChartEntryModel.extraStore].
+     */
+    public suspend fun setEntriesSuspending(
+        vararg entries: List<ChartEntry>,
+        updateExtras: (MutableExtraStore) -> Unit = {},
+    ): Deferred<Unit> = setEntriesSuspending(entries.toList(), updateExtras)
+
+    private fun getInternalModel(extraStore: ExtraStore? = null) =
+        if (series.isEmpty()) {
+            null
+        } else {
+            val mergedExtraStore = this.extraStore.let { if (extraStore != null) it + extraStore else it }
+            cachedInternalModel?.copy(extraStore = mergedExtraStore)
+                ?: run {
+                    val xRange = series.xRange
+                    val yRange = series.yRange
+                    val aggregateYRange = series.calculateStackedYRange()
+                    InternalModel(
+                        entries = series,
+                        minX = xRange.start,
+                        maxX = xRange.endInclusive,
+                        minY = yRange.start,
+                        maxY = yRange.endInclusive,
+                        stackedPositiveY = aggregateYRange.endInclusive,
+                        stackedNegativeY = aggregateYRange.start,
+                        xGcd = series.calculateXGcd(),
+                        id = series.hashCode(),
+                        extraStore = mergedExtraStore,
+                    ).also { cachedInternalModel = it }
+                }
+        }
+
+    override fun getModel(): ChartEntryModel? = getInternalModel()
+
+    override suspend fun transformModel(key: Any, fraction: Float) {
+        with(updateReceivers[key] ?: return) {
+            modelTransformer?.transform(extraStore, fraction)
+            val internalModel = getInternalModel(extraStore.copy())
+            currentCoroutineContext().ensureActive()
+            onModelCreated(internalModel)
         }
     }
 
-    private fun progressModelSynchronously(
-        progress: Float,
-        modelReceiver: (ChartEntryModel) -> Unit,
-        diffProcessor: DiffProcessor<ChartEntry>,
-    ) {
-        val model = getModel(
-            entries = diffProcessor.progressDiff(progress),
-            yRange = diffProcessor.yRangeProgressDiff(progress),
-            stackedPositiveYRange = diffProcessor.stackedYRangeProgressDiff(progress),
-        )
-        modelReceiver(model)
-    }
-
-    private fun getModel(
-        entries: List<List<ChartEntry>>,
-        yRange: ClosedFloatingPointRange<Float> = entries.yRange,
-        stackedPositiveYRange: ClosedFloatingPointRange<Float> = entries.calculateStackedYRange(),
-    ): ChartEntryModel =
-        Model(
-            entries = entries,
-            minX = entries.xRange.start,
-            maxX = entries.xRange.endInclusive,
-            minY = yRange.start,
-            maxY = yRange.endInclusive,
-            stackedPositiveY = stackedPositiveYRange.endInclusive,
-            stackedNegativeY = stackedPositiveYRange.start,
-            xGcd = entries.calculateXGcd(),
-            id = entriesHashCode ?: entries.hashCode().also { entriesHashCode = it },
-        )
-
+    @WorkerThread
     override fun registerForUpdates(
         key: Any,
-        updateListener: () -> Unit,
+        cancelAnimation: () -> Unit,
+        startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
         getOldModel: () -> ChartEntryModel?,
-        onModel: (ChartEntryModel) -> Unit,
+        modelTransformerProvider: Chart.ModelTransformerProvider?,
+        extraStore: MutableExtraStore,
+        updateChartValues: (ChartEntryModel?) -> ChartValuesProvider,
+        onModelCreated: (ChartEntryModel?) -> Unit,
     ) {
-        updateReceivers[key] = UpdateReceiver(
-            listener = updateListener,
-            onModel = onModel,
-            diffProcessor = diffProcessor,
-            getOldModel = getOldModel,
-        )
-        executor.execute {
-            diffProcessor.setEntries(old = getOldModel()?.entries.orEmpty(), new = entries)
-            updateListener()
+        UpdateReceiver(
+            cancelAnimation,
+            startAnimation,
+            onModelCreated,
+            extraStore,
+            modelTransformerProvider?.getModelTransformer(),
+            getOldModel,
+            updateChartValues,
+        ).run {
+            updateReceivers[key] = this
+            handleUpdate()
         }
     }
 
@@ -157,14 +197,28 @@ public class ChartEntryModelProducer(
 
     override fun isRegistered(key: Any): Boolean = updateReceivers.containsKey(key = key)
 
-    private data class UpdateReceiver(
-        val listener: () -> Unit,
-        val onModel: (ChartEntryModel) -> Unit,
-        val diffProcessor: DiffProcessor<ChartEntry>,
+    private inner class UpdateReceiver(
+        val cancelAnimation: () -> Unit,
+        val startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
+        val onModelCreated: (ChartEntryModel?) -> Unit,
+        val extraStore: MutableExtraStore,
+        val modelTransformer: Chart.ModelTransformer<ChartEntryModel>?,
         val getOldModel: () -> ChartEntryModel?,
-    )
+        val updateChartValues: (ChartEntryModel?) -> ChartValuesProvider,
+    ) {
+        fun handleUpdate() {
+            cancelAnimation()
+            modelTransformer?.prepareForTransformation(
+                oldModel = getOldModel(),
+                newModel = getModel(),
+                extraStore = extraStore,
+                chartValuesProvider = updateChartValues(getModel()),
+            )
+            startAnimation(::transformModel)
+        }
+    }
 
-    internal data class Model(
+    private data class InternalModel(
         override val entries: List<List<ChartEntry>>,
         override val minX: Float,
         override val maxX: Float,
@@ -174,5 +228,6 @@ public class ChartEntryModelProducer(
         override val stackedNegativeY: Float,
         override val xGcd: Float,
         override val id: Int,
+        override val extraStore: ExtraStore,
     ) : ChartEntryModel
 }

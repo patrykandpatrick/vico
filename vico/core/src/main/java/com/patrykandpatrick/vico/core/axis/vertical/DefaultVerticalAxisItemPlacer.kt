@@ -49,7 +49,7 @@ internal class DefaultVerticalAxisItemPlacer(
         position: AxisPosition.Vertical,
     ): List<Float> {
         if (maxItemCount == 0) return emptyList()
-        val chartValues = context.chartValuesManager.getChartValues(position)
+        val chartValues = context.chartValuesProvider.getChartValues(position)
         return if (chartValues.minY * chartValues.maxY >= 0) {
             getSimpleLabelValues(axisHeight, maxLabelHeight, chartValues)
         } else {
@@ -61,7 +61,7 @@ internal class DefaultVerticalAxisItemPlacer(
         context: MeasureContext,
         position: AxisPosition.Vertical,
     ): List<Float> {
-        val chartValues = context.chartValuesManager.getChartValues(position)
+        val chartValues = context.chartValuesProvider.getChartValues(position)
         return listOf(chartValues.minY, (chartValues.minY + chartValues.maxY).half, chartValues.maxY)
     }
 
@@ -69,24 +69,30 @@ internal class DefaultVerticalAxisItemPlacer(
         verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
         maxLabelHeight: Float,
         maxLineThickness: Float,
-    ) = when (verticalLabelPosition) {
-        VerticalAxis.VerticalLabelPosition.Top ->
+    ) = when {
+        maxItemCount == 0 -> 0f
+
+        verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top ->
             maxLabelHeight + (if (shiftTopLines) maxLineThickness else -maxLineThickness).half
 
-        VerticalAxis.VerticalLabelPosition.Center ->
+        verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
             (max(maxLabelHeight, maxLineThickness) + if (shiftTopLines) maxLineThickness else -maxLineThickness).half
 
-        VerticalAxis.VerticalLabelPosition.Bottom -> if (shiftTopLines) maxLineThickness else 0f
+        else -> if (shiftTopLines) maxLineThickness else 0f
     }
 
     override fun getBottomVerticalAxisInset(
         verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
         maxLabelHeight: Float,
         maxLineThickness: Float,
-    ): Float = when (verticalLabelPosition) {
-        VerticalAxis.VerticalLabelPosition.Top -> maxLineThickness
-        VerticalAxis.VerticalLabelPosition.Center -> (maxOf(maxLabelHeight, maxLineThickness) + maxLineThickness).half
-        VerticalAxis.VerticalLabelPosition.Bottom -> maxLabelHeight + maxLineThickness.half
+    ): Float = when {
+        maxItemCount == 0 -> 0f
+        verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top -> maxLineThickness
+
+        verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
+            (maxOf(maxLabelHeight, maxLineThickness) + maxLineThickness).half
+
+        else -> maxLabelHeight + maxLineThickness.half
     }
 
     private fun getSimpleLabelValues(axisHeight: Float, maxLabelHeight: Float, chartValues: ChartValues): List<Float> {

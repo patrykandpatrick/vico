@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-rootProject.name = "Vico"
+package com.patrykandpatrick.vico.sample.previews.resource
 
-include ":sample"
-include ":vico"
-include ":vico:views"
-include ":vico:compose"
-include ":vico:core"
-include ":vico:compose-m2"
-include ":vico:compose-m3"
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import com.patrykandpatrick.vico.sample.utils.VicoTheme
+
+@Composable
+public fun PreviewSurface(content: @Composable () -> Unit) {
+    VicoTheme {
+        Surface {
+            content()
+        }
+    }
+}

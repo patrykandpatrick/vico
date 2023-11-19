@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,13 @@ package com.patrykandpatrick.vico.core.extension
 import android.graphics.Paint
 
 private val fm: Paint.FontMetrics = Paint.FontMetrics()
+
+internal fun Paint.withOpacity(opacity: Float, action: (Paint) -> Unit) {
+    val previousOpacity = this.alpha
+    color = color.copyColor(opacity * previousOpacity / MAX_HEX_VALUE)
+    action(this)
+    this.alpha = previousOpacity
+}
 
 /**
  * Returns the height of a single line of text.

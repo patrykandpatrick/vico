@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.BaseChart
+import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
@@ -37,6 +38,7 @@ import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec.PointConnect
 import com.patrykandpatrick.vico.core.chart.put
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
@@ -46,11 +48,16 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.rangeWith
+import com.patrykandpatrick.vico.core.extension.withOpacity
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -64,11 +71,16 @@ import kotlin.math.min
  * @param spacingDp the spacing between each [LineSpec.point] (in dp).
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
  * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
+ * @param drawingModelInterpolator interpolates the [LineChart]’s [LineChartDrawingModel]s.
  */
 public open class LineChart(
     public var lines: List<LineSpec> = listOf(LineSpec()),
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
     public var targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    public var drawingModelInterpolator: DrawingModelInterpolator<
+        LineChartDrawingModel.PointInfo,
+        LineChartDrawingModel,
+        > = DefaultDrawingModelInterpolator(),
 ) : BaseChart<ChartEntryModel>() {
 
     /**
@@ -217,25 +229,22 @@ public open class LineChart(
         /**
          * Draws the line.
          */
-        public fun drawLine(context: DrawContext, path: Path): Unit = with(context) {
-            linePaint.strokeWidth = lineThicknessDp.pixels
-            canvas.drawPath(path, linePaint)
+        public fun drawLine(context: DrawContext, path: Path, opacity: Float = 1f) {
+            with(context) {
+                linePaint.strokeWidth = lineThicknessDp.pixels
+                linePaint.withOpacity(opacity) { canvas.drawPath(path, it) }
+            }
         }
 
         /**
          * Draws the line background.
          */
-        public fun drawBackgroundLine(context: DrawContext, bounds: RectF, path: Path): Unit = with(context) {
-            lineBackgroundPaint.shader = lineBackgroundShader
-                ?.provideShader(
-                    context = context,
-                    left = bounds.left,
-                    top = bounds.top,
-                    right = bounds.right,
-                    bottom = bounds.bottom,
-                )
-
-            canvas.drawPath(path, lineBackgroundPaint)
+        public fun drawBackgroundLine(context: DrawContext, bounds: RectF, path: Path, opacity: Float = 1f) {
+            with(lineBackgroundPaint) {
+                shader =
+                    lineBackgroundShader?.provideShader(context, bounds.left, bounds.top, bounds.right, bounds.bottom)
+                withOpacity(opacity) { context.canvas.drawPath(path, it) }
+            }
         }
 
         /**
@@ -270,10 +279,7 @@ public open class LineChart(
      */
     protected val lineBackgroundPath: Path = Path()
 
-    /**
-     * Holds information on the [LineChart]’s horizontal dimensions.
-     */
-    protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
+    protected val drawingModelKey: ExtraStore.Key<LineChartDrawingModel> = ExtraStore.Key()
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -283,7 +289,11 @@ public open class LineChart(
     ): Unit = with(context) {
         resetTempData()
 
+        val drawingModel = model.extraStore.getOrNull(drawingModelKey)
+
         model.entries.forEachIndexed { entryListIndex, entries ->
+
+            val pointInfoMap = drawingModel?.getOrNull(entryListIndex)
 
             linePath.rewind()
             lineBackgroundPath.rewind()
@@ -299,6 +309,7 @@ public open class LineChart(
             forEachPointWithinBoundsIndexed(
                 entries = entries,
                 drawingStart = drawingStart,
+                pointInfoMap = pointInfoMap,
             ) { entryIndex, entry, x, y, _, _ ->
                 if (linePath.isEmpty) {
                     linePath.moveTo(x, y)
@@ -345,14 +356,15 @@ public open class LineChart(
             if (component.hasLineBackgroundShader) {
                 lineBackgroundPath.lineTo(prevX, bounds.bottom)
                 lineBackgroundPath.close()
-                component.drawBackgroundLine(context, bounds, lineBackgroundPath)
+                component.drawBackgroundLine(context, bounds, lineBackgroundPath, drawingModel?.opacity ?: 1f)
             }
-            component.drawLine(context, linePath)
+            component.drawLine(context, linePath, drawingModel?.opacity ?: 1f)
 
             drawPointsAndDataLabels(
                 lineSpec = component,
                 entries = entries,
                 drawingStart = drawingStart,
+                pointInfoMap = pointInfoMap,
             )
         }
     }
@@ -364,13 +376,15 @@ public open class LineChart(
         lineSpec: LineSpec,
         entries: List<ChartEntry>,
         drawingStart: Float,
+        pointInfoMap: Map<Float, LineChartDrawingModel.PointInfo>?,
     ) {
         if (lineSpec.point == null && lineSpec.dataLabel == null) return
-        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
+        val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
 
         forEachPointWithinBoundsIndexed(
             entries = entries,
             drawingStart = drawingStart,
+            pointInfoMap = pointInfoMap,
         ) { _, chartEntry, x, y, previousX, nextX ->
 
             if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
@@ -427,7 +441,7 @@ public open class LineChart(
         previousX: Float?,
         nextX: Float?,
     ): Int {
-        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
+        val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
         return when {
             previousX != null && nextX != null -> min(x - previousX, nextX - x)
 
@@ -471,14 +485,13 @@ public open class LineChart(
     protected open fun ChartDrawContext.forEachPointWithinBoundsIndexed(
         entries: List<ChartEntry>,
         drawingStart: Float,
+        pointInfoMap: Map<Float, LineChartDrawingModel.PointInfo>?,
         action: (index: Int, entry: ChartEntry, x: Float, y: Float, previousX: Float?, nextX: Float?) -> Unit,
     ) {
-        val chartValues = chartValuesManager.getChartValues(targetVerticalAxisPosition)
+        val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
 
         val minX = chartValues.minX
         val maxX = chartValues.maxX
-        val minY = chartValues.minY
-        val maxY = chartValues.maxY
         val xStep = chartValues.xStep
 
         var x: Float = Float.NEGATIVE_INFINITY
@@ -488,8 +501,6 @@ public open class LineChart(
         var prevEntry: ChartEntry? = null
         var lastEntry: ChartEntry? = null
 
-        val heightMultiplier = bounds.height() / (maxY - minY)
-
         val boundsStart = bounds.getStart(isLtr = isLtr)
         val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
 
@@ -497,7 +508,8 @@ public open class LineChart(
             horizontalDimensions.xSpacing * (entry.x - minX) / xStep
 
         fun getDrawY(entry: ChartEntry): Float =
-            bounds.bottom - (entry.y - minY) * heightMultiplier
+            bounds.bottom - (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - chartValues.minY) / chartValues.lengthY)) *
+                bounds.height()
 
         entries.forEachInAbsolutelyIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
 
@@ -527,23 +539,30 @@ public open class LineChart(
         }
     }
 
-    override fun getHorizontalDimensions(
+    override fun updateHorizontalDimensions(
         context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
         model: ChartEntryModel,
-    ): HorizontalDimensions = with(context) {
-        val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
-        horizontalDimensions.apply {
-            xSpacing = maxPointSize + spacingDp.pixels
+    ) {
+        with(context) {
+            val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
+            val xSpacing = maxPointSize + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> {
-                    scalableStartPadding = xSpacing.half
-                    scalableEndPadding = scalableStartPadding
+                    horizontalDimensions.ensureValuesAtLeast(
+                        xSpacing = xSpacing,
+                        scalableStartPadding = xSpacing.half,
+                        scalableEndPadding = xSpacing.half,
+                    )
                 }
                 is HorizontalLayout.FullWidth -> {
-                    scalableStartPadding = horizontalLayout.startPaddingDp.pixels
-                    scalableEndPadding = horizontalLayout.endPaddingDp.pixels
-                    unscalableStartPadding = maxPointSize.half
-                    unscalableEndPadding = unscalableStartPadding
+                    horizontalDimensions.ensureValuesAtLeast(
+                        xSpacing = xSpacing,
+                        scalableStartPadding = horizontalLayout.scalableStartPaddingDp.pixels,
+                        scalableEndPadding = horizontalLayout.scalableEndPaddingDp.pixels,
+                        unscalableStartPadding = maxPointSize.half + horizontalLayout.unscalableStartPaddingDp.pixels,
+                        unscalableEndPadding = maxPointSize.half + horizontalLayout.unscalableEndPaddingDp.pixels,
+                    )
                 }
             }
         }
@@ -572,5 +591,49 @@ public open class LineChart(
                 if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp) else it.lineThicknessDp
             }.pixels,
         )
+    }
+
+    override val modelTransformerProvider: Chart.ModelTransformerProvider = object : Chart.ModelTransformerProvider {
+        private val modelTransformer =
+            LineChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition }, { drawingModelInterpolator })
+
+        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
+    }
+
+    protected class LineChartModelTransformer(
+        override val key: ExtraStore.Key<LineChartDrawingModel>,
+        private val getTargetVerticalAxisPosition: () -> AxisPosition.Vertical?,
+        private val getDrawingModelInterpolator: () -> DrawingModelInterpolator<
+            LineChartDrawingModel.PointInfo,
+            LineChartDrawingModel,
+            >,
+    ) : Chart.ModelTransformer<ChartEntryModel>() {
+
+        override fun prepareForTransformation(
+            oldModel: ChartEntryModel?,
+            newModel: ChartEntryModel?,
+            extraStore: MutableExtraStore,
+            chartValuesProvider: ChartValuesProvider,
+        ) {
+            getDrawingModelInterpolator().setModels(
+                extraStore.getOrNull(key),
+                newModel?.toDrawingModel(chartValuesProvider.getChartValues(getTargetVerticalAxisPosition())),
+            )
+        }
+
+        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
+            getDrawingModelInterpolator()
+                .transform(fraction)
+                ?.let { extraStore[key] = it }
+                ?: extraStore.remove(key)
+        }
+
+        private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): LineChartDrawingModel = entries
+            .map { series ->
+                series.associate { entry ->
+                    entry.x to LineChartDrawingModel.PointInfo((entry.y - chartValues.minY) / chartValues.lengthY)
+                }
+            }
+            .let(::LineChartDrawingModel)
     }
 }

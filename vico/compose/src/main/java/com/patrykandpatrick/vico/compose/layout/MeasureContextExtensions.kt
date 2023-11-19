@@ -23,6 +23,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 
@@ -33,6 +35,7 @@ import com.patrykandpatrick.vico.core.context.MutableMeasureContext
  * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param spToPx converts dimensions from sp to px.
+ * @param chartValuesProvider provides the chart’s [ChartValues] instances.
  */
 @Composable
 public fun getMeasureContext(
@@ -40,17 +43,20 @@ public fun getMeasureContext(
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,
     spToPx: (Float) -> Float,
+    chartValuesProvider: ChartValuesProvider,
 ): MutableMeasureContext = remember {
     MutableMeasureContext(
         canvasBounds = canvasBounds,
         density = 0f,
         isLtr = true,
-        isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-        horizontalLayout = horizontalLayout,
         spToPx = spToPx,
+        chartValuesProvider = chartValuesProvider,
     )
 }.apply {
     this.density = LocalDensity.current.density
     this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+    this.horizontalLayout = horizontalLayout
+    this.spToPx = spToPx
+    this.chartValuesProvider = chartValuesProvider
 }

@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatrick.vico.core.chart.line.LineChartDrawingModel
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.component.Component
@@ -46,6 +47,8 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.entry.diff.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -61,6 +64,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
  * @param axisValuesOverrider overrides the minimum and maximum x-axis and y-axis values.
  * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
  * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
+ * @param drawingModelInterpolator interpolates the [LineChart]’s [LineChartDrawingModel]s.
  *
  * @see Chart
  * @see ColumnChart
@@ -73,54 +77,14 @@ public fun lineChart(
     persistentMarkers: Map<Float, Marker>? = null,
     axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
     targetVerticalAxisPosition: AxisPosition.Vertical? = null,
+    drawingModelInterpolator: DrawingModelInterpolator<LineChartDrawingModel.PointInfo, LineChartDrawingModel> =
+        remember { DefaultDrawingModelInterpolator() },
 ): LineChart = remember { LineChart() }.apply {
     this.lines = lines
     this.spacingDp = spacing.value
     this.axisValuesOverrider = axisValuesOverrider
     this.targetVerticalAxisPosition = targetVerticalAxisPosition
-    decorations?.also(::setDecorations)
-    persistentMarkers?.also(::setPersistentMarkers)
-}
-
-/**
- * Creates a [LineChart].
- *
- * @param lines the [LineChart.LineSpec]s to use for the lines. This list is iterated through as many times as there
- * are lines.
- * @param spacing the distance between neighboring major entries’ points.
- * @param minX the minimum value shown on the x-axis. If not null, this overrides [ChartEntryModel.minX].
- * @param maxX the maximum value shown on the x-axis. If not null, this overrides [ChartEntryModel.maxX].
- * @param minY the minimum value shown on the y-axis. If not null, this overrides [ChartEntryModel.minY].
- * @param maxY the maximum value shown on the y-axis. If not null, this overrides [ChartEntryModel.maxY].
- * @param decorations the list of [Decoration]s that will be added to the [LineChart].
- * @param persistentMarkers maps x-axis values to persistent [Marker]s.
- * @param targetVerticalAxisPosition if this is set, any [AxisRenderer] with an [AxisPosition] equal to the provided
- * value will use the [ChartValues] provided by this chart. This is meant to be used with [ComposedChart].
- *
- * @see Chart
- * @see ColumnChart
- */
-@Deprecated(message = "Axis values should be overridden via `AxisValuesOverrider`.", level = DeprecationLevel.ERROR)
-@Suppress("DEPRECATION_ERROR")
-@Composable
-public fun lineChart(
-    lines: List<LineSpec> = currentChartStyle.lineChart.lines,
-    spacing: Dp = currentChartStyle.lineChart.spacing,
-    minX: Float? = null,
-    maxX: Float? = null,
-    minY: Float? = null,
-    maxY: Float? = null,
-    decorations: List<Decoration>? = null,
-    persistentMarkers: Map<Float, Marker>? = null,
-    targetVerticalAxisPosition: AxisPosition.Vertical? = null,
-): LineChart = remember { LineChart() }.apply {
-    this.lines = lines
-    this.spacingDp = spacing.value
-    this.minX = minX
-    this.maxX = maxX
-    this.minY = minY
-    this.maxY = maxY
-    this.targetVerticalAxisPosition = targetVerticalAxisPosition
+    this.drawingModelInterpolator = drawingModelInterpolator
     decorations?.also(::setDecorations)
     persistentMarkers?.also(::setPersistentMarkers)
 }

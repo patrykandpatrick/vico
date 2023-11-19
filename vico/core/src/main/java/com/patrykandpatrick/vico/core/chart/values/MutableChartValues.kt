@@ -106,3 +106,15 @@ public class MutableChartValues : ChartValues {
         }
     }
 }
+
+/**
+ * Creates and returns an immutable copy of this [MutableChartValues] instance.
+ */
+public fun MutableChartValues.toImmutable(): ChartValues = object : ChartValues {
+    override val minX: Float = this@toImmutable.minX
+    override val maxX: Float = this@toImmutable.maxX
+    override val xStep: Float = this@toImmutable.xStep
+    override val minY: Float = this@toImmutable.minY
+    override val maxY: Float = this@toImmutable.maxY
+    override val chartEntryModel: ChartEntryModel = this@toImmutable.chartEntryModel.toImmutable()
+}

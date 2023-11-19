@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.chart.composed
 import com.patrykandpatrick.vico.core.chart.AXIS_VALUES_DEPRECATION_MESSAGE
 import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.Chart.ModelTransformerProvider
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
@@ -26,8 +27,11 @@ import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
+import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.updateAll
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -50,8 +54,6 @@ public class ComposedChart<Model : ChartEntryModel>(
     public val charts: List<Chart<Model>> = ArrayList(charts)
 
     private val tempInsets = Insets()
-
-    private val horizontalDimensions = MutableHorizontalDimensions()
 
     override val entryLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
 
@@ -97,22 +99,14 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun getHorizontalDimensions(
+    override fun updateHorizontalDimensions(
         context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
         model: ComposedChartEntryModel<Model>,
-    ): HorizontalDimensions {
-        horizontalDimensions.clear()
+    ) {
         model.forEachModelWithChart { item, chart ->
-            val chartHorizontalDimensions = chart.getHorizontalDimensions(context, item)
-            horizontalDimensions.apply {
-                xSpacing = maxOf(xSpacing, chartHorizontalDimensions.xSpacing)
-                scalableStartPadding = maxOf(scalableStartPadding, chartHorizontalDimensions.scalableStartPadding)
-                scalableEndPadding = maxOf(scalableEndPadding, chartHorizontalDimensions.scalableEndPadding)
-                unscalableStartPadding = maxOf(unscalableStartPadding, chartHorizontalDimensions.unscalableStartPadding)
-                unscalableEndPadding = maxOf(unscalableEndPadding, chartHorizontalDimensions.unscalableEndPadding)
-            }
+            chart.updateHorizontalDimensions(context, horizontalDimensions, item)
         }
-        return horizontalDimensions
     }
 
     override fun updateChartValues(
@@ -152,6 +146,43 @@ public class ComposedChart<Model : ChartEntryModel>(
                 composedEntryCollections[index],
                 charts[index],
             )
+        }
+    }
+
+    override val modelTransformerProvider: ModelTransformerProvider = object : ModelTransformerProvider {
+        private val modelTransformer =
+            ComposedModelTransformer { charts.map { it.modelTransformerProvider.getModelTransformer() } }
+
+        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
+    }
+
+    private class ComposedModelTransformer<T : ChartEntryModel>(
+        private val getModelTransformers: () -> List<Chart.ModelTransformer<T>>,
+    ) : Chart.ModelTransformer<T>() {
+
+        override val key: ExtraStore.Key<Nothing> = ExtraStore.Key()
+
+        override fun prepareForTransformation(
+            oldModel: T?,
+            newModel: T?,
+            extraStore: MutableExtraStore,
+            chartValuesProvider: ChartValuesProvider,
+        ) {
+            getModelTransformers().forEachIndexed { index, transformer ->
+                @Suppress("UNCHECKED_CAST")
+                transformer.prepareForTransformation(
+                    (oldModel as ComposedChartEntryModel<*>?)?.composedEntryCollections?.getOrNull(index) as T?,
+                    (newModel as ComposedChartEntryModel<*>?)?.composedEntryCollections?.getOrNull(index) as T?,
+                    extraStore,
+                    chartValuesProvider,
+                )
+            }
+        }
+
+        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
+            getModelTransformers().forEach { transformer ->
+                transformer.transform(extraStore, fraction)
+            }
         }
     }
 }
