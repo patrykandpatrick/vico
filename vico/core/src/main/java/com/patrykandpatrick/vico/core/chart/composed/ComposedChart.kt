@@ -172,7 +172,7 @@ public class ComposedChart<Model : ChartEntryModel>(
                 @Suppress("UNCHECKED_CAST")
                 transformer.prepareForTransformation(
                     (oldModel as ComposedChartEntryModel<*>?)?.composedEntryCollections?.getOrNull(index) as T?,
-                    (newModel as ComposedChartEntryModel<*>).composedEntryCollections[index] as T,
+                    (newModel as ComposedChartEntryModel<*>?)?.composedEntryCollections?.getOrNull(index) as T?,
                     extraStore,
                     chartValuesProvider,
                 )
