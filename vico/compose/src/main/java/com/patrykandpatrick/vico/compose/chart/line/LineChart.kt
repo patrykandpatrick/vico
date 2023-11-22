@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.fill.shader
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultAlpha
@@ -37,7 +36,6 @@ import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.column.ColumnChart
 import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
-import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatrick.vico.core.chart.line.LineChartDrawingModel
@@ -46,6 +44,8 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.component.shape.shader.HorizontalSplitShader
+import com.patrykandpatrick.vico.core.component.shape.shader.SolidShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.entry.ChartEntryModel
@@ -129,9 +129,9 @@ public fun lineSpec(
     dataLabelRotationDegrees: Float = 0f,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
 ): LineSpec = LineSpec(
-    lineFill = FillStyle.Solid(lineColor.toArgb()),
+    lineShader = SolidShader(lineColor.toArgb()),
     lineThicknessDp = lineThickness.value,
-    lineBackgroundFill = lineBackgroundShader?.let(FillStyle::shader),
+    lineBackgroundShader = lineBackgroundShader,
     lineCap = lineCap.paintCap,
     point = point,
     pointSizeDp = pointSize.value,
@@ -145,9 +145,9 @@ public fun lineSpec(
 /**
  * Creates a [LineChart.LineSpec] for use in [LineChart]s.
  *
- * @param lineFill the [FillStyle] for the line.
+ * @param lineShader the [DynamicShader] for the line.
  * @param lineThickness the thickness of the line.
- * @param lineBackgroundFill an optional [FillStyle] to use for the area below and above the line.
+ * @param lineBackgroundShader an optional [DynamicShader] to use for the area below and above the line.
  * @param lineCap the stroke cap for the line.
  * @param point an optional [Component] that can be drawn at a given point on the line.
  * @param pointSize the size of the [point].
@@ -161,9 +161,9 @@ public fun lineSpec(
  * @see LineChart.LineSpec
  */
 public fun lineSpec(
-    lineFill: FillStyle,
+    lineShader: DynamicShader,
     lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
-    lineBackgroundFill: FillStyle? = lineFill.getBackwardCompatibleBackgroundFill(),
+    lineBackgroundShader: DynamicShader? = lineShader.getBackwardCompatibleBackgroundShader(),
     lineCap: StrokeCap = StrokeCap.Round,
     point: Component? = null,
     pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
@@ -173,9 +173,9 @@ public fun lineSpec(
     dataLabelRotationDegrees: Float = 0f,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
 ): LineSpec = LineSpec(
-    lineFill = lineFill,
+    lineShader = lineShader,
     lineThicknessDp = lineThickness.value,
-    lineBackgroundFill = lineBackgroundFill,
+    lineBackgroundShader = lineBackgroundShader,
     lineCap = lineCap.paintCap,
     point = point,
     pointSizeDp = pointSize.value,
@@ -186,10 +186,10 @@ public fun lineSpec(
     pointConnector = pointConnector,
 )
 
-private fun FillStyle.getBackwardCompatibleBackgroundFill(): FillStyle? =
+private fun DynamicShader.getBackwardCompatibleBackgroundShader(): DynamicShader? =
     when (this) {
-        is FillStyle.Solid -> FillStyle.SplitShader(
-            positiveShader = DynamicShaders.fromBrush(
+        is SolidShader -> HorizontalSplitShader.Double(
+            topShader = DynamicShaders.fromBrush(
                 brush = Brush.verticalGradient(
                     listOf(
                         Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
@@ -197,7 +197,7 @@ private fun FillStyle.getBackwardCompatibleBackgroundFill(): FillStyle? =
                     ),
                 ),
             ),
-            negativeShader = DynamicShaders.fromBrush(
+            bottomShader = DynamicShaders.fromBrush(
                 brush = Brush.verticalGradient(
                     listOf(
                         Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
@@ -207,20 +207,20 @@ private fun FillStyle.getBackwardCompatibleBackgroundFill(): FillStyle? =
             ),
         )
 
-        is FillStyle.Split -> FillStyle.SplitShader(
-            positiveShader = DynamicShaders.fromBrush(
+        is HorizontalSplitShader.Solid -> HorizontalSplitShader.Double(
+            topShader = DynamicShaders.fromBrush(
                 brush = Brush.verticalGradient(
                     listOf(
-                        Color(positiveColor).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                        Color(positiveColor).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                        Color(colorTop).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                        Color(colorTop).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
                     ),
                 ),
             ),
-            negativeShader = DynamicShaders.fromBrush(
+            bottomShader = DynamicShaders.fromBrush(
                 brush = Brush.verticalGradient(
                     listOf(
-                        Color(negativeColor).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                        Color(negativeColor).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                        Color(colorBottom).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                        Color(colorBottom).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
                     ),
                 ),
             ),

@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.chart
 
 import android.graphics.Paint
-import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
@@ -65,9 +64,9 @@ public fun LineChart.LineSpec.copy(
  * Creates a new [LineChart.LineSpec] based on this one, updating select properties.
  */
 @Deprecated(
-    message = "`lineColor` and `lineBackgroundShader` are deprecated. Use `lineFill` and `lineBackgroundFill`",
+    message = "`lineColor` is deprecated. Use `lineShader`",
     replaceWith = ReplaceWith(
-        "copy(lineFill = lineFill, lineBackgroundFill = lineBackgroundFill)",
+        "copy(lineShader = lineShader)",
         "com.patrykandpatrick.vico.core.chart.fill.FillStyle",
     ),
 )
@@ -100,9 +99,9 @@ public fun LineChart.LineSpec.copy(
  * Creates a new [LineChart.LineSpec] based on this one, updating select properties.
  */
 public fun LineChart.LineSpec.copy(
-    lineFill: FillStyle = this.lineFill,
+    lineFill: DynamicShader = this.lineShader,
     lineThicknessDp: Float = this.lineThicknessDp,
-    lineBackgroundFill: FillStyle? = this.lineBackgroundFill,
+    lineBackgroundFill: DynamicShader? = this.lineBackgroundShader,
     lineCap: Paint.Cap = this.lineCap,
     point: Component? = this.point,
     pointSizeDp: Float = this.pointSizeDp,
@@ -112,9 +111,9 @@ public fun LineChart.LineSpec.copy(
     dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
     pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,
 ): LineChart.LineSpec = LineChart.LineSpec(
-    lineFill = lineFill,
+    lineShader = lineFill,
     lineThicknessDp = lineThicknessDp,
-    lineBackgroundFill = lineBackgroundFill,
+    lineBackgroundShader = lineBackgroundFill,
     lineCap = lineCap,
     point = point,
     pointSizeDp = pointSizeDp,

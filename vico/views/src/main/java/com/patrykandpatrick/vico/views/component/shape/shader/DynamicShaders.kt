@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,14 @@ package com.patrykandpatrick.vico.views.component.shape.shader
 
 import android.graphics.LinearGradient
 import android.graphics.Shader
+import androidx.annotation.ColorInt
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.CacheableDynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.component.shape.shader.HorizontalSplitShader
+import com.patrykandpatrick.vico.core.component.shape.shader.SolidShader
 import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
@@ -137,3 +140,17 @@ public fun DynamicShaders.verticalGradient(
     override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
         "%s,%s".format(top, bottom)
 }
+
+/**
+ * Creates a [DynamicShader] that fills the area with a solid color.
+ */
+public fun DynamicShaders.solid(@ColorInt color: Int): SolidShader = SolidShader(color)
+
+/**
+ * Creates a [DynamicShader] with split colors. The positive color is used for values above the zero line,
+ * and the negative color is used for values below the zero line.
+ */
+public fun DynamicShaders.split(
+    @ColorInt positiveColor: Int,
+    @ColorInt negativeColor: Int,
+): HorizontalSplitShader.Solid = HorizontalSplitShader.Solid(positiveColor, negativeColor)

@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.forEachInAbsolutelyIndexed
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -42,6 +41,7 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
+import com.patrykandpatrick.vico.core.component.shape.shader.SolidShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.inBounds
@@ -103,9 +103,9 @@ public open class LineChart(
     /**
      * Defines the appearance of a line in a line chart.
      *
-     * @param lineFill the [FillStyle] for the line.
+     * @param lineShader the [DynamicShader] for the line.
      * @param lineThicknessDp the thickness of the line (in dp).
-     * @param lineBackgroundFill an optional [FillStyle] to use for the area below and above the line.
+     * @param lineBackgroundShader an optional [DynamicShader] to use for the area below and above the line.
      * @param lineCap the stroke cap for the line.
      * @param point an optional [Component] that can be drawn at a given point on the line.
      * @param pointSizeDp the size of the [point] (in dp).
@@ -116,9 +116,9 @@ public open class LineChart(
      * @param pointConnector the [PointConnector] for the line.
      */
     public open class LineSpec(
-        public var lineFill: FillStyle,
+        public var lineShader: DynamicShader,
         public var lineThicknessDp: Float = DefaultDimens.LINE_THICKNESS,
-        public var lineBackgroundFill: FillStyle? = null,
+        public var lineBackgroundShader: DynamicShader? = null,
         public var lineCap: Paint.Cap = Paint.Cap.ROUND,
         public var point: Component? = null,
         public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
@@ -155,9 +155,9 @@ public open class LineChart(
             dataLabelRotationDegrees: Float = 0f,
             pointConnector: PointConnector = DefaultPointConnector(),
         ) : this(
-            lineFill = FillStyle.Solid(lineColor),
+            lineShader = SolidShader(lineColor),
             lineThicknessDp = lineThicknessDp,
-            lineBackgroundFill = lineBackgroundShader?.let(FillStyle::Shader),
+            lineBackgroundShader = lineBackgroundShader,
             lineCap = lineCap,
             point = point,
             pointSizeDp = pointSizeDp,
@@ -169,31 +169,10 @@ public open class LineChart(
         )
 
         /**
-         * An optional [DynamicShader] to use for the area below and above the line.
-         */
-        @Deprecated(
-            message = "There are two line background shaders now, one for positive values and one for negative " +
-                "values. Use `positiveLineBackgroundShader` instead.",
-            replaceWith = ReplaceWith("positiveLineBackgroundShader"),
-        )
-        public val lineBackgroundShader: DynamicShader?
-            get() = (lineBackgroundFill as? FillStyle.Shader<*>)?.dynamicShader
-
-        /**
          * Returns `true` if the [lineBackgroundShader] is not null, and `false` otherwise.
          */
-        @Deprecated(
-            message = "`lineBackgroundShader` is deprecated. Use `hasLineBackgroundFill` instead.",
-            replaceWith = ReplaceWith("hasLineBackgroundFill"),
-        )
         public val hasLineBackgroundShader: Boolean
             get() = lineBackgroundShader != null
-
-        /**
-         * Returns `true` if the [lineBackgroundFill] is not null, and `false` otherwise.
-         */
-        public val hasLineBackgroundFill: Boolean
-            get() = lineBackgroundFill != null
 
         protected val linePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
@@ -212,13 +191,13 @@ public open class LineChart(
          * The color of the line.
          */
         @Deprecated(
-            message = "The line color, or shader is now defined by `lineFill",
-            replaceWith = ReplaceWith("lineFill"),
+            message = "The line color, or shader is now defined by `lineShader",
+            replaceWith = ReplaceWith("lineShader"),
         )
         public var lineColor: Int
-            get() = (lineFill as? FillStyle.Solid)?.color ?: Color.TRANSPARENT
+            get() = (lineShader as? SolidShader)?.color ?: Color.TRANSPARENT
             set(value) {
-                lineFill = FillStyle.Solid(value)
+                lineShader = SolidShader(value)
             }
 
         /**
@@ -251,7 +230,7 @@ public open class LineChart(
         ) {
             with(context) {
                 linePaint.strokeWidth = lineThicknessDp.pixels
-                lineFill.applyTo(linePaint, context, bounds, zeroLineYFraction)
+                lineShader.applyTo(linePaint, context, bounds, zeroLineYFraction)
                 linePaint.withOpacity(opacity) { canvas.drawPath(path, it) }
             }
         }
@@ -266,7 +245,7 @@ public open class LineChart(
             path: Path,
             opacity: Float = 1f,
         ) {
-            val fill = lineBackgroundFill ?: return
+            val fill = lineBackgroundShader ?: return
             with(lineBackgroundPaint) {
                 if (zeroLineYFraction > 0) {
                     val zeroLineY = bounds.top + (zeroLineYFraction * bounds.height())
@@ -386,13 +365,13 @@ public open class LineChart(
                         x = x,
                         y = coercedY,
                         entry = entry,
-                        color = component.lineFill.getColorAt(Point(x, coercedY), context, bounds, zeroLineYFraction),
+                        color = component.lineShader.getColorAt(Point(x, coercedY), context, bounds, zeroLineYFraction),
                         index = entryIndex,
                     )
                 }
             }
 
-            if (component.hasLineBackgroundFill) {
+            if (component.hasLineBackgroundShader) {
                 lineBackgroundPath.addPath(linePath)
                 lineBackgroundPath.lineTo(prevX, bounds.bottom)
                 component.drawBackgroundLine(

@@ -31,26 +31,25 @@ import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.fill.split
-import com.patrykandpatrick.vico.compose.chart.fill.splitShader
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.line.lineSpec
 import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
+import com.patrykandpatrick.vico.compose.component.shape.shader.split
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.component.shape.shader.splitShader
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.databinding.Chart9Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -73,8 +72,8 @@ private fun ComposeChart9(chartEntryModelProducer: ChartEntryModelProducer) {
             chart = lineChart(
                 lines = listOf(
                     lineSpec(
-                        lineFill = FillStyle.split(chartColors[0], chartColors[1]),
-                        lineBackgroundFill = FillStyle.splitShader(
+                        lineShader = DynamicShaders.split(chartColors[0], chartColors[1]),
+                        lineBackgroundShader = DynamicShaders.splitShader(
                             DynamicShaders.composeShader(
                                 DynamicShaders.fromComponent(
                                     componentSize = 6.dp,
@@ -158,11 +157,8 @@ private fun ViewChart9(chartEntryModelProducer: ChartEntryModelProducer) {
             with(chart as LineChart) {
                 lines = listOf(
                     LineChart.LineSpec(
-                        lineFill = FillStyle.Split(
-                            positiveColor = colors[0].toArgb(),
-                            negativeColor = colors[1].toArgb(),
-                        ),
-                        lineBackgroundFill = FillStyle.SplitShader(
+                        lineShader = DynamicShaders.split(colors[0], colors[1]),
+                        lineBackgroundShader = DynamicShaders.splitShader(
                             DynamicShaders.composeShader(
                                 DynamicShaders.fromComponent(
                                     componentSize = 6.dp,

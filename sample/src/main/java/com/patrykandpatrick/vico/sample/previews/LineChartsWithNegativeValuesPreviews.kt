@@ -28,16 +28,16 @@ import com.patrykandpatrick.vico.compose.axis.axisLineComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.fill.solid
-import com.patrykandpatrick.vico.compose.chart.fill.split
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.chart.line.lineSpec
+import com.patrykandpatrick.vico.compose.component.shape.shader.solid
+import com.patrykandpatrick.vico.compose.component.shape.shader.split
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
@@ -53,7 +53,7 @@ public fun SingleLineChartWithNegativeValues() {
             chart = lineChart(
                 lines = listOf(
                     lineSpec(
-                        lineFill = FillStyle.split(
+                        lineShader = DynamicShaders.split(
                             positiveColor = Color(0xFF25BE53),
                             negativeColor = Color(0xFFE73B3B),
                         ),
@@ -86,7 +86,9 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
     Surface {
         Chart(
             chart = lineChart(
-                lines = listOf(lineSpec(lineFill = FillStyle.solid(Color.DarkGray), dataLabel = textComponent())),
+                lines = listOf(
+                    lineSpec(lineShader = DynamicShaders.solid(Color.DarkGray), dataLabel = textComponent()),
+                ),
             ),
             model = model,
             startAxis = rememberStartAxis(),

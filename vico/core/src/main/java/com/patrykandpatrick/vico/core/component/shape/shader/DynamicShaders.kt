@@ -79,3 +79,12 @@ public object DynamicShaders {
         )
     }
 }
+
+/**
+ * Creates a [DynamicShader] that is split into two shaders. The positive shader is used for values
+ * above the zero line, and the negative shader is used for values below the zero line.
+ */
+public fun DynamicShaders.splitShader(
+    positiveShader: DynamicShader,
+    negativeShader: DynamicShader,
+): HorizontalSplitShader.Double = HorizontalSplitShader.Double(positiveShader, negativeShader)

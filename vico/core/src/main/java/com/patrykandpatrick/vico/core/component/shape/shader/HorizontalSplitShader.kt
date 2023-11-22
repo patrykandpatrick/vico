@@ -21,8 +21,10 @@ import android.graphics.BitmapShader
 import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.RectF
 import android.graphics.Shader
 import com.patrykandpatrick.vico.core.context.DrawContext
+import com.patrykandpatrick.vico.core.model.Point
 
 /**
  * A [DynamicShader] that can apply two different [DynamicShader]s to the top and bottom part of the area.
@@ -94,6 +96,24 @@ public abstract class HorizontalSplitShader(
 
     override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
         super.createKey(left, top, right, bottom) + ",$dividerYFraction"
+
+    override fun applyTo(
+        paint: Paint,
+        drawContext: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+        zeroLineYFraction: Float,
+    ) {
+        dividerYFraction = zeroLineYFraction
+        super.applyTo(paint, drawContext, left, top, right, bottom, zeroLineYFraction)
+    }
+
+    override fun getColorAt(point: Point, drawContext: DrawContext, rectF: RectF, zeroLineYFraction: Float): Int {
+        dividerYFraction = zeroLineYFraction
+        return super.getColorAt(point, drawContext, rectF, zeroLineYFraction)
+    }
 
     /**
      * A [HorizontalSplitShader] with a solid color for the top and bottom part of the area.

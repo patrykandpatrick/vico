@@ -22,7 +22,6 @@ import android.graphics.Color
 import com.patrykandpatrick.vico.core.DefaultAlpha
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
-import com.patrykandpatrick.vico.core.chart.fill.FillStyle
 import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.OverlayingComponent
@@ -31,6 +30,8 @@ import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.component.shape.shader.HorizontalSplitShader
+import com.patrykandpatrick.vico.core.component.shape.shader.SolidShader
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.extension.copyColor
 import com.patrykandpatrick.vico.views.R
@@ -138,10 +139,10 @@ internal fun TypedArray.getLineSpec(
 
     val negativeLineColor = getColorExtended(R.styleable.LineSpec_negativeColor)
 
-    val lineFill = if (hasValue(R.styleable.LineSpec_negativeColor)) {
-        FillStyle.Split(positiveLineColor, negativeLineColor)
+    val lineShader = if (hasValue(R.styleable.LineSpec_negativeColor)) {
+        HorizontalSplitShader.Solid(positiveLineColor, negativeLineColor)
     } else {
-        FillStyle.Solid(positiveLineColor)
+        SolidShader(positiveLineColor)
     }
 
     val positiveShader = if (
@@ -183,7 +184,7 @@ internal fun TypedArray.getLineSpec(
     }
 
     return LineChart.LineSpec(
-        lineFill = lineFill,
+        lineShader = lineShader,
         point = getNestedTypedArray(
             context = context,
             resourceId = R.styleable.LineSpec_pointStyle,
@@ -199,7 +200,7 @@ internal fun TypedArray.getLineSpec(
             index = R.styleable.LineSpec_lineThickness,
             defaultValue = DefaultDimens.LINE_THICKNESS,
         ),
-        lineBackgroundFill = FillStyle.SplitShader(positiveShader, negativeShader),
+        lineBackgroundShader = HorizontalSplitShader.Double(positiveShader, negativeShader),
         dataLabel = if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
             getNestedTypedArray(
                 context = context,
