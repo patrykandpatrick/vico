@@ -86,7 +86,7 @@ public class MutableExtraStore internal constructor(mapDelegate: Map<Key<*>, Any
     /**
      * Removes the value associated with the provided key.
      */
-    public fun <T : DrawingModel<*>> remove(key: Key<T>) {
+    public fun <T : Any> remove(key: Key<T>) {
         mapDelegate.remove(key)
     }
 
