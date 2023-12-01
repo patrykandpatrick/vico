@@ -84,21 +84,9 @@ public interface MeasureContext : Extras {
     public fun dpToPx(dp: Float): Float = dp * density
 
     /**
-     * Converts the provided dimension from dp to px.
-     */
-    @Deprecated("Use `dpToPx` instead.", ReplaceWith("dpToPx(dp)"))
-    public fun toPixels(dp: Float): Float = dpToPx(dp)
-
-    /**
      * Converts the provided dimension from sp to px.
      */
     public fun spToPx(sp: Float): Float
-
-    /**
-     * Converts the provided dimension from sp to px.
-     */
-    @Deprecated("Use `spToPx` instead.", ReplaceWith("spToPx(sp)"))
-    public fun toFontSize(sp: Float): Float = spToPx(sp)
 
     /**
      * Removes all stored extras.

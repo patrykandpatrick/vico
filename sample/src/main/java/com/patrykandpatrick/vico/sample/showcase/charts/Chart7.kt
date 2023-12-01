@@ -62,7 +62,7 @@ private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
         Chart(
             chart = lineChart(
                 remember(defaultLines) {
-                    defaultLines.map { defaultLine -> defaultLine.copy(lineBackgroundShader = null) }
+                    defaultLines.map { defaultLine -> defaultLine.copy(lineBackgroundFill = null) }
                 },
             ),
             chartModelProducer = chartEntryModelProducer,

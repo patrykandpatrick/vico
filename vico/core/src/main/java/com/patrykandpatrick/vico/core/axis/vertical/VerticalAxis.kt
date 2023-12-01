@@ -16,8 +16,6 @@
 
 package com.patrykandpatrick.vico.core.axis.vertical
 
-import com.patrykandpatrick.vico.core.DEF_LABEL_COUNT
-import com.patrykandpatrick.vico.core.DEF_LABEL_SPACING
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -62,33 +60,9 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
 
     /**
-     * The maximum label count.
-     */
-    @Deprecated(
-        """
-            `maxLabelCount` is being replaced by `AxisItemPlacer.Vertical. Create a base implementation with the desired
-            maximum item count via `AxisItemPlacer.Vertical.default`, and use the `itemPlacer` field to apply it to this
-            `VerticalAxis`.
-        """,
-    )
-    public var maxLabelCount: Int = DEF_LABEL_COUNT
-        set(value) {
-            field = value
-            itemPlacer = AxisItemPlacer.Vertical.default(value)
-        }
-
-    /**
      * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
      */
-    @Suppress("DEPRECATION")
-    public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default(maxLabelCount)
-
-    /**
-     * The label spacing (in dp).
-     */
-    @Deprecated("This is unused. It’s a leftover field from before the first release of Vico.")
-    @Suppress("DEPRECATION")
-    public var labelSpacing: Float = DEF_LABEL_SPACING
+    public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default()
 
     /**
      * Defines the horizontal position of each axis label relative to the axis line.
@@ -340,33 +314,9 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         builder: Axis.Builder<Position>? = null,
     ) : Axis.Builder<Position>(builder) {
         /**
-         * The maximum label count.
-         */
-        @Deprecated(
-            """
-                `maxLabelCount` is being replaced by `AxisItemPlacer.Vertical`. Create a base implementation with the
-                desired maximum item count via `AxisItemPlacer.Vertical.default`, and use the `itemPlacer` field to
-                apply it to this `VerticalAxis.Builder`.
-            """,
-        )
-        public var maxLabelCount: Int = DEF_LABEL_COUNT
-            set(value) {
-                field = value
-                itemPlacer = AxisItemPlacer.Vertical.default(value)
-            }
-
-        /**
          * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
          */
-        @Suppress("DEPRECATION")
-        public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default(maxLabelCount)
-
-        /**
-         * The label spacing (in dp).
-         */
-        @Deprecated("This is unused. It’s a leftover field from before the first release of Vico.")
-        @Suppress("DEPRECATION")
-        public var labelSpacing: Float = DEF_LABEL_SPACING
+        public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default()
 
         /**
          * Defines the horizontal position of each axis label relative to the axis line.
@@ -388,11 +338,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
                 else -> throw UnknownAxisPositionException(T::class.java)
             } as Position
-            @Suppress("DEPRECATION")
             return setTo(VerticalAxis(position)).also { axis ->
-                axis.maxLabelCount = maxLabelCount
                 axis.itemPlacer = itemPlacer
-                axis.labelSpacing = labelSpacing
                 axis.horizontalLabelPosition = horizontalLabelPosition
                 axis.verticalLabelPosition = verticalLabelPosition
             } as VerticalAxis<T>

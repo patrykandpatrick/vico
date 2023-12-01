@@ -44,22 +44,6 @@ public data class MutableHorizontalDimensions(
     }
 
     /**
-     * Updates the stored values.
-     */
-    @Deprecated(
-        """`startPadding` and `endPadding` have been replaced by `scalableStartPadding`, `scalableEndPadding`,
-            `unscalableStartPadding`, and `unscalableEndPadding`. Use the overload with these parameters instead.""",
-        ReplaceWith("set(xSpacing, startPadding, endPadding, 0f, 0f)"),
-    )
-    public fun set(xSpacing: Float, startPadding: Float, endPadding: Float): MutableHorizontalDimensions = set(
-        xSpacing = xSpacing,
-        scalableStartPadding = startPadding,
-        scalableEndPadding = endPadding,
-        unscalableStartPadding = 0f,
-        unscalableEndPadding = 0f,
-    )
-
-    /**
      * Ensures that the stored values are no smaller than the provided ones.
      */
     public fun ensureValuesAtLeast(

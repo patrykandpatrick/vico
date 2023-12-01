@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.Insets
-import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.ceil
@@ -51,41 +50,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         get() = if (isBottom) VerticalPosition.Bottom else VerticalPosition.Top
 
     /**
-     * How often labels (and their corresponding ticks and guidelines) should be drawn.
-     */
-    @Deprecated(
-        """`labelSpacing` is being replaced by `AxisItemPlacer.Horizontal`. Create a base implementation with the
-            desired spacing via `AxisItemPlacer.Horizontal.default`, and use the `itemPlacer` field to apply it to this
-            `HorizontalAxis`.""",
-    )
-    public var labelSpacing: Int = 1
-        set(value) {
-            field = value
-            @Suppress("DEPRECATION")
-            itemPlacer = AxisItemPlacer.Horizontal.default(spacing = value, offset = labelOffset)
-        }
-
-    /**
-     * The number of labels (and, for [HorizontalLayout.FullWidth], their corresponding ticks and guidelines) to skip
-     * from the start.
-     */
-    @Deprecated(
-        """`labelOffset` is being replaced by `AxisItemPlacer.Horizontal`. Create a base implementation with the desired
-            offset via `AxisItemPlacer.Horizontal.default`, and use the `itemPlacer` field to apply it to this
-            `HorizontalAxis`.""",
-    )
-    public var labelOffset: Int = 0
-        set(value) {
-            field = value
-            @Suppress("DEPRECATION")
-            itemPlacer = AxisItemPlacer.Horizontal.default(spacing = labelSpacing, offset = value)
-        }
-
-    /**
      * Determines for what _x_ values this [HorizontalAxis] is to display labels, ticks, and guidelines.
      */
-    @Suppress("DEPRECATION")
-    public var itemPlacer: AxisItemPlacer.Horizontal = AxisItemPlacer.Horizontal.default(labelSpacing, labelOffset)
+    public var itemPlacer: AxisItemPlacer.Horizontal = AxisItemPlacer.Horizontal.default()
 
     override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
         val clipRestoreCount = canvas.save()
@@ -325,41 +292,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ) : Axis.Builder<Position>(builder) {
 
         /**
-         * How often labels (and their corresponding ticks and guidelines) should be drawn.
-         */
-        @Deprecated(
-            """`labelSpacing` is being replaced by `AxisItemPlacer.Horizontal`. Create a base implementation with the
-                desired spacing via `AxisItemPlacer.Horizontal.default`, and use the `itemPlacer` field to apply it to
-                this `HorizontalAxis.Builder`.""",
-        )
-        public var labelSpacing: Int = 1
-            set(value) {
-                field = value
-                @Suppress("DEPRECATION")
-                itemPlacer = AxisItemPlacer.Horizontal.default(spacing = value, offset = labelOffset)
-            }
-
-        /**
-         * The number of labels (and, for [HorizontalLayout.FullWidth], their corresponding ticks and guidelines) to
-         * skip from the start.
-         */
-        @Deprecated(
-            """`labelOffset` is being replaced by `AxisItemPlacer.Horizontal`. Create a base implementation with the
-                desired offset via `AxisItemPlacer.Horizontal.default`, and use the `itemPlacer` field to apply it to
-                this `HorizontalAxis.Builder`.""",
-        )
-        public var labelOffset: Int = 0
-            set(value) {
-                field = value
-                @Suppress("DEPRECATION")
-                itemPlacer = AxisItemPlacer.Horizontal.default(spacing = labelSpacing, offset = value)
-            }
-
-        /**
          * Determines for what _x_ values the [HorizontalAxis] is to display labels, ticks, and guidelines.
          */
-        @Suppress("DEPRECATION")
-        public var itemPlacer: AxisItemPlacer.Horizontal = AxisItemPlacer.Horizontal.default(labelSpacing, labelOffset)
+        public var itemPlacer: AxisItemPlacer.Horizontal = AxisItemPlacer.Horizontal.default()
 
         /**
          * Creates a [HorizontalAxis] instance with the properties from this [Builder].
@@ -371,12 +306,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 AxisPosition.Horizontal.Bottom::class.java -> AxisPosition.Horizontal.Bottom
                 else -> throw UnknownAxisPositionException(T::class.java)
             } as Position
-            @Suppress("DEPRECATION")
-            return setTo(HorizontalAxis(position = position)).also { axis ->
-                axis.labelSpacing = labelSpacing
-                axis.labelOffset = labelOffset
-                axis.itemPlacer = itemPlacer
-            } as HorizontalAxis<T>
+            return setTo(HorizontalAxis(position = position)).also { it.itemPlacer = itemPlacer } as HorizontalAxis<T>
         }
     }
 

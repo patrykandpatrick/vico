@@ -26,30 +26,6 @@ import kotlin.properties.Delegates
  */
 public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
 
-    /**
-     * Handles scroll events.
-     *
-     * @param setScrollAmount called when the scroll amount changes.
-     * @param maxScrollDistance the initial maximum scroll amount.
-     */
-    @Deprecated(
-        message = """Use the primary constructor. `initialMaxValue` replaces `maxScrollDistance`, and you can register a
-            `ScrollListener` instead of using `setScrollAmount`.""",
-        level = DeprecationLevel.ERROR,
-    )
-    public constructor(
-        setScrollAmount: (Float) -> Unit = {},
-        maxScrollDistance: Float = 0f,
-    ) : this(maxScrollDistance) {
-        registerScrollListener(
-            object : ScrollListener {
-                override fun onValueChanged(oldValue: Float, newValue: Float) {
-                    setScrollAmount(newValue)
-                }
-            },
-        )
-    }
-
     private var initialScrollHandled: Boolean = false
     private val scrollListeners: MutableSet<ScrollListener> = mutableSetOf()
 
@@ -66,22 +42,6 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
     public var maxValue: Float by Delegates.observable(initialMaxValue) { _, oldMaxValue, newMaxValue ->
         scrollListeners.forEach { scrollListener -> scrollListener.onMaxValueChanged(oldMaxValue, newMaxValue) }
     }
-
-    /**
-     * The current scroll amount (in pixels).
-     */
-    @Deprecated(message = "Use the `value` field instead.", level = DeprecationLevel.ERROR)
-    public var currentScroll: Float
-        get() = value
-        set(newCurrentScroll) { value = newCurrentScroll }
-
-    /**
-     * The maximum scroll amount (in pixels).
-     */
-    @Deprecated(message = "Use the `maxValue` field instead.", level = DeprecationLevel.ERROR)
-    public var maxScrollDistance: Float
-        get() = maxValue
-        set(newMaxScrollDistance) { maxValue = newMaxScrollDistance }
 
     private fun getClampedScroll(scroll: Float): Float = scroll.coerceIn(0f.rangeWith(maxValue))
 

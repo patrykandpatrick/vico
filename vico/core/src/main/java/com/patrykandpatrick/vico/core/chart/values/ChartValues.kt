@@ -50,13 +50,6 @@ public interface ChartValues {
     public val xStep: Float
 
     /**
-     * The difference between the _x_ values of neighboring major entries.
-     */
-    @Deprecated("Use `xStep` instead.", ReplaceWith("xStep"))
-    public val stepX: Float
-        get() = xStep
-
-    /**
      * The minimum value displayed on the y-axis. By default, this is equal to [ChartEntryModel.minY] (the
      * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
      * value.

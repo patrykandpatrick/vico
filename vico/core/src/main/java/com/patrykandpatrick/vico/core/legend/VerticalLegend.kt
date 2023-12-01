@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,8 @@ package com.patrykandpatrick.vico.core.legend
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
-import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
@@ -99,24 +97,4 @@ public open class VerticalLegend(
             currentTop += height + spacingDp.pixels
         }
     }
-
-    @Deprecated("Use `LegendItem#getLabelHeight` instead.")
-    @Suppress("DEPRECATION")
-    protected open fun Item.getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
-        label.getHeight(this, labelText, (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt())
-    }
-
-    /**
-     * Defines the appearance of an item of a [VerticalLegend].
-     *
-     * @param icon the [Component] used as the item’s icon.
-     * @param label the [TextComponent] used for the label.
-     * @param labelText the text content of the label.
-     */
-    @Deprecated("Use `LegendItem` instead.")
-    public class Item(
-        public override val icon: Component,
-        public override val label: TextComponent,
-        public override val labelText: CharSequence,
-    ) : LegendItem(icon, label, labelText)
 }

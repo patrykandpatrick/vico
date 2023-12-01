@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.chart.composed
 
-import com.patrykandpatrick.vico.core.chart.AXIS_VALUES_DEPRECATION_MESSAGE
 import com.patrykandpatrick.vico.core.chart.BaseChart
 import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.Chart.ModelTransformerProvider
@@ -36,8 +35,6 @@ import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.updateAll
 import com.patrykandpatrick.vico.core.marker.Marker
 import java.util.TreeMap
-import kotlin.properties.ReadWriteProperty
-import kotlin.reflect.KProperty
 
 /**
  * Combines multiple [Chart]s and draws them on top of one another.
@@ -59,22 +56,6 @@ public class ComposedChart<Model : ChartEntryModel>(
 
     override val chartInsetters: Collection<ChartInsetter>
         get() = charts.map { it.chartInsetters }.flatten() + persistentMarkers.values
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    override var minY: Float? by childChartsValue { minY = it }
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    override var maxY: Float? by childChartsValue { maxY = it }
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    override var minX: Float? by childChartsValue { minX = it }
-
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION_ERROR")
-    override var maxX: Float? by childChartsValue { maxX = it }
 
     override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
         this.bounds.set(left, top, right, bottom)
@@ -184,19 +165,5 @@ public class ComposedChart<Model : ChartEntryModel>(
                 transformer.transform(extraStore, fraction)
             }
         }
-    }
-}
-
-private fun childChartsValue(
-    setValue: Chart<*>.(newValue: Float?) -> Unit,
-): ReadWriteProperty<ComposedChart<*>, Float?> = object : ReadWriteProperty<ComposedChart<*>, Float?> {
-
-    private var backingValue: Float? = null
-
-    override fun getValue(thisRef: ComposedChart<*>, property: KProperty<*>): Float? = backingValue
-
-    override fun setValue(thisRef: ComposedChart<*>, property: KProperty<*>, value: Float?) {
-        thisRef.charts.forEach { chart -> chart.setValue(value) }
-        backingValue = value
     }
 }

@@ -224,19 +224,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     public var getXStep: ((Model) -> Float)? by invalidatingObservable(null)
 
     /**
-     * Whether the chart can be scrolled horizontally.
-     */
-    @Deprecated(
-        message = "`isHorizontalScrollEnabled` is deprecated. Use `chartScrollSpec` instead.",
-        level = DeprecationLevel.ERROR,
-    )
-    public var isHorizontalScrollEnabled: Boolean
-        get() = chartScrollSpec.isScrollEnabled
-        set(value) {
-            chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = value)
-        }
-
-    /**
      * Whether the pinch-to-zoom gesture is enabled.
      */
     public var isZoomEnabled: Boolean = true

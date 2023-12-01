@@ -35,9 +35,6 @@ import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
 import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
 import com.patrykandpatrick.vico.core.marker.Marker
 
-internal const val AXIS_VALUES_DEPRECATION_MESSAGE: String = "Axis values should be overridden via " +
-    "`Chart#axisValuesOverrider`."
-
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to draw a chart.
  */
@@ -62,42 +59,6 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * [ColumnChart.targetVerticalAxisPosition] and [LineChart.targetVerticalAxisPosition] for this purpose.
      */
     public var axisValuesOverrider: AxisValuesOverrider<@UnsafeVariance Model>?
-
-    /**
-     * The minimum value shown on the y-axis. If [Model] implements [ChartEntryModel], and [minY] is not null, this
-     * overrides [ChartEntryModel.minY].
-     *
-     * @see ChartEntryModel.minY
-     */
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public var minY: Float?
-
-    /**
-     * The maximum value shown on the y-axis. If [Model] implements [ChartEntryModel], and [maxY] is not null, this
-     * overrides [ChartEntryModel.maxY].
-     *
-     * @see ChartEntryModel.maxY
-     */
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public var maxY: Float?
-
-    /**
-     * The minimum value shown on the x-axis. If [Model] implements [ChartEntryModel], and [minX] is not null, this
-     * overrides [ChartEntryModel.minX].
-     *
-     * @see ChartEntryModel.minX
-     */
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public var minX: Float?
-
-    /**
-     * The maximum value shown on the x-axis. If [Model] implements [ChartEntryModel], and [maxX] is not null, this
-     * overrides [ChartEntryModel.maxX].
-     *
-     * @see ChartEntryModel.maxX
-     */
-    @Deprecated(message = AXIS_VALUES_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-    public var maxX: Float?
 
     /**
      * Responsible for drawing the chart itself and any decorations behind it.

@@ -40,9 +40,6 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 
     private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
-    @Deprecated("This is no longer used.")
-    protected val labels: ArrayList<CharSequence> = ArrayList()
-
     override val bounds: RectF = RectF()
 
     protected val MeasureContext.axisThickness: Float

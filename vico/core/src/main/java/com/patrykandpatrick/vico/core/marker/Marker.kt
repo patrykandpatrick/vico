@@ -34,33 +34,14 @@ public interface Marker : ChartInsetter {
      * @param context the [DrawContext] used to draw the marker.
      * @param bounds the bounds in which the marker is drawn.
      * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
-     */
-    @Deprecated(
-        message = "Use the version of `draw` that takes a `ChartValuesProvider` as an argument.",
-        replaceWith = ReplaceWith("draw(context, bounds, markedEntries, chartValuesProvider)"),
-    )
-    public fun draw(
-        context: DrawContext,
-        bounds: RectF,
-        markedEntries: List<EntryModel>,
-    ): Unit = Unit
-
-    /**
-     * Draws the marker.
-     * @param context the [DrawContext] used to draw the marker.
-     * @param bounds the bounds in which the marker is drawn.
-     * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
      * @param chartValuesProvider the [Chart]’s [ChartValuesProvider].
      */
-    @Suppress("DEPRECATION")
     public fun draw(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<EntryModel>,
         chartValuesProvider: ChartValuesProvider,
-    ) {
-        draw(context, bounds, markedEntries)
-    }
+    )
 
     /**
      * Contains information on a single chart entry to which a chart marker refers.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,27 +64,6 @@ public fun verticalLegend(
  */
 @Composable
 public fun legendItem(
-    icon: Component,
-    label: TextComponent,
-    labelText: CharSequence,
-): LegendItem = remember(icon, label, labelText) {
-    LegendItem(
-        icon = icon,
-        label = label,
-        labelText = labelText,
-    )
-}
-
-/**
- * Defines the appearance of an item of a [VerticalLegend].
- *
- * @param icon the [Component] used as the item’s icon.
- * @param label the [TextComponent] used for the label.
- * @param labelText the text content of the label.
- */
-@Composable
-@Deprecated("Use `legendItem` instead.", ReplaceWith("legendItem(icon, label, labelText)"))
-public fun verticalLegendItem(
     icon: Component,
     label: TextComponent,
     labelText: CharSequence,

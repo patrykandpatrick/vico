@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.component
 
-import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.Layout
 import android.text.TextUtils
@@ -268,43 +267,3 @@ public fun textComponent(
             this.textAlignment = textAlignment
         }
     }
-
-/**
- * Creates a [TextComponent].
- *
- * @param color the text color.
- * @param textSize the text size.
- * @param background an optional [ShapeComponent] to be displayed behind the text.
- * @param ellipsize the text truncation behavior.
- * @param lineCount the line count.
- * @param padding the padding between the text and the background.
- * @param margins the margins around the background.
- * @param typeface the [Typeface] for the text.
- * @param textAlign the text alignment.
- */
-@Composable
-@Deprecated("Instead of `textAlign`, use `textAlignment`.")
-public fun textComponent(
-    color: Color = Color.Black,
-    textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
-    background: ShapeComponent? = null,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = DEF_LABEL_LINE_COUNT,
-    padding: MutableDimensions = emptyDimensions(),
-    margins: MutableDimensions = emptyDimensions(),
-    typeface: Typeface? = null,
-    textAlign: Paint.Align,
-): TextComponent = remember(color, textSize, background, ellipsize, lineCount, padding, margins, typeface, textAlign) {
-    textComponent {
-        this.color = color.toArgb()
-        textSizeSp = textSize.pixelSize()
-        this.ellipsize = ellipsize
-        this.lineCount = lineCount
-        this.background = background
-        this.padding = padding
-        this.margins = margins
-        this.typeface = typeface
-        @Suppress("DEPRECATION")
-        this.textAlign = textAlign
-    }
-}

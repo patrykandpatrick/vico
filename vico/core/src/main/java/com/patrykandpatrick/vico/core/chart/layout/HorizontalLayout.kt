@@ -29,16 +29,7 @@ public sealed interface HorizontalLayout {
      * at the start and end of the [Chart]. [HorizontalAxis] instances display ticks and guidelines at the edges of the
      * segments.
      */
-    public object Segmented : HorizontalLayout {
-        /**
-         * Returns an instance of [HorizontalLayout.Segmented].
-         */
-        @Deprecated(
-            """`HorizontalLayout.Segmented` is now an object. Replace `HorizontalLayout.Segmented()` with
-                `HorizontalLayout.Segmented`.""",
-        )
-        public operator fun invoke(): Segmented = this
-    }
+    public object Segmented : HorizontalLayout
 
     /**
      * When this is applied, the [Chart]’s content takes up the [Chart]’s entire width (unless padding is added).

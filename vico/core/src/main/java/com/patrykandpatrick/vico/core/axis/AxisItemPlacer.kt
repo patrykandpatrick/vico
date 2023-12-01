@@ -80,18 +80,6 @@ public interface AxisItemPlacer {
         ): List<Float>
 
         /**
-         * Returns the smallest expected distance between a label measured during the measuring phase and the next
-         * label or the previous label, whichever is closer to the measured label. This distance is expressed as the
-         * difference between the two labels’ _x_ values divided by [ChartValues.xStep].
-         */
-        @Deprecated("This is no longer used.")
-        public fun getMeasuredLabelClearance(
-            context: MeasureContext,
-            horizontalDimensions: HorizontalDimensions,
-            fullXRange: ClosedFloatingPointRange<Float>,
-        ): Float = 0f
-
-        /**
          * Returns, as a list, the _x_ values for which ticks and guidelines are to be displayed, restricted to
          * [visibleXRange] and with an extra value on either side (if applicable). If `null` is returned, the values
          * returned by [getLabelValues] are used.

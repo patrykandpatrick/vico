@@ -26,8 +26,8 @@
         app:chart="column"
         app:columnChartStyle="@style/Chart2ColumnChartStyle"
         app:horizontalLayout="fullWidth"
-        app:endContentPadding="16dp"
-        app:startContentPadding="16dp"
+        app:scalableEndContentPadding="16dp"
+        app:scalableStartContentPadding="16dp"
         app:showBottomAxis="true"
         app:showStartAxis="true" />
 </FrameLayout>

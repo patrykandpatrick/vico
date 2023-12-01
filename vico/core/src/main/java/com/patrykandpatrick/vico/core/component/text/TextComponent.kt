@@ -108,14 +108,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
     /**
      * The text alignment.
      */
-    @Deprecated("Use `textAlignment` instead.")
-    public var textAlign: Paint.Align
-        get() = textAlignment.equivLtrPaintAlign
-        set(value) { textAlignment = value.equivLtrLayoutAlignment }
-
-    /**
-     * The text alignment.
-     */
     public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL
 
     /**
@@ -428,14 +420,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
         public var background: Component? = null
 
         /**
-         * @see [TextComponent.textAlign]
-         */
-        @Deprecated("Use `textAlignment` instead.")
-        public var textAlign: Paint.Align
-            get() = textAlignment.equivLtrPaintAlign
-            set(value) { textAlignment = value.equivLtrLayoutAlignment }
-
-        /**
          * @see TextComponent.textAlignment
          */
         public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL
@@ -481,17 +465,3 @@ public open class TextComponent protected constructor() : Padding, Margins {
  */
 public inline fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
     TextComponent.Builder().apply(block).build()
-
-private val Paint.Align.equivLtrLayoutAlignment
-    get() = when (this) {
-        Paint.Align.LEFT -> Layout.Alignment.ALIGN_NORMAL
-        Paint.Align.CENTER -> Layout.Alignment.ALIGN_CENTER
-        Paint.Align.RIGHT -> Layout.Alignment.ALIGN_OPPOSITE
-    }
-
-private val Layout.Alignment.equivLtrPaintAlign
-    get() = when (this) {
-        Layout.Alignment.ALIGN_NORMAL -> Paint.Align.LEFT
-        Layout.Alignment.ALIGN_OPPOSITE -> Paint.Align.RIGHT
-        Layout.Alignment.ALIGN_CENTER -> Paint.Align.CENTER
-    }

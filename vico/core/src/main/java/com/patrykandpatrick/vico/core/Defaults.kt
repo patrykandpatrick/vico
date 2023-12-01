@@ -30,12 +30,6 @@ public const val DEF_LABEL_LINE_COUNT: Int = 1
 public const val DEF_LABEL_COUNT: Int = 100
 
 /**
- * The default label spacing for vertical axes (in dp).
- */
-@Deprecated("This is unused. It’s a leftover constant from before the first release of Vico.")
-public const val DEF_LABEL_SPACING: Float = 16f
-
-/**
  * The default tick size for markers (in dp).
  */
 public const val DEF_MARKER_TICK_SIZE: Float = 6f

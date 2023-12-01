@@ -113,23 +113,3 @@ public fun HorizontalDimensions(
     override val unscalableStartPadding: Float = unscalableStartPadding
     override val unscalableEndPadding: Float = unscalableEndPadding
 }
-
-/**
- * Creates a [HorizontalDimensions] instance.
- */
-@Deprecated(
-    """`startPadding` and `endPadding` have been replaced by `scalableStartPadding`, `scalableEndPadding`,
-        `unscalableStartPadding`, and `unscalableEndPadding`. Use the overload with these parameters instead.""",
-    ReplaceWith("HorizontalDimensions(xSpacing, startPadding, endPadding, 0f, 0f)"),
-)
-public fun HorizontalDimensions(
-    xSpacing: Float,
-    startPadding: Float,
-    endPadding: Float,
-): HorizontalDimensions = HorizontalDimensions(
-    xSpacing = xSpacing,
-    scalableStartPadding = startPadding,
-    unscalableEndPadding = endPadding,
-    scalableEndPadding = 0f,
-    unscalableStartPadding = 0f,
-)

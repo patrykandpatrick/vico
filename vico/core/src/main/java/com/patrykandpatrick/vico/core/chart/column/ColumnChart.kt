@@ -335,12 +335,11 @@ public open class ColumnChart(
     }
 
     override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel, xStep: Float?) {
-        @Suppress("DEPRECATION_ERROR")
         chartValuesManager.tryUpdate(
-            minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
-            maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
-            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: mergeMode.getMinY(model),
-            maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: mergeMode.getMaxY(model),
+            minX = axisValuesOverrider?.getMinX(model) ?: model.minX,
+            maxX = axisValuesOverrider?.getMaxX(model) ?: model.maxX,
+            minY = axisValuesOverrider?.getMinY(model) ?: mergeMode.getMinY(model),
+            maxY = axisValuesOverrider?.getMaxY(model) ?: mergeMode.getMaxY(model),
             xStep = xStep ?: model.xGcd,
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,

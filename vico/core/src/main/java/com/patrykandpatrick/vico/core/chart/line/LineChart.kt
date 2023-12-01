@@ -188,19 +188,6 @@ public open class LineChart(
         protected val pathBounds: RectF = RectF()
 
         /**
-         * The color of the line.
-         */
-        @Deprecated(
-            message = "The line color, or shader is now defined by `lineShader",
-            replaceWith = ReplaceWith("lineShader"),
-        )
-        public var lineColor: Int
-            get() = (lineShader as? SolidShader)?.color ?: Color.TRANSPARENT
-            set(value) {
-                lineShader = SolidShader(value)
-            }
-
-        /**
          * The stroke cap for the line.
          */
         public var lineStrokeCap: Paint.Cap by linePaint::strokeCap
@@ -594,12 +581,11 @@ public open class LineChart(
     }
 
     override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel, xStep: Float?) {
-        @Suppress("DEPRECATION_ERROR")
         chartValuesManager.tryUpdate(
-            minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
-            maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
-            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: min(model.minY, 0f),
-            maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: model.maxY,
+            minX = axisValuesOverrider?.getMinX(model) ?: model.minX,
+            maxX = axisValuesOverrider?.getMaxX(model) ?: model.maxX,
+            minY = axisValuesOverrider?.getMinY(model) ?: min(model.minY, 0f),
+            maxY = axisValuesOverrider?.getMaxY(model) ?: model.maxY,
             xStep = xStep ?: model.xGcd,
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,

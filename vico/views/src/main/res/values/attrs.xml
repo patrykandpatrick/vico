@@ -90,10 +90,6 @@
         <attr name="scalableEndContentPadding" format="dimension" />
         <attr name="unscalableStartContentPadding" format="dimension" />
         <attr name="unscalableEndContentPadding" format="dimension" />
-        <!-- Deprecated. Use `scalableStartContentPadding` instead. -->
-        <attr name="startContentPadding" format="dimension" />
-        <!-- Deprecated. Use `scalableEndContentPadding` instead. -->
-        <attr name="endContentPadding" format="dimension" />
     </declare-styleable>
 
     <!-- Defines the appearance of chart axes. -->
@@ -167,12 +163,6 @@
         <attr name="marginBottom" format="dimension" />
         <attr name="marginVertical" format="dimension" />
         <attr name="marginHorizontal" format="dimension" />
-        <!-- Deprecated. Use `textAlignment` instead. -->
-        <attr name="textAlign" format="enum">
-            <enum name="left" value="0" />
-            <enum name="center" value="1" />
-            <enum name="right" value="2" />
-        </attr>
         <attr name="textAlignment" format="enum">
             <enum name="normal" value="0" />
             <enum name="opposite" value="1" />
