@@ -16,44 +16,33 @@
 
 package com.patrykandpatrick.vico.core.scroll
 
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
-import com.patrykandpatrick.vico.core.extension.ifNotNull
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
 
 /**
  * Defines when an automatic scroll should be performed.
  */
-public fun interface AutoScrollCondition<in Model : ChartEntryModel> {
+public fun interface AutoScrollCondition {
     /**
      * Given a chart’s new and old models, defines whether an automatic scroll should be performed.
      */
     public fun shouldPerformAutoScroll(
-        newModel: Model,
-        oldModel: Model?,
+        newModel: CartesianChartModel,
+        oldModel: CartesianChartModel?,
     ): Boolean
 
     public companion object {
         /**
          * Prevents any automatic scrolling from occurring.
          */
-        public val Never: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition { _, _ -> false }
+        public val Never: AutoScrollCondition = AutoScrollCondition { _, _ -> false }
 
         /**
          * Triggers an automatic scroll when the size of the model increases (that is, the contents of the chart become
          * wider).
          */
-        public val OnModelSizeIncreased: AutoScrollCondition<ChartEntryModel> =
-            AutoScrollCondition { n, o ->
-                if (o != null) {
-                    val new = n.entries
-                    val old = o.entries
-                    new.size > old.size ||
-                        ifNotNull(
-                            t1 = new.maxOfOrNull { entries -> entries.size },
-                            t2 = old.maxOfOrNull { entries -> entries.size },
-                        ) { t1, t2 -> t1 > t2 } == true
-                } else {
-                    false
-                }
+        public val OnModelSizeIncreased: AutoScrollCondition =
+            AutoScrollCondition { newModel, oldModel ->
+                oldModel != null && (newModel.models.size > oldModel.models.size || newModel.width > oldModel.width)
             }
     }
 }

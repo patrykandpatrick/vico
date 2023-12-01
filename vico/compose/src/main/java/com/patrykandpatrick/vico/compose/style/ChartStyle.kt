@@ -31,16 +31,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.chart.line.lineSpec
+import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
-import com.patrykandpatrick.vico.compose.component.shape.shader.solid
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.DefaultColors
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
-import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
+import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer.MergeMode
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer.LineSpec
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -55,15 +57,15 @@ import com.patrykandpatrick.vico.core.formatter.ValueFormatter
  * Defines the appearance of charts.
  *
  * @property axis the appearance of chart axes.
- * @property columnChart the appearance of column charts.
- * @property lineChart the appearance of line charts.
+ * @property columnLayer the appearance of [ColumnCartesianLayer]s.
+ * @property lineLayer the appearance of [LineCartesianLayer]s.
  * @property marker the appearance of chart markers.
  * @property elevationOverlayColor the color used for elevation overlays.
  */
 public data class ChartStyle(
     val axis: Axis,
-    val columnChart: ColumnChart,
-    val lineChart: LineChart,
+    val columnLayer: ColumnLayer,
+    val lineLayer: LineLayer,
     val marker: Marker,
     val elevationOverlayColor: Color,
 ) {
@@ -126,21 +128,21 @@ public data class ChartStyle(
     )
 
     /**
-     * Defines the appearance of column charts.
+     * Defines the appearance of [ColumnCartesianLayer]s.
      *
      * @property columns the [LineComponent] instances to use for columns. This list is iterated through as many times
      * as necessary for each column collection. If the list contains a single element, all columns have the same
      * appearance.
      * @property outsideSpacing the distance between neighboring column collections.
      * @property innerSpacing the distance between neighboring grouped columns.
-     * @property mergeMode defines the way multiple columns are rendered in [ColumnChart]s.
+     * @property mergeMode defines the way multiple columns are rendered in [ColumnLayer]s.
      * @property dataLabel an optional [TextComponent] to use for data labels.
      * @property dataLabelVerticalPosition the vertical position of data labels relative to the top of their
      * respective columns.
      * @property dataLabelValueFormatter the [ValueFormatter] to use for data labels.
      * @property dataLabelRotationDegrees the rotation of data labels in degrees.
      */
-    public data class ColumnChart(
+    public data class ColumnLayer(
         val columns: List<LineComponent>,
         val outsideSpacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
         val innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
@@ -152,13 +154,13 @@ public data class ChartStyle(
     )
 
     /**
-     * Defines the appearance of line charts.
+     * Defines the appearance of [LineCartesianLayer]s.
      *
      * @param lines the [LineSpec]s to use for the lines. This list is iterated through as many times as there are
      * lines.
      * @property spacing the spacing between points.
      */
-    public data class LineChart(
+    public data class LineLayer(
         val lines: List<LineSpec>,
         val spacing: Dp = DefaultDimens.POINT_SPACING.dp,
     )
@@ -195,8 +197,8 @@ public data class ChartStyle(
                         axisGuidelineColor = axisGuidelineColor,
                         axisLineColor = axisLineColor,
                     ),
-                columnChart =
-                    ColumnChart(
+                columnLayer =
+                    ColumnLayer(
                         columns =
                             entityColors.map { entityColor ->
                                 LineComponent(
@@ -209,12 +211,12 @@ public data class ChartStyle(
                                 )
                             },
                     ),
-                lineChart =
-                    LineChart(
+                lineLayer =
+                    LineLayer(
                         lines =
                             entityColors.map { entityColor ->
                                 lineSpec(
-                                    lineShader = DynamicShaders.solid(entityColor),
+                                    shader = DynamicShaders.color(entityColor),
                                 )
                             },
                     ),

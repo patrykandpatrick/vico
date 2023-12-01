@@ -24,8 +24,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
@@ -41,8 +42,8 @@ import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
@@ -51,31 +52,30 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 @Composable
 internal fun Chart2(
     uiSystem: UISystem,
-    chartEntryModelProducer: ChartEntryModelProducer,
+    modelProducer: CartesianChartModelProducer,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart2(chartEntryModelProducer)
-        UISystem.Views -> ViewChart2(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart2(modelProducer)
+        UISystem.Views -> ViewChart2(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ComposeChart2(modelProducer: CartesianChartModelProducer) {
     val thresholdLine = rememberThresholdLine()
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        val defaultColumns = currentChartStyle.columnChart.columns
-        Chart(
+        val defaultColumns = currentChartStyle.columnLayer.columns
+        CartesianChartHost(
             chart =
-                columnChart(
-                    columns =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(
                         remember(defaultColumns) {
-                            defaultColumns.map { defaultColumn ->
-                                LineComponent(defaultColumn.color, COLUMN_WIDTH_DP, defaultColumn.shape)
-                            }
+                            defaultColumns.map { LineComponent(it.color, COLUMN_WIDTH_DP, it.shape) }
                         },
+                    ),
                     decorations = remember(thresholdLine) { listOf(thresholdLine) },
                 ),
-            chartModelProducer = chartEntryModelProducer,
+            modelProducer = modelProducer,
             startAxis = rememberStartAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
             bottomAxis = rememberBottomAxis(itemPlacer = bottomAxisItemPlacer),
             marker = rememberMarker(),
@@ -86,14 +86,14 @@ private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ViewChart2(modelProducer: CartesianChartModelProducer) {
     val thresholdLine = rememberThresholdLine()
     val marker = rememberMarker()
     AndroidViewBinding(Chart2Binding::inflate) {
         with(chartView) {
             chart?.addDecoration(thresholdLine)
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
+            this.modelProducer = modelProducer
             with(startAxis as VerticalAxis) {
                 itemPlacer = startAxisItemPlacer
                 valueFormatter = startAxisValueFormatter

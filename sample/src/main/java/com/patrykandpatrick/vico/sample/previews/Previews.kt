@@ -34,11 +34,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.chart.line.lineSpec
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.component.shapeComponent
@@ -47,13 +49,15 @@ import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.createVerticalAxis
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes.pillShape
 import com.patrykandpatrick.vico.core.component.shape.Shapes.rectShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.sample.utils.VicoTheme
 
 private val chartModifier = Modifier.height(100.dp)
@@ -65,19 +69,20 @@ public fun ColumnChartCard(): Unit =
         val colors = MaterialTheme.colors
 
         SampleCard {
-            Chart(
+            CartesianChartHost(
                 modifier = chartModifier,
                 chart =
-                    columnChart(
-                        columns =
+                    rememberCartesianChart(
+                        rememberColumnCartesianLayer(
                             listOf(
                                 lineComponent(
-                                    colors.primary,
+                                    color = colors.primary,
                                     thickness = 8.dp,
                                     shape = RoundedCornerShape(4.dp),
                                     dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
                                 ),
                             ),
+                        ),
                     ),
                 startAxis =
                     createVerticalAxis {
@@ -106,7 +111,7 @@ public fun ColumnChartCard(): Unit =
                                 1.dp.value,
                             )
                     },
-                model = entryModelOf(1, 2, 3, 2),
+                model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
             )
         }
     }
@@ -118,32 +123,33 @@ public fun LineChartCard(): Unit =
         val colors = MaterialTheme.colors
 
         SampleCard {
-            Chart(
+            CartesianChartHost(
                 modifier = Modifier.height(100.dp),
                 chart =
-                    lineChart(
-                        lines =
+                    rememberCartesianChart(
+                        rememberLineCartesianLayer(
                             listOf(
                                 lineSpec(
                                     point = null,
-                                    lineColor = colors.primary,
-                                    lineBackgroundShader =
+                                    shader = DynamicShaders.color(colors.primary),
+                                    backgroundShader =
                                         DynamicShaders.fromComponent(
                                             componentSize = 4.dp,
                                             component =
-                                                shapeComponent(shape = pillShape, color = colors.primary).apply {
-                                                    setMargins(0.5.dp.value)
-                                                },
+                                                shapeComponent(shape = pillShape, color = colors.primary)
+                                                    .apply { setMargins(0.5.dp.value) },
                                         ),
                                 ),
                             ),
-                        axisValuesOverrider =
-                            AxisValuesOverrider.fixed(
-                                minX = 0f,
-                                maxY = 3f,
-                            ),
+                            axisValueOverrider = AxisValueOverrider.fixed(minX = 0f, maxY = 3f),
+                        ),
                     ),
-                model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
+                model =
+                    CartesianChartModel(
+                        LineCartesianLayerModel.build {
+                            series(x = listOf(-1, 0, 1, 2, 3, 4, 5), y = listOf(0, 0, 1, 2, 0, 2, 1))
+                        },
+                    ),
                 startAxis =
                     createVerticalAxis {
                         label =

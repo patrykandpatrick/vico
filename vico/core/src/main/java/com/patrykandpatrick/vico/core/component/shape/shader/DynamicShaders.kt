@@ -49,7 +49,7 @@ public object DynamicShaders {
         }
 
     /**
-     * Creates a [ComposeShader] out of two [DynamicShader]s by using a [BlendMode].
+     * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via [mode].
      */
     @RequiresApi(Build.VERSION_CODES.Q)
     public fun composeShader(
@@ -66,7 +66,7 @@ public object DynamicShaders {
         }
 
     /**
-     * Creates a [ComposeShader] out of two [DynamicShader]s by using a [PorterDuff.Mode].
+     * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via [mode].
      */
     public fun composeShader(
         first: DynamicShader,
@@ -81,12 +81,3 @@ public object DynamicShaders {
             )
         }
 }
-
-/**
- * Creates a [DynamicShader] that is split into two shaders. The positive shader is used for values
- * above the zero line, and the negative shader is used for values below the zero line.
- */
-public fun DynamicShaders.splitShader(
-    positiveShader: DynamicShader,
-    negativeShader: DynamicShader,
-): HorizontalSplitShader.Double = HorizontalSplitShader.Double(positiveShader, negativeShader)

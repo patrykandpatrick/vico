@@ -22,16 +22,16 @@ import android.graphics.Color
 import com.patrykandpatrick.vico.core.DefaultAlpha
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
-import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.OverlayingComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
+import com.patrykandpatrick.vico.core.component.shape.shader.ColorShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.component.shape.shader.HorizontalSplitShader
-import com.patrykandpatrick.vico.core.component.shape.shader.SolidShader
+import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.extension.copyColor
 import com.patrykandpatrick.vico.views.R
@@ -142,7 +142,7 @@ internal fun TypedArray.getComponent(context: Context): Component? =
 internal fun TypedArray.getLineSpec(
     context: Context,
     defaultColor: Int = context.defaultColors.entity1Color.toInt(),
-): LineChart.LineSpec {
+): LineCartesianLayer.LineSpec {
     val positiveLineColor =
         getColor(
             R.styleable.LineSpec_positiveColor,
@@ -153,9 +153,9 @@ internal fun TypedArray.getLineSpec(
 
     val lineShader =
         if (hasValue(R.styleable.LineSpec_negativeColor)) {
-            HorizontalSplitShader.Solid(positiveLineColor, negativeLineColor)
+            TopBottomShader(ColorShader(positiveLineColor), ColorShader(negativeLineColor))
         } else {
-            SolidShader(positiveLineColor)
+            ColorShader(positiveLineColor)
         }
 
     val positiveShader =
@@ -200,8 +200,8 @@ internal fun TypedArray.getLineSpec(
             )
         }
 
-    return LineChart.LineSpec(
-        lineShader = lineShader,
+    return LineCartesianLayer.LineSpec(
+        shader = lineShader,
         point =
             getNestedTypedArray(
                 context = context,
@@ -214,13 +214,13 @@ internal fun TypedArray.getLineSpec(
                 index = R.styleable.LineSpec_pointSize,
                 defaultValue = DefaultDimens.POINT_SIZE,
             ),
-        lineThicknessDp =
+        thicknessDp =
             getRawDimension(
                 context = context,
                 index = R.styleable.LineSpec_lineThickness,
                 defaultValue = DefaultDimens.LINE_THICKNESS,
             ),
-        lineBackgroundShader = HorizontalSplitShader.Double(positiveShader, negativeShader),
+        backgroundShader = TopBottomShader(positiveShader, negativeShader),
         dataLabel =
             if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
                 getNestedTypedArray(

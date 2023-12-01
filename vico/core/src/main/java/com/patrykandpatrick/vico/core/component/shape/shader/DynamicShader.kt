@@ -23,7 +23,7 @@ import android.graphics.RectF
 import android.graphics.Shader
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.getOrPutExtra
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 import kotlin.math.roundToInt
 
 /**
@@ -62,58 +62,12 @@ public fun interface DynamicShader {
     ): Shader
 
     /**
-     * Applies the [Shader] to the [Paint] object.
-     *
-     * @param paint the [Paint] object to apply the style to.
-     * @param drawContext the [DrawContext] for the current draw operation.
-     * @param rectF the [RectF] holding coordinates of the area to apply the style to.
-     * @param zeroLineYFraction the fraction of the height of the area to apply the style to, that the zero line is at.
-     */
-    public fun applyTo(
-        paint: Paint,
-        drawContext: DrawContext,
-        rectF: RectF,
-        zeroLineYFraction: Float,
-    ) {
-        applyTo(paint, drawContext, rectF.left, rectF.top, rectF.right, rectF.bottom, zeroLineYFraction)
-    }
-
-    /**
-     * Applies the [Shader] to the [Paint] object.
-     *
-     * @param paint the [Paint] object to apply the style to.
-     * @param drawContext the [DrawContext] for the current draw operation.
-     * @param left the left coordinate of the area to apply the style to.
-     * @param top the top coordinate of the area to apply the style to.
-     * @param right the right coordinate of the area to apply the style to.
-     * @param bottom the bottom coordinate of the area to apply the style to.
-     * @param zeroLineYFraction the fraction of the height of the area to apply the style to, that the zero line is at.
-     */
-    public fun applyTo(
-        paint: Paint,
-        drawContext: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-        zeroLineYFraction: Float,
-    ) {
-        paint.shader = provideShader(drawContext, left, top, right, bottom)
-    }
-
-    /**
-     * Gets the pixel color of the [Shader] at the given [point].
-     *
-     * @param point the [Point] to get the color at.
-     * @param drawContext the [DrawContext] for the current draw operation.
-     * @param rectF the [RectF] holding coordinates of the area to apply the style to.
-     * @param zeroLineYFraction the fraction of the height of the area to apply the style to, that the zero line is at.
+     * Gets the color of the pixel at the given point. [rectF] specifies the shaded area.
      */
     public fun getColorAt(
         point: Point,
         drawContext: DrawContext,
         rectF: RectF,
-        zeroLineYFraction: Float,
     ): Int {
         val bitmap =
             drawContext.getOrPutExtra(bitmapPixelExtractionKey) {

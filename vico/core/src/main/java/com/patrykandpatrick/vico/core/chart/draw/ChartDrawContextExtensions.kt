@@ -18,26 +18,25 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.getClosestMarkerEntryModel
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 
 /**
  * The anonymous implementation of [ChartDrawContext].
  *
- * @param canvas the canvas on which the [Chart] is to be drawn.
+ * @param canvas the canvas on which the [CartesianChart] is to be drawn.
  * @param elevationOverlayColor the color of elevation overlays, applied to [ShapeComponent]s that cast shadows.
  * @param measureContext holds data used for component measurements.
  * @param markerTouchPoint the point inside the chart’s bounds where physical touch is occurring.
- * @param horizontalDimensions holds information on the [Chart]’s horizontal dimensions.
- * @param chartBounds the bounds in which the [Chart] will be drawn.
+ * @param horizontalDimensions holds information on the [CartesianChart]’s horizontal dimensions.
+ * @param chartBounds the bounds in which the [CartesianChart] will be drawn.
  * @param horizontalScroll the horizontal scroll.
  * @param zoom the zoom factor.
  *
@@ -83,10 +82,10 @@ public fun chartDrawContext(
  * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the
  * [markerVisibilityChangeListener] about the [marker]’s visibility changes.
  */
-public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
+public fun ChartDrawContext.drawMarker(
     marker: Marker,
     markerTouchPoint: Point?,
-    chart: Chart<Model>,
+    chart: CartesianChart,
     markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
     wasMarkerVisible: Boolean,
     setWasMarkerVisible: (Boolean) -> Unit,
@@ -100,7 +99,7 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
                 context = this,
                 bounds = chart.bounds,
                 markedEntries = markerEntryModels,
-                chartValuesProvider = chartValuesProvider,
+                chartValues = chartValues,
             )
             if (wasMarkerVisible.not()) {
                 markerVisibilityChangeListener?.onMarkerShown(

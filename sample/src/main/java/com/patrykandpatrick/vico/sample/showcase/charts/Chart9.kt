@@ -30,27 +30,28 @@ import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.chart.line.lineSpec
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
-import com.patrykandpatrick.vico.compose.component.shape.shader.split
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.component.shape.shader.splitShader
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart9Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
@@ -59,59 +60,65 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 @Composable
 internal fun Chart9(
     uiSystem: UISystem,
-    chartEntryModelProducer: ChartEntryModelProducer,
+    modelProducer: CartesianChartModelProducer,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart9(chartEntryModelProducer)
-        UISystem.Views -> ViewChart9(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart9(modelProducer)
+        UISystem.Views -> ViewChart9(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart9(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
     val marker = rememberMarker()
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        Chart(
+        CartesianChartHost(
             chart =
-                lineChart(
-                    lines =
-                        listOf(
-                            lineSpec(
-                                lineShader = DynamicShaders.split(chartColors[0], chartColors[1]),
-                                lineBackgroundShader =
-                                    DynamicShaders.splitShader(
-                                        DynamicShaders.composeShader(
-                                            DynamicShaders.fromComponent(
-                                                componentSize = 6.dp,
-                                                component =
-                                                    shapeComponent(
-                                                        shape = Shapes.pillShape,
-                                                        color = chartColors[0],
-                                                        margins = remember { dimensionsOf(1.dp) },
-                                                    ),
-                                            ),
-                                            verticalGradient(arrayOf(Color.Black, Color.Transparent)),
-                                            PorterDuff.Mode.DST_IN,
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(
+                        lines =
+                            listOf(
+                                lineSpec(
+                                    shader =
+                                        TopBottomShader(
+                                            DynamicShaders.color(chartColors[0]),
+                                            DynamicShaders.color(chartColors[1]),
                                         ),
-                                        DynamicShaders.composeShader(
-                                            DynamicShaders.fromComponent(
-                                                componentSize = 5.dp,
-                                                component =
-                                                    shapeComponent(
-                                                        shape = Shapes.rectShape,
-                                                        color = chartColors[1],
-                                                        margins = remember { dimensionsOf(horizontal = 2.dp) },
-                                                    ),
-                                                checkeredArrangement = false,
+                                    backgroundShader =
+                                        TopBottomShader(
+                                            DynamicShaders.composeShader(
+                                                DynamicShaders.fromComponent(
+                                                    componentSize = 6.dp,
+                                                    component =
+                                                        shapeComponent(
+                                                            shape = Shapes.pillShape,
+                                                            color = chartColors[0],
+                                                            margins = remember { dimensionsOf(1.dp) },
+                                                        ),
+                                                ),
+                                                verticalGradient(arrayOf(Color.Black, Color.Transparent)),
+                                                PorterDuff.Mode.DST_IN,
                                             ),
-                                            verticalGradient(arrayOf(Color.Transparent, Color.Black)),
-                                            PorterDuff.Mode.DST_IN,
+                                            DynamicShaders.composeShader(
+                                                DynamicShaders.fromComponent(
+                                                    componentSize = 5.dp,
+                                                    component =
+                                                        shapeComponent(
+                                                            shape = Shapes.rectShape,
+                                                            color = chartColors[1],
+                                                            margins = remember { dimensionsOf(horizontal = 2.dp) },
+                                                        ),
+                                                    checkeredArrangement = false,
+                                                ),
+                                                verticalGradient(arrayOf(Color.Transparent, Color.Black)),
+                                                PorterDuff.Mode.DST_IN,
+                                            ),
                                         ),
-                                    ),
+                                ),
                             ),
-                        ),
+                    ),
                 ),
-            chartModelProducer = chartEntryModelProducer,
+            modelProducer = modelProducer,
             startAxis =
                 rememberStartAxis(
                     label =
@@ -148,9 +155,12 @@ private fun ComposeChart9(chartEntryModelProducer: ChartEntryModelProducer) {
                 rememberBottomAxis(
                     guideline = null,
                     itemPlacer =
-                        AxisItemPlacer.Horizontal.default(
-                            spacing = 3,
-                        ),
+                        remember {
+                            AxisItemPlacer.Horizontal.default(
+                                spacing = 3,
+                                addExtremeLabelPadding = true,
+                            )
+                        },
                 ),
             marker = marker,
             runInitialAnimation = false,
@@ -160,22 +170,26 @@ private fun ComposeChart9(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun ViewChart9(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ViewChart9(modelProducer: CartesianChartModelProducer) {
     val marker = rememberMarker()
     val colors = chartColors
     AndroidViewBinding(Chart9Binding::inflate) {
         with(chartView) {
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
+            this.modelProducer = modelProducer
             (bottomAxis as Axis).guideline = null
             this.marker = marker
-            with(chart as LineChart) {
+            with(chart?.layers?.get(0) as LineCartesianLayer) {
                 lines =
                     listOf(
-                        LineChart.LineSpec(
-                            lineShader = DynamicShaders.split(colors[0], colors[1]),
-                            lineBackgroundShader =
-                                DynamicShaders.splitShader(
+                        LineCartesianLayer.LineSpec(
+                            shader =
+                                TopBottomShader(
+                                    DynamicShaders.color(colors[0]),
+                                    DynamicShaders.color(colors[1]),
+                                ),
+                            backgroundShader =
+                                TopBottomShader(
                                     DynamicShaders.composeShader(
                                         DynamicShaders.fromComponent(
                                             componentSize = 6.dp,

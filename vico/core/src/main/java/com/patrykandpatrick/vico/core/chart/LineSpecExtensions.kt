@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.chart
 
 import android.graphics.Paint
-import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
@@ -25,26 +25,26 @@ import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 
 /**
- * Creates a new [LineChart.LineSpec] based on this one, updating select properties.
+ * Creates a new [LineCartesianLayer.LineSpec] based on this one, updating select properties.
  */
-public fun LineChart.LineSpec.copy(
-    lineFill: DynamicShader = this.lineShader,
-    lineThicknessDp: Float = this.lineThicknessDp,
-    lineBackgroundFill: DynamicShader? = this.lineBackgroundShader,
-    lineCap: Paint.Cap = this.lineCap,
+public fun LineCartesianLayer.LineSpec.copy(
+    shader: DynamicShader = this.shader,
+    thicknessDp: Float = this.thicknessDp,
+    backgroundShader: DynamicShader? = this.backgroundShader,
+    cap: Paint.Cap = this.cap,
     point: Component? = this.point,
     pointSizeDp: Float = this.pointSizeDp,
     dataLabel: TextComponent? = this.dataLabel,
     dataLabelVerticalPosition: VerticalPosition = this.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = this.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
-    pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,
-): LineChart.LineSpec =
-    LineChart.LineSpec(
-        lineShader = lineFill,
-        lineThicknessDp = lineThicknessDp,
-        lineBackgroundShader = lineBackgroundFill,
-        lineCap = lineCap,
+    pointConnector: LineCartesianLayer.LineSpec.PointConnector = this.pointConnector,
+): LineCartesianLayer.LineSpec =
+    LineCartesianLayer.LineSpec(
+        shader = shader,
+        thicknessDp = thicknessDp,
+        backgroundShader = backgroundShader,
+        cap = cap,
         point = point,
         pointSizeDp = pointSizeDp,
         dataLabel = dataLabel,

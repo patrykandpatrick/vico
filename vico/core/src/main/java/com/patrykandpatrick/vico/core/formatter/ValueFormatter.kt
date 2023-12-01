@@ -16,7 +16,11 @@
 
 package com.patrykandpatrick.vico.core.formatter
 
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
 
 /**
  * Formats values for display.
@@ -26,7 +30,9 @@ public interface ValueFormatter {
      * Called to format axis labels and data labels.
      *
      * @param value the value to be formatted.
-     * @param chartValues the [ChartValues] used by the chart.
+     * @param chartValues houses the [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
+     * @param verticalAxisPosition the position of the [VerticalAxis] with which the caller is associated. This
+     * [VerticalAxis]’s scale should be used during the interpretation of [value].
      *
      * @see ChartValues
      *
@@ -35,5 +41,6 @@ public interface ValueFormatter {
     public fun formatValue(
         value: Float,
         chartValues: ChartValues,
+        verticalAxisPosition: AxisPosition.Vertical?,
     ): CharSequence
 }

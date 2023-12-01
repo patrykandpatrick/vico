@@ -16,9 +16,16 @@
 
 package com.patrykandpatrick.vico.sample.previews.resource
 
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 
-public val shortEntryModel: ChartEntryModel = entryModelOf(1, 2, 4, 8, 3)
+public val shortColumnModel = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 4, 8, 3) })
 
-public val mediumEntryModel: ChartEntryModel = entryModelOf(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8)
+public val mediumColumnModel =
+    CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8) })
+
+public val shortLineModel = CartesianChartModel(LineCartesianLayerModel.build { series(1, 2, 4, 8, 3) })
+
+public val mediumLineModel =
+    CartesianChartModel(LineCartesianLayerModel.build { series(1, 2, 4, 8, 3, 10, 4, 7, 2, 6, 4, 8) })

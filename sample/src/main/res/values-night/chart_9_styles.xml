@@ -15,6 +15,6 @@
   -->
 
 <resources>
-    <color name="chart_9_color_positive">#C7FF6C</color>
-    <color name="chart_9_color_negative">#A46CFF</color>
+    <color name="chart_9_color_positive">#735cff</color>
+    <color name="chart_9_color_negative">#ff337d</color>
 </resources>

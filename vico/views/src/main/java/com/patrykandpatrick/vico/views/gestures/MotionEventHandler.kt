@@ -21,8 +21,8 @@ import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
 import com.patrykandpatrick.vico.core.marker.Marker
-import com.patrykandpatrick.vico.core.model.Point
 import com.patrykandpatrick.vico.core.scroll.ScrollHandler
+import com.patrykandpatrick.vico.core.util.Point
 import com.patrykandpatrick.vico.views.extension.fling
 import com.patrykandpatrick.vico.views.extension.point
 import kotlin.math.abs

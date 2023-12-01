@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -15,9 +15,9 @@
   -->
 
 <resources>
-    <attr name="columnChartStyle" format="reference" />
+    <attr name="columnLayerStyle" format="reference" />
 
-    <declare-styleable name="ColumnChartStyle">
+    <declare-styleable name="ColumnCartesianLayerStyle">
         <attr name="column1" format="reference" />
         <attr name="column2" format="reference" />
         <attr name="column3" format="reference" />
@@ -27,5 +27,9 @@
         <attr name="dataLabelStyle" />
         <attr name="dataLabelVerticalPosition" />
         <attr name="dataLabelRotationDegrees" />
+        <attr name="mergeMode" format="enum">
+            <enum name="grouped" value="0" />
+            <enum name="stacked" value="1" />
+        </attr>
     </declare-styleable>
 </resources>

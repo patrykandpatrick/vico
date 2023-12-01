@@ -28,8 +28,9 @@ import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
@@ -41,7 +42,7 @@ import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.copy
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart7Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
@@ -50,26 +51,26 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 @Composable
 internal fun Chart7(
     uiSystem: UISystem,
-    chartEntryModelProducer: ChartEntryModelProducer,
+    modelProducer: CartesianChartModelProducer,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart7(chartEntryModelProducer)
-        UISystem.Views -> ViewChart7(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart7(modelProducer)
+        UISystem.Views -> ViewChart7(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ComposeChart7(modelProducer: CartesianChartModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        val defaultLines = currentChartStyle.lineChart.lines
-        Chart(
+        val defaultLines = currentChartStyle.lineLayer.lines
+        CartesianChartHost(
             chart =
-                lineChart(
-                    remember(defaultLines) {
-                        defaultLines.map { defaultLine -> defaultLine.copy(lineBackgroundFill = null) }
-                    },
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(
+                        remember(defaultLines) { defaultLines.map { it.copy(backgroundShader = null) } },
+                    ),
                 ),
-            chartModelProducer = chartEntryModelProducer,
+            modelProducer = modelProducer,
             startAxis =
                 rememberStartAxis(
                     label = rememberStartAxisLabel(),
@@ -84,14 +85,14 @@ private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun ViewChart7(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ViewChart7(modelProducer: CartesianChartModelProducer) {
     val startAxisLabel = rememberStartAxisLabel()
     val marker = rememberMarker()
     val legend = rememberLegend()
     AndroidViewBinding(Chart7Binding::inflate) {
         with(chartView) {
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
+            this.modelProducer = modelProducer
             (startAxis as VerticalAxis).horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
             (startAxis as VerticalAxis).label = startAxisLabel
             this.marker = marker
@@ -124,7 +125,7 @@ private fun rememberLegend() =
                             textSize = legendItemLabelTextSize,
                             typeface = Typeface.MONOSPACE,
                         ),
-                    labelText = stringResource(R.string.data_set_x, index + 1),
+                    labelText = stringResource(R.string.series_x, index + 1),
                 )
             },
         iconSize = legendItemIconSize,

@@ -16,10 +16,10 @@
 
 package com.patrykandpatrick.vico.core.chart.insets
 
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 
 /**
- * Used to apply horizontal insets to [Chart]s.
+ * Used to apply horizontal insets to [CartesianChart]s.
  *
  * @see ChartInsetter
  * @see Insets

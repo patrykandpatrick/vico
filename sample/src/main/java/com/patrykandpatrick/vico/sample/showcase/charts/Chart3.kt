@@ -25,20 +25,22 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
@@ -47,20 +49,20 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 @Composable
 internal fun Chart3(
     uiSystem: UISystem,
-    chartEntryModelProducer: ChartEntryModelProducer,
+    modelProducer: CartesianChartModelProducer,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart3(chartEntryModelProducer)
-        UISystem.Views -> ViewChart3(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart3(modelProducer)
+        UISystem.Views -> ViewChart3(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        Chart(
-            chart = lineChart(axisValuesOverrider = axisValueOverrider),
-            chartModelProducer = chartEntryModelProducer,
+        CartesianChartHost(
+            chart = rememberCartesianChart(rememberLineCartesianLayer(axisValueOverrider = axisValueOverrider)),
+            modelProducer = modelProducer,
             startAxis =
                 rememberStartAxis(
                     guideline = null,
@@ -96,13 +98,13 @@ private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun ViewChart3(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ViewChart3(modelProducer: CartesianChartModelProducer) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart3Binding::inflate) {
         with(chartView) {
-            (chart as LineChart).axisValuesOverrider = axisValueOverrider
+            (chart?.layers?.get(0) as LineCartesianLayer?)?.axisValueOverrider = axisValueOverrider
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
+            this.modelProducer = modelProducer
             this.marker = marker
         }
     }
@@ -116,7 +118,10 @@ private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val chartColors = listOf(color1, color2)
 private val axisValueOverrider =
-    AxisValuesOverrider.adaptiveYValues(yFraction = AXIS_VALUE_OVERRIDER_Y_FRACTION, round = true)
+    AxisValueOverrider.adaptiveYValues<LineCartesianLayerModel>(
+        yFraction = AXIS_VALUE_OVERRIDER_Y_FRACTION,
+        round = true,
+    )
 private val axisTitleHorizontalPaddingValue = 8.dp
 private val axisTitleVerticalPaddingValue = 2.dp
 private val axisTitlePadding = dimensionsOf(axisTitleHorizontalPaddingValue, axisTitleVerticalPaddingValue)

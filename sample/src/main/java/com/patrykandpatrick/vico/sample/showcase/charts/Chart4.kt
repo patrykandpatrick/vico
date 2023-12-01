@@ -23,18 +23,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberTopAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
-import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.chart.copy
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart4Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
@@ -43,40 +43,34 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 @Composable
 internal fun Chart4(
     uiSystem: UISystem,
-    chartEntryModelProducer: ComposedChartEntryModelProducer,
+    modelProducer: CartesianChartModelProducer,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart4(chartEntryModelProducer)
-        UISystem.Views -> ViewChart4(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart4(modelProducer)
+        UISystem.Views -> ViewChart4(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProducer) {
+private fun ComposeChart4(modelProducer: CartesianChartModelProducer) {
     ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
-        val defaultColumns = currentChartStyle.columnChart.columns
-        val defaultLines = currentChartStyle.lineChart.lines
-        val columnChart =
-            columnChart(
-                remember(defaultColumns) {
-                    defaultColumns.map { defaultColumn ->
-                        LineComponent(
-                            defaultColumn.color,
-                            defaultColumn.thicknessDp,
-                            Shapes.roundedCornerShape(columnCornerRadius),
-                        )
-                    }
-                },
-            )
-        val lineChart =
-            lineChart(
-                remember(defaultLines) {
-                    defaultLines.map { defaultLine -> defaultLine.copy(pointConnector = pointConnector) }
-                },
-            )
-        Chart(
-            chart = remember(columnChart, lineChart) { columnChart + lineChart },
-            chartModelProducer = chartEntryModelProducer,
+        val defaultColumns = currentChartStyle.columnLayer.columns
+        val defaultLines = currentChartStyle.lineLayer.lines
+        CartesianChartHost(
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(
+                        remember(defaultColumns) {
+                            defaultColumns.map {
+                                LineComponent(it.color, it.thicknessDp, Shapes.roundedCornerShape(columnCornerRadius))
+                            }
+                        },
+                    ),
+                    rememberLineCartesianLayer(
+                        remember(defaultLines) { defaultLines.map { it.copy(pointConnector = pointConnector) } },
+                    ),
+                ),
+            modelProducer = modelProducer,
             topAxis = rememberTopAxis(),
             endAxis = rememberEndAxis(),
             marker = rememberMarker(),
@@ -86,12 +80,12 @@ private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProduc
 }
 
 @Composable
-private fun ViewChart4(chartEntryModelProducer: ComposedChartEntryModelProducer) {
+private fun ViewChart4(modelProducer: CartesianChartModelProducer) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart4Binding::inflate) {
         with(chartView) {
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
+            this.modelProducer = modelProducer
             this.marker = marker
         }
     }

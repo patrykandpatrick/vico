@@ -23,13 +23,14 @@
         <item name="negativeColor">?colorSecondary</item>
     </style>
 
-    <style name="Chart9LineChartStyle">
+    <style name="Chart9LineLayerStyle">
         <item name="line1Spec">@style/Chart9Line1Style</item>
     </style>
 
     <style name="Chart9BottomAxisStyle">
         <item name="horizontalAxisLabelSpacing">3</item>
         <item name="showGuideline">false</item>
+        <item name="addExtremeHorizontalAxisLabelPadding">true</item>
     </style>
 
     <style name="Chart9StartAxisStyle">

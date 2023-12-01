@@ -18,12 +18,11 @@ package com.patrykandpatrick.vico.core.layout
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.axis.AxisManager
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.legend.Legend
 
@@ -53,10 +52,10 @@ public open class VirtualLayout(
      *
      * @return the bounds applied to the chart.
      */
-    public open fun <Model : ChartEntryModel> setBounds(
+    public open fun setBounds(
         context: MeasureContext,
         contentBounds: RectF,
-        chart: Chart<Model>,
+        chart: CartesianChart,
         legend: Legend?,
         horizontalDimensions: HorizontalDimensions,
         vararg chartInsetter: ChartInsetter?,

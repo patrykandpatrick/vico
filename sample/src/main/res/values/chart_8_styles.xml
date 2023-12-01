@@ -36,13 +36,14 @@
         <item name="color">@color/chart_8_color_4</item>
     </style>
 
-    <style name="Chart8ColumnChartStyle">
+    <style name="Chart8ColumnLayerStyle">
         <item name="column1">@style/Chart8Column1Style</item>
         <item name="column2">@style/Chart8Column2Style</item>
         <item name="column3">@style/Chart8Column3Style</item>
+        <item name="mergeMode">stacked</item>
     </style>
 
-    <style name="Chart8LineChartStyle">
+    <style name="Chart8LineLayerStyle">
         <item name="line1Spec">@style/Chart8Line1Style</item>
     </style>
 </resources>

@@ -20,28 +20,26 @@ import android.content.Context
 import android.content.res.TypedArray
 import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
-import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.extension.defaultColors
 
-internal fun TypedArray.getColumnChart(
+internal fun TypedArray.getColumnCartesianLayer(
     context: Context,
-    @StyleableRes resourceId: Int = R.styleable.BaseChartView_columnChartStyle,
-    @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnChartStyle,
-    mergeMode: MergeMode,
-): ColumnChart =
+    @StyleableRes resourceId: Int = R.styleable.CartesianChartView_columnLayerStyle,
+    @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnCartesianLayerStyle,
+): ColumnCartesianLayer =
     getNestedTypedArray(context, resourceId, styleableResourceId).run {
         val defaultShape = Shapes.roundedCornerShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT)
-        ColumnChart(
+        ColumnCartesianLayer(
             columns =
                 listOf(
                     getNestedTypedArray(
                         context = context,
-                        resourceId = R.styleable.ColumnChartStyle_column1,
+                        resourceId = R.styleable.ColumnCartesianLayerStyle_column1,
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
@@ -51,7 +49,7 @@ internal fun TypedArray.getColumnChart(
                     ),
                     getNestedTypedArray(
                         context = context,
-                        resourceId = R.styleable.ColumnChartStyle_column2,
+                        resourceId = R.styleable.ColumnCartesianLayerStyle_column2,
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
@@ -61,7 +59,7 @@ internal fun TypedArray.getColumnChart(
                     ),
                     getNestedTypedArray(
                         context = context,
-                        resourceId = R.styleable.ColumnChartStyle_column3,
+                        resourceId = R.styleable.ColumnCartesianLayerStyle_column3,
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
@@ -73,51 +71,54 @@ internal fun TypedArray.getColumnChart(
             spacingDp =
                 getRawDimension(
                     context = context,
-                    index = R.styleable.ColumnChartStyle_columnOuterSpacing,
+                    index = R.styleable.ColumnCartesianLayerStyle_columnOuterSpacing,
                     defaultValue = DefaultDimens.COLUMN_OUTSIDE_SPACING,
                 ),
             innerSpacingDp =
                 getRawDimension(
                     context = context,
-                    index = R.styleable.ColumnChartStyle_columnInnerSpacing,
+                    index = R.styleable.ColumnCartesianLayerStyle_columnInnerSpacing,
                     defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING,
                 ),
-            mergeMode = mergeMode,
+            mergeMode =
+                getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)
+                    .let(ColumnCartesianLayer.MergeMode.entries::get),
             dataLabel =
-                if (getBoolean(R.styleable.ColumnChartStyle_showDataLabels, false)) {
+                if (getBoolean(R.styleable.ColumnCartesianLayerStyle_showDataLabels, false)) {
                     getNestedTypedArray(
                         context = context,
-                        resourceId = R.styleable.ColumnChartStyle_dataLabelStyle,
+                        resourceId = R.styleable.ColumnCartesianLayerStyle_dataLabelStyle,
                         styleableResourceId = R.styleable.TextComponentStyle,
                     ).getTextComponent(context = context)
                 } else {
                     null
                 },
             dataLabelVerticalPosition =
-                getInteger(R.styleable.ColumnChartStyle_dataLabelVerticalPosition, 0).let { value ->
-                    val values = VerticalPosition.values()
-                    values[value % values.size]
-                },
+                getInteger(R.styleable.ColumnCartesianLayerStyle_dataLabelVerticalPosition, 0)
+                    .let { value ->
+                        val values = VerticalPosition.entries
+                        values[value % values.size]
+                    },
             dataLabelRotationDegrees =
                 getFloat(
-                    R.styleable.ColumnChartStyle_dataLabelRotationDegrees,
+                    R.styleable.ColumnCartesianLayerStyle_dataLabelRotationDegrees,
                     0f,
                 ),
         )
     }
 
-internal fun TypedArray.getLineChart(
+internal fun TypedArray.getLineCartesianLayer(
     context: Context,
-    @StyleableRes resourceId: Int = R.styleable.BaseChartView_lineChartStyle,
-    @StyleableRes styleableResourceId: IntArray = R.styleable.LineChartStyle,
-): LineChart =
+    @StyleableRes resourceId: Int = R.styleable.CartesianChartView_lineLayerStyle,
+    @StyleableRes styleableResourceId: IntArray = R.styleable.LineCartesianLayerStyle,
+): LineCartesianLayer =
     getNestedTypedArray(context, resourceId, styleableResourceId).run {
-        LineChart(
+        LineCartesianLayer(
             lines =
                 listOf(
                     getNestedTypedArray(
                         context = context,
-                        resourceId = R.styleable.LineChartStyle_line1Spec,
+                        resourceId = R.styleable.LineCartesianLayerStyle_line1Spec,
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
@@ -125,7 +126,7 @@ internal fun TypedArray.getLineChart(
                     ),
                     getNestedTypedArray(
                         context = context,
-                        resourceId = R.styleable.LineChartStyle_line2Spec,
+                        resourceId = R.styleable.LineCartesianLayerStyle_line2Spec,
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
@@ -133,7 +134,7 @@ internal fun TypedArray.getLineChart(
                     ),
                     getNestedTypedArray(
                         context = context,
-                        resourceId = R.styleable.LineChartStyle_line3Spec,
+                        resourceId = R.styleable.LineCartesianLayerStyle_line3Spec,
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
@@ -143,7 +144,7 @@ internal fun TypedArray.getLineChart(
             spacingDp =
                 getRawDimension(
                     context = context,
-                    index = R.styleable.LineChartStyle_spacing,
+                    index = R.styleable.LineCartesianLayerStyle_spacing,
                     defaultValue = DefaultDimens.POINT_SPACING,
                 ),
         )

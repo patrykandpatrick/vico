@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused")
+@file:Suppress("UnusedReceiverParameter")
 
 package com.patrykandpatrick.vico.views.component.shape.shader
 
 import android.graphics.LinearGradient
 import android.graphics.Shader
-import androidx.annotation.ColorInt
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.CacheableDynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.component.shape.shader.HorizontalSplitShader
-import com.patrykandpatrick.vico.core.component.shape.shader.SolidShader
 import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
@@ -97,11 +94,7 @@ public fun DynamicShaders.horizontalGradient(
             top: Float,
             right: Float,
             bottom: Float,
-        ): String =
-            "%s,%s".format(
-                left,
-                right,
-            )
+        ): String = "%s,%s".format(left, right)
     }
 
 /**
@@ -147,25 +140,5 @@ public fun DynamicShaders.verticalGradient(
             top: Float,
             right: Float,
             bottom: Float,
-        ): String =
-            "%s,%s".format(
-                top,
-                bottom,
-            )
+        ): String = "%s,%s".format(top, bottom)
     }
-
-/**
- * Creates a [DynamicShader] that fills the area with a solid color.
- */
-public fun DynamicShaders.solid(
-    @ColorInt color: Int,
-): SolidShader = SolidShader(color)
-
-/**
- * Creates a [DynamicShader] with split colors. The positive color is used for values above the zero line,
- * and the negative color is used for values below the zero line.
- */
-public fun DynamicShaders.split(
-    @ColorInt positiveColor: Int,
-    @ColorInt negativeColor: Int,
-): HorizontalSplitShader.Solid = HorizontalSplitShader.Solid(positiveColor, negativeColor)

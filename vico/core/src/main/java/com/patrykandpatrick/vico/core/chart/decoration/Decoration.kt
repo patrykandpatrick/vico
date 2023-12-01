@@ -17,11 +17,11 @@
 package com.patrykandpatrick.vico.core.chart.decoration
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 
 /**
- * A [Decoration] presents additional information on a [Chart].
+ * A [Decoration] presents additional information on a [CartesianChart].
  *
  * An example [Decoration] implementation is [ThresholdLine].
  *
@@ -29,10 +29,10 @@ import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
  */
 public interface Decoration {
     /**
-     * Called before the [Chart] starts drawing itself.
+     * Called before the [CartesianChart] starts drawing itself.
      *
-     * @param [context] holds the information needed to draw the [Chart].
-     * @param [bounds] the bounding box of the [Chart].
+     * @param [context] holds the information needed to draw the [CartesianChart].
+     * @param [bounds] the bounding box of the [CartesianChart].
      */
     public fun onDrawBehindChart(
         context: ChartDrawContext,
@@ -40,10 +40,10 @@ public interface Decoration {
     ): Unit = Unit
 
     /**
-     * Called immediately after the [Chart] finishes drawing itself.
+     * Called immediately after the [CartesianChart] finishes drawing itself.
      *
-     * @param [context] holds the information needed to draw the [Chart].
-     * @param [bounds] the bounding box of the [Chart].
+     * @param [context] holds the information needed to draw the [CartesianChart].
+     * @param [bounds] the bounding box of the [CartesianChart].
      */
     public fun onDrawAboveChart(
         context: ChartDrawContext,

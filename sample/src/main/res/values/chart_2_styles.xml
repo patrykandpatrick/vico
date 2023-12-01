@@ -22,7 +22,7 @@
         <item name="thickness">16dp</item>
     </style>
 
-    <style name="Chart2ColumnChartStyle">
+    <style name="Chart2ColumnLayerStyle">
         <item name="column1">@style/Chart2Column1Style</item>
     </style>
 </resources>

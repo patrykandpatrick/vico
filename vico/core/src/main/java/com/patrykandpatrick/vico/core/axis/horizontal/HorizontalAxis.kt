@@ -58,7 +58,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             val clipRestoreCount = canvas.save()
             val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - axisThickness - tickLength
             val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-            val chartValues = chartValuesProvider.getChartValues()
 
             canvas.clipRect(
                 bounds.left - itemPlacer.getStartHorizontalAxisInset(this, horizontalDimensions, tickThickness),
@@ -91,7 +90,8 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
                 label?.drawText(
                     context = context,
-                    text = valueFormatter.formatValue(x, chartValues),
+                    text =
+                        valueFormatter.formatValue(value = x, chartValues = chartValues, verticalAxisPosition = null),
                     textX = canvasX,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -162,8 +162,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val clipRestoreCount = canvas.save()
         canvas.clipRect(chartBounds)
 
-        val chartValues = chartValuesProvider.getChartValues()
-
         if (lineValues == null) {
             labelValues.forEach { x ->
                 val canvasX =
@@ -206,14 +204,19 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         horizontalDimensions: MutableHorizontalDimensions,
     ) {
-        val chartValues = context.chartValuesProvider.getChartValues()
+        val chartValues = context.chartValues
         horizontalDimensions.ensureValuesAtLeast(
             unscalableStartPadding =
                 label
                     .takeIf { itemPlacer.getAddFirstLabelPadding(context) }
                     ?.getWidth(
                         context = context,
-                        text = valueFormatter.formatValue(chartValues.minX, chartValues),
+                        text =
+                            valueFormatter.formatValue(
+                                value = chartValues.minX,
+                                chartValues = chartValues,
+                                verticalAxisPosition = null,
+                            ),
                         pad = true,
                     )
                     ?.half
@@ -223,7 +226,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     .takeIf { itemPlacer.getAddLastLabelPadding(context) }
                     ?.getWidth(
                         context = context,
-                        text = valueFormatter.formatValue(chartValues.maxX, chartValues),
+                        text =
+                            valueFormatter.formatValue(
+                                value = chartValues.maxX,
+                                chartValues = chartValues,
+                                verticalAxisPosition = null,
+                            ),
                         pad = true,
                     )
                     ?.half
@@ -247,7 +255,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         horizontalDimensions: HorizontalDimensions,
     ): ClosedFloatingPointRange<Float> =
         with(horizontalDimensions) {
-            val chartValues = chartValuesProvider.getChartValues()
             val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
             val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
             start..end
@@ -258,7 +265,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         horizontalDimensions: HorizontalDimensions,
     ): Float =
         with(context) {
-            val chartValues = chartValuesProvider.getChartValues()
             val fullXRange = getFullXRange(horizontalDimensions)
 
             when (val constraint = sizeConstraint) {
@@ -267,7 +273,13 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                         label?.let { label ->
                             itemPlacer
                                 .getMeasuredLabelValues(this, horizontalDimensions, fullXRange)
-                                .map { valueFormatter.formatValue(it, chartValues) }
+                                .map { value ->
+                                    valueFormatter.formatValue(
+                                        value = value,
+                                        chartValues = chartValues,
+                                        verticalAxisPosition = null,
+                                    )
+                                }
                                 .maxOf { labelText ->
                                     label.getHeight(
                                         context = this,

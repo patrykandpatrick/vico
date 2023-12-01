@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.formatter
 
+import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -40,6 +41,7 @@ public open class DecimalFormatValueFormatter(private val decimalFormat: Decimal
     override fun formatValue(
         value: Float,
         chartValues: ChartValues,
+        verticalAxisPosition: AxisPosition.Vertical?,
     ): String = decimalFormat.format(value)
 
     public companion object {

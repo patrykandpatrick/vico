@@ -20,7 +20,6 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -75,7 +74,7 @@ public open class MarkerComponent(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
-        chartValuesProvider: ChartValuesProvider,
+        chartValues: ChartValues,
     ): Unit =
         with(context) {
             drawGuideline(context, bounds, markedEntries)
@@ -91,7 +90,7 @@ public open class MarkerComponent(
                     model.location.y + halfIndicatorSize,
                 )
             }
-            drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues())
+            drawLabel(context, bounds, markedEntries, chartValues)
         }
 
     private fun drawLabel(

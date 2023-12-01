@@ -15,12 +15,12 @@
   -->
 
 <resources>
-    <attr name="lineChartStyle" format="reference" />
+    <attr name="lineLayerStyle" format="reference" />
     <attr name="line1Spec" format="reference" />
     <attr name="line2Spec" format="reference" />
     <attr name="line3Spec" format="reference" />
 
-    <declare-styleable name="LineChartStyle">
+    <declare-styleable name="LineCartesianLayerStyle">
         <attr name="line1Spec" />
         <attr name="line2Spec" />
         <attr name="line3Spec" />

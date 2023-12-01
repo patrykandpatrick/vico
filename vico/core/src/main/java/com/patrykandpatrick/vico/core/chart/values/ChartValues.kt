@@ -16,30 +16,23 @@
 
 package com.patrykandpatrick.vico.core.chart.values
 
-import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.chart.CartesianChart
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import kotlin.math.abs
 import kotlin.math.ceil
 
 /**
- * Where [Chart]s get their data from.
- *
- * By default, [minX], [maxX], [minY], and [maxY] are equal to [ChartEntryModel.minX],
- * [ChartEntryModel.maxX], [ChartEntryModel.minY], and [ChartEntryModel.maxY], respectively,
- * but you can use [AxisValuesOverrider] to override these values.
+ * Houses a [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
  */
 public interface ChartValues {
     /**
-     * The minimum value displayed on the x-axis. By default, this is equal to [ChartEntryModel.minX] (the
-     * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
-     * value.
+     * The minimum _x_ value.
      */
     public val minX: Float
 
     /**
-     * The maximum value displayed on the x-axis. By default, this is equal to [ChartEntryModel.maxX] (the
-     * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
-     * value.
+     * The maximum _x_ value.
      */
     public val maxX: Float
 
@@ -49,39 +42,71 @@ public interface ChartValues {
     public val xStep: Float
 
     /**
-     * The minimum value displayed on the y-axis. By default, this is equal to [ChartEntryModel.minY] (the
-     * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
-     * value.
+     * The [CartesianChart]’s [CartesianChartModel].
      */
-    public val minY: Float
+    public val model: CartesianChartModel
 
     /**
-     * The maximum value displayed on the y-axis. By default, this is equal to [ChartEntryModel.maxY] (the
-     * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
-     * value.
+     * Returns the _y_ range associated with the given [AxisPosition.Vertical] subclass. If [axisPosition] is `null` or
+     * has no associated _y_ range, the global _y_ range is returned.
      */
-    public val maxY: Float
-
-    /**
-     * The source of the associated [Chart]’s entries. The [ChartEntryModel] defines the default values for [minX],
-     * [maxX], [minY], and [maxY].
-     */
-    public val chartEntryModel: ChartEntryModel
+    public fun getYRange(axisPosition: AxisPosition.Vertical?): YRange
 
     /**
      * The difference between [maxX] and [minX].
      */
-    public val lengthX: Float
-        get() = maxX - minX
-
-    /**
-     * The difference between [maxY] and [minY].
-     */
-    public val lengthY: Float
-        get() = maxY - minY
+    public val xLength: Float get() = maxX - minX
 
     /**
      * Returns the maximum number of major entries that can be present, based on [minX], [maxX], and [xStep].
      */
     public fun getMaxMajorEntryCount(): Int = ceil(abs(maxX - minX) / xStep + 1).toInt()
+
+    /**
+     * Holds information on a _y_ range.
+     */
+    public interface YRange {
+        /**
+         * The minimum _y_ value.
+         */
+        public val minY: Float
+
+        /**
+         * The maximum _y_ value.
+         */
+        public val maxY: Float
+
+        /**
+         * The difference between [maxY] and [minY].
+         */
+        public val length: Float
+    }
+
+    /**
+     * An empty [ChartValues] implementation.
+     */
+    public object Empty : ChartValues {
+        private const val ERROR_MESSAGE = "`ChartValues.Empty` shouldn’t be used."
+
+        override val minX: Float
+            get() {
+                error(ERROR_MESSAGE)
+            }
+
+        override val maxX: Float
+            get() {
+                error(ERROR_MESSAGE)
+            }
+
+        override val xStep: Float
+            get() {
+                error(ERROR_MESSAGE)
+            }
+
+        override val model: CartesianChartModel = CartesianChartModel.empty
+
+        override fun getYRange(axisPosition: AxisPosition.Vertical?): YRange {
+            error(ERROR_MESSAGE)
+        }
+    }
 }

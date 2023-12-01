@@ -16,9 +16,9 @@
 
 package com.patrykandpatrick.vico.core.extension
 
-import com.patrykandpatrick.vico.core.entry.ChartEntry
 import com.patrykandpatrick.vico.core.marker.Marker
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.model.CartesianLayerModel
+import com.patrykandpatrick.vico.core.util.Point
 import java.util.TreeMap
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -34,7 +34,8 @@ public fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
 ): List<Marker.EntryModel>? = keys.findClosestPositiveValue(touchPoint.x)?.let(::get)
 
 /**
- * Returns those of the [Marker.EntryModel]s stored in the [Map] whose [ChartEntry.x] is equal to [xValue].
+ * Returns those of the [Marker.EntryModel]s stored in the [Map] whose [CartesianLayerModel.Entry.x] is equal to
+ * [xValue].
  *
  * @see Marker.EntryModel
  */

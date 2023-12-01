@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
@@ -194,8 +194,8 @@ public open class AxisManager {
     }
 
     /**
-     * Called before the associated [Chart] is drawn. This forwards a call to all [Axis] subclasses that causes them to
-     * be drawn behind the chart.
+     * Called before the associated [CartesianChart] is drawn. This forwards a call to all [Axis] subclasses that causes
+     * them to be drawn behind the chart.
      *
      * @param context holds the information necessary to draw the axes.
      *
@@ -208,8 +208,8 @@ public open class AxisManager {
     }
 
     /**
-     * Called after the associated [Chart] is drawn. This forwards a call to all [Axis] subclasses that causes them to
-     * be drawn above the chart.
+     * Called after the associated [CartesianChart] is drawn. This forwards a call to all [Axis] subclasses that causes
+     * them to be drawn above the chart.
      *
      * @param context holds the information necessary to draw the axes.
      *

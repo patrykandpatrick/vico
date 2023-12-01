@@ -22,7 +22,7 @@ import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatrick.vico.core.scroll.ScrollListener
@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.core.scroll.ScrollListenerHost
 import kotlin.math.abs
 
 /**
- * Houses information on a [Chart]’s scroll state. Allows for programmatic scrolling.
+ * Houses information on a [CartesianChartHost]’s scroll state. Allows for programmatic scrolling.
  */
 public class ChartScrollState : ScrollableState, ScrollListenerHost {
     private val _value = mutableFloatStateOf(0f)

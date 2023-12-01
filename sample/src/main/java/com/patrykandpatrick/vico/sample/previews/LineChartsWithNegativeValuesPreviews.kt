@@ -27,46 +27,46 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.axisLineComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.chart.line.lineSpec
-import com.patrykandpatrick.vico.compose.component.shape.shader.solid
-import com.patrykandpatrick.vico.compose.component.shape.shader.split
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
-private val model = entryModelOf(-2f, -1f, 4f, -2f, 1f, 5f, -3f)
+private val model = CartesianChartModel(LineCartesianLayerModel.build { series(-2, -1, 4, -2, 1, 5, -3) })
 
 @Preview
 @Composable
 public fun SingleLineChartWithNegativeValues() {
     val marker = rememberMarker()
     Surface {
-        Chart(
+        CartesianChartHost(
             modifier = Modifier.height(250.dp),
             chart =
-                lineChart(
-                    lines =
-                        listOf(
-                            lineSpec(
-                                lineShader =
-                                    DynamicShaders.split(
-                                        positiveColor = Color(0xFF25BE53),
-                                        negativeColor = Color(0xFFE73B3B),
-                                    ),
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(
+                        lines =
+                            listOf(
+                                lineSpec(
+                                    shader =
+                                        TopBottomShader(
+                                            DynamicShaders.color(Color(0xFF25BE53)),
+                                            DynamicShaders.color(Color(0xFFE73B3B)),
+                                        ),
+                                ),
                             ),
-                        ),
-                    persistentMarkers =
-                        mapOf(
-                            2f to marker,
-                            3f to marker,
-                        ),
+                    ),
+                    persistentMarkers = mapOf(2f to marker, 3f to marker),
                 ),
             model = model,
             startAxis =
@@ -91,13 +91,15 @@ public fun SingleLineChartWithNegativeValues() {
 @Composable
 public fun SingleLineChartWithNegativeValuesAndDataLabels() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart =
-                lineChart(
-                    lines =
-                        listOf(
-                            lineSpec(lineShader = DynamicShaders.solid(Color.DarkGray), dataLabel = textComponent()),
-                        ),
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(
+                        lines =
+                            listOf(
+                                lineSpec(shader = DynamicShaders.color(Color.DarkGray), dataLabel = textComponent()),
+                            ),
+                    ),
                 ),
             model = model,
             startAxis = rememberStartAxis(),
@@ -110,14 +112,10 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
 @Composable
 public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart =
-                lineChart(
-                    axisValuesOverrider =
-                        AxisValuesOverrider.fixed(
-                            minY = 1f,
-                            maxY = 4f,
-                        ),
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)),
                 ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
@@ -130,14 +128,10 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
 @Composable
 public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
-        Chart(
+        CartesianChartHost(
             chart =
-                lineChart(
-                    axisValuesOverrider =
-                        AxisValuesOverrider.fixed(
-                            minY = -2f,
-                            maxY = 0f,
-                        ),
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)),
                 ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),

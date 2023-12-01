@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.axis.horizontal.DefaultHorizontalAxisItemP
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.DefaultVerticalAxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -129,9 +129,10 @@ public interface AxisItemPlacer {
      */
     public interface Vertical {
         /**
-         * Returns a boolean indicating whether to shift the lines whose _y_ values are equal to [ChartValues.maxY], if
-         * such lines are present, such that they’re immediately above the [Chart]’s bounds. If the chart has a top
-         * axis, the shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
+         * Returns a boolean indicating whether to shift the lines whose _y_ values are equal to
+         * [ChartValues.YRange.maxY], if such lines are present, such that they’re immediately above the
+         * [CartesianChart]’s bounds. If the chart has a top axis, the shifted tick will then be aligned with this axis,
+         * and the shifted guideline will be hidden.
          */
         public fun getShiftTopLines(chartDrawContext: ChartDrawContext): Boolean = true
 
@@ -199,9 +200,9 @@ public interface AxisItemPlacer {
              * Creates a base [AxisItemPlacer.Vertical] implementation. [maxItemCount] is the maximum number of labels
              * (and their corresponding line pairs) to be displayed. The actual item count is the greatest number
              * smaller than or equal to [maxItemCount] for which no overlaps occur. [shiftTopLines] defines whether
-             * to shift the lines whose _y_ values are equal to [ChartValues.maxY], if such lines are present, such that
-             * they’re immediately above the [Chart]’s bounds. If the chart has a top axis, the shifted tick will then
-             * be aligned with this axis, and the shifted guideline will be hidden.
+             * to shift the lines whose _y_ values are equal to [ChartValues.YRange.maxY], if such lines are present,
+             * such that they’re immediately above the [CartesianChart]’s bounds. If the chart has a top axis, the
+             * shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
              */
             public fun default(
                 maxItemCount: Int = DEF_LABEL_COUNT,

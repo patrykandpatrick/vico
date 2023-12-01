@@ -16,10 +16,10 @@
 
 package com.patrykandpatrick.vico.core.chart.dimensions
 
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 
 /**
- * Holds information on a [Chart]’s horizontal dimensions.
+ * Holds information on a [CartesianChart]’s horizontal dimensions.
  */
 public interface HorizontalDimensions {
     /**
@@ -73,14 +73,15 @@ public interface HorizontalDimensions {
     public val padding: Float get() = startPadding + endPadding
 
     /**
-     * Given the chart’s maximum number of major entries, calculates the width of the [Chart]’s scalable content (in
-     * pixels).
+     * Given the chart’s maximum number of major entries, calculates the width of the [CartesianChart]’s scalable
+     * content (in pixels).
      */
     public fun getScalableContentWidth(maxMajorEntryCount: Int): Float =
         xSpacing * (maxMajorEntryCount - 1) + scalablePadding
 
     /**
-     * Given the chart’s maximum number of major entries, calculates the width of the [Chart]’s content (in pixels).
+     * Given the chart’s maximum number of major entries, calculates the width of the [CartesianChart]’s content (in
+     * pixels).
      */
     public fun getContentWidth(maxMajorEntryCount: Int): Float =
         getScalableContentWidth(maxMajorEntryCount) + unscalablePadding

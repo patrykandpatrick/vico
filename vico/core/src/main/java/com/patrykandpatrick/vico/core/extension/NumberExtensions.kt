@@ -21,6 +21,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 /**
  * The number of degrees equivalent to π radians.
@@ -54,6 +55,11 @@ internal fun Float.toPrettyString(): String = if (this < 0f) "−${-this}" else 
 
 internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>) =
     this == range.start || this == range.endInclusive
+
+internal fun ClosedFloatingPointRange<Float>.random(): Float = start + (endInclusive - start) * Random.nextFloat()
+
+internal val ClosedFloatingPointRange<Float>?.orZero: ClosedFloatingPointRange<Float>
+    get() = this ?: 0f..0f
 
 /**
  * Half of this value.

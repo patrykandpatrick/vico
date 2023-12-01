@@ -68,7 +68,7 @@ internal fun TypedArray.getTextComponent(context: Context): TextComponent =
 
 private fun TypedArray.getTruncateAt(): TextUtils.TruncateAt {
     val int = getInt(R.styleable.TextComponentStyle_android_ellipsize, TextUtils.TruncateAt.END.ordinal)
-    val values = TextUtils.TruncateAt.values()
+    val values = TextUtils.TruncateAt.entries
     return when (int) {
         in 1..values.size -> values[int]
         else -> TextUtils.TruncateAt.END
@@ -161,6 +161,6 @@ private fun TypedArray.getMargins(context: Context): MutableDimensions {
 
 private fun TypedArray.getTextAlignment(): Layout.Alignment =
     Layout.Alignment
-        .values()
+        .entries
         .getOrNull(getInt(R.styleable.TextComponentStyle_textAlignment, Layout.Alignment.ALIGN_NORMAL.ordinal))
         ?: Layout.Alignment.ALIGN_NORMAL

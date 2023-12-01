@@ -16,9 +16,11 @@
 
 package com.patrykandpatrick.vico.core.chart.values
 
-import com.patrykandpatrick.vico.core.entry.ChartEntry
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.extension.orZero
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * An implementation of [ChartValues] whose every property is mutable.
@@ -30,9 +32,7 @@ public class MutableChartValues : ChartValues {
 
     private var _xStep: Float? = null
 
-    private var _minY: Float? = null
-
-    private var _maxY: Float? = null
+    internal val yRanges: MutableMap<AxisPosition.Vertical?, MutableYRange> = mutableMapOf()
 
     override val minX: Float
         get() = _minX.orZero
@@ -43,67 +43,68 @@ public class MutableChartValues : ChartValues {
     override val xStep: Float
         get() = _xStep ?: 1f
 
-    override val minY: Float
-        get() = _minY.orZero
+    override fun getYRange(axisPosition: AxisPosition.Vertical?): ChartValues.YRange =
+        yRanges[axisPosition] ?: yRanges.getValue(null)
 
-    override val maxY: Float
-        get() = _maxY.orZero
-
-    override var chartEntryModel: ChartEntryModel = emptyChartEntryModel()
+    override var model: CartesianChartModel = CartesianChartModel.empty
 
     /**
-     * Returns `true` if all values have been set and at least one call to [tryUpdate] or [set] has been made.
+     * Updates [MutableChartValues.xStep] and [MutableChartValues.model].
      */
-    public val hasValuesSet: Boolean
-        get() = _minX != null || _maxX != null || _minY != null || _maxY != null
+    public fun update(
+        xStep: Float? = null,
+        model: CartesianChartModel,
+    ) {
+        _xStep = xStep
+        this.model = model
+    }
 
     /**
-     * Attempts to update the stored values to the provided values.
-     * [MutableChartValues.minX] and [MutableChartValues.minY] can be updated to a lower value.
-     * [MutableChartValues.maxX] and [MutableChartValues.maxY] can be updated to a higher value.
-     * [MutableChartValues.chartEntryModel] and [MutableChartValues.xStep] are always updated.
+     * Tries to update the stored values. A minimum value can only be decreased. A maximum value can only be increased.
      */
     public fun tryUpdate(
-        minX: Float? = null,
-        maxX: Float? = null,
-        minY: Float? = null,
-        maxY: Float? = null,
-        xStep: Float? = null,
-        chartEntryModel: ChartEntryModel = this.chartEntryModel,
-    ): MutableChartValues =
-        apply {
-            if (minX != null) _minX = if (_minX != null) minOf(this.minX, minX) else minX
-            if (maxX != null) _maxX = if (_maxX != null) maxOf(this.maxX, maxX) else maxX
-            if (minY != null) _minY = if (_minY != null) minOf(this.minY, minY) else minY
-            if (maxY != null) _maxY = if (_maxY != null) maxOf(this.maxY, maxY) else maxY
-            if (xStep != null) _xStep = xStep
-            this.chartEntryModel = chartEntryModel
+        minX: Float,
+        maxX: Float,
+        minY: Float,
+        maxY: Float,
+        axisPosition: AxisPosition.Vertical?,
+    ) {
+        _minX = _minX?.coerceAtMost(minX) ?: minX
+        _maxX = _maxX?.coerceAtLeast(maxX) ?: maxX
+        yRanges[null]?.tryUpdate(minY, maxY) ?: run { yRanges[null] = MutableYRange(minY, maxY) }
+        if (axisPosition != null) {
+            yRanges[axisPosition]?.tryUpdate(minY, maxY) ?: run { yRanges[axisPosition] = MutableYRange(minY, maxY) }
         }
+    }
 
     /**
-     * Sets [minX], [maxX], [minY], and [maxY] to 0.
+     * Clears all values.
      */
     public fun reset() {
         _minX = null
         _maxX = null
-        _minY = null
-        _maxY = null
+        yRanges.clear()
         _xStep = null
-        chartEntryModel = emptyChartEntryModel()
+        model = CartesianChartModel.empty
     }
 
-    private companion object {
-        fun emptyChartEntryModel(): ChartEntryModel =
-            object : ChartEntryModel {
-                override val entries: List<List<ChartEntry>> = emptyList()
-                override val minX: Float = 0f
-                override val maxX: Float = 0f
-                override val minY: Float = 0f
-                override val maxY: Float = 0f
-                override val stackedPositiveY: Float = 0f
-                override val stackedNegativeY: Float = 0f
-                override val xGcd: Float = 1f
-            }
+    /**
+     * A mutable implementation of [ChartValues.YRange].
+     */
+    public class MutableYRange(override var minY: Float, override var maxY: Float) : ChartValues.YRange {
+        override val length: Float get() = maxY - minY
+
+        /**
+         * Tries to update [MutableYRange.minY] and [MutableYRange.maxY]. [MutableYRange.minY] can only be decreased.
+         * [MutableYRange.maxY] can only be increased.
+         */
+        public fun tryUpdate(
+            minY: Float,
+            maxY: Float,
+        ) {
+            this.minY = min(this.minY, minY)
+            this.maxY = max(this.maxY, maxY)
+        }
     }
 }
 
@@ -112,10 +113,12 @@ public class MutableChartValues : ChartValues {
  */
 public fun MutableChartValues.toImmutable(): ChartValues =
     object : ChartValues {
+        private val yRanges = this@toImmutable.yRanges.toMap()
         override val minX: Float = this@toImmutable.minX
         override val maxX: Float = this@toImmutable.maxX
         override val xStep: Float = this@toImmutable.xStep
-        override val minY: Float = this@toImmutable.minY
-        override val maxY: Float = this@toImmutable.maxY
-        override val chartEntryModel: ChartEntryModel = this@toImmutable.chartEntryModel.toImmutable()
+        override val model: CartesianChartModel = this@toImmutable.model.toImmutable()
+
+        override fun getYRange(axisPosition: AxisPosition.Vertical?): ChartValues.YRange =
+            yRanges[axisPosition] ?: yRanges.getValue(null)
     }

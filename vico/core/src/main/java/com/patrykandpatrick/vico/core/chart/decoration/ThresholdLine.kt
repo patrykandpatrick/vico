@@ -18,6 +18,8 @@ package com.patrykandpatrick.vico.core.chart.decoration
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
@@ -45,6 +47,8 @@ import java.text.DecimalFormat
  * @property labelHorizontalPosition defines the horizontal position of the label.
  * @property labelVerticalPosition defines the vertical position of the label.
  * @property labelRotationDegrees the rotation of the label (in degrees).
+ * @property verticalAxisPosition the position of the [VerticalAxis] whose scale the [ThresholdLine] should use when
+ * interpreting [thresholdRange].
  *
  * @see Decoration
  */
@@ -61,6 +65,7 @@ public data class ThresholdLine(
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
     val labelRotationDegrees: Float = 0f,
+    val verticalAxisPosition: AxisPosition.Vertical? = null,
 ) : Decoration {
     /**
      * An alternative constructor that accepts a single y-axis value as opposed to a range.
@@ -74,6 +79,8 @@ public data class ThresholdLine(
      * @property labelHorizontalPosition defines the horizontal position of the label.
      * @property labelVerticalPosition defines the vertical position of the label.
      * @property labelRotationDegrees the rotation of the label (in degrees).
+     * @property verticalAxisPosition the position of the [VerticalAxis] whose scale the [ThresholdLine] should use when
+     * interpreting [thresholdValue].
      */
     public constructor(
         thresholdValue: Float,
@@ -84,6 +91,7 @@ public data class ThresholdLine(
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
         labelRotationDegrees: Float = 0f,
+        verticalAxisPosition: AxisPosition.Vertical? = null,
     ) : this(
         thresholdRange = thresholdValue..thresholdValue,
         thresholdLabel = thresholdLabel,
@@ -93,6 +101,7 @@ public data class ThresholdLine(
         labelHorizontalPosition = labelHorizontalPosition,
         labelVerticalPosition = labelVerticalPosition,
         labelRotationDegrees = labelRotationDegrees,
+        verticalAxisPosition = verticalAxisPosition,
     )
 
     override fun onDrawAboveChart(
@@ -100,20 +109,18 @@ public data class ThresholdLine(
         bounds: RectF,
     ): Unit =
         with(context) {
-            val chartValues = chartValuesProvider.getChartValues()
+            val yRange = chartValues.getYRange(verticalAxisPosition)
 
-            val valueRange = chartValues.maxY - chartValues.minY
-
-            val centerY = bounds.bottom - (thresholdRange.median - chartValues.minY) / valueRange * bounds.height()
+            val centerY = bounds.bottom - (thresholdRange.median - yRange.minY) / yRange.length * bounds.height()
 
             val topY =
                 minOf(
-                    bounds.bottom - (thresholdRange.endInclusive - chartValues.minY) / valueRange * bounds.height(),
+                    bounds.bottom - (thresholdRange.endInclusive - yRange.minY) / yRange.length * bounds.height(),
                     centerY - minimumLineThicknessDp.pixels.half,
                 ).ceil
             val bottomY =
                 maxOf(
-                    bounds.bottom - (thresholdRange.start - chartValues.minY) / valueRange * bounds.height(),
+                    bounds.bottom - (thresholdRange.start - yRange.minY) / yRange.length * bounds.height(),
                     centerY + minimumLineThicknessDp.pixels.half,
                 ).floor
             val textY =

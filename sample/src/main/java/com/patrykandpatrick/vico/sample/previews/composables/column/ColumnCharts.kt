@@ -19,29 +19,30 @@ package com.patrykandpatrick.vico.sample.previews.composables.column
 import androidx.compose.runtime.Composable
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatrick.vico.sample.previews.annotation.ChartPreview
 import com.patrykandpatrick.vico.sample.previews.resource.PreviewSurface
-import com.patrykandpatrick.vico.sample.previews.resource.mediumEntryModel
-import com.patrykandpatrick.vico.sample.previews.resource.shortEntryModel
+import com.patrykandpatrick.vico.sample.previews.resource.mediumColumnModel
+import com.patrykandpatrick.vico.sample.previews.resource.shortColumnModel
 
 @ChartPreview
 @Composable
 public fun DefaultColumnChart(
-    model: ChartEntryModel = shortEntryModel,
-    oldModel: ChartEntryModel? = null,
+    model: CartesianChartModel = shortColumnModel,
+    oldModel: CartesianChartModel? = null,
     scrollable: Boolean = true,
     initialScroll: InitialScroll = InitialScroll.Start,
-    autoScrollCondition: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition.Never,
+    autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
 ) {
     PreviewSurface {
-        Chart(
-            chart = columnChart(),
+        CartesianChartHost(
+            chart = rememberCartesianChart(rememberColumnCartesianLayer()),
             model = model,
             oldModel = oldModel,
             startAxis = rememberStartAxis(),
@@ -59,17 +60,17 @@ public fun DefaultColumnChart(
 @ChartPreview
 @Composable
 public fun DefaultColumnChartLongScrollable() {
-    DefaultColumnChart(model = mediumEntryModel)
+    DefaultColumnChart(model = mediumColumnModel)
 }
 
 @ChartPreview
 @Composable
 public fun DefaultColumnChartLongScrollableEnd() {
-    DefaultColumnChart(model = mediumEntryModel, initialScroll = InitialScroll.End)
+    DefaultColumnChart(model = mediumColumnModel, initialScroll = InitialScroll.End)
 }
 
 @ChartPreview
 @Composable
 public fun DefaultColumnChartLongNonScrollable() {
-    DefaultColumnChart(model = mediumEntryModel, scrollable = false)
+    DefaultColumnChart(model = mediumColumnModel, scrollable = false)
 }

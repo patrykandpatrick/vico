@@ -48,11 +48,11 @@ internal class DefaultVerticalAxisItemPlacer(
         position: AxisPosition.Vertical,
     ): List<Float> {
         if (maxItemCount == 0) return emptyList()
-        val chartValues = context.chartValuesProvider.getChartValues(position)
-        return if (chartValues.minY * chartValues.maxY >= 0) {
-            getSimpleLabelValues(axisHeight, maxLabelHeight, chartValues)
+        val yRange = context.chartValues.getYRange(position)
+        return if (yRange.minY * yRange.maxY >= 0) {
+            getSimpleLabelValues(axisHeight, maxLabelHeight, yRange)
         } else {
-            getMixedLabelValues(axisHeight, maxLabelHeight, chartValues)
+            getMixedLabelValues(axisHeight, maxLabelHeight, yRange)
         }
     }
 
@@ -60,8 +60,8 @@ internal class DefaultVerticalAxisItemPlacer(
         context: MeasureContext,
         position: AxisPosition.Vertical,
     ): List<Float> {
-        val chartValues = context.chartValuesProvider.getChartValues(position)
-        return listOf(chartValues.minY, (chartValues.minY + chartValues.maxY).half, chartValues.maxY)
+        val yRange = context.chartValues.getYRange(position)
+        return listOf(yRange.minY, (yRange.minY + yRange.maxY).half, yRange.maxY)
     }
 
     override fun getTopVerticalAxisInset(
@@ -98,25 +98,25 @@ internal class DefaultVerticalAxisItemPlacer(
     private fun getSimpleLabelValues(
         axisHeight: Float,
         maxLabelHeight: Float,
-        chartValues: ChartValues,
+        yRange: ChartValues.YRange,
     ): List<Float> {
-        val values = mutableListOf(chartValues.minY)
+        val values = mutableListOf(yRange.minY)
         if (maxItemCount == 1) return values
         val extraItemCount = (axisHeight / maxLabelHeight).toInt().coerceAtMost(maxItemCount - 1)
-        val step = chartValues.lengthY / extraItemCount
-        repeat(extraItemCount) { values += chartValues.minY + (it + 1) * step }
+        val step = yRange.length / extraItemCount
+        repeat(extraItemCount) { values += yRange.minY + (it + 1) * step }
         return values
     }
 
     private fun getMixedLabelValues(
         axisHeight: Float,
         maxLabelHeight: Float,
-        chartValues: ChartValues,
+        yRange: ChartValues.YRange,
     ): List<Float> {
         val values = mutableListOf(0f)
         if (maxItemCount == 1) return values
-        val topHeight = chartValues.maxY / chartValues.lengthY * axisHeight
-        val bottomHeight = -chartValues.minY / chartValues.lengthY * axisHeight
+        val topHeight = yRange.maxY / yRange.length * axisHeight
+        val bottomHeight = -yRange.minY / yRange.length * axisHeight
         val maxTopItemCount = (maxItemCount - 1) * topHeight / axisHeight
         val maxBottomItemCount = (maxItemCount - 1) * bottomHeight / axisHeight
         val topItemCountByHeight = topHeight / maxLabelHeight
@@ -135,11 +135,11 @@ internal class DefaultVerticalAxisItemPlacer(
             }
         }
         if (topItemCount != 0) {
-            val step = chartValues.maxY / topItemCount
+            val step = yRange.maxY / topItemCount
             repeat(topItemCount) { values += (it + 1) * step }
         }
         if (bottomItemCount != 0) {
-            val step = chartValues.minY / bottomItemCount
+            val step = yRange.minY / bottomItemCount
             repeat(bottomItemCount) { values += (it + 1) * step }
         }
         return values
