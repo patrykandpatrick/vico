@@ -46,11 +46,12 @@ public fun DefaultColumnChart(
             oldModel = oldModel,
             startAxis = rememberStartAxis(),
             bottomAxis = rememberBottomAxis(),
-            chartScrollSpec = rememberChartScrollSpec(
-                isScrollEnabled = scrollable,
-                initialScroll = initialScroll,
-                autoScrollCondition = autoScrollCondition,
-            ),
+            chartScrollSpec =
+                rememberChartScrollSpec(
+                    isScrollEnabled = scrollable,
+                    initialScroll = initialScroll,
+                    autoScrollCondition = autoScrollCondition,
+                ),
         )
     }
 }

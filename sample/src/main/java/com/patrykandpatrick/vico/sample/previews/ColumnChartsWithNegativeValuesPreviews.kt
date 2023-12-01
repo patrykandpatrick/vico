@@ -42,12 +42,14 @@ public fun SingleColumnChartWithNegativeValues() {
     Surface {
         Chart(
             modifier = Modifier.height(250.dp),
-            chart = columnChart(
-                persistentMarkers = mapOf(
-                    2f to marker,
-                    3f to marker,
+            chart =
+                columnChart(
+                    persistentMarkers =
+                        mapOf(
+                            2f to marker,
+                            3f to marker,
+                        ),
                 ),
-            ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 9) }),
             bottomAxis = rememberBottomAxis(),
@@ -60,9 +62,10 @@ public fun SingleColumnChartWithNegativeValues() {
 public fun SingleColumnChartWithNegativeValuesAndDataLabels() {
     Surface {
         Chart(
-            chart = columnChart(
-                dataLabel = textComponent(),
-            ),
+            chart =
+                columnChart(
+                    dataLabel = textComponent(),
+                ),
             model = model,
             startAxis = rememberStartAxis(),
             bottomAxis = rememberBottomAxis(),
@@ -75,12 +78,14 @@ public fun SingleColumnChartWithNegativeValuesAndDataLabels() {
 public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
         Chart(
-            chart = columnChart(
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minY = 1f,
-                    maxY = 4f,
+            chart =
+                columnChart(
+                    axisValuesOverrider =
+                        AxisValuesOverrider.fixed(
+                            minY = 1f,
+                            maxY = 4f,
+                        ),
                 ),
-            ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
             bottomAxis = rememberBottomAxis(),
@@ -93,12 +98,14 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
 public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
         Chart(
-            chart = columnChart(
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minY = -2f,
-                    maxY = 0f,
+            chart =
+                columnChart(
+                    axisValuesOverrider =
+                        AxisValuesOverrider.fixed(
+                            minY = -2f,
+                            maxY = 0f,
+                        ),
                 ),
-            ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
             bottomAxis = rememberBottomAxis(),

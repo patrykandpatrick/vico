@@ -81,15 +81,16 @@ public fun lineChart(
     targetVerticalAxisPosition: AxisPosition.Vertical? = null,
     drawingModelInterpolator: DrawingModelInterpolator<LineChartDrawingModel.PointInfo, LineChartDrawingModel> =
         remember { DefaultDrawingModelInterpolator() },
-): LineChart = remember { LineChart() }.apply {
-    this.lines = lines
-    this.spacingDp = spacing.value
-    this.axisValuesOverrider = axisValuesOverrider
-    this.targetVerticalAxisPosition = targetVerticalAxisPosition
-    this.drawingModelInterpolator = drawingModelInterpolator
-    decorations?.also(::setDecorations)
-    persistentMarkers?.also(::setPersistentMarkers)
-}
+): LineChart =
+    remember { LineChart() }.apply {
+        this.lines = lines
+        this.spacingDp = spacing.value
+        this.axisValuesOverrider = axisValuesOverrider
+        this.targetVerticalAxisPosition = targetVerticalAxisPosition
+        this.drawingModelInterpolator = drawingModelInterpolator
+        decorations?.also(::setDecorations)
+        persistentMarkers?.also(::setPersistentMarkers)
+    }
 
 /**
  * Creates a [LineChart.LineSpec] for use in [LineChart]s.
@@ -112,14 +113,16 @@ public fun lineChart(
 public fun lineSpec(
     lineColor: Color,
     lineThickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
-    lineBackgroundShader: DynamicShader? = DynamicShaders.fromBrush(
-        brush = Brush.verticalGradient(
-            listOf(
-                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-            ),
+    lineBackgroundShader: DynamicShader? =
+        DynamicShaders.fromBrush(
+            brush =
+                Brush.verticalGradient(
+                    listOf(
+                        lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                        lineColor.copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                    ),
+                ),
         ),
-    ),
     lineCap: StrokeCap = StrokeCap.Round,
     point: Component? = null,
     pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
@@ -128,19 +131,20 @@ public fun lineSpec(
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
-): LineSpec = LineSpec(
-    lineShader = SolidShader(lineColor.toArgb()),
-    lineThicknessDp = lineThickness.value,
-    lineBackgroundShader = lineBackgroundShader,
-    lineCap = lineCap.paintCap,
-    point = point,
-    pointSizeDp = pointSize.value,
-    dataLabel = dataLabel,
-    dataLabelVerticalPosition = dataLabelVerticalPosition,
-    dataLabelValueFormatter = dataLabelValueFormatter,
-    dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointConnector = pointConnector,
-)
+): LineSpec =
+    LineSpec(
+        lineShader = SolidShader(lineColor.toArgb()),
+        lineThicknessDp = lineThickness.value,
+        lineBackgroundShader = lineBackgroundShader,
+        lineCap = lineCap.paintCap,
+        point = point,
+        pointSizeDp = pointSize.value,
+        dataLabel = dataLabel,
+        dataLabelVerticalPosition = dataLabelVerticalPosition,
+        dataLabelValueFormatter = dataLabelValueFormatter,
+        dataLabelRotationDegrees = dataLabelRotationDegrees,
+        pointConnector = pointConnector,
+    )
 
 /**
  * Creates a [LineChart.LineSpec] for use in [LineChart]s.
@@ -172,67 +176,79 @@ public fun lineSpec(
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     dataLabelRotationDegrees: Float = 0f,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
-): LineSpec = LineSpec(
-    lineShader = lineShader,
-    lineThicknessDp = lineThickness.value,
-    lineBackgroundShader = lineBackgroundShader,
-    lineCap = lineCap.paintCap,
-    point = point,
-    pointSizeDp = pointSize.value,
-    dataLabel = dataLabel,
-    dataLabelVerticalPosition = dataLabelVerticalPosition,
-    dataLabelValueFormatter = dataLabelValueFormatter,
-    dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointConnector = pointConnector,
-)
+): LineSpec =
+    LineSpec(
+        lineShader = lineShader,
+        lineThicknessDp = lineThickness.value,
+        lineBackgroundShader = lineBackgroundShader,
+        lineCap = lineCap.paintCap,
+        point = point,
+        pointSizeDp = pointSize.value,
+        dataLabel = dataLabel,
+        dataLabelVerticalPosition = dataLabelVerticalPosition,
+        dataLabelValueFormatter = dataLabelValueFormatter,
+        dataLabelRotationDegrees = dataLabelRotationDegrees,
+        pointConnector = pointConnector,
+    )
 
 private fun DynamicShader.getBackwardCompatibleBackgroundShader(): DynamicShader? =
     when (this) {
-        is SolidShader -> HorizontalSplitShader.Double(
-            topShader = DynamicShaders.fromBrush(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                        Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+        is SolidShader ->
+            HorizontalSplitShader.Double(
+                topShader =
+                    DynamicShaders.fromBrush(
+                        brush =
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                                    Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                                ),
+                            ),
                     ),
-                ),
-            ),
-            bottomShader = DynamicShaders.fromBrush(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                        Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                bottomShader =
+                    DynamicShaders.fromBrush(
+                        brush =
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                                    Color(color).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                                ),
+                            ),
                     ),
-                ),
-            ),
-        )
+            )
 
-        is HorizontalSplitShader.Solid -> HorizontalSplitShader.Double(
-            topShader = DynamicShaders.fromBrush(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        Color(colorTop).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                        Color(colorTop).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+        is HorizontalSplitShader.Solid ->
+            HorizontalSplitShader.Double(
+                topShader =
+                    DynamicShaders.fromBrush(
+                        brush =
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color(colorTop).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                                    Color(colorTop).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                                ),
+                            ),
                     ),
-                ),
-            ),
-            bottomShader = DynamicShaders.fromBrush(
-                brush = Brush.verticalGradient(
-                    listOf(
-                        Color(colorBottom).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-                        Color(colorBottom).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                bottomShader =
+                    DynamicShaders.fromBrush(
+                        brush =
+                            Brush.verticalGradient(
+                                listOf(
+                                    Color(colorBottom).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                                    Color(colorBottom).copy(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                                ),
+                            ),
                     ),
-                ),
-            ),
-        )
+            )
 
         else -> null
     }
 
 private val StrokeCap.paintCap: Paint.Cap
-    get() = when (this) {
-        StrokeCap.Butt -> Paint.Cap.BUTT
-        StrokeCap.Round -> Paint.Cap.ROUND
-        StrokeCap.Square -> Paint.Cap.SQUARE
-        else -> throw IllegalArgumentException("Not `StrokeCap.Butt`, `StrokeCap.Round`, or `StrokeCap.Square`.")
-    }
+    get() =
+        when (this) {
+            StrokeCap.Butt -> Paint.Cap.BUTT
+            StrokeCap.Round -> Paint.Cap.ROUND
+            StrokeCap.Square -> Paint.Cap.SQUARE
+            else -> throw IllegalArgumentException("Not `StrokeCap.Butt`, `StrokeCap.Round`, or `StrokeCap.Square`.")
+        }

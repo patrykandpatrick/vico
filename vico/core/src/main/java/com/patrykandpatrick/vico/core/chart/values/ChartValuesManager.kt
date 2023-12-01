@@ -37,7 +37,6 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModel
  * @see LineChart.targetVerticalAxisPosition
  */
 public class ChartValuesManager : ChartValuesProvider {
-
     internal val chartValues: MutableMap<AxisPosition.Vertical?, MutableChartValues> = mutableMapOf()
 
     override fun getChartValues(axisPosition: AxisPosition.Vertical?): ChartValues =
@@ -96,12 +95,14 @@ public class ChartValuesManager : ChartValuesProvider {
  * Creates and returns a [ChartValuesProvider] implementation with this [ChartValuesManager]’s [ChartValues]
  * instances.
  */
-public fun ChartValuesManager.toChartValuesProvider(): ChartValuesProvider = object : ChartValuesProvider {
-    val chartValues = this@toChartValuesProvider
-        .chartValues
-        .map { (axisPosition, chartValues) -> axisPosition to chartValues.toImmutable() }
-        .toMap()
+public fun ChartValuesManager.toChartValuesProvider(): ChartValuesProvider =
+    object : ChartValuesProvider {
+        val chartValues =
+            this@toChartValuesProvider
+                .chartValues
+                .map { (axisPosition, chartValues) -> axisPosition to chartValues.toImmutable() }
+                .toMap()
 
-    override fun getChartValues(axisPosition: AxisPosition.Vertical?): ChartValues =
-        chartValues[axisPosition] ?: chartValues.getValue(null)
-}
+        override fun getChartValues(axisPosition: AxisPosition.Vertical?): ChartValues =
+            chartValues[axisPosition] ?: chartValues.getValue(null)
+    }

@@ -33,7 +33,10 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart1(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart1(
+    uiSystem: UISystem,
+    chartEntryModelProducer: ChartEntryModelProducer,
+) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart1(chartEntryModelProducer)
         UISystem.Views -> ViewChart1(chartEntryModelProducer)

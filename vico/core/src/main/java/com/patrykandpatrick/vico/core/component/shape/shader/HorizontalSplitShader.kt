@@ -34,10 +34,15 @@ import com.patrykandpatrick.vico.core.model.Point
 public abstract class HorizontalSplitShader(
     public var dividerYFraction: Float = 0f,
 ) : CacheableDynamicShader() {
-
     private val paint = Paint()
 
-    override fun createShader(context: DrawContext, left: Float, top: Float, right: Float, bottom: Float): Shader {
+    override fun createShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): Shader {
         val height = (bottom - top).toInt()
         val width = (right - left).toInt()
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
@@ -94,8 +99,12 @@ public abstract class HorizontalSplitShader(
         bottom: Float,
     )
 
-    override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
-        super.createKey(left, top, right, bottom) + ",$dividerYFraction"
+    override fun createKey(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): String = super.createKey(left, top, right, bottom) + ",$dividerYFraction"
 
     override fun applyTo(
         paint: Paint,
@@ -110,7 +119,12 @@ public abstract class HorizontalSplitShader(
         super.applyTo(paint, drawContext, left, top, right, bottom, zeroLineYFraction)
     }
 
-    override fun getColorAt(point: Point, drawContext: DrawContext, rectF: RectF, zeroLineYFraction: Float): Int {
+    override fun getColorAt(
+        point: Point,
+        drawContext: DrawContext,
+        rectF: RectF,
+        zeroLineYFraction: Float,
+    ): Int {
         dividerYFraction = zeroLineYFraction
         return super.getColorAt(point, drawContext, rectF, zeroLineYFraction)
     }
@@ -127,7 +141,6 @@ public abstract class HorizontalSplitShader(
         public var colorBottom: Int,
         dividerYFraction: Float = 0f,
     ) : HorizontalSplitShader(dividerYFraction) {
-
         override fun applyTopTo(
             paint: Paint,
             drawContext: DrawContext,
@@ -152,8 +165,12 @@ public abstract class HorizontalSplitShader(
             paint.shader = null
         }
 
-        override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
-            super.createKey(left, top, right, bottom) + ",$colorTop,$colorBottom"
+        override fun createKey(
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ): String = super.createKey(left, top, right, bottom) + ",$colorTop,$colorBottom"
 
         override fun equals(other: Any?): Boolean =
             when {
@@ -185,7 +202,6 @@ public abstract class HorizontalSplitShader(
         public var bottomShader: DynamicShader,
         dividerYFraction: Float = 0f,
     ) : HorizontalSplitShader(dividerYFraction) {
-
         override fun applyTopTo(
             paint: Paint,
             drawContext: DrawContext,
@@ -208,8 +224,12 @@ public abstract class HorizontalSplitShader(
             paint.shader = bottomShader.provideShader(drawContext, left, top, right, bottom)
         }
 
-        override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
-            super.createKey(left, top, right, bottom) + ",${topShader.hashCode()},${bottomShader.hashCode()}"
+        override fun createKey(
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ): String = super.createKey(left, top, right, bottom) + ",${topShader.hashCode()},${bottomShader.hashCode()}"
 
         override fun equals(other: Any?): Boolean =
             when {
@@ -221,7 +241,6 @@ public abstract class HorizontalSplitShader(
                         dividerYFraction == other.dividerYFraction
             }
 
-        override fun hashCode(): Int =
-            31 * topShader.hashCode() + bottomShader.hashCode()
+        override fun hashCode(): Int = 31 * topShader.hashCode() + bottomShader.hashCode()
     }
 }

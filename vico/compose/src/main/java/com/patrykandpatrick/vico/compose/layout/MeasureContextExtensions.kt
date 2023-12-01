@@ -44,19 +44,20 @@ public fun getMeasureContext(
     horizontalLayout: HorizontalLayout,
     spToPx: (Float) -> Float,
     chartValuesProvider: ChartValuesProvider,
-): MutableMeasureContext = remember {
-    MutableMeasureContext(
-        canvasBounds = canvasBounds,
-        density = 0f,
-        isLtr = true,
-        spToPx = spToPx,
-        chartValuesProvider = chartValuesProvider,
-    )
-}.apply {
-    this.density = LocalDensity.current.density
-    this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-    this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
-    this.horizontalLayout = horizontalLayout
-    this.spToPx = spToPx
-    this.chartValuesProvider = chartValuesProvider
-}
+): MutableMeasureContext =
+    remember {
+        MutableMeasureContext(
+            canvasBounds = canvasBounds,
+            density = 0f,
+            isLtr = true,
+            spToPx = spToPx,
+            chartValuesProvider = chartValuesProvider,
+        )
+    }.apply {
+        this.density = LocalDensity.current.density
+        this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+        this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+        this.horizontalLayout = horizontalLayout
+        this.spToPx = spToPx
+        this.chartValuesProvider = chartValuesProvider
+    }

@@ -22,7 +22,6 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 public class ChartEntryModelProducerTest {
-
     private val minX = 0f
     private val maxX = 3f
     private val minY = 1f

@@ -39,16 +39,17 @@ public fun LineChart.LineSpec.copy(
     dataLabelValueFormatter: ValueFormatter = this.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
     pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,
-): LineChart.LineSpec = LineChart.LineSpec(
-    lineShader = lineFill,
-    lineThicknessDp = lineThicknessDp,
-    lineBackgroundShader = lineBackgroundFill,
-    lineCap = lineCap,
-    point = point,
-    pointSizeDp = pointSizeDp,
-    dataLabel = dataLabel,
-    dataLabelVerticalPosition = dataLabelVerticalPosition,
-    dataLabelValueFormatter = dataLabelValueFormatter,
-    dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointConnector = pointConnector,
-)
+): LineChart.LineSpec =
+    LineChart.LineSpec(
+        lineShader = lineFill,
+        lineThicknessDp = lineThicknessDp,
+        lineBackgroundShader = lineBackgroundFill,
+        lineCap = lineCap,
+        point = point,
+        pointSizeDp = pointSizeDp,
+        dataLabel = dataLabel,
+        dataLabelVerticalPosition = dataLabelVerticalPosition,
+        dataLabelValueFormatter = dataLabelValueFormatter,
+        dataLabelRotationDegrees = dataLabelRotationDegrees,
+        pointConnector = pointConnector,
+    )

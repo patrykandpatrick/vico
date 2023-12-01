@@ -31,38 +31,40 @@ import com.patrykandpatrick.vico.views.theme.ThemeHandler
 /**
  * A subclass of [BaseChartView] that displays charts that use [ComposedChartEntryModel].
  */
-public class ComposedChartView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-) : BaseChartView<ComposedChartEntryModel<ChartEntryModel>>(
-    context = context,
-    attrs = attrs,
-    defStyleAttr = defStyleAttr,
-    chartType = ThemeHandler.ChartType.Composed,
-) {
+public class ComposedChartView
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : BaseChartView<ComposedChartEntryModel<ChartEntryModel>>(
+            context = context,
+            attrs = attrs,
+            defStyleAttr = defStyleAttr,
+            chartType = ThemeHandler.ChartType.Composed,
+        ) {
+        init {
+            chart = themeHandler.composedChart
+            if (isInEditMode && attrs != null) setPreviewModel(attrs)
+        }
 
-    init {
-        chart = themeHandler.composedChart
-        if (isInEditMode && attrs != null) setPreviewModel(attrs)
-    }
-
-    private fun setPreviewModel(attrs: AttributeSet) {
-        context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView).use { typedArray ->
-            val modelCount = typedArray.getInt(R.styleable.ComposedChartView_previewModelCount, MODEL_COUNT)
-            val seriesCount = typedArray.getInt(R.styleable.ComposedChartView_previewSeriesCount, SERIES_COUNT)
-            val minX = typedArray.getInt(R.styleable.ComposedChartView_previewMinX, 0)
-            val maxX = typedArray.getInt(R.styleable.ComposedChartView_previewMaxX, X_RANGE_TOP)
-            val minY = typedArray.getInt(R.styleable.ComposedChartView_previewMinY, 0)
-            val maxY = typedArray.getInt(R.styleable.ComposedChartView_previewMaxY, Y_RANGE_TOP)
-            setModel(
-                model = RandomEntriesGenerator(
-                    xRange = minX..maxX,
-                    yRange = minY..maxY,
-                    seriesCount = seriesCount,
-                    modelCount = modelCount,
-                ).randomComposedEntryModel(),
-            )
+        private fun setPreviewModel(attrs: AttributeSet) {
+            context.obtainStyledAttributes(attrs, R.styleable.ComposedChartView).use { typedArray ->
+                val modelCount = typedArray.getInt(R.styleable.ComposedChartView_previewModelCount, MODEL_COUNT)
+                val seriesCount = typedArray.getInt(R.styleable.ComposedChartView_previewSeriesCount, SERIES_COUNT)
+                val minX = typedArray.getInt(R.styleable.ComposedChartView_previewMinX, 0)
+                val maxX = typedArray.getInt(R.styleable.ComposedChartView_previewMaxX, X_RANGE_TOP)
+                val minY = typedArray.getInt(R.styleable.ComposedChartView_previewMinY, 0)
+                val maxY = typedArray.getInt(R.styleable.ComposedChartView_previewMaxY, Y_RANGE_TOP)
+                setModel(
+                    model =
+                        RandomEntriesGenerator(
+                            xRange = minX..maxX,
+                            yRange = minY..maxY,
+                            seriesCount = seriesCount,
+                            modelCount = modelCount,
+                        ).randomComposedEntryModel(),
+                )
+            }
         }
     }
-}

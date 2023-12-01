@@ -39,7 +39,10 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart8(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEntryModelProducer) {
+internal fun Chart8(
+    uiSystem: UISystem,
+    chartEntryModelProducer: ComposedChartEntryModelProducer,
+) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart8(chartEntryModelProducer)
         UISystem.Views -> ViewChart8(chartEntryModelProducer)
@@ -49,10 +52,11 @@ internal fun Chart8(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEn
 @Composable
 private fun ComposeChart8(chartEntryModelProducer: ComposedChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
-        val columnChart = columnChart(
-            mergeMode = ColumnChart.MergeMode.Stack,
-            targetVerticalAxisPosition = AxisPosition.Vertical.Start,
-        )
+        val columnChart =
+            columnChart(
+                mergeMode = ColumnChart.MergeMode.Stack,
+                targetVerticalAxisPosition = AxisPosition.Vertical.Start,
+            )
         val lineChart = lineChart(targetVerticalAxisPosition = AxisPosition.Vertical.End)
         Chart(
             chart = remember(columnChart, lineChart) { columnChart + lineChart },

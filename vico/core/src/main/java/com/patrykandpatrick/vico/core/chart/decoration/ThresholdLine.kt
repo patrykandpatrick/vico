@@ -50,10 +50,11 @@ import java.text.DecimalFormat
  */
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
-    val thresholdLabel: CharSequence = RANGE_FORMAT.format(
-        decimalFormat.format(thresholdRange.start),
-        decimalFormat.format(thresholdRange.endInclusive),
-    ),
+    val thresholdLabel: CharSequence =
+        RANGE_FORMAT.format(
+            decimalFormat.format(thresholdRange.start),
+            decimalFormat.format(thresholdRange.endInclusive),
+        ),
     val lineComponent: ShapeComponent = ShapeComponent(),
     val minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
     val labelComponent: TextComponent = textComponent(),
@@ -61,7 +62,6 @@ public data class ThresholdLine(
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
     val labelRotationDegrees: Float = 0f,
 ) : Decoration {
-
     /**
      * An alternative constructor that accepts a single y-axis value as opposed to a range.
      *
@@ -98,55 +98,62 @@ public data class ThresholdLine(
     override fun onDrawAboveChart(
         context: ChartDrawContext,
         bounds: RectF,
-    ): Unit = with(context) {
-        val chartValues = chartValuesProvider.getChartValues()
+    ): Unit =
+        with(context) {
+            val chartValues = chartValuesProvider.getChartValues()
 
-        val valueRange = chartValues.maxY - chartValues.minY
+            val valueRange = chartValues.maxY - chartValues.minY
 
-        val centerY = bounds.bottom - (thresholdRange.median - chartValues.minY) / valueRange * bounds.height()
+            val centerY = bounds.bottom - (thresholdRange.median - chartValues.minY) / valueRange * bounds.height()
 
-        val topY = minOf(
-            bounds.bottom - (thresholdRange.endInclusive - chartValues.minY) / valueRange * bounds.height(),
-            centerY - minimumLineThicknessDp.pixels.half,
-        ).ceil
-        val bottomY = maxOf(
-            bounds.bottom - (thresholdRange.start - chartValues.minY) / valueRange * bounds.height(),
-            centerY + minimumLineThicknessDp.pixels.half,
-        ).floor
-        val textY = when (labelVerticalPosition) {
-            LabelVerticalPosition.Top -> topY
-            LabelVerticalPosition.Bottom -> bottomY
+            val topY =
+                minOf(
+                    bounds.bottom - (thresholdRange.endInclusive - chartValues.minY) / valueRange * bounds.height(),
+                    centerY - minimumLineThicknessDp.pixels.half,
+                ).ceil
+            val bottomY =
+                maxOf(
+                    bounds.bottom - (thresholdRange.start - chartValues.minY) / valueRange * bounds.height(),
+                    centerY + minimumLineThicknessDp.pixels.half,
+                ).floor
+            val textY =
+                when (labelVerticalPosition) {
+                    LabelVerticalPosition.Top -> topY
+                    LabelVerticalPosition.Bottom -> bottomY
+                }
+
+            lineComponent.draw(
+                context = context,
+                left = bounds.left,
+                right = bounds.right,
+                top = topY,
+                bottom = bottomY,
+            )
+            labelComponent.drawText(
+                context = context,
+                text = thresholdLabel,
+                maxTextWidth = bounds.width().toInt(),
+                textX =
+                    when (labelHorizontalPosition) {
+                        LabelHorizontalPosition.Start -> bounds.getStart(isLtr = isLtr)
+                        LabelHorizontalPosition.End -> bounds.getEnd(isLtr = isLtr)
+                    },
+                textY = textY,
+                horizontalPosition = labelHorizontalPosition.position,
+                verticalPosition =
+                    labelVerticalPosition.position.inBounds(
+                        bounds = bounds,
+                        componentHeight =
+                            labelComponent.getHeight(
+                                context = context,
+                                text = thresholdLabel,
+                                rotationDegrees = labelRotationDegrees,
+                            ),
+                        y = textY,
+                    ),
+                rotationDegrees = labelRotationDegrees,
+            )
         }
-
-        lineComponent.draw(
-            context = context,
-            left = bounds.left,
-            right = bounds.right,
-            top = topY,
-            bottom = bottomY,
-        )
-        labelComponent.drawText(
-            context = context,
-            text = thresholdLabel,
-            maxTextWidth = bounds.width().toInt(),
-            textX = when (labelHorizontalPosition) {
-                LabelHorizontalPosition.Start -> bounds.getStart(isLtr = isLtr)
-                LabelHorizontalPosition.End -> bounds.getEnd(isLtr = isLtr)
-            },
-            textY = textY,
-            horizontalPosition = labelHorizontalPosition.position,
-            verticalPosition = labelVerticalPosition.position.inBounds(
-                bounds = bounds,
-                componentHeight = labelComponent.getHeight(
-                    context = context,
-                    text = thresholdLabel,
-                    rotationDegrees = labelRotationDegrees,
-                ),
-                y = textY,
-            ),
-            rotationDegrees = labelRotationDegrees,
-        )
-    }
 
     /**
      * Defines the horizontal position of a [ThresholdLine]’s label.

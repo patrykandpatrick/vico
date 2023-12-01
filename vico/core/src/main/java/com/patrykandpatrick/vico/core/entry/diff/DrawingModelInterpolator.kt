@@ -23,7 +23,10 @@ public interface DrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : Draw
     /**
      * Sets the initial and target [DrawingModel]s.
      */
-    public fun setModels(old: R?, new: R?)
+    public fun setModels(
+        old: R?,
+        new: R?,
+    )
 
     /**
      * Interpolates the two [DrawingModel]s. [fraction] is the balance between the initial and target [DrawingModel]s,

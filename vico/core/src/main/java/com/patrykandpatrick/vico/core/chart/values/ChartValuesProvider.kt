@@ -22,7 +22,6 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
  * Provides a chart’s [ChartValues] instances.
  */
 public interface ChartValuesProvider {
-
     /**
      * Returns the [ChartValues] instance associated with the specified [AxisPosition.Vertical] subclass. If
      * [axisPosition] is `null`, the chart’s main [ChartValues] instance is returned.

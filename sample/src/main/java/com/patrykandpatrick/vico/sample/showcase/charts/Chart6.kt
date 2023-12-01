@@ -45,7 +45,10 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart6(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart6(
+    uiSystem: UISystem,
+    chartEntryModelProducer: ChartEntryModelProducer,
+) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart6(chartEntryModelProducer)
         UISystem.Views -> ViewChart6(chartEntryModelProducer)
@@ -58,19 +61,21 @@ private fun ComposeChart6(chartEntryModelProducer: ChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultColumns = currentChartStyle.columnChart.columns
         Chart(
-            chart = columnChart(
-                columns = remember(defaultColumns) {
-                    defaultColumns.map { defaultColumn ->
-                        LineComponent(
-                            defaultColumn.color,
-                            defaultColumn.thicknessDp,
-                            Shapes.cutCornerShape(topLeftPercent = COLUMN_CORNER_CUT_SIZE_PERCENT),
-                        )
-                    }
-                },
-                mergeMode = ColumnChart.MergeMode.Grouped,
-                decorations = remember(thresholdLine) { listOf(thresholdLine) },
-            ),
+            chart =
+                columnChart(
+                    columns =
+                        remember(defaultColumns) {
+                            defaultColumns.map { defaultColumn ->
+                                LineComponent(
+                                    defaultColumn.color,
+                                    defaultColumn.thicknessDp,
+                                    Shapes.cutCornerShape(topLeftPercent = COLUMN_CORNER_CUT_SIZE_PERCENT),
+                                )
+                            }
+                        },
+                    mergeMode = ColumnChart.MergeMode.Grouped,
+                    decorations = remember(thresholdLine) { listOf(thresholdLine) },
+                ),
             chartModelProducer = chartEntryModelProducer,
             startAxis = rememberStartAxis(),
             bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
@@ -98,13 +103,14 @@ private fun ViewChart6(chartEntryModelProducer: ChartEntryModelProducer) {
 
 @Composable
 private fun rememberThresholdLine(): ThresholdLine {
-    val label = textComponent(
-        color = Color.Black,
-        background = shapeComponent(Shapes.rectShape, color4),
-        padding = thresholdLineLabelPadding,
-        margins = thresholdLineLabelMargins,
-        typeface = Typeface.MONOSPACE,
-    )
+    val label =
+        textComponent(
+            color = Color.Black,
+            background = shapeComponent(Shapes.rectShape, color4),
+            padding = thresholdLineLabelPadding,
+            margins = thresholdLineLabelMargins,
+            typeface = Typeface.MONOSPACE,
+        )
     val line = shapeComponent(color = thresholdLineColor)
     return remember(label, line) {
         ThresholdLine(thresholdRange = thresholdLineValueRange, labelComponent = label, lineComponent = line)

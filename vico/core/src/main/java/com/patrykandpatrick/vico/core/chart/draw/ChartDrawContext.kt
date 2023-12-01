@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.model.Point
  * An extension of [DrawContext] that holds additional data required to render a [Chart].
  */
 public interface ChartDrawContext : DrawContext {
-
     /**
      * The bounds in which the [Chart] will be drawn.
      */
@@ -64,9 +63,10 @@ public fun MeasureContext.getMaxScrollDistance(
     horizontalDimensions: HorizontalDimensions,
     zoom: Float? = null,
 ): Float {
-    val contentWidth = horizontalDimensions
-        .run { if (zoom != null) scaled(zoom) else this }
-        .getContentWidth(chartValuesProvider.getChartValues().getMaxMajorEntryCount())
+    val contentWidth =
+        horizontalDimensions
+            .run { if (zoom != null) scaled(zoom) else this }
+            .getContentWidth(chartValuesProvider.getChartValues().getMaxMajorEntryCount())
 
     return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
         if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,9 +25,16 @@ internal fun <S, T : AxisRenderer<S>?> cacheInList(): ReadWriteProperty<AxisMana
     object : ReadWriteProperty<AxisManager, T?> {
         var field: T? = null
 
-        override fun getValue(thisRef: AxisManager, property: KProperty<*>): T? = field
+        override fun getValue(
+            thisRef: AxisManager,
+            property: KProperty<*>,
+        ): T? = field
 
-        override fun setValue(thisRef: AxisManager, property: KProperty<*>, value: T?) {
+        override fun setValue(
+            thisRef: AxisManager,
+            property: KProperty<*>,
+            value: T?,
+        ) {
             if (field == value) return
             field?.let(thisRef.axisCache::remove)
             field = value

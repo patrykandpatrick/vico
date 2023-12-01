@@ -1,0 +1,19 @@
+name: Run Ktlint
+on:
+  push:
+  pull_request:
+jobs:
+  run-ktlint:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: zulu
+      - run: |
+          curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.0.1/ktlint
+          chmod +x ktlint
+          sudo mv ktlint /usr/local/bin
+      - uses: actions/checkout@v3
+      - run: ktlint

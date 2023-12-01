@@ -36,7 +36,6 @@ public open class CorneredShape(
     public val bottomRight: Corner = Corner.Sharp,
     public val bottomLeft: Corner = Corner.Sharp,
 ) : Shape {
-
     private val Float.nonZero: Float
         get() = if (this == 0f) 1f else this
 
@@ -48,7 +47,11 @@ public open class CorneredShape(
      * @param height the height of the [Shape].
      * @param density the pixel density of the screen (used in pixel size calculation).
      */
-    public fun getCornerScale(width: Float, height: Float, density: Float): Float {
+    public fun getCornerScale(
+        width: Float,
+        height: Float,
+        density: Float,
+    ): Float {
         val availableSize = minOf(width, height)
         val tL = topLeft.getCornerSize(availableSize, density)
         val tR = topRight.getCornerSize(availableSize, density)

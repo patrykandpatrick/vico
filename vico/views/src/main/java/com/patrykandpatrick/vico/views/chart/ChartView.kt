@@ -29,35 +29,38 @@ import com.patrykandpatrick.vico.views.theme.ThemeHandler
 /**
  * A subclass of [BaseChartView] that displays charts that use [ChartEntryModel].
  */
-public class ChartView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-) : BaseChartView<ChartEntryModel>(
-    context = context,
-    attrs = attrs,
-    defStyleAttr = defStyleAttr,
-    chartType = ThemeHandler.ChartType.Single,
-) {
-    init {
-        chart = themeHandler.chart
-        if (isInEditMode && attrs != null) setPreviewModel(attrs)
-    }
+public class ChartView
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : BaseChartView<ChartEntryModel>(
+            context = context,
+            attrs = attrs,
+            defStyleAttr = defStyleAttr,
+            chartType = ThemeHandler.ChartType.Single,
+        ) {
+        init {
+            chart = themeHandler.chart
+            if (isInEditMode && attrs != null) setPreviewModel(attrs)
+        }
 
-    private fun setPreviewModel(attrs: AttributeSet) {
-        context.obtainStyledAttributes(attrs, R.styleable.ChartView).use { typedArray ->
-            val seriesCount = typedArray.getInt(R.styleable.ChartView_previewSeriesCount, SERIES_COUNT)
-            val minX = typedArray.getInt(R.styleable.ChartView_previewMinX, 0)
-            val maxX = typedArray.getInt(R.styleable.ChartView_previewMaxX, X_RANGE_TOP)
-            val minY = typedArray.getInt(R.styleable.ChartView_previewMinY, 0)
-            val maxY = typedArray.getInt(R.styleable.ChartView_previewMaxY, Y_RANGE_TOP)
-            setModel(
-                model = RandomEntriesGenerator(
-                    xRange = minX..maxX,
-                    yRange = minY..maxY,
-                    seriesCount = seriesCount,
-                ).randomEntryModel(),
-            )
+        private fun setPreviewModel(attrs: AttributeSet) {
+            context.obtainStyledAttributes(attrs, R.styleable.ChartView).use { typedArray ->
+                val seriesCount = typedArray.getInt(R.styleable.ChartView_previewSeriesCount, SERIES_COUNT)
+                val minX = typedArray.getInt(R.styleable.ChartView_previewMinX, 0)
+                val maxX = typedArray.getInt(R.styleable.ChartView_previewMaxX, X_RANGE_TOP)
+                val minY = typedArray.getInt(R.styleable.ChartView_previewMinY, 0)
+                val maxY = typedArray.getInt(R.styleable.ChartView_previewMaxY, Y_RANGE_TOP)
+                setModel(
+                    model =
+                        RandomEntriesGenerator(
+                            xRange = minX..maxX,
+                            yRange = minY..maxY,
+                            seriesCount = seriesCount,
+                        ).randomEntryModel(),
+                )
+            }
         }
     }
-}

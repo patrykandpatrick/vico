@@ -45,7 +45,10 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart3(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart3(
+    uiSystem: UISystem,
+    chartEntryModelProducer: ChartEntryModelProducer,
+) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart3(chartEntryModelProducer)
         UISystem.Views -> ViewChart3(chartEntryModelProducer)
@@ -58,28 +61,32 @@ private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
         Chart(
             chart = lineChart(axisValuesOverrider = axisValueOverrider),
             chartModelProducer = chartEntryModelProducer,
-            startAxis = rememberStartAxis(
-                guideline = null,
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                titleComponent = textComponent(
-                    color = Color.Black,
-                    background = shapeComponent(Shapes.pillShape, color1),
-                    padding = axisTitlePadding,
-                    margins = startAxisTitleMargins,
-                    typeface = Typeface.MONOSPACE,
+            startAxis =
+                rememberStartAxis(
+                    guideline = null,
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                    titleComponent =
+                        textComponent(
+                            color = Color.Black,
+                            background = shapeComponent(Shapes.pillShape, color1),
+                            padding = axisTitlePadding,
+                            margins = startAxisTitleMargins,
+                            typeface = Typeface.MONOSPACE,
+                        ),
+                    title = stringResource(R.string.y_axis),
                 ),
-                title = stringResource(R.string.y_axis),
-            ),
-            bottomAxis = rememberBottomAxis(
-                titleComponent = textComponent(
-                    background = shapeComponent(Shapes.pillShape, color2),
-                    color = Color.White,
-                    padding = axisTitlePadding,
-                    margins = bottomAxisTitleMargins,
-                    typeface = Typeface.MONOSPACE,
+            bottomAxis =
+                rememberBottomAxis(
+                    titleComponent =
+                        textComponent(
+                            background = shapeComponent(Shapes.pillShape, color2),
+                            color = Color.White,
+                            padding = axisTitlePadding,
+                            margins = bottomAxisTitleMargins,
+                            typeface = Typeface.MONOSPACE,
+                        ),
+                    title = stringResource(R.string.x_axis),
                 ),
-                title = stringResource(R.string.x_axis),
-            ),
             marker = rememberMarker(),
             runInitialAnimation = false,
             fadingEdges = rememberFadingEdges(),

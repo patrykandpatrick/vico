@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,10 +32,11 @@ internal fun VerticalPosition.inBounds(
     return when (this) {
         VerticalPosition.Top -> if (topFits) this else VerticalPosition.Bottom
         VerticalPosition.Bottom -> if (bottomFits) this else VerticalPosition.Top
-        VerticalPosition.Center -> when {
-            centerFits -> this
-            topFits -> VerticalPosition.Top
-            else -> VerticalPosition.Bottom
-        }
+        VerticalPosition.Center ->
+            when {
+                centerFits -> this
+                topFits -> VerticalPosition.Top
+                else -> VerticalPosition.Bottom
+            }
     }
 }

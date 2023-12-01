@@ -55,17 +55,17 @@ public class RandomEntriesGenerator(
      * Creates a [ChartEntryModel] containing a collection of [FloatEntry] instances with randomized _y_ values.
      * The size of the collection is equal to the number of values in [xRange].
      */
-    public fun randomEntryModel(): ChartEntryModel =
-        getChartEntryModelProducer().requireModel()
+    public fun randomEntryModel(): ChartEntryModel = getChartEntryModelProducer().requireModel()
 
     /**
      * Creates a [ComposedChartEntryModel] with three [ChartEntryModelProducer]s, each containing a collection of
      * [FloatEntry] instances with randomized y values. The size of each collection is equal to the number of values in
      * [xRange].
      */
-    public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> = ComposedChartEntryModelProducer
-        .build { repeat(modelCount) { add(List(seriesCount) { generateRandomEntries() }) } }
-        .requireModel()
+    public fun randomComposedEntryModel(): ComposedChartEntryModel<ChartEntryModel> =
+        ComposedChartEntryModelProducer
+            .build { repeat(modelCount) { add(List(seriesCount) { generateRandomEntries() }) } }
+            .requireModel()
 
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public companion object {

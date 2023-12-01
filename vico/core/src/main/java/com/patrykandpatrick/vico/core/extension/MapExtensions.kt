@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,12 +38,11 @@ public fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
  *
  * @see Marker.EntryModel
  */
-public fun Map<Float, List<Marker.EntryModel>>.getEntryModel(
-    xValue: Float,
-): List<Marker.EntryModel>? = values
-    .mapNotNull { entries -> entries.takeIf { it.firstOrNull()?.entry?.x == xValue } }
-    .flatten()
-    .takeIf { it.isNotEmpty() }
+public fun Map<Float, List<Marker.EntryModel>>.getEntryModel(xValue: Float): List<Marker.EntryModel>? =
+    values
+        .mapNotNull { entries -> entries.takeIf { it.firstOrNull()?.entry?.x == xValue } }
+        .flatten()
+        .takeIf { it.isNotEmpty() }
 
 /**
  * Updates the receiver [TreeMap] with the contents of another [Map].

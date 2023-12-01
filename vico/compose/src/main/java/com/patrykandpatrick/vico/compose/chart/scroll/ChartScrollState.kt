@@ -33,7 +33,6 @@ import kotlin.math.abs
  * Houses information on a [Chart]’s scroll state. Allows for programmatic scrolling.
  */
 public class ChartScrollState : ScrollableState, ScrollListenerHost {
-
     private val _value = mutableFloatStateOf(0f)
     private val _maxValue = mutableFloatStateOf(0f)
     private val scrollListeners: MutableSet<ScrollListener> = mutableSetOf()
@@ -62,22 +61,26 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
             scrollListeners.forEach { scrollListener -> scrollListener.onMaxValueChanged(oldMaxValue, newMaxValue) }
         }
 
-    private val scrollableState = ScrollableState { delta ->
-        val unlimitedValue = value + delta
-        val limitedValue = unlimitedValue.coerceIn(0f.rangeWith(maxValue))
-        val consumedValue = limitedValue - value
-        value += consumedValue
+    private val scrollableState =
+        ScrollableState { delta ->
+            val unlimitedValue = value + delta
+            val limitedValue = unlimitedValue.coerceIn(0f.rangeWith(maxValue))
+            val consumedValue = limitedValue - value
+            value += consumedValue
 
-        val unconsumedScroll = delta - consumedValue
-        if (unconsumedScroll != 0f) notifyUnconsumedScroll(unconsumedScroll)
+            val unconsumedScroll = delta - consumedValue
+            if (unconsumedScroll != 0f) notifyUnconsumedScroll(unconsumedScroll)
 
-        if (unlimitedValue != limitedValue) consumedValue else delta
-    }
+            if (unlimitedValue != limitedValue) consumedValue else delta
+        }
 
     override val isScrollInProgress: Boolean
         get() = scrollableState.isScrollInProgress
 
-    override suspend fun scroll(scrollPriority: MutatePriority, block: suspend ScrollScope.() -> Unit) {
+    override suspend fun scroll(
+        scrollPriority: MutatePriority,
+        block: suspend ScrollScope.() -> Unit,
+    ) {
         scrollableState.scroll(scrollPriority, block)
     }
 
@@ -97,10 +100,11 @@ public class ChartScrollState : ScrollableState, ScrollListenerHost {
 
     internal fun handleInitialScroll(initialScroll: InitialScroll) {
         if (initialScrollHandled) return
-        value = when (initialScroll) {
-            InitialScroll.Start -> 0f
-            InitialScroll.End -> maxValue
-        }
+        value =
+            when (initialScroll) {
+                InitialScroll.Start -> 0f
+                InitialScroll.End -> maxValue
+            }
         initialScrollHandled = true
     }
 

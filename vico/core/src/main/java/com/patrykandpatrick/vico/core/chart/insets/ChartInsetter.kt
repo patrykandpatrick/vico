@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.core.marker.Marker
  * like.
  */
 public interface ChartInsetter {
-
     /**
      * Called during the measurement phase, before [getHorizontalInsets]. Both horizontal and vertical insets can be
      * requested from this function. The final inset for a given edge of the associated [Chart] is the largest of the

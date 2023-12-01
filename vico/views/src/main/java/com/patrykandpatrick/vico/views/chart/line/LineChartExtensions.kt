@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,18 +73,20 @@ public fun lineChart(
 ): LineChart {
     val tempArray = IntArray(1)
 
-    val lineSpecs = listOf(R.attr.line1Spec, R.attr.line2Spec, R.attr.line3Spec)
-        .map { themeAttrResItem -> lineSpec(context, themeAttrResItem, styleResId) }
+    val lineSpecs =
+        listOf(R.attr.line1Spec, R.attr.line2Spec, R.attr.line3Spec)
+            .map { themeAttrResItem -> lineSpec(context, themeAttrResItem, styleResId) }
 
     tempArray[0] = R.styleable.LineChartStyle_spacing
-    val spacingDp = context.obtainStyledAttributes(null, tempArray)
-        .use { typedArray ->
-            typedArray.getRawDimension(
-                context = context,
-                index = R.styleable.LineChartStyle_spacing,
-                defaultValue = DefaultDimens.POINT_SPACING,
-            )
-        }
+    val spacingDp =
+        context.obtainStyledAttributes(null, tempArray)
+            .use { typedArray ->
+                typedArray.getRawDimension(
+                    context = context,
+                    index = R.styleable.LineChartStyle_spacing,
+                    defaultValue = DefaultDimens.POINT_SPACING,
+                )
+            }
 
     return LineChart(
         lines = lineSpecs,

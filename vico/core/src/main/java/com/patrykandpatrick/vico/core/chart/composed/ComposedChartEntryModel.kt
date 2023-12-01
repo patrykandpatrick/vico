@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.patrykandpatrick.vico.core.entry.ChartEntryModel
  * An extended [ChartEntryModel] that can compose multiple [ChartEntryModel]s. It is used by [ComposedChart].
  */
 public interface ComposedChartEntryModel<Model : ChartEntryModel> : ChartEntryModel {
-
     /**
      * A list of the [ChartEntryModel]s that make up this model.
      */

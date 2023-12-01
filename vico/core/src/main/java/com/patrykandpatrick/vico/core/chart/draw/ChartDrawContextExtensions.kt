@@ -52,29 +52,32 @@ public fun chartDrawContext(
     chartBounds: RectF,
     horizontalScroll: Float,
     zoom: Float,
-): ChartDrawContext = object : ChartDrawContext, MeasureContext by measureContext {
+): ChartDrawContext =
+    object : ChartDrawContext, MeasureContext by measureContext {
+        override val chartBounds: RectF = chartBounds
 
-    override val chartBounds: RectF = chartBounds
+        override var canvas: Canvas = canvas
 
-    override var canvas: Canvas = canvas
+        override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
 
-    override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
+        override val markerTouchPoint: Point? = markerTouchPoint
 
-    override val markerTouchPoint: Point? = markerTouchPoint
+        override val zoom: Float = zoom
 
-    override val zoom: Float = zoom
+        override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(zoom)
 
-    override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(zoom)
+        override val horizontalScroll: Float = horizontalScroll
 
-    override val horizontalScroll: Float = horizontalScroll
-
-    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
-        val originalCanvas = this.canvas
-        this.canvas = canvas
-        block(this)
-        this.canvas = originalCanvas
+        override fun withOtherCanvas(
+            canvas: Canvas,
+            block: (DrawContext) -> Unit,
+        ) {
+            val originalCanvas = this.canvas
+            this.canvas = canvas
+            block(this)
+            this.canvas = originalCanvas
+        }
     }
-}
 
 /**
  * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the
@@ -125,5 +128,5 @@ public fun <Model : ChartEntryModel> ChartDrawContext.drawMarker(
 }
 
 private fun List<Marker.EntryModel>.xPosition(): Float? = firstOrNull()?.entry?.x
-private fun List<Marker.EntryModel>.hasMoved(other: List<Marker.EntryModel>): Boolean =
-    xPosition() != other.xPosition()
+
+private fun List<Marker.EntryModel>.hasMoved(other: List<Marker.EntryModel>): Boolean = xPosition() != other.xPosition()

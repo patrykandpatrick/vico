@@ -50,31 +50,38 @@ public fun SingleLineChartWithNegativeValues() {
     Surface {
         Chart(
             modifier = Modifier.height(250.dp),
-            chart = lineChart(
-                lines = listOf(
-                    lineSpec(
-                        lineShader = DynamicShaders.split(
-                            positiveColor = Color(0xFF25BE53),
-                            negativeColor = Color(0xFFE73B3B),
+            chart =
+                lineChart(
+                    lines =
+                        listOf(
+                            lineSpec(
+                                lineShader =
+                                    DynamicShaders.split(
+                                        positiveColor = Color(0xFF25BE53),
+                                        negativeColor = Color(0xFFE73B3B),
+                                    ),
+                            ),
                         ),
-                    ),
+                    persistentMarkers =
+                        mapOf(
+                            2f to marker,
+                            3f to marker,
+                        ),
                 ),
-                persistentMarkers = mapOf(
-                    2f to marker,
-                    3f to marker,
-                ),
-            ),
             model = model,
-            startAxis = rememberStartAxis(
-                itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
-                guideline = axisLineComponent(),
-            ),
-            bottomAxis = rememberBottomAxis(
-                guideline = axisLineComponent(),
-                itemPlacer = AxisItemPlacer.Horizontal.default(
-                    spacing = 2,
+            startAxis =
+                rememberStartAxis(
+                    itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
+                    guideline = axisLineComponent(),
                 ),
-            ),
+            bottomAxis =
+                rememberBottomAxis(
+                    guideline = axisLineComponent(),
+                    itemPlacer =
+                        AxisItemPlacer.Horizontal.default(
+                            spacing = 2,
+                        ),
+                ),
             horizontalLayout = HorizontalLayout.fullWidth(),
         )
     }
@@ -85,11 +92,13 @@ public fun SingleLineChartWithNegativeValues() {
 public fun SingleLineChartWithNegativeValuesAndDataLabels() {
     Surface {
         Chart(
-            chart = lineChart(
-                lines = listOf(
-                    lineSpec(lineShader = DynamicShaders.solid(Color.DarkGray), dataLabel = textComponent()),
+            chart =
+                lineChart(
+                    lines =
+                        listOf(
+                            lineSpec(lineShader = DynamicShaders.solid(Color.DarkGray), dataLabel = textComponent()),
+                        ),
                 ),
-            ),
             model = model,
             startAxis = rememberStartAxis(),
             bottomAxis = rememberBottomAxis(),
@@ -102,12 +111,14 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
 public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
         Chart(
-            chart = lineChart(
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minY = 1f,
-                    maxY = 4f,
+            chart =
+                lineChart(
+                    axisValuesOverrider =
+                        AxisValuesOverrider.fixed(
+                            minY = 1f,
+                            maxY = 4f,
+                        ),
                 ),
-            ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
             bottomAxis = rememberBottomAxis(),
@@ -120,12 +131,14 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
 public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
         Chart(
-            chart = lineChart(
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minY = -2f,
-                    maxY = 0f,
+            chart =
+                lineChart(
+                    axisValuesOverrider =
+                        AxisValuesOverrider.fixed(
+                            minY = -2f,
+                            maxY = 0f,
+                        ),
                 ),
-            ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
             bottomAxis = rememberBottomAxis(),

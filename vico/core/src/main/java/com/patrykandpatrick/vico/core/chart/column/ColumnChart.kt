@@ -82,7 +82,6 @@ public open class ColumnChart(
         ColumnChartDrawingModel,
         > = DefaultDrawingModelInterpolator(),
 ) : BaseChart<ChartEntryModel>() {
-
     /**
      * Creates a [ColumnChart] with a common style for all columns.
      *
@@ -122,15 +121,16 @@ public open class ColumnChart(
     override fun drawChart(
         context: ChartDrawContext,
         model: ChartEntryModel,
-    ): Unit = with(context) {
-        entryLocationMap.clear()
-        drawChartInternal(
-            chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
-            model = model,
-            drawingModel = model.extraStore.getOrNull(drawingModelKey),
-        )
-        heightMap.clear()
-    }
+    ): Unit =
+        with(context) {
+            entryLocationMap.clear()
+            drawChartInternal(
+                chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
+                model = model,
+                drawingModel = model.extraStore.getOrNull(drawingModelKey),
+            )
+            heightMap.clear()
+        }
 
     protected open fun ChartDrawContext.drawChartInternal(
         chartValues: ChartValues,
@@ -266,44 +266,49 @@ public open class ColumnChart(
             val canUseXSpacing =
                 mergeMode == MergeMode.Stack ||
                     mergeMode == MergeMode.Grouped && modelEntriesSize == 1
-            var maxWidth = when {
-                canUseXSpacing -> horizontalDimensions.xSpacing
-                mergeMode == MergeMode.Grouped ->
-                    (columnThicknessDp + minOf(spacingDp, innerSpacingDp).half).pixels * zoom
+            var maxWidth =
+                when {
+                    canUseXSpacing -> horizontalDimensions.xSpacing
+                    mergeMode == MergeMode.Grouped ->
+                        (columnThicknessDp + minOf(spacingDp, innerSpacingDp).half).pixels * zoom
 
-                else -> error(message = "Encountered an unexpected `MergeMode`.")
-            }
+                    else -> error(message = "Encountered an unexpected `MergeMode`.")
+                }
             if (isFirst && horizontalLayout is HorizontalLayout.FullWidth) {
                 maxWidth = maxWidth.coerceAtMost(horizontalDimensions.startPadding.doubled)
             }
             if (isLast && horizontalLayout is HorizontalLayout.FullWidth) {
                 maxWidth = maxWidth.coerceAtMost(horizontalDimensions.endPadding.doubled)
             }
-            val text = dataLabelValueFormatter.formatValue(
-                value = dataLabelValue,
-                chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
-            )
-            val dataLabelWidth = textComponent.getWidth(
-                context = this,
-                text = text,
-                rotationDegrees = dataLabelRotationDegrees,
-            ).coerceAtMost(maximumValue = maxWidth)
+            val text =
+                dataLabelValueFormatter.formatValue(
+                    value = dataLabelValue,
+                    chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
+                )
+            val dataLabelWidth =
+                textComponent.getWidth(
+                    context = this,
+                    text = text,
+                    rotationDegrees = dataLabelRotationDegrees,
+                ).coerceAtMost(maximumValue = maxWidth)
 
             if (x - dataLabelWidth.half > bounds.right || x + dataLabelWidth.half < bounds.left) return
 
             val labelVerticalPosition =
                 if (dataLabelValue < 0f) dataLabelVerticalPosition.negative() else dataLabelVerticalPosition
 
-            val verticalPosition = labelVerticalPosition.inBounds(
-                y = y,
-                bounds = bounds,
-                componentHeight = textComponent.getHeight(
-                    context = this,
-                    text = text,
-                    width = maxWidth.toInt(),
-                    rotationDegrees = dataLabelRotationDegrees,
-                ),
-            )
+            val verticalPosition =
+                labelVerticalPosition.inBounds(
+                    y = y,
+                    bounds = bounds,
+                    componentHeight =
+                        textComponent.getHeight(
+                            context = this,
+                            text = text,
+                            width = maxWidth.toInt(),
+                            rotationDegrees = dataLabelRotationDegrees,
+                        ),
+                )
             textComponent.drawText(
                 context = this,
                 text = text,
@@ -334,7 +339,11 @@ public open class ColumnChart(
         }
     }
 
-    override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel, xStep: Float?) {
+    override fun updateChartValues(
+        chartValuesManager: ChartValuesManager,
+        model: ChartEntryModel,
+        xStep: Float?,
+    ) {
         chartValuesManager.tryUpdate(
             minX = axisValuesOverrider?.getMinX(model) ?: model.minX,
             maxX = axisValuesOverrider?.getMaxX(model) ?: model.maxX,
@@ -366,8 +375,9 @@ public open class ColumnChart(
                 is HorizontalLayout.FullWidth -> {
                     horizontalDimensions.ensureValuesAtLeast(
                         xSpacing = xSpacing,
-                        scalableStartPadding = columnCollectionWidth.half +
-                            horizontalLayout.scalableStartPaddingDp.pixels,
+                        scalableStartPadding =
+                            columnCollectionWidth.half +
+                                horizontalLayout.scalableStartPaddingDp.pixels,
                         scalableEndPadding = columnCollectionWidth.half + horizontalLayout.scalableEndPaddingDp.pixels,
                         unscalableStartPadding = horizontalLayout.unscalableStartPaddingDp.pixels,
                         unscalableEndPadding = horizontalLayout.unscalableEndPaddingDp.pixels,
@@ -377,34 +387,42 @@ public open class ColumnChart(
         }
     }
 
-    override val modelTransformerProvider: Chart.ModelTransformerProvider = object : Chart.ModelTransformerProvider {
-        private val modelTransformer =
-            ColumnChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition }, { drawingModelInterpolator })
+    override val modelTransformerProvider: Chart.ModelTransformerProvider =
+        object : Chart.ModelTransformerProvider {
+            private val modelTransformer =
+                ColumnChartModelTransformer(
+                    drawingModelKey,
+                    { targetVerticalAxisPosition },
+                    { drawingModelInterpolator },
+                )
 
-        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
-    }
-
-    protected open fun MeasureContext.getColumnCollectionWidth(
-        entryCollectionSize: Int,
-    ): Float = when (mergeMode) {
-        MergeMode.Stack ->
-            columns.take(entryCollectionSize).maxOf { it.thicknessDp.pixels }
-
-        MergeMode.Grouped ->
-            getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
-    }
-
-    protected open fun ChartDrawContext.getDrawingStart(entryCollectionIndex: Int, entryCollectionCount: Int): Float {
-        val mergeModeComponent = when (mergeMode) {
-            MergeMode.Grouped ->
-                getCumulatedThickness(entryCollectionIndex) + innerSpacingDp.pixels * entryCollectionIndex
-
-            MergeMode.Stack -> 0f
+            override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
         }
+
+    protected open fun MeasureContext.getColumnCollectionWidth(entryCollectionSize: Int): Float =
+        when (mergeMode) {
+            MergeMode.Stack ->
+                columns.take(entryCollectionSize).maxOf { it.thicknessDp.pixels }
+
+            MergeMode.Grouped ->
+                getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
+        }
+
+    protected open fun ChartDrawContext.getDrawingStart(
+        entryCollectionIndex: Int,
+        entryCollectionCount: Int,
+    ): Float {
+        val mergeModeComponent =
+            when (mergeMode) {
+                MergeMode.Grouped ->
+                    getCumulatedThickness(entryCollectionIndex) + innerSpacingDp.pixels * entryCollectionIndex
+
+                MergeMode.Stack -> 0f
+            }
         return bounds.getStart(isLtr) + (
             horizontalDimensions.startPadding +
                 (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * zoom
-            ) * layoutDirectionMultiplier
+        ) * layoutDirectionMultiplier
     }
 
     protected open fun MeasureContext.getCumulatedThickness(count: Int): Float {
@@ -419,7 +437,6 @@ public open class ColumnChart(
      * Defines how a [ColumnChart] should draw columns in column collections.
      */
     public enum class MergeMode {
-
         /**
          * Columns with the same x-axis values will be placed next to each other in groups.
          */
@@ -435,18 +452,20 @@ public open class ColumnChart(
         /**
          * Returns the minimum y-axis value, taking into account the current [MergeMode].
          */
-        public fun getMinY(model: ChartEntryModel): Float = when (this) {
-            Grouped -> model.minY.coerceAtMost(0f)
-            Stack -> model.stackedNegativeY.coerceAtMost(0f)
-        }
+        public fun getMinY(model: ChartEntryModel): Float =
+            when (this) {
+                Grouped -> model.minY.coerceAtMost(0f)
+                Stack -> model.stackedNegativeY.coerceAtMost(0f)
+            }
 
         /**
          * Returns the maximum y-axis value, taking into account the current [MergeMode].
          */
-        public fun getMaxY(model: ChartEntryModel): Float = when (this) {
-            Grouped -> model.maxY
-            Stack -> model.stackedPositiveY
-        }
+        public fun getMaxY(model: ChartEntryModel): Float =
+            when (this) {
+                Grouped -> model.maxY
+                Stack -> model.stackedPositiveY
+            }
     }
 
     protected class ColumnChartModelTransformer(
@@ -457,7 +476,6 @@ public open class ColumnChart(
             ColumnChartDrawingModel,
             >,
     ) : Chart.ModelTransformer<ChartEntryModel>() {
-
         override fun prepareForTransformation(
             oldModel: ChartEntryModel?,
             newModel: ChartEntryModel?,
@@ -470,19 +488,23 @@ public open class ColumnChart(
             )
         }
 
-        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
+        override suspend fun transform(
+            extraStore: MutableExtraStore,
+            fraction: Float,
+        ) {
             getDrawingModelInterpolator()
                 .transform(fraction)
                 ?.let { extraStore[key] = it }
                 ?: extraStore.remove(key)
         }
 
-        private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): ColumnChartDrawingModel = entries
-            .map { series ->
-                series.associate { entry ->
-                    entry.x to ColumnChartDrawingModel.ColumnInfo(abs(entry.y) / chartValues.lengthY)
+        private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): ColumnChartDrawingModel =
+            entries
+                .map { series ->
+                    series.associate { entry ->
+                        entry.x to ColumnChartDrawingModel.ColumnInfo(abs(entry.y) / chartValues.lengthY)
+                    }
                 }
-            }
-            .let(::ColumnChartDrawingModel)
+                .let(::ColumnChartDrawingModel)
     }
 }

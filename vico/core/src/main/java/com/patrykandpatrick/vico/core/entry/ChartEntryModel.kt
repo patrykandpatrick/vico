@@ -39,7 +39,6 @@ import com.patrykandpatrick.vico.core.entry.diff.ExtraStore
  * @see [ComposedChartEntryModelProducer].
  */
 public interface ChartEntryModel {
-
     /**
      * The [ChartEntryModel]’s identifier. Different [ChartEntryModel] instances don’t necessarily have different
      * identifiers. [ChartEntryModelProducer] and [ComposedChartEntryModelProducer] use the same [id] for all

@@ -24,19 +24,24 @@ import com.patrykandpatrick.vico.core.util.unpackFloat2
 /**
  * Creates a new [Point] with the provided coordinates.
  */
-public fun Point(x: Float, y: Float): Point = Point(packFloats(x, y))
+public fun Point(
+    x: Float,
+    y: Float,
+): Point = Point(packFloats(x, y))
 
 /**
  * Creates a new [Point] with the provided coordinates.
  */
-public fun Point(x: Int, y: Int): Point = Point(packInts(x, y))
+public fun Point(
+    x: Int,
+    y: Int,
+): Point = Point(packInts(x, y))
 
 /**
  * Represents a point in a coordinate system.
  */
 @JvmInline
 public value class Point internal constructor(private val packedValue: Long) {
-
     /**
      * The _x_ coordinate.
      */

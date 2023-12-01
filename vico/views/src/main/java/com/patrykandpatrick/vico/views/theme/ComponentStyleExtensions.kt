@@ -43,186 +43,211 @@ internal fun TypedArray.getLineComponent(
     defaultColor: Int = context.defaultColors.axisLineColor.toInt(),
     defaultThickness: Float = DefaultDimens.AXIS_LINE_WIDTH,
     defaultShape: Shape = Shapes.rectShape,
-): LineComponent = use { array ->
-    LineComponent(
-        color = array.getColorExtended(
-            index = R.styleable.LineComponent_color,
-            defaultColor = defaultColor,
-        ),
-        thicknessDp = array.getRawDimension(
-            context = context,
-            index = R.styleable.LineComponent_thickness,
-            defaultValue = defaultThickness,
-        ),
-        shape = if (hasValue(R.styleable.LineComponent_shapeStyle)) {
-            getNestedTypedArray(
-                context = context,
-                resourceId = R.styleable.LineComponent_shapeStyle,
-                styleableResourceId = R.styleable.Shape,
-            ).getShape(
-                context = context,
+): LineComponent =
+    use { array ->
+        LineComponent(
+            color =
+                array.getColorExtended(
+                    index = R.styleable.LineComponent_color,
+                    defaultColor = defaultColor,
+                ),
+            thicknessDp =
+                array.getRawDimension(
+                    context = context,
+                    index = R.styleable.LineComponent_thickness,
+                    defaultValue = defaultThickness,
+                ),
+            shape =
+                if (hasValue(R.styleable.LineComponent_shapeStyle)) {
+                    getNestedTypedArray(
+                        context = context,
+                        resourceId = R.styleable.LineComponent_shapeStyle,
+                        styleableResourceId = R.styleable.Shape,
+                    ).getShape(
+                        context = context,
+                    )
+                } else {
+                    defaultShape
+                },
+            strokeColor =
+                array.getColorExtended(
+                    index = R.styleable.LineComponent_strokeColor,
+                    defaultColor = Color.TRANSPARENT,
+                ),
+            strokeWidthDp =
+                array.getRawDimension(
+                    context = context,
+                    index = R.styleable.LineComponent_strokeWidth,
+                    defaultValue = 0f,
+                ),
+        )
+    }
+
+internal fun TypedArray.getComponent(context: Context): Component? =
+    use { array ->
+
+        if (!hasValue(R.styleable.ComponentStyle_color)) {
+            return@use null
+        }
+
+        val overlayingComponent =
+            if (hasValue(R.styleable.ComponentStyle_overlayingComponentStyle)) {
+                getNestedTypedArray(
+                    context = context,
+                    resourceId = R.styleable.ComponentStyle_overlayingComponentStyle,
+                    styleableResourceId = R.styleable.ComponentStyle,
+                ).getComponent(context)
+            } else {
+                null
+            }
+
+        val baseComponent =
+            ShapeComponent(
+                color = array.getColorExtended(index = R.styleable.ComponentStyle_color),
+                shape =
+                    getNestedTypedArray(
+                        context = context,
+                        resourceId = R.styleable.ComponentStyle_shapeStyle,
+                        styleableResourceId = R.styleable.Shape,
+                    ).getShape(context),
+                strokeColor =
+                    array.getColorExtended(
+                        index = R.styleable.ComponentStyle_strokeColor,
+                        defaultColor = Color.TRANSPARENT,
+                    ),
+                strokeWidthDp =
+                    array.getRawDimension(
+                        context = context,
+                        index = R.styleable.ComponentStyle_strokeWidth,
+                        defaultValue = 0f,
+                    ),
+            )
+
+        if (overlayingComponent != null) {
+            OverlayingComponent(
+                outer = baseComponent,
+                inner = overlayingComponent,
+                innerPaddingAllDp =
+                    getRawDimension(
+                        context = context,
+                        index = R.styleable.ComponentStyle_overlayingComponentPadding,
+                        defaultValue = 0f,
+                    ),
             )
         } else {
-            defaultShape
-        },
-        strokeColor = array.getColorExtended(
-            index = R.styleable.LineComponent_strokeColor,
-            defaultColor = Color.TRANSPARENT,
-        ),
-        strokeWidthDp = array.getRawDimension(
-            context = context,
-            index = R.styleable.LineComponent_strokeWidth,
-            defaultValue = 0f,
-        ),
-    )
-}
-
-internal fun TypedArray.getComponent(
-    context: Context,
-): Component? = use { array ->
-
-    if (!hasValue(R.styleable.ComponentStyle_color)) {
-        return@use null
+            baseComponent
+        }
     }
-
-    val overlayingComponent = if (hasValue(R.styleable.ComponentStyle_overlayingComponentStyle)) {
-        getNestedTypedArray(
-            context = context,
-            resourceId = R.styleable.ComponentStyle_overlayingComponentStyle,
-            styleableResourceId = R.styleable.ComponentStyle,
-        ).getComponent(context)
-    } else {
-        null
-    }
-
-    val baseComponent = ShapeComponent(
-        color = array.getColorExtended(index = R.styleable.ComponentStyle_color),
-        shape = getNestedTypedArray(
-            context = context,
-            resourceId = R.styleable.ComponentStyle_shapeStyle,
-            styleableResourceId = R.styleable.Shape,
-        ).getShape(context),
-        strokeColor = array.getColorExtended(
-            index = R.styleable.ComponentStyle_strokeColor,
-            defaultColor = Color.TRANSPARENT,
-        ),
-        strokeWidthDp = array.getRawDimension(
-            context = context,
-            index = R.styleable.ComponentStyle_strokeWidth,
-            defaultValue = 0f,
-        ),
-    )
-
-    if (overlayingComponent != null) {
-        OverlayingComponent(
-            outer = baseComponent,
-            inner = overlayingComponent,
-            innerPaddingAllDp = getRawDimension(
-                context = context,
-                index = R.styleable.ComponentStyle_overlayingComponentPadding,
-                defaultValue = 0f,
-            ),
-        )
-    } else {
-        baseComponent
-    }
-}
 
 internal fun TypedArray.getLineSpec(
     context: Context,
     defaultColor: Int = context.defaultColors.entity1Color.toInt(),
 ): LineChart.LineSpec {
-    val positiveLineColor = getColor(
-        R.styleable.LineSpec_positiveColor,
-        getColor(R.styleable.LineSpec_color, defaultColor),
-    )
+    val positiveLineColor =
+        getColor(
+            R.styleable.LineSpec_positiveColor,
+            getColor(R.styleable.LineSpec_color, defaultColor),
+        )
 
     val negativeLineColor = getColorExtended(R.styleable.LineSpec_negativeColor)
 
-    val lineShader = if (hasValue(R.styleable.LineSpec_negativeColor)) {
-        HorizontalSplitShader.Solid(positiveLineColor, negativeLineColor)
-    } else {
-        SolidShader(positiveLineColor)
-    }
+    val lineShader =
+        if (hasValue(R.styleable.LineSpec_negativeColor)) {
+            HorizontalSplitShader.Solid(positiveLineColor, negativeLineColor)
+        } else {
+            SolidShader(positiveLineColor)
+        }
 
-    val positiveShader = if (
-        hasValue(R.styleable.LineSpec_gradientTopColor) ||
-        hasValue(R.styleable.LineSpec_gradientBottomColor) ||
-        hasValue(R.styleable.LineSpec_positiveGradientTopColor) ||
-        hasValue(R.styleable.LineSpec_positiveGradientBottomColor)
-    ) {
-        val gradientTopColor = getColorExtended(
-            index = R.styleable.LineSpec_positiveGradientTopColor,
-            defaultColor = getColorExtended(R.styleable.LineSpec_gradientTopColor),
-        )
-        val gradientBottomColor = getColorExtended(
-            index = R.styleable.LineSpec_positiveGradientBottomColor,
-            defaultColor = getColorExtended(R.styleable.LineSpec_gradientBottomColor),
-        )
+    val positiveShader =
+        if (
+            hasValue(R.styleable.LineSpec_gradientTopColor) ||
+            hasValue(R.styleable.LineSpec_gradientBottomColor) ||
+            hasValue(R.styleable.LineSpec_positiveGradientTopColor) ||
+            hasValue(R.styleable.LineSpec_positiveGradientBottomColor)
+        ) {
+            val gradientTopColor =
+                getColorExtended(
+                    index = R.styleable.LineSpec_positiveGradientTopColor,
+                    defaultColor = getColorExtended(R.styleable.LineSpec_gradientTopColor),
+                )
+            val gradientBottomColor =
+                getColorExtended(
+                    index = R.styleable.LineSpec_positiveGradientBottomColor,
+                    defaultColor = getColorExtended(R.styleable.LineSpec_gradientBottomColor),
+                )
 
-        DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
-    } else {
-        DynamicShaders.verticalGradient(
-            positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-            positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-        )
-    }
+            DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
+        } else {
+            DynamicShaders.verticalGradient(
+                positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+            )
+        }
 
-    val negativeShader = if (
-        hasValue(R.styleable.LineSpec_negativeGradientTopColor) ||
-        hasValue(R.styleable.LineSpec_negativeGradientBottomColor)
-    ) {
-        val gradientTopColor = getColorExtended(R.styleable.LineSpec_negativeGradientTopColor)
-        val gradientBottomColor = getColorExtended(R.styleable.LineSpec_negativeGradientBottomColor)
+    val negativeShader =
+        if (
+            hasValue(R.styleable.LineSpec_negativeGradientTopColor) ||
+            hasValue(R.styleable.LineSpec_negativeGradientBottomColor)
+        ) {
+            val gradientTopColor = getColorExtended(R.styleable.LineSpec_negativeGradientTopColor)
+            val gradientBottomColor = getColorExtended(R.styleable.LineSpec_negativeGradientBottomColor)
 
-        DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
-    } else {
-        DynamicShaders.verticalGradient(
-            negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-            negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-        )
-    }
+            DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
+        } else {
+            DynamicShaders.verticalGradient(
+                negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+                negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+            )
+        }
 
     return LineChart.LineSpec(
         lineShader = lineShader,
-        point = getNestedTypedArray(
-            context = context,
-            resourceId = R.styleable.LineSpec_pointStyle,
-            styleableResourceId = R.styleable.ComponentStyle,
-        ).getComponent(context),
-        pointSizeDp = getRawDimension(
-            context = context,
-            index = R.styleable.LineSpec_pointSize,
-            defaultValue = DefaultDimens.POINT_SIZE,
-        ),
-        lineThicknessDp = getRawDimension(
-            context = context,
-            index = R.styleable.LineSpec_lineThickness,
-            defaultValue = DefaultDimens.LINE_THICKNESS,
-        ),
-        lineBackgroundShader = HorizontalSplitShader.Double(positiveShader, negativeShader),
-        dataLabel = if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
+        point =
             getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.LineSpec_dataLabelStyle,
-                styleableResourceId = R.styleable.TextComponentStyle,
-            ).getTextComponent(context = context)
-        } else {
-            null
-        },
-        dataLabelVerticalPosition = getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->
-            val values = VerticalPosition.entries
-            values[value % values.size]
-        },
-        dataLabelRotationDegrees = getFloat(
-            R.styleable.LineSpec_dataLabelRotationDegrees,
-            0f,
-        ),
-        pointConnector = DefaultPointConnector(
-            cubicStrength = getFraction(
-                index = R.styleable.LineSpec_cubicStrength,
-                defaultValue = DefaultDimens.CUBIC_STRENGTH,
+                resourceId = R.styleable.LineSpec_pointStyle,
+                styleableResourceId = R.styleable.ComponentStyle,
+            ).getComponent(context),
+        pointSizeDp =
+            getRawDimension(
+                context = context,
+                index = R.styleable.LineSpec_pointSize,
+                defaultValue = DefaultDimens.POINT_SIZE,
             ),
-        ),
+        lineThicknessDp =
+            getRawDimension(
+                context = context,
+                index = R.styleable.LineSpec_lineThickness,
+                defaultValue = DefaultDimens.LINE_THICKNESS,
+            ),
+        lineBackgroundShader = HorizontalSplitShader.Double(positiveShader, negativeShader),
+        dataLabel =
+            if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
+                getNestedTypedArray(
+                    context = context,
+                    resourceId = R.styleable.LineSpec_dataLabelStyle,
+                    styleableResourceId = R.styleable.TextComponentStyle,
+                ).getTextComponent(context = context)
+            } else {
+                null
+            },
+        dataLabelVerticalPosition =
+            getInteger(R.styleable.LineSpec_dataLabelVerticalPosition, 0).let { value ->
+                val values = VerticalPosition.entries
+                values[value % values.size]
+            },
+        dataLabelRotationDegrees =
+            getFloat(
+                R.styleable.LineSpec_dataLabelRotationDegrees,
+                0f,
+            ),
+        pointConnector =
+            DefaultPointConnector(
+                cubicStrength =
+                    getFraction(
+                        index = R.styleable.LineSpec_cubicStrength,
+                        defaultValue = DefaultDimens.CUBIC_STRENGTH,
+                    ),
+            ),
     )
 }

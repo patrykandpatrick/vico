@@ -79,7 +79,10 @@ public class MutableExtraStore internal constructor(mapDelegate: Map<Key<*>, Any
     /**
      * Saves the provided value to this [MutableExtraStore], associating the value with the given key.
      */
-    public operator fun <T : Any> set(key: Key<T>, value: T) {
+    public operator fun <T : Any> set(
+        key: Key<T>,
+        value: T,
+    ) {
         mapDelegate[key] = value
     }
 
@@ -96,10 +99,11 @@ public class MutableExtraStore internal constructor(mapDelegate: Map<Key<*>, Any
         destination.putAll(mapDelegate)
     }
 
-    override operator fun plus(other: ExtraStore): ExtraStore = MutableExtraStore(
-        buildMap {
-            putAll(mapDelegate)
-            other.copyContentTo(this)
-        },
-    )
+    override operator fun plus(other: ExtraStore): ExtraStore =
+        MutableExtraStore(
+            buildMap {
+                putAll(mapDelegate)
+                other.copyContentTo(this)
+            },
+        )
 }

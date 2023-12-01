@@ -38,32 +38,33 @@ import com.patrykandpatrick.vico.views.extension.defaultColors
 
 private const val FONT_WEIGHT_NORMAL = 400
 
-internal fun TypedArray.getTextComponent(
-    context: Context,
-): TextComponent = use {
-    val color = getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.axisLabelColor.toInt())
-    val background = getNestedTypedArray(
-        context = context,
-        resourceId = R.styleable.TextComponentStyle_backgroundStyle,
-        styleableResourceId = R.styleable.ComponentStyle,
-    ).getComponent(context)
+internal fun TypedArray.getTextComponent(context: Context): TextComponent =
+    use {
+        val color = getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.axisLabelColor.toInt())
+        val background =
+            getNestedTypedArray(
+                context = context,
+                resourceId = R.styleable.TextComponentStyle_backgroundStyle,
+                styleableResourceId = R.styleable.ComponentStyle,
+            ).getComponent(context)
 
-    textComponent {
-        this.color = color
-        this.background = background
-        this.padding = getPadding(context)
-        this.margins = getMargins(context)
-        this.textSizeSp = getRawDimension(
-            context = context,
-            index = R.styleable.TextComponentStyle_android_textSize,
-            defaultValue = TEXT_COMPONENT_TEXT_SIZE,
-        )
-        this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
-        this.ellipsize = getTruncateAt()
-        getTypeface(context)?.let { this.typeface = it }
-        this.textAlignment = getTextAlignment()
+        textComponent {
+            this.color = color
+            this.background = background
+            this.padding = getPadding(context)
+            this.margins = getMargins(context)
+            this.textSizeSp =
+                getRawDimension(
+                    context = context,
+                    index = R.styleable.TextComponentStyle_android_textSize,
+                    defaultValue = TEXT_COMPONENT_TEXT_SIZE,
+                )
+            this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
+            this.ellipsize = getTruncateAt()
+            getTypeface(context)?.let { this.typeface = it }
+            this.textAlignment = getTextAlignment()
+        }
     }
-}
 
 private fun TypedArray.getTruncateAt(): TextUtils.TruncateAt {
     val int = getInt(R.styleable.TextComponentStyle_android_ellipsize, TextUtils.TruncateAt.END.ordinal)
@@ -74,33 +75,35 @@ private fun TypedArray.getTruncateAt(): TextUtils.TruncateAt {
     }
 }
 
-@Suppress("MagicNumber")
 private fun TypedArray.getTypeface(context: Context): Typeface? {
-    val fontIndex = if (hasValue(R.styleable.TextComponentStyle_android_fontFamily)) {
-        R.styleable.TextComponentStyle_android_fontFamily
-    } else {
-        R.styleable.TextComponentStyle_fontFamily
-    }
+    val fontIndex =
+        if (hasValue(R.styleable.TextComponentStyle_android_fontFamily)) {
+            R.styleable.TextComponentStyle_android_fontFamily
+        } else {
+            R.styleable.TextComponentStyle_fontFamily
+        }
 
-    val fontStyle = if (hasValue(R.styleable.TextComponentStyle_android_fontStyle)) {
-        R.styleable.TextComponentStyle_android_fontStyle
-    } else {
-        R.styleable.TextComponentStyle_fontStyle
-    }
+    val fontStyle =
+        if (hasValue(R.styleable.TextComponentStyle_android_fontStyle)) {
+            R.styleable.TextComponentStyle_android_fontStyle
+        } else {
+            R.styleable.TextComponentStyle_fontStyle
+        }
 
     val fontResId = getResourceId(fontIndex, 0)
     val fontWeight = getInteger(R.styleable.TextComponentStyle_android_textFontWeight, FONT_WEIGHT_NORMAL)
 
-    val family = if (fontResId > 0) {
-        ResourcesCompat.getFont(context, fontResId)
-    } else {
-        when (getInteger(R.styleable.TextComponentStyle_typeface, 3)) {
-            0 -> Typeface.DEFAULT
-            1 -> Typeface.SANS_SERIF
-            2 -> Typeface.SERIF
-            else -> Typeface.MONOSPACE
+    val family =
+        if (fontResId > 0) {
+            ResourcesCompat.getFont(context, fontResId)
+        } else {
+            when (getInteger(R.styleable.TextComponentStyle_typeface, 3)) {
+                0 -> Typeface.DEFAULT
+                1 -> Typeface.SANS_SERIF
+                2 -> Typeface.SERIF
+                else -> Typeface.MONOSPACE
+            }
         }
-    }
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
         Typeface.create(family, fontWeight, fontStyle == 1)
     } else {
@@ -109,8 +112,9 @@ private fun TypedArray.getTypeface(context: Context): Typeface? {
 }
 
 private fun TypedArray.getPadding(context: Context): MutableDimensions {
-    fun getDpDimension(@StyleableRes index: Int): Float =
-        getRawDimension(context, index, -1f)
+    fun getDpDimension(
+        @StyleableRes index: Int,
+    ): Float = getRawDimension(context, index, -1f)
 
     val padding = getDpDimension(R.styleable.TextComponentStyle_android_padding)
     val paddingVertical = getDpDimension(R.styleable.TextComponentStyle_android_paddingVertical)
@@ -120,20 +124,25 @@ private fun TypedArray.getPadding(context: Context): MutableDimensions {
     val paddingEnd = getDpDimension(R.styleable.TextComponentStyle_android_paddingEnd)
     val paddingBottom = getDpDimension(R.styleable.TextComponentStyle_android_paddingBottom)
     return MutableDimensions(
-        startDp = firstNonNegativeOf(paddingStart, paddingHorizontal, padding)
-            ?: AXIS_LABEL_HORIZONTAL_PADDING.toFloat(),
-        topDp = firstNonNegativeOf(paddingTop, paddingVertical, padding)
-            ?: AXIS_LABEL_VERTICAL_PADDING.toFloat(),
-        endDp = firstNonNegativeOf(paddingEnd, paddingHorizontal, padding)
-            ?: AXIS_LABEL_HORIZONTAL_PADDING.toFloat(),
-        bottomDp = firstNonNegativeOf(paddingBottom, paddingVertical, padding)
-            ?: AXIS_LABEL_VERTICAL_PADDING.toFloat(),
+        startDp =
+            firstNonNegativeOf(paddingStart, paddingHorizontal, padding)
+                ?: AXIS_LABEL_HORIZONTAL_PADDING.toFloat(),
+        topDp =
+            firstNonNegativeOf(paddingTop, paddingVertical, padding)
+                ?: AXIS_LABEL_VERTICAL_PADDING.toFloat(),
+        endDp =
+            firstNonNegativeOf(paddingEnd, paddingHorizontal, padding)
+                ?: AXIS_LABEL_HORIZONTAL_PADDING.toFloat(),
+        bottomDp =
+            firstNonNegativeOf(paddingBottom, paddingVertical, padding)
+                ?: AXIS_LABEL_VERTICAL_PADDING.toFloat(),
     )
 }
 
 private fun TypedArray.getMargins(context: Context): MutableDimensions {
-    fun getDpDimension(@StyleableRes index: Int): Float =
-        getRawDimension(context, index, -1f)
+    fun getDpDimension(
+        @StyleableRes index: Int,
+    ): Float = getRawDimension(context, index, -1f)
 
     val padding = getDpDimension(R.styleable.TextComponentStyle_margin)
     val paddingVertical = getDpDimension(R.styleable.TextComponentStyle_marginVertical)

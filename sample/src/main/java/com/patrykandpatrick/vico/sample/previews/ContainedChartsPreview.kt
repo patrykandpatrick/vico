@@ -56,52 +56,60 @@ private val markerMap: Map<Float, Marker>
 private fun getColumnChart(
     markerMap: Map<Float, Marker> = emptyMap(),
     targetVerticalAxisPosition: Vertical? = null,
-): ColumnChart = columnChart(
-    columns = listOf(
-        lineComponent(
-            color = Color.Black,
-            thickness = 8.dp,
-            shape = Shapes.pillShape,
-        ),
-    ),
-    persistentMarkers = markerMap,
-    targetVerticalAxisPosition = targetVerticalAxisPosition,
-)
+): ColumnChart =
+    columnChart(
+        columns =
+            listOf(
+                lineComponent(
+                    color = Color.Black,
+                    thickness = 8.dp,
+                    shape = Shapes.pillShape,
+                ),
+            ),
+        persistentMarkers = markerMap,
+        targetVerticalAxisPosition = targetVerticalAxisPosition,
+    )
 
 @Composable
 private fun getLineChart(
     markerMap: Map<Float, Marker> = emptyMap(),
     targetVerticalAxisPosition: Vertical? = null,
-): LineChart = lineChart(
-    lines = listOf(
-        lineSpec(
-            lineColor = Color.DarkGray,
-            lineBackgroundShader = verticalGradient(
-                arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f)),
+): LineChart =
+    lineChart(
+        lines =
+            listOf(
+                lineSpec(
+                    lineColor = Color.DarkGray,
+                    lineBackgroundShader =
+                        verticalGradient(
+                            arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f)),
+                        ),
+                ),
             ),
-        ),
-    ),
-    persistentMarkers = markerMap,
-    targetVerticalAxisPosition = targetVerticalAxisPosition,
-)
+        persistentMarkers = markerMap,
+        targetVerticalAxisPosition = targetVerticalAxisPosition,
+    )
 
 private val startAxis: Axis<Start>
-    @Composable get() = rememberStartAxis(
-        label = textComponent(color = Color.Black),
-        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 5) },
-    )
+    @Composable get() =
+        rememberStartAxis(
+            label = textComponent(color = Color.Black),
+            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 5) },
+        )
 
 private val endAxis: Axis<End>
-    @Composable get() = rememberEndAxis(
-        label = textComponent(color = Color.DarkGray),
-        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 7) },
-    )
+    @Composable get() =
+        rememberEndAxis(
+            label = textComponent(color = Color.DarkGray),
+            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 7) },
+        )
 
 @Composable
 @Preview("Chart with independent axes", widthDp = 350)
 public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
-    val composedChart = getColumnChart(targetVerticalAxisPosition = Start) +
-        getLineChart(targetVerticalAxisPosition = End)
+    val composedChart =
+        getColumnChart(targetVerticalAxisPosition = Start) +
+            getLineChart(targetVerticalAxisPosition = End)
 
     composedChart.setPersistentMarkers(markerMap)
 

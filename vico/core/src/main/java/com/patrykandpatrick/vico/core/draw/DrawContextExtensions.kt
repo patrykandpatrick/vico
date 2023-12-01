@@ -47,26 +47,30 @@ public fun drawContext(
     isLtr: Boolean = true,
     elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
     spToPx: (Float) -> Float = { it },
-): DrawContext = object : DrawContext, Extras by DefaultExtras() {
-    override val canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
-    override val elevationOverlayColor: Long = elevationOverlayColor
-    override var canvas: Canvas = canvas
-    override val density: Float = density
-    override val isLtr: Boolean = isLtr
-    override val isHorizontalScrollEnabled: Boolean = false
-    override val chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
-    override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented
+): DrawContext =
+    object : DrawContext, Extras by DefaultExtras() {
+        override val canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
+        override val elevationOverlayColor: Long = elevationOverlayColor
+        override var canvas: Canvas = canvas
+        override val density: Float = density
+        override val isLtr: Boolean = isLtr
+        override val isHorizontalScrollEnabled: Boolean = false
+        override val chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
+        override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented
 
-    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
-        val originalCanvas = this.canvas
-        this.canvas = canvas
-        block(this)
-        this.canvas = originalCanvas
+        override fun withOtherCanvas(
+            canvas: Canvas,
+            block: (DrawContext) -> Unit,
+        ) {
+            val originalCanvas = this.canvas
+            this.canvas = canvas
+            block(this)
+            this.canvas = originalCanvas
+        }
+
+        override fun reset() {
+            clearExtras()
+        }
+
+        override fun spToPx(sp: Float): Float = spToPx(sp)
     }
-
-    override fun reset() {
-        clearExtras()
-    }
-
-    override fun spToPx(sp: Float): Float = spToPx(sp)
-}

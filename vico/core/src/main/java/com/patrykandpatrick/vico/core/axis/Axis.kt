@@ -37,7 +37,6 @@ import com.patrykandpatrick.vico.core.extension.setAll
  * @see VerticalAxis
  */
 public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
-
     private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
     override val bounds: RectF = RectF()
@@ -113,9 +112,10 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         top: Float,
         right: Float,
         bottom: Float,
-    ): Boolean = restrictedBounds.none {
-        it.contains(left, top, right, bottom) || it.intersects(left, top, right, bottom)
-    }
+    ): Boolean =
+        restrictedBounds.none {
+            it.contains(left, top, right, bottom) || it.intersects(left, top, right, bottom)
+        }
 
     /**
      * Used to construct [Axis] instances.
@@ -182,7 +182,6 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
      * @see [HorizontalAxis]
      */
     public sealed class SizeConstraint {
-
         /**
          * The axis will measure itself and use as much space as it needs, but no less than [minSizeDp], and no more
          * than [maxSizeDp].

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,9 +73,10 @@ internal fun staticLayout(
         ).setLineCount(maxLines)
     }
 
-internal fun StaticLayout.setLineCount(count: Int) = apply {
-    setFieldValue(LINE_COUNT_FIELD, count)
-}
+internal fun StaticLayout.setLineCount(count: Int) =
+    apply {
+        setFieldValue(LINE_COUNT_FIELD, count)
+    }
 
 internal fun Layout.getBounds(outBounds: RectF): RectF =
     outBounds.apply {

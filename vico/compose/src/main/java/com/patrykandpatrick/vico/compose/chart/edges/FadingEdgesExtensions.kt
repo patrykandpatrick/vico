@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,11 +42,12 @@ public fun FadingEdges(
     endEdgeWidth: Dp = startEdgeWidth,
     visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
     visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
-): FadingEdges = FadingEdges(
-    startEdgeWidthDp = startEdgeWidth.value,
-    endEdgeWidthDp = endEdgeWidth.value,
-    visibilityThresholdDp = visibilityThreshold.value,
-) { input -> visibilityEasing.transform(input) }
+): FadingEdges =
+    FadingEdges(
+        startEdgeWidthDp = startEdgeWidth.value,
+        endEdgeWidthDp = endEdgeWidth.value,
+        visibilityThresholdDp = visibilityThreshold.value,
+    ) { input -> visibilityEasing.transform(input) }
 
 /**
  * Creates and remembers a [FadingEdges] instance.
@@ -65,13 +66,14 @@ public fun rememberFadingEdges(
     endEdgeWidth: Dp = startEdgeWidth,
     visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
     visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
-): FadingEdges = remember { FadingEdges() }
-    .apply {
-        startEdgeWidthDp = startEdgeWidth.value
-        endEdgeWidthDp = endEdgeWidth.value
-        visibilityThresholdDp = visibilityThreshold.value
-        this.visibilityInterpolator = remember(visibilityEasing) { TimeInterpolator(visibilityEasing::transform) }
-    }
+): FadingEdges =
+    remember { FadingEdges() }
+        .apply {
+            startEdgeWidthDp = startEdgeWidth.value
+            endEdgeWidthDp = endEdgeWidth.value
+            visibilityThresholdDp = visibilityThreshold.value
+            this.visibilityInterpolator = remember(visibilityEasing) { TimeInterpolator(visibilityEasing::transform) }
+        }
 
 /**
  * Creates and remembers a [FadingEdges] instance.
@@ -88,18 +90,18 @@ public fun rememberFadingEdges(
     edgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
     visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
     visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
-): FadingEdges = rememberFadingEdges(
-    startEdgeWidth = edgeWidth,
-    endEdgeWidth = edgeWidth,
-    visibilityThreshold = visibilityThreshold,
-    visibilityEasing = visibilityEasing,
-)
+): FadingEdges =
+    rememberFadingEdges(
+        startEdgeWidth = edgeWidth,
+        endEdgeWidth = edgeWidth,
+        visibilityThreshold = visibilityThreshold,
+        visibilityEasing = visibilityEasing,
+    )
 
 /**
  * The default values for [FadingEdges].
  */
 public object FadingEdgesDefaults {
-
     /**
      * The width of the fade overlays (in dp).
      */

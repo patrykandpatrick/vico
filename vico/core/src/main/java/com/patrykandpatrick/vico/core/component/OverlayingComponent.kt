@@ -36,7 +36,6 @@ public class OverlayingComponent(
     public val innerPaddingEndDp: Float = 0f,
     public val innerPaddingBottomDp: Float = 0f,
 ) : Component() {
-
     public constructor(
         outer: Component,
         inner: Component,
@@ -66,21 +65,22 @@ public class OverlayingComponent(
         right: Float,
         bottom: Float,
         opacity: Float,
-    ): Unit = with(context) {
-        val leftWithMargin = left + margins.startDp.pixels
-        val topWithMargin = top + margins.topDp.pixels
-        val rightWithMargin = right - margins.endDp.pixels
-        val bottomWithMargin = bottom - margins.bottomDp.pixels
+    ): Unit =
+        with(context) {
+            val leftWithMargin = left + margins.startDp.pixels
+            val topWithMargin = top + margins.topDp.pixels
+            val rightWithMargin = right - margins.endDp.pixels
+            val bottomWithMargin = bottom - margins.bottomDp.pixels
 
-        outer.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
-        inner.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
+            outer.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
+            inner.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
 
-        DebugHelper.drawDebugBounds(
-            context = context,
-            left = left,
-            top = top,
-            right = right,
-            bottom = bottom,
-        )
-    }
+            DebugHelper.drawDebugBounds(
+                context = context,
+                left = left,
+                top = top,
+                right = right,
+                bottom = bottom,
+            )
+        }
 }

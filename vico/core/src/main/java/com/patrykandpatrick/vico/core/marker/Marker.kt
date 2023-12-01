@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.core.model.Point
  * Highlights points on a chart and displays their corresponding values in a bubble.
  */
 public interface Marker : ChartInsetter {
-
     /**
      * Draws the marker.
      * @param context the [DrawContext] used to draw the marker.

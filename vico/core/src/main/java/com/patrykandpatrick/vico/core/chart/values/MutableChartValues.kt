@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.core.extension.orZero
  * An implementation of [ChartValues] whose every property is mutable.
  */
 public class MutableChartValues : ChartValues {
-
     private var _minX: Float? = null
 
     private var _maxX: Float? = null
@@ -71,14 +70,15 @@ public class MutableChartValues : ChartValues {
         maxY: Float? = null,
         xStep: Float? = null,
         chartEntryModel: ChartEntryModel = this.chartEntryModel,
-    ): MutableChartValues = apply {
-        if (minX != null) _minX = if (_minX != null) minOf(this.minX, minX) else minX
-        if (maxX != null) _maxX = if (_maxX != null) maxOf(this.maxX, maxX) else maxX
-        if (minY != null) _minY = if (_minY != null) minOf(this.minY, minY) else minY
-        if (maxY != null) _maxY = if (_maxY != null) maxOf(this.maxY, maxY) else maxY
-        if (xStep != null) _xStep = xStep
-        this.chartEntryModel = chartEntryModel
-    }
+    ): MutableChartValues =
+        apply {
+            if (minX != null) _minX = if (_minX != null) minOf(this.minX, minX) else minX
+            if (maxX != null) _maxX = if (_maxX != null) maxOf(this.maxX, maxX) else maxX
+            if (minY != null) _minY = if (_minY != null) minOf(this.minY, minY) else minY
+            if (maxY != null) _maxY = if (_maxY != null) maxOf(this.maxY, maxY) else maxY
+            if (xStep != null) _xStep = xStep
+            this.chartEntryModel = chartEntryModel
+        }
 
     /**
      * Sets [minX], [maxX], [minY], and [maxY] to 0.
@@ -93,28 +93,29 @@ public class MutableChartValues : ChartValues {
     }
 
     private companion object {
-
-        fun emptyChartEntryModel(): ChartEntryModel = object : ChartEntryModel {
-            override val entries: List<List<ChartEntry>> = emptyList()
-            override val minX: Float = 0f
-            override val maxX: Float = 0f
-            override val minY: Float = 0f
-            override val maxY: Float = 0f
-            override val stackedPositiveY: Float = 0f
-            override val stackedNegativeY: Float = 0f
-            override val xGcd: Float = 1f
-        }
+        fun emptyChartEntryModel(): ChartEntryModel =
+            object : ChartEntryModel {
+                override val entries: List<List<ChartEntry>> = emptyList()
+                override val minX: Float = 0f
+                override val maxX: Float = 0f
+                override val minY: Float = 0f
+                override val maxY: Float = 0f
+                override val stackedPositiveY: Float = 0f
+                override val stackedNegativeY: Float = 0f
+                override val xGcd: Float = 1f
+            }
     }
 }
 
 /**
  * Creates and returns an immutable copy of this [MutableChartValues] instance.
  */
-public fun MutableChartValues.toImmutable(): ChartValues = object : ChartValues {
-    override val minX: Float = this@toImmutable.minX
-    override val maxX: Float = this@toImmutable.maxX
-    override val xStep: Float = this@toImmutable.xStep
-    override val minY: Float = this@toImmutable.minY
-    override val maxY: Float = this@toImmutable.maxY
-    override val chartEntryModel: ChartEntryModel = this@toImmutable.chartEntryModel.toImmutable()
-}
+public fun MutableChartValues.toImmutable(): ChartValues =
+    object : ChartValues {
+        override val minX: Float = this@toImmutable.minX
+        override val maxX: Float = this@toImmutable.maxX
+        override val xStep: Float = this@toImmutable.xStep
+        override val minY: Float = this@toImmutable.minY
+        override val maxY: Float = this@toImmutable.maxY
+        override val chartEntryModel: ChartEntryModel = this@toImmutable.chartEntryModel.toImmutable()
+    }

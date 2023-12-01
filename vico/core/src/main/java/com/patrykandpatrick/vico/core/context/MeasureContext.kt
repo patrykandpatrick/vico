@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
  * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
  */
 public interface MeasureContext : Extras {
-
     /**
      * The bounds of the canvas that will be used to draw the chart and its components.
      */

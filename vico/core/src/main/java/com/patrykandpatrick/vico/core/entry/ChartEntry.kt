@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.patrykandpatrick.vico.core.chart.Chart
  * It holds information about the location of the chart entry on the x-axis and y-axis.
  */
 public interface ChartEntry {
-
     /**
      * The position of this [ChartEntry] on the x-axis.
      */

@@ -109,11 +109,12 @@ public data class ChartStyle(
         val axisLabelTextAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
         val axisGuidelineColor: Color,
         val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
-        val axisGuidelineShape: Shape = Shapes.dashedShape(
-            shape = Shapes.rectShape,
-            dashLength = DefaultDimens.DASH_LENGTH.dp,
-            gapLength = DefaultDimens.DASH_GAP.dp,
-        ),
+        val axisGuidelineShape: Shape =
+            Shapes.dashedShape(
+                shape = Shapes.rectShape,
+                dashLength = DefaultDimens.DASH_LENGTH.dp,
+                gapLength = DefaultDimens.DASH_GAP.dp,
+            ),
         val axisLineColor: Color,
         val axisLineWidth: Dp = DefaultDimens.AXIS_LINE_WIDTH.dp,
         val axisLineShape: Shape = Shapes.rectShape,
@@ -177,7 +178,6 @@ public data class ChartStyle(
     )
 
     public companion object {
-
         /**
          * Creates a base implementation of [ChartStyle] using the provided colors.
          */
@@ -187,43 +187,54 @@ public data class ChartStyle(
             axisLineColor: Color,
             entityColors: List<Color>,
             elevationOverlayColor: Color,
-        ): ChartStyle = ChartStyle(
-            axis = Axis(
-                axisLabelColor = axisLabelColor,
-                axisGuidelineColor = axisGuidelineColor,
-                axisLineColor = axisLineColor,
-            ),
-            columnChart = ColumnChart(
-                columns = entityColors.map { entityColor ->
-                    LineComponent(
-                        color = entityColor.toArgb(),
-                        thicknessDp = DefaultDimens.COLUMN_WIDTH,
-                        shape = Shapes.roundedCornerShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
-                    )
-                },
-            ),
-            lineChart = LineChart(
-                lines = entityColors.map { entityColor ->
-                    lineSpec(
-                        lineShader = DynamicShaders.solid(entityColor),
-                    )
-                },
-            ),
-            marker = Marker(),
-            elevationOverlayColor = elevationOverlayColor,
-        )
+        ): ChartStyle =
+            ChartStyle(
+                axis =
+                    Axis(
+                        axisLabelColor = axisLabelColor,
+                        axisGuidelineColor = axisGuidelineColor,
+                        axisLineColor = axisLineColor,
+                    ),
+                columnChart =
+                    ColumnChart(
+                        columns =
+                            entityColors.map { entityColor ->
+                                LineComponent(
+                                    color = entityColor.toArgb(),
+                                    thicknessDp = DefaultDimens.COLUMN_WIDTH,
+                                    shape =
+                                        Shapes.roundedCornerShape(
+                                            allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT,
+                                        ),
+                                )
+                            },
+                    ),
+                lineChart =
+                    LineChart(
+                        lines =
+                            entityColors.map { entityColor ->
+                                lineSpec(
+                                    lineShader = DynamicShaders.solid(entityColor),
+                                )
+                            },
+                    ),
+                marker = Marker(),
+                elevationOverlayColor = elevationOverlayColor,
+            )
 
-        internal fun fromDefaultColors(defaultColors: DefaultColors) = fromColors(
-            axisLabelColor = Color(defaultColors.axisLabelColor),
-            axisGuidelineColor = Color(defaultColors.axisGuidelineColor),
-            axisLineColor = Color(defaultColors.axisLineColor),
-            entityColors = listOf(
-                defaultColors.entity1Color,
-                defaultColors.entity2Color,
-                defaultColors.entity3Color,
-            ).map(::Color),
-            elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
-        )
+        internal fun fromDefaultColors(defaultColors: DefaultColors) =
+            fromColors(
+                axisLabelColor = Color(defaultColors.axisLabelColor),
+                axisGuidelineColor = Color(defaultColors.axisGuidelineColor),
+                axisLineColor = Color(defaultColors.axisLineColor),
+                entityColors =
+                    listOf(
+                        defaultColors.entity1Color,
+                        defaultColors.entity2Color,
+                        defaultColors.entity3Color,
+                    ).map(::Color),
+                elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
+            )
     }
 }
 
@@ -231,7 +242,6 @@ public data class ChartStyle(
  * Provides a [ChartStyle] instance.
  */
 public object LocalChartStyle {
-
     internal val default: ChartStyle
         @Composable
         get() {

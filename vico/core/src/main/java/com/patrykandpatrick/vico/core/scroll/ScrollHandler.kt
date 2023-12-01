@@ -25,7 +25,6 @@ import kotlin.properties.Delegates
  * @param initialMaxValue the initial maximum scroll amount.
  */
 public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
-
     private var initialScrollHandled: Boolean = false
     private val scrollListeners: MutableSet<ScrollListener> = mutableSetOf()
 
@@ -71,10 +70,11 @@ public class ScrollHandler(initialMaxValue: Float = 0f) : ScrollListenerHost {
      */
     public fun handleInitialScroll(initialScroll: InitialScroll) {
         if (initialScrollHandled) return
-        value = when (initialScroll) {
-            InitialScroll.Start -> 0f
-            InitialScroll.End -> maxValue
-        }
+        value =
+            when (initialScroll) {
+                InitialScroll.Start -> 0f
+                InitialScroll.End -> maxValue
+            }
         initialScrollHandled = true
     }
 

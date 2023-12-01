@@ -57,7 +57,10 @@ internal class ChartEntryModelWrapperState<T : ChartEntryModel> : State<ChartEnt
     override var value by mutableStateOf<ChartEntryModelWrapper<T>>(ChartEntryModelWrapper())
         private set
 
-    fun set(chartEntryModel: T?, chartValuesProvider: ChartValuesProvider) {
+    fun set(
+        chartEntryModel: T?,
+        chartValuesProvider: ChartValuesProvider,
+    ) {
         val currentChartEntryModel = value.chartEntryModel
         if (chartEntryModel?.id != currentChartEntryModel?.id) previousChartEntryModel = currentChartEntryModel
         value = ChartEntryModelWrapper(chartEntryModel, previousChartEntryModel, chartValuesProvider)

@@ -23,7 +23,6 @@ import com.patrykandpatrick.vico.core.chart.Chart
  */
 public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(private val drawingInfo: List<Map<Float, T>>) :
     List<Map<Float, T>> by drawingInfo {
-
     /**
      * Returns an intermediate [DrawingModel] between this one and [from]. The returned drawing model includes the
      * provided [DrawingInfo] list. [fraction] is the balance between [from] and this [DrawingModel], with 0
@@ -46,6 +45,9 @@ public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(private val dra
          * this [DrawingInfo] implementation. The returned object should be an instance of the [DrawingInfo]
          * implementation to which this function belongs.
          */
-        public fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo
+        public fun transform(
+            from: DrawingInfo?,
+            fraction: Float,
+        ): DrawingInfo
     }
 }

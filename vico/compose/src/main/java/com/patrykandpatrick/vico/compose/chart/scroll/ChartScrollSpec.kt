@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
     public val autoScrollCondition: AutoScrollCondition<Model>,
     public val autoScrollAnimationSpec: AnimationSpec<Float>,
 ) {
-
     /**
      * Performs an automatic scroll.
      */
@@ -58,10 +57,11 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
             }
 
             chartScrollState.animateScrollBy(
-                value = when (initialScroll) {
-                    InitialScroll.Start -> -chartScrollState.value
-                    InitialScroll.End -> -chartScrollState.value + chartScrollState.maxValue
-                },
+                value =
+                    when (initialScroll) {
+                        InitialScroll.Start -> -chartScrollState.value
+                        InitialScroll.End -> -chartScrollState.value + chartScrollState.maxValue
+                    },
                 animationSpec = autoScrollAnimationSpec,
             )
         }
@@ -77,16 +77,17 @@ public fun <Model : ChartEntryModel> rememberChartScrollSpec(
     initialScroll: InitialScroll = InitialScroll.Start,
     autoScrollCondition: AutoScrollCondition<Model> = AutoScrollCondition.Never,
     autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
-): ChartScrollSpec<Model> = remember(
-    isScrollEnabled,
-    initialScroll,
-    autoScrollCondition,
-    autoScrollAnimationSpec,
-) {
-    ChartScrollSpec(
-        isScrollEnabled = isScrollEnabled,
-        initialScroll = initialScroll,
-        autoScrollCondition = autoScrollCondition,
-        autoScrollAnimationSpec = autoScrollAnimationSpec,
-    )
-}
+): ChartScrollSpec<Model> =
+    remember(
+        isScrollEnabled,
+        initialScroll,
+        autoScrollCondition,
+        autoScrollAnimationSpec,
+    ) {
+        ChartScrollSpec(
+            isScrollEnabled = isScrollEnabled,
+            initialScroll = initialScroll,
+            autoScrollCondition = autoScrollCondition,
+            autoScrollAnimationSpec = autoScrollAnimationSpec,
+        )
+    }

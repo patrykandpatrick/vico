@@ -34,7 +34,6 @@ public data class MutableMeasureContext(
     public var spToPx: (Float) -> Float,
     override var chartValuesProvider: ChartValuesProvider,
 ) : MeasureContext, Extras by DefaultExtras() {
-
     override fun reset() {
         clearExtras()
     }

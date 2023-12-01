@@ -43,13 +43,14 @@ public fun DynamicShaders.fromComponent(
     checkeredArrangement: Boolean = true,
     tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     tileYMode: Shader.TileMode = tileXMode,
-): ComponentShader = ComponentShader(
-    component = component,
-    componentSizeDp = componentSize.value,
-    checkeredArrangement = checkeredArrangement,
-    tileXMode = tileXMode,
-    tileYMode = tileYMode,
-)
+): ComponentShader =
+    ComponentShader(
+        component = component,
+        componentSizeDp = componentSize.value,
+        checkeredArrangement = checkeredArrangement,
+        tileXMode = tileXMode,
+        tileYMode = tileYMode,
+    )
 
 /**
  * Creates a [BrushShader] using the given [Brush].
@@ -67,5 +68,7 @@ public fun DynamicShaders.solid(color: Color): SolidShader = SolidShader(color.t
  * Creates a [DynamicShader] with split colors. The positive color is used for values above the zero line,
  * and the negative color is used for values below the zero line.
  */
-public fun DynamicShaders.split(positiveColor: Color, negativeColor: Color): HorizontalSplitShader.Solid =
-    HorizontalSplitShader.Solid(positiveColor.toArgb(), negativeColor.toArgb())
+public fun DynamicShaders.split(
+    positiveColor: Color,
+    negativeColor: Color,
+): HorizontalSplitShader.Solid = HorizontalSplitShader.Solid(positiveColor.toArgb(), negativeColor.toArgb())

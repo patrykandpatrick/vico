@@ -22,7 +22,10 @@ import com.patrykandpatrick.vico.core.entry.ChartEntry
  * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
  * block with the [ChartEntry] as the block’s argument.
  */
-public inline fun List<ChartEntry>.forEachIn(range: ClosedFloatingPointRange<Float>, action: (ChartEntry) -> Unit) {
+public inline fun List<ChartEntry>.forEachIn(
+    range: ClosedFloatingPointRange<Float>,
+    action: (ChartEntry) -> Unit,
+) {
     forEach { if (it.x in range) action(it) }
 }
 

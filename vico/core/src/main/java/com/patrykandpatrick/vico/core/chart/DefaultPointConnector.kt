@@ -35,7 +35,6 @@ import kotlin.math.abs
 public class DefaultPointConnector(
     private val cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
 ) : LineChart.LineSpec.PointConnector {
-
     public override fun connect(
         path: Path,
         prevX: Float,
@@ -50,13 +49,13 @@ public class DefaultPointConnector(
             prevY = prevY,
             x = x,
             y = y,
-            curvature = abs(x - prevX).half * cubicStrength *
-                (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(maximumValue = 1f),
+            curvature =
+                abs(x - prevX).half * cubicStrength *
+                    (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(maximumValue = 1f),
         )
     }
 
     private companion object {
-
         const val CUBIC_Y_MULTIPLIER = 4
     }
 }

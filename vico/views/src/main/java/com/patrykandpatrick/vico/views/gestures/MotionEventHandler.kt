@@ -41,7 +41,6 @@ public open class MotionEventHandler(
     private val onTouchPoint: (Point?) -> Unit,
     private val requestInvalidate: () -> Unit,
 ) {
-
     private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
     private val dragThreshold = DRAG_THRESHOLD_PIXELS * density
     private var initialX = -dragThreshold
@@ -114,12 +113,10 @@ public open class MotionEventHandler(
     }
 
     private class VelocityTrackerHelper {
-
         private var tracker: VelocityTracker? = null
 
         @SuppressLint("Recycle")
-        fun get(): VelocityTracker =
-            tracker ?: VelocityTracker.obtain().also { tracker = it }
+        fun get(): VelocityTracker = tracker ?: VelocityTracker.obtain().also { tracker = it }
 
         fun clear() {
             tracker?.recycle()

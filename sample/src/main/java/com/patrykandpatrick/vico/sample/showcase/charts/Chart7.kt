@@ -48,7 +48,10 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart7(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart7(
+    uiSystem: UISystem,
+    chartEntryModelProducer: ChartEntryModelProducer,
+) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart7(chartEntryModelProducer)
         UISystem.Views -> ViewChart7(chartEntryModelProducer)
@@ -60,16 +63,18 @@ private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultLines = currentChartStyle.lineChart.lines
         Chart(
-            chart = lineChart(
-                remember(defaultLines) {
-                    defaultLines.map { defaultLine -> defaultLine.copy(lineBackgroundFill = null) }
-                },
-            ),
+            chart =
+                lineChart(
+                    remember(defaultLines) {
+                        defaultLines.map { defaultLine -> defaultLine.copy(lineBackgroundFill = null) }
+                    },
+                ),
             chartModelProducer = chartEntryModelProducer,
-            startAxis = rememberStartAxis(
-                label = rememberStartAxisLabel(),
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-            ),
+            startAxis =
+                rememberStartAxis(
+                    label = rememberStartAxisLabel(),
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                ),
             bottomAxis = rememberBottomAxis(),
             marker = rememberMarker(),
             legend = rememberLegend(),
@@ -96,33 +101,37 @@ private fun ViewChart7(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun rememberStartAxisLabel() = axisLabelComponent(
-    color = Color.Black,
-    verticalPadding = startAxisLabelVerticalPaddingValue,
-    horizontalPadding = startAxisLabelHorizontalPaddingValue,
-    verticalMargin = startAxisLabelMarginValue,
-    horizontalMargin = startAxisLabelMarginValue,
-    background = shapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
-)
+private fun rememberStartAxisLabel() =
+    axisLabelComponent(
+        color = Color.Black,
+        verticalPadding = startAxisLabelVerticalPaddingValue,
+        horizontalPadding = startAxisLabelHorizontalPaddingValue,
+        verticalMargin = startAxisLabelMarginValue,
+        horizontalMargin = startAxisLabelMarginValue,
+        background = shapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
+    )
 
 @Composable
-private fun rememberLegend() = verticalLegend(
-    items = chartColors.mapIndexed { index, chartColor ->
-        legendItem(
-            icon = shapeComponent(Shapes.pillShape, chartColor),
-            label = textComponent(
-                color = currentChartStyle.axis.axisLabelColor,
-                textSize = legendItemLabelTextSize,
-                typeface = Typeface.MONOSPACE,
-            ),
-            labelText = stringResource(R.string.data_set_x, index + 1),
-        )
-    },
-    iconSize = legendItemIconSize,
-    iconPadding = legendItemIconPaddingValue,
-    spacing = legendItemSpacing,
-    padding = legendPadding,
-)
+private fun rememberLegend() =
+    verticalLegend(
+        items =
+            chartColors.mapIndexed { index, chartColor ->
+                legendItem(
+                    icon = shapeComponent(Shapes.pillShape, chartColor),
+                    label =
+                        textComponent(
+                            color = currentChartStyle.axis.axisLabelColor,
+                            textSize = legendItemLabelTextSize,
+                            typeface = Typeface.MONOSPACE,
+                        ),
+                    labelText = stringResource(R.string.data_set_x, index + 1),
+                )
+            },
+        iconSize = legendItemIconSize,
+        iconPadding = legendItemIconPaddingValue,
+        spacing = legendItemSpacing,
+        padding = legendPadding,
+    )
 
 private const val COLOR_1_CODE = 0xffb983ff
 private const val COLOR_2_CODE = 0xff91b1fd

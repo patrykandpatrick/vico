@@ -29,7 +29,6 @@ import kotlin.math.ceil
  * but you can use [AxisValuesOverrider] to override these values.
  */
 public interface ChartValues {
-
     /**
      * The minimum value displayed on the x-axis. By default, this is equal to [ChartEntryModel.minX] (the
      * [ChartEntryModel] instance being [chartEntryModel]), but you can use [AxisValuesOverrider] to override this
@@ -84,6 +83,5 @@ public interface ChartValues {
     /**
      * Returns the maximum number of major entries that can be present, based on [minX], [maxX], and [xStep].
      */
-    public fun getMaxMajorEntryCount(): Int =
-        ceil(abs(maxX - minX) / xStep + 1).toInt()
+    public fun getMaxMajorEntryCount(): Int = ceil(abs(maxX - minX) / xStep + 1).toInt()
 }

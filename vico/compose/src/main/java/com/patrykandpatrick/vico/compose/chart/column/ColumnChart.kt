@@ -78,18 +78,19 @@ public fun columnChart(
     axisValuesOverrider: AxisValuesOverrider<ChartEntryModel>? = null,
     drawingModelInterpolator: DrawingModelInterpolator<ColumnChartDrawingModel.ColumnInfo, ColumnChartDrawingModel> =
         remember { DefaultDrawingModelInterpolator() },
-): ColumnChart = remember { ColumnChart() }.apply {
-    this.columns = columns
-    this.spacingDp = spacing.value
-    this.innerSpacingDp = innerSpacing.value
-    this.mergeMode = mergeMode
-    this.dataLabel = dataLabel
-    this.dataLabelVerticalPosition = dataLabelVerticalPosition
-    this.dataLabelValueFormatter = dataLabelValueFormatter
-    this.dataLabelRotationDegrees = dataLabelRotationDegrees
-    this.axisValuesOverrider = axisValuesOverrider
-    this.targetVerticalAxisPosition = targetVerticalAxisPosition
-    this.drawingModelInterpolator = drawingModelInterpolator
-    decorations?.also(::setDecorations)
-    persistentMarkers?.also(::setPersistentMarkers)
-}
+): ColumnChart =
+    remember { ColumnChart() }.apply {
+        this.columns = columns
+        this.spacingDp = spacing.value
+        this.innerSpacingDp = innerSpacing.value
+        this.mergeMode = mergeMode
+        this.dataLabel = dataLabel
+        this.dataLabelVerticalPosition = dataLabelVerticalPosition
+        this.dataLabelValueFormatter = dataLabelValueFormatter
+        this.dataLabelRotationDegrees = dataLabelRotationDegrees
+        this.axisValuesOverrider = axisValuesOverrider
+        this.targetVerticalAxisPosition = targetVerticalAxisPosition
+        this.drawingModelInterpolator = drawingModelInterpolator
+        decorations?.also(::setDecorations)
+        persistentMarkers?.also(::setPersistentMarkers)
+    }

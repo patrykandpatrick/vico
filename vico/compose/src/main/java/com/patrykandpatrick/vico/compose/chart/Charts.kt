@@ -250,7 +250,6 @@ public fun <Model : ChartEntryModel> Chart(
     }
 }
 
-@Suppress("LongMethod")
 @Composable
 internal fun <Model : ChartEntryModel> ChartImpl(
     chart: Chart<Model>,
@@ -276,13 +275,14 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val zoom = remember { mutableFloatStateOf(0f) }
     val wasZoomOverridden = remember { mutableStateOf(false) }
-    val measureContext = getMeasureContext(
-        chartScrollSpec.isScrollEnabled,
-        bounds,
-        horizontalLayout,
-        with(LocalContext.current) { ::spToPx },
-        chartValuesProvider,
-    )
+    val measureContext =
+        getMeasureContext(
+            chartScrollSpec.isScrollEnabled,
+            bounds,
+            horizontalLayout,
+            with(LocalContext.current) { ::spToPx },
+            chartValuesProvider,
+        )
     val scrollListener = rememberScrollListener(markerTouchPoint)
     val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }
 
@@ -296,27 +296,30 @@ internal fun <Model : ChartEntryModel> ChartImpl(
     var previousModelID by remember { ValueWrapper(model.id) }
     val horizontalDimensions = remember { MutableHorizontalDimensions() }
 
-    val onZoom = rememberZoomState(
-        zoom = zoom,
-        wasZoomOverridden = wasZoomOverridden,
-        getScroll = { chartScrollState.value },
-        scrollBy = { value -> coroutineScope.launch { chartScrollState.scrollBy(value) } },
-        chartBounds = chart.bounds,
-    )
+    val onZoom =
+        rememberZoomState(
+            zoom = zoom,
+            wasZoomOverridden = wasZoomOverridden,
+            getScroll = { chartScrollState.value },
+            scrollBy = { value -> coroutineScope.launch { chartScrollState.scrollBy(value) } },
+            chartBounds = chart.bounds,
+        )
 
     Canvas(
-        modifier = Modifier
-            .fillMaxSize()
-            .chartTouchEvent(
-                setTouchPoint = remember(marker == null) {
-                    markerTouchPoint
-                        .component2()
-                        .takeIf { marker != null }
-                },
-                isScrollEnabled = chartScrollSpec.isScrollEnabled,
-                scrollableState = chartScrollState,
-                onZoom = onZoom.takeIf { isZoomEnabled },
-            ),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .chartTouchEvent(
+                    setTouchPoint =
+                        remember(marker == null) {
+                            markerTouchPoint
+                                .component2()
+                                .takeIf { marker != null }
+                        },
+                    isScrollEnabled = chartScrollSpec.isScrollEnabled,
+                    scrollableState = chartScrollState,
+                    onZoom = onZoom.takeIf { isZoomEnabled },
+                ),
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
@@ -350,11 +353,12 @@ internal fun <Model : ChartEntryModel> ChartImpl(
             if (chartScrollSpec.isScrollEnabled) zoom.floatValue = finalZoom
         }
 
-        chartScrollState.maxValue = measureContext.getMaxScrollDistance(
-            chartWidth = chart.bounds.width(),
-            horizontalDimensions = horizontalDimensions,
-            zoom = finalZoom,
-        )
+        chartScrollState.maxValue =
+            measureContext.getMaxScrollDistance(
+                chartWidth = chart.bounds.width(),
+                horizontalDimensions = horizontalDimensions,
+                zoom = finalZoom,
+            )
 
         if (model.id != previousModelID) {
             coroutineScope.launch { chartScrollSpec.performAutoScroll(model, oldModel, chartScrollState) }
@@ -363,16 +367,17 @@ internal fun <Model : ChartEntryModel> ChartImpl(
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
-        val chartDrawContext = chartDrawContext(
-            canvas = drawContext.canvas.nativeCanvas,
-            elevationOverlayColor = elevationOverlayColor,
-            measureContext = measureContext,
-            markerTouchPoint = markerTouchPoint.value,
-            horizontalDimensions = horizontalDimensions,
-            chartBounds = chart.bounds,
-            horizontalScroll = chartScrollState.value,
-            zoom = finalZoom,
-        )
+        val chartDrawContext =
+            chartDrawContext(
+                canvas = drawContext.canvas.nativeCanvas,
+                elevationOverlayColor = elevationOverlayColor,
+                measureContext = measureContext,
+                markerTouchPoint = markerTouchPoint.value,
+                horizontalDimensions = horizontalDimensions,
+                chartBounds = chart.bounds,
+                horizontalScroll = chartScrollState.value,
+                zoom = finalZoom,
+            )
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
 
@@ -417,21 +422,25 @@ internal fun ChartBox(
 }
 
 @Composable
-internal fun rememberScrollListener(touchPoint: MutableState<Point?>): ScrollListener = remember {
-    object : ScrollListener {
-        override fun onValueChanged(oldValue: Float, newValue: Float) {
-            touchPoint.value?.let { point ->
-                touchPoint.value = point.copy(x = point.x + oldValue - newValue)
+internal fun rememberScrollListener(touchPoint: MutableState<Point?>): ScrollListener =
+    remember {
+        object : ScrollListener {
+            override fun onValueChanged(
+                oldValue: Float,
+                newValue: Float,
+            ) {
+                touchPoint.value?.let { point ->
+                    touchPoint.value = point.copy(x = point.x + oldValue - newValue)
+                }
             }
-        }
 
-        override fun onScrollNotConsumed(delta: Float) {
-            touchPoint.value?.let { point ->
-                touchPoint.value = point.copy(x = point.x - delta)
+            override fun onScrollNotConsumed(delta: Float) {
+                touchPoint.value?.let { point ->
+                    touchPoint.value = point.copy(x = point.x - delta)
+                }
             }
         }
     }
-}
 
 @Composable
 internal fun rememberZoomState(
@@ -440,14 +449,15 @@ internal fun rememberZoomState(
     getScroll: () -> Float,
     scrollBy: (value: Float) -> Unit,
     chartBounds: RectF,
-): OnZoom = remember {
-    onZoom@{ centroid, zoomChange ->
-        val newZoom = zoom.floatValue * zoomChange
-        if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return@onZoom
-        val transformationAxisX = getScroll() + centroid.x - chartBounds.left
-        val zoomedTransformationAxisX = transformationAxisX * zoomChange
-        zoom.floatValue = newZoom
-        scrollBy(zoomedTransformationAxisX - transformationAxisX)
-        wasZoomOverridden.value = true
+): OnZoom =
+    remember {
+        onZoom@{ centroid, zoomChange ->
+            val newZoom = zoom.floatValue * zoomChange
+            if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return@onZoom
+            val transformationAxisX = getScroll() + centroid.x - chartBounds.left
+            val zoomedTransformationAxisX = transformationAxisX * zoomChange
+            zoom.floatValue = newZoom
+            scrollBy(zoomedTransformationAxisX - transformationAxisX)
+            wasZoomOverridden.value = true
+        }
     }
-}

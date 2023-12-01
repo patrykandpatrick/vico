@@ -32,7 +32,6 @@ import kotlin.math.roundToInt
  * @see Shader
  */
 public fun interface DynamicShader {
-
     private val bitmapPixelExtractionKey: Any
         get() = "bitmapPixelExtractionKey${hashCode()}"
 
@@ -42,13 +41,14 @@ public fun interface DynamicShader {
     public fun provideShader(
         context: DrawContext,
         bounds: RectF,
-    ): Shader = provideShader(
-        context = context,
-        left = bounds.left,
-        top = bounds.top,
-        right = bounds.right,
-        bottom = bounds.bottom,
-    )
+    ): Shader =
+        provideShader(
+            context = context,
+            left = bounds.left,
+            top = bounds.top,
+            right = bounds.right,
+            bottom = bounds.bottom,
+        )
 
     /**
      * Creates a [Shader] by using the provided [left], [top], [right], and [bottom] bounds.
@@ -69,7 +69,12 @@ public fun interface DynamicShader {
      * @param rectF the [RectF] holding coordinates of the area to apply the style to.
      * @param zeroLineYFraction the fraction of the height of the area to apply the style to, that the zero line is at.
      */
-    public fun applyTo(paint: Paint, drawContext: DrawContext, rectF: RectF, zeroLineYFraction: Float) {
+    public fun applyTo(
+        paint: Paint,
+        drawContext: DrawContext,
+        rectF: RectF,
+        zeroLineYFraction: Float,
+    ) {
         applyTo(paint, drawContext, rectF.left, rectF.top, rectF.right, rectF.bottom, zeroLineYFraction)
     }
 
@@ -104,11 +109,17 @@ public fun interface DynamicShader {
      * @param rectF the [RectF] holding coordinates of the area to apply the style to.
      * @param zeroLineYFraction the fraction of the height of the area to apply the style to, that the zero line is at.
      */
-    public fun getColorAt(point: Point, drawContext: DrawContext, rectF: RectF, zeroLineYFraction: Float): Int {
-        val bitmap = drawContext.getOrPutExtra(bitmapPixelExtractionKey) {
-            val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-            getBitmap(drawContext, paint, rectF)
-        }
+    public fun getColorAt(
+        point: Point,
+        drawContext: DrawContext,
+        rectF: RectF,
+        zeroLineYFraction: Float,
+    ): Int {
+        val bitmap =
+            drawContext.getOrPutExtra(bitmapPixelExtractionKey) {
+                val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+                getBitmap(drawContext, paint, rectF)
+            }
         return bitmap.getPixel(
             (point.x - rectF.left).toInt().coerceIn(0, rectF.width().toInt() - 1),
             (point.y - rectF.top).toInt().coerceIn(0, rectF.height().toInt() - 1),
@@ -116,8 +127,11 @@ public fun interface DynamicShader {
     }
 
     public companion object {
-
-        private fun DynamicShader.getBitmap(drawContext: DrawContext, paint: Paint, rectF: RectF): Bitmap {
+        private fun DynamicShader.getBitmap(
+            drawContext: DrawContext,
+            paint: Paint,
+            rectF: RectF,
+        ): Bitmap {
             val width = rectF.width().roundToInt()
             val height = rectF.height().roundToInt()
             paint.shader = provideShader(drawContext, 0f, 0f, width.toFloat(), height.toFloat())

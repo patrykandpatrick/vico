@@ -41,7 +41,10 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart4(uiSystem: UISystem, chartEntryModelProducer: ComposedChartEntryModelProducer) {
+internal fun Chart4(
+    uiSystem: UISystem,
+    chartEntryModelProducer: ComposedChartEntryModelProducer,
+) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart4(chartEntryModelProducer)
         UISystem.Views -> ViewChart4(chartEntryModelProducer)
@@ -53,22 +56,24 @@ private fun ComposeChart4(chartEntryModelProducer: ComposedChartEntryModelProduc
     ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
         val defaultColumns = currentChartStyle.columnChart.columns
         val defaultLines = currentChartStyle.lineChart.lines
-        val columnChart = columnChart(
-            remember(defaultColumns) {
-                defaultColumns.map { defaultColumn ->
-                    LineComponent(
-                        defaultColumn.color,
-                        defaultColumn.thicknessDp,
-                        Shapes.roundedCornerShape(columnCornerRadius),
-                    )
-                }
-            },
-        )
-        val lineChart = lineChart(
-            remember(defaultLines) {
-                defaultLines.map { defaultLine -> defaultLine.copy(pointConnector = pointConnector) }
-            },
-        )
+        val columnChart =
+            columnChart(
+                remember(defaultColumns) {
+                    defaultColumns.map { defaultColumn ->
+                        LineComponent(
+                            defaultColumn.color,
+                            defaultColumn.thicknessDp,
+                            Shapes.roundedCornerShape(columnCornerRadius),
+                        )
+                    }
+                },
+            )
+        val lineChart =
+            lineChart(
+                remember(defaultLines) {
+                    defaultLines.map { defaultLine -> defaultLine.copy(pointConnector = pointConnector) }
+                },
+            )
         Chart(
             chart = remember(columnChart, lineChart) { columnChart + lineChart },
             chartModelProducer = chartEntryModelProducer,

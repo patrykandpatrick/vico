@@ -41,60 +41,69 @@ public open class VerticalLegend(
     public var spacingDp: Float = 0f,
     override val padding: MutableDimensions = emptyDimensions(),
 ) : Legend, Padding {
-
     private val heights: HashMap<LegendItem, Float> = HashMap()
 
     override val bounds: RectF = RectF()
 
-    override fun getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
-        items.fold(0f) { sum, item ->
-            sum + maxOf(
-                iconSizeDp.pixels,
-                item.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
-            ).also { height -> heights[item] = height }
-        } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
-    }
-
-    override fun draw(context: ChartDrawContext): Unit = with(context) {
-        var currentTop = bounds.top + padding.topDp.pixels
-
-        items.forEach { item ->
-
-            val height = heights.getOrPut(item) {
-                item.getLabelHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp)
-            }
-            val centerY = currentTop + height.half
-            var startX = if (isLtr) {
-                chartBounds.left + padding.startDp.pixels
-            } else {
-                chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
-            }
-
-            item.icon.draw(
-                context = context,
-                left = startX,
-                top = centerY - iconSizeDp.half.pixels,
-                right = startX + iconSizeDp.pixels,
-                bottom = centerY + iconSizeDp.half.pixels,
-            )
-
-            startX += if (isLtr) {
-                (iconSizeDp + iconPaddingDp).pixels
-            } else {
-                -iconPaddingDp.pixels
-            }
-
-            item.label.drawText(
-                context = context,
-                text = item.labelText,
-                textX = startX,
-                textY = centerY,
-                horizontalPosition = HorizontalPosition.End,
-                maxTextWidth = (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
-                    .toInt(),
-            )
-
-            currentTop += height + spacingDp.pixels
+    override fun getHeight(
+        context: MeasureContext,
+        availableWidth: Float,
+    ): Float =
+        with(context) {
+            items.fold(0f) { sum, item ->
+                sum +
+                    maxOf(
+                        iconSizeDp.pixels,
+                        item.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
+                    ).also { height -> heights[item] = height }
+            } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
         }
-    }
+
+    override fun draw(context: ChartDrawContext): Unit =
+        with(context) {
+            var currentTop = bounds.top + padding.topDp.pixels
+
+            items.forEach { item ->
+
+                val height =
+                    heights.getOrPut(item) {
+                        item.getLabelHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp)
+                    }
+                val centerY = currentTop + height.half
+                var startX =
+                    if (isLtr) {
+                        chartBounds.left + padding.startDp.pixels
+                    } else {
+                        chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
+                    }
+
+                item.icon.draw(
+                    context = context,
+                    left = startX,
+                    top = centerY - iconSizeDp.half.pixels,
+                    right = startX + iconSizeDp.pixels,
+                    bottom = centerY + iconSizeDp.half.pixels,
+                )
+
+                startX +=
+                    if (isLtr) {
+                        (iconSizeDp + iconPaddingDp).pixels
+                    } else {
+                        -iconPaddingDp.pixels
+                    }
+
+                item.label.drawText(
+                    context = context,
+                    text = item.labelText,
+                    textX = startX,
+                    textY = centerY,
+                    horizontalPosition = HorizontalPosition.End,
+                    maxTextWidth =
+                        (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
+                            .toInt(),
+                )
+
+                currentTop += height + spacingDp.pixels
+            }
+        }
 }

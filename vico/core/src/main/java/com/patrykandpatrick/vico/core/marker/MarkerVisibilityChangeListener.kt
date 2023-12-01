@@ -20,7 +20,6 @@ package com.patrykandpatrick.vico.core.marker
  * Allows for listening to [Marker] visibility changes.
  */
 public interface MarkerVisibilityChangeListener {
-
     /**
      * Called when the linked [Marker] is shown.
      *

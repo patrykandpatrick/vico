@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.entry.diff.MutableExtraStore
  * @see ComposedChartEntryModelProducer
  */
 public interface ChartModelProducer<Model : ChartEntryModel> {
-
     /**
      * Returns the [ChartEntryModel] or, if no [ChartEntryModel] is available, `null`.
      */
@@ -44,7 +43,10 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
      * Creates an intermediate [ChartEntryModel] for difference animations. [fraction] is the balance between the
      * initial and target [ChartEntryModel]s.
      */
-    public suspend fun transformModel(key: Any, fraction: Float)
+    public suspend fun transformModel(
+        key: Any,
+        fraction: Float,
+    )
 
     /**
      * Registers an update listener associated with a [key]. [cancelAnimation] and [startAnimation] are

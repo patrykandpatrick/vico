@@ -49,7 +49,10 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart2(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart2(
+    uiSystem: UISystem,
+    chartEntryModelProducer: ChartEntryModelProducer,
+) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart2(chartEntryModelProducer)
         UISystem.Views -> ViewChart2(chartEntryModelProducer)
@@ -62,14 +65,16 @@ private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultColumns = currentChartStyle.columnChart.columns
         Chart(
-            chart = columnChart(
-                columns = remember(defaultColumns) {
-                    defaultColumns.map { defaultColumn ->
-                        LineComponent(defaultColumn.color, COLUMN_WIDTH_DP, defaultColumn.shape)
-                    }
-                },
-                decorations = remember(thresholdLine) { listOf(thresholdLine) },
-            ),
+            chart =
+                columnChart(
+                    columns =
+                        remember(defaultColumns) {
+                            defaultColumns.map { defaultColumn ->
+                                LineComponent(defaultColumn.color, COLUMN_WIDTH_DP, defaultColumn.shape)
+                            }
+                        },
+                    decorations = remember(thresholdLine) { listOf(thresholdLine) },
+                ),
             chartModelProducer = chartEntryModelProducer,
             startAxis = rememberStartAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
             bottomAxis = rememberBottomAxis(itemPlacer = bottomAxisItemPlacer),
@@ -102,13 +107,14 @@ private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
 @Composable
 private fun rememberThresholdLine(): ThresholdLine {
     val line = shapeComponent(color = color2)
-    val label = textComponent(
-        color = Color.Black,
-        background = shapeComponent(Shapes.pillShape, color2),
-        padding = thresholdLineLabelPadding,
-        margins = thresholdLineLabelMargins,
-        typeface = Typeface.MONOSPACE,
-    )
+    val label =
+        textComponent(
+            color = Color.Black,
+            background = shapeComponent(Shapes.pillShape, color2),
+            padding = thresholdLineLabelPadding,
+            margins = thresholdLineLabelMargins,
+            typeface = Typeface.MONOSPACE,
+        )
     return remember(line, label) {
         ThresholdLine(thresholdValue = THRESHOLD_LINE_VALUE, lineComponent = line, labelComponent = label)
     }
@@ -132,9 +138,10 @@ private val thresholdLineLabelPadding =
     dimensionsOf(thresholdLineLabelHorizontalPaddingValue, thresholdLineLabelVerticalPaddingValue)
 private val thresholdLineLabelMargins = dimensionsOf(thresholdLineLabelMarginValue)
 private val startAxisValueFormatter = PercentageFormatAxisValueFormatter<AxisPosition.Vertical.Start>()
-private val horizontalLayout = HorizontalLayout.FullWidth(
-    scalableStartPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
-    scalableEndPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
-)
+private val horizontalLayout =
+    HorizontalLayout.FullWidth(
+        scalableStartPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+        scalableEndPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+    )
 private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(MAX_START_AXIS_ITEM_COUNT)
 private val bottomAxisItemPlacer = AxisItemPlacer.Horizontal.default(BOTTOM_AXIS_ITEM_SPACING, BOTTOM_AXIS_ITEM_OFFSET)

@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.core.model.Point
  * A [DynamicShader] that fills the area with the solid [color].
  */
 public class SolidShader(public val color: Int) : DynamicShader {
-
     private val shader: Shader = getShaderImplementation()
 
     private fun getShaderImplementation(): Shader {
@@ -39,15 +38,21 @@ public class SolidShader(public val color: Int) : DynamicShader {
                 setColorUniform(INPUT_COLOR, color)
             }
         } else {
-            val bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888).apply {
-                setPixel(0, 0, color)
-            }
+            val bitmap =
+                Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888).apply {
+                    setPixel(0, 0, color)
+                }
             BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
         }
     }
 
-    override fun provideShader(context: DrawContext, left: Float, top: Float, right: Float, bottom: Float): Shader =
-        shader
+    override fun provideShader(
+        context: DrawContext,
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ): Shader = shader
 
     override fun applyTo(
         paint: Paint,
@@ -61,11 +66,14 @@ public class SolidShader(public val color: Int) : DynamicShader {
         paint.shader = shader
     }
 
-    override fun getColorAt(point: Point, drawContext: DrawContext, rectF: RectF, zeroLineYFraction: Float): Int =
-        color
+    override fun getColorAt(
+        point: Point,
+        drawContext: DrawContext,
+        rectF: RectF,
+        zeroLineYFraction: Float,
+    ): Int = color
 
     private companion object {
-
         private const val INPUT_COLOR = "inputColor"
 
         private val SHADER_CODE =

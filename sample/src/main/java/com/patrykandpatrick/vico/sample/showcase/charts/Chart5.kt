@@ -39,7 +39,10 @@ import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart5(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart5(
+    uiSystem: UISystem,
+    chartEntryModelProducer: ChartEntryModelProducer,
+) {
     when (uiSystem) {
         UISystem.Compose -> ComposeChart5(chartEntryModelProducer)
         UISystem.Views -> ViewChart5(chartEntryModelProducer)
@@ -51,31 +54,35 @@ private fun ComposeChart5(chartEntryModelProducer: ChartEntryModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultColumns = currentChartStyle.columnChart.columns
         Chart(
-            chart = columnChart(
-                columns = remember(defaultColumns) {
-                    defaultColumns.mapIndexed { index, defaultColumn ->
-                        val topCornerRadiusPercent =
-                            if (index == defaultColumns.lastIndex) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
-                        val bottomCornerRadiusPercent = if (index == 0) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
-                        LineComponent(
-                            defaultColumn.color,
-                            defaultColumn.thicknessDp,
-                            Shapes.roundedCornerShape(
-                                topCornerRadiusPercent,
-                                topCornerRadiusPercent,
-                                bottomCornerRadiusPercent,
-                                bottomCornerRadiusPercent,
-                            ),
-                        )
-                    }
-                },
-                mergeMode = ColumnChart.MergeMode.Stack,
-            ),
+            chart =
+                columnChart(
+                    columns =
+                        remember(defaultColumns) {
+                            defaultColumns.mapIndexed { index, defaultColumn ->
+                                val topCornerRadiusPercent =
+                                    if (index == defaultColumns.lastIndex) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
+                                val bottomCornerRadiusPercent =
+                                    if (index == 0) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
+                                LineComponent(
+                                    defaultColumn.color,
+                                    defaultColumn.thicknessDp,
+                                    Shapes.roundedCornerShape(
+                                        topCornerRadiusPercent,
+                                        topCornerRadiusPercent,
+                                        bottomCornerRadiusPercent,
+                                        bottomCornerRadiusPercent,
+                                    ),
+                                )
+                            }
+                        },
+                    mergeMode = ColumnChart.MergeMode.Stack,
+                ),
             chartModelProducer = chartEntryModelProducer,
-            startAxis = rememberStartAxis(
-                itemPlacer = startAxisItemPlacer,
-                labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
-            ),
+            startAxis =
+                rememberStartAxis(
+                    itemPlacer = startAxisItemPlacer,
+                    labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
+                ),
             bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
             marker = rememberMarker(),
             runInitialAnimation = false,

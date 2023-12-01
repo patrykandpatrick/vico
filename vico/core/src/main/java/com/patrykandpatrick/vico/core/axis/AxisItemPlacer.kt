@@ -36,14 +36,11 @@ public interface AxisItemPlacer {
      * An [AxisItemPlacer] subinterface for [HorizontalAxis] instances.
      */
     public interface Horizontal : AxisItemPlacer {
-
         /**
          * Whether ticks whose _x_ values are bounds of the _x_-axis value range should be shifted to the edges of the
          * axis bounds, to be aligned with the vertical axes.
          */
-        public fun getShiftExtremeTicks(
-            context: ChartDrawContext,
-        ): Boolean = true
+        public fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = true
 
         /**
          * Returns a boolean indicating whether the [HorizontalAxis] should reserve room for a label for
@@ -206,8 +203,10 @@ public interface AxisItemPlacer {
              * they’re immediately above the [Chart]’s bounds. If the chart has a top axis, the shifted tick will then
              * be aligned with this axis, and the shifted guideline will be hidden.
              */
-            public fun default(maxItemCount: Int = DEF_LABEL_COUNT, shiftTopLines: Boolean = true): Vertical =
-                DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
+            public fun default(
+                maxItemCount: Int = DEF_LABEL_COUNT,
+                shiftTopLines: Boolean = true,
+            ): Vertical = DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
         }
     }
 }

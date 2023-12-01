@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.extension.orZero
  */
 public class ColumnChartDrawingModel(entries: List<Map<Float, ColumnInfo>>, public val opacity: Float = 1f) :
     DrawingModel<ColumnChartDrawingModel.ColumnInfo>(entries) {
-
     override fun transform(
         drawingInfo: List<Map<Float, ColumnInfo>>,
         from: DrawingModel<ColumnInfo>?,
@@ -40,7 +39,10 @@ public class ColumnChartDrawingModel(entries: List<Map<Float, ColumnInfo>>, publ
      * of the [ColumnChart]’s height.
      */
     public class ColumnInfo(public val height: Float) : DrawingInfo {
-        override fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo {
+        override fun transform(
+            from: DrawingInfo?,
+            fraction: Float,
+        ): DrawingInfo {
             val oldHeight = (from as? ColumnInfo)?.height.orZero
             return ColumnInfo(oldHeight.lerp(height, fraction))
         }

@@ -27,12 +27,14 @@ import kotlin.math.max
 @Suppress("UNCHECKED_CAST")
 public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : DrawingModel<T>> :
     DrawingModelInterpolator<T, R> {
-
     private var transformationMaps = emptyList<Map<Float, TransformationModel<T>>>()
     private var oldDrawingModel: R? = null
     private var newDrawingModel: R? = null
 
-    override fun setModels(old: R?, new: R?) {
+    override fun setModels(
+        old: R?,
+        new: R?,
+    ) {
         synchronized(this) {
             oldDrawingModel = old
             newDrawingModel = new
@@ -40,33 +42,36 @@ public class DefaultDrawingModelInterpolator<T : DrawingModel.DrawingInfo, R : D
         }
     }
 
-    override suspend fun transform(fraction: Float): R? = newDrawingModel?.transform(
-        drawingInfo = transformationMaps.mapNotNull { map ->
-            map
-                .mapNotNull { (x, model) ->
-                    currentCoroutineContext().ensureActive()
-                    model.transform(fraction)?.let { drawingInfo -> x to drawingInfo }
-                }
-                .takeIf { list -> list.isNotEmpty() }
-                ?.toMap()
-        },
-        from = oldDrawingModel,
-        fraction = fraction,
-    ) as R?
+    override suspend fun transform(fraction: Float): R? =
+        newDrawingModel?.transform(
+            drawingInfo =
+                transformationMaps.mapNotNull { map ->
+                    map
+                        .mapNotNull { (x, model) ->
+                            currentCoroutineContext().ensureActive()
+                            model.transform(fraction)?.let { drawingInfo -> x to drawingInfo }
+                        }
+                        .takeIf { list -> list.isNotEmpty() }
+                        ?.toMap()
+                },
+            from = oldDrawingModel,
+            fraction = fraction,
+        ) as R?
 
     private fun updateTransformationMap() {
-        transformationMaps = buildList {
-            repeat(max(oldDrawingModel?.size.orZero, newDrawingModel?.size.orZero)) { index ->
-                val map = mutableMapOf<Float, TransformationModel<T>>()
-                oldDrawingModel
-                    ?.getOrNull(index)
-                    ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(drawingInfo) }
-                newDrawingModel
-                    ?.getOrNull(index)
-                    ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(map[x]?.old, drawingInfo) }
-                add(map)
+        transformationMaps =
+            buildList {
+                repeat(max(oldDrawingModel?.size.orZero, newDrawingModel?.size.orZero)) { index ->
+                    val map = mutableMapOf<Float, TransformationModel<T>>()
+                    oldDrawingModel
+                        ?.getOrNull(index)
+                        ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(drawingInfo) }
+                    newDrawingModel
+                        ?.getOrNull(index)
+                        ?.forEach { (x, drawingInfo) -> map[x] = TransformationModel(map[x]?.old, drawingInfo) }
+                    add(map)
+                }
             }
-        }
     }
 
     private class TransformationModel<T : DrawingModel.DrawingInfo>(val old: T?, val new: T? = null) {

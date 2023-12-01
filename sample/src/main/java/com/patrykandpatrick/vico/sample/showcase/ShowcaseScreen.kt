@@ -76,10 +76,11 @@ internal fun ShowcaseScreen(viewModel: ShowcaseViewModel = viewModel()) {
     ) { paddingValues ->
         Crossfade(viewModel.uiSystem) { uiSystem ->
             LazyColumn(
-                state = when (uiSystem) {
-                    UISystem.Compose -> composeShowcaseState
-                    UISystem.Views -> viewShowcaseState
-                },
+                state =
+                    when (uiSystem) {
+                        UISystem.Compose -> composeShowcaseState
+                        UISystem.Views -> viewShowcaseState
+                    },
                 contentPadding = paddingValues + PaddingValues(padding),
                 verticalArrangement = Arrangement.spacedBy(padding),
             ) {
@@ -89,7 +90,10 @@ internal fun ShowcaseScreen(viewModel: ShowcaseViewModel = viewModel()) {
     }
 }
 
-private fun LazyListScope.chartItems(uiSystem: UISystem, viewModel: ShowcaseViewModel) {
+private fun LazyListScope.chartItems(
+    uiSystem: UISystem,
+    viewModel: ShowcaseViewModel,
+) {
     cardItem { Chart9(uiSystem, viewModel.positiveAndNegativeChartEntryModelProducer) }
     cardItem { Chart1(uiSystem, viewModel.customStepChartEntryModelProducer) }
     cardItem { Chart2(uiSystem, viewModel.chartEntryModelProducer) }

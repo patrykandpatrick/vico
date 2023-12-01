@@ -51,23 +51,27 @@ public fun LineChartDark() {
 
         Chart(
             modifier = Modifier.padding(8.dp),
-            chart = lineChart(
-                lines = listOf(
-                    lineSpec(
-                        lineColor = yellow,
-                        lineBackgroundShader = verticalGradient(
-                            arrayOf(yellow.copy(0.5f), yellow.copy(alpha = 0f)),
+            chart =
+                lineChart(
+                    lines =
+                        listOf(
+                            lineSpec(
+                                lineColor = yellow,
+                                lineBackgroundShader =
+                                    verticalGradient(
+                                        arrayOf(yellow.copy(0.5f), yellow.copy(alpha = 0f)),
+                                    ),
+                            ),
+                            lineSpec(
+                                lineColor = pink,
+                                lineBackgroundShader =
+                                    verticalGradient(
+                                        arrayOf(pink.copy(0.5f), pink.copy(alpha = 0f)),
+                                    ),
+                            ),
                         ),
-                    ),
-                    lineSpec(
-                        lineColor = pink,
-                        lineBackgroundShader = verticalGradient(
-                            arrayOf(pink.copy(0.5f), pink.copy(alpha = 0f)),
-                        ),
-                    ),
+                    axisValuesOverrider = AxisValuesOverrider.fixed(maxY = 4f),
                 ),
-                axisValuesOverrider = AxisValuesOverrider.fixed(maxY = 4f),
-            ),
             model = model3,
         )
     }
@@ -87,12 +91,14 @@ public fun RegularLineChart() {
 @Composable
 public fun RegularLineChartExpanded() {
     Chart(
-        chart = lineChart(
-            axisValuesOverrider = AxisValuesOverrider.fixed(
-                minY = -1f,
-                maxY = 5f,
+        chart =
+            lineChart(
+                axisValuesOverrider =
+                    AxisValuesOverrider.fixed(
+                        minY = -1f,
+                        maxY = 5f,
+                    ),
             ),
-        ),
         model = model1,
         startAxis = rememberStartAxis(),
     )
@@ -102,12 +108,14 @@ public fun RegularLineChartExpanded() {
 @Composable
 public fun RegularLineChartCollapsed() {
     Chart(
-        chart = lineChart(
-            axisValuesOverrider = AxisValuesOverrider.fixed(
-                minY = 1f,
-                maxY = 3f,
+        chart =
+            lineChart(
+                axisValuesOverrider =
+                    AxisValuesOverrider.fixed(
+                        minY = 1f,
+                        maxY = 3f,
+                    ),
             ),
-        ),
         model = model1,
         startAxis = rememberStartAxis(),
     )
@@ -117,19 +125,24 @@ public fun RegularLineChartCollapsed() {
 @Composable
 public fun ComposedLineChart() {
     Chart(
-        chart = lineChart() + lineChart(
-            lines = listOf(
-                lineSpec(
-                    lineColor = Color.Blue,
-                    lineBackgroundShader = verticalGradient(
-                        colors = arrayOf(
-                            Color.Blue.copy(alpha = 0.4f),
-                            Color.Blue.copy(alpha = 0f),
+        chart =
+            lineChart() +
+                lineChart(
+                    lines =
+                        listOf(
+                            lineSpec(
+                                lineColor = Color.Blue,
+                                lineBackgroundShader =
+                                    verticalGradient(
+                                        colors =
+                                            arrayOf(
+                                                Color.Blue.copy(alpha = 0.4f),
+                                                Color.Blue.copy(alpha = 0f),
+                                            ),
+                                    ),
+                            ),
                         ),
-                    ),
                 ),
-            ),
-        ),
         model = model1 + model2,
         startAxis = rememberStartAxis(),
     )
@@ -139,17 +152,21 @@ public fun ComposedLineChart() {
 @Composable
 public fun ComposedLineChartCollapsed() {
     Chart(
-        chart = lineChart(
-            axisValuesOverrider = AxisValuesOverrider.fixed(
-                minY = 1f,
-                maxY = 3f,
-            ),
-        ) + lineChart(
-            axisValuesOverrider = AxisValuesOverrider.fixed(
-                minY = 1f,
-                maxY = 3f,
-            ),
-        ),
+        chart =
+            lineChart(
+                axisValuesOverrider =
+                    AxisValuesOverrider.fixed(
+                        minY = 1f,
+                        maxY = 3f,
+                    ),
+            ) +
+                lineChart(
+                    axisValuesOverrider =
+                        AxisValuesOverrider.fixed(
+                            minY = 1f,
+                            maxY = 3f,
+                        ),
+                ),
         model = model1 + model2,
         startAxis = rememberStartAxis(),
     )

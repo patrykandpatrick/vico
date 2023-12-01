@@ -85,7 +85,6 @@ public open class LineChart(
         LineChartDrawingModel,
         > = DefaultDrawingModelInterpolator(),
 ) : BaseChart<ChartEntryModel>() {
-
     /**
      * Creates a [LineChart] with a common style for all lines.
      *
@@ -128,7 +127,6 @@ public open class LineChart(
         public var dataLabelRotationDegrees: Float = 0f,
         public var pointConnector: PointConnector = DefaultPointConnector(),
     ) {
-
         /**
          * @param lineColor the color of the line.
          * @param lineThicknessDp the thickness of the line (in dp).
@@ -174,10 +172,11 @@ public open class LineChart(
         public val hasLineBackgroundShader: Boolean
             get() = lineBackgroundShader != null
 
-        protected val linePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            style = Paint.Style.STROKE
-            strokeCap = lineCap
-        }
+        protected val linePaint: Paint =
+            Paint(Paint.ANTI_ALIAS_FLAG).apply {
+                style = Paint.Style.STROKE
+                strokeCap = lineCap
+            }
 
         protected val lineBackgroundPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
@@ -201,9 +200,10 @@ public open class LineChart(
             context: DrawContext,
             x: Float,
             y: Float,
-        ): Unit = with(context) {
-            point?.drawPoint(context, x, y, pointSizeDp.pixels.half)
-        }
+        ): Unit =
+            with(context) {
+                point?.drawPoint(context, x, y, pointSizeDp.pixels.half)
+            }
 
         /**
          * Draws the line.
@@ -270,7 +270,6 @@ public open class LineChart(
          * @see DefaultPointConnector
          */
         public interface PointConnector {
-
             /**
              * Draws a line between two points.
              */
@@ -303,83 +302,90 @@ public open class LineChart(
     override fun drawChart(
         context: ChartDrawContext,
         model: ChartEntryModel,
-    ): Unit = with(context) {
-        resetTempData()
+    ): Unit =
+        with(context) {
+            resetTempData()
 
-        val drawingModel = model.extraStore.getOrNull(drawingModelKey)
-        val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
-        val zeroLineYFraction = 1f - (drawingModel?.zeroY ?: abs(chartValues.minY / chartValues.lengthY))
+            val drawingModel = model.extraStore.getOrNull(drawingModelKey)
+            val chartValues = chartValuesProvider.getChartValues(targetVerticalAxisPosition)
+            val zeroLineYFraction = 1f - (drawingModel?.zeroY ?: abs(chartValues.minY / chartValues.lengthY))
 
-        model.entries.forEachIndexed { entryListIndex, entries ->
+            model.entries.forEachIndexed { entryListIndex, entries ->
 
-            val pointInfoMap = drawingModel?.getOrNull(entryListIndex)
+                val pointInfoMap = drawingModel?.getOrNull(entryListIndex)
 
-            linePath.rewind()
-            lineBackgroundPath.rewind()
-            val component = lines.getRepeating(entryListIndex)
+                linePath.rewind()
+                lineBackgroundPath.rewind()
+                val component = lines.getRepeating(entryListIndex)
 
-            var prevX = bounds.getStart(isLtr = isLtr)
-            var prevY = bounds.bottom
+                var prevX = bounds.getStart(isLtr = isLtr)
+                var prevY = bounds.bottom
 
-            val drawingStartAlignmentCorrection = layoutDirectionMultiplier * horizontalDimensions.startPadding
+                val drawingStartAlignmentCorrection = layoutDirectionMultiplier * horizontalDimensions.startPadding
 
-            val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
+                val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
 
-            forEachPointWithinBoundsIndexed(
-                entries = entries,
-                drawingStart = drawingStart,
-                pointInfoMap = pointInfoMap,
-            ) { entryIndex, entry, x, y, _, _ ->
-                if (linePath.isEmpty) {
-                    linePath.moveTo(x, y)
-                } else {
-                    component.pointConnector.connect(
-                        path = linePath,
-                        prevX = prevX,
-                        prevY = prevY,
-                        x = x,
-                        y = y,
-                        horizontalDimensions = horizontalDimensions,
-                        bounds = bounds,
+                forEachPointWithinBoundsIndexed(
+                    entries = entries,
+                    drawingStart = drawingStart,
+                    pointInfoMap = pointInfoMap,
+                ) { entryIndex, entry, x, y, _, _ ->
+                    if (linePath.isEmpty) {
+                        linePath.moveTo(x, y)
+                    } else {
+                        component.pointConnector.connect(
+                            path = linePath,
+                            prevX = prevX,
+                            prevY = prevY,
+                            x = x,
+                            y = y,
+                            horizontalDimensions = horizontalDimensions,
+                            bounds = bounds,
+                        )
+                    }
+                    prevX = x
+                    prevY = y
+
+                    if (x > bounds.left - 1 && x < bounds.right + 1) {
+                        val coercedY = y.coerceIn(bounds.top, bounds.bottom)
+                        entryLocationMap.put(
+                            x = x,
+                            y = coercedY,
+                            entry = entry,
+                            color =
+                                component.lineShader.getColorAt(
+                                    Point(x, coercedY),
+                                    context,
+                                    bounds,
+                                    zeroLineYFraction,
+                                ),
+                            index = entryIndex,
+                        )
+                    }
+                }
+
+                if (component.hasLineBackgroundShader) {
+                    lineBackgroundPath.addPath(linePath)
+                    lineBackgroundPath.lineTo(prevX, bounds.bottom)
+                    component.drawBackgroundLine(
+                        context,
+                        bounds,
+                        zeroLineYFraction,
+                        lineBackgroundPath,
+                        drawingModel?.opacity ?: 1f,
                     )
                 }
-                prevX = x
-                prevY = y
 
-                if (x > bounds.left - 1 && x < bounds.right + 1) {
-                    val coercedY = y.coerceIn(bounds.top, bounds.bottom)
-                    entryLocationMap.put(
-                        x = x,
-                        y = coercedY,
-                        entry = entry,
-                        color = component.lineShader.getColorAt(Point(x, coercedY), context, bounds, zeroLineYFraction),
-                        index = entryIndex,
-                    )
-                }
-            }
+                component.drawLine(context, bounds, zeroLineYFraction, linePath, drawingModel?.opacity ?: 1f)
 
-            if (component.hasLineBackgroundShader) {
-                lineBackgroundPath.addPath(linePath)
-                lineBackgroundPath.lineTo(prevX, bounds.bottom)
-                component.drawBackgroundLine(
-                    context,
-                    bounds,
-                    zeroLineYFraction,
-                    lineBackgroundPath,
-                    drawingModel?.opacity ?: 1f,
+                drawPointsAndDataLabels(
+                    lineSpec = component,
+                    entries = entries,
+                    drawingStart = drawingStart,
+                    pointInfoMap = pointInfoMap,
                 )
             }
-
-            component.drawLine(context, bounds, zeroLineYFraction, linePath, drawingModel?.opacity ?: 1f)
-
-            drawPointsAndDataLabels(
-                lineSpec = component,
-                entries = entries,
-                drawingStart = drawingStart,
-                pointInfoMap = pointInfoMap,
-            )
         }
-    }
 
     /**
      * Draws a line’s points ([LineSpec.point]) and their corresponding data labels ([LineSpec.dataLabel]).
@@ -408,32 +414,38 @@ public open class LineChart(
                     chartEntry.x == chartValues.maxX && horizontalDimensions.endPadding > 0
             }?.let { textComponent ->
 
-                val distanceFromLine = maxOf(
-                    a = lineSpec.lineThicknessDp,
-                    b = lineSpec.pointSizeDpOrZero,
-                ).half.pixels
+                val distanceFromLine =
+                    maxOf(
+                        a = lineSpec.lineThicknessDp,
+                        b = lineSpec.pointSizeDpOrZero,
+                    ).half.pixels
 
-                val text = lineSpec.dataLabelValueFormatter.formatValue(
-                    value = chartEntry.y,
-                    chartValues = chartValues,
-                )
+                val text =
+                    lineSpec.dataLabelValueFormatter.formatValue(
+                        value = chartEntry.y,
+                        chartValues = chartValues,
+                    )
                 val maxWidth = getMaxDataLabelWidth(chartEntry, x, previousX, nextX)
-                val verticalPosition = lineSpec.dataLabelVerticalPosition.inBounds(
-                    bounds = bounds,
-                    distanceFromPoint = distanceFromLine,
-                    componentHeight = textComponent.getHeight(
-                        context = this,
-                        text = text,
-                        width = maxWidth,
-                        rotationDegrees = lineSpec.dataLabelRotationDegrees,
-                    ),
-                    y = y,
-                )
-                val dataLabelY = y + when (verticalPosition) {
-                    VerticalPosition.Top -> -distanceFromLine
-                    VerticalPosition.Center -> 0f
-                    VerticalPosition.Bottom -> distanceFromLine
-                }
+                val verticalPosition =
+                    lineSpec.dataLabelVerticalPosition.inBounds(
+                        bounds = bounds,
+                        distanceFromPoint = distanceFromLine,
+                        componentHeight =
+                            textComponent.getHeight(
+                                context = this,
+                                text = text,
+                                width = maxWidth,
+                                rotationDegrees = lineSpec.dataLabelRotationDegrees,
+                            ),
+                        y = y,
+                    )
+                val dataLabelY =
+                    y +
+                        when (verticalPosition) {
+                            VerticalPosition.Top -> -distanceFromLine
+                            VerticalPosition.Center -> 0f
+                            VerticalPosition.Bottom -> distanceFromLine
+                        }
                 textComponent.drawText(
                     context = this,
                     textX = x,
@@ -461,20 +473,22 @@ public open class LineChart(
                 min(horizontalDimensions.startPadding, horizontalDimensions.endPadding).doubled
 
             nextX != null -> {
-                val extraSpace = when (horizontalLayout) {
-                    is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
-                    is HorizontalLayout.FullWidth -> horizontalDimensions.startPadding
-                }
+                val extraSpace =
+                    when (horizontalLayout) {
+                        is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
+                        is HorizontalLayout.FullWidth -> horizontalDimensions.startPadding
+                    }
                 ((entry.x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing + extraSpace)
                     .doubled
                     .coerceAtMost(nextX - x)
             }
 
             else -> {
-                val extraSpace = when (horizontalLayout) {
-                    is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
-                    is HorizontalLayout.FullWidth -> horizontalDimensions.endPadding
-                }
+                val extraSpace =
+                    when (horizontalLayout) {
+                        is HorizontalLayout.Segmented -> horizontalDimensions.xSpacing.half
+                        is HorizontalLayout.FullWidth -> horizontalDimensions.endPadding
+                    }
                 ((chartValues.maxX - entry.x) / chartValues.xStep * horizontalDimensions.xSpacing + extraSpace)
                     .doubled
                     .coerceAtMost(x - previousX!!)
@@ -516,8 +530,9 @@ public open class LineChart(
         val boundsStart = bounds.getStart(isLtr = isLtr)
         val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
 
-        fun getDrawX(entry: ChartEntry): Float = drawingStart + layoutDirectionMultiplier *
-            horizontalDimensions.xSpacing * (entry.x - minX) / xStep
+        fun getDrawX(entry: ChartEntry): Float =
+            drawingStart + layoutDirectionMultiplier *
+                horizontalDimensions.xSpacing * (entry.x - minX) / xStep
 
         fun getDrawY(entry: ChartEntry): Float =
             bounds.bottom - (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - chartValues.minY) / chartValues.lengthY)) *
@@ -580,7 +595,11 @@ public open class LineChart(
         }
     }
 
-    override fun updateChartValues(chartValuesManager: ChartValuesManager, model: ChartEntryModel, xStep: Float?) {
+    override fun updateChartValues(
+        chartValuesManager: ChartValuesManager,
+        model: ChartEntryModel,
+        xStep: Float?,
+    ) {
         chartValuesManager.tryUpdate(
             minX = axisValuesOverrider?.getMinX(model) ?: model.minX,
             maxX = axisValuesOverrider?.getMaxX(model) ?: model.maxX,
@@ -596,20 +615,23 @@ public open class LineChart(
         context: MeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
-    ): Unit = with(context) {
-        outInsets.setVertical(
-            value = lines.maxOf {
-                if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp) else it.lineThicknessDp
-            }.pixels,
-        )
-    }
+    ): Unit =
+        with(context) {
+            outInsets.setVertical(
+                value =
+                    lines.maxOf {
+                        if (it.point != null) max(a = it.lineThicknessDp, b = it.pointSizeDp) else it.lineThicknessDp
+                    }.pixels,
+            )
+        }
 
-    override val modelTransformerProvider: Chart.ModelTransformerProvider = object : Chart.ModelTransformerProvider {
-        private val modelTransformer =
-            LineChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition }, { drawingModelInterpolator })
+    override val modelTransformerProvider: Chart.ModelTransformerProvider =
+        object : Chart.ModelTransformerProvider {
+            private val modelTransformer =
+                LineChartModelTransformer(drawingModelKey, { targetVerticalAxisPosition }, { drawingModelInterpolator })
 
-        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
-    }
+            override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
+        }
 
     protected class LineChartModelTransformer(
         override val key: ExtraStore.Key<LineChartDrawingModel>,
@@ -619,7 +641,6 @@ public open class LineChart(
             LineChartDrawingModel,
             >,
     ) : Chart.ModelTransformer<ChartEntryModel>() {
-
         override fun prepareForTransformation(
             oldModel: ChartEntryModel?,
             newModel: ChartEntryModel?,
@@ -632,21 +653,25 @@ public open class LineChart(
             )
         }
 
-        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
+        override suspend fun transform(
+            extraStore: MutableExtraStore,
+            fraction: Float,
+        ) {
             getDrawingModelInterpolator()
                 .transform(fraction)
                 ?.let { extraStore[key] = it }
                 ?: extraStore.remove(key)
         }
 
-        private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): LineChartDrawingModel = entries
-            .map { series ->
-                series.associate { entry ->
-                    entry.x to LineChartDrawingModel.PointInfo((entry.y - chartValues.minY) / chartValues.lengthY)
+        private fun ChartEntryModel.toDrawingModel(chartValues: ChartValues): LineChartDrawingModel =
+            entries
+                .map { series ->
+                    series.associate { entry ->
+                        entry.x to LineChartDrawingModel.PointInfo((entry.y - chartValues.minY) / chartValues.lengthY)
+                    }
                 }
-            }
-            .let { pointInfo ->
-                LineChartDrawingModel(pointInfo, abs(chartValues.minY / chartValues.lengthY))
-            }
+                .let { pointInfo ->
+                    LineChartDrawingModel(pointInfo, abs(chartValues.minY / chartValues.lengthY))
+                }
     }
 }

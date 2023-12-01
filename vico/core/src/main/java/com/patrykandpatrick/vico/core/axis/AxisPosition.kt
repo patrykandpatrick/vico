@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.patrykandpatrick.vico.core.chart.Chart
  * Defines the position of an axis relative to its [Chart].
  */
 public sealed class AxisPosition {
-
     /**
      * Whether the axis is at the top of its [Chart].
      */
@@ -50,20 +49,17 @@ public sealed class AxisPosition {
     /**
      * Whether the axis is on the left of its [Chart]. The layout direction is considered here.
      */
-    public fun isLeft(isLtr: Boolean): Boolean =
-        this is Vertical.Start && isLtr || this is Vertical.End && isLtr.not()
+    public fun isLeft(isLtr: Boolean): Boolean = this is Vertical.Start && isLtr || this is Vertical.End && isLtr.not()
 
     /**
      * Whether the axis is on the right of its [Chart]. The layout direction is considered here.
      */
-    public fun isRight(isLtr: Boolean): Boolean =
-        this is Vertical.End && isLtr || this is Vertical.Start && isLtr.not()
+    public fun isRight(isLtr: Boolean): Boolean = this is Vertical.End && isLtr || this is Vertical.Start && isLtr.not()
 
     /**
      * Defines the position of a horizontal axis relative to its [Chart].
      */
     public sealed class Horizontal : AxisPosition() {
-
         /**
          * The horizontal axis will be placed at the top of its [Chart].
          */
@@ -79,7 +75,6 @@ public sealed class AxisPosition {
      * Defines the position of a vertical axis relative to its [Chart].
      */
     public sealed class Vertical : AxisPosition() {
-
         /**
          * The vertical axis will be placed at the start of its [Chart].
          */

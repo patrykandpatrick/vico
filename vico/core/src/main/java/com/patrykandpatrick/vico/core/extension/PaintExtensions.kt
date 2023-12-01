@@ -20,7 +20,10 @@ import android.graphics.Paint
 
 private val fm: Paint.FontMetrics = Paint.FontMetrics()
 
-internal fun Paint.withOpacity(opacity: Float, action: (Paint) -> Unit) {
+internal fun Paint.withOpacity(
+    opacity: Float,
+    action: (Paint) -> Unit,
+) {
     val previousOpacity = this.alpha
     color = color.copyColor(opacity * previousOpacity / MAX_HEX_VALUE)
     action(this)
@@ -48,5 +51,4 @@ public val Paint.textHeight: Float
 /**
  * Returns the width of the provided text.
  */
-public fun Paint.measureText(text: CharSequence): Float =
-    measureText(text, 0, text.length)
+public fun Paint.measureText(text: CharSequence): Float = measureText(text, 0, text.length)

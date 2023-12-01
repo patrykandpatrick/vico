@@ -51,10 +51,10 @@ private const val TITLE_ABS_ROTATION_DEGREES = 90f
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
 ) : Axis<Position>() {
-
     private val areLabelsOutsideAtStartOrInsideAtEnd
-        get() = horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
-            horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
+        get() =
+            horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
+                horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
 
     private val textHorizontalPosition: HorizontalPosition
         get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
@@ -74,88 +74,90 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
-    override fun drawBehindChart(
-        context: ChartDrawContext,
-    ): Unit = with(context) {
-        var centerY: Float
-        val chartValues = chartValuesProvider.getChartValues(position)
-        val maxLabelHeight = getMaxLabelHeight()
-        val lineValues = itemPlacer.getLineValues(this, bounds.height(), maxLabelHeight, position)
-            ?: itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
+    override fun drawBehindChart(context: ChartDrawContext): Unit =
+        with(context) {
+            var centerY: Float
+            val chartValues = chartValuesProvider.getChartValues(position)
+            val maxLabelHeight = getMaxLabelHeight()
+            val lineValues =
+                itemPlacer.getLineValues(this, bounds.height(), maxLabelHeight, position)
+                    ?: itemPlacer.getLabelValues(this, bounds.height(), maxLabelHeight, position)
 
-        lineValues.forEach { lineValue ->
-            centerY = bounds.bottom - bounds.height() * (lineValue - chartValues.minY) / chartValues.lengthY +
-                getLineCanvasYCorrection(guidelineThickness, lineValue)
+            lineValues.forEach { lineValue ->
+                centerY = bounds.bottom - bounds.height() * (lineValue - chartValues.minY) / chartValues.lengthY +
+                    getLineCanvasYCorrection(guidelineThickness, lineValue)
 
-            guideline?.takeIf {
-                isNotInRestrictedBounds(
+                guideline?.takeIf {
+                    isNotInRestrictedBounds(
+                        left = chartBounds.left,
+                        top = centerY - guidelineThickness.half,
+                        right = chartBounds.right,
+                        bottom = centerY + guidelineThickness.half,
+                    )
+                }?.drawHorizontal(
+                    context = context,
                     left = chartBounds.left,
-                    top = centerY - guidelineThickness.half,
                     right = chartBounds.right,
-                    bottom = centerY + guidelineThickness.half,
+                    centerY = centerY,
                 )
-            }?.drawHorizontal(
+            }
+            val axisLineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
+            axisLine?.drawVertical(
                 context = context,
-                left = chartBounds.left,
-                right = chartBounds.right,
-                centerY = centerY,
-            )
-        }
-        val axisLineExtensionLength = if (itemPlacer.getShiftTopLines(this)) tickThickness else 0f
-        axisLine?.drawVertical(
-            context = context,
-            top = bounds.top - axisLineExtensionLength,
-            bottom = bounds.bottom + axisLineExtensionLength,
-            centerX = if (position.isLeft(isLtr = isLtr)) {
-                bounds.right - axisThickness.half
-            } else {
-                bounds.left + axisThickness.half
-            },
-        )
-    }
-
-    override fun drawAboveChart(context: ChartDrawContext): Unit = with(context) {
-        val label = label
-        val labelValues = itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
-        val tickLeftX = getTickLeftX()
-        val tickRightX = tickLeftX + axisThickness + tickLength
-        val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
-        var tickCenterY: Float
-        val chartValues = chartValuesProvider.getChartValues(position)
-
-        labelValues.forEach { labelValue ->
-            tickCenterY = bounds.bottom - bounds.height() * (labelValue - chartValues.minY) / chartValues.lengthY +
-                getLineCanvasYCorrection(tickThickness, labelValue)
-
-            tick?.drawHorizontal(
-                context = context,
-                left = tickLeftX,
-                right = tickRightX,
-                centerY = tickCenterY,
-            )
-
-            label ?: return@forEach
-            drawLabel(
-                label = label,
-                labelText = valueFormatter.formatValue(labelValue, chartValues),
-                labelX = labelX,
-                tickCenterY = tickCenterY,
+                top = bounds.top - axisLineExtensionLength,
+                bottom = bounds.bottom + axisLineExtensionLength,
+                centerX =
+                    if (position.isLeft(isLtr = isLtr)) {
+                        bounds.right - axisThickness.half
+                    } else {
+                        bounds.left + axisThickness.half
+                    },
             )
         }
 
-        title?.let { title ->
-            titleComponent?.drawText(
-                context = this,
-                text = title,
-                textX = if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
-                textY = bounds.centerY(),
-                horizontalPosition = if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
-                verticalPosition = VerticalPosition.Center,
-                rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
-                maxTextHeight = bounds.height().toInt(),
-            )
+    override fun drawAboveChart(context: ChartDrawContext): Unit =
+        with(context) {
+            val label = label
+            val labelValues = itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
+            val tickLeftX = getTickLeftX()
+            val tickRightX = tickLeftX + axisThickness + tickLength
+            val labelX = if (areLabelsOutsideAtStartOrInsideAtEnd == isLtr) tickLeftX else tickRightX
+            var tickCenterY: Float
+            val chartValues = chartValuesProvider.getChartValues(position)
+
+            labelValues.forEach { labelValue ->
+                tickCenterY = bounds.bottom - bounds.height() * (labelValue - chartValues.minY) / chartValues.lengthY +
+                    getLineCanvasYCorrection(tickThickness, labelValue)
+
+                tick?.drawHorizontal(
+                    context = context,
+                    left = tickLeftX,
+                    right = tickRightX,
+                    centerY = tickCenterY,
+                )
+
+                label ?: return@forEach
+                drawLabel(
+                    label = label,
+                    labelText = valueFormatter.formatValue(labelValue, chartValues),
+                    labelX = labelX,
+                    tickCenterY = tickCenterY,
+                )
+            }
+
+            title?.let { title ->
+                titleComponent?.drawText(
+                    context = this,
+                    text = title,
+                    textX = if (position.isStart) bounds.getStart(isLtr = isLtr) else bounds.getEnd(isLtr = isLtr),
+                    textY = bounds.centerY(),
+                    horizontalPosition = if (position.isStart) HorizontalPosition.End else HorizontalPosition.Start,
+                    verticalPosition = VerticalPosition.Center,
+                    rotationDegrees = TITLE_ABS_ROTATION_DEGREES * if (position.isStart) -1f else 1f,
+                    maxTextHeight = bounds.height().toInt(),
+                )
+            }
         }
-    }
 
     override fun updateHorizontalDimensions(
         context: MeasureContext,
@@ -168,12 +170,13 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         labelX: Float,
         tickCenterY: Float,
     ) {
-        val textBounds = label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).apply {
-            translate(
-                x = labelX,
-                y = tickCenterY - centerY(),
-            )
-        }
+        val textBounds =
+            label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).apply {
+                translate(
+                    x = labelX,
+                    y = tickCenterY - centerY(),
+                )
+            }
 
         if (
             horizontalLabelPosition == Outside ||
@@ -192,11 +195,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 horizontalPosition = textHorizontalPosition,
                 verticalPosition = verticalLabelPosition.textPosition,
                 rotationDegrees = labelRotationDegrees,
-                maxTextWidth = when (sizeConstraint) {
-                    // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
-                    is SizeConstraint.Auto -> Int.MAX_VALUE
-                    else -> (bounds.width() - tickLength - axisThickness).toInt()
-                },
+                maxTextWidth =
+                    when (sizeConstraint) {
+                        // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
+                        is SizeConstraint.Auto -> Int.MAX_VALUE
+                        else -> (bounds.width() - tickLength - axisThickness).toInt()
+                    },
             )
         }
     }
@@ -217,72 +221,83 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         context: MeasureContext,
         availableHeight: Float,
         outInsets: HorizontalInsets,
-    ): Unit = with(context) {
-        val desiredWidth = getDesiredWidth(availableHeight)
+    ): Unit =
+        with(context) {
+            val desiredWidth = getDesiredWidth(availableHeight)
 
-        outInsets.set(
-            start = if (position.isStart) desiredWidth else 0f,
-            end = if (position.isEnd) desiredWidth else 0f,
-        )
-    }
+            outInsets.set(
+                start = if (position.isStart) desiredWidth else 0f,
+                end = if (position.isEnd) desiredWidth else 0f,
+            )
+        }
 
     override fun getInsets(
         context: MeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
-    ): Unit = with(context) {
-        val maxLabelHeight = getMaxLabelHeight()
-        val maxLineThickness = maxOf(axisThickness, tickThickness)
-        outInsets.set(
-            top = itemPlacer.getTopVerticalAxisInset(verticalLabelPosition, maxLabelHeight, maxLineThickness),
-            bottom = itemPlacer.getBottomVerticalAxisInset(verticalLabelPosition, maxLabelHeight, maxLineThickness),
-        )
-    }
+    ): Unit =
+        with(context) {
+            val maxLabelHeight = getMaxLabelHeight()
+            val maxLineThickness = maxOf(axisThickness, tickThickness)
+            outInsets.set(
+                top = itemPlacer.getTopVerticalAxisInset(verticalLabelPosition, maxLabelHeight, maxLineThickness),
+                bottom = itemPlacer.getBottomVerticalAxisInset(verticalLabelPosition, maxLabelHeight, maxLineThickness),
+            )
+        }
 
     /**
      * Calculates the optimal width for this [VerticalAxis], accounting for the value of [sizeConstraint].
      */
-    private fun MeasureContext.getDesiredWidth(height: Float) = when (val constraint = sizeConstraint) {
-        is SizeConstraint.Auto -> {
-            val titleComponentWidth = title?.let { title ->
-                titleComponent?.getWidth(
-                    context = this,
-                    text = title,
-                    rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
-                    height = bounds.height().toInt(),
-                )
-            }.orZero
-            val labelSpace = when (horizontalLabelPosition) {
-                Outside -> getMaxLabelWidth(height)
-                Inside -> 0f
+    private fun MeasureContext.getDesiredWidth(height: Float) =
+        when (val constraint = sizeConstraint) {
+            is SizeConstraint.Auto -> {
+                val titleComponentWidth =
+                    title?.let { title ->
+                        titleComponent?.getWidth(
+                            context = this,
+                            text = title,
+                            rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
+                            height = bounds.height().toInt(),
+                        )
+                    }.orZero
+                val labelSpace =
+                    when (horizontalLabelPosition) {
+                        Outside -> getMaxLabelWidth(height)
+                        Inside -> 0f
+                    }
+                (labelSpace + titleComponentWidth + axisThickness + tickLength)
+                    .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
             }
-            (labelSpace + titleComponentWidth + axisThickness + tickLength)
-                .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
+            is SizeConstraint.Exact -> constraint.sizeDp.pixels
+            is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
+            is SizeConstraint.TextWidth ->
+                label?.getWidth(
+                    context = this,
+                    text = constraint.text,
+                    rotationDegrees = labelRotationDegrees,
+                ).orZero + tickLength + axisThickness.half
         }
-        is SizeConstraint.Exact -> constraint.sizeDp.pixels
-        is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
-        is SizeConstraint.TextWidth -> label?.getWidth(
-            context = this,
-            text = constraint.text,
-            rotationDegrees = labelRotationDegrees,
-        ).orZero + tickLength + axisThickness.half
-    }
 
-    private fun MeasureContext.getMaxLabelHeight() = label?.let { label ->
-        val chartValues = chartValuesProvider.getChartValues(position)
-        itemPlacer
-            .getHeightMeasurementLabelValues(this, position)
-            .maxOfOrNull { value -> label.getHeight(this, valueFormatter.formatValue(value, chartValues)) }
-    }.orZero
+    private fun MeasureContext.getMaxLabelHeight() =
+        label?.let { label ->
+            val chartValues = chartValuesProvider.getChartValues(position)
+            itemPlacer
+                .getHeightMeasurementLabelValues(this, position)
+                .maxOfOrNull { value -> label.getHeight(this, valueFormatter.formatValue(value, chartValues)) }
+        }.orZero
 
-    private fun MeasureContext.getMaxLabelWidth(axisHeight: Float) = label?.let { label ->
-        val chartValues = chartValuesProvider.getChartValues(position)
-        itemPlacer
-            .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
-            .maxOfOrNull { value -> label.getWidth(this, valueFormatter.formatValue(value, chartValues)) }
-    }.orZero
+    private fun MeasureContext.getMaxLabelWidth(axisHeight: Float) =
+        label?.let { label ->
+            val chartValues = chartValuesProvider.getChartValues(position)
+            itemPlacer
+                .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
+                .maxOfOrNull { value -> label.getWidth(this, valueFormatter.formatValue(value, chartValues)) }
+        }.orZero
 
-    private fun ChartDrawContext.getLineCanvasYCorrection(thickness: Float, y: Float): Float {
+    private fun ChartDrawContext.getLineCanvasYCorrection(
+        thickness: Float,
+        y: Float,
+    ): Float {
         val chartValues = chartValuesProvider.getChartValues(position)
         return if (y == chartValues.maxY && itemPlacer.getShiftTopLines(this)) -thickness.half else thickness.half
     }
@@ -291,7 +306,8 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      * Defines the horizontal position of each of a vertical axis’s labels relative to the axis line.
      */
     public enum class HorizontalLabelPosition {
-        Outside, Inside
+        Outside,
+        Inside,
     }
 
     /**
@@ -333,11 +349,12 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
          */
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : Position> build(): VerticalAxis<T> {
-            val position = when (T::class.java) {
-                AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
-                AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
-                else -> throw UnknownAxisPositionException(T::class.java)
-            } as Position
+            val position =
+                when (T::class.java) {
+                    AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
+                    AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
+                    else -> throw UnknownAxisPositionException(T::class.java)
+                } as Position
             return setTo(VerticalAxis(position)).also { axis ->
                 axis.itemPlacer = itemPlacer
                 axis.horizontalLabelPosition = horizontalLabelPosition

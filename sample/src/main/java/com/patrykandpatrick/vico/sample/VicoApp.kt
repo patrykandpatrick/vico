@@ -42,9 +42,10 @@ internal fun VicoApp() {
     }
     VicoTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(color = MaterialTheme.colorScheme.background),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(color = MaterialTheme.colorScheme.background),
         ) { ShowcaseScreen() }
     }
 }

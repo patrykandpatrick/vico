@@ -30,21 +30,23 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 internal class ShowcaseViewModel : ViewModel() {
+    private val generator =
+        RandomEntriesGenerator(
+            xRange = 0..GENERATOR_X_RANGE_TOP,
+            yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
+        )
 
-    private val generator = RandomEntriesGenerator(
-        xRange = 0..GENERATOR_X_RANGE_TOP,
-        yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
-    )
+    private val customStepGenerator =
+        RandomEntriesGenerator(
+            xRange = IntProgression.fromClosedRange(rangeStart = 0, rangeEnd = GENERATOR_X_RANGE_TOP, step = 2),
+            yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
+        )
 
-    private val customStepGenerator = RandomEntriesGenerator(
-        xRange = IntProgression.fromClosedRange(rangeStart = 0, rangeEnd = GENERATOR_X_RANGE_TOP, step = 2),
-        yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
-    )
-
-    private val positiveAndNegativeValuesGenerator = RandomEntriesGenerator(
-        xRange = 0..GENERATOR_X_RANGE_TOP,
-        yRange = -10..GENERATOR_Y_RANGE_TOP,
-    )
+    private val positiveAndNegativeValuesGenerator =
+        RandomEntriesGenerator(
+            xRange = 0..GENERATOR_X_RANGE_TOP,
+            yRange = -10..GENERATOR_Y_RANGE_TOP,
+        )
 
     internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
 

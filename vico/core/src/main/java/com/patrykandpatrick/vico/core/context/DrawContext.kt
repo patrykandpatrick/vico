@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import com.patrykandpatrick.vico.core.extension.saveLayer
  * It also defines helpful drawing functions.
  */
 public interface DrawContext : MeasureContext {
-
     /**
      * The elevation overlay color, applied to [ShapeComponent]s that cast shadows.
      */
@@ -47,14 +46,22 @@ public interface DrawContext : MeasureContext {
     /**
      * Temporarily swaps the [Canvas] and yields [DrawContext] as the [block]’s receiver.
      */
-    public fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit)
+    public fun withOtherCanvas(
+        canvas: Canvas,
+        block: (DrawContext) -> Unit,
+    )
 
     /**
      * Clips the [Canvas] to the specified rectangle.
      *
      * @see Canvas.clipRect
      */
-    public fun clipRect(left: Float, top: Float, right: Float, bottom: Float) {
+    public fun clipRect(
+        left: Float,
+        top: Float,
+        right: Float,
+        bottom: Float,
+    ) {
         canvas.clipRect(left, top, right, bottom)
     }
 

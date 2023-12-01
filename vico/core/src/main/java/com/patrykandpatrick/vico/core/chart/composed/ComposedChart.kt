@@ -42,7 +42,6 @@ import java.util.TreeMap
 public class ComposedChart<Model : ChartEntryModel>(
     charts: List<Chart<Model>>,
 ) : BaseChart<ComposedChartEntryModel<Model>>() {
-
     public constructor(vararg charts: Chart<Model>) : this(charts.toList())
 
     /**
@@ -57,7 +56,12 @@ public class ComposedChart<Model : ChartEntryModel>(
     override val chartInsetters: Collection<ChartInsetter>
         get() = charts.map { it.chartInsetters }.flatten() + persistentMarkers.values
 
-    override fun setBounds(left: Number, top: Number, right: Number, bottom: Number) {
+    override fun setBounds(
+        left: Number,
+        top: Number,
+        right: Number,
+        bottom: Number,
+    ) {
         this.bounds.set(left, top, right, bottom)
         charts.forEach { chart -> chart.setBounds(left, top, right, bottom) }
     }
@@ -73,7 +77,10 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun drawChartInternal(context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
+    override fun drawChartInternal(
+        context: ChartDrawContext,
+        model: ComposedChartEntryModel<Model>,
+    ) {
         drawDecorationBehindChart(context)
         if (model.entries.isNotEmpty()) {
             drawChart(context, model)
@@ -111,7 +118,11 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override fun getHorizontalInsets(context: MeasureContext, availableHeight: Float, outInsets: HorizontalInsets) {
+    override fun getHorizontalInsets(
+        context: MeasureContext,
+        availableHeight: Float,
+        outInsets: HorizontalInsets,
+    ) {
         charts.forEach { chart ->
             chart.getHorizontalInsets(context, availableHeight, tempInsets)
             outInsets.setValuesIfGreater(start = tempInsets.start, end = tempInsets.end)
@@ -130,17 +141,17 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
-    override val modelTransformerProvider: ModelTransformerProvider = object : ModelTransformerProvider {
-        private val modelTransformer =
-            ComposedModelTransformer { charts.map { it.modelTransformerProvider.getModelTransformer() } }
+    override val modelTransformerProvider: ModelTransformerProvider =
+        object : ModelTransformerProvider {
+            private val modelTransformer =
+                ComposedModelTransformer { charts.map { it.modelTransformerProvider.getModelTransformer() } }
 
-        override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
-    }
+            override fun <T : ChartEntryModel> getModelTransformer(): Chart.ModelTransformer<T> = modelTransformer
+        }
 
     private class ComposedModelTransformer<T : ChartEntryModel>(
         private val getModelTransformers: () -> List<Chart.ModelTransformer<T>>,
     ) : Chart.ModelTransformer<T>() {
-
         override val key: ExtraStore.Key<Nothing> = ExtraStore.Key()
 
         override fun prepareForTransformation(
@@ -160,7 +171,10 @@ public class ComposedChart<Model : ChartEntryModel>(
             }
         }
 
-        override suspend fun transform(extraStore: MutableExtraStore, fraction: Float) {
+        override suspend fun transform(
+            extraStore: MutableExtraStore,
+            fraction: Float,
+        ) {
             getModelTransformers().forEach { transformer ->
                 transformer.transform(extraStore, fraction)
             }

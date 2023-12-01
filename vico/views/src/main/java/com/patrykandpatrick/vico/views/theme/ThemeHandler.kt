@@ -52,7 +52,6 @@ internal class ThemeHandler(
     attrs: AttributeSet?,
     chartType: ChartType,
 ) {
-
     public var startAxis: Axis<AxisPosition.Vertical.Start>? = null
         private set
 
@@ -86,33 +85,39 @@ internal class ThemeHandler(
     init {
         context.obtainStyledAttributes(attrs, R.styleable.BaseChartView).use { typedArray ->
             if (typedArray.getBoolean(R.styleable.BaseChartView_showStartAxis, false)) {
-                startAxis = typedArray.getAxisBuilder(
-                    R.styleable.BaseChartView_startAxisStyle,
-                    VerticalAxis.Builder(),
-                ).build()
+                startAxis =
+                    typedArray.getAxisBuilder(
+                        R.styleable.BaseChartView_startAxisStyle,
+                        VerticalAxis.Builder(),
+                    ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showTopAxis, false)) {
-                topAxis = typedArray.getAxisBuilder(
-                    R.styleable.BaseChartView_topAxisStyle,
-                    HorizontalAxis.Builder(),
-                ).build()
+                topAxis =
+                    typedArray.getAxisBuilder(
+                        R.styleable.BaseChartView_topAxisStyle,
+                        HorizontalAxis.Builder(),
+                    ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showEndAxis, false)) {
-                endAxis = typedArray.getAxisBuilder(
-                    R.styleable.BaseChartView_endAxisStyle,
-                    VerticalAxis.Builder(),
-                ).build()
+                endAxis =
+                    typedArray.getAxisBuilder(
+                        R.styleable.BaseChartView_endAxisStyle,
+                        VerticalAxis.Builder(),
+                    ).build()
             }
             if (typedArray.getBoolean(R.styleable.BaseChartView_showBottomAxis, false)) {
-                bottomAxis = typedArray.getAxisBuilder(
-                    R.styleable.BaseChartView_bottomAxisStyle,
-                    HorizontalAxis.Builder(),
-                ).build()
+                bottomAxis =
+                    typedArray.getAxisBuilder(
+                        R.styleable.BaseChartView_bottomAxisStyle,
+                        HorizontalAxis.Builder(),
+                    ).build()
             }
-            isHorizontalScrollEnabled = typedArray
-                .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, true)
-            isChartZoomEnabled = typedArray
-                .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, true)
+            isHorizontalScrollEnabled =
+                typedArray
+                    .getBoolean(R.styleable.BaseChartView_chartHorizontalScrollingEnabled, true)
+            isChartZoomEnabled =
+                typedArray
+                    .getBoolean(R.styleable.BaseChartView_chartZoomEnabled, true)
             fadingEdges = typedArray.getFadingEdges()
             horizontalLayout = typedArray.getHorizontalLayout()
 
@@ -149,83 +154,94 @@ internal class ThemeHandler(
                 styleableResourceId = styleableResourceId,
             ).getLineComponent(context = context, defaultShape = defaultShape)
 
-        val axisStyle = getNestedTypedArray(
-            context = context,
-            resourceId = if (hasValue(styleAttrId)) styleAttrId else R.styleable.BaseChartView_axisStyle,
-            styleableResourceId = R.styleable.Axis,
-        )
+        val axisStyle =
+            getNestedTypedArray(
+                context = context,
+                resourceId = if (hasValue(styleAttrId)) styleAttrId else R.styleable.BaseChartView_axisStyle,
+                styleableResourceId = R.styleable.Axis,
+            )
 
         return builder.apply {
-            axis = axisStyle
-                .takeIf { it.getBoolean(R.styleable.Axis_showAxisLine, true) }
-                ?.getLineComponent(
-                    resourceId = R.styleable.Axis_axisLineStyle,
-                    styleableResourceId = R.styleable.LineComponent,
+            axis =
+                axisStyle
+                    .takeIf { it.getBoolean(R.styleable.Axis_showAxisLine, true) }
+                    ?.getLineComponent(
+                        resourceId = R.styleable.Axis_axisLineStyle,
+                        styleableResourceId = R.styleable.LineComponent,
+                    )
+            tick =
+                axisStyle
+                    .takeIf { it.getBoolean(R.styleable.Axis_showTick, true) }
+                    ?.getLineComponent(
+                        resourceId = R.styleable.Axis_axisTickStyle,
+                        styleableResourceId = R.styleable.LineComponent,
+                    )
+            tickLengthDp =
+                axisStyle.getRawDimension(
+                    context = context,
+                    R.styleable.Axis_axisTickLength,
+                    defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
                 )
-            tick = axisStyle
-                .takeIf { it.getBoolean(R.styleable.Axis_showTick, true) }
-                ?.getLineComponent(
-                    resourceId = R.styleable.Axis_axisTickStyle,
-                    styleableResourceId = R.styleable.LineComponent,
+            guideline =
+                axisStyle
+                    .takeIf { it.getBoolean(R.styleable.Axis_showGuideline, true) }
+                    ?.getLineComponent(
+                        resourceId = R.styleable.Axis_axisGuidelineStyle,
+                        styleableResourceId = R.styleable.LineComponent,
+                        defaultShape = DashedShape(),
+                    )
+            labelRotationDegrees =
+                axisStyle.getFloat(
+                    R.styleable.Axis_labelRotationDegrees,
+                    0f,
                 )
-            tickLengthDp = axisStyle.getRawDimension(
-                context = context,
-                R.styleable.Axis_axisTickLength,
-                defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
-            )
-            guideline = axisStyle
-                .takeIf { it.getBoolean(R.styleable.Axis_showGuideline, true) }
-                ?.getLineComponent(
-                    resourceId = R.styleable.Axis_axisGuidelineStyle,
-                    styleableResourceId = R.styleable.LineComponent,
-                    defaultShape = DashedShape(),
-                )
-            labelRotationDegrees = axisStyle.getFloat(
-                R.styleable.Axis_labelRotationDegrees,
-                0f,
-            )
-            label = axisStyle.getNestedTypedArray(
-                context = context,
-                resourceId = R.styleable.Axis_axisLabelStyle,
-                styleableResourceId = R.styleable.TextComponentStyle,
-            ).getTextComponent(context = context)
-            titleComponent = if (axisStyle.getBoolean(R.styleable.Axis_showTitle, false)) {
+            label =
                 axisStyle.getNestedTypedArray(
                     context = context,
-                    resourceId = R.styleable.Axis_titleStyle,
+                    resourceId = R.styleable.Axis_axisLabelStyle,
                     styleableResourceId = R.styleable.TextComponentStyle,
                 ).getTextComponent(context = context)
-            } else {
-                null
-            }
+            titleComponent =
+                if (axisStyle.getBoolean(R.styleable.Axis_showTitle, false)) {
+                    axisStyle.getNestedTypedArray(
+                        context = context,
+                        resourceId = R.styleable.Axis_titleStyle,
+                        styleableResourceId = R.styleable.TextComponentStyle,
+                    ).getTextComponent(context = context)
+                } else {
+                    null
+                }
             title = axisStyle.getString(R.styleable.Axis_title)
 
             when (this) {
                 is VerticalAxis.Builder<*> -> {
-                    horizontalLabelPosition = axisStyle
-                        .getInteger(R.styleable.Axis_verticalAxisHorizontalLabelPosition, 0)
-                        .let { value ->
-                            val values = VerticalAxis.HorizontalLabelPosition.entries
-                            values[value % values.size]
-                        }
+                    horizontalLabelPosition =
+                        axisStyle
+                            .getInteger(R.styleable.Axis_verticalAxisHorizontalLabelPosition, 0)
+                            .let { value ->
+                                val values = VerticalAxis.HorizontalLabelPosition.entries
+                                values[value % values.size]
+                            }
 
-                    verticalLabelPosition = axisStyle
-                        .getInteger(R.styleable.Axis_verticalAxisVerticalLabelPosition, 0)
-                        .let { value ->
-                            val values = VerticalAxis.VerticalLabelPosition.entries
-                            values[value % values.size]
-                        }
+                    verticalLabelPosition =
+                        axisStyle
+                            .getInteger(R.styleable.Axis_verticalAxisVerticalLabelPosition, 0)
+                            .let { value ->
+                                val values = VerticalAxis.VerticalLabelPosition.entries
+                                values[value % values.size]
+                            }
 
                     itemPlacer = axisStyle.getVerticalAxisItemPlacer()
                 }
 
                 is HorizontalAxis.Builder<*> -> {
-                    itemPlacer = AxisItemPlacer.Horizontal.default(
-                        axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1),
-                        axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0),
-                        axisStyle.getBoolean(R.styleable.Axis_shiftExtremeHorizontalAxisTicks, true),
-                        axisStyle.getBoolean(R.styleable.Axis_addExtremeHorizontalAxisLabelPadding, false),
-                    )
+                    itemPlacer =
+                        AxisItemPlacer.Horizontal.default(
+                            axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelSpacing, 1),
+                            axisStyle.getInteger(R.styleable.Axis_horizontalAxisLabelOffset, 0),
+                            axisStyle.getBoolean(R.styleable.Axis_shiftExtremeHorizontalAxisTicks, true),
+                            axisStyle.getBoolean(R.styleable.Axis_addExtremeHorizontalAxisLabelPadding, false),
+                        )
                 }
             }
         }.also { axisStyle.recycle() }
@@ -245,12 +261,13 @@ internal class ThemeHandler(
     private fun TypedArray.getHorizontalLayout(): HorizontalLayout =
         when (getInt(R.styleable.BaseChartView_horizontalLayout, 0)) {
             0 -> HorizontalLayout.Segmented
-            else -> HorizontalLayout.FullWidth(
-                getRawDimension(context, R.styleable.BaseChartView_scalableStartContentPadding, 0f),
-                getRawDimension(context, R.styleable.BaseChartView_scalableEndContentPadding, 0f),
-                getRawDimension(context, R.styleable.BaseChartView_unscalableStartContentPadding, 0f),
-                getRawDimension(context, R.styleable.BaseChartView_unscalableEndContentPadding, 0f),
-            )
+            else ->
+                HorizontalLayout.FullWidth(
+                    getRawDimension(context, R.styleable.BaseChartView_scalableStartContentPadding, 0f),
+                    getRawDimension(context, R.styleable.BaseChartView_scalableEndContentPadding, 0f),
+                    getRawDimension(context, R.styleable.BaseChartView_unscalableStartContentPadding, 0f),
+                    getRawDimension(context, R.styleable.BaseChartView_unscalableEndContentPadding, 0f),
+                )
         }
 
     private fun getComposedChart(
@@ -259,19 +276,21 @@ internal class ThemeHandler(
     ): Chart<ComposedChartEntryModel<ChartEntryModel>>? {
         val chartFlags = composedChartViewTypedArray.getInt(R.styleable.ComposedChartView_charts, 0)
 
-        val columnChart: ColumnChart? = if (chartFlags.hasAnyFlagOf(COLUMN_CHART, STACKED_COLUMN_CHART)) {
-            baseTypedArray.getColumnChart(
-                context,
-                mergeMode = if (chartFlags.hasFlag(STACKED_COLUMN_CHART)) MergeMode.Stack else MergeMode.Grouped,
-            )
-        } else {
-            null
-        }
-        val lineChart = if (chartFlags.hasFlag(LINE_CHART)) {
-            baseTypedArray.getLineChart(context)
-        } else {
-            null
-        }
+        val columnChart: ColumnChart? =
+            if (chartFlags.hasAnyFlagOf(COLUMN_CHART, STACKED_COLUMN_CHART)) {
+                baseTypedArray.getColumnChart(
+                    context,
+                    mergeMode = if (chartFlags.hasFlag(STACKED_COLUMN_CHART)) MergeMode.Stack else MergeMode.Grouped,
+                )
+            } else {
+                null
+            }
+        val lineChart =
+            if (chartFlags.hasFlag(LINE_CHART)) {
+                baseTypedArray.getLineChart(context)
+            } else {
+                null
+            }
 
         return when {
             columnChart != null && lineChart != null -> ComposedChart(columnChart, lineChart)
@@ -281,35 +300,36 @@ internal class ThemeHandler(
         }
     }
 
-    @Suppress("TooGenericExceptionCaught")
     private fun TypedArray.getFadingEdges(): FadingEdges? {
         val edgesLength = getRawDimension(context, R.styleable.BaseChartView_fadingEdgeWidth, 0f)
         val startLength = getRawDimension(context, R.styleable.BaseChartView_startFadingEdgeWidth, edgesLength)
         val endLength = getRawDimension(context, R.styleable.BaseChartView_endFadingEdgeWidth, edgesLength)
-        val threshold = getRawDimension(
-            context,
-            R.styleable.BaseChartView_fadingEdgeVisibilityThreshold,
-            FADING_EDGE_VISIBILITY_THRESHOLD_DP,
-        )
+        val threshold =
+            getRawDimension(
+                context,
+                R.styleable.BaseChartView_fadingEdgeVisibilityThreshold,
+                FADING_EDGE_VISIBILITY_THRESHOLD_DP,
+            )
 
         return if (startLength > 0f || endLength > 0f) {
             val interpolatorClassName = getString(R.styleable.BaseChartView_fadingEdgeVisibilityInterpolator)
 
-            val interpolator = if (interpolatorClassName != null) {
-                try {
-                    context.classLoader.loadClass(interpolatorClassName).getDeclaredConstructor().newInstance()
-                        as? TimeInterpolator
-                } catch (e: Exception) {
-                    Log.e(
-                        "ChartView",
-                        "Caught exception when trying to instantiate $interpolatorClassName " +
-                            "as fade interpolator.",
-                    )
+            val interpolator =
+                if (interpolatorClassName != null) {
+                    try {
+                        context.classLoader.loadClass(interpolatorClassName).getDeclaredConstructor().newInstance()
+                            as? TimeInterpolator
+                    } catch (e: Exception) {
+                        Log.e(
+                            "ChartView",
+                            "Caught exception when trying to instantiate $interpolatorClassName " +
+                                "as fade interpolator.",
+                        )
+                        null
+                    }
+                } else {
                     null
                 }
-            } else {
-                null
-            }
 
             FadingEdges(
                 startEdgeWidthDp = startLength,

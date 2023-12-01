@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  * @property shader the [Shader] that will always be provided, regardless of the [provideShader] function’s arguments.
  */
 public class StaticShader(private val shader: Shader) : DynamicShader {
-
     override fun provideShader(
         context: DrawContext,
         left: Float,

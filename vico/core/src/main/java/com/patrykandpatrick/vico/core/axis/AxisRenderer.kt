@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.core.dimensions.BoundsAware
  * Defines the minimal set of properties and functions required by other parts of the library to draw an axis.
  */
 public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInsetter {
-
     /**
      * Defines the position of the axis relative to the [Chart].
      */
@@ -59,5 +58,8 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
     /**
      * Updates the chart’s [MutableHorizontalDimensions] instance.
      */
-    public fun updateHorizontalDimensions(context: MeasureContext, horizontalDimensions: MutableHorizontalDimensions)
+    public fun updateHorizontalDimensions(
+        context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
+    )
 }

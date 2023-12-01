@@ -32,17 +32,17 @@ import org.junit.Rule
 import org.junit.Test
 
 public class PaparazziTest {
-
-    private val defaultCharts = listOf<Pair<String, @Composable () -> Unit>>(
-        "LineChart" to { DefaultLineChart() },
-        "LineChart Long Scrollable" to { DefaultLineChartLongScrollable() },
-        "LineChart Long Scrollable with initial scroll end" to { DefaultLineChartLongScrollableEnd() },
-        "LineChart Long Not Scrollable" to { DefaultLineChartLongNonScrollable() },
-        "ColumnChart" to { DefaultColumnChart() },
-        "ColumnChart Long Scrollable" to { DefaultColumnChartLongScrollable() },
-        "ColumnChart Long Scrollable with initial scroll end" to { DefaultColumnChartLongScrollableEnd() },
-        "ColumnChart Long Not Scrollable" to { DefaultColumnChartLongNonScrollable() },
-    )
+    private val defaultCharts =
+        listOf<Pair<String, @Composable () -> Unit>>(
+            "LineChart" to { DefaultLineChart() },
+            "LineChart Long Scrollable" to { DefaultLineChartLongScrollable() },
+            "LineChart Long Scrollable with initial scroll end" to { DefaultLineChartLongScrollableEnd() },
+            "LineChart Long Not Scrollable" to { DefaultLineChartLongNonScrollable() },
+            "ColumnChart" to { DefaultColumnChart() },
+            "ColumnChart Long Scrollable" to { DefaultColumnChartLongScrollable() },
+            "ColumnChart Long Scrollable with initial scroll end" to { DefaultColumnChartLongScrollableEnd() },
+            "ColumnChart Long Not Scrollable" to { DefaultColumnChartLongNonScrollable() },
+        )
 
     @get:Rule
     public val paparazzi: Paparazzi = Paparazzi(deviceConfig = lightConfig)

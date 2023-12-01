@@ -81,35 +81,39 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                 (chartEntryModelWrapperState.value.chartEntryModel != null || runInitialAnimation)
             ) {
                 isAnimationRunning = true
-                mainAnimationJob = scope.launch(dispatcher) {
-                    animate(
-                        initialValue = Animation.range.start,
-                        targetValue = Animation.range.endInclusive,
-                        animationSpec = animationSpec,
-                    ) { fraction, _ ->
-                        when {
-                            !isAnimationRunning -> return@animate
-                            !isAnimationFrameGenerationRunning -> {
-                                isAnimationFrameGenerationRunning = true
-                                animationFrameJob = scope.launch(dispatcher) {
-                                    transformModel(chart, fraction)
-                                    isAnimationFrameGenerationRunning = false
+                mainAnimationJob =
+                    scope.launch(dispatcher) {
+                        animate(
+                            initialValue = Animation.range.start,
+                            targetValue = Animation.range.endInclusive,
+                            animationSpec = animationSpec,
+                        ) { fraction, _ ->
+                            when {
+                                !isAnimationRunning -> return@animate
+                                !isAnimationFrameGenerationRunning -> {
+                                    isAnimationFrameGenerationRunning = true
+                                    animationFrameJob =
+                                        scope.launch(dispatcher) {
+                                            transformModel(chart, fraction)
+                                            isAnimationFrameGenerationRunning = false
+                                        }
                                 }
-                            }
-                            fraction == 1f -> {
-                                finalAnimationFrameJob = scope.launch(dispatcher) {
-                                    animationFrameJob?.cancelAndJoin()
-                                    transformModel(chart, fraction)
-                                    isAnimationFrameGenerationRunning = false
+                                fraction == 1f -> {
+                                    finalAnimationFrameJob =
+                                        scope.launch(dispatcher) {
+                                            animationFrameJob?.cancelAndJoin()
+                                            transformModel(chart, fraction)
+                                            isAnimationFrameGenerationRunning = false
+                                        }
                                 }
                             }
                         }
                     }
-                }
             } else {
-                finalAnimationFrameJob = scope.launch(dispatcher) {
-                    transformModel(chart, Animation.range.endInclusive)
-                }
+                finalAnimationFrameJob =
+                    scope.launch(dispatcher) {
+                        transformModel(chart, Animation.range.endInclusive)
+                    }
             }
         }
         scope.launch(dispatcher) {

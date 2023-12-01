@@ -30,7 +30,6 @@ internal class DefaultHorizontalAxisItemPlacer(
     private val shiftExtremeTicks: Boolean,
     private val addExtremeLabelPadding: Boolean,
 ) : AxisItemPlacer.Horizontal {
-
     override fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = shiftExtremeTicks
 
     override fun getAddFirstLabelPadding(context: MeasureContext) =
@@ -42,7 +41,6 @@ internal class DefaultHorizontalAxisItemPlacer(
             (chartValues.maxX - chartValues.minX - chartValues.xStep * offset) % (chartValues.xStep * spacing) == 0f
     }
 
-    @Suppress("LoopWithTooManyJumpStatements")
     override fun getLabelValues(
         context: ChartDrawContext,
         visibleXRange: ClosedFloatingPointRange<Float>,
@@ -75,7 +73,6 @@ internal class DefaultHorizontalAxisItemPlacer(
         return listOf(chartValues.minX, (chartValues.minX + chartValues.maxX).half, chartValues.maxX)
     }
 
-    @Suppress("LoopWithTooManyJumpStatements")
     override fun getLineValues(
         context: ChartDrawContext,
         visibleXRange: ClosedFloatingPointRange<Float>,

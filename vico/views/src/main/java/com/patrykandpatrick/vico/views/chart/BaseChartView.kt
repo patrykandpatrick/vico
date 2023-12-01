@@ -100,7 +100,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     defStyleAttr: Int = 0,
     chartType: ThemeHandler.ChartType,
 ) : FrameLayout(context, attrs, defStyleAttr), ScrollListenerHost {
-
     private val contentBounds = RectF()
 
     private val scrollHandler = ScrollHandler()
@@ -113,22 +112,24 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
 
     private val chartValuesManager = ChartValuesManager()
 
-    private val motionEventHandler = MotionEventHandler(
-        scroller = scroller,
-        scrollHandler = scrollHandler,
-        density = resources.displayMetrics.density,
-        onTouchPoint = ::handleTouchEvent,
-        requestInvalidate = ::invalidate,
-    )
+    private val motionEventHandler =
+        MotionEventHandler(
+            scroller = scroller,
+            scrollHandler = scrollHandler,
+            density = resources.displayMetrics.density,
+            onTouchPoint = ::handleTouchEvent,
+            requestInvalidate = ::invalidate,
+        )
 
-    private val measureContext = MutableMeasureContext(
-        canvasBounds = contentBounds,
-        density = context.density,
-        isLtr = context.isLtr,
-        isHorizontalScrollEnabled = false,
-        spToPx = context::spToPx,
-        chartValuesProvider = ChartValuesProvider.Empty,
-    )
+    private val measureContext =
+        MutableMeasureContext(
+            canvasBounds = contentBounds,
+            density = context.density,
+            isLtr = context.isLtr,
+            isHorizontalScrollEnabled = false,
+            spToPx = context::spToPx,
+            chartValuesProvider = ChartValuesProvider.Empty,
+        )
 
     private val scaleGestureListener: ScaleGestureDetector.OnScaleGestureListener =
         ChartScaleGestureListener(
@@ -284,9 +285,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                             animator.start()
                         }
                     } else {
-                        finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
-                            transformModel(this@BaseChartView, Animation.range.endInclusive)
-                        }
+                        finalAnimationFrameJob =
+                            coroutineScope?.launch(dispatcher) {
+                                transformModel(this@BaseChartView, Animation.range.endInclusive)
+                            }
                     }
                 },
                 getOldModel = { model },
@@ -374,7 +376,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         setModel(model = model, updateChartValues = true)
     }
 
-    private fun setModel(model: Model?, updateChartValues: Boolean) {
+    private fun setModel(
+        model: Model?,
+        updateChartValues: Boolean,
+    ) {
         val oldModel = this.model
         this.model = model
         updatePlaceholderVisibility()
@@ -390,7 +395,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
     }
 
-    protected fun tryInvalidate(chart: Chart<Model>?, model: Model?, updateChartValues: Boolean) {
+    protected fun tryInvalidate(
+        chart: Chart<Model>?,
+        model: Model?,
+        updateChartValues: Boolean,
+    ) {
         if (chart == null || model == null) return
         if (updateChartValues) {
             chartValuesManager.resetChartValues()
@@ -412,11 +421,12 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val scaleHandled = if (isZoomEnabled && event.pointerCount > 1 && chartScrollSpec.isScrollEnabled) {
-            scaleGestureDetector.onTouchEvent(event)
-        } else {
-            false
-        }
+        val scaleHandled =
+            if (isZoomEnabled && event.pointerCount > 1 && chartScrollSpec.isScrollEnabled) {
+                scaleGestureDetector.onTouchEvent(event)
+            } else {
+                false
+            }
         val touchHandled = motionEventHandler.handleMotionEvent(event)
 
         if (scrollDirectionResolved.not() && event.historySize > 0) {
@@ -431,7 +441,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         return touchHandled || scaleHandled
     }
 
-    private fun handleZoom(focusX: Float, zoomChange: Float) {
+    private fun handleZoom(
+        focusX: Float,
+        zoomChange: Float,
+    ) {
         val chart = chart ?: return
         val newZoom = zoom * zoomChange
         if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return
@@ -489,24 +502,26 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                 if (chartScrollSpec.isScrollEnabled) zoom = finalZoom
             }
 
-            scrollHandler.maxValue = measureContext.getMaxScrollDistance(
-                chartWidth = chart.bounds.width(),
-                horizontalDimensions = horizontalDimensions,
-                zoom = finalZoom,
-            )
+            scrollHandler.maxValue =
+                measureContext.getMaxScrollDistance(
+                    chartWidth = chart.bounds.width(),
+                    horizontalDimensions = horizontalDimensions,
+                    zoom = finalZoom,
+                )
 
             scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
-            val chartDrawContext = chartDrawContext(
-                canvas = canvas,
-                elevationOverlayColor = elevationOverlayColor,
-                measureContext = measureContext,
-                markerTouchPoint = markerTouchPoint,
-                horizontalDimensions = horizontalDimensions,
-                chartBounds = chart.bounds,
-                horizontalScroll = scrollHandler.value,
-                zoom = finalZoom,
-            )
+            val chartDrawContext =
+                chartDrawContext(
+                    canvas = canvas,
+                    elevationOverlayColor = elevationOverlayColor,
+                    measureContext = measureContext,
+                    markerTouchPoint = markerTouchPoint,
+                    horizontalDimensions = horizontalDimensions,
+                    chartBounds = chart.bounds,
+                    horizontalScroll = scrollHandler.value,
+                    zoom = finalZoom,
+                )
 
             val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
 
@@ -543,29 +558,35 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             !isAnimationRunning -> return
             !isAnimationFrameGenerationRunning -> {
                 isAnimationFrameGenerationRunning = true
-                animationFrameJob = coroutineScope?.launch(dispatcher) {
-                    entryProducer?.transformModel(this@BaseChartView, fraction)
-                    isAnimationFrameGenerationRunning = false
-                }
+                animationFrameJob =
+                    coroutineScope?.launch(dispatcher) {
+                        entryProducer?.transformModel(this@BaseChartView, fraction)
+                        isAnimationFrameGenerationRunning = false
+                    }
             }
             fraction == 1f -> {
-                finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
-                    animationFrameJob?.cancelAndJoin()
-                    entryProducer?.transformModel(this@BaseChartView, fraction)
-                    isAnimationFrameGenerationRunning = false
-                }
+                finalAnimationFrameJob =
+                    coroutineScope?.launch(dispatcher) {
+                        animationFrameJob?.cancelAndJoin()
+                        entryProducer?.transformModel(this@BaseChartView, fraction)
+                        isAnimationFrameGenerationRunning = false
+                    }
             }
         }
     }
 
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+    override fun onMeasure(
+        widthMeasureSpec: Int,
+        heightMeasureSpec: Int,
+    ) {
         val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
         val defaultHeight = DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
-        val height = when (heightMeasureSpec.specMode) {
-            MeasureSpec.EXACTLY -> heightMeasureSpec.specSize
-            MeasureSpec.AT_MOST -> defaultHeight.coerceAtMost(heightMeasureSpec.specSize)
-            else -> defaultHeight
-        }.coerceAtLeast(suggestedMinimumHeight)
+        val height =
+            when (heightMeasureSpec.specMode) {
+                MeasureSpec.EXACTLY -> heightMeasureSpec.specSize
+                MeasureSpec.AT_MOST -> defaultHeight.coerceAtMost(heightMeasureSpec.specSize)
+                else -> defaultHeight
+            }.coerceAtLeast(suggestedMinimumHeight)
         super.onMeasure(
             MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
             MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
@@ -574,7 +595,11 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             .set(left = paddingLeft, top = paddingTop, right = width - paddingRight, bottom = height - paddingBottom)
     }
 
-    override fun addView(child: View, index: Int, params: ViewGroup.LayoutParams?) {
+    override fun addView(
+        child: View,
+        index: Int,
+        params: ViewGroup.LayoutParams?,
+    ) {
         check(childCount == 0) { "Only one placeholder can be added." }
         super.addView(child, index, params)
         placeholder = child
@@ -589,7 +614,10 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     /**
      * Updates the placeholder, which is shown when no [ChartEntryModel] is available.
      */
-    public fun setPlaceholder(view: View?, params: LayoutParams? = null) {
+    public fun setPlaceholder(
+        view: View?,
+        params: LayoutParams? = null,
+    ) {
         if (view === placeholder) return
         removeAllViews()
         if (view != null) addView(view, params)

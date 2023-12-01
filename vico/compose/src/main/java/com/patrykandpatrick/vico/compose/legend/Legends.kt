@@ -45,15 +45,16 @@ public fun verticalLegend(
     iconPadding: Dp,
     spacing: Dp = 0.dp,
     padding: MutableDimensions = emptyDimensions(),
-): VerticalLegend = remember(items, iconSize, iconPadding, spacing, padding) {
-    VerticalLegend(
-        items = items,
-        iconSizeDp = iconSize.value,
-        iconPaddingDp = iconPadding.value,
-        spacingDp = spacing.value,
-        padding = padding,
-    )
-}
+): VerticalLegend =
+    remember(items, iconSize, iconPadding, spacing, padding) {
+        VerticalLegend(
+            items = items,
+            iconSizeDp = iconSize.value,
+            iconPaddingDp = iconPadding.value,
+            spacingDp = spacing.value,
+            padding = padding,
+        )
+    }
 
 /**
  * Defines the appearance of an item of a [Legend].
@@ -67,13 +68,14 @@ public fun legendItem(
     icon: Component,
     label: TextComponent,
     labelText: CharSequence,
-): LegendItem = remember(icon, label, labelText) {
-    LegendItem(
-        icon = icon,
-        label = label,
-        labelText = labelText,
-    )
-}
+): LegendItem =
+    remember(icon, label, labelText) {
+        LegendItem(
+            icon = icon,
+            label = label,
+            labelText = labelText,
+        )
+    }
 
 /**
  * Creates a [HorizontalLegend].
@@ -93,13 +95,14 @@ public fun horizontalLegend(
     lineSpacing: Dp = 0.dp,
     spacing: Dp = 0.dp,
     padding: MutableDimensions = emptyDimensions(),
-): HorizontalLegend = remember(items, iconSize, iconPadding, spacing, padding) {
-    HorizontalLegend(
-        items = items,
-        iconSizeDp = iconSize.value,
-        iconPaddingDp = iconPadding.value,
-        lineSpacingDp = lineSpacing.value,
-        spacingDp = spacing.value,
-        padding = padding,
-    )
-}
+): HorizontalLegend =
+    remember(items, iconSize, iconPadding, spacing, padding) {
+        HorizontalLegend(
+            items = items,
+            iconSizeDp = iconSize.value,
+            iconPaddingDp = iconPadding.value,
+            lineSpacingDp = lineSpacing.value,
+            spacingDp = spacing.value,
+            padding = padding,
+        )
+    }

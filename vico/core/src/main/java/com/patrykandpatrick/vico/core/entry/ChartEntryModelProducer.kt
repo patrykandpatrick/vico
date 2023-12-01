@@ -46,7 +46,6 @@ public class ChartEntryModelProducer(
     entryCollections: List<List<ChartEntry>>,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ChartModelProducer<ChartEntryModel> {
-
     private var series = emptyList<List<ChartEntry>>()
     private var cachedInternalModel: InternalModel? = null
     private val mutex = Mutex()
@@ -69,14 +68,18 @@ public class ChartEntryModelProducer(
      * behavior, use [setEntriesSuspending]. [updateExtras] allows for adding auxiliary data, which can later be
      * retrieved via [ChartEntryModel.extraStore].
      */
-    public fun setEntries(entries: List<List<ChartEntry>>, updateExtras: (MutableExtraStore) -> Unit = {}): Boolean {
+    public fun setEntries(
+        entries: List<List<ChartEntry>>,
+        updateExtras: (MutableExtraStore) -> Unit = {},
+    ): Boolean {
         if (!mutex.tryLock()) return false
         series = entries.copy()
         updateExtras(extraStore)
         cachedInternalModel = null
-        val deferredUpdates = updateReceivers.values.map { updateReceiver ->
-            coroutineScope.async { updateReceiver.handleUpdate() }
-        }
+        val deferredUpdates =
+            updateReceivers.values.map { updateReceiver ->
+                coroutineScope.async { updateReceiver.handleUpdate() }
+            }
         coroutineScope.launch {
             deferredUpdates.awaitAll()
             mutex.unlock()
@@ -99,9 +102,10 @@ public class ChartEntryModelProducer(
         updateExtras(extraStore)
         cachedInternalModel = null
         val completableDeferred = CompletableDeferred<Unit>()
-        val deferredUpdates = updateReceivers.values.map { updateReceiver ->
-            coroutineScope.async { updateReceiver.handleUpdate() }
-        }
+        val deferredUpdates =
+            updateReceivers.values.map { updateReceiver ->
+                coroutineScope.async { updateReceiver.handleUpdate() }
+            }
         coroutineScope.launch {
             deferredUpdates.awaitAll()
             mutex.unlock()
@@ -116,8 +120,10 @@ public class ChartEntryModelProducer(
      * behavior, use [setEntriesSuspending]. [updateExtras] allows for adding auxiliary data, which can later be
      * retrieved via [ChartEntryModel.extraStore].
      */
-    public fun setEntries(vararg entries: List<ChartEntry>, updateExtras: (MutableExtraStore) -> Unit = {}): Boolean =
-        setEntries(entries.toList(), updateExtras)
+    public fun setEntries(
+        vararg entries: List<ChartEntry>,
+        updateExtras: (MutableExtraStore) -> Unit = {},
+    ): Boolean = setEntries(entries.toList(), updateExtras)
 
     /**
      * Updates the data set. Unlike [setEntries], this function suspends the current coroutine and waits until an update
@@ -157,7 +163,10 @@ public class ChartEntryModelProducer(
 
     override fun getModel(): ChartEntryModel? = getInternalModel()
 
-    override suspend fun transformModel(key: Any, fraction: Float) {
+    override suspend fun transformModel(
+        key: Any,
+        fraction: Float,
+    ) {
         with(updateReceivers[key] ?: return) {
             modelTransformer?.transform(extraStore, fraction)
             val internalModel = getInternalModel(extraStore.copy())

@@ -56,18 +56,20 @@ private fun PreviewShape(shape: Shape) {
     val path = remember { Path() }
 
     Column(
-        modifier = Modifier
-            .width(100.dp)
-            .background(color = Color.White, shape = RoundedCornerShape(size = 4.dp))
-            .padding(8.dp),
+        modifier =
+            Modifier
+                .width(100.dp)
+                .background(color = Color.White, shape = RoundedCornerShape(size = 4.dp))
+                .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(text = "Canvas")
 
         Canvas(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
         ) {
             shape.drawShape(
                 context = drawContext(drawContext.canvas.nativeCanvas),
@@ -86,13 +88,14 @@ private fun PreviewShape(shape: Shape) {
             Text(text = "Compose Shape")
 
             Box(
-                modifier = Modifier
-                    .height(50.dp)
-                    .fillMaxWidth()
-                    .background(
-                        color = Color(black),
-                        shape = shape.composeShape(),
-                    ),
+                modifier =
+                    Modifier
+                        .height(50.dp)
+                        .fillMaxWidth()
+                        .background(
+                            color = Color(black),
+                            shape = shape.composeShape(),
+                        ),
             )
         }
     }
@@ -138,11 +141,12 @@ public fun CutCornerCustom1Shape() {
 @Preview
 public fun DrawableShape() {
     PreviewShape(
-        shape = Shapes.drawableShape(
-            drawable = getDrawable(id = R.drawable.ic_baseline_android_24),
-            keepAspectRatio = true,
-            otherShape = Shapes.pillShape,
-        ),
+        shape =
+            Shapes.drawableShape(
+                drawable = getDrawable(id = R.drawable.ic_baseline_android_24),
+                keepAspectRatio = true,
+                otherShape = Shapes.pillShape,
+            ),
     )
 }
 
@@ -150,11 +154,12 @@ public fun DrawableShape() {
 @Preview
 public fun DrawableShape2() {
     PreviewShape(
-        shape = Shapes.drawableShape(
-            drawable = getDrawable(id = R.drawable.ic_baseline_android_24),
-            keepAspectRatio = true,
-            otherShape = Shapes.pillShape,
-        ),
+        shape =
+            Shapes.drawableShape(
+                drawable = getDrawable(id = R.drawable.ic_baseline_android_24),
+                keepAspectRatio = true,
+                otherShape = Shapes.pillShape,
+            ),
     )
 }
 
@@ -168,14 +173,16 @@ public fun DrawableShapeStretched() {
 @Preview
 public fun DashedCutCornerCustomShape() {
     PreviewShape(
-        shape = Shapes.dashedShape(
-            shape = Shapes.cutCornerShape(topRightPercent = 50, bottomLeftPercent = 50),
-            dashLength = 24.dp,
-            gapLength = 8.dp,
-        ),
+        shape =
+            Shapes.dashedShape(
+                shape = Shapes.cutCornerShape(topRightPercent = 50, bottomLeftPercent = 50),
+                dashLength = 24.dp,
+                gapLength = 8.dp,
+            ),
     )
 }
 
 @Composable
-private fun getDrawable(@DrawableRes id: Int): Drawable =
-    ResourcesCompat.getDrawable(LocalContext.current.resources, id, null)!!
+private fun getDrawable(
+    @DrawableRes id: Int,
+): Drawable = ResourcesCompat.getDrawable(LocalContext.current.resources, id, null)!!

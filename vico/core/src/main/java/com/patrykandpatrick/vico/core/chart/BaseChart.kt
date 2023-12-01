@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.core.marker.Marker
  * @see Chart
  */
 public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, BoundsAware {
-
     private val decorations = ArrayList<Decoration>()
 
     private val insets: Insets = Insets()
@@ -59,7 +58,10 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
 
     override fun removeDecoration(decoration: Decoration): Boolean = decorations.remove(decoration)
 
-    override fun addPersistentMarker(x: Float, marker: Marker) {
+    override fun addPersistentMarker(
+        x: Float,
+        marker: Marker,
+    ) {
         persistentMarkers[x] = marker
     }
 
@@ -74,35 +76,37 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     override fun drawScrollableContent(
         context: ChartDrawContext,
         model: Model,
-    ): Unit = with(context) {
-        insets.clear()
-        getInsets(this, insets, horizontalDimensions)
-        drawChartInternal(context, model)
-    }
+    ): Unit =
+        with(context) {
+            insets.clear()
+            getInsets(this, insets, horizontalDimensions)
+            drawChartInternal(context, model)
+        }
 
     override fun drawNonScrollableContent(
         context: ChartDrawContext,
         model: Model,
-    ): Unit = with(context) {
-        canvas.inClip(
-            left = bounds.left,
-            top = 0f,
-            right = bounds.right,
-            bottom = context.canvas.height.toFloat(),
-        ) {
-            drawDecorationAboveChart(context)
-        }
-        persistentMarkers.forEach { (x, marker) ->
-            entryLocationMap.getEntryModel(x)?.also { markerModel ->
-                marker.draw(
-                    context = context,
-                    bounds = bounds,
-                    markedEntries = markerModel,
-                    chartValuesProvider = chartValuesProvider,
-                )
+    ): Unit =
+        with(context) {
+            canvas.inClip(
+                left = bounds.left,
+                top = 0f,
+                right = bounds.right,
+                bottom = context.canvas.height.toFloat(),
+            ) {
+                drawDecorationAboveChart(context)
+            }
+            persistentMarkers.forEach { (x, marker) ->
+                entryLocationMap.getEntryModel(x)?.also { markerModel ->
+                    marker.draw(
+                        context = context,
+                        bounds = bounds,
+                        markedEntries = markerModel,
+                        chartValuesProvider = chartValuesProvider,
+                    )
+                }
             }
         }
-    }
 
     /**
      * An internal function that draws both [Decoration]s behind the chart and the chart itself in the clip bounds.
@@ -110,19 +114,20 @@ public abstract class BaseChart<in Model : ChartEntryModel> : Chart<Model>, Boun
     protected open fun drawChartInternal(
         context: ChartDrawContext,
         model: Model,
-    ): Unit = with(context) {
-        canvas.inClip(
-            left = bounds.left - insets.getLeft(isLtr),
-            top = bounds.top - insets.top,
-            right = bounds.right + insets.getRight(isLtr),
-            bottom = bounds.bottom + insets.bottom,
-        ) {
-            drawDecorationBehindChart(context)
-            if (model.entries.isNotEmpty()) {
-                drawChart(context, model)
+    ): Unit =
+        with(context) {
+            canvas.inClip(
+                left = bounds.left - insets.getLeft(isLtr),
+                top = bounds.top - insets.top,
+                right = bounds.right + insets.getRight(isLtr),
+                bottom = bounds.bottom + insets.bottom,
+            ) {
+                drawDecorationBehindChart(context)
+                if (model.entries.isNotEmpty()) {
+                    drawChart(context, model)
+                }
             }
         }
-    }
 
     protected abstract fun drawChart(
         context: ChartDrawContext,

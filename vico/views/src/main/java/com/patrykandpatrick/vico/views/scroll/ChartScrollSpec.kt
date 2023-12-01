@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,13 +41,14 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
     public val autoScrollInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
     public val autoScrollDuration: Long = Animation.DIFF_DURATION.toLong(),
 ) {
-    private val animator: ValueAnimator = ValueAnimator.ofFloat(
-        Animation.range.start,
-        Animation.range.endInclusive,
-    ).apply {
-        duration = autoScrollDuration
-        interpolator = autoScrollInterpolator
-    }
+    private val animator: ValueAnimator =
+        ValueAnimator.ofFloat(
+            Animation.range.start,
+            Animation.range.endInclusive,
+        ).apply {
+            duration = autoScrollDuration
+            interpolator = autoScrollInterpolator
+        }
 
     /**
      * Performs an automatic scroll.
@@ -63,12 +64,13 @@ public class ChartScrollSpec<in Model : ChartEntryModel>(
             removeAllUpdateListeners()
             addUpdateListener {
                 scrollHandler.handleScroll(
-                    targetScroll = when (initialScroll) {
-                        InitialScroll.Start -> (1 - it.animatedFraction) * scrollHandler.value
-                        InitialScroll.End ->
-                            scrollHandler.value + it.animatedFraction *
-                                (scrollHandler.maxValue - scrollHandler.value)
-                    },
+                    targetScroll =
+                        when (initialScroll) {
+                            InitialScroll.Start -> (1 - it.animatedFraction) * scrollHandler.value
+                            InitialScroll.End ->
+                                scrollHandler.value + it.animatedFraction *
+                                    (scrollHandler.maxValue - scrollHandler.value)
+                        },
                 )
             }
             start()
@@ -85,10 +87,11 @@ public fun <Model : ChartEntryModel> ChartScrollSpec<Model>.copy(
     autoScrollCondition: AutoScrollCondition<Model> = this.autoScrollCondition,
     autoScrollInterpolator: TimeInterpolator = this.autoScrollInterpolator,
     autoScrollDuration: Long = this.autoScrollDuration,
-): ChartScrollSpec<Model> = ChartScrollSpec(
-    isScrollEnabled = isScrollEnabled,
-    initialScroll = initialScroll,
-    autoScrollCondition = autoScrollCondition,
-    autoScrollInterpolator = autoScrollInterpolator,
-    autoScrollDuration = autoScrollDuration,
-)
+): ChartScrollSpec<Model> =
+    ChartScrollSpec(
+        isScrollEnabled = isScrollEnabled,
+        initialScroll = initialScroll,
+        autoScrollCondition = autoScrollCondition,
+        autoScrollInterpolator = autoScrollInterpolator,
+        autoScrollDuration = autoScrollDuration,
+    )

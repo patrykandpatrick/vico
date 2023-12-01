@@ -30,7 +30,6 @@ public class LineChartDrawingModel(
     public val opacity: Float = 1f,
 ) :
     DrawingModel<LineChartDrawingModel.PointInfo>(pointInfo) {
-
     override fun transform(
         drawingInfo: List<Map<Float, PointInfo>>,
         from: DrawingModel<PointInfo>?,
@@ -46,7 +45,10 @@ public class LineChartDrawingModel(
      * of the [LineChart] as a fraction of the [LineChart]’s height.
      */
     public class PointInfo(public val y: Float) : DrawingInfo {
-        override fun transform(from: DrawingInfo?, fraction: Float): DrawingInfo {
+        override fun transform(
+            from: DrawingInfo?,
+            fraction: Float,
+        ): DrawingInfo {
             val oldY = (from as? PointInfo)?.y.orZero
             return PointInfo(oldY.lerp(y, fraction))
         }

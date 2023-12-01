@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  * An object that holds simple, anonymous implementations of [DynamicShader].
  */
 public object DynamicShaders {
-
     /**
      * Creates a [DynamicShader] out of the given [bitmap].
      */
@@ -38,15 +37,16 @@ public object DynamicShaders {
         bitmap: Bitmap,
         tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
         tileYMode: Shader.TileMode = tileXMode,
-    ): DynamicShader = object : CacheableDynamicShader() {
-        override fun createShader(
-            context: DrawContext,
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float,
-        ): Shader = BitmapShader(bitmap, tileXMode, tileYMode)
-    }
+    ): DynamicShader =
+        object : CacheableDynamicShader() {
+            override fun createShader(
+                context: DrawContext,
+                left: Float,
+                top: Float,
+                right: Float,
+                bottom: Float,
+            ): Shader = BitmapShader(bitmap, tileXMode, tileYMode)
+        }
 
     /**
      * Creates a [ComposeShader] out of two [DynamicShader]s by using a [BlendMode].
@@ -56,13 +56,14 @@ public object DynamicShaders {
         first: DynamicShader,
         second: DynamicShader,
         mode: BlendMode,
-    ): DynamicShader = DynamicShader { context, left, top, right, bottom ->
-        ComposeShader(
-            first.provideShader(context, left, top, right, bottom),
-            second.provideShader(context, left, top, right, bottom),
-            mode,
-        )
-    }
+    ): DynamicShader =
+        DynamicShader { context, left, top, right, bottom ->
+            ComposeShader(
+                first.provideShader(context, left, top, right, bottom),
+                second.provideShader(context, left, top, right, bottom),
+                mode,
+            )
+        }
 
     /**
      * Creates a [ComposeShader] out of two [DynamicShader]s by using a [PorterDuff.Mode].
@@ -71,13 +72,14 @@ public object DynamicShaders {
         first: DynamicShader,
         second: DynamicShader,
         mode: PorterDuff.Mode,
-    ): DynamicShader = DynamicShader { context, left, top, right, bottom ->
-        ComposeShader(
-            first.provideShader(context, left, top, right, bottom),
-            second.provideShader(context, left, top, right, bottom),
-            mode,
-        )
-    }
+    ): DynamicShader =
+        DynamicShader { context, left, top, right, bottom ->
+            ComposeShader(
+                first.provideShader(context, left, top, right, bottom),
+                second.provideShader(context, left, top, right, bottom),
+                mode,
+            )
+        }
 }
 
 /**

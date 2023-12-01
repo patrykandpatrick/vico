@@ -39,7 +39,6 @@ import com.patrykandpatrick.vico.core.marker.Marker
  * Defines the minimal set of properties and functions required by other parts of the library to draw a chart.
  */
 public interface Chart<in Model> : BoundsAware, ChartInsetter {
-
     /**
      * Links x-axis values to [Marker.EntryModel]s. A [Marker.EntryModel] holds the data needed to draw a [Marker].
      */
@@ -117,15 +116,17 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @see removeDecoration
      * @see Decoration
      */
-    public fun removeDecorations(decorations: List<Decoration>): Boolean =
-        decorations.all(::removeDecoration)
+    public fun removeDecorations(decorations: List<Decoration>): Boolean = decorations.all(::removeDecoration)
 
     /**
      * Adds a persistent [Marker] to this [Chart]. The [Marker] will be anchored to the given [x] value on the x-axis.
      *
      * @see Marker
      */
-    public fun addPersistentMarker(x: Float, marker: Marker)
+    public fun addPersistentMarker(
+        x: Float,
+        marker: Marker,
+    )
 
     /**
      * Replaces the current map of markers with the provided [markers].
@@ -158,7 +159,11 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
      * @param model holds data about the [Chart]’s entries.
      * @param xStep the overridden _x_ step (or `null` if no override has occurred).
      */
-    public fun updateChartValues(chartValuesManager: ChartValuesManager, model: Model, xStep: Float?)
+    public fun updateChartValues(
+        chartValuesManager: ChartValuesManager,
+        model: Model,
+        xStep: Float?,
+    )
 
     /**
      * Provides the [Chart]’s [ModelTransformer].
@@ -197,7 +202,10 @@ public interface Chart<in Model> : BoundsAware, ChartInsetter {
         /**
          * Carries out the pending difference animation. [fraction] is the animation progress.
          */
-        public abstract suspend fun transform(extraStore: MutableExtraStore, fraction: Float)
+        public abstract suspend fun transform(
+            extraStore: MutableExtraStore,
+            fraction: Float,
+        )
     }
 }
 

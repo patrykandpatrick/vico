@@ -45,22 +45,21 @@ public fun DynamicShaders.fromComponent(
     checkeredArrangement: Boolean = true,
     tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     tileYMode: Shader.TileMode = tileXMode,
-): ComponentShader = ComponentShader(
-    component = component,
-    componentSizeDp = componentSizeDp,
-    checkeredArrangement = checkeredArrangement,
-    tileXMode = tileXMode,
-    tileYMode = tileYMode,
-)
+): ComponentShader =
+    ComponentShader(
+        component = component,
+        componentSizeDp = componentSizeDp,
+        checkeredArrangement = checkeredArrangement,
+        tileXMode = tileXMode,
+        tileYMode = tileYMode,
+    )
 
 /**
  * Creates a [DynamicShader] in the form of a horizontal gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
  */
-public fun DynamicShaders.horizontalGradient(
-    vararg colors: Int,
-): DynamicShader = horizontalGradient(colors)
+public fun DynamicShaders.horizontalGradient(vararg colors: Int): DynamicShader = horizontalGradient(colors)
 
 /**
  * Creates a [DynamicShader] in the form of a horizontal gradient.
@@ -74,37 +73,43 @@ public fun DynamicShaders.horizontalGradient(
 public fun DynamicShaders.horizontalGradient(
     colors: IntArray,
     positions: FloatArray? = null,
-): DynamicShader = object : CacheableDynamicShader() {
+): DynamicShader =
+    object : CacheableDynamicShader() {
+        override fun createShader(
+            context: DrawContext,
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ): Shader =
+            LinearGradient(
+                left,
+                top,
+                right,
+                top,
+                colors,
+                positions,
+                Shader.TileMode.CLAMP,
+            )
 
-    override fun createShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader =
-        LinearGradient(
-            left,
-            top,
-            right,
-            top,
-            colors,
-            positions,
-            Shader.TileMode.CLAMP,
-        )
-
-    override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
-        "%s,%s".format(left, right)
-}
+        override fun createKey(
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ): String =
+            "%s,%s".format(
+                left,
+                right,
+            )
+    }
 
 /**
  * Creates a [DynamicShader] in the form of a vertical gradient.
  *
  * @param colors the sRGB colors to be distributed along the gradient line.
  */
-public fun DynamicShaders.verticalGradient(
-    vararg colors: Int,
-): DynamicShader = verticalGradient(colors)
+public fun DynamicShaders.verticalGradient(vararg colors: Int): DynamicShader = verticalGradient(colors)
 
 /**
  * Creates a [DynamicShader] in the form of a vertical gradient.
@@ -118,33 +123,43 @@ public fun DynamicShaders.verticalGradient(
 public fun DynamicShaders.verticalGradient(
     colors: IntArray,
     positions: FloatArray? = null,
-): DynamicShader = object : CacheableDynamicShader() {
+): DynamicShader =
+    object : CacheableDynamicShader() {
+        override fun createShader(
+            context: DrawContext,
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ): Shader =
+            LinearGradient(
+                left,
+                top,
+                left,
+                bottom,
+                colors,
+                positions,
+                Shader.TileMode.CLAMP,
+            )
 
-    override fun createShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader =
-        LinearGradient(
-            left,
-            top,
-            left,
-            bottom,
-            colors,
-            positions,
-            Shader.TileMode.CLAMP,
-        )
-
-    override fun createKey(left: Float, top: Float, right: Float, bottom: Float): String =
-        "%s,%s".format(top, bottom)
-}
+        override fun createKey(
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ): String =
+            "%s,%s".format(
+                top,
+                bottom,
+            )
+    }
 
 /**
  * Creates a [DynamicShader] that fills the area with a solid color.
  */
-public fun DynamicShaders.solid(@ColorInt color: Int): SolidShader = SolidShader(color)
+public fun DynamicShaders.solid(
+    @ColorInt color: Int,
+): SolidShader = SolidShader(color)
 
 /**
  * Creates a [DynamicShader] with split colors. The positive color is used for values above the zero line,

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,28 +76,31 @@ public fun columnChart(
 ): ColumnChart {
     val tempArray = IntArray(1)
 
-    val columns = listOf(R.attr.column1, R.attr.column2, R.attr.column3)
-        .map { themeAttrResItem -> columnLineComponent(context, themeAttrResItem, styleResId) }
+    val columns =
+        listOf(R.attr.column1, R.attr.column2, R.attr.column3)
+            .map { themeAttrResItem -> columnLineComponent(context, themeAttrResItem, styleResId) }
 
     tempArray[0] = R.styleable.ColumnChartStyle_columnOuterSpacing
 
-    val spacingDp = context.obtainStyledAttributes(null, tempArray)
-        .use { typedArray ->
-            typedArray.getRawDimension(
-                context = context,
-                index = R.styleable.ColumnChartStyle_columnOuterSpacing,
-                defaultValue = DefaultDimens.COLUMN_OUTSIDE_SPACING,
-            )
-        }
+    val spacingDp =
+        context.obtainStyledAttributes(null, tempArray)
+            .use { typedArray ->
+                typedArray.getRawDimension(
+                    context = context,
+                    index = R.styleable.ColumnChartStyle_columnOuterSpacing,
+                    defaultValue = DefaultDimens.COLUMN_OUTSIDE_SPACING,
+                )
+            }
 
-    val innerSpacingDp = context.obtainStyledAttributes(null, tempArray)
-        .use { typedArray ->
-            typedArray.getRawDimension(
-                context = context,
-                index = R.styleable.ColumnChartStyle_columnInnerSpacing,
-                defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING,
-            )
-        }
+    val innerSpacingDp =
+        context.obtainStyledAttributes(null, tempArray)
+            .use { typedArray ->
+                typedArray.getRawDimension(
+                    context = context,
+                    index = R.styleable.ColumnChartStyle_columnInnerSpacing,
+                    defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING,
+                )
+            }
 
     return ColumnChart(
         columns = columns,

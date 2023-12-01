@@ -28,7 +28,6 @@ internal class DefaultVerticalAxisItemPlacer(
     private val maxItemCount: Int,
     private val shiftTopLines: Boolean,
 ) : AxisItemPlacer.Vertical {
-
     init {
         require(maxItemCount >= 0) { "`maxItemCount` must be nonnegative." }
     }
@@ -85,17 +84,22 @@ internal class DefaultVerticalAxisItemPlacer(
         verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
         maxLabelHeight: Float,
         maxLineThickness: Float,
-    ): Float = when {
-        maxItemCount == 0 -> 0f
-        verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top -> maxLineThickness
+    ): Float =
+        when {
+            maxItemCount == 0 -> 0f
+            verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top -> maxLineThickness
 
-        verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
-            (maxOf(maxLabelHeight, maxLineThickness) + maxLineThickness).half
+            verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
+                (maxOf(maxLabelHeight, maxLineThickness) + maxLineThickness).half
 
-        else -> maxLabelHeight + maxLineThickness.half
-    }
+            else -> maxLabelHeight + maxLineThickness.half
+        }
 
-    private fun getSimpleLabelValues(axisHeight: Float, maxLabelHeight: Float, chartValues: ChartValues): List<Float> {
+    private fun getSimpleLabelValues(
+        axisHeight: Float,
+        maxLabelHeight: Float,
+        chartValues: ChartValues,
+    ): List<Float> {
         val values = mutableListOf(chartValues.minY)
         if (maxItemCount == 1) return values
         val extraItemCount = (axisHeight / maxLabelHeight).toInt().coerceAtMost(maxItemCount - 1)
@@ -104,7 +108,11 @@ internal class DefaultVerticalAxisItemPlacer(
         return values
     }
 
-    private fun getMixedLabelValues(axisHeight: Float, maxLabelHeight: Float, chartValues: ChartValues): List<Float> {
+    private fun getMixedLabelValues(
+        axisHeight: Float,
+        maxLabelHeight: Float,
+        chartValues: ChartValues,
+    ): List<Float> {
         val values = mutableListOf(0f)
         if (maxItemCount == 1) return values
         val topHeight = chartValues.maxY / chartValues.lengthY * axisHeight

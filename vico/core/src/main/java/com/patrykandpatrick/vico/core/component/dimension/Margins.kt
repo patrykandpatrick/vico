@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
  * Allows a component to implement margins.
  */
 public interface Margins {
-
     /**
      * The current margins.
      */
@@ -44,9 +43,7 @@ public interface Margins {
     /**
      * Sets a common size for each margin.
      */
-    public fun setMargins(
-        all: Float = 0f,
-    ) {
+    public fun setMargins(all: Float = 0f) {
         margins.set(all)
     }
 }

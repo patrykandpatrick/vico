@@ -66,21 +66,22 @@ public fun rememberStartAxis(
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.Start> = remember { createVerticalAxis<AxisPosition.Vertical.Start>() }.apply {
-    this.label = label
-    axisLine = axis
-    this.tick = tick
-    this.guideline = guideline
-    this.valueFormatter = valueFormatter
-    tickLengthDp = tickLength.value
-    this.sizeConstraint = sizeConstraint
-    this.horizontalLabelPosition = horizontalLabelPosition
-    this.verticalLabelPosition = verticalLabelPosition
-    this.itemPlacer = itemPlacer
-    this.labelRotationDegrees = labelRotationDegrees
-    this.titleComponent = titleComponent
-    this.title = title
-}
+): VerticalAxis<AxisPosition.Vertical.Start> =
+    remember { createVerticalAxis<AxisPosition.Vertical.Start>() }.apply {
+        this.label = label
+        axisLine = axis
+        this.tick = tick
+        this.guideline = guideline
+        this.valueFormatter = valueFormatter
+        tickLengthDp = tickLength.value
+        this.sizeConstraint = sizeConstraint
+        this.horizontalLabelPosition = horizontalLabelPosition
+        this.verticalLabelPosition = verticalLabelPosition
+        this.itemPlacer = itemPlacer
+        this.labelRotationDegrees = labelRotationDegrees
+        this.titleComponent = titleComponent
+        this.title = title
+    }
 
 /**
  * Creates and remembers an end axis (i.e., a [VerticalAxis] with [AxisPosition.Vertical.End]).
@@ -114,18 +115,19 @@ public fun rememberEndAxis(
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
-): VerticalAxis<AxisPosition.Vertical.End> = remember { createVerticalAxis<AxisPosition.Vertical.End>() }.apply {
-    this.label = label
-    axisLine = axis
-    this.tick = tick
-    this.guideline = guideline
-    this.valueFormatter = valueFormatter
-    tickLengthDp = tickLength.value
-    this.sizeConstraint = sizeConstraint
-    this.horizontalLabelPosition = horizontalLabelPosition
-    this.verticalLabelPosition = verticalLabelPosition
-    this.itemPlacer = itemPlacer
-    this.labelRotationDegrees = labelRotationDegrees
-    this.titleComponent = titleComponent
-    this.title = title
-}
+): VerticalAxis<AxisPosition.Vertical.End> =
+    remember { createVerticalAxis<AxisPosition.Vertical.End>() }.apply {
+        this.label = label
+        axisLine = axis
+        this.tick = tick
+        this.guideline = guideline
+        this.valueFormatter = valueFormatter
+        tickLengthDp = tickLength.value
+        this.sizeConstraint = sizeConstraint
+        this.horizontalLabelPosition = horizontalLabelPosition
+        this.verticalLabelPosition = verticalLabelPosition
+        this.itemPlacer = itemPlacer
+        this.labelRotationDegrees = labelRotationDegrees
+        this.titleComponent = titleComponent
+        this.title = title
+    }

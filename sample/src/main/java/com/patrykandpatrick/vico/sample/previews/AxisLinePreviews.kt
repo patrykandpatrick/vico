@@ -42,24 +42,28 @@ private val model = entryModelOf(1, 2, 3, 4)
 
 @Composable
 private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
-    val chartStyle = LocalChartStyle.current.copy(
-        axis = LocalChartStyle.current.axis.copy(
-            axisLabelColor = Color.Black,
-            axisLineColor = Color.Black.copy(alpha = 0.5f),
-            axisGuidelineColor = Color.Black.copy(alpha = 0.2f),
-        ),
-        columnChart = LocalChartStyle.current.columnChart.copy(
-            columns = LocalChartStyle.current.columnChart.columns.map {
-                lineComponent(
-                    color = Color.Gray,
-                    thickness = it.thicknessDp.dp,
-                    shape = it.shape,
-                    dynamicShader = it.dynamicShader,
-                    margins = it.margins,
-                )
-            },
-        ),
-    )
+    val chartStyle =
+        LocalChartStyle.current.copy(
+            axis =
+                LocalChartStyle.current.axis.copy(
+                    axisLabelColor = Color.Black,
+                    axisLineColor = Color.Black.copy(alpha = 0.5f),
+                    axisGuidelineColor = Color.Black.copy(alpha = 0.2f),
+                ),
+            columnChart =
+                LocalChartStyle.current.columnChart.copy(
+                    columns =
+                        LocalChartStyle.current.columnChart.columns.map {
+                            lineComponent(
+                                color = Color.Gray,
+                                thickness = it.thicknessDp.dp,
+                                shape = it.shape,
+                                dynamicShader = it.dynamicShader,
+                                margins = it.margins,
+                            )
+                        },
+                ),
+        )
     CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
 }
 
@@ -67,39 +71,46 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
 @Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisTextInside() {
     ProvidePreviewChartStyle {
-        val label = axisLabelComponent(
-            background = shapeComponent(
-                shape = CorneredShape(
-                    topLeft = Corner.Relative(
-                        percentage = 50,
-                        cornerTreatment = CutCornerTreatment,
+        val label =
+            axisLabelComponent(
+                background =
+                    shapeComponent(
+                        shape =
+                            CorneredShape(
+                                topLeft =
+                                    Corner.Relative(
+                                        percentage = 50,
+                                        cornerTreatment = CutCornerTreatment,
+                                    ),
+                                bottomRight =
+                                    Corner.Relative(
+                                        percentage = 50,
+                                        cornerTreatment = RoundedCornerTreatment,
+                                    ),
+                            ),
+                        color = Color.LightGray,
+                        strokeColor = Color.Gray,
+                        strokeWidth = 1.dp,
                     ),
-                    bottomRight = Corner.Relative(
-                        percentage = 50,
-                        cornerTreatment = RoundedCornerTreatment,
-                    ),
-                ),
-                color = Color.LightGray,
-                strokeColor = Color.Gray,
-                strokeWidth = 1.dp,
-            ),
-            verticalPadding = 2.dp,
-            horizontalPadding = 8.dp,
-            verticalMargin = 4.dp,
-            horizontalMargin = 4.dp,
-        )
+                verticalPadding = 2.dp,
+                horizontalPadding = 8.dp,
+                verticalMargin = 4.dp,
+                horizontalMargin = 4.dp,
+            )
         Chart(
             chart = columnChart(),
             model = model,
-            startAxis = rememberStartAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                label = label,
-            ),
-            endAxis = rememberEndAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                guideline = null,
-                label = label,
-            ),
+            startAxis =
+                rememberStartAxis(
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                    label = label,
+                ),
+            endAxis =
+                rememberEndAxis(
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                    guideline = null,
+                    label = label,
+                ),
         )
     }
 }
@@ -108,28 +119,32 @@ public fun HorizontalAxisTextInside() {
 @Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisTextInsideAndBottomAxis() {
     ProvidePreviewChartStyle {
-        val label = axisLabelComponent(
-            background = shapeComponent(
-                shape = Shapes.pillShape,
-                color = Color.LightGray,
-            ),
-            verticalPadding = 2.dp,
-            horizontalPadding = 8.dp,
-            verticalMargin = 4.dp,
-            horizontalMargin = 4.dp,
-        )
+        val label =
+            axisLabelComponent(
+                background =
+                    shapeComponent(
+                        shape = Shapes.pillShape,
+                        color = Color.LightGray,
+                    ),
+                verticalPadding = 2.dp,
+                horizontalPadding = 8.dp,
+                verticalMargin = 4.dp,
+                horizontalMargin = 4.dp,
+            )
         Chart(
             chart = columnChart(),
             model = model,
-            startAxis = rememberStartAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                label = label,
-            ),
-            endAxis = rememberEndAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                guideline = null,
-                label = label,
-            ),
+            startAxis =
+                rememberStartAxis(
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                    label = label,
+                ),
+            endAxis =
+                rememberEndAxis(
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                    guideline = null,
+                    label = label,
+                ),
             bottomAxis = rememberBottomAxis(),
         )
     }
@@ -142,13 +157,15 @@ public fun HorizontalAxisTextOutside() {
         Chart(
             chart = columnChart(),
             model = model,
-            startAxis = rememberStartAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-            ),
-            endAxis = rememberEndAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-                guideline = null,
-            ),
+            startAxis =
+                rememberStartAxis(
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+                ),
+            endAxis =
+                rememberEndAxis(
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+                    guideline = null,
+                ),
         )
     }
 }
@@ -160,9 +177,10 @@ public fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
         Chart(
             chart = columnChart(),
             model = model,
-            startAxis = rememberStartAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-            ),
+            startAxis =
+                rememberStartAxis(
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+                ),
             bottomAxis = rememberBottomAxis(),
         )
     }

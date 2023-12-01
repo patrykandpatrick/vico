@@ -60,110 +60,127 @@ private val chartModifier = Modifier.height(100.dp)
 
 @Preview("Sample Card With Column Chart", widthDp = 200)
 @Composable
-public fun ColumnChartCard(): Unit = VicoTheme {
-    val colors = MaterialTheme.colors
+public fun ColumnChartCard(): Unit =
+    VicoTheme {
+        val colors = MaterialTheme.colors
 
-    SampleCard {
-        Chart(
-            modifier = chartModifier,
-            chart = columnChart(
-                columns = listOf(
-                    lineComponent(
-                        colors.primary,
-                        thickness = 8.dp,
-                        shape = RoundedCornerShape(4.dp),
-                        dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
+        SampleCard {
+            Chart(
+                modifier = chartModifier,
+                chart =
+                    columnChart(
+                        columns =
+                            listOf(
+                                lineComponent(
+                                    colors.primary,
+                                    thickness = 8.dp,
+                                    shape = RoundedCornerShape(4.dp),
+                                    dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
+                                ),
+                            ),
                     ),
-                ),
-            ),
-            startAxis = createVerticalAxis {
-                label = textComponent(
-                    color = colors.primary,
-                    textSize = 10.sp,
-                    background = shapeComponent(
-                        shape = CutCornerShape(
-                            CornerSize(percent = 25),
-                            CornerSize(percent = 50),
-                            CornerSize(percent = 50),
-                            CornerSize(percent = 25),
-                        ),
-                        color = colors.primary.copy(alpha = 0.1f),
-                    ),
-                    padding = dimensionsOf(end = 8.dp, start = 4.dp),
-                )
-                axis = null
-                tick = null
-                guideline = LineComponent(
-                    colors.primary.copy(alpha = 0.1f).toArgb(),
-                    1.dp.value,
-                )
-            },
-            model = @Suppress("MagicNumber") (entryModelOf(1, 2, 3, 2)),
-        )
+                startAxis =
+                    createVerticalAxis {
+                        label =
+                            textComponent(
+                                color = colors.primary,
+                                textSize = 10.sp,
+                                background =
+                                    shapeComponent(
+                                        shape =
+                                            CutCornerShape(
+                                                CornerSize(percent = 25),
+                                                CornerSize(percent = 50),
+                                                CornerSize(percent = 50),
+                                                CornerSize(percent = 25),
+                                            ),
+                                        color = colors.primary.copy(alpha = 0.1f),
+                                    ),
+                                padding = dimensionsOf(end = 8.dp, start = 4.dp),
+                            )
+                        axis = null
+                        tick = null
+                        guideline =
+                            LineComponent(
+                                colors.primary.copy(alpha = 0.1f).toArgb(),
+                                1.dp.value,
+                            )
+                    },
+                model = entryModelOf(1, 2, 3, 2),
+            )
+        }
     }
-}
 
 @Preview("Sample Card With Line Chart", widthDp = 200)
 @Composable
-public fun LineChartCard(): Unit = VicoTheme {
-    val colors = MaterialTheme.colors
+public fun LineChartCard(): Unit =
+    VicoTheme {
+        val colors = MaterialTheme.colors
 
-    SampleCard {
-        Chart(
-            modifier = Modifier.height(100.dp),
-            chart = lineChart(
-                lines = listOf(
-                    lineSpec(
-                        point = null,
-                        lineColor = colors.primary,
-                        lineBackgroundShader = DynamicShaders.fromComponent(
-                            componentSize = 4.dp,
-                            component = shapeComponent(shape = pillShape, color = colors.primary).apply {
-                                setMargins(0.5.dp.value)
-                            },
-                        ),
+        SampleCard {
+            Chart(
+                modifier = Modifier.height(100.dp),
+                chart =
+                    lineChart(
+                        lines =
+                            listOf(
+                                lineSpec(
+                                    point = null,
+                                    lineColor = colors.primary,
+                                    lineBackgroundShader =
+                                        DynamicShaders.fromComponent(
+                                            componentSize = 4.dp,
+                                            component =
+                                                shapeComponent(shape = pillShape, color = colors.primary).apply {
+                                                    setMargins(0.5.dp.value)
+                                                },
+                                        ),
+                                ),
+                            ),
+                        axisValuesOverrider =
+                            AxisValuesOverrider.fixed(
+                                minX = 0f,
+                                maxY = 3f,
+                            ),
                     ),
-                ),
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minX = 0f,
-                    maxY = 3f,
-                ),
-            ),
-            model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
-            startAxis = createVerticalAxis {
-                label = textComponent(
-                    color = colors.onSurface,
-                    textSize = 10.sp,
-                    background = shapeComponent(shape = rectShape, color = Color.LightGray),
-                    padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
-                )
-                axis = null
-                tick = null
-                guideline = LineComponent(
-                    color = Color.LightGray.toArgb(),
-                    thicknessDp = 1.dp.value,
-                    shape = DashedShape(
-                        shape = pillShape,
-                        dashLengthDp = 2.dp.value,
-                        gapLengthDp = 4.dp.value,
-                    ),
-                )
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
-            },
-            bottomAxis = createHorizontalAxis {
-                label = null
-                tick = null
-                guideline = null
-                axis = lineComponent(color = Color.LightGray, thickness = 1.dp)
-            },
-        )
+                model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
+                startAxis =
+                    createVerticalAxis {
+                        label =
+                            textComponent(
+                                color = colors.onSurface,
+                                textSize = 10.sp,
+                                background = shapeComponent(shape = rectShape, color = Color.LightGray),
+                                padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
+                            )
+                        axis = null
+                        tick = null
+                        guideline =
+                            LineComponent(
+                                color = Color.LightGray.toArgb(),
+                                thicknessDp = 1.dp.value,
+                                shape =
+                                    DashedShape(
+                                        shape = pillShape,
+                                        dashLengthDp = 2.dp.value,
+                                        gapLengthDp = 4.dp.value,
+                                    ),
+                            )
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
+                    },
+                bottomAxis =
+                    createHorizontalAxis {
+                        label = null
+                        tick = null
+                        guideline = null
+                        axis = lineComponent(color = Color.LightGray, thickness = 1.dp)
+                    },
+            )
+        }
     }
-}
 
 @Composable
-private fun SampleCard(
-    chart: @Composable ColumnScope.() -> Unit,
-) {
+private fun SampleCard(chart: @Composable ColumnScope.() -> Unit) {
     Card(
         modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(8.dp),

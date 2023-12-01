@@ -45,7 +45,6 @@ import kotlin.math.min
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
 ) : Axis<Position>() {
-
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Bottom else VerticalPosition.Top
 
@@ -54,97 +53,104 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      */
     public var itemPlacer: AxisItemPlacer.Horizontal = AxisItemPlacer.Horizontal.default()
 
-    override fun drawBehindChart(context: ChartDrawContext): Unit = with(context) {
-        val clipRestoreCount = canvas.save()
-        val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - axisThickness - tickLength
-        val tickMarkBottom = tickMarkTop + axisThickness + tickLength
-        val chartValues = chartValuesProvider.getChartValues()
+    override fun drawBehindChart(context: ChartDrawContext): Unit =
+        with(context) {
+            val clipRestoreCount = canvas.save()
+            val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - axisThickness - tickLength
+            val tickMarkBottom = tickMarkTop + axisThickness + tickLength
+            val chartValues = chartValuesProvider.getChartValues()
 
-        canvas.clipRect(
-            bounds.left - itemPlacer.getStartHorizontalAxisInset(this, horizontalDimensions, tickThickness),
-            minOf(bounds.top, chartBounds.top),
-            bounds.right + itemPlacer.getEndHorizontalAxisInset(this, horizontalDimensions, tickThickness),
-            maxOf(bounds.bottom, chartBounds.bottom),
-        )
-
-        val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
-        val fullXRange = getFullXRange(horizontalDimensions)
-        val baseCanvasX = bounds.getStart(isLtr) - horizontalScroll + horizontalDimensions.startPadding *
-            layoutDirectionMultiplier
-        val firstVisibleX = fullXRange.start + horizontalScroll / horizontalDimensions.xSpacing * chartValues.xStep *
-            layoutDirectionMultiplier
-        val lastVisibleX = firstVisibleX + bounds.width() / horizontalDimensions.xSpacing * chartValues.xStep
-        val visibleXRange = firstVisibleX..lastVisibleX
-        val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange)
-        val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange)
-
-        labelValues.forEachIndexed { index, x ->
-            val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
-                layoutDirectionMultiplier
-            val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
-            val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
-            val maxWidth =
-                (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing).ceil.toInt()
-
-            label?.drawText(
-                context = context,
-                text = valueFormatter.formatValue(x, chartValues),
-                textX = canvasX,
-                textY = textY,
-                verticalPosition = position.textVerticalPosition,
-                maxTextWidth = maxWidth,
-                maxTextHeight = (bounds.height() - tickLength - axisThickness.half).toInt(),
-                rotationDegrees = labelRotationDegrees,
+            canvas.clipRect(
+                bounds.left - itemPlacer.getStartHorizontalAxisInset(this, horizontalDimensions, tickThickness),
+                minOf(bounds.top, chartBounds.top),
+                bounds.right + itemPlacer.getEndHorizontalAxisInset(this, horizontalDimensions, tickThickness),
+                maxOf(bounds.bottom, chartBounds.bottom),
             )
 
-            if (lineValues == null) {
+            val textY = if (position.isBottom) tickMarkBottom else tickMarkTop
+            val fullXRange = getFullXRange(horizontalDimensions)
+            val baseCanvasX =
+                bounds.getStart(isLtr) - horizontalScroll + horizontalDimensions.startPadding *
+                    layoutDirectionMultiplier
+            val firstVisibleX =
+                fullXRange.start + horizontalScroll / horizontalDimensions.xSpacing * chartValues.xStep *
+                    layoutDirectionMultiplier
+            val lastVisibleX = firstVisibleX + bounds.width() / horizontalDimensions.xSpacing * chartValues.xStep
+            val visibleXRange = firstVisibleX..lastVisibleX
+            val labelValues = itemPlacer.getLabelValues(this, visibleXRange, fullXRange)
+            val lineValues = itemPlacer.getLineValues(this, visibleXRange, fullXRange)
+
+            labelValues.forEachIndexed { index, x ->
+                val canvasX =
+                    baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                        layoutDirectionMultiplier
+                val previousX = labelValues.getOrNull(index - 1) ?: (fullXRange.start.doubled - x)
+                val nextX = labelValues.getOrNull(index + 1) ?: (fullXRange.endInclusive.doubled - x)
+                val maxWidth =
+                    (min(x - previousX, nextX - x) / chartValues.xStep * horizontalDimensions.xSpacing).ceil.toInt()
+
+                label?.drawText(
+                    context = context,
+                    text = valueFormatter.formatValue(x, chartValues),
+                    textX = canvasX,
+                    textY = textY,
+                    verticalPosition = position.textVerticalPosition,
+                    maxTextWidth = maxWidth,
+                    maxTextHeight = (bounds.height() - tickLength - axisThickness.half).toInt(),
+                    rotationDegrees = labelRotationDegrees,
+                )
+
+                if (lineValues == null) {
+                    tick?.drawVertical(
+                        context = this,
+                        top = tickMarkTop,
+                        bottom = tickMarkBottom,
+                        centerX = canvasX + getLinesCorrectionX(x, fullXRange),
+                    )
+                }
+            }
+
+            lineValues?.forEach { x ->
                 tick?.drawVertical(
                     context = this,
                     top = tickMarkTop,
                     bottom = tickMarkBottom,
-                    centerX = canvasX + getLinesCorrectionX(x, fullXRange),
+                    centerX =
+                        baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                            layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange),
                 )
             }
-        }
 
-        lineValues?.forEach { x ->
-            tick?.drawVertical(
-                context = this,
-                top = tickMarkTop,
-                bottom = tickMarkBottom,
-                centerX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
-                    layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange),
-            )
-        }
+            val axisLineExtend =
+                if (itemPlacer.getShiftExtremeTicks(context)) {
+                    tickThickness
+                } else {
+                    tickThickness.half
+                }
 
-        val axisLineExtend = if (itemPlacer.getShiftExtremeTicks(context)) {
-            tickThickness
-        } else {
-            tickThickness.half
-        }
-
-        axisLine?.drawHorizontal(
-            context = context,
-            left = chartBounds.left - axisLineExtend,
-            right = chartBounds.right + axisLineExtend,
-            centerY = if (position.isBottom) bounds.top + axisThickness.half else bounds.bottom - axisThickness.half,
-        )
-
-        title?.let { title ->
-            titleComponent?.drawText(
+            axisLine?.drawHorizontal(
                 context = context,
-                textX = bounds.centerX(),
-                textY = if (position.isTop) bounds.top else bounds.bottom,
-                verticalPosition = if (position.isTop) VerticalPosition.Bottom else VerticalPosition.Top,
-                maxTextWidth = bounds.width().toInt(),
-                text = title,
+                left = chartBounds.left - axisLineExtend,
+                right = chartBounds.right + axisLineExtend,
+                centerY =
+                    if (position.isBottom) bounds.top + axisThickness.half else bounds.bottom - axisThickness.half,
             )
+
+            title?.let { title ->
+                titleComponent?.drawText(
+                    context = context,
+                    textX = bounds.centerX(),
+                    textY = if (position.isTop) bounds.top else bounds.bottom,
+                    verticalPosition = if (position.isTop) VerticalPosition.Bottom else VerticalPosition.Top,
+                    maxTextWidth = bounds.width().toInt(),
+                    text = title,
+                )
+            }
+
+            if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
+
+            drawGuidelines(baseCanvasX, fullXRange, labelValues, lineValues)
         }
-
-        if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
-
-        drawGuidelines(baseCanvasX, fullXRange, labelValues, lineValues)
-    }
 
     private fun ChartDrawContext.drawGuidelines(
         baseCanvasX: Float,
@@ -160,8 +166,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
         if (lineValues == null) {
             labelValues.forEach { x ->
-                val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
-                    layoutDirectionMultiplier
+                val canvasX =
+                    baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                        layoutDirectionMultiplier
 
                 guideline
                     .takeUnless { x.isBoundOf(fullXRange) }
@@ -169,8 +176,9 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             }
         } else {
             lineValues.forEach { x ->
-                val canvasX = baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
-                    layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange)
+                val canvasX =
+                    baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                        layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange)
 
                 guideline
                     .takeUnless { x.isBoundOf(fullXRange) }
@@ -200,24 +208,26 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     ) {
         val chartValues = context.chartValuesProvider.getChartValues()
         horizontalDimensions.ensureValuesAtLeast(
-            unscalableStartPadding = label
-                .takeIf { itemPlacer.getAddFirstLabelPadding(context) }
-                ?.getWidth(
-                    context = context,
-                    text = valueFormatter.formatValue(chartValues.minX, chartValues),
-                    pad = true,
-                )
-                ?.half
-                .orZero,
-            unscalableEndPadding = label
-                .takeIf { itemPlacer.getAddLastLabelPadding(context) }
-                ?.getWidth(
-                    context = context,
-                    text = valueFormatter.formatValue(chartValues.maxX, chartValues),
-                    pad = true,
-                )
-                ?.half
-                .orZero,
+            unscalableStartPadding =
+                label
+                    .takeIf { itemPlacer.getAddFirstLabelPadding(context) }
+                    ?.getWidth(
+                        context = context,
+                        text = valueFormatter.formatValue(chartValues.minX, chartValues),
+                        pad = true,
+                    )
+                    ?.half
+                    .orZero,
+            unscalableEndPadding =
+                label
+                    .takeIf { itemPlacer.getAddLastLabelPadding(context) }
+                    ?.getWidth(
+                        context = context,
+                        text = valueFormatter.formatValue(chartValues.maxX, chartValues),
+                        pad = true,
+                    )
+                    ?.half
+                    .orZero,
         )
     }
 
@@ -225,64 +235,73 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
-    ): Unit = with(outInsets) {
-        start = itemPlacer.getStartHorizontalAxisInset(context, horizontalDimensions, context.tickThickness)
-        end = itemPlacer.getEndHorizontalAxisInset(context, horizontalDimensions, context.tickThickness)
-        top = if (position.isTop) getDesiredHeight(context, horizontalDimensions) else 0f
-        bottom = if (position.isBottom) getDesiredHeight(context, horizontalDimensions) else 0f
-    }
+    ): Unit =
+        with(outInsets) {
+            start = itemPlacer.getStartHorizontalAxisInset(context, horizontalDimensions, context.tickThickness)
+            end = itemPlacer.getEndHorizontalAxisInset(context, horizontalDimensions, context.tickThickness)
+            top = if (position.isTop) getDesiredHeight(context, horizontalDimensions) else 0f
+            bottom = if (position.isBottom) getDesiredHeight(context, horizontalDimensions) else 0f
+        }
 
     private fun MeasureContext.getFullXRange(
         horizontalDimensions: HorizontalDimensions,
-    ): ClosedFloatingPointRange<Float> = with(horizontalDimensions) {
-        val chartValues = chartValuesProvider.getChartValues()
-        val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
-        val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
-        start..end
-    }
+    ): ClosedFloatingPointRange<Float> =
+        with(horizontalDimensions) {
+            val chartValues = chartValuesProvider.getChartValues()
+            val start = chartValues.minX - startPadding / xSpacing * chartValues.xStep
+            val end = chartValues.maxX + endPadding / xSpacing * chartValues.xStep
+            start..end
+        }
 
     private fun getDesiredHeight(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
-    ): Float = with(context) {
-        val chartValues = chartValuesProvider.getChartValues()
-        val fullXRange = getFullXRange(horizontalDimensions)
+    ): Float =
+        with(context) {
+            val chartValues = chartValuesProvider.getChartValues()
+            val fullXRange = getFullXRange(horizontalDimensions)
 
-        when (val constraint = sizeConstraint) {
-            is SizeConstraint.Auto -> {
-                val labelHeight = label?.let { label ->
-                    itemPlacer
-                        .getMeasuredLabelValues(this, horizontalDimensions, fullXRange)
-                        .map { valueFormatter.formatValue(it, chartValues) }
-                        .maxOf { labelText ->
-                            label.getHeight(
-                                context = this,
-                                text = labelText,
-                                rotationDegrees = labelRotationDegrees,
-                                pad = true,
-                            ).orZero
-                        }
-                }.orZero
-                val titleComponentHeight = title?.let { title ->
-                    titleComponent?.getHeight(
-                        context = context,
-                        width = bounds.width().toInt(),
-                        text = title,
-                    )
-                }.orZero
-                (labelHeight + titleComponentHeight + (if (position.isBottom) axisThickness else 0f) + tickLength)
-                    .coerceAtMost(maximumValue = canvasBounds.height() / MAX_HEIGHT_DIVISOR)
-                    .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
+            when (val constraint = sizeConstraint) {
+                is SizeConstraint.Auto -> {
+                    val labelHeight =
+                        label?.let { label ->
+                            itemPlacer
+                                .getMeasuredLabelValues(this, horizontalDimensions, fullXRange)
+                                .map { valueFormatter.formatValue(it, chartValues) }
+                                .maxOf { labelText ->
+                                    label.getHeight(
+                                        context = this,
+                                        text = labelText,
+                                        rotationDegrees = labelRotationDegrees,
+                                        pad = true,
+                                    ).orZero
+                                }
+                        }.orZero
+                    val titleComponentHeight =
+                        title?.let { title ->
+                            titleComponent?.getHeight(
+                                context = context,
+                                width = bounds.width().toInt(),
+                                text = title,
+                            )
+                        }.orZero
+                    (labelHeight + titleComponentHeight + (if (position.isBottom) axisThickness else 0f) + tickLength)
+                        .coerceAtMost(maximumValue = canvasBounds.height() / MAX_HEIGHT_DIVISOR)
+                        .coerceIn(
+                            minimumValue = constraint.minSizeDp.pixels,
+                            maximumValue = constraint.maxSizeDp.pixels,
+                        )
+                }
+                is SizeConstraint.Exact -> constraint.sizeDp.pixels
+                is SizeConstraint.Fraction -> canvasBounds.height() * constraint.fraction
+                is SizeConstraint.TextWidth ->
+                    label?.getHeight(
+                        context = this,
+                        text = constraint.text,
+                        rotationDegrees = labelRotationDegrees,
+                    ).orZero
             }
-            is SizeConstraint.Exact -> constraint.sizeDp.pixels
-            is SizeConstraint.Fraction -> canvasBounds.height() * constraint.fraction
-            is SizeConstraint.TextWidth -> label?.getHeight(
-                context = this,
-                text = constraint.text,
-                rotationDegrees = labelRotationDegrees,
-            ).orZero
         }
-    }
 
     /**
      * A subclass of [Axis.Builder] used to build [HorizontalAxis] instances.
@@ -290,7 +309,6 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     public class Builder<Position : AxisPosition.Horizontal>(
         builder: Axis.Builder<Position>? = null,
     ) : Axis.Builder<Position>(builder) {
-
         /**
          * Determines for what _x_ values the [HorizontalAxis] is to display labels, ticks, and guidelines.
          */
@@ -301,11 +319,12 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
          */
         @Suppress("UNCHECKED_CAST")
         public inline fun <reified T : Position> build(): HorizontalAxis<T> {
-            val position = when (T::class.java) {
-                AxisPosition.Horizontal.Top::class.java -> AxisPosition.Horizontal.Top
-                AxisPosition.Horizontal.Bottom::class.java -> AxisPosition.Horizontal.Bottom
-                else -> throw UnknownAxisPositionException(T::class.java)
-            } as Position
+            val position =
+                when (T::class.java) {
+                    AxisPosition.Horizontal.Top::class.java -> AxisPosition.Horizontal.Top
+                    AxisPosition.Horizontal.Bottom::class.java -> AxisPosition.Horizontal.Bottom
+                    else -> throw UnknownAxisPositionException(T::class.java)
+                } as Position
             return setTo(HorizontalAxis(position = position)).also { it.itemPlacer = itemPlacer } as HorizontalAxis<T>
         }
     }

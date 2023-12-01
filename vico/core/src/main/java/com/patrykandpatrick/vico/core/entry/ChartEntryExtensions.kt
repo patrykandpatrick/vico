@@ -29,7 +29,10 @@ import kotlin.math.abs
  *
  * @see [entriesOf]
  */
-public fun entryOf(x: Float, y: Float): FloatEntry = FloatEntry(x, y)
+public fun entryOf(
+    x: Float,
+    y: Float,
+): FloatEntry = FloatEntry(x, y)
 
 /**
  * Creates a [FloatEntry] instance.
@@ -39,7 +42,10 @@ public fun entryOf(x: Float, y: Float): FloatEntry = FloatEntry(x, y)
  *
  * @see [entriesOf]
  */
-public fun entryOf(x: Number, y: Number): FloatEntry = entryOf(x.toFloat(), y.toFloat())
+public fun entryOf(
+    x: Number,
+    y: Number,
+): FloatEntry = entryOf(x.toFloat(), y.toFloat())
 
 /**
  * Creates a [List] of [FloatEntry] instances. Each of the provided [Pair]s corresponds to a single [FloatEntry], with
@@ -56,8 +62,7 @@ public fun entryOf(x: Number, y: Number): FloatEntry = entryOf(x.toFloat(), y.to
  *
  * @see [entryOf]
  */
-public fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> =
-    pairs.map { (x, y) -> entryOf(x, y) }
+public fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> = pairs.map { (x, y) -> entryOf(x, y) }
 
 /**
  * Creates a [List] of [FloatEntry] instances out of an array of y-axis values.
@@ -79,8 +84,7 @@ public fun entriesOf(vararg pairs: Pair<Number, Number>): List<FloatEntry> =
  *
  * @see [entryOf]
  */
-public fun entriesOf(vararg yValues: Number): List<FloatEntry> =
-    yValues.mapIndexed { index, y -> entryOf(index, y) }
+public fun entriesOf(vararg yValues: Number): List<FloatEntry> = yValues.mapIndexed { index, y -> entryOf(index, y) }
 
 internal inline val Iterable<Iterable<ChartEntry>>.yRange: ClosedFloatingPointRange<Float>
     get() = flatten().rangeOfOrNull { it.y } ?: 0f..0f
@@ -88,11 +92,14 @@ internal inline val Iterable<Iterable<ChartEntry>>.yRange: ClosedFloatingPointRa
 internal inline val Iterable<Iterable<ChartEntry>>.xRange: ClosedFloatingPointRange<Float>
     get() = flatten().rangeOfOrNull { it.x } ?: 0f..0f
 
-internal fun Iterable<Iterable<ChartEntry>>.calculateXGcd() = flatten()
-    .zipWithNext { firstEntry, secondEntry -> abs(secondEntry.x - firstEntry.x) }
-    .fold<Float, Float?>(null) { gcd, delta -> gcd?.gcdWith(delta) ?: delta }
-    ?.also { require(it != 0f) { "The precision of the x values is too large. The maximum is two decimal places." } }
-    ?: 1f
+internal fun Iterable<Iterable<ChartEntry>>.calculateXGcd() =
+    flatten()
+        .zipWithNext { firstEntry, secondEntry -> abs(secondEntry.x - firstEntry.x) }
+        .fold<Float, Float?>(null) { gcd, delta -> gcd?.gcdWith(delta) ?: delta }
+        ?.also {
+            require(it != 0f) { "The precision of the x values is too large. The maximum is two decimal places." }
+        }
+        ?: 1f
 
 internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =
     flatten().fold(HashMap<Float, Pair<Float, Float>>()) { map, entry ->

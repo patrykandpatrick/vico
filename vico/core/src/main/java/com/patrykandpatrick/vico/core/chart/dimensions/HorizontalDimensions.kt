@@ -88,13 +88,14 @@ public interface HorizontalDimensions {
     /**
      * Creates a new [HorizontalDimensions] instance by multiplying this one’s scalable values by the given factor.
      */
-    public fun scaled(scale: Float): HorizontalDimensions = HorizontalDimensions(
-        xSpacing * scale,
-        scalableStartPadding * scale,
-        scalableEndPadding * scale,
-        unscalableStartPadding,
-        unscalableEndPadding,
-    )
+    public fun scaled(scale: Float): HorizontalDimensions =
+        HorizontalDimensions(
+            xSpacing * scale,
+            scalableStartPadding * scale,
+            scalableEndPadding * scale,
+            unscalableStartPadding,
+            unscalableEndPadding,
+        )
 }
 
 /**
@@ -106,10 +107,11 @@ public fun HorizontalDimensions(
     scalableEndPadding: Float,
     unscalableStartPadding: Float,
     unscalableEndPadding: Float,
-): HorizontalDimensions = object : HorizontalDimensions {
-    override val xSpacing: Float = xSpacing
-    override val scalableStartPadding: Float = scalableStartPadding
-    override val scalableEndPadding: Float = scalableEndPadding
-    override val unscalableStartPadding: Float = unscalableStartPadding
-    override val unscalableEndPadding: Float = unscalableEndPadding
-}
+): HorizontalDimensions =
+    object : HorizontalDimensions {
+        override val xSpacing: Float = xSpacing
+        override val scalableStartPadding: Float = scalableStartPadding
+        override val scalableEndPadding: Float = scalableEndPadding
+        override val unscalableStartPadding: Float = unscalableStartPadding
+        override val unscalableEndPadding: Float = unscalableEndPadding
+    }

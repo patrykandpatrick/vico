@@ -38,19 +38,21 @@ import com.patrykandpatrick.vico.core.entry.entriesOf
 import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
-private val model = entryModelOf(
-    entriesOf(2f, -1f, -4f, 2f, 1f, -5f, -2f, -3f),
-    entriesOf(3f, -2f, 2f, -1f, 2f, -3f, -4f, -1f),
-    entriesOf(1f, -2f, 2f, 1f, -1f, 4f, 4f, -2f),
-)
+private val model =
+    entryModelOf(
+        entriesOf(2f, -1f, -4f, 2f, 1f, -5f, -2f, -3f),
+        entriesOf(3f, -2f, 2f, -1f, 2f, -3f, -4f, -1f),
+        entriesOf(1f, -2f, 2f, 1f, -1f, 4f, 4f, -2f),
+    )
 
 private val columns: List<LineComponent>
     @Composable
-    get() = listOf(
-        lineComponent(color = Color(0xFF494949), thickness = 8.dp),
-        lineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
-        lineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
-    )
+    get() =
+        listOf(
+            lineComponent(color = Color(0xFF494949), thickness = 8.dp),
+            lineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
+            lineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
+        )
 
 @Preview
 @Composable
@@ -59,14 +61,16 @@ public fun StackedColumnChartWithNegativeValues() {
     Surface {
         Chart(
             modifier = Modifier.height(250.dp),
-            chart = columnChart(
-                columns = columns,
-                persistentMarkers = mapOf(
-                    2f to marker,
-                    3f to marker,
+            chart =
+                columnChart(
+                    columns = columns,
+                    persistentMarkers =
+                        mapOf(
+                            2f to marker,
+                            3f to marker,
+                        ),
+                    mergeMode = Stack,
                 ),
-                mergeMode = Stack,
-            ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 8) }),
             bottomAxis = rememberBottomAxis(),
@@ -79,11 +83,12 @@ public fun StackedColumnChartWithNegativeValues() {
 public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
     Surface {
         Chart(
-            chart = columnChart(
-                columns = columns,
-                dataLabel = textComponent(),
-                mergeMode = Stack,
-            ),
+            chart =
+                columnChart(
+                    columns = columns,
+                    dataLabel = textComponent(),
+                    mergeMode = Stack,
+                ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 8) }),
             bottomAxis = rememberBottomAxis(),
@@ -96,14 +101,16 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
 public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
         Chart(
-            chart = columnChart(
-                columns = columns,
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minY = 1f,
-                    maxY = 4f,
+            chart =
+                columnChart(
+                    columns = columns,
+                    axisValuesOverrider =
+                        AxisValuesOverrider.fixed(
+                            minY = 1f,
+                            maxY = 4f,
+                        ),
+                    mergeMode = Stack,
                 ),
-                mergeMode = Stack,
-            ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
             bottomAxis = rememberBottomAxis(),
@@ -116,14 +123,16 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
 public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
         Chart(
-            chart = columnChart(
-                columns = columns,
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minY = -2f,
-                    maxY = 0f,
+            chart =
+                columnChart(
+                    columns = columns,
+                    axisValuesOverrider =
+                        AxisValuesOverrider.fixed(
+                            minY = -2f,
+                            maxY = 0f,
+                        ),
+                    mergeMode = Stack,
                 ),
-                mergeMode = Stack,
-            ),
             model = model,
             startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
             bottomAxis = rememberBottomAxis(),

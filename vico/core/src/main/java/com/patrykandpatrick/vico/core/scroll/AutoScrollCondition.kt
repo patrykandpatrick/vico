@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,14 +23,15 @@ import com.patrykandpatrick.vico.core.extension.ifNotNull
  * Defines when an automatic scroll should be performed.
  */
 public fun interface AutoScrollCondition<in Model : ChartEntryModel> {
-
     /**
      * Given a chart’s new and old models, defines whether an automatic scroll should be performed.
      */
-    public fun shouldPerformAutoScroll(newModel: Model, oldModel: Model?): Boolean
+    public fun shouldPerformAutoScroll(
+        newModel: Model,
+        oldModel: Model?,
+    ): Boolean
 
     public companion object {
-
         /**
          * Prevents any automatic scrolling from occurring.
          */
@@ -40,18 +41,19 @@ public fun interface AutoScrollCondition<in Model : ChartEntryModel> {
          * Triggers an automatic scroll when the size of the model increases (that is, the contents of the chart become
          * wider).
          */
-        public val OnModelSizeIncreased: AutoScrollCondition<ChartEntryModel> = AutoScrollCondition { n, o ->
-            if (o != null) {
-                val new = n.entries
-                val old = o.entries
-                new.size > old.size ||
-                    ifNotNull(
-                        t1 = new.maxOfOrNull { entries -> entries.size },
-                        t2 = old.maxOfOrNull { entries -> entries.size },
-                    ) { t1, t2 -> t1 > t2 } == true
-            } else {
-                false
+        public val OnModelSizeIncreased: AutoScrollCondition<ChartEntryModel> =
+            AutoScrollCondition { n, o ->
+                if (o != null) {
+                    val new = n.entries
+                    val old = o.entries
+                    new.size > old.size ||
+                        ifNotNull(
+                            t1 = new.maxOfOrNull { entries -> entries.size },
+                            t2 = old.maxOfOrNull { entries -> entries.size },
+                        ) { t1, t2 -> t1 > t2 } == true
+                } else {
+                    false
+                }
             }
-        }
     }
 }
