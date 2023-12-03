@@ -36,7 +36,7 @@
         <item name="color">@color/chart_7_color_3</item>
     </style>
 
-    <style name="Chart7LineChartStyle">
+    <style name="Chart7LineLayerStyle">
         <item name="line1Spec">@style/Chart7Line1Style</item>
         <item name="line2Spec">@style/Chart7Line2Style</item>
         <item name="line3Spec">@style/Chart7Line3Style</item>

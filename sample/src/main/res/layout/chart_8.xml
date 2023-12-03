@@ -19,13 +19,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <com.patrykandpatrick.vico.views.chart.ComposedChartView
+    <com.patrykandpatrick.vico.views.chart.CartesianChartView
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:charts="line|column"
-        app:columnChartStyle="@style/Chart8ColumnChartStyle"
-        app:lineChartStyle="@style/Chart8LineChartStyle"
+        app:columnLayerStyle="@style/Chart8ColumnLayerStyle"
+        app:layers="line|column"
+        app:lineLayerStyle="@style/Chart8LineLayerStyle"
         app:showEndAxis="true"
         app:showStartAxis="true" />
 </FrameLayout>

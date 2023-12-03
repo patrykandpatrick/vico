@@ -8,7 +8,6 @@ appcompat = "1.6.1"
 composeBom = "2023.10.01"
 composeCompiler = "1.5.4"
 coroutines = "1.7.3"
-detekt = "1.23.3"
 dokka = "1.9.10"
 jUnit = "4.13.2"
 jUnitExt = "1.1.5"
@@ -33,7 +32,6 @@ composeUI = { group = "androidx.compose.ui", name = "ui" }
 composeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }
 coroutinesCore = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
-detektFormatting = { group = "io.gitlab.arturbosch.detekt", name = "detekt-formatting", version.ref = "detekt" }
 jUnit = { group = "junit", name = "junit", version.ref = "jUnit" }
 jUnitExt = { group = "androidx.test.ext", name = "junit", version.ref = "jUnitExt" }
 kotlinGradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -48,5 +46,4 @@ testCore = { group = "androidx.test", name = "core-ktx", version.ref = "testCore
 viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
 [plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,34 +40,34 @@ public class ComponentShader(
     private val tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     private val tileYMode: Shader.TileMode = tileXMode,
 ) : CacheableDynamicShader() {
-
     override fun createShader(
         context: DrawContext,
         left: Float,
         top: Float,
         right: Float,
         bottom: Float,
-    ): Shader = with(context) {
-        val size = componentSizeDp.pixels.toInt() * if (checkeredArrangement) 2 else 1
-        val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
+    ): Shader =
+        with(context) {
+            val size = componentSizeDp.pixels.toInt() * if (checkeredArrangement) 2 else 1
+            val bitmap = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888)
 
-        val canvas = Canvas(bitmap)
-        context.withOtherCanvas(canvas) {
-            if (checkeredArrangement) {
-                val halfSize = componentSizeDp.pixels.half
-                with(component) {
-                    draw(context, -halfSize, -halfSize, componentSizeDp.pixels)
-                    draw(context, -halfSize, size - halfSize, componentSizeDp.pixels)
-                    draw(context, size - halfSize, -halfSize, componentSizeDp.pixels)
-                    draw(context, size - halfSize, size - halfSize, componentSizeDp.pixels)
-                    draw(context, halfSize, halfSize, componentSizeDp.pixels)
+            val canvas = Canvas(bitmap)
+            context.withOtherCanvas(canvas) {
+                if (checkeredArrangement) {
+                    val halfSize = componentSizeDp.pixels.half
+                    with(component) {
+                        draw(context, -halfSize, -halfSize, componentSizeDp.pixels)
+                        draw(context, -halfSize, size - halfSize, componentSizeDp.pixels)
+                        draw(context, size - halfSize, -halfSize, componentSizeDp.pixels)
+                        draw(context, size - halfSize, size - halfSize, componentSizeDp.pixels)
+                        draw(context, halfSize, halfSize, componentSizeDp.pixels)
+                    }
+                } else {
+                    component.draw(context, 0f, 0f, componentSizeDp.pixels, componentSizeDp.pixels)
                 }
-            } else {
-                component.draw(context, 0f, 0f, componentSizeDp.pixels, componentSizeDp.pixels)
             }
+            return BitmapShader(bitmap, tileXMode, tileYMode)
         }
-        return BitmapShader(bitmap, tileXMode, tileYMode)
-    }
 
     private fun Component.draw(
         context: DrawContext,

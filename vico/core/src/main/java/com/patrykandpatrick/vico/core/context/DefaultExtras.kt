@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,12 @@ private const val INITIAL_CAPACITY = 8
  */
 @Suppress("UNCHECKED_CAST")
 public class DefaultExtras : Extras {
-
     private val extrasMap: HashMap<Any, Any> = HashMap(INITIAL_CAPACITY)
 
-    public override fun putExtra(key: Any, value: Any) {
+    public override fun putExtra(
+        key: Any,
+        value: Any,
+    ) {
         extrasMap[key] = value
     }
 
@@ -35,9 +37,10 @@ public class DefaultExtras : Extras {
 
     override fun <T> getExtra(key: Any): T = extrasMap[key] as T
 
-    public override fun <T> consumeExtra(key: Any): T = getExtra<T>(key).also {
-        extrasMap.remove(key)
-    }
+    public override fun <T> consumeExtra(key: Any): T =
+        getExtra<T>(key).also {
+            extrasMap.remove(key)
+        }
 
     override fun clearExtras() {
         extrasMap.clear()

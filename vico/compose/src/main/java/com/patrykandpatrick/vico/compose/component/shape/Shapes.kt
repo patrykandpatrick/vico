@@ -50,73 +50,82 @@ private const val RADII_ARRAY_SIZE = 8
  * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
  * [com.patrykandpatrick.vico.core.component.shape.Shape].
  */
-public fun ComposeShape.chartShape(): Shape = object : Shape {
-    private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
-    private val matrix: Matrix by lazy { Matrix() }
+public fun ComposeShape.chartShape(): Shape =
+    object : Shape {
+        private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
+        private val matrix: Matrix by lazy { Matrix() }
 
-    override fun drawShape(
-        context: DrawContext,
-        paint: Paint,
-        path: Path,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ) {
-        val outline = createOutline(
-            size = Size(
-                width = right - left,
-                height = bottom - top,
-            ),
-            layoutDirection = if (context.isLtr) LayoutDirection.Ltr else LayoutDirection.Rtl,
-            density = Density(context.density, 1f),
-        )
-        when (outline) {
-            is Outline.Rectangle -> path.addRect(
-                left,
-                top,
-                right,
-                bottom,
-                Path.Direction.CCW,
-            )
+        override fun drawShape(
+            context: DrawContext,
+            paint: Paint,
+            path: Path,
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ) {
+            val outline =
+                createOutline(
+                    size =
+                        Size(
+                            width = right - left,
+                            height = bottom - top,
+                        ),
+                    layoutDirection = if (context.isLtr) LayoutDirection.Ltr else LayoutDirection.Rtl,
+                    density = Density(context.density, 1f),
+                )
+            when (outline) {
+                is Outline.Rectangle ->
+                    path.addRect(
+                        left,
+                        top,
+                        right,
+                        bottom,
+                        Path.Direction.CCW,
+                    )
 
-            is Outline.Rounded -> path.addRoundRect(
-                left = left,
-                top = top,
-                right = right,
-                bottom = bottom,
-                rect = outline.roundRect,
-                radii = radii,
-            )
+                is Outline.Rounded ->
+                    path.addRoundRect(
+                        left = left,
+                        top = top,
+                        right = right,
+                        bottom = bottom,
+                        rect = outline.roundRect,
+                        radii = radii,
+                    )
 
-            is Outline.Generic -> {
-                matrix.setTranslate(left, top)
-                path.addPath(outline.path.asAndroidPath(), matrix)
+                is Outline.Generic -> {
+                    matrix.setTranslate(left, top)
+                    path.addPath(outline.path.asAndroidPath(), matrix)
+                }
             }
+            context.canvas.drawPath(path, paint)
         }
-        context.canvas.drawPath(path, paint)
     }
-}
 
 /**
  * Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape].
  */
-public fun CorneredShape.composeShape(): ComposeShape = object : ComposeShape {
+public fun CorneredShape.composeShape(): ComposeShape =
+    object : ComposeShape {
+        override fun createOutline(
+            size: Size,
+            layoutDirection: LayoutDirection,
+            density: Density,
+        ): Outline {
+            val path = ComposePath()
 
-    override fun createOutline(size: Size, layoutDirection: LayoutDirection, density: Density): Outline {
-        val path = ComposePath()
-
-        createPath(
-            density = density.density,
-            path = path.asAndroidPath(),
-            left = 0f,
-            top = 0f,
-            right = size.width,
-            bottom = size.height,
-        )
-        return Outline.Generic(path)
+            createPath(
+                density = density.density,
+                path = path.asAndroidPath(),
+                left = 0f,
+                top = 0f,
+                right = size.width,
+                bottom = size.height,
+            )
+            return Outline.Generic(path)
+        }
     }
-}
 
 /**
  * Adds a rounded rectangle to the receiver [Path].
@@ -128,7 +137,6 @@ public fun CorneredShape.composeShape(): ComposeShape = object : ComposeShape {
  * @param rect the rounded rectangle to be drawn.
  * @param radii used to store the corner radii. This array must be mutable.
  */
-@Suppress("MagicNumber")
 public fun Path.addRoundRect(
     left: Float,
     top: Float,
@@ -151,14 +159,13 @@ public fun Path.addRoundRect(
 /**
  * Creates a [CorneredShape] with rounded corners of the provided size.
  */
-public fun Shapes.roundedCornerShape(
-    all: Dp = 0.dp,
-): CorneredShape = CorneredShape(
-    Corner.Absolute(all.value, RoundedCornerTreatment),
-    Corner.Absolute(all.value, RoundedCornerTreatment),
-    Corner.Absolute(all.value, RoundedCornerTreatment),
-    Corner.Absolute(all.value, RoundedCornerTreatment),
-)
+public fun Shapes.roundedCornerShape(all: Dp = 0.dp): CorneredShape =
+    CorneredShape(
+        Corner.Absolute(all.value, RoundedCornerTreatment),
+        Corner.Absolute(all.value, RoundedCornerTreatment),
+        Corner.Absolute(all.value, RoundedCornerTreatment),
+        Corner.Absolute(all.value, RoundedCornerTreatment),
+    )
 
 /**
  * Creates a [CorneredShape] with rounded corners of the provided sizes.
@@ -168,24 +175,24 @@ public fun Shapes.roundedCornerShape(
     topRight: Dp = 0.dp,
     bottomRight: Dp = 0.dp,
     bottomLeft: Dp = 0.dp,
-): CorneredShape = CorneredShape(
-    Corner.Absolute(topLeft.value, RoundedCornerTreatment),
-    Corner.Absolute(topRight.value, RoundedCornerTreatment),
-    Corner.Absolute(bottomRight.value, RoundedCornerTreatment),
-    Corner.Absolute(bottomLeft.value, RoundedCornerTreatment),
-)
+): CorneredShape =
+    CorneredShape(
+        Corner.Absolute(topLeft.value, RoundedCornerTreatment),
+        Corner.Absolute(topRight.value, RoundedCornerTreatment),
+        Corner.Absolute(bottomRight.value, RoundedCornerTreatment),
+        Corner.Absolute(bottomLeft.value, RoundedCornerTreatment),
+    )
 
 /**
  * Creates a [CorneredShape] with cut corners of the provided size.
  */
-public fun Shapes.cutCornerShape(
-    all: Dp = 0.dp,
-): CorneredShape = CorneredShape(
-    Corner.Absolute(all.value, CutCornerTreatment),
-    Corner.Absolute(all.value, CutCornerTreatment),
-    Corner.Absolute(all.value, CutCornerTreatment),
-    Corner.Absolute(all.value, CutCornerTreatment),
-)
+public fun Shapes.cutCornerShape(all: Dp = 0.dp): CorneredShape =
+    CorneredShape(
+        Corner.Absolute(all.value, CutCornerTreatment),
+        Corner.Absolute(all.value, CutCornerTreatment),
+        Corner.Absolute(all.value, CutCornerTreatment),
+        Corner.Absolute(all.value, CutCornerTreatment),
+    )
 
 /**
  * Creates a [CorneredShape] with cut corners of the provided sizes.
@@ -195,12 +202,13 @@ public fun Shapes.cutCornerShape(
     topRight: Dp = 0.dp,
     bottomRight: Dp = 0.dp,
     bottomLeft: Dp = 0.dp,
-): CorneredShape = CorneredShape(
-    Corner.Absolute(topLeft.value, CutCornerTreatment),
-    Corner.Absolute(topRight.value, CutCornerTreatment),
-    Corner.Absolute(bottomRight.value, CutCornerTreatment),
-    Corner.Absolute(bottomLeft.value, CutCornerTreatment),
-)
+): CorneredShape =
+    CorneredShape(
+        Corner.Absolute(topLeft.value, CutCornerTreatment),
+        Corner.Absolute(topRight.value, CutCornerTreatment),
+        Corner.Absolute(bottomRight.value, CutCornerTreatment),
+        Corner.Absolute(bottomLeft.value, CutCornerTreatment),
+    )
 
 /**
  * Creates a [MarkerCorneredShape].
@@ -217,13 +225,14 @@ public fun Shapes.markerCorneredShape(
     bottomRight: Corner,
     bottomLeft: Corner,
     tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
-): MarkerCorneredShape = MarkerCorneredShape(
-    topLeft = topLeft,
-    topRight = topRight,
-    bottomRight = bottomRight,
-    bottomLeft = bottomLeft,
-    tickSizeDp = tickSizeDp.value,
-)
+): MarkerCorneredShape =
+    MarkerCorneredShape(
+        topLeft = topLeft,
+        topRight = topRight,
+        bottomRight = bottomRight,
+        bottomLeft = bottomLeft,
+        tickSizeDp = tickSizeDp.value,
+    )
 
 /**
  * Creates a [MarkerCorneredShape].
@@ -234,13 +243,14 @@ public fun Shapes.markerCorneredShape(
 public fun Shapes.markerCorneredShape(
     all: Corner,
     tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
-): MarkerCorneredShape = MarkerCorneredShape(
-    topLeft = all,
-    topRight = all,
-    bottomRight = all,
-    bottomLeft = all,
-    tickSizeDp = tickSizeDp.value,
-)
+): MarkerCorneredShape =
+    MarkerCorneredShape(
+        topLeft = all,
+        topRight = all,
+        bottomRight = all,
+        bottomLeft = all,
+        tickSizeDp = tickSizeDp.value,
+    )
 
 /**
  * Creates a [MarkerCorneredShape] out of a regular [CorneredShape].
@@ -251,13 +261,14 @@ public fun Shapes.markerCorneredShape(
 public fun Shapes.markerCorneredShape(
     corneredShape: CorneredShape,
     tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
-): MarkerCorneredShape = MarkerCorneredShape(
-    topLeft = corneredShape.topLeft,
-    topRight = corneredShape.topRight,
-    bottomRight = corneredShape.bottomRight,
-    bottomLeft = corneredShape.bottomLeft,
-    tickSizeDp = tickSizeDp.value,
-)
+): MarkerCorneredShape =
+    MarkerCorneredShape(
+        topLeft = corneredShape.topLeft,
+        topRight = corneredShape.topRight,
+        bottomRight = corneredShape.bottomRight,
+        bottomLeft = corneredShape.bottomLeft,
+        tickSizeDp = tickSizeDp.value,
+    )
 
 /**
  * Creates a [DashedShape].
@@ -272,12 +283,13 @@ public fun Shapes.dashedShape(
     dashLength: Dp,
     gapLength: Dp,
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
-): DashedShape = DashedShape(
-    shape = shape.chartShape(),
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
-)
+): DashedShape =
+    DashedShape(
+        shape = shape.chartShape(),
+        dashLengthDp = dashLength.value,
+        gapLengthDp = gapLength.value,
+        fitStrategy = fitStrategy,
+    )
 
 /**
  * Creates a [DashedShape].
@@ -292,9 +304,10 @@ public fun Shapes.dashedShape(
     dashLength: Dp,
     gapLength: Dp,
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
-): DashedShape = DashedShape(
-    shape = shape,
-    dashLengthDp = dashLength.value,
-    gapLengthDp = gapLength.value,
-    fitStrategy = fitStrategy,
-)
+): DashedShape =
+    DashedShape(
+        shape = shape,
+        dashLengthDp = dashLength.value,
+        gapLengthDp = gapLength.value,
+        fitStrategy = fitStrategy,
+    )

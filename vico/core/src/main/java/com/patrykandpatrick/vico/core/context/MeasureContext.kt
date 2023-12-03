@@ -19,24 +19,20 @@ package com.patrykandpatrick.vico.core.context
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 
 /**
  * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
  */
 public interface MeasureContext : Extras {
-
     /**
      * The bounds of the canvas that will be used to draw the chart and its components.
      */
     public val canvasBounds: RectF
 
     /**
-     * Provides the chart’s [ChartValues] instances.
-     *
-     * @see [ChartValuesProvider]
+     * The chart’s [ChartValues].
      */
-    public val chartValuesProvider: ChartValuesProvider
+    public val chartValues: ChartValues
 
     /**
      * The pixel density.
@@ -84,21 +80,9 @@ public interface MeasureContext : Extras {
     public fun dpToPx(dp: Float): Float = dp * density
 
     /**
-     * Converts the provided dimension from dp to px.
-     */
-    @Deprecated("Use `dpToPx` instead.", ReplaceWith("dpToPx(dp)"))
-    public fun toPixels(dp: Float): Float = dpToPx(dp)
-
-    /**
      * Converts the provided dimension from sp to px.
      */
     public fun spToPx(sp: Float): Float
-
-    /**
-     * Converts the provided dimension from sp to px.
-     */
-    @Deprecated("Use `spToPx` instead.", ReplaceWith("spToPx(sp)"))
-    public fun toFontSize(sp: Float): Float = spToPx(sp)
 
     /**
      * Removes all stored extras.

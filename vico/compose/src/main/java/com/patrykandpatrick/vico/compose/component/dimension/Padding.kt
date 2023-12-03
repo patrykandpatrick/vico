@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +32,15 @@ public fun <P : Padding> P.setPadding(
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
-): P = apply {
-    padding.set(
-        startDp = start.value,
-        topDp = top.value,
-        endDp = end.value,
-        bottomDp = bottom.value,
-    )
-}
+): P =
+    apply {
+        padding.set(
+            startDp = start.value,
+            topDp = top.value,
+            endDp = end.value,
+            bottomDp = bottom.value,
+        )
+    }
 
 /**
  * Sets the horizontal and vertical padding for the rectangle.
@@ -48,26 +49,26 @@ public fun <P : Padding> P.setPadding(
 public fun <P : Padding> P.setPadding(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
-): P = apply {
-    padding.set(
-        startDp = horizontal.value,
-        topDp = vertical.value,
-        endDp = horizontal.value,
-        bottomDp = vertical.value,
-    )
-}
+): P =
+    apply {
+        padding.set(
+            startDp = horizontal.value,
+            topDp = vertical.value,
+            endDp = horizontal.value,
+            bottomDp = vertical.value,
+        )
+    }
 
 /**
  * Sets a common padding value for each edge of the rectangle.
  */
 @Composable
-public fun <P : Padding> P.setPadding(
-    all: Dp = 0.dp,
-): P = apply {
-    padding.set(
-        startDp = all.value,
-        topDp = all.value,
-        endDp = all.value,
-        bottomDp = all.value,
-    )
-}
+public fun <P : Padding> P.setPadding(all: Dp = 0.dp): P =
+    apply {
+        padding.set(
+            startDp = all.value,
+            topDp = all.value,
+            endDp = all.value,
+            bottomDp = all.value,
+        )
+    }

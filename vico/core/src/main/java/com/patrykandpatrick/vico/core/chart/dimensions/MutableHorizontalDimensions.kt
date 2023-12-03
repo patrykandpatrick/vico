@@ -35,29 +35,14 @@ public data class MutableHorizontalDimensions(
         scalableEndPadding: Float,
         unscalableStartPadding: Float,
         unscalableEndPadding: Float,
-    ): MutableHorizontalDimensions = apply {
-        this.xSpacing = xSpacing
-        this.scalableStartPadding = scalableStartPadding
-        this.scalableEndPadding = scalableEndPadding
-        this.unscalableStartPadding = unscalableStartPadding
-        this.unscalableEndPadding = unscalableEndPadding
-    }
-
-    /**
-     * Updates the stored values.
-     */
-    @Deprecated(
-        """`startPadding` and `endPadding` have been replaced by `scalableStartPadding`, `scalableEndPadding`,
-            `unscalableStartPadding`, and `unscalableEndPadding`. Use the overload with these parameters instead.""",
-        ReplaceWith("set(xSpacing, startPadding, endPadding, 0f, 0f)"),
-    )
-    public fun set(xSpacing: Float, startPadding: Float, endPadding: Float): MutableHorizontalDimensions = set(
-        xSpacing = xSpacing,
-        scalableStartPadding = startPadding,
-        scalableEndPadding = endPadding,
-        unscalableStartPadding = 0f,
-        unscalableEndPadding = 0f,
-    )
+    ): MutableHorizontalDimensions =
+        apply {
+            this.xSpacing = xSpacing
+            this.scalableStartPadding = scalableStartPadding
+            this.scalableEndPadding = scalableEndPadding
+            this.unscalableStartPadding = unscalableStartPadding
+            this.unscalableEndPadding = unscalableEndPadding
+        }
 
     /**
      * Ensures that the stored values are no smaller than the provided ones.
@@ -68,13 +53,14 @@ public data class MutableHorizontalDimensions(
         scalableEndPadding: Float = 0f,
         unscalableStartPadding: Float = 0f,
         unscalableEndPadding: Float = 0f,
-    ): MutableHorizontalDimensions = set(
-        this.xSpacing.coerceAtLeast(xSpacing),
-        this.scalableStartPadding.coerceAtLeast(scalableStartPadding),
-        this.scalableEndPadding.coerceAtLeast(scalableEndPadding),
-        this.unscalableStartPadding.coerceAtLeast(unscalableStartPadding),
-        this.unscalableEndPadding.coerceAtLeast(unscalableEndPadding),
-    )
+    ): MutableHorizontalDimensions =
+        set(
+            this.xSpacing.coerceAtLeast(xSpacing),
+            this.scalableStartPadding.coerceAtLeast(scalableStartPadding),
+            this.scalableEndPadding.coerceAtLeast(scalableEndPadding),
+            this.unscalableStartPadding.coerceAtLeast(unscalableStartPadding),
+            this.unscalableEndPadding.coerceAtLeast(unscalableEndPadding),
+        )
 
     /**
      * Clears the stored values.

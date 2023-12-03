@@ -21,48 +21,46 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
-import com.patrykandpatrick.vico.core.util.RandomEntriesGenerator
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.util.RandomCartesianModelGenerator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 internal class ShowcaseViewModel : ViewModel() {
-
-    private val generator = RandomEntriesGenerator(
-        xRange = 0..GENERATOR_X_RANGE_TOP,
-        yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
-    )
-
-    private val customStepGenerator = RandomEntriesGenerator(
-        xRange = IntProgression.fromClosedRange(rangeStart = 0, rangeEnd = GENERATOR_X_RANGE_TOP, step = 2),
-        yRange = GENERATOR_Y_RANGE_BOTTOM..GENERATOR_Y_RANGE_TOP,
-    )
-
-    internal val chartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
-
-    internal val customStepChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
-
-    internal val multiDataSetChartEntryModelProducer: ChartEntryModelProducer = ChartEntryModelProducer()
-
-    internal val composedChartEntryModelProducer = ComposedChartEntryModelProducer.build()
+    internal val modelProducer1 = CartesianChartModelProducer.build()
+    internal val modelProducer2 = CartesianChartModelProducer.build()
+    internal val modelProducer3 = CartesianChartModelProducer.build()
+    internal val modelProducer4 = CartesianChartModelProducer.build()
+    internal val modelProducer5 = CartesianChartModelProducer.build()
+    internal val modelProducer6 = CartesianChartModelProducer.build()
 
     var uiSystem by mutableStateOf(UISystem.Compose)
         private set
 
     init {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.Default) {
             while (currentCoroutineContext().isActive) {
-                val randomSeries = generator.generateRandomEntries()
-                val randomDataSet = List(MULTI_ENTRIES_COMBINED) { generator.generateRandomEntries() }
-                chartEntryModelProducer.setEntries(randomSeries)
-                multiDataSetChartEntryModelProducer.setEntries(randomDataSet)
-                customStepChartEntryModelProducer.setEntries(customStepGenerator.generateRandomEntries())
-                composedChartEntryModelProducer.runTransaction {
-                    add(randomDataSet)
-                    add(randomSeries)
+                val singleSeriesLineLayerModelPartial =
+                    RandomCartesianModelGenerator.getRandomLineLayerModelPartial()
+                val tripleSeriesColumnLayerModelPartial =
+                    RandomCartesianModelGenerator.getRandomColumnLayerModelPartial(seriesCount = 3)
+                modelProducer1.tryRunTransaction { add(singleSeriesLineLayerModelPartial) }
+                modelProducer2.tryRunTransaction {
+                    add(RandomCartesianModelGenerator.getRandomColumnLayerModelPartial())
+                }
+                modelProducer3.tryRunTransaction {
+                    add(tripleSeriesColumnLayerModelPartial)
+                    add(singleSeriesLineLayerModelPartial)
+                }
+                modelProducer4.tryRunTransaction { add(tripleSeriesColumnLayerModelPartial) }
+                modelProducer5.tryRunTransaction {
+                    add(RandomCartesianModelGenerator.getRandomLineLayerModelPartial(seriesCount = 3))
+                }
+                modelProducer6.tryRunTransaction {
+                    add(RandomCartesianModelGenerator.getRandomLineLayerModelPartial(y = -10f..20f))
                 }
                 delay(UPDATE_FREQUENCY)
             }
@@ -74,10 +72,6 @@ internal class ShowcaseViewModel : ViewModel() {
     }
 
     private companion object {
-        const val MULTI_ENTRIES_COMBINED = 3
-        const val GENERATOR_X_RANGE_TOP = 96
-        const val GENERATOR_Y_RANGE_BOTTOM = 2
-        const val GENERATOR_Y_RANGE_TOP = 20
         const val UPDATE_FREQUENCY = 2000L
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.chart
 
 import android.graphics.Paint
-import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
@@ -25,30 +25,31 @@ import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
 
 /**
- * Creates a new [LineChart.LineSpec] based on this one, updating select properties.
+ * Creates a new [LineCartesianLayer.LineSpec] based on this one, updating select properties.
  */
-public fun LineChart.LineSpec.copy(
-    lineColor: Int = this.lineColor,
-    lineThicknessDp: Float = this.lineThicknessDp,
-    lineBackgroundShader: DynamicShader? = this.lineBackgroundShader,
-    lineCap: Paint.Cap = this.lineCap,
+public fun LineCartesianLayer.LineSpec.copy(
+    shader: DynamicShader = this.shader,
+    thicknessDp: Float = this.thicknessDp,
+    backgroundShader: DynamicShader? = this.backgroundShader,
+    cap: Paint.Cap = this.cap,
     point: Component? = this.point,
     pointSizeDp: Float = this.pointSizeDp,
     dataLabel: TextComponent? = this.dataLabel,
     dataLabelVerticalPosition: VerticalPosition = this.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = this.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
-    pointConnector: LineChart.LineSpec.PointConnector = this.pointConnector,
-): LineChart.LineSpec = LineChart.LineSpec(
-    lineColor = lineColor,
-    lineThicknessDp = lineThicknessDp,
-    lineBackgroundShader = lineBackgroundShader,
-    lineCap = lineCap,
-    point = point,
-    pointSizeDp = pointSizeDp,
-    dataLabel = dataLabel,
-    dataLabelVerticalPosition = dataLabelVerticalPosition,
-    dataLabelValueFormatter = dataLabelValueFormatter,
-    dataLabelRotationDegrees = dataLabelRotationDegrees,
-    pointConnector = pointConnector,
-)
+    pointConnector: LineCartesianLayer.LineSpec.PointConnector = this.pointConnector,
+): LineCartesianLayer.LineSpec =
+    LineCartesianLayer.LineSpec(
+        shader = shader,
+        thicknessDp = thicknessDp,
+        backgroundShader = backgroundShader,
+        cap = cap,
+        point = point,
+        pointSizeDp = pointSizeDp,
+        dataLabel = dataLabel,
+        dataLabelVerticalPosition = dataLabelVerticalPosition,
+        dataLabelValueFormatter = dataLabelValueFormatter,
+        dataLabelRotationDegrees = dataLabelRotationDegrees,
+        pointConnector = pointConnector,
+    )

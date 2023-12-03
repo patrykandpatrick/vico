@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.component
 
-import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.Layout
 import android.text.TextUtils
@@ -62,25 +61,26 @@ public fun lineComponent(
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
-): LineComponent = remember(
-    color,
-    thickness,
-    shape,
-    dynamicShader,
-    margins,
-    strokeWidth,
-    strokeColor,
-) {
-    LineComponent(
-        color = color.toArgb(),
-        thicknessDp = thickness.value,
-        shape = shape,
-        dynamicShader = dynamicShader,
-        margins = margins,
-        strokeWidthDp = strokeWidth.value,
-        strokeColor = strokeColor.toArgb(),
-    )
-}
+): LineComponent =
+    remember(
+        color,
+        thickness,
+        shape,
+        dynamicShader,
+        margins,
+        strokeWidth,
+        strokeColor,
+    ) {
+        LineComponent(
+            color = color.toArgb(),
+            thicknessDp = thickness.value,
+            shape = shape,
+            dynamicShader = dynamicShader,
+            margins = margins,
+            strokeWidthDp = strokeWidth.value,
+            strokeColor = strokeColor.toArgb(),
+        )
+    }
 
 /**
  * Creates a [LineComponent] with the specified properties.
@@ -94,15 +94,16 @@ public fun lineComponent(
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
-): LineComponent = lineComponent(
-    color = color,
-    thickness = thickness,
-    shape = shape.chartShape(),
-    dynamicShader = dynamicShader,
-    margins = margins,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-)
+): LineComponent =
+    lineComponent(
+        color = color,
+        thickness = thickness,
+        shape = shape.chartShape(),
+        dynamicShader = dynamicShader,
+        margins = margins,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
 
 /**
  * Creates a [ShapeComponent] with the specified properties.
@@ -115,23 +116,24 @@ public fun shapeComponent(
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
-): ShapeComponent = remember(
-    shape,
-    color,
-    dynamicShader,
-    margins,
-    strokeWidth,
-    strokeColor,
-) {
-    ShapeComponent(
-        shape = shape,
-        color = color.toArgb(),
-        dynamicShader = dynamicShader,
-        margins = margins,
-        strokeWidthDp = strokeWidth.value,
-        strokeColor = strokeColor.toArgb(),
-    )
-}
+): ShapeComponent =
+    remember(
+        shape,
+        color,
+        dynamicShader,
+        margins,
+        strokeWidth,
+        strokeColor,
+    ) {
+        ShapeComponent(
+            shape = shape,
+            color = color.toArgb(),
+            dynamicShader = dynamicShader,
+            margins = margins,
+            strokeWidthDp = strokeWidth.value,
+            strokeColor = strokeColor.toArgb(),
+        )
+    }
 
 /**
  * Creates a [ShapeComponent] with the specified properties.
@@ -144,14 +146,15 @@ public fun shapeComponent(
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
-): ShapeComponent = shapeComponent(
-    shape = shape.chartShape(),
-    color = color,
-    dynamicShader = dynamicShader,
-    margins = margins,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-)
+): ShapeComponent =
+    shapeComponent(
+        shape = shape.chartShape(),
+        color = color,
+        dynamicShader = dynamicShader,
+        margins = margins,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
 
 /**
  * Creates a [ShapeComponent] with the specified properties.
@@ -164,14 +167,15 @@ public fun shapeComponent(
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
-): ShapeComponent = shapeComponent(
-    shape = shape,
-    color = color,
-    dynamicShader = brush.toDynamicShader(),
-    margins = margins,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-)
+): ShapeComponent =
+    shapeComponent(
+        shape = shape,
+        color = color,
+        dynamicShader = brush.toDynamicShader(),
+        margins = margins,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
 
 /**
  * Creates an [OverlayingComponent].
@@ -191,23 +195,24 @@ public fun overlayingComponent(
     innerPaddingTop: Dp = 0.dp,
     innerPaddingBottom: Dp = 0.dp,
     innerPaddingEnd: Dp = 0.dp,
-): OverlayingComponent = remember(
-    outer,
-    inner,
-    innerPaddingStart,
-    innerPaddingTop,
-    innerPaddingBottom,
-    innerPaddingEnd,
-) {
-    OverlayingComponent(
-        outer = outer,
-        inner = inner,
-        innerPaddingStartDp = innerPaddingStart.value,
-        innerPaddingTopDp = innerPaddingTop.value,
-        innerPaddingBottomDp = innerPaddingBottom.value,
-        innerPaddingEndDp = innerPaddingEnd.value,
-    )
-}
+): OverlayingComponent =
+    remember(
+        outer,
+        inner,
+        innerPaddingStart,
+        innerPaddingTop,
+        innerPaddingBottom,
+        innerPaddingEnd,
+    ) {
+        OverlayingComponent(
+            outer = outer,
+            inner = inner,
+            innerPaddingStartDp = innerPaddingStart.value,
+            innerPaddingTopDp = innerPaddingTop.value,
+            innerPaddingBottomDp = innerPaddingBottom.value,
+            innerPaddingEndDp = innerPaddingEnd.value,
+        )
+    }
 
 /**
  * Creates an [OverlayingComponent].
@@ -221,14 +226,15 @@ public fun overlayingComponent(
     outer: Component,
     inner: Component,
     innerPaddingAll: Dp,
-): OverlayingComponent = overlayingComponent(
-    outer = outer,
-    inner = inner,
-    innerPaddingStart = innerPaddingAll,
-    innerPaddingTop = innerPaddingAll,
-    innerPaddingBottom = innerPaddingAll,
-    innerPaddingEnd = innerPaddingAll,
-)
+): OverlayingComponent =
+    overlayingComponent(
+        outer = outer,
+        inner = inner,
+        innerPaddingStart = innerPaddingAll,
+        innerPaddingTop = innerPaddingAll,
+        innerPaddingBottom = innerPaddingAll,
+        innerPaddingEnd = innerPaddingAll,
+    )
 
 /**
  * Creates a [TextComponent].
@@ -268,43 +274,3 @@ public fun textComponent(
             this.textAlignment = textAlignment
         }
     }
-
-/**
- * Creates a [TextComponent].
- *
- * @param color the text color.
- * @param textSize the text size.
- * @param background an optional [ShapeComponent] to be displayed behind the text.
- * @param ellipsize the text truncation behavior.
- * @param lineCount the line count.
- * @param padding the padding between the text and the background.
- * @param margins the margins around the background.
- * @param typeface the [Typeface] for the text.
- * @param textAlign the text alignment.
- */
-@Composable
-@Deprecated("Instead of `textAlign`, use `textAlignment`.")
-public fun textComponent(
-    color: Color = Color.Black,
-    textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
-    background: ShapeComponent? = null,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = DEF_LABEL_LINE_COUNT,
-    padding: MutableDimensions = emptyDimensions(),
-    margins: MutableDimensions = emptyDimensions(),
-    typeface: Typeface? = null,
-    textAlign: Paint.Align,
-): TextComponent = remember(color, textSize, background, ellipsize, lineCount, padding, margins, typeface, textAlign) {
-    textComponent {
-        this.color = color.toArgb()
-        textSizeSp = textSize.pixelSize()
-        this.ellipsize = ellipsize
-        this.lineCount = lineCount
-        this.background = background
-        this.padding = padding
-        this.margins = margins
-        this.typeface = typeface
-        @Suppress("DEPRECATION")
-        this.textAlign = textAlign
-    }
-}

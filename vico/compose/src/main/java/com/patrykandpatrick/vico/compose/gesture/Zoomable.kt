@@ -41,19 +41,22 @@ public typealias OnZoom = (centroid: Offset, zoomChange: Float) -> Unit
 public fun Modifier.zoomable(
     onZoom: OnZoom,
     enabled: Boolean = true,
-): Modifier = composed(
-    factory = {
-        val block: suspend PointerInputScope.() -> Unit = remember {
-            {
-                detectZoomGestures { centroid, zoom ->
-                    onZoom(centroid, zoom)
+): Modifier =
+    composed(
+        factory = {
+            val block: suspend PointerInputScope.() -> Unit =
+                remember {
+                    {
+                        detectZoomGestures { centroid, zoom ->
+                            onZoom(centroid, zoom)
+                        }
+                    }
                 }
-            }
-        }
-        if (enabled) Modifier.pointerInput(Unit, block) else Modifier
-    },
-    inspectorInfo = debugInspectorInfo {
-        name = "zoomable"
-        properties["enabled"] = enabled
-    },
-)
+            if (enabled) Modifier.pointerInput(Unit, block) else Modifier
+        },
+        inspectorInfo =
+            debugInspectorInfo {
+                name = "zoomable"
+                properties["enabled"] = enabled
+            },
+    )

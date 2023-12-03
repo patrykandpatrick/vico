@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,42 +31,47 @@ import com.patrykandpatrick.vico.views.R
 
 private const val ONE_HUNDRED_PERCENT = 100
 
-internal fun TypedArray.getShape(
-    context: Context,
-): Shape {
-    val shape = CorneredShape(
-        topLeft = getCorner(
-            context = context,
-            sizeIndex = R.styleable.Shape_topStartCornerSize,
-            treatmentIndex = R.styleable.Shape_topStartCornerTreatment,
-        ),
-        topRight = getCorner(
-            context = context,
-            sizeIndex = R.styleable.Shape_topEndCornerSize,
-            treatmentIndex = R.styleable.Shape_topEndCornerTreatment,
-        ),
-        bottomLeft = getCorner(
-            context = context,
-            sizeIndex = R.styleable.Shape_bottomStartCornerSize,
-            treatmentIndex = R.styleable.Shape_bottomStartCornerTreatment,
-        ),
-        bottomRight = getCorner(
-            context = context,
-            sizeIndex = R.styleable.Shape_bottomEndCornerSize,
-            treatmentIndex = R.styleable.Shape_bottomEndCornerTreatment,
-        ),
-    )
+internal fun TypedArray.getShape(context: Context): Shape {
+    val shape =
+        CorneredShape(
+            topLeft =
+                getCorner(
+                    context = context,
+                    sizeIndex = R.styleable.Shape_topStartCornerSize,
+                    treatmentIndex = R.styleable.Shape_topStartCornerTreatment,
+                ),
+            topRight =
+                getCorner(
+                    context = context,
+                    sizeIndex = R.styleable.Shape_topEndCornerSize,
+                    treatmentIndex = R.styleable.Shape_topEndCornerTreatment,
+                ),
+            bottomLeft =
+                getCorner(
+                    context = context,
+                    sizeIndex = R.styleable.Shape_bottomStartCornerSize,
+                    treatmentIndex = R.styleable.Shape_bottomStartCornerTreatment,
+                ),
+            bottomRight =
+                getCorner(
+                    context = context,
+                    sizeIndex = R.styleable.Shape_bottomEndCornerSize,
+                    treatmentIndex = R.styleable.Shape_bottomEndCornerTreatment,
+                ),
+        )
 
-    val dashLength = getRawDimension(
-        context = context,
-        index = R.styleable.Shape_dashLength,
-        defaultValue = 0f,
-    )
-    val dashGapLength = getRawDimension(
-        context = context,
-        index = R.styleable.Shape_dashGapLength,
-        defaultValue = 0f,
-    )
+    val dashLength =
+        getRawDimension(
+            context = context,
+            index = R.styleable.Shape_dashLength,
+            defaultValue = 0f,
+        )
+    val dashGapLength =
+        getRawDimension(
+            context = context,
+            index = R.styleable.Shape_dashGapLength,
+            defaultValue = 0f,
+        )
 
     return if (dashLength == 0f) {
         shape
@@ -84,38 +89,41 @@ private fun TypedArray.getCorner(
     @StyleableRes sizeIndex: Int,
     @StyleableRes treatmentIndex: Int,
     handleNullSizeIndex: Boolean = true,
-): Corner = when {
-    !hasValue(sizeIndex) && handleNullSizeIndex -> {
-        getCorner(
-            context = context,
-            sizeIndex = R.styleable.Shape_cornerSize,
-            treatmentIndex = treatmentIndex,
-            handleNullSizeIndex = false,
-        )
+): Corner =
+    when {
+        !hasValue(sizeIndex) && handleNullSizeIndex -> {
+            getCorner(
+                context = context,
+                sizeIndex = R.styleable.Shape_cornerSize,
+                treatmentIndex = treatmentIndex,
+                handleNullSizeIndex = false,
+            )
+        }
+        isFraction(sizeIndex) -> {
+            val percentage = (getFraction(sizeIndex, defaultValue = 0f) * ONE_HUNDRED_PERCENT).toInt()
+            Corner.Relative(
+                percentage = percentage,
+                cornerTreatment =
+                    if (percentage == 0) {
+                        SharpCornerTreatment
+                    } else {
+                        getCornerTreatment(treatmentIndex)
+                    },
+            )
+        }
+        else -> {
+            val sizeDp = getRawDimension(context, sizeIndex, defaultValue = 0f)
+            Corner.Absolute(
+                sizeDp = sizeDp,
+                cornerTreatment =
+                    if (sizeDp == 0f) {
+                        SharpCornerTreatment
+                    } else {
+                        getCornerTreatment(treatmentIndex)
+                    },
+            )
+        }
     }
-    isFraction(sizeIndex) -> {
-        val percentage = (getFraction(sizeIndex, defaultValue = 0f) * ONE_HUNDRED_PERCENT).toInt()
-        Corner.Relative(
-            percentage = percentage,
-            cornerTreatment = if (percentage == 0) {
-                SharpCornerTreatment
-            } else {
-                getCornerTreatment(treatmentIndex)
-            },
-        )
-    }
-    else -> {
-        val sizeDp = getRawDimension(context, sizeIndex, defaultValue = 0f)
-        Corner.Absolute(
-            sizeDp = sizeDp,
-            cornerTreatment = if (sizeDp == 0f) {
-                SharpCornerTreatment
-            } else {
-                getCornerTreatment(treatmentIndex)
-            },
-        )
-    }
-}
 
 private fun TypedArray.getCornerTreatment(
     @StyleableRes index: Int,

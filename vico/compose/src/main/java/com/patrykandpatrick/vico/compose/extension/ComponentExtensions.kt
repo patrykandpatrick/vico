@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,9 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
  */
 public var MarkerComponent.indicatorSize: Dp
     get() = indicatorSizeDp.dp
-    set(value) { indicatorSizeDp = value.value }
+    set(value) {
+        indicatorSizeDp = value.value
+    }
 
 /**
  * Applies a drop shadow to this [ShapeComponent].
@@ -49,10 +51,11 @@ public fun <T : ShapeComponent> T.setShadow(
     dy: Dp = 0.dp,
     color: Color = Color(DEF_SHADOW_COLOR),
     applyElevationOverlay: Boolean = false,
-): T = setShadow(
-    radius = radius.value,
-    dx = dx.value,
-    dy = dy.value,
-    color = color.toArgb(),
-    applyElevationOverlay = applyElevationOverlay,
-) as T
+): T =
+    setShadow(
+        radius = radius.value,
+        dx = dx.value,
+        dy = dy.value,
+        color = color.toArgb(),
+        applyElevationOverlay = applyElevationOverlay,
+    ) as T

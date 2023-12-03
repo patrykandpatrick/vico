@@ -44,90 +44,99 @@ public open class HorizontalLegend(
     public var spacingDp: Float = 0f,
     override val padding: MutableDimensions = emptyDimensions(),
 ) : Legend, Padding {
-
     private val heights = mutableListOf<Float>()
 
     private val lines = mutableListOf<MutableList<LegendItem>>(mutableListOf())
 
     override val bounds: RectF = RectF()
 
-    override fun getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
-        if (items.isEmpty()) return@with 0f
-        lines.clear()
-        lines.add(mutableListOf())
-        var height = maxOf(
-            items.first().getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
-            iconSizeDp.pixels,
-        )
-        heights.add(height)
-        buildLines(context, availableWidth) {
-            val currentHeight =
-                maxOf(it.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp), iconSizeDp.pixels)
-            heights.add(currentHeight)
-            height += currentHeight
-        }
-        height + (lines.size - 1) * lineSpacingDp.pixels + padding.verticalDp.pixels
-    }
-
-    override fun draw(context: ChartDrawContext): Unit = with(context) {
-        var currentTop = bounds.top + padding.topDp.pixels
-        // isLtr? startX means the line starts at X from left : it starts at X from right
-        val startX = if (isLtr) {
-            chartBounds.left + padding.startDp.pixels
-        } else {
-            chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
-        }
-        val availableWidth = chartBounds.width()
-        if (lines.isEmpty()) {
-            buildLines(context, availableWidth)
-        }
-
-        lines.forEachIndexed { index, item ->
-            var currentStart = 0f
-            val currentLineHeight = heights.getOrElse(index) {
-                item.first().getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp)
-            }
-            val centerY = currentTop + currentLineHeight.half
-
-            item.forEach {
-                it.icon.draw(
-                    context = context,
-                    left = startX + currentStart,
-                    top = centerY - iconSizeDp.half.pixels,
-                    right = startX + iconSizeDp.pixels + currentStart,
-                    bottom = centerY + iconSizeDp.half.pixels,
+    override fun getHeight(
+        context: MeasureContext,
+        availableWidth: Float,
+    ): Float =
+        with(context) {
+            if (items.isEmpty()) return@with 0f
+            lines.clear()
+            lines.add(mutableListOf())
+            var height =
+                maxOf(
+                    items.first().getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
+                    iconSizeDp.pixels,
                 )
-                currentStart += if (isLtr) {
-                    (iconSizeDp + iconPaddingDp).pixels
-                } else {
-                    -iconPaddingDp.pixels
-                }
-                it.label.drawText(
-                    context = context,
-                    text = it.labelText,
-                    textX = startX + currentStart,
-                    textY = centerY,
-                    horizontalPosition = HorizontalPosition.End,
-                    verticalPosition = VerticalPosition.Center,
-                    maxTextWidth =
-                    (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels).toInt(),
-                )
-                currentStart += if (isLtr) {
-                    it.getLabelWidth(context, availableWidth, iconPaddingDp, iconSizeDp) + spacingDp.pixels
-                } else {
-                    -(
-                        it.getLabelWidth(
-                            context,
-                            availableWidth,
-                            iconPaddingDp,
-                            iconSizeDp,
-                        ) + spacingDp.pixels + iconSizeDp.pixels
-                        )
-                }
+            heights.add(height)
+            buildLines(context, availableWidth) {
+                val currentHeight =
+                    maxOf(it.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp), iconSizeDp.pixels)
+                heights.add(currentHeight)
+                height += currentHeight
             }
-            currentTop += currentLineHeight + lineSpacingDp.pixels
+            height + (lines.size - 1) * lineSpacingDp.pixels + padding.verticalDp.pixels
         }
-    }
+
+    override fun draw(context: ChartDrawContext): Unit =
+        with(context) {
+            var currentTop = bounds.top + padding.topDp.pixels
+            // isLtr? startX means the line starts at X from left : it starts at X from right
+            val startX =
+                if (isLtr) {
+                    chartBounds.left + padding.startDp.pixels
+                } else {
+                    chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
+                }
+            val availableWidth = chartBounds.width()
+            if (lines.isEmpty()) {
+                buildLines(context, availableWidth)
+            }
+
+            lines.forEachIndexed { index, item ->
+                var currentStart = 0f
+                val currentLineHeight =
+                    heights.getOrElse(index) {
+                        item.first().getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp)
+                    }
+                val centerY = currentTop + currentLineHeight.half
+
+                item.forEach {
+                    it.icon.draw(
+                        context = context,
+                        left = startX + currentStart,
+                        top = centerY - iconSizeDp.half.pixels,
+                        right = startX + iconSizeDp.pixels + currentStart,
+                        bottom = centerY + iconSizeDp.half.pixels,
+                    )
+                    currentStart +=
+                        if (isLtr) {
+                            (iconSizeDp + iconPaddingDp).pixels
+                        } else {
+                            -iconPaddingDp.pixels
+                        }
+                    it.label.drawText(
+                        context = context,
+                        text = it.labelText,
+                        textX = startX + currentStart,
+                        textY = centerY,
+                        horizontalPosition = HorizontalPosition.End,
+                        verticalPosition = VerticalPosition.Center,
+                        maxTextWidth =
+                            (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels).toInt(),
+                    )
+                    currentStart +=
+                        if (isLtr) {
+                            it.getLabelWidth(context, availableWidth, iconPaddingDp, iconSizeDp) + spacingDp.pixels
+                        } else {
+                            -(
+                                it.getLabelWidth(
+                                    context,
+                                    availableWidth,
+                                    iconPaddingDp,
+                                    iconSizeDp,
+                                ) + spacingDp.pixels + iconSizeDp.pixels
+                            )
+                        }
+                }
+                currentTop += currentLineHeight + lineSpacingDp.pixels
+            }
+        }
 
     protected fun buildLines(
         context: MeasureContext,
@@ -152,12 +161,13 @@ public open class HorizontalLegend(
                 }
 
                 currentLine++
-                remainWidth = availableWidth - it.getWidth(
-                    context,
-                    availableWidth,
-                    iconPaddingDp,
-                    iconSizeDp,
-                ) - spacingDp.pixels
+                remainWidth = availableWidth -
+                    it.getWidth(
+                        context,
+                        availableWidth,
+                        iconPaddingDp,
+                        iconSizeDp,
+                    ) - spacingDp.pixels
                 lines.add(mutableListOf(it))
                 callback(it)
             }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.compose.axis
 
-import android.graphics.Paint
 import android.graphics.Typeface
 import android.text.Layout
 import android.text.TextUtils
@@ -39,6 +38,7 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
+import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 
 public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Shape
@@ -71,49 +71,7 @@ public fun axisLabelComponent(
     horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
     typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
     textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
-): TextComponent = textComponent(
-    color,
-    textSize,
-    background,
-    ellipsize,
-    lineCount,
-    dimensionsOf(horizontalPadding, verticalPadding),
-    dimensionsOf(horizontalMargin, verticalMargin),
-    typeface,
-    textAlignment,
-)
-
-/**
- * Creates a [TextComponent] to be used for axis labels.
- *
- * @param color the text color.
- * @param textSize the text size.
- * @param background an optional [ShapeComponent] to be displayed behind the text.
- * @param ellipsize the text truncation behavior.
- * @param lineCount the line count.
- * @param verticalPadding the amount of top and bottom padding between the text and the background.
- * @param horizontalPadding the amount of start and end padding between the text and the background.
- * @param verticalMargin the size of the top and bottom margins around the background.
- * @param horizontalMargin the size of the start and end margins around the background.
- * @param typeface the [Typeface] for the text.
- * @param textAlign the text alignment.
- */
-@Composable
-@Deprecated("Instead of `textAlign`, use `textAlignment`.")
-public fun axisLabelComponent(
-    color: Color = currentChartStyle.axis.axisLabelColor,
-    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
-    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
-    verticalPadding: Dp = currentChartStyle.axis.axisLabelVerticalPadding,
-    horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
-    verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
-    horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
-    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
-    textAlign: Paint.Align,
 ): TextComponent =
-    @Suppress("DEPRECATION")
     textComponent(
         color,
         textSize,
@@ -123,7 +81,52 @@ public fun axisLabelComponent(
         dimensionsOf(horizontalPadding, verticalPadding),
         dimensionsOf(horizontalMargin, verticalMargin),
         typeface,
-        textAlign,
+        textAlignment,
+    )
+
+/**
+ * Creates a [TextComponent] to be used for axis labels.
+ *
+ * @param color the text color.
+ * @param textSize the text size.
+ * @param background an optional [ShapeComponent] to be displayed behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param padding the padding between the text and the background.
+ * @param margins the margins around the background.
+ * @param typeface the [Typeface] for the text.
+ * @param textAlignment the text alignment.
+ */
+@Composable
+public fun axisLabelComponent(
+    color: Color = currentChartStyle.axis.axisLabelColor,
+    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
+    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    padding: MutableDimensions =
+        dimensionsOf(
+            horizontal = currentChartStyle.axis.axisLabelHorizontalPadding,
+            vertical = currentChartStyle.axis.axisLabelVerticalPadding,
+        ),
+    margins: MutableDimensions =
+        dimensionsOf(
+            horizontal = currentChartStyle.axis.axisLabelHorizontalMargin,
+            vertical = currentChartStyle.axis.axisLabelVerticalMargin,
+        ),
+    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
+    textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
+): TextComponent =
+    textComponent(
+        color,
+        textSize,
+        background,
+        ellipsize,
+        lineCount,
+        padding,
+        margins,
+        typeface,
+        textAlignment,
     )
 
 /**
@@ -146,15 +149,16 @@ public fun axisLineComponent(
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): LineComponent = lineComponent(
-    color = color,
-    thickness = thickness,
-    dynamicShader = dynamicShader,
-    shape = shape,
-    margins = margins,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-)
+): LineComponent =
+    lineComponent(
+        color = color,
+        thickness = thickness,
+        dynamicShader = dynamicShader,
+        shape = shape,
+        margins = margins,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
 
 /**
  * Creates a [LineComponent] styled as an axis line.
@@ -176,15 +180,16 @@ public fun axisLineComponent(
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
     margins: Dimensions = emptyDimensions(),
-): LineComponent = lineComponent(
-    color = color,
-    thickness = thickness,
-    dynamicShader = brush?.let(::BrushShader),
-    shape = shape,
-    margins = margins,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-)
+): LineComponent =
+    lineComponent(
+        color = color,
+        thickness = thickness,
+        dynamicShader = brush?.let(::BrushShader),
+        shape = shape,
+        margins = margins,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
 
 /**
  * Creates a [LineComponent] styled as a tick line.
@@ -204,14 +209,15 @@ public fun axisTickComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
-): LineComponent = lineComponent(
-    color = color,
-    thickness = thickness,
-    dynamicShader = dynamicShader,
-    shape = shape,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-)
+): LineComponent =
+    lineComponent(
+        color = color,
+        thickness = thickness,
+        dynamicShader = dynamicShader,
+        shape = shape,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
 
 /**
  * Creates a [LineComponent] styled as a tick line.
@@ -231,14 +237,15 @@ public fun axisTickComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
-): LineComponent = lineComponent(
-    color = color,
-    thickness = thickness,
-    dynamicShader = brush?.let(::BrushShader),
-    shape = shape.chartShape(),
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-)
+): LineComponent =
+    lineComponent(
+        color = color,
+        thickness = thickness,
+        dynamicShader = brush?.let(::BrushShader),
+        shape = shape.chartShape(),
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
 
 /**
  * Creates an axis guideline.
@@ -260,12 +267,13 @@ public fun axisGuidelineComponent(
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
-): LineComponent = lineComponent(
-    color = color,
-    thickness = thickness,
-    dynamicShader = dynamicShader,
-    shape = shape,
-    margins = margins,
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-)
+): LineComponent =
+    lineComponent(
+        color = color,
+        thickness = thickness,
+        dynamicShader = dynamicShader,
+        shape = shape,
+        margins = margins,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )

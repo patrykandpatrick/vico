@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,11 @@ import android.graphics.drawable.Drawable
 /**
  * Sets a bounding box for this [Drawable].
  */
-public fun Drawable.setBounds(left: Float, top: Float, right: Float, bottom: Float) {
+public fun Drawable.setBounds(
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+) {
     setBounds(left.toInt(), top.toInt(), right.toInt(), bottom.toInt())
 }

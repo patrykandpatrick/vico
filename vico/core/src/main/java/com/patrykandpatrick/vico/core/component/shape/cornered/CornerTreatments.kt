@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.core.extension.piRad
  * Creates sharp corners.
  */
 public object SharpCornerTreatment : CornerTreatment {
-
     public override fun createCorner(
         x1: Float,
         y1: Float,
@@ -32,27 +31,27 @@ public object SharpCornerTreatment : CornerTreatment {
         y2: Float,
         cornerLocation: CornerLocation,
         path: Path,
-    ): Unit = when (cornerLocation) {
-        CornerLocation.TopLeft -> {
-            path.lineTo(x1, y2)
+    ): Unit =
+        when (cornerLocation) {
+            CornerLocation.TopLeft -> {
+                path.lineTo(x1, y2)
+            }
+            CornerLocation.TopRight -> {
+                path.lineTo(x2, y1)
+            }
+            CornerLocation.BottomRight -> {
+                path.lineTo(x1, y2)
+            }
+            CornerLocation.BottomLeft -> {
+                path.lineTo(x2, y1)
+            }
         }
-        CornerLocation.TopRight -> {
-            path.lineTo(x2, y1)
-        }
-        CornerLocation.BottomRight -> {
-            path.lineTo(x1, y2)
-        }
-        CornerLocation.BottomLeft -> {
-            path.lineTo(x2, y1)
-        }
-    }
 }
 
 /**
  * Creates cut corners.
  */
 public object CutCornerTreatment : CornerTreatment {
-
     override fun createCorner(
         x1: Float,
         y1: Float,
@@ -70,7 +69,6 @@ public object CutCornerTreatment : CornerTreatment {
  * Creates rounded corners.
  */
 public object RoundedCornerTreatment : CornerTreatment {
-
     private val tempRect = RectF()
 
     override fun createCorner(

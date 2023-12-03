@@ -20,7 +20,6 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -50,7 +49,6 @@ public open class MarkerComponent(
     public val indicator: Component?,
     public val guideline: LineComponent?,
 ) : Marker {
-
     private val tempBounds = RectF()
 
     private val TextComponent.tickSizeDp: Float
@@ -76,57 +74,65 @@ public open class MarkerComponent(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
-        chartValuesProvider: ChartValuesProvider,
-    ): Unit = with(context) {
-        drawGuideline(context, bounds, markedEntries)
-        val halfIndicatorSize = indicatorSizeDp.half.pixels
+        chartValues: ChartValues,
+    ): Unit =
+        with(context) {
+            drawGuideline(context, bounds, markedEntries)
+            val halfIndicatorSize = indicatorSizeDp.half.pixels
 
-        markedEntries.forEachIndexed { _, model ->
-            onApplyEntryColor?.invoke(model.color)
-            indicator?.draw(
-                context,
-                model.location.x - halfIndicatorSize,
-                model.location.y - halfIndicatorSize,
-                model.location.x + halfIndicatorSize,
-                model.location.y + halfIndicatorSize,
-            )
+            markedEntries.forEachIndexed { _, model ->
+                onApplyEntryColor?.invoke(model.color)
+                indicator?.draw(
+                    context,
+                    model.location.x - halfIndicatorSize,
+                    model.location.y - halfIndicatorSize,
+                    model.location.x + halfIndicatorSize,
+                    model.location.y + halfIndicatorSize,
+                )
+            }
+            drawLabel(context, bounds, markedEntries, chartValues)
         }
-        drawLabel(context, bounds, markedEntries, chartValuesProvider.getChartValues())
-    }
 
     private fun drawLabel(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValues: ChartValues,
-    ): Unit = with(context) {
-        val text = labelFormatter.getLabel(markedEntries, chartValues)
-        val entryX = markedEntries.averageOf { it.location.x }
-        val labelBounds =
-            label.getTextBounds(context = context, text = text, width = bounds.width().toInt(), outRect = tempBounds)
-        val halfOfTextWidth = labelBounds.width().half
-        val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
-        this[MarkerCorneredShape.tickXKey] = entryX
+    ): Unit =
+        with(context) {
+            val text = labelFormatter.getLabel(markedEntries, chartValues)
+            val entryX = markedEntries.averageOf { it.location.x }
+            val labelBounds =
+                label.getTextBounds(
+                    context = context,
+                    text = text,
+                    width = bounds.width().toInt(),
+                    outRect = tempBounds,
+                )
+            val halfOfTextWidth = labelBounds.width().half
+            val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
+            this[MarkerCorneredShape.TICK_X_KEY] = entryX
 
-        label.drawText(
-            context = context,
-            text = text,
-            textX = x,
-            textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
-            verticalPosition = VerticalPosition.Bottom,
-            maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
-        )
-    }
+            label.drawText(
+                context = context,
+                text = text,
+                textX = x,
+                textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
+                verticalPosition = VerticalPosition.Bottom,
+                maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
+            )
+        }
 
     private fun overrideXPositionToFit(
         xPosition: Float,
         bounds: RectF,
         halfOfTextWidth: Float,
-    ): Float = when {
-        xPosition - halfOfTextWidth < bounds.left -> bounds.left + halfOfTextWidth
-        xPosition + halfOfTextWidth > bounds.right -> bounds.right - halfOfTextWidth
-        else -> xPosition
-    }
+    ): Float =
+        when {
+            xPosition - halfOfTextWidth < bounds.left -> bounds.left + halfOfTextWidth
+            xPosition + halfOfTextWidth > bounds.right -> bounds.right - halfOfTextWidth
+            else -> xPosition
+        }
 
     private fun drawGuideline(
         context: DrawContext,
@@ -150,7 +156,8 @@ public open class MarkerComponent(
         context: MeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
-    ): Unit = with(context) {
-        outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
-    }
+    ): Unit =
+        with(context) {
+            outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
+        }
 }

@@ -40,7 +40,7 @@
         <item name="color">@color/chart_6_color_3</item>
     </style>
 
-    <style name="Chart6ColumnChartStyle">
+    <style name="Chart6ColumnLayerStyle">
         <item name="column1">@style/Chart6Column1Style</item>
         <item name="column2">@style/Chart6Column2Style</item>
         <item name="column3">@style/Chart6Column3Style</item>

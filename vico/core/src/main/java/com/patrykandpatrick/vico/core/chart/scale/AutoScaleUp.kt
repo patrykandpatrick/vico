@@ -21,7 +21,6 @@ package com.patrykandpatrick.vico.core.chart.scale
  * an empty space would be visible near the end edge of the chart.
  */
 public enum class AutoScaleUp {
-
     /**
      * Scales up the chart to prevent any empty space from being visible.
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  * [CacheableDynamicShader] can cache created [Shader] instances for reuse between identical sets of bounds.
  */
 public abstract class CacheableDynamicShader : DynamicShader {
-
     private val cache = HashMap<String, Shader>(1)
 
     override fun provideShader(

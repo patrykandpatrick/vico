@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
  * @see AxisRenderer
  */
 public open class AxisManager {
-
     internal val axisCache = ArrayList<AxisRenderer<*>>(MAX_AXIS_COUNT)
 
     /**
@@ -195,8 +194,8 @@ public open class AxisManager {
     }
 
     /**
-     * Called before the associated [Chart] is drawn. This forwards a call to all [Axis] subclasses that causes them to
-     * be drawn behind the chart.
+     * Called before the associated [CartesianChart] is drawn. This forwards a call to all [Axis] subclasses that causes
+     * them to be drawn behind the chart.
      *
      * @param context holds the information necessary to draw the axes.
      *
@@ -209,8 +208,8 @@ public open class AxisManager {
     }
 
     /**
-     * Called after the associated [Chart] is drawn. This forwards a call to all [Axis] subclasses that causes them to
-     * be drawn above the chart.
+     * Called after the associated [CartesianChart] is drawn. This forwards a call to all [Axis] subclasses that causes
+     * them to be drawn above the chart.
      *
      * @param context holds the information necessary to draw the axes.
      *

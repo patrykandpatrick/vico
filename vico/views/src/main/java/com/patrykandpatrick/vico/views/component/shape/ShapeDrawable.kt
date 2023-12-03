@@ -48,7 +48,6 @@ public class ShapeDrawable(
     private val width: Int = 0,
     private val height: Int = 0,
 ) : Drawable() {
-
     public constructor(
         context: Context,
         shape: Shape,
@@ -69,9 +68,10 @@ public class ShapeDrawable(
     /**
      * The [Paint] used to draw the shape.
      */
-    public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = DEF_COLOR
-    }
+    public val paint: Paint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = DEF_COLOR
+        }
 
     init {
         setBounds(0, 0, width, height)
@@ -94,11 +94,12 @@ public class ShapeDrawable(
         path.reset()
     }
 
-    private fun isLtr(): Boolean = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
-        layoutDirection == LayoutDirection.LTR
-    } else {
-        isLtr
-    }
+    private fun isLtr(): Boolean =
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            layoutDirection == LayoutDirection.LTR
+        } else {
+            isLtr
+        }
 
     override fun setAlpha(alpha: Int) {
         paint.alpha = alpha

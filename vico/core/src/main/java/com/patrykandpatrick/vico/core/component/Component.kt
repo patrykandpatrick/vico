@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  * Its subclasses are used throughout the library.
  */
 public abstract class Component : Margins by DefaultMargins() {
-
     /**
      * Instructs the [Component] to draw itself at the given coordinates.
      */
