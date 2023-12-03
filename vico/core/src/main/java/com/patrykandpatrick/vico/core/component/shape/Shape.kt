@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  * Defines a shape that can be drawn on a canvas.
  */
 public interface Shape {
-
     /**
      * Draws the [Shape] on the canvas.
      *

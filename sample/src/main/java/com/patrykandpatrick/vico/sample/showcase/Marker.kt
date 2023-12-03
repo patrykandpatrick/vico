@@ -43,36 +43,41 @@ import com.patrykandpatrick.vico.core.marker.Marker
 @Composable
 internal fun rememberMarker(): Marker {
     val labelBackgroundColor = MaterialTheme.colorScheme.surface
-    val labelBackground = remember(labelBackgroundColor) {
-        ShapeComponent(labelBackgroundShape, labelBackgroundColor.toArgb()).setShadow(
-            radius = LABEL_BACKGROUND_SHADOW_RADIUS,
-            dy = LABEL_BACKGROUND_SHADOW_DY,
-            applyElevationOverlay = true,
+    val labelBackground =
+        remember(labelBackgroundColor) {
+            ShapeComponent(labelBackgroundShape, labelBackgroundColor.toArgb()).setShadow(
+                radius = LABEL_BACKGROUND_SHADOW_RADIUS,
+                dy = LABEL_BACKGROUND_SHADOW_DY,
+                applyElevationOverlay = true,
+            )
+        }
+    val label =
+        textComponent(
+            background = labelBackground,
+            lineCount = LABEL_LINE_COUNT,
+            padding = labelPadding,
+            typeface = Typeface.MONOSPACE,
         )
-    }
-    val label = textComponent(
-        background = labelBackground,
-        lineCount = LABEL_LINE_COUNT,
-        padding = labelPadding,
-        typeface = Typeface.MONOSPACE,
-    )
     val indicatorInnerComponent = shapeComponent(Shapes.pillShape, MaterialTheme.colorScheme.surface)
     val indicatorCenterComponent = shapeComponent(Shapes.pillShape, Color.White)
     val indicatorOuterComponent = shapeComponent(Shapes.pillShape, Color.White)
-    val indicator = overlayingComponent(
-        outer = indicatorOuterComponent,
-        inner = overlayingComponent(
-            outer = indicatorCenterComponent,
-            inner = indicatorInnerComponent,
-            innerPaddingAll = indicatorInnerAndCenterComponentPaddingValue,
-        ),
-        innerPaddingAll = indicatorCenterAndOuterComponentPaddingValue,
-    )
-    val guideline = lineComponent(
-        MaterialTheme.colorScheme.onSurface.copy(GUIDELINE_ALPHA),
-        guidelineThickness,
-        guidelineShape,
-    )
+    val indicator =
+        overlayingComponent(
+            outer = indicatorOuterComponent,
+            inner =
+                overlayingComponent(
+                    outer = indicatorCenterComponent,
+                    inner = indicatorInnerComponent,
+                    innerPaddingAll = indicatorInnerAndCenterComponentPaddingValue,
+                ),
+            innerPaddingAll = indicatorCenterAndOuterComponentPaddingValue,
+        )
+    val guideline =
+        lineComponent(
+            MaterialTheme.colorScheme.onSurface.copy(GUIDELINE_ALPHA),
+            guidelineThickness,
+            guidelineShape,
+        )
     return remember(label, indicator, guideline) {
         object : MarkerComponent(label, indicator, guideline) {
             init {

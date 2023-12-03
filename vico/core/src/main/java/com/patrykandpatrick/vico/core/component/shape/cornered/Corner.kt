@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import com.patrykandpatrick.vico.core.throwable.IllegalPercentageException
 public sealed class Corner(
     public val cornerTreatment: CornerTreatment,
 ) {
-
     /**
      * Calculates the size of the corner.
      *
@@ -35,7 +34,10 @@ public sealed class Corner(
      *
      * @return the size of the corner (in pixels).
      */
-    public abstract fun getCornerSize(availableCornerSize: Float, density: Float): Float
+    public abstract fun getCornerSize(
+        availableCornerSize: Float,
+        density: Float,
+    ): Float
 
     /**
      * Defines an absolute size for a corner (in dp).
@@ -46,9 +48,10 @@ public sealed class Corner(
         public val sizeDp: Float,
         cornerTreatment: CornerTreatment,
     ) : Corner(cornerTreatment) {
-
-        override fun getCornerSize(availableCornerSize: Float, density: Float): Float =
-            sizeDp * density
+        override fun getCornerSize(
+            availableCornerSize: Float,
+            density: Float,
+        ): Float = sizeDp * density
     }
 
     /**
@@ -60,13 +63,14 @@ public sealed class Corner(
         public val percentage: Int,
         cornerTreatment: CornerTreatment,
     ) : Corner(cornerTreatment) {
-
         init {
             if (percentage !in 0..MAX_PERCENTAGE) throw IllegalPercentageException(percentage)
         }
 
-        override fun getCornerSize(availableCornerSize: Float, density: Float): Float =
-            availableCornerSize / MAX_PERCENTAGE * percentage
+        override fun getCornerSize(
+            availableCornerSize: Float,
+            density: Float,
+        ): Float = availableCornerSize / MAX_PERCENTAGE * percentage
     }
 
     public companion object {

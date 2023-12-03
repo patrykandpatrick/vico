@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,24 +16,29 @@
 
 package com.patrykandpatrick.vico.core.chart.insets
 
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 
 /**
- * Used to apply horizontal insets to [Chart]s.
+ * Used to apply horizontal insets to [CartesianChart]s.
  *
  * @see ChartInsetter
  * @see Insets
  */
 public interface HorizontalInsets {
-
     /**
      * Sets the start and end insets.
      */
-    public fun set(start: Float, end: Float)
+    public fun set(
+        start: Float,
+        end: Float,
+    )
 
     /**
      * For the start and end insets, updates the value of the inset to the corresponding
      * provided value if the provided value is greater than the current value.
      */
-    public fun setValuesIfGreater(start: Float, end: Float)
+    public fun setValuesIfGreater(
+        start: Float,
+        end: Float,
+    )
 }

@@ -19,36 +19,43 @@ package com.patrykandpatrick.vico.sample.previews
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode.Stack
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.textComponent
-import com.patrykandpatrick.vico.core.entry.entriesOf
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
-private val model = entryModelOf(
-    entriesOf(2f, -1f, -4f, 2f, 1f, -5f, -2f, -3f),
-    entriesOf(3f, -2f, 2f, -1f, 2f, -3f, -4f, -1f),
-    entriesOf(1f, -2f, 2f, 1f, -1f, 4f, 4f, -2f),
-)
+private val model =
+    CartesianChartModel(
+        ColumnCartesianLayerModel.build {
+            series(2, -1, -4, 2, 1, -5, -2, -3)
+            series(3, -2, 2, -1, 2, -3, -4, -1)
+            series(1, -2, 2, 1, -1, 4, 4, -2)
+        },
+    )
 
 private val columns: List<LineComponent>
     @Composable
-    get() = listOf(
-        lineComponent(color = Color(0xFF494949), thickness = 8.dp),
-        lineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
-        lineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
-    )
+    get() =
+        listOf(
+            lineComponent(color = Color(0xFF494949), thickness = 8.dp),
+            lineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
+            lineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
+        )
 
 @Preview
 @Composable
@@ -57,17 +64,14 @@ public fun StackedColumnChartWithNegativeValues() {
     Surface {
         CartesianChartHost(
             modifier = Modifier.height(250.dp),
-            chart = columnChart(
-                columns = columns,
-                persistentMarkers = mapOf(
-                    2f to marker,
-                    3f to marker,
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(columns = columns, mergeMode = ColumnCartesianLayer.MergeMode.Stacked),
+                    persistentMarkers = mapOf(2f to marker, 3f to marker),
                 ),
-                mergeMode = Stack,
-            ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 8),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 8) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -77,14 +81,17 @@ public fun StackedColumnChartWithNegativeValues() {
 public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
     Surface {
         CartesianChartHost(
-            chart = columnChart(
-                columns = columns,
-                dataLabel = textComponent(),
-                mergeMode = Stack,
-            ),
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(
+                        columns = columns,
+                        dataLabel = textComponent(),
+                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                    ),
+                ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 8),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 8) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -94,17 +101,17 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
 public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
         CartesianChartHost(
-            chart = columnChart(
-                columns = columns,
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minY = 1f,
-                    maxY = 4f,
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(
+                        columns = columns,
+                        axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f),
+                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                    ),
                 ),
-                mergeMode = Stack,
-            ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 4),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -114,17 +121,17 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
 public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
         CartesianChartHost(
-            chart = columnChart(
-                columns = columns,
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minY = -2f,
-                    maxY = 0f,
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(
+                        columns = columns,
+                        axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f),
+                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                    ),
                 ),
-                mergeMode = Stack,
-            ),
             model = model,
-            startAxis = startAxis(maxLabelCount = 3),
-            bottomAxis = bottomAxis(),
+            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }

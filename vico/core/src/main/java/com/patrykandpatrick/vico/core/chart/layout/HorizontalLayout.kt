@@ -17,77 +17,33 @@
 package com.patrykandpatrick.vico.core.chart.layout
 
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
-import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 
 /**
- * Defines how a chart’s content is positioned horizontally. This affects the [Chart] and the [HorizontalAxis]
- * instances. [startPaddingDp] and [endPaddingDp] control the amount of empty space at the start and end of the [Chart],
- * respectively.
+ * Defines how a chart’s content is positioned horizontally. This affects the [CartesianChart] and the [HorizontalAxis]
+ * instances.
  */
-public sealed class HorizontalLayout(public val startPaddingDp: Float, public val endPaddingDp: Float) {
+public sealed interface HorizontalLayout {
     /**
-     * Given a chart’s maximum number of major entries, calculates the number of labels to be displayed by
-     * [HorizontalAxis] instances.
+     * When this is applied, the [CartesianChart] centers each major entry in a designated segment. Some empty space is
+     * visible at the start and end of the [CartesianChart]. [HorizontalAxis] instances display ticks and guidelines at
+     * the edges of the segments.
      */
-    public abstract fun getHorizontalAxisLabelCount(maxMajorEntryCount: Int): Int
-
-    /**
-     * Given a [HorizontalAxis]’s tick thickness, calculates the start inset required by the [HorizontalAxis].
-     */
-    public abstract fun getStartHorizontalAxisInset(
-        horizontalDimensions: HorizontalDimensions,
-        tickThickness: Float,
-    ): Float
+    public object Segmented : HorizontalLayout
 
     /**
-     * Given a [HorizontalAxis]’s tick thickness, calculates the end inset required by the [HorizontalAxis].
+     * When this is applied, the [CartesianChart]’s content takes up the [CartesianChart]’s entire width (unless padding
+     * is added). [HorizontalAxis] instances display a tick and a guideline for each label, with the tick, guideline,
+     * and label vertically centered relative to one another. [scalableStartPaddingDp], [scalableEndPaddingDp],
+     * [unscalableStartPaddingDp], and [unscalableEndPaddingDp] control the amount of empty space at the start and end
+     * of the [CartesianChart]. Scalable padding values are multiplied by the zoom factor, unlike unscalable ones.
      */
-    public abstract fun getEndHorizontalAxisInset(
-        horizontalDimensions: HorizontalDimensions,
-        tickThickness: Float,
-    ): Float
-
-    /**
-     * When this is applied, the [Chart] centers each major entry in a designated segment. Some empty space is visible
-     * at the start and end of the [Chart]. [HorizontalAxis] instances display ticks and guidelines at the edges of the
-     * segments.
-     */
-    public class Segmented : HorizontalLayout(0f, 0f) {
-        override fun getHorizontalAxisLabelCount(maxMajorEntryCount: Int): Int = maxMajorEntryCount + 1
-
-        override fun getStartHorizontalAxisInset(
-            horizontalDimensions: HorizontalDimensions,
-            tickThickness: Float,
-        ): Float = tickThickness.half
-
-        override fun getEndHorizontalAxisInset(
-            horizontalDimensions: HorizontalDimensions,
-            tickThickness: Float,
-        ): Float = tickThickness.half
-    }
-
-    /**
-     * When this is applied, the [Chart]’s content takes up the [Chart]’s entire width (unless padding is added).
-     * [HorizontalAxis] instances display a tick and a guideline for each label, with the tick, guideline, and label
-     * vertically centered relative to one another.
-     */
-    public class FullWidth(startPaddingDp: Float = 0f, endPaddingDp: Float = 0f) :
-        HorizontalLayout(startPaddingDp, endPaddingDp) {
-
-        override fun getHorizontalAxisLabelCount(maxMajorEntryCount: Int): Int = maxMajorEntryCount
-
-        override fun getStartHorizontalAxisInset(
-            horizontalDimensions: HorizontalDimensions,
-            tickThickness: Float,
-        ): Float = (tickThickness.half - horizontalDimensions.startPadding).coerceAtLeast(0f)
-
-        override fun getEndHorizontalAxisInset(
-            horizontalDimensions: HorizontalDimensions,
-            tickThickness: Float,
-        ): Float = (tickThickness.half - horizontalDimensions.endPadding).coerceAtLeast(0f)
-    }
+    public class FullWidth(
+        public val scalableStartPaddingDp: Float = 0f,
+        public val scalableEndPaddingDp: Float = 0f,
+        public val unscalableStartPaddingDp: Float = 0f,
+        public val unscalableEndPaddingDp: Float = 0f,
+    ) : HorizontalLayout
 
     public companion object
 }

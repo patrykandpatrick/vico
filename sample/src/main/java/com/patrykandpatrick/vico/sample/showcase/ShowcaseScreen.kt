@@ -26,7 +26,6 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -52,14 +51,13 @@ import com.patrykandpatrick.vico.sample.showcase.charts.PieChart1
 import com.patrykandpatrick.vico.sample.utils.plus
 
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 internal fun ShowcaseScreen(viewModel: ShowcaseViewModel = viewModel()) {
     val composeShowcaseState = rememberLazyListState()
     val viewShowcaseState = rememberLazyListState()
     Scaffold(
         bottomBar = {
             NavigationBar {
-                UISystem.values().forEach { uiSystem ->
+                UISystem.entries.forEach { uiSystem ->
                     NavigationBarItem(
                         selected = viewModel.uiSystem == uiSystem,
                         onClick = { viewModel.setUISystem(uiSystem) },
@@ -77,10 +75,11 @@ internal fun ShowcaseScreen(viewModel: ShowcaseViewModel = viewModel()) {
     ) { paddingValues ->
         Crossfade(viewModel.uiSystem) { uiSystem ->
             LazyColumn(
-                state = when (uiSystem) {
-                    UISystem.Compose -> composeShowcaseState
-                    UISystem.Views -> viewShowcaseState
-                },
+                state =
+                    when (uiSystem) {
+                        UISystem.Compose -> composeShowcaseState
+                        UISystem.Views -> viewShowcaseState
+                    },
                 contentPadding = paddingValues + PaddingValues(padding),
                 verticalArrangement = Arrangement.spacedBy(padding),
             ) {
@@ -90,17 +89,20 @@ internal fun ShowcaseScreen(viewModel: ShowcaseViewModel = viewModel()) {
     }
 }
 
-private fun LazyListScope.chartItems(uiSystem: UISystem, viewModel: ShowcaseViewModel) {
+private fun LazyListScope.chartItems(
+    uiSystem: UISystem,
+    viewModel: ShowcaseViewModel,
+) {
     cardItem { PieChart1(uiSystem, viewModel.pieChartEntryModelProducer) }
-    cardItem { Chart9(uiSystem, viewModel.candlestickChartEntryModelProducer) }
-    cardItem { Chart1(uiSystem, viewModel.customStepChartEntryModelProducer) }
-    cardItem { Chart2(uiSystem, viewModel.chartEntryModelProducer) }
-    cardItem { Chart3(uiSystem, viewModel.chartEntryModelProducer) }
-    cardItem { Chart4(uiSystem, viewModel.composedChartEntryModelProducer) }
-    cardItem { Chart5(uiSystem, viewModel.multiDataSetChartEntryModelProducer) }
-    cardItem { Chart6(uiSystem, viewModel.multiDataSetChartEntryModelProducer) }
-    cardItem { Chart7(uiSystem, viewModel.multiDataSetChartEntryModelProducer) }
-    cardItem { Chart8(uiSystem, viewModel.composedChartEntryModelProducer) }
+    cardItem { Chart1(uiSystem, viewModel.modelProducer1) }
+    cardItem { Chart2(uiSystem, viewModel.modelProducer2) }
+    cardItem { Chart3(uiSystem, viewModel.modelProducer1) }
+    cardItem { Chart4(uiSystem, viewModel.modelProducer3) }
+    cardItem { Chart5(uiSystem, viewModel.modelProducer4) }
+    cardItem { Chart6(uiSystem, viewModel.modelProducer4) }
+    cardItem { Chart7(uiSystem, viewModel.modelProducer5) }
+    cardItem { Chart8(uiSystem, viewModel.modelProducer3) }
+    cardItem { Chart9(uiSystem, viewModel.modelProducer6) }
 }
 
 private fun LazyListScope.cardItem(content: @Composable () -> Unit) {

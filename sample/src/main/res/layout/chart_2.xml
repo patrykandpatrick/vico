@@ -19,16 +19,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <com.patrykandpatrick.vico.views.chart.ChartView
+    <com.patrykandpatrick.vico.views.chart.CartesianChartView
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:axisStyle="@style/Chart2AxisStyle"
-        app:chart="column"
-        app:columnChartStyle="@style/Chart2ColumnChartStyle"
+        app:columnLayerStyle="@style/Chart2ColumnLayerStyle"
         app:horizontalLayout="fullWidth"
-        app:endContentPadding="16dp"
-        app:startContentPadding="16dp"
+        app:layers="column"
+        app:scalableEndContentPadding="16dp"
+        app:scalableStartContentPadding="16dp"
         app:showBottomAxis="true"
         app:showStartAxis="true" />
 </FrameLayout>

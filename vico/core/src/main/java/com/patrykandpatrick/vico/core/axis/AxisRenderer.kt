@@ -17,24 +17,25 @@
 package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
+import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to draw an axis.
  */
 public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInsetter {
-
     /**
-     * Defines the position of the axis relative to the [Chart].
+     * Defines the position of the axis relative to the [CartesianChart].
      */
     public val position: Position
 
     /**
-     * Called before the [Chart] is drawn. Implementations should rely on this function to draw themselves, unless they
-     * need to draw something above the [Chart].
+     * Called before the [CartesianChart] is drawn. Implementations should rely on this function to draw themselves,
+     * unless they need to draw something above the [CartesianChart].
      *
      * @param context holds the information needed to draw the axis.
      *
@@ -43,7 +44,8 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
     public fun drawBehindChart(context: CartesianChartDrawContext)
 
     /**
-     * Called after the [Chart] is drawn. Implementations can use this function to draw content above the [Chart].
+     * Called after the [CartesianChart] is drawn. Implementations can use this function to draw content above the
+     * [CartesianChart].
      *
      * @param context holds the information needed to draw the axis.
      */
@@ -53,4 +55,12 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
      * The bounds ([RectF]) passed here define the area where the [AxisRenderer] shouldn’t draw anything.
      */
     public fun setRestrictedBounds(vararg bounds: RectF?)
+
+    /**
+     * Updates the chart’s [MutableHorizontalDimensions] instance.
+     */
+    public fun updateHorizontalDimensions(
+        context: MeasureContext,
+        horizontalDimensions: MutableHorizontalDimensions,
+    )
 }

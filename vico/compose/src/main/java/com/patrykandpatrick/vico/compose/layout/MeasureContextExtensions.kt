@@ -22,18 +22,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.context.MutableCartesianMeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
 
 /**
  * The anonymous implementation of the [CartesianMeasureContext].
  *
  * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
- * @param chartScale the scale of the chart. Used to handle zooming in and out.
  * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
+ * @param spToPx converts dimensions from sp to px.
+ * @param chartValues houses the [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
  */
 @Composable
 public fun getMeasureContext(
@@ -62,32 +66,24 @@ public fun getMeasureContext(
 @Composable
 public fun getCartesianMeasureContext(
     isHorizontalScrollEnabled: Boolean,
-    chartScale: Float,
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,
-): MutableCartesianMeasureContext = remember {
-    MutableCartesianMeasureContext(
-        canvasBounds = canvasBounds,
-        density = 0f,
-        fontScale = 0f,
-        isLtr = true,
-        isHorizontalScrollEnabled = isHorizontalScrollEnabled,
-        chartScale = chartScale,
-        horizontalLayout = horizontalLayout,
-    )
-}.apply {
-    density = getDensity()
-    fontScale = getFontScale()
-    isLtr = getIsLtr()
-    this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
-    this.chartScale = chartScale
-}
-
-@Composable
-internal fun getDensity(): Float = LocalDensity.current.density
-
-@Composable
-internal fun getFontScale(): Float = LocalDensity.current.fontScale * LocalDensity.current.density
-
-@Composable
-internal fun getIsLtr(): Boolean = LocalLayoutDirection.current == LayoutDirection.Ltr
+    spToPx: (Float) -> Float,
+    chartValues: ChartValues,
+): MutableCartesianMeasureContext =
+    remember {
+        MutableCartesianMeasureContext(
+            canvasBounds = canvasBounds,
+            density = 0f,
+            isLtr = true,
+            spToPx = spToPx,
+            chartValues = chartValues,
+        )
+    }.apply {
+        this.density = LocalDensity.current.density
+        this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+        this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+        this.horizontalLayout = horizontalLayout
+        this.spToPx = spToPx
+        this.chartValues = chartValues
+    }

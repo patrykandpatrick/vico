@@ -68,7 +68,7 @@
         <item name="title">@string/x_axis</item>
     </style>
 
-    <style name="Chart3LineChartStyle">
+    <style name="Chart3LineLayerStyle">
         <item name="line1Spec">@style/Chart3Line1Style</item>
     </style>
 

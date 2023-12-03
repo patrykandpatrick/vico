@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ public open class MarkerCorneredShape(
     bottomLeft: Corner,
     public val tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
 ) : CorneredShape(topLeft, topRight, bottomRight, bottomLeft) {
-
     public constructor(
         all: Corner,
         tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
@@ -66,41 +65,42 @@ public open class MarkerCorneredShape(
         top: Float,
         right: Float,
         bottom: Float,
-    ): Unit = with(context) {
-        val tickX: Float? = context[tickXKey]
-        if (tickX != null) {
-            createPath(
-                context = context,
-                path = path,
-                left = left,
-                top = top,
-                right = right,
-                bottom = bottom,
-            )
-            val tickSize = context.toPixels(tickSizeDp)
-            val availableCornerSize = minOf(right - left, bottom - top)
-            val cornerScale = getCornerScale(right - left, bottom - top, density)
+    ): Unit =
+        with(context) {
+            val tickX: Float? = context[TICK_X_KEY]
+            if (tickX != null) {
+                createPath(
+                    context = context,
+                    path = path,
+                    left = left,
+                    top = top,
+                    right = right,
+                    bottom = bottom,
+                )
+                val tickSize = context.dpToPx(tickSizeDp)
+                val availableCornerSize = minOf(right - left, bottom - top)
+                val cornerScale = getCornerScale(right - left, bottom - top, density)
 
-            val minLeft = left + bottomLeft.getCornerSize(availableCornerSize, density) * cornerScale
-            val maxLeft = right - bottomRight.getCornerSize(availableCornerSize, density) * cornerScale
+                val minLeft = left + bottomLeft.getCornerSize(availableCornerSize, density) * cornerScale
+                val maxLeft = right - bottomRight.getCornerSize(availableCornerSize, density) * cornerScale
 
-            val coercedTickSize = tickSize.coerceAtMost((maxLeft - minLeft).half.coerceAtLeast(0f))
+                val coercedTickSize = tickSize.coerceAtMost((maxLeft - minLeft).half.coerceAtLeast(0f))
 
-            (tickX - coercedTickSize)
-                .takeIf { minLeft < maxLeft }
-                ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
-                ?.also { tickTopLeft ->
-                    path.moveTo(tickTopLeft, bottom)
-                    path.lineTo(tickX, bottom + tickSize)
-                    path.lineTo(tickTopLeft + coercedTickSize.doubled, bottom)
-                }
+                (tickX - coercedTickSize)
+                    .takeIf { minLeft < maxLeft }
+                    ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
+                    ?.also { tickTopLeft ->
+                        path.moveTo(tickTopLeft, bottom)
+                        path.lineTo(tickX, bottom + tickSize)
+                        path.lineTo(tickTopLeft + coercedTickSize.doubled, bottom)
+                    }
 
-            path.close()
-            context.canvas.drawPath(path, paint)
-        } else {
-            super.drawShape(context, paint, path, left, top, right, bottom)
+                path.close()
+                context.canvas.drawPath(path, paint)
+            } else {
+                super.drawShape(context, paint, path, left, top, right, bottom)
+            }
         }
-    }
 
     public companion object {
         /**
@@ -108,6 +108,6 @@ public open class MarkerCorneredShape(
          *
          * @see Extras
          */
-        public const val tickXKey: String = "tickX"
+        public const val TICK_X_KEY: String = "tickX"
     }
 }

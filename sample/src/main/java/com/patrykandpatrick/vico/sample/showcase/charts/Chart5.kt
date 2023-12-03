@@ -20,62 +20,77 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart
+import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart5Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart5(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart5(
+    uiSystem: UISystem,
+    modelProducer: CartesianChartModelProducer,
+) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart5(chartEntryModelProducer)
-        UISystem.Views -> ViewChart5(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart5(modelProducer)
+        UISystem.Views -> ViewChart5(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart5(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ComposeChart5(modelProducer: CartesianChartModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        val defaultColumns = currentChartStyle.columnChart.columns
+        val defaultColumns = currentChartStyle.columnLayer.columns
         CartesianChartHost(
-            chart = columnChart(
-                columns = remember(defaultColumns) {
-                    defaultColumns.mapIndexed { index, defaultColumn ->
-                        val topCornerRadiusPercent =
-                            if (index == defaultColumns.lastIndex) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
-                        val bottomCornerRadiusPercent = if (index == 0) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
-                        LineComponent(
-                            defaultColumn.color,
-                            defaultColumn.thicknessDp,
-                            Shapes.roundedCornerShape(
-                                topCornerRadiusPercent,
-                                topCornerRadiusPercent,
-                                bottomCornerRadiusPercent,
-                                bottomCornerRadiusPercent,
-                            ),
-                        )
-                    }
-                },
-                mergeMode = ColumnChart.MergeMode.Stack,
-            ),
-            chartModelProducer = chartEntryModelProducer,
-            startAxis = startAxis(
-                maxLabelCount = START_AXIS_LABEL_COUNT,
-                labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
-            ),
-            bottomAxis = bottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(
+                        columns =
+                            remember(defaultColumns) {
+                                defaultColumns.mapIndexed { index, defaultColumn ->
+                                    val topCornerRadiusPercent =
+                                        if (index == defaultColumns.lastIndex) {
+                                            DefaultDimens.COLUMN_ROUNDNESS_PERCENT
+                                        } else {
+                                            0
+                                        }
+                                    val bottomCornerRadiusPercent =
+                                        if (index == 0) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
+                                    LineComponent(
+                                        defaultColumn.color,
+                                        defaultColumn.thicknessDp,
+                                        Shapes.roundedCornerShape(
+                                            topCornerRadiusPercent,
+                                            topCornerRadiusPercent,
+                                            bottomCornerRadiusPercent,
+                                            bottomCornerRadiusPercent,
+                                        ),
+                                    )
+                                }
+                            },
+                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                    ),
+                ),
+            modelProducer = modelProducer,
+            startAxis =
+                rememberStartAxis(
+                    itemPlacer = startAxisItemPlacer,
+                    labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
+                ),
+            bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -83,14 +98,13 @@ private fun ComposeChart5(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun ViewChart5(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ViewChart5(modelProducer: CartesianChartModelProducer) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart5Binding::inflate) {
         with(chartView) {
-            (chart as ColumnChart).mergeMode = ColumnChart.MergeMode.Stack
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
-            (startAxis as VerticalAxis).maxLabelCount = START_AXIS_LABEL_COUNT
+            this.modelProducer = modelProducer
+            (startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
             this.marker = marker
         }
     }
@@ -99,10 +113,11 @@ private fun ViewChart5(chartEntryModelProducer: ChartEntryModelProducer) {
 private const val COLOR_1_CODE = 0xff6438a7
 private const val COLOR_2_CODE = 0xff3490de
 private const val COLOR_3_CODE = 0xff73e8dc
-private const val START_AXIS_LABEL_COUNT = 3
+private const val MAX_START_AXIS_ITEM_COUNT = 3
 private const val AXIS_LABEL_ROTATION_DEGREES = 45f
 
 private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val color3 = Color(COLOR_3_CODE)
 private val chartColors = listOf(color1, color2, color3)
+private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(MAX_START_AXIS_ITEM_COUNT)

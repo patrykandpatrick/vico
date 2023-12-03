@@ -25,7 +25,6 @@ public data class MutableDimensions(
     override var endDp: Float,
     override var bottomDp: Float,
 ) : Dimensions {
-
     public constructor(
         horizontalDp: Float,
         verticalDp: Float,
@@ -51,14 +50,12 @@ public data class MutableDimensions(
     /**
      * Updates these [MutableDimensions] to match the provided [Dimensions].
      */
-    public fun set(other: Dimensions): MutableDimensions =
-        set(other.startDp, other.topDp, other.endDp, other.bottomDp)
+    public fun set(other: Dimensions): MutableDimensions = set(other.startDp, other.topDp, other.endDp, other.bottomDp)
 
     /**
      * Sets a common value for each coordinate.
      */
-    public fun set(all: Float): MutableDimensions =
-        set(all, all, all, all)
+    public fun set(all: Float): MutableDimensions = set(all, all, all, all)
 
     /**
      * Updates the coordinates to the provided values.
@@ -68,28 +65,31 @@ public data class MutableDimensions(
         topDp: Float = 0f,
         endDp: Float = 0f,
         bottomDp: Float = 0f,
-    ): MutableDimensions = apply {
-        this.startDp = startDp
-        this.topDp = topDp
-        this.endDp = endDp
-        this.bottomDp = bottomDp
-    }
+    ): MutableDimensions =
+        apply {
+            this.startDp = startDp
+            this.topDp = topDp
+            this.endDp = endDp
+            this.bottomDp = bottomDp
+        }
 
     /**
      * Evenly distributes the provided measurement between [startDp] and [endDp].
      */
-    public fun setHorizontal(valueDp: Float): MutableDimensions = apply {
-        startDp = if (valueDp == 0f) valueDp else valueDp / 2
-        endDp = if (valueDp == 0f) valueDp else valueDp / 2
-    }
+    public fun setHorizontal(valueDp: Float): MutableDimensions =
+        apply {
+            startDp = if (valueDp == 0f) valueDp else valueDp / 2
+            endDp = if (valueDp == 0f) valueDp else valueDp / 2
+        }
 
     /**
      * Evenly distributes the provided measurement between [topDp] and [bottomDp].
      */
-    public fun setVertical(valueDp: Float): MutableDimensions = apply {
-        topDp = if (valueDp == 0f) valueDp else valueDp / 2
-        bottomDp = if (valueDp == 0f) valueDp else valueDp / 2
-    }
+    public fun setVertical(valueDp: Float): MutableDimensions =
+        apply {
+            topDp = if (valueDp == 0f) valueDp else valueDp / 2
+            bottomDp = if (valueDp == 0f) valueDp else valueDp / 2
+        }
 
     /**
      * Sets all coordinates to 0.

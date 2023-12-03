@@ -67,21 +67,23 @@ public class OverlayingComponent(
         top: Float,
         right: Float,
         bottom: Float,
-    ): Unit = with(context) {
-        val leftWithMargin = left + margins.startDp.pixels
-        val topWithMargin = top + margins.topDp.pixels
-        val rightWithMargin = right - margins.endDp.pixels
-        val bottomWithMargin = bottom - margins.bottomDp.pixels
+        opacity: Float,
+    ): Unit =
+        with(context) {
+            val leftWithMargin = left + margins.startDp.pixels
+            val topWithMargin = top + margins.topDp.pixels
+            val rightWithMargin = right - margins.endDp.pixels
+            val bottomWithMargin = bottom - margins.bottomDp.pixels
 
-        outer.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
-        inner.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin)
+            outer.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
+            inner.draw(context, leftWithMargin, topWithMargin, rightWithMargin, bottomWithMargin, opacity)
 
-        DebugHelper.drawDebugBounds(
-            context = context,
-            left = left,
-            top = top,
-            right = right,
-            bottom = bottom,
-        )
-    }
+            DebugHelper.drawDebugBounds(
+                context = context,
+                left = left,
+                top = top,
+                right = right,
+                bottom = bottom,
+            )
+        }
 }

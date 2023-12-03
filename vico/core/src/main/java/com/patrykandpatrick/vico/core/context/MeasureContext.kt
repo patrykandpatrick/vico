@@ -17,17 +17,22 @@
 package com.patrykandpatrick.vico.core.context
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
+import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
 
 /**
  * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
  */
 public interface MeasureContext : Extras {
-
     /**
      * The bounds of the canvas that will be used to draw the chart and its components.
      */
     public val canvasBounds: RectF
+
+    /**
+     * The chart’s [ChartValues].
+     */
+    public val chartValues: ChartValues
 
     /**
      * The pixel density.
@@ -35,14 +40,19 @@ public interface MeasureContext : Extras {
     public val density: Float
 
     /**
-     * The font scale.
-     */
-    public val fontScale: Float
-
-    /**
      * Whether the layout direction is left-to-right.
      */
     public val isLtr: Boolean
+
+    /**
+     * Whether horizontal scrolling is enabled.
+     */
+    public val isHorizontalScrollEnabled: Boolean
+
+    /**
+     * Defines how the chart’s content is positioned horizontally.
+     */
+    public val horizontalLayout: HorizontalLayout
 
     /**
      * A multiplier used to ensure support for both left-to-right and right-to-left layouts. Values such as translation
@@ -65,20 +75,19 @@ public interface MeasureContext : Extras {
         get() = pixels.toInt()
 
     /**
-     * Returns the number of pixels corresponding to the provided number of density-independent pixels.
+     * Converts the provided dimension from dp to px.
      */
-    public fun toPixels(dp: Float): Float = dp * density
+    public fun dpToPx(dp: Float): Float = dp * density
 
     /**
-     * Returns the number of pixels corresponding to the provided number of scaled pixels.
+     * Converts the provided dimension from sp to px.
      */
-    public fun toFontSize(sp: Float): Float = sp * fontScale
+    public fun spToPx(sp: Float): Float
 
     /**
-     * Removes all stored extras and resets [ChartValuesManager.chartValues].
+     * Removes all stored extras.
      *
      * @see Extras.clearExtras
-     * @see ChartValuesManager.resetChartValues
      */
     public fun reset()
 }

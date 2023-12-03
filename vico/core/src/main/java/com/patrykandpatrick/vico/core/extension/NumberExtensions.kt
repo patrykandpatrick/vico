@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,31 +21,45 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 /**
  * The number of degrees equivalent to π radians.
  */
 public const val PI_RAD: Float = 180f
 
-internal const val FLOAT_GCD_DECIMALS = 3
+internal const val FLOAT_GCD_DECIMALS = 2
 
 private fun Float.round(decimals: Int): Float {
     val multiplier = 10f.pow(n = decimals)
     return (this * multiplier).round / multiplier
 }
 
-private fun Float.gcdWithImpl(other: Float, threshold: Float): Float = when {
-    this < other -> other.gcdWithImpl(other = this, threshold = threshold)
-    abs(x = other) < threshold -> this
-    else -> other.gcdWithImpl(other = this - (this / other).floor * other, threshold = threshold)
-}
+private fun Float.gcdWithImpl(
+    other: Float,
+    threshold: Float,
+): Float =
+    when {
+        this < other -> other.gcdWithImpl(other = this, threshold = threshold)
+        abs(x = other) < threshold -> this
+        else -> other.gcdWithImpl(other = this - (this / other).floor * other, threshold = threshold)
+    }
 
-internal fun Float.gcdWith(other: Float): Float = gcdWithImpl(
-    other = other,
-    threshold = 10f.pow(n = -FLOAT_GCD_DECIMALS - 1),
-).round(decimals = FLOAT_GCD_DECIMALS)
+internal fun Float.gcdWith(other: Float): Float =
+    gcdWithImpl(
+        other = other,
+        threshold = 10f.pow(n = -FLOAT_GCD_DECIMALS - 1),
+    ).round(decimals = FLOAT_GCD_DECIMALS)
 
 internal fun Float.toPrettyString(): String = if (this < 0f) "−${-this}" else this.toString()
+
+internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>) =
+    this == range.start || this == range.endInclusive
+
+internal fun ClosedFloatingPointRange<Float>.random(): Float = start + (endInclusive - start) * Random.nextFloat()
+
+internal val ClosedFloatingPointRange<Float>?.orZero: ClosedFloatingPointRange<Float>
+    get() = this ?: 0f..0f
 
 /**
  * Half of this value.
@@ -70,12 +84,6 @@ public inline val Double.half: Double
  */
 public inline val Float.doubled: Float
     get() = this * 2
-
-/**
- * This value as an integer if this value is not null, or zero otherwise.
- */
-public inline val Number?.orZeroInt: Int
-    get() = this?.toInt() ?: 0
 
 /**
  * This value as an integer if this value is not null, or zero otherwise.
@@ -125,11 +133,6 @@ public inline val ClosedFloatingPointRange<Float>.median: Float
 public fun Int.hasFlag(flag: Int): Boolean = this and flag == flag
 
 /**
- * Whether this value contains any of the provided bit flags.
- */
-public fun Int.hasAnyFlagOf(vararg flags: Int): Boolean = flags.any(::hasFlag)
-
-/**
  * The first non-negative value of the values provided, or `null` if none of the values is non-negative.
  */
 public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull { it >= 0f }
@@ -140,6 +143,11 @@ public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull
  */
 public fun Float.rangeWith(other: Float): ClosedFloatingPointRange<Float> =
     if (other > this) this..other else other..this
+
+internal fun Float.lerp(
+    to: Float,
+    fraction: Float,
+): Float = this + (to - this) * fraction
 
 /**
  * Performs a linear progression between [start] and [end] values.

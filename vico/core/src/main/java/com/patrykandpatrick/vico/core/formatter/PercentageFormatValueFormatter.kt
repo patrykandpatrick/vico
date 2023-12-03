@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.formatter
 
+import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import java.text.DecimalFormat
 
@@ -26,7 +27,6 @@ import java.text.DecimalFormat
  * @param pattern the pattern used by [DecimalFormat] to format values as percentages.
  */
 public open class PercentageFormatValueFormatter(pattern: String) : ValueFormatter {
-
     private val decimalFormat = DecimalFormat(pattern)
 
     /**
@@ -37,13 +37,13 @@ public open class PercentageFormatValueFormatter(pattern: String) : ValueFormatt
     override fun formatValue(
         value: Float,
         chartValues: ChartValues,
+        verticalAxisPosition: AxisPosition.Vertical?,
     ): String {
-        val percentage = value / chartValues.maxY
+        val percentage = value / chartValues.getYRange(verticalAxisPosition).maxY
         return decimalFormat.format(percentage)
     }
 
     public companion object {
-
         /**
          * The default percentage pattern.
          */

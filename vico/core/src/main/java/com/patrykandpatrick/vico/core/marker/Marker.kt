@@ -17,62 +17,54 @@
 package com.patrykandpatrick.vico.core.marker
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.values.ChartValuesProvider
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.CartesianDrawContext
-import com.patrykandpatrick.vico.core.entry.ChartEntry
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.extension.updateList
+import com.patrykandpatrick.vico.core.model.CartesianLayerModel
+import com.patrykandpatrick.vico.core.util.Point
 
 /**
  * Highlights points on a chart and displays their corresponding values in a bubble.
  */
 public interface Marker : ChartInsetter {
-
     /**
      * Draws the marker.
      * @param context the [CartesianDrawContext] used to draw the marker.
      * @param bounds the bounds in which the marker is drawn.
      * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
+     * @param chartValues the [CartesianChart]’s [ChartValues].
      */
-    @Deprecated(
-        message = "Use the version of `draw` that takes a `ChartValuesProvider` as an argument.",
-        replaceWith = ReplaceWith("draw(context, bounds, markedEntries, chartValuesProvider)"),
+    public fun draw(
+        context: CartesianDrawContext,
+        bounds: RectF,
+        markedEntries: List<EntryModel>,
+        chartValues: ChartValues,
     )
-    public fun draw(
-        context: CartesianDrawContext,
-        bounds: RectF,
-        markedEntries: List<EntryModel>,
-    ): Unit = Unit
-
-    /**
-     * Draws the marker.
-     * @param context the [CartesianDrawContext] used to draw the marker.
-     * @param bounds the bounds in which the marker is drawn.
-     * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
-     * @param chartValuesProvider the [Chart]’s [ChartValuesProvider].
-     */
-    @Suppress("DEPRECATION")
-    public fun draw(
-        context: CartesianDrawContext,
-        bounds: RectF,
-        markedEntries: List<EntryModel>,
-        chartValuesProvider: ChartValuesProvider,
-    ) {
-        draw(context, bounds, markedEntries)
-    }
 
     /**
      * Contains information on a single chart entry to which a chart marker refers.
      * @param location the coordinates of the indicator.
-     * @param entry the [ChartEntry].
-     * @param color the color associated with the [ChartEntry].
-     * @param index the index of the [ChartEntry] in the model.
+     * @param entry the [CartesianLayerModel.Entry].
+     * @param color the color associated with the [CartesianLayerModel.Entry].
+     * @param index the index of the [CartesianLayerModel.Entry] in its series.
      */
     public data class EntryModel(
         public val location: Point,
-        public val entry: ChartEntry,
+        public val entry: CartesianLayerModel.Entry,
         public val color: Int,
         public val index: Int,
     )
+}
+
+internal fun HashMap<Float, MutableList<Marker.EntryModel>>.put(
+    x: Float,
+    y: Float,
+    entry: CartesianLayerModel.Entry,
+    color: Int,
+    index: Int,
+) {
+    updateList(x) { add(Marker.EntryModel(Point(x, y), entry, color, index)) }
 }

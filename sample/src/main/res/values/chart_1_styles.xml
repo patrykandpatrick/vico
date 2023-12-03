@@ -21,7 +21,7 @@
         <item name="color">@color/chart_1_color_1</item>
     </style>
 
-    <style name="Chart1LineChartStyle">
+    <style name="Chart1LineLayerStyle">
         <item name="line1Spec">@style/Chart1Line1Style</item>
     </style>
 </resources>

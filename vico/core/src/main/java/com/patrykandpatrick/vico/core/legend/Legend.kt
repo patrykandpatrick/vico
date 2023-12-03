@@ -24,11 +24,13 @@ import com.patrykandpatrick.vico.core.dimensions.BoundsAware
  * Defines the functions required by the library to draw a chart legend.
  */
 public interface Legend : BoundsAware {
-
     /**
      * Returns the height of the legend.
      */
-    public fun getHeight(context: CartesianMeasureContext, availableWidth: Float): Float
+    public fun getHeight(
+        context: CartesianMeasureContext,
+        availableWidth: Float,
+    ): Float
 
     /**
      * Draws the legend.

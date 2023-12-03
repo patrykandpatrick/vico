@@ -18,30 +18,27 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.Canvas
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.getClosestMarkerEntryModel
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 
 /**
  * The anonymous implementation of [CartesianChartDrawContext].
  *
- * @param canvas the canvas on which the [Chart] is to be drawn.
+ * @param canvas the canvas on which the [CartesianChart] is to be drawn.
  * @param elevationOverlayColor the color of elevation overlays, applied to [ShapeComponent]s that cast shadows.
  * @param measureContext holds data used for component measurements.
  * @param markerTouchPoint the point inside the chart’s bounds where physical touch is occurring.
- * @param horizontalDimensions holds information on the [Chart]’s horizontal dimensions.
- * @param chartBounds the bounds in which the [Chart] will be drawn.
+ * @param horizontalDimensions holds information on the [CartesianChart]’s horizontal dimensions.
+ * @param chartBounds the bounds in which the [CartesianChart] will be drawn.
  * @param horizontalScroll the horizontal scroll.
- * @param autoScaleUp defines whether the content of a scrollable chart should be scaled up when the dimensions are such
- * that, at a scale factor of 1, an empty space would be visible near the end edge of the chart.
+ * @param zoom the zoom factor.
  *
  * @see [ShapeComponent.setShadow]
  */
@@ -53,51 +50,43 @@ public fun cartesianChartDrawContext(
     horizontalDimensions: HorizontalDimensions,
     chartBounds: RectF,
     horizontalScroll: Float,
-    autoScaleUp: AutoScaleUp,
-): CartesianChartDrawContext = object : CartesianChartDrawContext, CartesianMeasureContext by measureContext {
+    zoom: Float,
+): CartesianChartDrawContext =
+    object : CartesianChartDrawContext, CartesianMeasureContext by measureContext {
 
     override val chartBounds: RectF = chartBounds
 
-    override var canvas: Canvas = canvas
+        override var canvas: Canvas = canvas
 
-    override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
+        override val elevationOverlayColor: Long = elevationOverlayColor.toLong()
 
-    override val markerTouchPoint: Point? = markerTouchPoint
+        override val markerTouchPoint: Point? = markerTouchPoint
 
-    override val chartScale: Float = calculateDrawScale()
+        override val zoom: Float = zoom
 
-    override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(chartScale)
+        override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(zoom)
 
-    override val horizontalScroll: Float = horizontalScroll
+        override val horizontalScroll: Float = horizontalScroll
 
-    override fun withOtherCanvas(canvas: Canvas, block: (DrawContext) -> Unit) {
-        val originalCanvas = this.canvas
-        this.canvas = canvas
-        block(this)
-        this.canvas = originalCanvas
-    }
-
-    private fun calculateDrawScale(): Float {
-        val contentWidth =
-            horizontalDimensions.getContentWidth(chartValuesManager.getChartValues().getMaxMajorEntryCount())
-        val upscalingPossibleButDisallowed = contentWidth < chartBounds.width() && autoScaleUp == AutoScaleUp.None
-        val scrollEnabledAndUpscalingImpossible = isHorizontalScrollEnabled && contentWidth >= chartBounds.width()
-        return if (upscalingPossibleButDisallowed || scrollEnabledAndUpscalingImpossible) {
-            measureContext.chartScale
-        } else {
-            chartBounds.width() / contentWidth
+        override fun withOtherCanvas(
+            canvas: Canvas,
+            block: (DrawContext) -> Unit,
+        ) {
+            val originalCanvas = this.canvas
+            this.canvas = canvas
+            block(this)
+            this.canvas = originalCanvas
         }
     }
-}
 
 /**
  * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the
  * [markerVisibilityChangeListener] about the [marker]’s visibility changes.
  */
-public fun <Model : ChartEntryModel> CartesianChartDrawContext.drawMarker(
+public fun CartesianChartDrawContext.drawMarker(
     marker: Marker,
     markerTouchPoint: Point?,
-    chart: Chart<Model>,
+    chart: CartesianChart,
     markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
     wasMarkerVisible: Boolean,
     setWasMarkerVisible: (Boolean) -> Unit,
@@ -107,12 +96,11 @@ public fun <Model : ChartEntryModel> CartesianChartDrawContext.drawMarker(
     markerTouchPoint
         ?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
         ?.let { markerEntryModels ->
-            chartValuesManager.getChartValues()
             marker.draw(
                 context = this,
                 bounds = chart.bounds,
                 markedEntries = markerEntryModels,
-                chartValuesProvider = chartValuesManager,
+                chartValues = chartValues,
             )
             if (wasMarkerVisible.not()) {
                 markerVisibilityChangeListener?.onMarkerShown(
@@ -140,5 +128,5 @@ public fun <Model : ChartEntryModel> CartesianChartDrawContext.drawMarker(
 }
 
 private fun List<Marker.EntryModel>.xPosition(): Float? = firstOrNull()?.entry?.x
-private fun List<Marker.EntryModel>.hasMoved(other: List<Marker.EntryModel>): Boolean =
-    xPosition() != other.xPosition()
+
+private fun List<Marker.EntryModel>.hasMoved(other: List<Marker.EntryModel>): Boolean = xPosition() != other.xPosition()

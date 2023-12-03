@@ -22,7 +22,6 @@ import android.graphics.Path
  * Defines a shape corner style.
  */
 public interface CornerTreatment {
-
     /**
      * Draws a shape corner of the appropriate style.
      * @param x1 the horizontal coordinate of the starting point.

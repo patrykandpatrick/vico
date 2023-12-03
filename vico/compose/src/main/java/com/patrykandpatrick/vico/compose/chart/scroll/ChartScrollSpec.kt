@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
-import com.patrykandpatrick.vico.core.entry.EntryModel
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 
@@ -37,19 +37,18 @@ import com.patrykandpatrick.vico.core.scroll.InitialScroll
  * @property autoScrollAnimationSpec the [AnimationSpec] to use for automatic scrolling.
  */
 @Stable
-public class ChartScrollSpec<in Model : EntryModel<*>>(
+public class ChartScrollSpec(
     public val isScrollEnabled: Boolean,
     public val initialScroll: InitialScroll,
-    public val autoScrollCondition: AutoScrollCondition<Model>,
+    public val autoScrollCondition: AutoScrollCondition,
     public val autoScrollAnimationSpec: AnimationSpec<Float>,
 ) {
-
     /**
      * Performs an automatic scroll.
      */
     public suspend fun performAutoScroll(
-        model: Model,
-        oldModel: Model?,
+        model: CartesianChartModel,
+        oldModel: CartesianChartModel?,
         chartScrollState: ChartScrollState,
     ) {
         if (autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) {
@@ -58,10 +57,11 @@ public class ChartScrollSpec<in Model : EntryModel<*>>(
             }
 
             chartScrollState.animateScrollBy(
-                value = when (initialScroll) {
-                    InitialScroll.Start -> -chartScrollState.value
-                    InitialScroll.End -> -chartScrollState.value + chartScrollState.maxValue
-                },
+                value =
+                    when (initialScroll) {
+                        InitialScroll.Start -> -chartScrollState.value
+                        InitialScroll.End -> -chartScrollState.value + chartScrollState.maxValue
+                    },
                 animationSpec = autoScrollAnimationSpec,
             )
         }
@@ -72,21 +72,22 @@ public class ChartScrollSpec<in Model : EntryModel<*>>(
  * Creates and remembers an instance of [ChartScrollSpec].
  */
 @Composable
-public fun <Model : EntryModel<*>> rememberChartScrollSpec(
+public fun rememberChartScrollSpec(
     isScrollEnabled: Boolean = true,
     initialScroll: InitialScroll = InitialScroll.Start,
-    autoScrollCondition: AutoScrollCondition<Model> = AutoScrollCondition.Never,
+    autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
     autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
-): ChartScrollSpec<Model> = remember(
-    isScrollEnabled,
-    initialScroll,
-    autoScrollCondition,
-    autoScrollAnimationSpec,
-) {
-    ChartScrollSpec(
-        isScrollEnabled = isScrollEnabled,
-        initialScroll = initialScroll,
-        autoScrollCondition = autoScrollCondition,
-        autoScrollAnimationSpec = autoScrollAnimationSpec,
-    )
-}
+): ChartScrollSpec =
+    remember(
+        isScrollEnabled,
+        initialScroll,
+        autoScrollCondition,
+        autoScrollAnimationSpec,
+    ) {
+        ChartScrollSpec(
+            isScrollEnabled = isScrollEnabled,
+            initialScroll = initialScroll,
+            autoScrollCondition = autoScrollCondition,
+            autoScrollAnimationSpec = autoScrollAnimationSpec,
+        )
+    }

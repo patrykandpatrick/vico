@@ -17,25 +17,24 @@
 package com.patrykandpatrick.vico.core.chart.insets
 
 import com.patrykandpatrick.vico.core.axis.Axis
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.marker.Marker
 
 /**
- * Enables a component to add insets to [Chart]s to make room for itself. This is used by [Axis], [Marker], and the
- * like.
+ * Enables a component to add insets to [CartesianChart]s to make room for itself. This is used by [Axis], [Marker], and
+ * the like.
  */
 public interface ChartInsetter {
-
     /**
      * Called during the measurement phase, before [getHorizontalInsets]. Both horizontal and vertical insets can be
-     * requested from this function. The final inset for a given edge of the associated [Chart] is the largest of the
-     * insets requested for the edge.
+     * requested from this function. The final inset for a given edge of the associated [CartesianChart] is the largest
+     * of the insets requested for the edge.
      *
      * @param context holds data used for the measuring of components.
      * @param outInsets used to store the requested insets.
-     * @param horizontalDimensions the associated [Chart]’s [HorizontalDimensions].
+     * @param horizontalDimensions the [CartesianChart]’s [HorizontalDimensions].
      */
     public fun getInsets(
         context: CartesianMeasureContext,
@@ -46,7 +45,7 @@ public interface ChartInsetter {
     /**
      * Called during the measurement phase, after [getInsets]. Only horizontal insets can be requested from this
      * function. Unless the available height is of interest, [getInsets] can be used to set all insets. The final inset
-     * for a given edge of the associated [Chart] is the largest of the insets requested for the edge.
+     * for a given edge of the associated [CartesianChart] is the largest of the insets requested for the edge.
      *
      * @param context holds data used for the measuring of components.
      * @param availableHeight the available height. The vertical insets are considered here.

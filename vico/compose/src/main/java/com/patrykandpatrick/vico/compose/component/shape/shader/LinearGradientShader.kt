@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,25 +36,25 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 public fun horizontalGradient(
     colors: Array<Color>,
     positions: FloatArray? = null,
-): DynamicShader = object : CacheableDynamicShader() {
-
-    override fun createShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader =
-        LinearGradient(
-            left,
-            top,
-            right,
-            top,
-            IntArray(colors.size) { index -> colors[index].toArgb() },
-            positions,
-            Shader.TileMode.CLAMP,
-        )
-}
+): DynamicShader =
+    object : CacheableDynamicShader() {
+        override fun createShader(
+            context: DrawContext,
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ): Shader =
+            LinearGradient(
+                left,
+                top,
+                right,
+                top,
+                IntArray(colors.size) { index -> colors[index].toArgb() },
+                positions,
+                Shader.TileMode.CLAMP,
+            )
+    }
 
 /**
  * Creates a [DynamicShader] in the form of a vertical gradient.
@@ -68,22 +68,22 @@ public fun horizontalGradient(
 public fun verticalGradient(
     colors: Array<Color>,
     positions: FloatArray? = null,
-): DynamicShader = object : CacheableDynamicShader() {
-
-    override fun createShader(
-        context: DrawContext,
-        left: Float,
-        top: Float,
-        right: Float,
-        bottom: Float,
-    ): Shader =
-        LinearGradient(
-            left,
-            top,
-            left,
-            bottom,
-            IntArray(colors.size) { index -> colors[index].toArgb() },
-            positions,
-            Shader.TileMode.CLAMP,
-        )
-}
+): DynamicShader =
+    object : CacheableDynamicShader() {
+        override fun createShader(
+            context: DrawContext,
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ): Shader =
+            LinearGradient(
+                left,
+                top,
+                left,
+                bottom,
+                IntArray(colors.size) { index -> colors[index].toArgb() },
+                positions,
+                Shader.TileMode.CLAMP,
+            )
+    }

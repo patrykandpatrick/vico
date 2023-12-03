@@ -23,7 +23,7 @@ private const val RED_BIT_SHIFT = 16
 private const val GREEN_BIT_SHIFT = 8
 private const val BLUE_BIT_SHIFT = 0
 private const val COLOR_MASK = 0xff
-private const val MAX_HEX_VALUE = 255f
+internal const val MAX_HEX_VALUE = 255f
 
 /**
  * Copies this color, updating any or all of the color channels.
@@ -33,10 +33,11 @@ public fun Int.copyColor(
     red: Int = this.extractColorChannel(RED_BIT_SHIFT),
     green: Int = this.extractColorChannel(GREEN_BIT_SHIFT),
     blue: Int = this.extractColorChannel(BLUE_BIT_SHIFT),
-): Int = alpha shl ALPHA_BIT_SHIFT or
-    (red shl RED_BIT_SHIFT) or
-    (green shl GREEN_BIT_SHIFT) or
-    (blue shl BLUE_BIT_SHIFT)
+): Int =
+    alpha shl ALPHA_BIT_SHIFT or
+        (red shl RED_BIT_SHIFT) or
+        (green shl GREEN_BIT_SHIFT) or
+        (blue shl BLUE_BIT_SHIFT)
 
 /**
  * Copies this color, updating any or all of the color channels.
@@ -46,17 +47,18 @@ public fun Int.copyColor(
     red: Float = this.extractColorChannel(RED_BIT_SHIFT) / MAX_HEX_VALUE,
     green: Float = this.extractColorChannel(GREEN_BIT_SHIFT) / MAX_HEX_VALUE,
     blue: Float = this.extractColorChannel(BLUE_BIT_SHIFT) / MAX_HEX_VALUE,
-): Int = copyColor(
-    alpha = (alpha * MAX_HEX_VALUE).toInt(),
-    red = (red * MAX_HEX_VALUE).toInt(),
-    green = (green * MAX_HEX_VALUE).toInt(),
-    blue = (blue * MAX_HEX_VALUE).toInt(),
-)
+): Int =
+    copyColor(
+        alpha = (alpha * MAX_HEX_VALUE).toInt(),
+        red = (red * MAX_HEX_VALUE).toInt(),
+        green = (green * MAX_HEX_VALUE).toInt(),
+        blue = (blue * MAX_HEX_VALUE).toInt(),
+    )
 
 /**
  * The hex code for this color.
  */
-@Suppress("MagicNumber", "ImplicitDefaultLocale")
+@Suppress("ImplicitDefaultLocale")
 public val Int.colorHex: String
     get() = String.format("#%08X", 0xFFFFFFFF and this.toLong())
 
@@ -78,5 +80,4 @@ public val Int.isNotTransparent: Boolean
 public val Int.isTransparent: Boolean
     get() = this == Color.TRANSPARENT
 
-private fun Int.extractColorChannel(bitShift: Int): Int =
-    this shr bitShift and COLOR_MASK
+private fun Int.extractColorChannel(bitShift: Int): Int = this shr bitShift and COLOR_MASK

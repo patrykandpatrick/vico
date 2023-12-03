@@ -30,11 +30,6 @@ public const val DEF_LABEL_LINE_COUNT: Int = 1
 public const val DEF_LABEL_COUNT: Int = 100
 
 /**
- * The default label spacing for vertical axes (in dp).
- */
-public const val DEF_LABEL_SPACING: Float = 16f
-
-/**
  * The default tick size for markers (in dp).
  */
 public const val DEF_MARKER_TICK_SIZE: Float = 6f
@@ -278,9 +273,7 @@ public object DefaultDimens {
 /**
  * The default chart colors.
  */
-@Suppress("MagicNumber")
 public interface DefaultColors {
-
     /**
      * The default color for elevation overlays. Its opacity is modified depending on the elevation.
      */
@@ -343,7 +336,6 @@ public interface DefaultColors {
      * The default chart colors for light mode.
      */
     public object Light : DefaultColors {
-
         override val elevationOverlayColor: Long = 0x00000000
 
         override val axisLabelColor: Long = 0xDE000000
@@ -365,7 +357,6 @@ public interface DefaultColors {
      * The default chart colors for dark mode.
      */
     public object Dark : DefaultColors {
-
         override val elevationOverlayColor: Long = 0xFFFFFFFF
 
         override val axisLabelColor: Long = 0xFFFFFFFF

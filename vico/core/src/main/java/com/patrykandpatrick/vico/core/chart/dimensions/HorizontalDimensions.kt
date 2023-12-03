@@ -16,10 +16,10 @@
 
 package com.patrykandpatrick.vico.core.chart.dimensions
 
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 
 /**
- * Holds information on a [Chart]’s horizontal dimensions.
+ * Holds information on a [CartesianChart]’s horizontal dimensions.
  */
 public interface HorizontalDimensions {
     /**
@@ -50,36 +50,53 @@ public interface HorizontalDimensions {
     /**
      * The total start padding (in pixels).
      */
-    public val startPadding: Float
-        get() = scalableStartPadding + unscalableStartPadding
+    public val startPadding: Float get() = scalableStartPadding + unscalableStartPadding
 
     /**
      * The total end padding (in pixels).
      */
-    public val endPadding: Float
-        get() = scalableEndPadding + unscalableEndPadding
+    public val endPadding: Float get() = scalableEndPadding + unscalableEndPadding
+
+    /**
+     * The total scalable horizontal padding (in pixels).
+     */
+    public val scalablePadding: Float get() = scalableStartPadding + scalableEndPadding
+
+    /**
+     * The total unscalable horizontal padding (in pixels).
+     */
+    public val unscalablePadding: Float get() = unscalableStartPadding + unscalableEndPadding
 
     /**
      * The total horizontal padding (in pixels).
      */
-    public val padding: Float
-        get() = startPadding + endPadding
+    public val padding: Float get() = startPadding + endPadding
 
     /**
-     * Given the chart’s maximum number of major entries, calculates the width of the [Chart]’s content (in pixels).
+     * Given the chart’s maximum number of major entries, calculates the width of the [CartesianChart]’s scalable
+     * content (in pixels).
      */
-    public fun getContentWidth(maxMajorEntryCount: Int): Float = xSpacing * (maxMajorEntryCount - 1) + padding
+    public fun getScalableContentWidth(maxMajorEntryCount: Int): Float =
+        xSpacing * (maxMajorEntryCount - 1) + scalablePadding
+
+    /**
+     * Given the chart’s maximum number of major entries, calculates the width of the [CartesianChart]’s content (in
+     * pixels).
+     */
+    public fun getContentWidth(maxMajorEntryCount: Int): Float =
+        getScalableContentWidth(maxMajorEntryCount) + unscalablePadding
 
     /**
      * Creates a new [HorizontalDimensions] instance by multiplying this one’s scalable values by the given factor.
      */
-    public fun scaled(scale: Float): HorizontalDimensions = HorizontalDimensions(
-        xSpacing * scale,
-        scalableStartPadding * scale,
-        scalableEndPadding * scale,
-        unscalableStartPadding,
-        unscalableEndPadding,
-    )
+    public fun scaled(scale: Float): HorizontalDimensions =
+        HorizontalDimensions(
+            xSpacing * scale,
+            scalableStartPadding * scale,
+            scalableEndPadding * scale,
+            unscalableStartPadding,
+            unscalableEndPadding,
+        )
 }
 
 /**
@@ -91,30 +108,11 @@ public fun HorizontalDimensions(
     scalableEndPadding: Float,
     unscalableStartPadding: Float,
     unscalableEndPadding: Float,
-): HorizontalDimensions = object : HorizontalDimensions {
-    override val xSpacing: Float = xSpacing
-    override val scalableStartPadding: Float = scalableStartPadding
-    override val scalableEndPadding: Float = scalableEndPadding
-    override val unscalableStartPadding: Float = unscalableStartPadding
-    override val unscalableEndPadding: Float = unscalableEndPadding
-}
-
-/**
- * Creates a [HorizontalDimensions] instance.
- */
-@Deprecated(
-    """`startPadding` and `endPadding` have been replaced by `scalableStartPadding`, `scalableEndPadding`,
-        `unscalableStartPadding`, and `unscalableEndPadding`. Use the overload with these parameters instead.""",
-    ReplaceWith("HorizontalDimensions(xSpacing, startPadding, endPadding, 0f, 0f)"),
-)
-public fun HorizontalDimensions(
-    xSpacing: Float,
-    startPadding: Float,
-    endPadding: Float,
-): HorizontalDimensions = HorizontalDimensions(
-    xSpacing = xSpacing,
-    scalableStartPadding = startPadding,
-    unscalableEndPadding = endPadding,
-    scalableEndPadding = 0f,
-    unscalableStartPadding = 0f,
-)
+): HorizontalDimensions =
+    object : HorizontalDimensions {
+        override val xSpacing: Float = xSpacing
+        override val scalableStartPadding: Float = scalableStartPadding
+        override val scalableEndPadding: Float = scalableEndPadding
+        override val unscalableStartPadding: Float = unscalableStartPadding
+        override val unscalableEndPadding: Float = unscalableEndPadding
+    }

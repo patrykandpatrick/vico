@@ -20,22 +20,19 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.extension.horizontalCubicTo
 import com.patrykandpatrick.vico.core.extension.half
 import kotlin.math.abs
 
 /**
- * The default implementation of [LineChart.LineSpec.PointConnector]. This uses cubic bezier curves.
+ * The default implementation of [LineCartesianLayer.LineSpec.PointConnector]. This uses cubic bezier curves.
  *
  * @property cubicStrength the strength of the cubic bezier curve between each point on the line.
- *
- * @see LineChart.LineSpec.PointConnector
  */
 public class DefaultPointConnector(
     private val cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
-) : LineChart.LineSpec.PointConnector {
-
+) : LineCartesianLayer.LineSpec.PointConnector {
     public override fun connect(
         path: Path,
         prevX: Float,
@@ -50,13 +47,13 @@ public class DefaultPointConnector(
             prevY = prevY,
             x = x,
             y = y,
-            curvature = abs(x - prevX).half * cubicStrength *
-                (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(maximumValue = 1f),
+            curvature =
+                abs(x - prevX).half * cubicStrength *
+                    (abs(x = y - prevY) / bounds.bottom * CUBIC_Y_MULTIPLIER).coerceAtMost(maximumValue = 1f),
         )
     }
 
     private companion object {
-
         const val CUBIC_Y_MULTIPLIER = 4
     }
 }

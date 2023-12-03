@@ -19,16 +19,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <com.patrykandpatrick.vico.views.chart.ChartView
+    <com.patrykandpatrick.vico.views.chart.CartesianChartView
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:bottomAxisStyle="@style/Chart3BottomAxisStyle"
-        app:chart="line"
         app:fadingEdgeVisibilityInterpolator="androidx.interpolator.view.animation.FastOutSlowInInterpolator"
         app:fadingEdgeWidth="32dp"
         app:horizontalLayout="fullWidth"
-        app:lineChartStyle="@style/Chart3LineChartStyle"
+        app:layers="line"
+        app:lineLayerStyle="@style/Chart3LineLayerStyle"
         app:showBottomAxis="true"
         app:showStartAxis="true"
         app:startAxisStyle="@style/Chart3StartAxisStyle" />

@@ -19,10 +19,19 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <com.patrykandpatrick.vico.views.chart.CandlestickChartView
+    <com.patrykandpatrick.vico.views.chart.CartesianChartView
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:theme="@style/Chart9ThemeOverlay"
+        app:bottomAxisStyle="@style/Chart9BottomAxisStyle"
+        app:layers="line"
+        app:horizontalLayout="fullWidth"
+        app:lineLayerStyle="@style/Chart9LineLayerStyle"
+        app:previewMaxX="8"
+        app:previewMaxY="10"
+        app:previewMinY="-7"
         app:showBottomAxis="true"
-        app:showStartAxis="true" />
+        app:showStartAxis="true"
+        app:startAxisStyle="@style/Chart9StartAxisStyle" />
 </FrameLayout>

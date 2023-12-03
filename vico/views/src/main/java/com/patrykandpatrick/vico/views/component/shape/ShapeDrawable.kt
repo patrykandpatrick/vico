@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ public class ShapeDrawable(
     private val width: Int = 0,
     private val height: Int = 0,
 ) : Drawable() {
-
     public constructor(
         context: Context,
         shape: Shape,
@@ -69,9 +68,10 @@ public class ShapeDrawable(
     /**
      * The [Paint] used to draw the shape.
      */
-    public val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = DEF_COLOR
-    }
+    public val paint: Paint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = DEF_COLOR
+        }
 
     init {
         setBounds(0, 0, width, height)
@@ -82,7 +82,6 @@ public class ShapeDrawable(
             drawContext(
                 canvas = canvas,
                 density = density,
-                fontScale = 1f,
                 isLtr = isLtr(),
             ),
             paint = paint,
@@ -95,11 +94,12 @@ public class ShapeDrawable(
         path.reset()
     }
 
-    private fun isLtr(): Boolean = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
-        layoutDirection == LayoutDirection.LTR
-    } else {
-        isLtr
-    }
+    private fun isLtr(): Boolean =
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.M) {
+            layoutDirection == LayoutDirection.LTR
+        } else {
+            isLtr
+        }
 
     override fun setAlpha(alpha: Int) {
         paint.alpha = alpha

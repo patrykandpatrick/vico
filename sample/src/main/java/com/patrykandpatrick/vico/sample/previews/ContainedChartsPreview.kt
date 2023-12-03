@@ -17,97 +17,97 @@
 package com.patrykandpatrick.vico.sample.previews
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.endAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.chart.line.lineSpec
+import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.Axis
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.End
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.Start
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart
-import com.patrykandpatrick.vico.core.chart.composed.plus
-import com.patrykandpatrick.vico.core.chart.line.LineChart
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.composed.plus
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.marker.Marker
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
-private val model1 = entryModelOf(0 to 1, 1 to 2, 2 to 4, 3 to 1, 4 to 4)
-private val model2 = entryModelOf(1 to 4, 2 to 1, 3 to 8, 4 to 12, 5 to 5)
+private val model =
+    CartesianChartModel(
+        ColumnCartesianLayerModel.build { series(1, 2, 4, 1, 4) },
+        LineCartesianLayerModel.build { series(4, 1, 8, 12, 5) },
+    )
 
 private val markerMap: Map<Float, Marker>
     @Composable get() = mapOf(4f to rememberMarker())
 
 @Composable
-private fun getColumnChart(
-    markerMap: Map<Float, Marker> = emptyMap(),
-    targetVerticalAxisPosition: Vertical? = null,
-): ColumnChart = columnChart(
-    columns = listOf(
-        lineComponent(
-            color = Color.Black,
-            thickness = 8.dp,
-            shape = Shapes.pillShape,
-        ),
-    ),
-    persistentMarkers = markerMap,
-    targetVerticalAxisPosition = targetVerticalAxisPosition,
-)
+private fun getColumnLayer(verticalAxisPosition: Vertical? = null) =
+    rememberColumnCartesianLayer(
+        columns =
+            listOf(
+                lineComponent(
+                    color = Color.Black,
+                    thickness = 8.dp,
+                    shape = Shapes.pillShape,
+                ),
+            ),
+        verticalAxisPosition = verticalAxisPosition,
+    )
 
 @Composable
-private fun getLineChart(
-    markerMap: Map<Float, Marker> = emptyMap(),
-    targetVerticalAxisPosition: Vertical? = null,
-): LineChart = lineChart(
-    lines = listOf(
-        lineSpec(
-            lineColor = Color.DarkGray,
-            lineBackgroundShader = verticalGradient(
-                arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f)),
+private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
+    rememberLineCartesianLayer(
+        lines =
+            listOf(
+                lineSpec(
+                    shader = DynamicShaders.color(Color.DarkGray),
+                    backgroundShader =
+                        verticalGradient(
+                            arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f)),
+                        ),
+                ),
             ),
-        ),
-    ),
-    persistentMarkers = markerMap,
-    targetVerticalAxisPosition = targetVerticalAxisPosition,
-)
+        verticalAxisPosition = verticalAxisPosition,
+    )
 
 private val startAxis: Axis<Start>
-    @Composable get() = startAxis(
-        label = textComponent(color = Color.Black),
-        maxLabelCount = 5,
-    )
+    @Composable get() =
+        rememberStartAxis(
+            label = textComponent(color = Color.Black),
+            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 5) },
+        )
 
 private val endAxis: Axis<End>
-    @Composable get() = endAxis(
-        label = textComponent(color = Color.DarkGray),
-        maxLabelCount = 7,
-    )
+    @Composable get() =
+        rememberEndAxis(
+            label = textComponent(color = Color.DarkGray),
+            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 7) },
+        )
 
 @Composable
 @Preview("Chart with independent axes", widthDp = 350)
 public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
-    val composedChart = getColumnChart(targetVerticalAxisPosition = Start) +
-        getLineChart(targetVerticalAxisPosition = End)
-
-    composedChart.setPersistentMarkers(markerMap)
-
     CartesianChartHost(
-        chart = composedChart,
-        model = model1 + model2,
+        chart = rememberCartesianChart(getColumnLayer(Start), getLineLayer(End)),
+        model = model,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = rememberBottomAxis(),
         endAxis = endAxis,
         modifier = modifier,
     )
@@ -116,15 +116,11 @@ public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
 @Composable
 @Preview("Chart with dependent axes", widthDp = 350)
 public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
-    val composedChart = getColumnChart() + getLineChart()
-
-    composedChart.setPersistentMarkers(markerMap)
-
     CartesianChartHost(
-        chart = composedChart,
-        model = model1 + model2,
+        chart = rememberCartesianChart(getColumnLayer(), getLineLayer(), persistentMarkers = markerMap),
+        model = model,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = rememberBottomAxis(),
         endAxis = endAxis,
         modifier = modifier,
     )
@@ -134,10 +130,10 @@ public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
 @Preview("Column chart", widthDp = 350)
 public fun ColumnChart(modifier: Modifier = Modifier) {
     CartesianChartHost(
-        chart = getColumnChart(markerMap = markerMap),
-        model = model1,
+        chart = rememberCartesianChart(getColumnLayer(), persistentMarkers = markerMap),
+        model = model,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = rememberBottomAxis(),
         modifier = modifier,
     )
 }
@@ -146,10 +142,10 @@ public fun ColumnChart(modifier: Modifier = Modifier) {
 @Preview("Line chart", widthDp = 350)
 public fun LineChart(modifier: Modifier = Modifier) {
     CartesianChartHost(
-        chart = getLineChart(markerMap = markerMap),
-        model = model2,
+        chart = rememberCartesianChart(getLineLayer(), persistentMarkers = markerMap),
+        model = model,
         startAxis = startAxis,
-        bottomAxis = bottomAxis(),
+        bottomAxis = rememberBottomAxis(),
         modifier = modifier,
     )
 }

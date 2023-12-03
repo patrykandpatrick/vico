@@ -23,7 +23,6 @@ import com.patrykandpatrick.vico.core.extension.set
  * Defines an abstract component that has some physical bounds.
  */
 public interface BoundsAware {
-
     /**
      * The bounds of the abstract component.
      */

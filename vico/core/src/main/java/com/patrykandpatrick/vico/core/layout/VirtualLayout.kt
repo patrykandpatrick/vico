@@ -18,12 +18,11 @@ package com.patrykandpatrick.vico.core.layout
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.axis.AxisManager
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.entry.ChartEntryModel
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.legend.Legend
 
@@ -35,7 +34,6 @@ import com.patrykandpatrick.vico.core.legend.Legend
 public open class VirtualLayout(
     private val axisManager: AxisManager,
 ) {
-
     private val tempInsetters = ArrayList<ChartInsetter>(TEMP_INSETTERS_INITIAL_SIZE)
 
     private val finalInsets: Insets = Insets()
@@ -54,62 +52,64 @@ public open class VirtualLayout(
      *
      * @return the bounds applied to the chart.
      */
-    public open fun <Model : ChartEntryModel> setBounds(
+    public open fun setBounds(
         context: CartesianMeasureContext,
         contentBounds: RectF,
-        chart: Chart<Model>,
+        chart: CartesianChart,
         legend: Legend?,
         horizontalDimensions: HorizontalDimensions,
         vararg chartInsetter: ChartInsetter?,
-    ): RectF = with(context) {
-        tempInsetters.clear()
-        finalInsets.clear()
-        tempInsets.clear()
+    ): RectF =
+        with(context) {
+            tempInsetters.clear()
+            finalInsets.clear()
+            tempInsets.clear()
 
-        val legendHeight = legend?.getHeight(context, contentBounds.width()).orZero
+            val legendHeight = legend?.getHeight(context, contentBounds.width()).orZero
 
-        axisManager.addInsetters(tempInsetters)
-        chartInsetter.filterNotNull().forEach(tempInsetters::add)
-        tempInsetters.addAll(chart.chartInsetters)
-        tempInsetters.add(chart)
+            axisManager.addInsetters(tempInsetters)
+            chartInsetter.filterNotNull().forEach(tempInsetters::add)
+            tempInsetters.addAll(chart.chartInsetters)
+            tempInsetters.add(chart)
 
-        tempInsetters.forEach { insetter ->
-            insetter.getInsets(context, tempInsets, horizontalDimensions)
-            finalInsets.setValuesIfGreater(tempInsets)
+            tempInsetters.forEach { insetter ->
+                insetter.getInsets(context, tempInsets, horizontalDimensions)
+                finalInsets.setValuesIfGreater(tempInsets)
+            }
+
+            val availableHeight = contentBounds.height() - finalInsets.vertical - legendHeight
+
+            tempInsetters.forEach { insetter ->
+                insetter.getHorizontalInsets(context, availableHeight, tempInsets)
+                finalInsets.setValuesIfGreater(tempInsets)
+            }
+
+            val chartBounds =
+                RectF().apply {
+                    left = contentBounds.left + finalInsets.getLeft(isLtr)
+                    top = contentBounds.top + finalInsets.top
+                    right = contentBounds.right - finalInsets.getRight(isLtr)
+                    bottom = contentBounds.bottom - finalInsets.bottom - legendHeight
+                }
+
+            chart.setBounds(
+                left = chartBounds.left,
+                top = chartBounds.top,
+                right = chartBounds.right,
+                bottom = chartBounds.bottom,
+            )
+
+            axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)
+
+            legend?.setBounds(
+                left = contentBounds.left,
+                top = chart.bounds.bottom + finalInsets.bottom,
+                right = contentBounds.right,
+                bottom = chart.bounds.bottom + finalInsets.bottom + legendHeight,
+            )
+
+            chartBounds
         }
-
-        val availableHeight = contentBounds.height() - finalInsets.vertical - legendHeight
-
-        tempInsetters.forEach { insetter ->
-            insetter.getHorizontalInsets(context, availableHeight, tempInsets)
-            finalInsets.setValuesIfGreater(tempInsets)
-        }
-
-        val chartBounds = RectF().apply {
-            left = contentBounds.left + finalInsets.getLeft(isLtr)
-            top = contentBounds.top + finalInsets.top
-            right = contentBounds.right - finalInsets.getRight(isLtr)
-            bottom = contentBounds.bottom - finalInsets.bottom - legendHeight
-        }
-
-        chart.setBounds(
-            left = chartBounds.left,
-            top = chartBounds.top,
-            right = chartBounds.right,
-            bottom = chartBounds.bottom,
-        )
-
-        axisManager.setAxesBounds(context, contentBounds, chartBounds, finalInsets)
-
-        legend?.setBounds(
-            left = contentBounds.left,
-            top = chart.bounds.bottom + finalInsets.bottom,
-            right = contentBounds.right,
-            bottom = chart.bounds.bottom + finalInsets.bottom + legendHeight,
-        )
-
-        chartBounds
-    }
 
     private companion object {
         const val TEMP_INSETTERS_INITIAL_SIZE = 5

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,25 +32,27 @@ public fun m2ChartStyle(
     axisLabelColor: Color = MaterialTheme.colors.onBackground,
     axisGuidelineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = LINE_ALPHA),
     axisLineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = LINE_ALPHA),
-    entityColors: List<Color> = listOf(
-        MaterialTheme.colors.primary,
-        MaterialTheme.colors.secondary,
-    ),
+    entityColors: List<Color> =
+        listOf(
+            MaterialTheme.colors.primary,
+            MaterialTheme.colors.secondary,
+        ),
     elevationOverlayColor: Color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
-): ChartStyle = remember(
-    axisLabelColor,
-    axisGuidelineColor,
-    axisLineColor,
-    entityColors,
-    elevationOverlayColor,
-) {
-    ChartStyle.fromColors(
-        axisLabelColor = axisLabelColor,
-        axisGuidelineColor = axisGuidelineColor,
-        axisLineColor = axisLineColor,
-        entityColors = entityColors,
-        elevationOverlayColor = elevationOverlayColor,
-    )
-}
+): ChartStyle =
+    remember(
+        axisLabelColor,
+        axisGuidelineColor,
+        axisLineColor,
+        entityColors,
+        elevationOverlayColor,
+    ) {
+        ChartStyle.fromColors(
+            axisLabelColor = axisLabelColor,
+            axisGuidelineColor = axisGuidelineColor,
+            axisLineColor = axisLineColor,
+            entityColors = entityColors,
+            elevationOverlayColor = elevationOverlayColor,
+        )
+    }
 
 private const val LINE_ALPHA = 0.2f

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import android.animation.TimeInterpolator
 import android.animation.ValueAnimator
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.Animation
-import com.patrykandpatrick.vico.core.entry.EntryModel
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.InitialScroll
 import com.patrykandpatrick.vico.core.scroll.ScrollHandler
@@ -34,27 +34,28 @@ import com.patrykandpatrick.vico.core.scroll.ScrollHandler
  * @property autoScrollInterpolator the [TimeInterpolator] to use for automatic scrolling.
  * @property autoScrollDuration the animation duration for automatic scrolling.
  */
-public class ChartScrollSpec<in Model : EntryModel<*>>(
+public class ChartScrollSpec(
     public val isScrollEnabled: Boolean = true,
     public val initialScroll: InitialScroll = InitialScroll.Start,
-    public val autoScrollCondition: AutoScrollCondition<Model> = AutoScrollCondition.Never,
+    public val autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
     public val autoScrollInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
     public val autoScrollDuration: Long = Animation.DIFF_DURATION.toLong(),
 ) {
-    private val animator: ValueAnimator = ValueAnimator.ofFloat(
-        Animation.range.start,
-        Animation.range.endInclusive,
-    ).apply {
-        duration = autoScrollDuration
-        interpolator = autoScrollInterpolator
-    }
+    private val animator: ValueAnimator =
+        ValueAnimator.ofFloat(
+            Animation.range.start,
+            Animation.range.endInclusive,
+        ).apply {
+            duration = autoScrollDuration
+            interpolator = autoScrollInterpolator
+        }
 
     /**
      * Performs an automatic scroll.
      */
     public fun performAutoScroll(
-        model: Model,
-        oldModel: Model?,
+        model: CartesianChartModel,
+        oldModel: CartesianChartModel?,
         scrollHandler: ScrollHandler,
     ) {
         if (!autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) return
@@ -63,12 +64,13 @@ public class ChartScrollSpec<in Model : EntryModel<*>>(
             removeAllUpdateListeners()
             addUpdateListener {
                 scrollHandler.handleScroll(
-                    targetScroll = when (initialScroll) {
-                        InitialScroll.Start -> (1 - it.animatedFraction) * scrollHandler.value
-                        InitialScroll.End ->
-                            scrollHandler.value + it.animatedFraction *
-                                (scrollHandler.maxValue - scrollHandler.value)
-                    },
+                    targetScroll =
+                        when (initialScroll) {
+                            InitialScroll.Start -> (1 - it.animatedFraction) * scrollHandler.value
+                            InitialScroll.End ->
+                                scrollHandler.value + it.animatedFraction *
+                                    (scrollHandler.maxValue - scrollHandler.value)
+                        },
                 )
             }
             start()
@@ -79,16 +81,17 @@ public class ChartScrollSpec<in Model : EntryModel<*>>(
 /**
  * Copies this [ChartScrollSpec], changing select values.
  */
-public fun <Model : EntryModel<*>> ChartScrollSpec<Model>.copy(
+public fun ChartScrollSpec.copy(
     isScrollEnabled: Boolean = this.isScrollEnabled,
     initialScroll: InitialScroll = this.initialScroll,
-    autoScrollCondition: AutoScrollCondition<Model> = this.autoScrollCondition,
+    autoScrollCondition: AutoScrollCondition = this.autoScrollCondition,
     autoScrollInterpolator: TimeInterpolator = this.autoScrollInterpolator,
     autoScrollDuration: Long = this.autoScrollDuration,
-): ChartScrollSpec<Model> = ChartScrollSpec(
-    isScrollEnabled = isScrollEnabled,
-    initialScroll = initialScroll,
-    autoScrollCondition = autoScrollCondition,
-    autoScrollInterpolator = autoScrollInterpolator,
-    autoScrollDuration = autoScrollDuration,
-)
+): ChartScrollSpec =
+    ChartScrollSpec(
+        isScrollEnabled = isScrollEnabled,
+        initialScroll = initialScroll,
+        autoScrollCondition = autoScrollCondition,
+        autoScrollInterpolator = autoScrollInterpolator,
+        autoScrollDuration = autoScrollDuration,
+    )

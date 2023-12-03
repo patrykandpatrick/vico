@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,13 @@ import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 /**
  * Creates a [MutableDimensions] instance with a common value for each coordinate.
  */
-public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
-    start = all,
-    top = all,
-    end = all,
-    bottom = all,
-)
+public fun dimensionsOf(all: Dp): MutableDimensions =
+    dimensionsOf(
+        start = all,
+        top = all,
+        end = all,
+        bottom = all,
+    )
 
 /**
  * Creates a [MutableDimensions] instance using the provided measurements.
@@ -36,12 +37,13 @@ public fun dimensionsOf(all: Dp): MutableDimensions = dimensionsOf(
 public fun dimensionsOf(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
-): MutableDimensions = MutableDimensions(
-    startDp = horizontal.value,
-    topDp = vertical.value,
-    endDp = horizontal.value,
-    bottomDp = vertical.value,
-)
+): MutableDimensions =
+    MutableDimensions(
+        startDp = horizontal.value,
+        topDp = vertical.value,
+        endDp = horizontal.value,
+        bottomDp = vertical.value,
+    )
 
 /**
  * Creates a [MutableDimensions] instance using the provided measurements.
@@ -51,9 +53,10 @@ public fun dimensionsOf(
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
-): MutableDimensions = MutableDimensions(
-    startDp = start.value,
-    topDp = top.value,
-    endDp = end.value,
-    bottomDp = bottom.value,
-)
+): MutableDimensions =
+    MutableDimensions(
+        startDp = start.value,
+        topDp = top.value,
+        endDp = end.value,
+        bottomDp = bottom.value,
+    )

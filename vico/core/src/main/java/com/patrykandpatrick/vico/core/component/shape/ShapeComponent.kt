@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.alpha
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.round
+import com.patrykandpatrick.vico.core.extension.withOpacity
 import kotlin.properties.Delegates
 
 /**
@@ -86,16 +87,18 @@ public open class ShapeComponent(
         top: Float,
         right: Float,
         bottom: Float,
-    ): Unit = with(context) {
-        if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
-        path.rewind()
-        applyShader(context, left, top, right, bottom)
-        val centerX = (left + right).half
-        val centerY = (top + bottom).half
-        componentShadow.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
+        opacity: Float,
+    ): Unit =
+        with(context) {
+            if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
+            path.rewind()
+            applyShader(context, left, top, right, bottom)
+            val centerX = (left + right).half
+            val centerY = (top + bottom).half
+            componentShadow.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
 
-        val strokeWidth = strokeWidthDp.pixels
-        strokePaint.strokeWidth = strokeWidth
+            val strokeWidth = strokeWidthDp.pixels
+            strokePaint.strokeWidth = strokeWidth
 
         fun drawShape(paint: Paint, isStroke: Boolean) {
             val strokeCompensation = if (isStroke) strokeWidth.half else 0f
@@ -123,17 +126,19 @@ public open class ShapeComponent(
             )
         }
 
-        drawShape(paint = paint, isStroke = false)
+        paint.withOpacity(opacity) { paint ->
+            drawShape(paint = paint, isStroke = false)
+        }
         if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(paint = strokePaint, isStroke = true)
 
-        DebugHelper.drawDebugBounds(
-            context = context,
-            left = left,
-            top = top,
-            right = right,
-            bottom = bottom,
-        )
-    }
+            DebugHelper.drawDebugBounds(
+                context = context,
+                left = left,
+                top = top,
+                right = right,
+                bottom = bottom,
+            )
+        }
 
     protected fun applyShader(
         context: DrawContext,

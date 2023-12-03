@@ -34,5 +34,6 @@ public interface Component : Margins {
         top: Float,
         right: Float,
         bottom: Float,
+        opacity: Float = 1f,
     )
 }

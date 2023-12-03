@@ -20,23 +20,23 @@ import android.graphics.Color
 import com.patrykandpatrick.vico.core.context.CartesianDrawContext
 import com.patrykandpatrick.vico.core.context.DrawContext
 
-@Suppress("MagicNumber")
 private fun getElevationOverlayColorWithCorrectAlpha(
     elevationOverlayColor: Long,
     elevationDp: Float,
 ): Int {
-    val overlayPercentage = when {
-        elevationDp < 1f -> 0.00f
-        elevationDp < 2f -> 0.05f
-        elevationDp < 3f -> 0.07f
-        elevationDp < 4f -> 0.08f
-        elevationDp < 6f -> 0.09f
-        elevationDp < 8f -> 0.11f
-        elevationDp < 12f -> 0.12f
-        elevationDp < 16f -> 0.14f
-        elevationDp < 24f -> 0.15f
-        else -> 0.16f
-    }
+    val overlayPercentage =
+        when {
+            elevationDp < 1f -> 0.00f
+            elevationDp < 2f -> 0.05f
+            elevationDp < 3f -> 0.07f
+            elevationDp < 4f -> 0.08f
+            elevationDp < 6f -> 0.09f
+            elevationDp < 8f -> 0.11f
+            elevationDp < 12f -> 0.12f
+            elevationDp < 16f -> 0.14f
+            elevationDp < 24f -> 0.15f
+            else -> 0.16f
+        }
     return if (elevationOverlayColor.alpha == 0f) {
         Color.TRANSPARENT
     } else {
@@ -48,7 +48,10 @@ private fun getElevationOverlayColorWithCorrectAlpha(
  * Overlays the given [color] with [CartesianDrawContext.elevationOverlayColor], changing the opacity of
  * [CartesianDrawContext.elevationOverlayColor] depending on the value of [elevationDp].
  */
-public fun DrawContext.applyElevationOverlayToColor(color: Int, elevationDp: Float): Int =
+public fun DrawContext.applyElevationOverlayToColor(
+    color: Int,
+    elevationDp: Float,
+): Int =
     color.overlayColor(
         getElevationOverlayColorWithCorrectAlpha(
             elevationOverlayColor = elevationOverlayColor,

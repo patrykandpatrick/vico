@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,24 +31,26 @@ public fun m3ChartStyle(
     axisLabelColor: Color = MaterialTheme.colorScheme.onBackground,
     axisGuidelineColor: Color = MaterialTheme.colorScheme.outline,
     axisLineColor: Color = MaterialTheme.colorScheme.outline,
-    entityColors: List<Color> = listOf(
-        MaterialTheme.colorScheme.primary,
-        MaterialTheme.colorScheme.secondary,
-        MaterialTheme.colorScheme.tertiary,
-    ),
+    entityColors: List<Color> =
+        listOf(
+            MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.secondary,
+            MaterialTheme.colorScheme.tertiary,
+        ),
     elevationOverlayColor: Color = MaterialTheme.colorScheme.primary,
-): ChartStyle = remember(
-    axisLabelColor,
-    axisGuidelineColor,
-    axisLineColor,
-    entityColors,
-    elevationOverlayColor,
-) {
-    ChartStyle.fromColors(
-        axisLabelColor = axisLabelColor,
-        axisGuidelineColor = axisGuidelineColor,
-        axisLineColor = axisLineColor,
-        entityColors = entityColors,
-        elevationOverlayColor = elevationOverlayColor,
-    )
-}
+): ChartStyle =
+    remember(
+        axisLabelColor,
+        axisGuidelineColor,
+        axisLineColor,
+        entityColors,
+        elevationOverlayColor,
+    ) {
+        ChartStyle.fromColors(
+            axisLabelColor = axisLabelColor,
+            axisGuidelineColor = axisGuidelineColor,
+            axisLineColor = axisLineColor,
+            entityColors = entityColors,
+            elevationOverlayColor = elevationOverlayColor,
+        )
+    }

@@ -18,89 +18,69 @@ package com.patrykandpatrick.vico.compose.extension
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.scrollable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollState
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
-import com.patrykandpatrick.vico.core.model.Point
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
+import com.patrykandpatrick.vico.core.util.Point
 
 internal fun Modifier.chartTouchEvent(
     setTouchPoint: ((Point?) -> Unit)?,
     isScrollEnabled: Boolean,
     scrollableState: ChartScrollState,
     onZoom: OnZoom?,
-    interactionSource: MutableInteractionSource,
 ): Modifier =
     scrollable(
         state = scrollableState,
         orientation = Orientation.Horizontal,
-        interactionSource = interactionSource,
         reverseDirection = true,
         enabled = isScrollEnabled,
-    ).pointerInput(scrollableState, setTouchPoint, onZoom) {
-        coroutineScope {
+    )
+        .then(
             if (setTouchPoint != null) {
-                launch {
-                    detectTapGestures(
-                        onPress = {
-                            setTouchPoint(it.point)
-                            awaitRelease()
-                            setTouchPoint(null)
-                        },
-                    )
-                }
-            }
-
-            if (isScrollEnabled.not() && setTouchPoint != null) {
-                launch {
-                    detectHorizontalDragGestures(
-                        onDragCancel = {
-                            setTouchPoint(null)
-                        },
-                        onDragEnd = {
-                            setTouchPoint(null)
-                        },
-                        onDragStart = { offset ->
-                            setTouchPoint(offset.point)
-                        },
-                    ) { change, _ ->
-                        setTouchPoint(change.position.point)
+                pointerInput(setTouchPoint) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            when (event.type) {
+                                PointerEventType.Press -> setTouchPoint(event.changes.first().position.point)
+                                PointerEventType.Release -> setTouchPoint(null)
+                            }
+                        }
                     }
                 }
-            }
-
-            if (onZoom != null && isScrollEnabled) {
-                launch {
+            } else {
+                Modifier
+            },
+        )
+        .then(
+            if (!isScrollEnabled && setTouchPoint != null) {
+                pointerInput(setTouchPoint) {
+                    detectHorizontalDragGestures(
+                        onDragStart = { setTouchPoint(it.point) },
+                        onDragEnd = { setTouchPoint(null) },
+                        onDragCancel = { setTouchPoint(null) },
+                    ) { change, _ -> setTouchPoint(change.position.point) }
+                }
+            } else {
+                Modifier
+            },
+        )
+        .then(
+            if (isScrollEnabled && onZoom != null) {
+                pointerInput(setTouchPoint, onZoom) {
                     detectZoomGestures { centroid, zoom ->
                         setTouchPoint?.invoke(null)
                         onZoom(centroid, zoom)
                     }
                 }
-            }
-        }
-    }
+            } else {
+                Modifier
+            },
+        )
 
 private val Offset.point: Point
     get() = Point(x, y)
-
-/**
- * Adds the provided modifier elements to this modifier chain if [condition] is true.
- */
-public inline fun Modifier.addIf(
-    condition: Boolean,
-    crossinline factory: Modifier.() -> Modifier,
-): Modifier = if (condition) factory() else this
-
-/**
- * Adds the provided modifier elements to this modifier chain if [value] is not null.
- */
-public inline fun <T> Modifier.addIfNotNull(
-    value: T?,
-    crossinline factory: Modifier.(T) -> Modifier,
-): Modifier = if (value != null) factory(value) else this

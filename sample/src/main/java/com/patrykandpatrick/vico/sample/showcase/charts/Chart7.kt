@@ -26,10 +26,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.component.textComponent
@@ -41,36 +42,41 @@ import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.copy
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart7Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart7(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart7(
+    uiSystem: UISystem,
+    modelProducer: CartesianChartModelProducer,
+) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart7(chartEntryModelProducer)
-        UISystem.Views -> ViewChart7(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart7(modelProducer)
+        UISystem.Views -> ViewChart7(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ComposeChart7(modelProducer: CartesianChartModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        val defaultLines = currentChartStyle.lineChart.lines
+        val defaultLines = currentChartStyle.lineLayer.lines
         CartesianChartHost(
-            chart = lineChart(
-                remember(defaultLines) {
-                    defaultLines.map { defaultLine -> defaultLine.copy(lineBackgroundShader = null) }
-                },
-            ),
-            chartModelProducer = chartEntryModelProducer,
-            startAxis = startAxis(
-                label = rememberStartAxisLabel(),
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-            ),
-            bottomAxis = bottomAxis(),
+            chart =
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(
+                        remember(defaultLines) { defaultLines.map { it.copy(backgroundShader = null) } },
+                    ),
+                ),
+            modelProducer = modelProducer,
+            startAxis =
+                rememberStartAxis(
+                    label = rememberStartAxisLabel(),
+                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                ),
+            bottomAxis = rememberBottomAxis(),
             marker = rememberMarker(),
             legend = rememberLegend(),
             runInitialAnimation = false,
@@ -79,14 +85,14 @@ private fun ComposeChart7(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun ViewChart7(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ViewChart7(modelProducer: CartesianChartModelProducer) {
     val startAxisLabel = rememberStartAxisLabel()
     val marker = rememberMarker()
     val legend = rememberLegend()
     AndroidViewBinding(Chart7Binding::inflate) {
         with(chartView) {
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
+            this.modelProducer = modelProducer
             (startAxis as VerticalAxis).horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
             (startAxis as VerticalAxis).label = startAxisLabel
             this.marker = marker
@@ -96,33 +102,37 @@ private fun ViewChart7(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun rememberStartAxisLabel() = axisLabelComponent(
-    color = Color.Black,
-    verticalPadding = startAxisLabelVerticalPaddingValue,
-    horizontalPadding = startAxisLabelHorizontalPaddingValue,
-    verticalMargin = startAxisLabelMarginValue,
-    horizontalMargin = startAxisLabelMarginValue,
-    background = shapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
-)
+private fun rememberStartAxisLabel() =
+    axisLabelComponent(
+        color = Color.Black,
+        verticalPadding = startAxisLabelVerticalPaddingValue,
+        horizontalPadding = startAxisLabelHorizontalPaddingValue,
+        verticalMargin = startAxisLabelMarginValue,
+        horizontalMargin = startAxisLabelMarginValue,
+        background = shapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
+    )
 
 @Composable
-private fun rememberLegend() = verticalLegend(
-    items = chartColors.mapIndexed { index, chartColor ->
-        legendItem(
-            icon = shapeComponent(Shapes.pillShape, chartColor),
-            label = textComponent(
-                color = currentChartStyle.axis.axisLabelColor,
-                textSize = legendItemLabelTextSize,
-                typeface = Typeface.MONOSPACE,
-            ),
-            labelText = stringResource(R.string.data_set_x, index + 1),
-        )
-    },
-    iconSize = legendItemIconSize,
-    iconPadding = legendItemIconPaddingValue,
-    spacing = legendItemSpacing,
-    padding = legendPadding,
-)
+private fun rememberLegend() =
+    verticalLegend(
+        items =
+            chartColors.mapIndexed { index, chartColor ->
+                legendItem(
+                    icon = shapeComponent(Shapes.pillShape, chartColor),
+                    label =
+                        textComponent(
+                            color = currentChartStyle.axis.axisLabelColor,
+                            textSize = legendItemLabelTextSize,
+                            typeface = Typeface.MONOSPACE,
+                        ),
+                    labelText = stringResource(R.string.series_x, index + 1),
+                )
+            },
+        iconSize = legendItemIconSize,
+        iconPadding = legendItemIconPaddingValue,
+        spacing = legendItemSpacing,
+        padding = legendPadding,
+    )
 
 private const val COLOR_1_CODE = 0xffb983ff
 private const val COLOR_2_CODE = 0xff91b1fd

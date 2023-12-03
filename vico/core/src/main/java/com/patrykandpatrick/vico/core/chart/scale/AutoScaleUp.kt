@@ -17,11 +17,10 @@
 package com.patrykandpatrick.vico.core.chart.scale
 
 /**
- * Defines whether the content of a scrollable chart should be scaled up when the dimensions are such that, at a scale
- * factor of 1, an empty space would be visible near the end edge of the chart.
+ * Defines whether the content of a chart should be scaled up when the dimensions are such that, at a scale factor of 1,
+ * an empty space would be visible near the end edge of the chart.
  */
 public enum class AutoScaleUp {
-
     /**
      * Scales up the chart to prevent any empty space from being visible.
      */

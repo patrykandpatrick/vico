@@ -63,7 +63,7 @@ public fun <T> Iterable<T>.transformToSpannable(
         if (++count > 1) buffer.append(separator)
         if (limit < 0 || count <= limit) buffer.transform(element) else break
     }
-    if (limit in 0 until count) buffer.append(truncated)
+    if (limit in 0..<count) buffer.append(truncated)
     buffer.append(postfix)
     return buffer
 }

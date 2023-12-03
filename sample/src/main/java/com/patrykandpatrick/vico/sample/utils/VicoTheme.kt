@@ -25,15 +25,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 @Composable
-internal fun VicoTheme(content: @Composable () -> Unit) {
-    val darkColorScheme = darkColorScheme(
-        surface = Color(color = DARK_SURFACE),
-        background = Color.Black,
-    )
-    val lightColorScheme = lightColorScheme(
-        surface = Color.White,
-        background = Color(color = LIGHT_BACKGROUND),
-    )
+fun VicoTheme(content: @Composable () -> Unit) {
+    val darkColorScheme =
+        darkColorScheme(
+            surface = Color(color = DARK_SURFACE),
+            background = Color.Black,
+        )
+    val lightColorScheme =
+        lightColorScheme(
+            surface = Color.White,
+            background = Color(color = LIGHT_BACKGROUND),
+        )
     MaterialTheme(
         colorScheme = if (isSystemInDarkTheme()) darkColorScheme else lightColorScheme,
         typography = Typography(),

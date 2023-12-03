@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.extension.applyElevationOverlayToColor
  * @property color the shadow color.
  * @property applyElevationOverlay whether to apply an elevation overlay to the component casting the shadow.
  */
-@Suppress("ComplexCondition")
 public data class ComponentShadow(
     var radius: Float = 0f,
     var dx: Float = 0f,
@@ -50,11 +49,12 @@ public data class ComponentShadow(
         context: DrawContext,
         paint: Paint,
         backgroundColor: Int,
-    ): Unit = with(context) {
-        if (shouldUpdateShadowLayer()) {
-            updateShadowLayer(paint, backgroundColor)
+    ): Unit =
+        with(context) {
+            if (shouldUpdateShadowLayer()) {
+                updateShadowLayer(paint, backgroundColor)
+            }
         }
-    }
 
     private fun DrawContext.updateShadowLayer(
         paint: Paint,
@@ -63,11 +63,12 @@ public data class ComponentShadow(
         if (color == 0 || radius == 0f && dx == 0f && dy == 0f) {
             paint.clearShadowLayer()
         } else {
-            paint.color = if (applyElevationOverlay) {
-                applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius)
-            } else {
-                backgroundColor
-            }
+            paint.color =
+                if (applyElevationOverlay) {
+                    applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius)
+                } else {
+                    backgroundColor
+                }
             paint.setShadowLayer(
                 radius.pixels,
                 dx.pixels,

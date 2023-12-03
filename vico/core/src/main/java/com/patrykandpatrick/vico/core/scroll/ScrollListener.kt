@@ -20,16 +20,21 @@ package com.patrykandpatrick.vico.core.scroll
  * Allows for listening to a chart’s scroll state.
  */
 public interface ScrollListener {
-
     /**
      * Called when the scroll amount changes.
      */
-    public fun onValueChanged(oldValue: Float, newValue: Float): Unit = Unit
+    public fun onValueChanged(
+        oldValue: Float,
+        newValue: Float,
+    ): Unit = Unit
 
     /**
      * Called when the maximum scroll amount changes.
      */
-    public fun onMaxValueChanged(oldMaxValue: Float, newMaxValue: Float): Unit = Unit
+    public fun onMaxValueChanged(
+        oldMaxValue: Float,
+        newMaxValue: Float,
+    ): Unit = Unit
 
     /**
      * Called when the scroll has reached the limit and cannot be consumed further.

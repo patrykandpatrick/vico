@@ -22,14 +22,16 @@ package com.patrykandpatrick.vico.core.context
  * Extras are kept in memory while measuring or drawing is taking place. Afterwards, they are removed.
  */
 public interface Extras {
-
     /**
      * Saves an extra.
      *
      * @param key the extra’s unique identifier.
      * @param value the extra’s value.
      */
-    public fun putExtra(key: Any, value: Any)
+    public fun putExtra(
+        key: Any,
+        value: Any,
+    )
 
     /**
      * Checks whether an extra with the given key exists.
@@ -56,7 +58,10 @@ public interface Extras {
      *
      * @see putExtra
      */
-    public operator fun set(key: Any, value: Any): Unit = putExtra(key, value)
+    public operator fun set(
+        key: Any,
+        value: Any,
+    ): Unit = putExtra(key, value)
 
     /**
      * Operator function for [consumeExtra].
