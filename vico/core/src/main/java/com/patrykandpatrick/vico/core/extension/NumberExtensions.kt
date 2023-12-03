@@ -88,12 +88,6 @@ public inline val Float.doubled: Float
 /**
  * This value as an integer if this value is not null, or zero otherwise.
  */
-public inline val Number?.orZeroInt: Int
-    get() = this?.toInt() ?: 0
-
-/**
- * This value as an integer if this value is not null, or zero otherwise.
- */
 public inline val Float?.orZero: Float
     get() = this ?: 0f
 
@@ -137,11 +131,6 @@ public inline val ClosedFloatingPointRange<Float>.median: Float
  * Whether this value contains the provided bit flag.
  */
 public fun Int.hasFlag(flag: Int): Boolean = this and flag == flag
-
-/**
- * Whether this value contains any of the provided bit flags.
- */
-public fun Int.hasAnyFlagOf(vararg flags: Int): Boolean = flags.any(::hasFlag)
 
 /**
  * The first non-negative value of the values provided, or `null` if none of the values is non-negative.
