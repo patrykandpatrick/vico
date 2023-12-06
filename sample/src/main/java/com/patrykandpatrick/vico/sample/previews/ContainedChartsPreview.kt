@@ -31,9 +31,9 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
@@ -89,14 +89,14 @@ private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
 private val startAxis: Axis<Start>
     @Composable get() =
         rememberStartAxis(
-            label = textComponent(color = Color.Black),
+            label = rememberTextComponent(color = Color.Black),
             itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 5) },
         )
 
 private val endAxis: Axis<End>
     @Composable get() =
         rememberEndAxis(
-            label = textComponent(color = Color.DarkGray),
+            label = rememberTextComponent(color = Color.DarkGray),
             itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 7) },
         )
 

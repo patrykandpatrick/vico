@@ -34,9 +34,9 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
@@ -100,7 +100,8 @@ public fun ThresholdLine() {
                             ThresholdLine(
                                 thresholdValue = 2f,
                                 lineComponent = shapeComponent(color = Color.Black),
-                                labelComponent = textComponent(Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
+                                labelComponent =
+                                    rememberTextComponent(Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
                             ),
                         ),
                 ),
@@ -128,7 +129,7 @@ public fun ThresholdLineWithCustomText() {
                                 thresholdLabel = "Threshold line 1 📐",
                                 lineComponent = shapeComponent(color = Color.Black),
                                 labelComponent =
-                                    textComponent(
+                                    rememberTextComponent(
                                         color = Color.White,
                                         lineCount = 3,
                                         background =
@@ -156,7 +157,7 @@ public fun ThresholdLineWithCustomText() {
                                 thresholdLabel = "Threshold line 2 📐",
                                 lineComponent = shapeComponent(color = Color.DarkGray),
                                 labelComponent =
-                                    textComponent(
+                                    rememberTextComponent(
                                         color = Color.White,
                                         lineCount = 3,
                                         background =
@@ -203,7 +204,7 @@ public fun RangedThresholdLine() {
                                 thresholdRange = 2f..3f,
                                 lineComponent = shapeComponent(color = Color.Black.copy(alpha = 0.5f)),
                                 labelComponent =
-                                    textComponent(
+                                    rememberTextComponent(
                                         color = Color.Black,
                                         padding = dimensionsOf(horizontal = 8.dp),
                                     ),
@@ -244,7 +245,7 @@ public fun RangedThresholdLineWithBrushShader() {
                                             ).toDynamicShader(),
                                     ),
                                 labelComponent =
-                                    textComponent(
+                                    rememberTextComponent(
                                         color = Color.Black,
                                         padding = dimensionsOf(horizontal = 8.dp),
                                     ),
@@ -284,7 +285,7 @@ public fun RangedThresholdLineWithComponentShader() {
                                         strokeColor = Color.Black,
                                     ),
                                 labelComponent =
-                                    textComponent(
+                                    rememberTextComponent(
                                         color = Color.Black,
                                         padding = dimensionsOf(horizontal = 8.dp),
                                     ),

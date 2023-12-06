@@ -32,8 +32,8 @@ import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
@@ -97,7 +97,10 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
                     rememberLineCartesianLayer(
                         lines =
                             listOf(
-                                lineSpec(shader = DynamicShaders.color(Color.DarkGray), dataLabel = textComponent()),
+                                lineSpec(
+                                    shader = DynamicShaders.color(Color.DarkGray),
+                                    dataLabel = rememberTextComponent(),
+                                ),
                             ),
                     ),
                 ),

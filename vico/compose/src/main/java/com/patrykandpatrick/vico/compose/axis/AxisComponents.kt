@@ -28,9 +28,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.chartShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -72,7 +72,7 @@ public fun axisLabelComponent(
     typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
     textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
 ): TextComponent =
-    textComponent(
+    rememberTextComponent(
         color,
         textSize,
         background,
@@ -117,7 +117,7 @@ public fun axisLabelComponent(
     typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
     textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
 ): TextComponent =
-    textComponent(
+    rememberTextComponent(
         color,
         textSize,
         background,

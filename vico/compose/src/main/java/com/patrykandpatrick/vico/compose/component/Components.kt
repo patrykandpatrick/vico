@@ -237,7 +237,7 @@ public fun overlayingComponent(
     )
 
 /**
- * Creates a [TextComponent].
+ * Creates and remembers a [TextComponent].
  *
  * @param color the text color.
  * @param textSize the text size.
@@ -250,7 +250,7 @@ public fun overlayingComponent(
  * @param textAlignment the text alignment.
  */
 @Composable
-public fun textComponent(
+public fun rememberTextComponent(
     color: Color = Color.Black,
     textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
     background: ShapeComponent? = null,

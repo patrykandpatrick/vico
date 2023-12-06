@@ -27,8 +27,8 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
@@ -108,7 +108,7 @@ private fun ViewChart2(modelProducer: CartesianChartModelProducer) {
 private fun rememberThresholdLine(): ThresholdLine {
     val line = shapeComponent(color = color2)
     val label =
-        textComponent(
+        rememberTextComponent(
             color = Color.Black,
             background = shapeComponent(Shapes.pillShape, color2),
             padding = thresholdLineLabelPadding,

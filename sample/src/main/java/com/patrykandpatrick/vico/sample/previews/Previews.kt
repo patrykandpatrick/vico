@@ -40,11 +40,11 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -87,7 +87,7 @@ public fun ColumnChartCard(): Unit =
                 startAxis =
                     createVerticalAxis {
                         label =
-                            textComponent(
+                            rememberTextComponent(
                                 color = colors.primary,
                                 textSize = 10.sp,
                                 background =
@@ -153,7 +153,7 @@ public fun LineChartCard(): Unit =
                 startAxis =
                     createVerticalAxis {
                         label =
-                            textComponent(
+                            rememberTextComponent(
                                 color = colors.onSurface,
                                 textSize = 10.sp,
                                 background = shapeComponent(shape = rectShape, color = Color.LightGray),

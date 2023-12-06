@@ -31,9 +31,9 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
@@ -120,7 +120,7 @@ private fun rememberLegend() =
                 legendItem(
                     icon = shapeComponent(Shapes.pillShape, chartColor),
                     label =
-                        textComponent(
+                        rememberTextComponent(
                             color = currentChartStyle.axis.axisLabelColor,
                             textSize = legendItemLabelTextSize,
                             typeface = Typeface.MONOSPACE,

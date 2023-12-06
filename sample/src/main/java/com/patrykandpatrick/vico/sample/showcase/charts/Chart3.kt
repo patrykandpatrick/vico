@@ -30,8 +30,8 @@ import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -68,7 +68,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
                     guideline = null,
                     horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
                     titleComponent =
-                        textComponent(
+                        rememberTextComponent(
                             color = Color.Black,
                             background = shapeComponent(Shapes.pillShape, color1),
                             padding = axisTitlePadding,
@@ -80,7 +80,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
             bottomAxis =
                 rememberBottomAxis(
                     titleComponent =
-                        textComponent(
+                        rememberTextComponent(
                             background = shapeComponent(Shapes.pillShape, color2),
                             color = Color.White,
                             padding = axisTitlePadding,
