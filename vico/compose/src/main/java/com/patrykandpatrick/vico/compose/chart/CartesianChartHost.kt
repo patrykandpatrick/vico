@@ -46,7 +46,7 @@ import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
 import com.patrykandpatrick.vico.compose.extension.chartTouchEvent
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
-import com.patrykandpatrick.vico.compose.layout.getMeasureContext
+import com.patrykandpatrick.vico.compose.layout.rememberMutableMeasureContext
 import com.patrykandpatrick.vico.compose.model.collectAsState
 import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.state.component1
@@ -270,7 +270,7 @@ internal fun CartesianChartHostImpl(
     val zoom = remember { mutableFloatStateOf(0f) }
     val wasZoomOverridden = remember { mutableStateOf(false) }
     val measureContext =
-        getMeasureContext(
+        rememberMutableMeasureContext(
             chartScrollSpec.isScrollEnabled,
             bounds,
             horizontalLayout,

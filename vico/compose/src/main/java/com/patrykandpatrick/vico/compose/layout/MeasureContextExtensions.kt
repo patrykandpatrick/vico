@@ -25,12 +25,11 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 
 /**
- * The anonymous implementation of the [MeasureContext].
+ * Creates and remembers a [MutableMeasureContext] instance.
  *
  * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
  * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
@@ -39,7 +38,7 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModel
  * @param chartValues houses the [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
  */
 @Composable
-public fun getMeasureContext(
+public fun rememberMutableMeasureContext(
     isHorizontalScrollEnabled: Boolean,
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,
