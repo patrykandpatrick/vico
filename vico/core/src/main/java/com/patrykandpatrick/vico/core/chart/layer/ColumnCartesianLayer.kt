@@ -67,7 +67,7 @@ public open class ColumnCartesianLayer(
     public var columns: List<LineComponent>,
     public var spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
     public var innerSpacingDp: Float = DefaultDimens.COLUMN_INSIDE_SPACING,
-    public var mergeMode: MergeMode = MergeMode.Grouped,
+    public var mergeMode: (ColumnCartesianLayerModel) -> MergeMode = { MergeMode.Grouped },
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var dataLabel: TextComponent? = null,
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
@@ -143,11 +143,12 @@ public open class ColumnCartesianLayer(
         var columnTop: Float
         var columnBottom: Float
         val zeroLinePosition = bounds.bottom + yRange.minY / yRange.length * bounds.height()
+        val mergeMode = mergeMode(model)
 
         model.series.forEachIndexed { index, entryCollection ->
 
             column = columns.getRepeating(index)
-            drawingStart = getDrawingStart(index, model.series.size) - horizontalScroll
+            drawingStart = getDrawingStart(index, model.series.size, mergeMode) - horizontalScroll
 
             entryCollection.forEachInIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry ->
 
@@ -208,6 +209,7 @@ public open class ColumnCartesianLayer(
                         y = columnSignificantY,
                         isFirst = index == 0 && entry.x == chartValues.minX,
                         isLast = index == model.series.lastIndex && entry.x == chartValues.maxX,
+                        mergeMode = mergeMode,
                     )
                 } else if (index == model.series.lastIndex) {
                     val yValues = heightMap[entry.x]
@@ -221,6 +223,7 @@ public open class ColumnCartesianLayer(
                         heightMultiplier = heightMultiplier,
                         isFirst = entry.x == chartValues.minX,
                         isLast = entry.x == chartValues.maxX,
+                        mergeMode = mergeMode,
                     )
                 }
             }
@@ -237,14 +240,15 @@ public open class ColumnCartesianLayer(
         heightMultiplier: Float,
         isFirst: Boolean,
         isLast: Boolean,
+        mergeMode: MergeMode,
     ) {
         if (positiveY != null && positiveY > 0f) {
             val y = zeroLinePosition - positiveY * heightMultiplier
-            drawDataLabel(modelEntriesSize, columnThicknessDp, positiveY, x, y, isFirst, isLast)
+            drawDataLabel(modelEntriesSize, columnThicknessDp, positiveY, x, y, isFirst, isLast, mergeMode)
         }
         if (negativeY != null && negativeY < 0f) {
             val y = zeroLinePosition + abs(negativeY) * heightMultiplier
-            drawDataLabel(modelEntriesSize, columnThicknessDp, negativeY, x, y, isFirst, isLast)
+            drawDataLabel(modelEntriesSize, columnThicknessDp, negativeY, x, y, isFirst, isLast, mergeMode)
         }
     }
 
@@ -256,6 +260,7 @@ public open class ColumnCartesianLayer(
         y: Float,
         isFirst: Boolean,
         isLast: Boolean,
+        mergeMode: MergeMode,
     ) {
         dataLabel?.let { textComponent ->
 
@@ -340,6 +345,7 @@ public open class ColumnCartesianLayer(
         chartValues: MutableChartValues,
         model: ColumnCartesianLayerModel,
     ) {
+        val mergeMode = mergeMode(model)
         chartValues.tryUpdate(
             axisPosition = verticalAxisPosition,
             minX = axisValueOverrider?.getMinX(model) ?: model.minX,
@@ -356,7 +362,7 @@ public open class ColumnCartesianLayer(
     ) {
         with(context) {
             val columnCollectionWidth =
-                getColumnCollectionWidth(if (model.series.isNotEmpty()) model.series.size else 1)
+                getColumnCollectionWidth(if (model.series.isNotEmpty()) model.series.size else 1, mergeMode(model))
             val xSpacing = columnCollectionWidth + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> {
@@ -381,7 +387,10 @@ public open class ColumnCartesianLayer(
         }
     }
 
-    protected open fun MeasureContext.getColumnCollectionWidth(entryCollectionSize: Int): Float =
+    protected open fun MeasureContext.getColumnCollectionWidth(
+        entryCollectionSize: Int,
+        mergeMode: MergeMode,
+    ): Float =
         when (mergeMode) {
             MergeMode.Stacked ->
                 columns.take(entryCollectionSize).maxOf { it.thicknessDp.pixels }
@@ -393,6 +402,7 @@ public open class ColumnCartesianLayer(
     protected open fun ChartDrawContext.getDrawingStart(
         entryCollectionIndex: Int,
         entryCollectionCount: Int,
+        mergeMode: MergeMode,
     ): Float {
         val mergeModeComponent =
             when (mergeMode) {
@@ -403,7 +413,7 @@ public open class ColumnCartesianLayer(
             }
         return bounds.getStart(isLtr) + (
             horizontalDimensions.startPadding +
-                (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount).half) * zoom
+                (mergeModeComponent - getColumnCollectionWidth(entryCollectionCount, mergeMode).half) * zoom
         ) * layoutDirectionMultiplier
     }
 

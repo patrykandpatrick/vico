@@ -66,7 +66,10 @@ public fun StackedColumnChartWithNegativeValues() {
             modifier = Modifier.height(250.dp),
             chart =
                 rememberCartesianChart(
-                    rememberColumnCartesianLayer(columns = columns, mergeMode = ColumnCartesianLayer.MergeMode.Stacked),
+                    rememberColumnCartesianLayer(
+                        columns = columns,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
+                    ),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
                 ),
             model = model,
@@ -86,7 +89,7 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
                     rememberColumnCartesianLayer(
                         columns = columns,
                         dataLabel = textComponent(),
-                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                 ),
             model = model,
@@ -106,7 +109,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                     rememberColumnCartesianLayer(
                         columns = columns,
                         axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f),
-                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                 ),
             model = model,
@@ -126,7 +129,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                     rememberColumnCartesianLayer(
                         columns = columns,
                         axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f),
-                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                 ),
             model = model,

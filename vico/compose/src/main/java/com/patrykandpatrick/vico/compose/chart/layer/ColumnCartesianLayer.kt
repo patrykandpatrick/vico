@@ -58,7 +58,7 @@ public fun rememberColumnCartesianLayer(
     columns: List<LineComponent> = currentChartStyle.columnLayer.columns,
     spacing: Dp = currentChartStyle.columnLayer.outsideSpacing,
     innerSpacing: Dp = currentChartStyle.columnLayer.innerSpacing,
-    mergeMode: MergeMode = currentChartStyle.columnLayer.mergeMode,
+    mergeMode: (ColumnCartesianLayerModel) -> MergeMode = with(currentChartStyle) { { columnLayer.mergeMode } },
     verticalAxisPosition: AxisPosition.Vertical? = null,
     dataLabel: TextComponent? = currentChartStyle.columnLayer.dataLabel,
     dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnLayer.dataLabelVerticalPosition,

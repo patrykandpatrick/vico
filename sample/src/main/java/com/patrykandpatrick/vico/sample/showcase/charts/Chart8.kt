@@ -54,7 +54,7 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer) {
             chart =
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(
-                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                         verticalAxisPosition = AxisPosition.Vertical.Start,
                     ),
                     rememberLineCartesianLayer(verticalAxisPosition = AxisPosition.Vertical.End),

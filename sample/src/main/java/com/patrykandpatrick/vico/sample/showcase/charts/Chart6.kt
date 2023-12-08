@@ -74,7 +74,7 @@ private fun ComposeChart6(modelProducer: CartesianChartModelProducer) {
                                 )
                             }
                         },
-                        mergeMode = ColumnCartesianLayer.MergeMode.Grouped,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Grouped },
                     ),
                     decorations = remember(thresholdLine) { listOf(thresholdLine) },
                 ),

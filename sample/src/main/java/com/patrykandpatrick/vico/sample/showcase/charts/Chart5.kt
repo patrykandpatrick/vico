@@ -81,7 +81,7 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer) {
                                     )
                                 }
                             },
-                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                 ),
             modelProducer = modelProducer,
