@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.component.shapeComponent
@@ -65,7 +65,7 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
                 LocalChartStyle.current.columnLayer.copy(
                     columns =
                         LocalChartStyle.current.columnLayer.columns.map {
-                            lineComponent(
+                            rememberLineComponent(
                                 color = Color.DimmedGray,
                                 thickness = it.thicknessDp.dp,
                                 shape = it.shape,

@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
@@ -61,7 +61,7 @@ private fun getColumnLayer(verticalAxisPosition: Vertical? = null) =
     rememberColumnCartesianLayer(
         columns =
             listOf(
-                lineComponent(
+                rememberLineComponent(
                     color = Color.Black,
                     thickness = 8.dp,
                     shape = Shapes.pillShape,

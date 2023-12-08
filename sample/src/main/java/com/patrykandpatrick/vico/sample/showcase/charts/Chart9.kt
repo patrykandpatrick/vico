@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
@@ -137,7 +137,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                     axis = null,
                     tick = null,
                     guideline =
-                        lineComponent(
+                        rememberLineComponent(
                             thickness = 1.dp,
                             color = MaterialTheme.colorScheme.outlineVariant,
                             shape =

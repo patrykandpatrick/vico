@@ -23,8 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.lineComponent
 import com.patrykandpatrick.vico.compose.component.overlayingComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
@@ -73,7 +73,7 @@ internal fun rememberMarker(): Marker {
             innerPaddingAll = indicatorCenterAndOuterComponentPaddingValue,
         )
     val guideline =
-        lineComponent(
+        rememberLineComponent(
             MaterialTheme.colorScheme.onSurface.copy(GUIDELINE_ALPHA),
             guidelineThickness,
             guidelineShape,

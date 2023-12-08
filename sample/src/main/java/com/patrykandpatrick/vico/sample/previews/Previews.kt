@@ -39,7 +39,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
@@ -75,7 +75,7 @@ public fun ColumnChartCard(): Unit =
                     rememberCartesianChart(
                         rememberColumnCartesianLayer(
                             listOf(
-                                lineComponent(
+                                rememberLineComponent(
                                     color = colors.primary,
                                     thickness = 8.dp,
                                     shape = RoundedCornerShape(4.dp),
@@ -179,7 +179,7 @@ public fun LineChartCard(): Unit =
                         label = null
                         tick = null
                         guideline = null
-                        axis = lineComponent(color = Color.LightGray, thickness = 1.dp)
+                        axis = rememberLineComponent(color = Color.LightGray, thickness = 1.dp)
                     },
             )
         }

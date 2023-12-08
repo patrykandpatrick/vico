@@ -53,7 +53,7 @@ public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Sha
  * Creates a [LineComponent] with the specified properties.
  */
 @Composable
-public fun lineComponent(
+public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp,
     shape: ChartShape,
@@ -86,7 +86,7 @@ public fun lineComponent(
  * Creates a [LineComponent] with the specified properties.
  */
 @Composable
-public fun lineComponent(
+public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp = DefaultDimens.COLUMN_WIDTH.dp,
     shape: Shape = RectangleShape,
@@ -95,7 +95,7 @@ public fun lineComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): LineComponent =
-    lineComponent(
+    rememberLineComponent(
         color = color,
         thickness = thickness,
         shape = shape.chartShape(),

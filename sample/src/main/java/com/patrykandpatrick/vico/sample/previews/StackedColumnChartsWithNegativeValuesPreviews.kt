@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
@@ -52,9 +52,9 @@ private val columns: List<LineComponent>
     @Composable
     get() =
         listOf(
-            lineComponent(color = Color(0xFF494949), thickness = 8.dp),
-            lineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
-            lineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
+            rememberLineComponent(color = Color(0xFF494949), thickness = 8.dp),
+            rememberLineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
+            rememberLineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
         )
 
 @Preview

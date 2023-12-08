@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -56,7 +56,7 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
                 LocalChartStyle.current.columnLayer.copy(
                     columns =
                         LocalChartStyle.current.columnLayer.columns.map {
-                            lineComponent(
+                            rememberLineComponent(
                                 color = Color.Gray,
                                 thickness = it.thicknessDp.dp,
                                 shape = it.shape,
