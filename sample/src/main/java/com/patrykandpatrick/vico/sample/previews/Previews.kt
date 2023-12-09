@@ -83,34 +83,34 @@ public fun ColumnChartCard(): Unit =
                                 ),
                             ),
                         ),
-                    ),
-                startAxis =
-                    createVerticalAxis {
-                        label =
-                            rememberTextComponent(
-                                color = colors.primary,
-                                textSize = 10.sp,
-                                background =
-                                    rememberShapeComponent(
-                                        shape =
-                                            CutCornerShape(
-                                                CornerSize(percent = 25),
-                                                CornerSize(percent = 50),
-                                                CornerSize(percent = 50),
-                                                CornerSize(percent = 25),
+                        startAxis =
+                            createVerticalAxis {
+                                label =
+                                    rememberTextComponent(
+                                        color = colors.primary,
+                                        textSize = 10.sp,
+                                        background =
+                                            rememberShapeComponent(
+                                                shape =
+                                                    CutCornerShape(
+                                                        CornerSize(percent = 25),
+                                                        CornerSize(percent = 50),
+                                                        CornerSize(percent = 50),
+                                                        CornerSize(percent = 25),
+                                                    ),
+                                                color = colors.primary.copy(alpha = 0.1f),
                                             ),
-                                        color = colors.primary.copy(alpha = 0.1f),
-                                    ),
-                                padding = dimensionsOf(end = 8.dp, start = 4.dp),
-                            )
-                        axis = null
-                        tick = null
-                        guideline =
-                            LineComponent(
-                                colors.primary.copy(alpha = 0.1f).toArgb(),
-                                1.dp.value,
-                            )
-                    },
+                                        padding = dimensionsOf(end = 8.dp, start = 4.dp),
+                                    )
+                                axis = null
+                                tick = null
+                                guideline =
+                                    LineComponent(
+                                        colors.primary.copy(alpha = 0.1f).toArgb(),
+                                        1.dp.value,
+                                    )
+                            },
+                    ),
                 model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
             )
         }
@@ -143,6 +143,37 @@ public fun LineChartCard(): Unit =
                             ),
                             axisValueOverrider = AxisValueOverrider.fixed(minX = 0f, maxY = 3f),
                         ),
+                        startAxis =
+                            createVerticalAxis {
+                                label =
+                                    rememberTextComponent(
+                                        color = colors.onSurface,
+                                        textSize = 10.sp,
+                                        background = rememberShapeComponent(shape = rectShape, color = Color.LightGray),
+                                        padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
+                                    )
+                                axis = null
+                                tick = null
+                                guideline =
+                                    LineComponent(
+                                        color = Color.LightGray.toArgb(),
+                                        thicknessDp = 1.dp.value,
+                                        shape =
+                                            DashedShape(
+                                                shape = pillShape,
+                                                dashLengthDp = 2.dp.value,
+                                                gapLengthDp = 4.dp.value,
+                                            ),
+                                    )
+                                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
+                            },
+                        bottomAxis =
+                            createHorizontalAxis {
+                                label = null
+                                tick = null
+                                guideline = null
+                                axis = rememberLineComponent(color = Color.LightGray, thickness = 1.dp)
+                            },
                     ),
                 model =
                     CartesianChartModel(
@@ -150,37 +181,6 @@ public fun LineChartCard(): Unit =
                             series(x = listOf(-1, 0, 1, 2, 3, 4, 5), y = listOf(0, 0, 1, 2, 0, 2, 1))
                         },
                     ),
-                startAxis =
-                    createVerticalAxis {
-                        label =
-                            rememberTextComponent(
-                                color = colors.onSurface,
-                                textSize = 10.sp,
-                                background = rememberShapeComponent(shape = rectShape, color = Color.LightGray),
-                                padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
-                            )
-                        axis = null
-                        tick = null
-                        guideline =
-                            LineComponent(
-                                color = Color.LightGray.toArgb(),
-                                thicknessDp = 1.dp.value,
-                                shape =
-                                    DashedShape(
-                                        shape = pillShape,
-                                        dashLengthDp = 2.dp.value,
-                                        gapLengthDp = 4.dp.value,
-                                    ),
-                            )
-                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
-                    },
-                bottomAxis =
-                    createHorizontalAxis {
-                        label = null
-                        tick = null
-                        guideline = null
-                        axis = rememberLineComponent(color = Color.LightGray, thickness = 1.dp)
-                    },
             )
         }
     }

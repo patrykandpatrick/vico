@@ -83,14 +83,14 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer) {
                             },
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
+                    startAxis =
+                        rememberStartAxis(
+                            itemPlacer = startAxisItemPlacer,
+                            labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
+                        ),
+                    bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
                 ),
             modelProducer = modelProducer,
-            startAxis =
-                rememberStartAxis(
-                    itemPlacer = startAxisItemPlacer,
-                    labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
-                ),
-            bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -104,7 +104,7 @@ private fun ViewChart5(modelProducer: CartesianChartModelProducer) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
+            (chart?.startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
             this.marker = marker
         }
     }

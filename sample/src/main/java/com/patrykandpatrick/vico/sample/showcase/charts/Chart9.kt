@@ -117,51 +117,51 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                                 ),
                             ),
                     ),
-                ),
-            modelProducer = modelProducer,
-            startAxis =
-                rememberStartAxis(
-                    label =
-                        axisLabelComponent(
-                            color = MaterialTheme.colorScheme.onBackground,
-                            background =
-                                rememberShapeComponent(
-                                    shape = Shapes.pillShape,
-                                    color = MaterialTheme.colorScheme.background,
-                                    strokeColor = MaterialTheme.colorScheme.outlineVariant,
-                                    strokeWidth = 1.dp,
+                    startAxis =
+                        rememberStartAxis(
+                            label =
+                                axisLabelComponent(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    background =
+                                        rememberShapeComponent(
+                                            shape = Shapes.pillShape,
+                                            color = MaterialTheme.colorScheme.background,
+                                            strokeColor = MaterialTheme.colorScheme.outlineVariant,
+                                            strokeWidth = 1.dp,
+                                        ),
+                                    padding = remember { dimensionsOf(horizontal = 6.dp, vertical = 2.dp) },
+                                    margins = remember { dimensionsOf(end = 8.dp) },
                                 ),
-                            padding = remember { dimensionsOf(horizontal = 6.dp, vertical = 2.dp) },
-                            margins = remember { dimensionsOf(end = 8.dp) },
+                            axis = null,
+                            tick = null,
+                            guideline =
+                                rememberLineComponent(
+                                    thickness = 1.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant,
+                                    shape =
+                                        remember {
+                                            Shapes.dashedShape(
+                                                shape = Shapes.pillShape,
+                                                dashLength = 4.dp,
+                                                gapLength = 8.dp,
+                                            )
+                                        },
+                                ),
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
                         ),
-                    axis = null,
-                    tick = null,
-                    guideline =
-                        rememberLineComponent(
-                            thickness = 1.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant,
-                            shape =
+                    bottomAxis =
+                        rememberBottomAxis(
+                            guideline = null,
+                            itemPlacer =
                                 remember {
-                                    Shapes.dashedShape(
-                                        shape = Shapes.pillShape,
-                                        dashLength = 4.dp,
-                                        gapLength = 8.dp,
+                                    AxisItemPlacer.Horizontal.default(
+                                        spacing = 3,
+                                        addExtremeLabelPadding = true,
                                     )
                                 },
                         ),
-                    itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
                 ),
-            bottomAxis =
-                rememberBottomAxis(
-                    guideline = null,
-                    itemPlacer =
-                        remember {
-                            AxisItemPlacer.Horizontal.default(
-                                spacing = 3,
-                                addExtremeLabelPadding = true,
-                            )
-                        },
-                ),
+            modelProducer = modelProducer,
             marker = marker,
             runInitialAnimation = false,
             horizontalLayout = HorizontalLayout.fullWidth(),
@@ -177,7 +177,7 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (bottomAxis as Axis).guideline = null
+            (chart?.bottomAxis as Axis).guideline = null
             this.marker = marker
             with(chart?.layers?.get(0) as LineCartesianLayer) {
                 lines =

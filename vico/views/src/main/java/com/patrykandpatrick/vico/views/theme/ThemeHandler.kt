@@ -29,6 +29,7 @@ import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.CartesianChart
@@ -45,18 +46,6 @@ internal class ThemeHandler(
     private val context: Context,
     attrs: AttributeSet?,
 ) {
-    public var startAxis: Axis<AxisPosition.Vertical.Start>? = null
-        private set
-
-    public var topAxis: Axis<AxisPosition.Horizontal.Top>? = null
-        private set
-
-    public var endAxis: Axis<AxisPosition.Vertical.End>? = null
-        private set
-
-    public var bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null
-        private set
-
     public var isHorizontalScrollEnabled: Boolean = false
         private set
 
@@ -66,49 +55,17 @@ internal class ThemeHandler(
     public var chart: CartesianChart? = null
         private set
 
-    public var fadingEdges: FadingEdges? = null
-        private set
-
     lateinit var horizontalLayout: HorizontalLayout
         private set
 
     init {
         context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use { typedArray ->
-            if (typedArray.getBoolean(R.styleable.CartesianChartView_showStartAxis, false)) {
-                startAxis =
-                    typedArray.getAxisBuilder(
-                        R.styleable.CartesianChartView_startAxisStyle,
-                        VerticalAxis.Builder(),
-                    ).build()
-            }
-            if (typedArray.getBoolean(R.styleable.CartesianChartView_showTopAxis, false)) {
-                topAxis =
-                    typedArray.getAxisBuilder(
-                        R.styleable.CartesianChartView_topAxisStyle,
-                        HorizontalAxis.Builder(),
-                    ).build()
-            }
-            if (typedArray.getBoolean(R.styleable.CartesianChartView_showEndAxis, false)) {
-                endAxis =
-                    typedArray.getAxisBuilder(
-                        R.styleable.CartesianChartView_endAxisStyle,
-                        VerticalAxis.Builder(),
-                    ).build()
-            }
-            if (typedArray.getBoolean(R.styleable.CartesianChartView_showBottomAxis, false)) {
-                bottomAxis =
-                    typedArray.getAxisBuilder(
-                        R.styleable.CartesianChartView_bottomAxisStyle,
-                        HorizontalAxis.Builder(),
-                    ).build()
-            }
             isHorizontalScrollEnabled =
                 typedArray
                     .getBoolean(R.styleable.CartesianChartView_chartHorizontalScrollingEnabled, true)
             isChartZoomEnabled =
                 typedArray
                     .getBoolean(R.styleable.CartesianChartView_chartZoomEnabled, true)
-            fadingEdges = typedArray.getFadingEdges()
             horizontalLayout = typedArray.getHorizontalLayout()
 
             context
@@ -249,11 +206,18 @@ internal class ThemeHandler(
             if (layerFlags.hasFlag(LINE_LAYER)) baseTypedArray.getLineCartesianLayer(context) else null
 
         return CartesianChart(
-            buildList {
-                if (columnLayer != null) add(columnLayer)
-                if (lineLayer != null) add(lineLayer)
-            },
-        )
+            layers =
+                buildList {
+                    if (columnLayer != null) add(columnLayer)
+                    if (lineLayer != null) add(lineLayer)
+                },
+            fadingEdges = baseTypedArray.getFadingEdges(),
+        ).apply {
+            startAxis = baseTypedArray.getStartAxis()
+            topAxis = baseTypedArray.getTopAxis()
+            endAxis = baseTypedArray.getEndAxis()
+            bottomAxis = baseTypedArray.getBottomAxis()
+        }
     }
 
     private fun TypedArray.getFadingEdges(): FadingEdges? {
@@ -303,6 +267,38 @@ internal class ThemeHandler(
             maxItemCount = getInteger(R.styleable.Axis_maxVerticalAxisItemCount, DEF_LABEL_COUNT),
             shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true),
         )
+
+    private fun TypedArray.getStartAxis(): AxisRenderer<AxisPosition.Vertical.Start>? =
+        if (getBoolean(R.styleable.CartesianChartView_showStartAxis, false)) {
+            getAxisBuilder(R.styleable.CartesianChartView_startAxisStyle, VerticalAxis.Builder())
+                .build<AxisPosition.Vertical.Start>()
+        } else {
+            null
+        }
+
+    private fun TypedArray.getTopAxis(): AxisRenderer<AxisPosition.Horizontal.Top>? =
+        if (getBoolean(R.styleable.CartesianChartView_showTopAxis, false)) {
+            getAxisBuilder(R.styleable.CartesianChartView_topAxisStyle, HorizontalAxis.Builder())
+                .build<AxisPosition.Horizontal.Top>()
+        } else {
+            null
+        }
+
+    private fun TypedArray.getEndAxis(): AxisRenderer<AxisPosition.Vertical.End>? =
+        if (getBoolean(R.styleable.CartesianChartView_showEndAxis, false)) {
+            getAxisBuilder(R.styleable.CartesianChartView_endAxisStyle, VerticalAxis.Builder())
+                .build<AxisPosition.Vertical.End>()
+        } else {
+            null
+        }
+
+    private fun TypedArray.getBottomAxis(): AxisRenderer<AxisPosition.Horizontal.Bottom>? =
+        if (getBoolean(R.styleable.CartesianChartView_showBottomAxis, false)) {
+            getAxisBuilder(R.styleable.CartesianChartView_bottomAxisStyle, HorizontalAxis.Builder())
+                .build<AxisPosition.Horizontal.Bottom>()
+        } else {
+            null
+        }
 
     private companion object {
         const val COLUMN_LAYER = 1

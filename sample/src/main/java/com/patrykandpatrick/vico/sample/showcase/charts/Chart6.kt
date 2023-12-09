@@ -76,11 +76,11 @@ private fun ComposeChart6(modelProducer: CartesianChartModelProducer) {
                         },
                         mergeMode = { ColumnCartesianLayer.MergeMode.Grouped },
                     ),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
                     decorations = remember(thresholdLine) { listOf(thresholdLine) },
                 ),
             modelProducer = modelProducer,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -97,7 +97,8 @@ private fun ViewChart6(modelProducer: CartesianChartModelProducer) {
             chart?.setDecorations(decorations)
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (bottomAxis as? HorizontalAxis<AxisPosition.Horizontal.Bottom>)?.valueFormatter = bottomAxisValueFormatter
+            (chart?.bottomAxis as HorizontalAxis<AxisPosition.Horizontal.Bottom>).valueFormatter =
+                bottomAxisValueFormatter
             this.marker = marker
         }
     }

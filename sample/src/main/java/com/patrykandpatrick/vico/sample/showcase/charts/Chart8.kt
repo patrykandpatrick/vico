@@ -58,10 +58,10 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer) {
                         verticalAxisPosition = AxisPosition.Vertical.Start,
                     ),
                     rememberLineCartesianLayer(verticalAxisPosition = AxisPosition.Vertical.End),
+                    startAxis = rememberStartAxis(guideline = null),
+                    endAxis = rememberEndAxis(),
                 ),
             modelProducer = modelProducer,
-            startAxis = rememberStartAxis(guideline = null),
-            endAxis = rememberEndAxis(),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -77,7 +77,7 @@ private fun ViewChart8(modelProducer: CartesianChartModelProducer) {
             (chart?.layers?.get(1) as LineCartesianLayer).verticalAxisPosition = AxisPosition.Vertical.End
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (startAxis as Axis).guideline = null
+            (chart?.startAxis as Axis).guideline = null
             this.marker = marker
         }
     }

@@ -42,11 +42,14 @@ public fun DefaultColumnChart(
 ) {
     PreviewSurface {
         CartesianChartHost(
-            chart = rememberCartesianChart(rememberColumnCartesianLayer()),
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
+                ),
             model = model,
             oldModel = oldModel,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
             chartScrollSpec =
                 rememberChartScrollSpec(
                     isScrollEnabled = scrollable,

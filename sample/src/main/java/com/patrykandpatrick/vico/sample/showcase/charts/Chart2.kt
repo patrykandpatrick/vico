@@ -73,11 +73,12 @@ private fun ComposeChart2(modelProducer: CartesianChartModelProducer) {
                             defaultColumns.map { LineComponent(it.color, COLUMN_WIDTH_DP, it.shape) }
                         },
                     ),
+                    startAxis =
+                        rememberStartAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
+                    bottomAxis = rememberBottomAxis(itemPlacer = bottomAxisItemPlacer),
                     decorations = remember(thresholdLine) { listOf(thresholdLine) },
                 ),
             modelProducer = modelProducer,
-            startAxis = rememberStartAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
-            bottomAxis = rememberBottomAxis(itemPlacer = bottomAxisItemPlacer),
             marker = rememberMarker(),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
@@ -94,11 +95,11 @@ private fun ViewChart2(modelProducer: CartesianChartModelProducer) {
             chart?.addDecoration(thresholdLine)
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            with(startAxis as VerticalAxis) {
+            with(chart?.startAxis as VerticalAxis) {
                 itemPlacer = startAxisItemPlacer
                 valueFormatter = startAxisValueFormatter
             }
-            (bottomAxis as HorizontalAxis).itemPlacer = bottomAxisItemPlacer
+            (chart?.bottomAxis as HorizontalAxis).itemPlacer = bottomAxisItemPlacer
             this.marker = marker
         }
     }

@@ -69,16 +69,16 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer) {
                     rememberLineCartesianLayer(
                         remember(defaultLines) { defaultLines.map { it.copy(backgroundShader = null) } },
                     ),
+                    startAxis =
+                        rememberStartAxis(
+                            label = rememberStartAxisLabel(),
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                        ),
+                    bottomAxis = rememberBottomAxis(),
+                    legend = rememberLegend(),
                 ),
             modelProducer = modelProducer,
-            startAxis =
-                rememberStartAxis(
-                    label = rememberStartAxisLabel(),
-                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                ),
-            bottomAxis = rememberBottomAxis(),
             marker = rememberMarker(),
-            legend = rememberLegend(),
             runInitialAnimation = false,
         )
     }
@@ -93,10 +93,10 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (startAxis as VerticalAxis).horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
-            (startAxis as VerticalAxis).label = startAxisLabel
+            (chart?.startAxis as VerticalAxis).horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
+            (chart?.startAxis as VerticalAxis).label = startAxisLabel
             this.marker = marker
-            this.legend = legend
+            chart?.legend = legend
         }
     }
 }

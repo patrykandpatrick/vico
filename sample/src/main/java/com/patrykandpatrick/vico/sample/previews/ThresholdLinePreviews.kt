@@ -95,6 +95,8 @@ public fun ThresholdLine() {
             chart =
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
                     decorations =
                         listOf(
                             ThresholdLine(
@@ -106,8 +108,6 @@ public fun ThresholdLine() {
                         ),
                 ),
             model = model,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
@@ -180,10 +180,10 @@ public fun ThresholdLineWithCustomText() {
                                     ),
                             ),
                         ),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
@@ -210,10 +210,10 @@ public fun RangedThresholdLine() {
                                     ),
                             ),
                         ),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
@@ -251,10 +251,10 @@ public fun RangedThresholdLineWithBrushShader() {
                                     ),
                             ),
                         ),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }
@@ -291,10 +291,10 @@ public fun RangedThresholdLineWithComponentShader() {
                                     ),
                             ),
                         ),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
         )
     }

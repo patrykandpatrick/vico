@@ -95,9 +95,8 @@ public fun LineChartDark() {
 @Composable
 public fun RegularLineChart() {
     CartesianChartHost(
-        chart = rememberCartesianChart(rememberLineCartesianLayer()),
+        chart = rememberCartesianChart(rememberLineCartesianLayer(), startAxis = rememberStartAxis()),
         model = model1,
-        startAxis = rememberStartAxis(),
     )
 }
 
@@ -108,9 +107,9 @@ public fun RegularLineChartExpanded() {
         chart =
             rememberCartesianChart(
                 rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -1f, maxY = 5f)),
+                startAxis = rememberStartAxis(),
             ),
         model = model1,
-        startAxis = rememberStartAxis(),
     )
 }
 
@@ -121,9 +120,9 @@ public fun RegularLineChartCollapsed() {
         chart =
             rememberCartesianChart(
                 rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 3f)),
+                startAxis = rememberStartAxis(),
             ),
         model = model1,
-        startAxis = rememberStartAxis(),
     )
 }
 
@@ -145,9 +144,9 @@ public fun ComposedLineChart() {
                         ),
                     ),
                 ),
+                startAxis = rememberStartAxis(),
             ),
         model = model2,
-        startAxis = rememberStartAxis(),
     )
 }
 
@@ -159,8 +158,8 @@ public fun ComposedLineChartCollapsed() {
             rememberCartesianChart(
                 rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 3f)),
                 rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 3f)),
+                startAxis = rememberStartAxis(),
             ),
         model = model2,
-        startAxis = rememberStartAxis(),
     )
 }

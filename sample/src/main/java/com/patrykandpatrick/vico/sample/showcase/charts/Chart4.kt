@@ -69,10 +69,10 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer) {
                     rememberLineCartesianLayer(
                         remember(defaultLines) { defaultLines.map { it.copy(pointConnector = pointConnector) } },
                     ),
+                    topAxis = rememberTopAxis(),
+                    endAxis = rememberEndAxis(),
                 ),
             modelProducer = modelProducer,
-            topAxis = rememberTopAxis(),
-            endAxis = rememberEndAxis(),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
