@@ -50,7 +50,7 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Shape
 
 /**
- * Creates a [LineComponent] with the specified properties.
+ * Creates and remembers a [LineComponent] with the specified properties.
  */
 @Composable
 public fun rememberLineComponent(
@@ -83,7 +83,7 @@ public fun rememberLineComponent(
     }
 
 /**
- * Creates a [LineComponent] with the specified properties.
+ * Creates and remembers a [LineComponent] with the specified properties.
  */
 @Composable
 public fun rememberLineComponent(
