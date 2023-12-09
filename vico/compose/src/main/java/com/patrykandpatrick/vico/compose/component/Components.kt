@@ -106,10 +106,10 @@ public fun rememberLineComponent(
     )
 
 /**
- * Creates a [ShapeComponent] with the specified properties.
+ * Creates and remembers a [ShapeComponent] with the specified properties.
  */
 @Composable
-public fun shapeComponent(
+public fun rememberShapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
@@ -136,10 +136,10 @@ public fun shapeComponent(
     }
 
 /**
- * Creates a [ShapeComponent] with the specified properties.
+ * Creates and remembers a [ShapeComponent] with the specified properties.
  */
 @Composable
-public fun shapeComponent(
+public fun rememberShapeComponent(
     shape: Shape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
@@ -147,7 +147,7 @@ public fun shapeComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent =
-    shapeComponent(
+    rememberShapeComponent(
         shape = shape.chartShape(),
         color = color,
         dynamicShader = dynamicShader,
@@ -157,10 +157,10 @@ public fun shapeComponent(
     )
 
 /**
- * Creates a [ShapeComponent] with the specified properties.
+ * Creates and remembers a [ShapeComponent] with the specified properties.
  */
 @Composable
-public fun shapeComponent(
+public fun rememberShapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
     brush: Brush,
@@ -168,7 +168,7 @@ public fun shapeComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent =
-    shapeComponent(
+    rememberShapeComponent(
         shape = shape,
         color = color,
         dynamicShader = brush.toDynamicShader(),

@@ -31,9 +31,9 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
-import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
@@ -109,7 +109,7 @@ private fun rememberStartAxisLabel() =
         horizontalPadding = startAxisLabelHorizontalPaddingValue,
         verticalMargin = startAxisLabelMarginValue,
         horizontalMargin = startAxisLabelMarginValue,
-        background = shapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
+        background = rememberShapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
     )
 
 @Composable
@@ -118,7 +118,7 @@ private fun rememberLegend() =
         items =
             chartColors.mapIndexed { index, chartColor ->
                 legendItem(
-                    icon = shapeComponent(Shapes.pillShape, chartColor),
+                    icon = rememberShapeComponent(Shapes.pillShape, chartColor),
                     label =
                         rememberTextComponent(
                             color = currentChartStyle.axis.axisLabelColor,

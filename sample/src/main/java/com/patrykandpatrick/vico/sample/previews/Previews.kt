@@ -40,11 +40,11 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -91,7 +91,7 @@ public fun ColumnChartCard(): Unit =
                                 color = colors.primary,
                                 textSize = 10.sp,
                                 background =
-                                    shapeComponent(
+                                    rememberShapeComponent(
                                         shape =
                                             CutCornerShape(
                                                 CornerSize(percent = 25),
@@ -136,7 +136,7 @@ public fun LineChartCard(): Unit =
                                         DynamicShaders.fromComponent(
                                             componentSize = 4.dp,
                                             component =
-                                                shapeComponent(shape = pillShape, color = colors.primary)
+                                                rememberShapeComponent(shape = pillShape, color = colors.primary)
                                                     .apply { setMargins(0.5.dp.value) },
                                         ),
                                 ),
@@ -156,7 +156,7 @@ public fun LineChartCard(): Unit =
                             rememberTextComponent(
                                 color = colors.onSurface,
                                 textSize = 10.sp,
-                                background = shapeComponent(shape = rectShape, color = Color.LightGray),
+                                background = rememberShapeComponent(shape = rectShape, color = Color.LightGray),
                                 padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
                             )
                         axis = null

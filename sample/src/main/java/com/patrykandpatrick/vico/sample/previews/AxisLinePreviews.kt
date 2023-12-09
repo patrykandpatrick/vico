@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.component.shapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.component.shape.Shapes
@@ -76,7 +76,7 @@ public fun HorizontalAxisTextInside() {
         val label =
             axisLabelComponent(
                 background =
-                    shapeComponent(
+                    rememberShapeComponent(
                         shape =
                             CorneredShape(
                                 topLeft =
@@ -124,7 +124,7 @@ public fun HorizontalAxisTextInsideAndBottomAxis() {
         val label =
             axisLabelComponent(
                 background =
-                    shapeComponent(
+                    rememberShapeComponent(
                         shape = Shapes.pillShape,
                         color = Color.LightGray,
                     ),

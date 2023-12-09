@@ -34,9 +34,9 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
-import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
@@ -99,7 +99,7 @@ public fun ThresholdLine() {
                         listOf(
                             ThresholdLine(
                                 thresholdValue = 2f,
-                                lineComponent = shapeComponent(color = Color.Black),
+                                lineComponent = rememberShapeComponent(color = Color.Black),
                                 labelComponent =
                                     rememberTextComponent(Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
                             ),
@@ -127,13 +127,13 @@ public fun ThresholdLineWithCustomText() {
                             ThresholdLine(
                                 thresholdValue = 2f,
                                 thresholdLabel = "Threshold line 1 📐",
-                                lineComponent = shapeComponent(color = Color.Black),
+                                lineComponent = rememberShapeComponent(color = Color.Black),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.White,
                                         lineCount = 3,
                                         background =
-                                            shapeComponent(
+                                            rememberShapeComponent(
                                                 shape =
                                                     Shapes.roundedCornerShape(
                                                         bottomLeftPercent = 25,
@@ -155,13 +155,13 @@ public fun ThresholdLineWithCustomText() {
                             ThresholdLine(
                                 thresholdValue = 3f,
                                 thresholdLabel = "Threshold line 2 📐",
-                                lineComponent = shapeComponent(color = Color.DarkGray),
+                                lineComponent = rememberShapeComponent(color = Color.DarkGray),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.White,
                                         lineCount = 3,
                                         background =
-                                            shapeComponent(
+                                            rememberShapeComponent(
                                                 shape =
                                                     Shapes.cutCornerShape(
                                                         topLeftPercent = 25,
@@ -202,7 +202,7 @@ public fun RangedThresholdLine() {
                         listOf(
                             ThresholdLine(
                                 thresholdRange = 2f..3f,
-                                lineComponent = shapeComponent(color = Color.Black.copy(alpha = 0.5f)),
+                                lineComponent = rememberShapeComponent(color = Color.Black.copy(alpha = 0.5f)),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.Black,
@@ -233,7 +233,7 @@ public fun RangedThresholdLineWithBrushShader() {
                             ThresholdLine(
                                 thresholdRange = 2f..3f,
                                 lineComponent =
-                                    shapeComponent(
+                                    rememberShapeComponent(
                                         color = Color.Black,
                                         dynamicShader =
                                             Brush.verticalGradient(
@@ -274,11 +274,11 @@ public fun RangedThresholdLineWithComponentShader() {
                             ThresholdLine(
                                 thresholdRange = 2f..3f,
                                 lineComponent =
-                                    shapeComponent(
+                                    rememberShapeComponent(
                                         color = Color.Black,
                                         dynamicShader =
                                             ComponentShader(
-                                                shapeComponent(shape = Shapes.pillShape, color = Color.Black),
+                                                rememberShapeComponent(shape = Shapes.pillShape, color = Color.Black),
                                                 componentSizeDp = 4f,
                                             ),
                                         strokeWidth = 2.dp,
