@@ -86,10 +86,21 @@ public interface CartesianLayerModel {
     }
 }
 
-internal fun Iterable<CartesianLayerModel.Entry>.getXDeltaGcd() =
-    zipWithNext { firstEntry, secondEntry -> abs(secondEntry.x - firstEntry.x) }
-        .fold<Float, Float?>(null) { gcd, delta -> gcd?.gcdWith(delta) ?: delta }
+internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Float {
+    if (isEmpty()) return 1f
+    val iterator = iterator()
+    var prevX = iterator.next().x
+    var gcd: Float? = null
+    while (iterator.hasNext()) {
+        val x = iterator.next().x
+        val delta = abs(x - prevX)
+        prevX = x
+        if (delta != 0f) gcd = gcd?.gcdWith(delta) ?: delta
+    }
+    return gcd
+        ?.also { require(it != 0f) { "The x values are too precise. The maximum precision is two decimal places." } }
         ?: 1f
+}
 
 internal fun <T : CartesianLayerModel.Entry> Iterable<T>.forEachInIndexed(
     range: ClosedFloatingPointRange<Float>,
