@@ -21,8 +21,8 @@ import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
 import com.patrykandpatrick.vico.core.marker.Marker
-import com.patrykandpatrick.vico.core.model.Point
 import com.patrykandpatrick.vico.core.scroll.ScrollHandler
+import com.patrykandpatrick.vico.core.util.Point
 import com.patrykandpatrick.vico.views.extension.fling
 import com.patrykandpatrick.vico.views.extension.point
 import kotlin.math.abs
@@ -41,7 +41,6 @@ public open class MotionEventHandler(
     private val onTouchPoint: (Point?) -> Unit,
     private val requestInvalidate: () -> Unit,
 ) {
-
     private val velocityUnits = (VELOCITY_PIXELS * density).toInt()
     private val dragThreshold = DRAG_THRESHOLD_PIXELS * density
     private var initialX = -dragThreshold
@@ -114,12 +113,10 @@ public open class MotionEventHandler(
     }
 
     private class VelocityTrackerHelper {
-
         private var tracker: VelocityTracker? = null
 
         @SuppressLint("Recycle")
-        fun get(): VelocityTracker =
-            tracker ?: VelocityTracker.obtain().also { tracker = it }
+        fun get(): VelocityTracker = tracker ?: VelocityTracker.obtain().also { tracker = it }
 
         fun clear() {
             tracker?.recycle()

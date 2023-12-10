@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import com.patrykandpatrick.vico.core.extension.setBounds
  * Houses utilities for creating [Shape]s.
  */
 public object Shapes {
-
     /**
      * A shape whose each corner is fully rounded.
      */
@@ -42,25 +41,25 @@ public object Shapes {
     /**
      * A rectangle with sharp corners.
      */
-    public val rectShape: Shape = object : Shape {
-
-        override fun drawShape(
-            context: DrawContext,
-            paint: Paint,
-            path: Path,
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float,
-        ) {
-            path.moveTo(left, top)
-            path.lineTo(right, top)
-            path.lineTo(right, bottom)
-            path.lineTo(left, bottom)
-            path.close()
-            context.canvas.drawPath(path, paint)
+    public val rectShape: Shape =
+        object : Shape {
+            override fun drawShape(
+                context: DrawContext,
+                paint: Paint,
+                path: Path,
+                left: Float,
+                top: Float,
+                right: Float,
+                bottom: Float,
+            ) {
+                path.moveTo(left, top)
+                path.lineTo(right, top)
+                path.lineTo(right, bottom)
+                path.lineTo(left, bottom)
+                path.close()
+                context.canvas.drawPath(path, paint)
+            }
         }
-    }
 
     /**
      * Creates a [Shape] with all corners rounded.
@@ -83,12 +82,13 @@ public object Shapes {
         topRightPercent: Int = 0,
         bottomRightPercent: Int = 0,
         bottomLeftPercent: Int = 0,
-    ): CorneredShape = CorneredShape(
-        Corner.Relative(topLeftPercent, RoundedCornerTreatment),
-        Corner.Relative(topRightPercent, RoundedCornerTreatment),
-        Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
-        Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
-    )
+    ): CorneredShape =
+        CorneredShape(
+            Corner.Relative(topLeftPercent, RoundedCornerTreatment),
+            Corner.Relative(topRightPercent, RoundedCornerTreatment),
+            Corner.Relative(bottomRightPercent, RoundedCornerTreatment),
+            Corner.Relative(bottomLeftPercent, RoundedCornerTreatment),
+        )
 
     /**
      * Creates a [Shape] with all corners cut.
@@ -111,12 +111,13 @@ public object Shapes {
         topRightPercent: Int = 0,
         bottomRightPercent: Int = 0,
         bottomLeftPercent: Int = 0,
-    ): CorneredShape = CorneredShape(
-        Corner.Relative(topLeftPercent, CutCornerTreatment),
-        Corner.Relative(topRightPercent, CutCornerTreatment),
-        Corner.Relative(bottomRightPercent, CutCornerTreatment),
-        Corner.Relative(bottomLeftPercent, CutCornerTreatment),
-    )
+    ): CorneredShape =
+        CorneredShape(
+            Corner.Relative(topLeftPercent, CutCornerTreatment),
+            Corner.Relative(topRightPercent, CutCornerTreatment),
+            Corner.Relative(bottomRightPercent, CutCornerTreatment),
+            Corner.Relative(bottomLeftPercent, CutCornerTreatment),
+        )
 
     /**
      * Creates a [Shape] out of a [Drawable].
@@ -130,69 +131,70 @@ public object Shapes {
         tintDrawable: Boolean = true,
         keepAspectRatio: Boolean = false,
         otherShape: Shape? = rectShape,
-    ): Shape = object : Shape {
+    ): Shape =
+        object : Shape {
+            private val ratio: Float =
+                drawable.intrinsicWidth.coerceAtLeast(1) /
+                    drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
 
-        private val ratio: Float = drawable.intrinsicWidth.coerceAtLeast(1) /
-            drawable.intrinsicHeight.coerceAtLeast(1).toFloat()
+            override fun drawShape(
+                context: DrawContext,
+                paint: Paint,
+                path: Path,
+                left: Float,
+                top: Float,
+                right: Float,
+                bottom: Float,
+            ) {
+                if (bottom - top == 0f || left - right == 0f) return
+                val width = right - left
+                val height = bottom - top
 
-        override fun drawShape(
-            context: DrawContext,
-            paint: Paint,
-            path: Path,
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float,
-        ) {
-            if (bottom - top == 0f || left - right == 0f) return
-            val width = right - left
-            val height = bottom - top
+                var otherComponentLeft = left
+                var otherComponentTop = top
 
-            var otherComponentLeft = left
-            var otherComponentTop = top
+                if (tintDrawable) drawable.setTintCompat(paint.color)
 
-            if (tintDrawable) drawable.setTintCompat(paint.color)
+                if (height > width) {
+                    val drawableHeight = if (keepAspectRatio) width / ratio else height
+                    val topWithoutClipping = minOf(top, bottom - drawableHeight)
+                    drawable.setBounds(
+                        left = left,
+                        top = topWithoutClipping,
+                        right = right,
+                        bottom = topWithoutClipping + drawableHeight,
+                    )
 
-            if (height > width) {
-                val drawableHeight = if (keepAspectRatio) width / ratio else height
-                val topWithoutClipping = minOf(top, bottom - drawableHeight)
-                drawable.setBounds(
-                    left = left,
-                    top = topWithoutClipping,
-                    right = right,
-                    bottom = topWithoutClipping + drawableHeight,
-                )
+                    otherComponentTop = topWithoutClipping + drawableHeight
+                } else {
+                    val drawableWidth = if (keepAspectRatio) height * ratio else width
+                    val leftWithoutClipping = minOf(left, right - drawableWidth)
+                    drawable.setBounds(
+                        left = leftWithoutClipping,
+                        top = top,
+                        right = leftWithoutClipping + drawableWidth,
+                        bottom = bottom,
+                    )
 
-                otherComponentTop = topWithoutClipping + drawableHeight
-            } else {
-                val drawableWidth = if (keepAspectRatio) height * ratio else width
-                val leftWithoutClipping = minOf(left, right - drawableWidth)
-                drawable.setBounds(
-                    left = leftWithoutClipping,
-                    top = top,
-                    right = leftWithoutClipping + drawableWidth,
-                    bottom = bottom,
-                )
+                    otherComponentLeft = leftWithoutClipping + drawableWidth
+                }
 
-                otherComponentLeft = leftWithoutClipping + drawableWidth
-            }
+                drawable.draw(context.canvas)
+                otherShape ?: return
 
-            drawable.draw(context.canvas)
-            otherShape ?: return
-
-            if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
-                otherShape.drawShape(
-                    context = context,
-                    paint = paint,
-                    path = path,
-                    left = otherComponentLeft,
-                    top = otherComponentTop,
-                    right = right,
-                    bottom = bottom,
-                )
+                if (bottom - otherComponentTop > 0 && right - otherComponentLeft > 0) {
+                    otherShape.drawShape(
+                        context = context,
+                        paint = paint,
+                        path = path,
+                        left = otherComponentLeft,
+                        top = otherComponentTop,
+                        right = right,
+                        bottom = bottom,
+                    )
+                }
             }
         }
-    }
 }
 
 private fun Drawable.setTintCompat(tint: Int) {

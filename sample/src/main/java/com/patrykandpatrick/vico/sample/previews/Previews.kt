@@ -34,136 +34,159 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.chart.line.lineSpec
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.createVerticalAxis
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes.pillShape
 import com.patrykandpatrick.vico.core.component.shape.Shapes.rectShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.sample.utils.VicoTheme
 
 private val chartModifier = Modifier.height(100.dp)
 
 @Preview("Sample Card With Column Chart", widthDp = 200)
 @Composable
-public fun ColumnChartCard(): Unit = VicoTheme {
-    val colors = MaterialTheme.colors
+public fun ColumnChartCard(): Unit =
+    VicoTheme {
+        val colors = MaterialTheme.colors
 
-    SampleCard {
-        Chart(
-            modifier = chartModifier,
-            chart = columnChart(
-                columns = listOf(
-                    lineComponent(
-                        colors.primary,
-                        thickness = 8.dp,
-                        shape = RoundedCornerShape(4.dp),
-                        dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
-                    ),
-                ),
-            ),
-            startAxis = createVerticalAxis {
-                label = textComponent(
-                    color = colors.primary,
-                    textSize = 10.sp,
-                    background = shapeComponent(
-                        shape = CutCornerShape(
-                            CornerSize(percent = 25),
-                            CornerSize(percent = 50),
-                            CornerSize(percent = 50),
-                            CornerSize(percent = 25),
+        SampleCard {
+            CartesianChartHost(
+                modifier = chartModifier,
+                chart =
+                    rememberCartesianChart(
+                        rememberColumnCartesianLayer(
+                            listOf(
+                                rememberLineComponent(
+                                    color = colors.primary,
+                                    thickness = 8.dp,
+                                    shape = RoundedCornerShape(4.dp),
+                                    dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
+                                ),
+                            ),
                         ),
-                        color = colors.primary.copy(alpha = 0.1f),
+                        startAxis =
+                            createVerticalAxis {
+                                label =
+                                    rememberTextComponent(
+                                        color = colors.primary,
+                                        textSize = 10.sp,
+                                        background =
+                                            rememberShapeComponent(
+                                                shape =
+                                                    CutCornerShape(
+                                                        CornerSize(percent = 25),
+                                                        CornerSize(percent = 50),
+                                                        CornerSize(percent = 50),
+                                                        CornerSize(percent = 25),
+                                                    ),
+                                                color = colors.primary.copy(alpha = 0.1f),
+                                            ),
+                                        padding = dimensionsOf(end = 8.dp, start = 4.dp),
+                                    )
+                                axis = null
+                                tick = null
+                                guideline =
+                                    LineComponent(
+                                        colors.primary.copy(alpha = 0.1f).toArgb(),
+                                        1.dp.value,
+                                    )
+                            },
                     ),
-                    padding = dimensionsOf(end = 8.dp, start = 4.dp),
-                )
-                axis = null
-                tick = null
-                guideline = LineComponent(
-                    colors.primary.copy(alpha = 0.1f).toArgb(),
-                    1.dp.value,
-                )
-            },
-            model = @Suppress("MagicNumber") (entryModelOf(1, 2, 3, 2)),
-        )
+                model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
+            )
+        }
     }
-}
 
 @Preview("Sample Card With Line Chart", widthDp = 200)
 @Composable
-public fun LineChartCard(): Unit = VicoTheme {
-    val colors = MaterialTheme.colors
+public fun LineChartCard(): Unit =
+    VicoTheme {
+        val colors = MaterialTheme.colors
 
-    SampleCard {
-        Chart(
-            modifier = Modifier.height(100.dp),
-            chart = lineChart(
-                lines = listOf(
-                    lineSpec(
-                        point = null,
-                        lineColor = colors.primary,
-                        lineBackgroundShader = DynamicShaders.fromComponent(
-                            componentSize = 4.dp,
-                            component = shapeComponent(shape = pillShape, color = colors.primary).apply {
-                                setMargins(0.5.dp.value)
-                            },
+        SampleCard {
+            CartesianChartHost(
+                modifier = Modifier.height(100.dp),
+                chart =
+                    rememberCartesianChart(
+                        rememberLineCartesianLayer(
+                            listOf(
+                                lineSpec(
+                                    point = null,
+                                    shader = DynamicShaders.color(colors.primary),
+                                    backgroundShader =
+                                        DynamicShaders.fromComponent(
+                                            componentSize = 4.dp,
+                                            component =
+                                                rememberShapeComponent(shape = pillShape, color = colors.primary)
+                                                    .apply { setMargins(0.5.dp.value) },
+                                        ),
+                                ),
+                            ),
+                            axisValueOverrider = AxisValueOverrider.fixed(minX = 0f, maxY = 3f),
                         ),
+                        startAxis =
+                            createVerticalAxis {
+                                label =
+                                    rememberTextComponent(
+                                        color = colors.onSurface,
+                                        textSize = 10.sp,
+                                        background = rememberShapeComponent(shape = rectShape, color = Color.LightGray),
+                                        padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
+                                    )
+                                axis = null
+                                tick = null
+                                guideline =
+                                    LineComponent(
+                                        color = Color.LightGray.toArgb(),
+                                        thicknessDp = 1.dp.value,
+                                        shape =
+                                            DashedShape(
+                                                shape = pillShape,
+                                                dashLengthDp = 2.dp.value,
+                                                gapLengthDp = 4.dp.value,
+                                            ),
+                                    )
+                                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
+                            },
+                        bottomAxis =
+                            createHorizontalAxis {
+                                label = null
+                                tick = null
+                                guideline = null
+                                axis = rememberLineComponent(color = Color.LightGray, thickness = 1.dp)
+                            },
                     ),
-                ),
-                axisValuesOverrider = AxisValuesOverrider.fixed(
-                    minX = 0f,
-                    maxY = 3f,
-                ),
-            ),
-            model = entryModelOf(-1 to 0, 0 to 0, 1 to 1, 2 to 2, 3 to 0, 4 to 2, 5 to 1),
-            startAxis = createVerticalAxis {
-                label = textComponent(
-                    color = colors.onSurface,
-                    textSize = 10.sp,
-                    background = shapeComponent(shape = rectShape, color = Color.LightGray),
-                    padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
-                )
-                axis = null
-                tick = null
-                guideline = LineComponent(
-                    color = Color.LightGray.toArgb(),
-                    thicknessDp = 1.dp.value,
-                    shape = DashedShape(
-                        shape = pillShape,
-                        dashLengthDp = 2.dp.value,
-                        gapLengthDp = 4.dp.value,
+                model =
+                    CartesianChartModel(
+                        LineCartesianLayerModel.build {
+                            series(x = listOf(-1, 0, 1, 2, 3, 4, 5), y = listOf(0, 0, 1, 2, 0, 2, 1))
+                        },
                     ),
-                )
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
-            },
-            bottomAxis = createHorizontalAxis {
-                label = null
-                tick = null
-                guideline = null
-                axis = lineComponent(color = Color.LightGray, thickness = 1.dp)
-            },
-        )
+            )
+        }
     }
-}
 
 @Composable
-private fun SampleCard(
-    chart: @Composable ColumnScope.() -> Unit,
-) {
+private fun SampleCard(chart: @Composable ColumnScope.() -> Unit) {
     Card(
         modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(8.dp),

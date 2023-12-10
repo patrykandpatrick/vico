@@ -25,77 +25,89 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
-import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.chart.values.AxisValuesOverrider
+import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart3(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart3(
+    uiSystem: UISystem,
+    modelProducer: CartesianChartModelProducer,
+) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart3(chartEntryModelProducer)
-        UISystem.Views -> ViewChart3(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart3(modelProducer)
+        UISystem.Views -> ViewChart3(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart3(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        Chart(
-            chart = lineChart(axisValuesOverrider = axisValueOverrider),
-            chartModelProducer = chartEntryModelProducer,
-            startAxis = rememberStartAxis(
-                guideline = null,
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                titleComponent = textComponent(
-                    color = Color.Black,
-                    background = shapeComponent(Shapes.pillShape, color1),
-                    padding = axisTitlePadding,
-                    margins = startAxisTitleMargins,
-                    typeface = Typeface.MONOSPACE,
+        CartesianChartHost(
+            chart =
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(axisValueOverrider = axisValueOverrider),
+                    startAxis =
+                        rememberStartAxis(
+                            guideline = null,
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                            titleComponent =
+                                rememberTextComponent(
+                                    color = Color.Black,
+                                    background = rememberShapeComponent(Shapes.pillShape, color1),
+                                    padding = axisTitlePadding,
+                                    margins = startAxisTitleMargins,
+                                    typeface = Typeface.MONOSPACE,
+                                ),
+                            title = stringResource(R.string.y_axis),
+                        ),
+                    bottomAxis =
+                        rememberBottomAxis(
+                            titleComponent =
+                                rememberTextComponent(
+                                    background = rememberShapeComponent(Shapes.pillShape, color2),
+                                    color = Color.White,
+                                    padding = axisTitlePadding,
+                                    margins = bottomAxisTitleMargins,
+                                    typeface = Typeface.MONOSPACE,
+                                ),
+                            title = stringResource(R.string.x_axis),
+                        ),
+                    fadingEdges = rememberFadingEdges(),
                 ),
-                title = stringResource(R.string.y_axis),
-            ),
-            bottomAxis = rememberBottomAxis(
-                titleComponent = textComponent(
-                    background = shapeComponent(Shapes.pillShape, color2),
-                    color = Color.White,
-                    padding = axisTitlePadding,
-                    margins = bottomAxisTitleMargins,
-                    typeface = Typeface.MONOSPACE,
-                ),
-                title = stringResource(R.string.x_axis),
-            ),
+            modelProducer = modelProducer,
             marker = rememberMarker(),
             runInitialAnimation = false,
-            fadingEdges = rememberFadingEdges(),
             horizontalLayout = horizontalLayout,
         )
     }
 }
 
 @Composable
-private fun ViewChart3(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ViewChart3(modelProducer: CartesianChartModelProducer) {
     val marker = rememberMarker()
     AndroidViewBinding(Chart3Binding::inflate) {
         with(chartView) {
-            (chart as LineChart).axisValuesOverrider = axisValueOverrider
+            (chart?.layers?.get(0) as LineCartesianLayer?)?.axisValueOverrider = axisValueOverrider
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
+            this.modelProducer = modelProducer
             this.marker = marker
         }
     }
@@ -109,7 +121,10 @@ private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val chartColors = listOf(color1, color2)
 private val axisValueOverrider =
-    AxisValuesOverrider.adaptiveYValues(yFraction = AXIS_VALUE_OVERRIDER_Y_FRACTION, round = true)
+    AxisValueOverrider.adaptiveYValues<LineCartesianLayerModel>(
+        yFraction = AXIS_VALUE_OVERRIDER_Y_FRACTION,
+        round = true,
+    )
 private val axisTitleHorizontalPaddingValue = 8.dp
 private val axisTitleVerticalPaddingValue = 2.dp
 private val axisTitlePadding = dimensionsOf(axisTitleHorizontalPaddingValue, axisTitleVerticalPaddingValue)

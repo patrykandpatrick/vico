@@ -45,13 +45,13 @@
         <item name="cubicStrength">0%</item>
     </style>
 
-    <style name="Chart4ColumnChartStyle">
+    <style name="Chart4ColumnLayerStyle">
         <item name="column1">@style/Chart4Column1Style</item>
         <item name="column2">@style/Chart4Column2Style</item>
         <item name="column3">@style/Chart4Column3Style</item>
     </style>
 
-    <style name="Chart4LineChartStyle">
+    <style name="Chart4LineLayerStyle">
         <item name="line1Spec">@style/Chart4Line1Style</item>
     </style>
 </resources>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import kotlin.math.abs
  * @property brush the [Brush] to be converted to a [Shader].
  */
 public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
-
     private val matrix = Matrix()
 
     override fun createShader(
@@ -44,10 +43,11 @@ public class BrushShader(private val brush: Brush) : CacheableDynamicShader() {
     ): Shader {
         val tempPaint = Paint()
         brush.applyTo(
-            size = Size(
-                abs(left - right),
-                abs(top - bottom),
-            ),
+            size =
+                Size(
+                    abs(left - right),
+                    abs(top - bottom),
+                ),
             p = tempPaint,
             alpha = 1f,
         )

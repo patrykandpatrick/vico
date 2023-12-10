@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
+@file:Suppress("UnusedReceiverParameter")
+
 package com.patrykandpatrick.vico.compose.component.shape.shader
 
 import android.graphics.Shader
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.core.component.Component
+import com.patrykandpatrick.vico.core.component.shape.shader.ColorShader
 import com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 
@@ -38,13 +43,14 @@ public fun DynamicShaders.fromComponent(
     checkeredArrangement: Boolean = true,
     tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
     tileYMode: Shader.TileMode = tileXMode,
-): ComponentShader = ComponentShader(
-    component = component,
-    componentSizeDp = componentSize.value,
-    checkeredArrangement = checkeredArrangement,
-    tileXMode = tileXMode,
-    tileYMode = tileYMode,
-)
+): ComponentShader =
+    ComponentShader(
+        component = component,
+        componentSizeDp = componentSize.value,
+        checkeredArrangement = checkeredArrangement,
+        tileXMode = tileXMode,
+        tileYMode = tileYMode,
+    )
 
 /**
  * Creates a [BrushShader] using the given [Brush].
@@ -52,3 +58,8 @@ public fun DynamicShaders.fromComponent(
  * @see BrushShader
  */
 public fun DynamicShaders.fromBrush(brush: Brush): BrushShader = BrushShader(brush)
+
+/**
+ * Creates a [ColorShader].
+ */
+public fun DynamicShaders.color(color: Color): ColorShader = ColorShader(color.toArgb())

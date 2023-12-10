@@ -52,7 +52,6 @@ public open class ShapeComponent(
     public val strokeWidthDp: Float = 0f,
     strokeColor: Int = Color.TRANSPARENT,
 ) : Component() {
-
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val shadowProperties: ComponentShadow = ComponentShadow()
@@ -87,40 +86,41 @@ public open class ShapeComponent(
         right: Float,
         bottom: Float,
         opacity: Float,
-    ): Unit = with(context) {
-        if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
-        path.rewind()
-        applyShader(context, left, top, right, bottom)
-        val centerX = (left + right).half
-        val centerY = (top + bottom).half
-        shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
+    ): Unit =
+        with(context) {
+            if (left == right || top == bottom) return // Skip drawing shape that will be invisible.
+            path.rewind()
+            applyShader(context, left, top, right, bottom)
+            val centerX = (left + right).half
+            val centerY = (top + bottom).half
+            shadowProperties.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
 
-        val strokeWidth = strokeWidthDp.pixels
-        strokePaint.strokeWidth = strokeWidth
+            val strokeWidth = strokeWidthDp.pixels
+            strokePaint.strokeWidth = strokeWidth
 
-        fun drawShape(paint: Paint) {
-            shape.drawShape(
+            fun drawShape(paint: Paint) {
+                shape.drawShape(
+                    context = context,
+                    paint = paint,
+                    path = path,
+                    left = minOf(left + margins.startDp.pixels + strokeWidth.half, centerX),
+                    top = minOf(top + margins.topDp.pixels + strokeWidth.half, centerY),
+                    right = maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX),
+                    bottom = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY),
+                )
+            }
+
+            paint.withOpacity(opacity, ::drawShape)
+            if (strokeWidth > 0f && strokeColor.alpha > 0) strokePaint.withOpacity(opacity, ::drawShape)
+
+            DebugHelper.drawDebugBounds(
                 context = context,
-                paint = paint,
-                path = path,
-                left = minOf(left + margins.startDp.pixels + strokeWidth.half, centerX),
-                top = minOf(top + margins.topDp.pixels + strokeWidth.half, centerY),
-                right = maxOf(right - margins.endDp.pixels - strokeWidth.half, centerX),
-                bottom = maxOf(bottom - margins.bottomDp.pixels - strokeWidth.half, centerY),
+                left = left,
+                top = top,
+                right = right,
+                bottom = bottom,
             )
         }
-
-        paint.withOpacity(opacity, ::drawShape)
-        if (strokeWidth > 0f && strokeColor.alpha > 0) strokePaint.withOpacity(opacity, ::drawShape)
-
-        DebugHelper.drawDebugBounds(
-            context = context,
-            left = left,
-            top = top,
-            right = right,
-            bottom = bottom,
-        )
-    }
 
     protected fun applyShader(
         context: DrawContext,
@@ -149,25 +149,27 @@ public open class ShapeComponent(
         dy: Float = 0f,
         color: Int = DEF_SHADOW_COLOR,
         applyElevationOverlay: Boolean = false,
-    ): ShapeComponent = apply {
-        shadowProperties.apply {
-            this.radius = radius
-            this.dx = dx
-            this.dy = dy
-            this.color = color
-            this.applyElevationOverlay = applyElevationOverlay
+    ): ShapeComponent =
+        apply {
+            shadowProperties.apply {
+                this.radius = radius
+                this.dx = dx
+                this.dy = dy
+                this.color = color
+                this.applyElevationOverlay = applyElevationOverlay
+            }
         }
-    }
 
     /**
      * Removes this [ShapeComponent]’s drop shadow.
      */
-    public fun clearShadow(): ShapeComponent = apply {
-        shadowProperties.apply {
-            this.radius = 0f
-            this.dx = 0f
-            this.dy = 0f
-            this.color = 0
+    public fun clearShadow(): ShapeComponent =
+        apply {
+            shadowProperties.apply {
+                this.radius = 0f
+                this.dx = 0f
+                this.dy = 0f
+                this.color = 0
+            }
         }
-    }
 }

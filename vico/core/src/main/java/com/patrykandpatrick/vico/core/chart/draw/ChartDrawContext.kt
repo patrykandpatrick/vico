@@ -18,25 +18,24 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 
 /**
- * An extension of [DrawContext] that holds additional data required to render a [Chart].
+ * An extension of [DrawContext] that holds additional data required to render a [CartesianChart].
  */
 public interface ChartDrawContext : DrawContext {
-
     /**
-     * The bounds in which the [Chart] will be drawn.
+     * The bounds in which the [CartesianChart] will be drawn.
      */
     public val chartBounds: RectF
 
     /**
-     * Holds information on the [Chart]’s horizontal dimensions.
+     * Holds information on the [CartesianChart]’s horizontal dimensions.
      */
     public val horizontalDimensions: HorizontalDimensions
 
@@ -64,9 +63,10 @@ public fun MeasureContext.getMaxScrollDistance(
     horizontalDimensions: HorizontalDimensions,
     zoom: Float? = null,
 ): Float {
-    val contentWidth = horizontalDimensions
-        .run { if (zoom != null) scaled(zoom) else this }
-        .getContentWidth(chartValuesProvider.getChartValues().getMaxMajorEntryCount())
+    val contentWidth =
+        horizontalDimensions
+            .run { if (zoom != null) scaled(zoom) else this }
+            .getContentWidth(chartValues.getMaxMajorEntryCount())
 
     return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
         if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
@@ -91,7 +91,7 @@ public fun MeasureContext.getAutoZoom(
     autoScaleUp: AutoScaleUp,
 ): Float {
     val scalableContentWidth =
-        horizontalDimensions.getScalableContentWidth(chartValuesProvider.getChartValues().getMaxMajorEntryCount())
+        horizontalDimensions.getScalableContentWidth(chartValues.getMaxMajorEntryCount())
     val reducedChartWidth = chartBounds.width() - horizontalDimensions.unscalablePadding
     val fillingZoom = reducedChartWidth / scalableContentWidth
     return when {

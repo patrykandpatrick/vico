@@ -45,13 +45,14 @@ public open class LegendItem(
         availableWidth: Float,
         iconPaddingDp: Float,
         iconSizeDp: Float,
-    ): Float = with(context) {
-        label.getHeight(
-            context = context,
-            text = labelText,
-            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-        )
-    }
+    ): Float =
+        with(context) {
+            label.getHeight(
+                context = context,
+                text = labelText,
+                width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
+            )
+        }
 
     /**
      * Measures the width of the label.
@@ -66,13 +67,14 @@ public open class LegendItem(
         availableWidth: Float,
         iconPaddingDp: Float,
         iconSizeDp: Float,
-    ): Float = with(context) {
-        label.getWidth(
-            context = context,
-            text = labelText,
-            width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
-        )
-    }
+    ): Float =
+        with(context) {
+            label.getWidth(
+                context = context,
+                text = labelText,
+                width = (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt(),
+            )
+        }
 
     /**
      * Measures the width of this [LegendItem].
@@ -87,12 +89,13 @@ public open class LegendItem(
         availableWidth: Float,
         iconPaddingDp: Float,
         iconSizeDp: Float,
-    ): Float = with(context) {
-        getLabelWidth(
-            context,
-            availableWidth,
-            iconPaddingDp,
-            iconSizeDp,
-        ) + (iconSizeDp + iconPaddingDp).pixels
-    }
+    ): Float =
+        with(context) {
+            getLabelWidth(
+                context,
+                availableWidth,
+                iconPaddingDp,
+                iconSizeDp,
+            ) + (iconSizeDp + iconPaddingDp).pixels
+        }
 }

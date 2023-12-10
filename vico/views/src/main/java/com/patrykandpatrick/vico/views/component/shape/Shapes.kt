@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,7 @@ import com.patrykandpatrick.vico.core.component.shape.cornered.RoundedCornerTrea
 /**
  * Creates a [CorneredShape] with rounded corners of the provided size.
  */
-public fun Shapes.roundedCornerShape(all: Float): Shape =
-    roundedCornerShape(all, all, all, all)
+public fun Shapes.roundedCornerShape(all: Float): Shape = roundedCornerShape(all, all, all, all)
 
 /**
  * Creates a [CorneredShape] with rounded corners of the provided sizes.
@@ -39,18 +38,18 @@ public fun Shapes.roundedCornerShape(
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f,
-): CorneredShape = CorneredShape(
-    Corner.Absolute(topLeft, RoundedCornerTreatment),
-    Corner.Absolute(topRight, RoundedCornerTreatment),
-    Corner.Absolute(bottomRight, RoundedCornerTreatment),
-    Corner.Absolute(bottomLeft, RoundedCornerTreatment),
-)
+): CorneredShape =
+    CorneredShape(
+        Corner.Absolute(topLeft, RoundedCornerTreatment),
+        Corner.Absolute(topRight, RoundedCornerTreatment),
+        Corner.Absolute(bottomRight, RoundedCornerTreatment),
+        Corner.Absolute(bottomLeft, RoundedCornerTreatment),
+    )
 
 /**
  * Creates a [CorneredShape] with cut corners of the provided size.
  */
-public fun Shapes.cutCornerShape(all: Float): Shape =
-    cutCornerShape(all, all, all, all)
+public fun Shapes.cutCornerShape(all: Float): Shape = cutCornerShape(all, all, all, all)
 
 /**
  * Creates a [CorneredShape] with cut corners of the provided sizes.
@@ -60,9 +59,10 @@ public fun Shapes.cutCornerShape(
     topRight: Float = 0f,
     bottomRight: Float = 0f,
     bottomLeft: Float = 0f,
-): CorneredShape = CorneredShape(
-    Corner.Absolute(topLeft, CutCornerTreatment),
-    Corner.Absolute(topRight, CutCornerTreatment),
-    Corner.Absolute(bottomRight, CutCornerTreatment),
-    Corner.Absolute(bottomLeft, CutCornerTreatment),
-)
+): CorneredShape =
+    CorneredShape(
+        Corner.Absolute(topLeft, CutCornerTreatment),
+        Corner.Absolute(topRight, CutCornerTreatment),
+        Corner.Absolute(bottomRight, CutCornerTreatment),
+        Corner.Absolute(bottomLeft, CutCornerTreatment),
+    )

@@ -8,10 +8,10 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: vico
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: zulu
@@ -54,19 +54,3 @@ jobs:
           ORG_GRADLE_PROJECT_GPG_KEY: ${{ secrets.GPG_KEY }}
           ORG_GRADLE_PROJECT_GPG_KEY_PASSWORD: ${{ secrets.GPG_KEY_PASSWORD }}
           ORG_GRADLE_PROJECT_OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-      - run: |
-          cd "${{ github.workspace }}/vico"
-          ./gradlew clean
-          rm -r sample README.md logo-styles.css .github
-          find . -not -path "*/.*" -type d -name patrykandpatrick | while read path; do mv "$path" "$(sed s/patrykandpatrick/patrykandpatryk/ <<< "$path")"; done
-          mv vico/views vico/view
-          mv vico/view/src/main/java/com/patrykandpatryk/vico/views vico/view/src/main/java/com/patrykandpatryk/vico/view
-          find . -not -path "*/.*" -type f | while read path; do sed -i "s/com\.patrykandpatrick/com\.patrykandpatryk/" "$path"; done
-          find . -not -path "*/.*" -type f | while read path; do sed -i "s/vico\.views/vico\.view/" "$path"; done
-          find -type f \( -name "*.gradle" -o -name "*.gradle.kts" \) -exec sed -i s/vico:views/vico:view/ "{}" +
-          sed -i "s/\(username\s*=\s*\)\"patrykandpatrick\"/\1\"patrykandpatryk\"/" common-scripts.gradle
-          ./gradlew publish
-        env:
-          ORG_GRADLE_PROJECT_GPG_KEY: ${{ secrets.LEGACY_GPG_KEY }}
-          ORG_GRADLE_PROJECT_GPG_KEY_PASSWORD: ${{ secrets.LEGACY_GPG_KEY_PASSWORD }}
-          ORG_GRADLE_PROJECT_OSSRH_PASSWORD: ${{ secrets.LEGACY_OSSRH_PASSWORD }}

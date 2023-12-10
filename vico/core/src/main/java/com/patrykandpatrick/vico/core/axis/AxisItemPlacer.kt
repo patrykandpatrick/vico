@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.axis.horizontal.DefaultHorizontalAxisItemP
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.DefaultVerticalAxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.chart.Chart
+import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -36,14 +36,11 @@ public interface AxisItemPlacer {
      * An [AxisItemPlacer] subinterface for [HorizontalAxis] instances.
      */
     public interface Horizontal : AxisItemPlacer {
-
         /**
          * Whether ticks whose _x_ values are bounds of the _x_-axis value range should be shifted to the edges of the
          * axis bounds, to be aligned with the vertical axes.
          */
-        public fun getShiftExtremeTicks(
-            context: ChartDrawContext,
-        ): Boolean = true
+        public fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = true
 
         /**
          * Returns a boolean indicating whether the [HorizontalAxis] should reserve room for a label for
@@ -78,18 +75,6 @@ public interface AxisItemPlacer {
             horizontalDimensions: HorizontalDimensions,
             fullXRange: ClosedFloatingPointRange<Float>,
         ): List<Float>
-
-        /**
-         * Returns the smallest expected distance between a label measured during the measuring phase and the next
-         * label or the previous label, whichever is closer to the measured label. This distance is expressed as the
-         * difference between the two labels’ _x_ values divided by [ChartValues.xStep].
-         */
-        @Deprecated("This is no longer used.")
-        public fun getMeasuredLabelClearance(
-            context: MeasureContext,
-            horizontalDimensions: HorizontalDimensions,
-            fullXRange: ClosedFloatingPointRange<Float>,
-        ): Float = 0f
 
         /**
          * Returns, as a list, the _x_ values for which ticks and guidelines are to be displayed, restricted to
@@ -144,9 +129,10 @@ public interface AxisItemPlacer {
      */
     public interface Vertical {
         /**
-         * Returns a boolean indicating whether to shift the lines whose _y_ values are equal to [ChartValues.maxY], if
-         * such lines are present, such that they’re immediately above the [Chart]’s bounds. If the chart has a top
-         * axis, the shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
+         * Returns a boolean indicating whether to shift the lines whose _y_ values are equal to
+         * [ChartValues.YRange.maxY], if such lines are present, such that they’re immediately above the
+         * [CartesianChart]’s bounds. If the chart has a top axis, the shifted tick will then be aligned with this axis,
+         * and the shifted guideline will be hidden.
          */
         public fun getShiftTopLines(chartDrawContext: ChartDrawContext): Boolean = true
 
@@ -214,12 +200,14 @@ public interface AxisItemPlacer {
              * Creates a base [AxisItemPlacer.Vertical] implementation. [maxItemCount] is the maximum number of labels
              * (and their corresponding line pairs) to be displayed. The actual item count is the greatest number
              * smaller than or equal to [maxItemCount] for which no overlaps occur. [shiftTopLines] defines whether
-             * to shift the lines whose _y_ values are equal to [ChartValues.maxY], if such lines are present, such that
-             * they’re immediately above the [Chart]’s bounds. If the chart has a top axis, the shifted tick will then
-             * be aligned with this axis, and the shifted guideline will be hidden.
+             * to shift the lines whose _y_ values are equal to [ChartValues.YRange.maxY], if such lines are present,
+             * such that they’re immediately above the [CartesianChart]’s bounds. If the chart has a top axis, the
+             * shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
              */
-            public fun default(maxItemCount: Int = DEF_LABEL_COUNT, shiftTopLines: Boolean = true): Vertical =
-                DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
+            public fun default(
+                maxItemCount: Int = DEF_LABEL_COUNT,
+                shiftTopLines: Boolean = true,
+            ): Vertical = DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
         }
     }
 }

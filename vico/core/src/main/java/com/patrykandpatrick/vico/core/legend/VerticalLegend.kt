@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,8 @@ package com.patrykandpatrick.vico.core.legend
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
-import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
@@ -43,80 +41,69 @@ public open class VerticalLegend(
     public var spacingDp: Float = 0f,
     override val padding: MutableDimensions = emptyDimensions(),
 ) : Legend, Padding {
-
     private val heights: HashMap<LegendItem, Float> = HashMap()
 
     override val bounds: RectF = RectF()
 
-    override fun getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
-        items.fold(0f) { sum, item ->
-            sum + maxOf(
-                iconSizeDp.pixels,
-                item.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
-            ).also { height -> heights[item] = height }
-        } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
-    }
-
-    override fun draw(context: ChartDrawContext): Unit = with(context) {
-        var currentTop = bounds.top + padding.topDp.pixels
-
-        items.forEach { item ->
-
-            val height = heights.getOrPut(item) {
-                item.getLabelHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp)
-            }
-            val centerY = currentTop + height.half
-            var startX = if (isLtr) {
-                chartBounds.left + padding.startDp.pixels
-            } else {
-                chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
-            }
-
-            item.icon.draw(
-                context = context,
-                left = startX,
-                top = centerY - iconSizeDp.half.pixels,
-                right = startX + iconSizeDp.pixels,
-                bottom = centerY + iconSizeDp.half.pixels,
-            )
-
-            startX += if (isLtr) {
-                (iconSizeDp + iconPaddingDp).pixels
-            } else {
-                -iconPaddingDp.pixels
-            }
-
-            item.label.drawText(
-                context = context,
-                text = item.labelText,
-                textX = startX,
-                textY = centerY,
-                horizontalPosition = HorizontalPosition.End,
-                maxTextWidth = (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
-                    .toInt(),
-            )
-
-            currentTop += height + spacingDp.pixels
+    override fun getHeight(
+        context: MeasureContext,
+        availableWidth: Float,
+    ): Float =
+        with(context) {
+            items.fold(0f) { sum, item ->
+                sum +
+                    maxOf(
+                        iconSizeDp.pixels,
+                        item.getLabelHeight(context, availableWidth, iconPaddingDp, iconSizeDp),
+                    ).also { height -> heights[item] = height }
+            } + (padding.verticalDp + spacingDp * (items.size - 1)).pixels
         }
-    }
 
-    @Deprecated("Use `LegendItem#getLabelHeight` instead.")
-    @Suppress("DEPRECATION")
-    protected open fun Item.getHeight(context: MeasureContext, availableWidth: Float): Float = with(context) {
-        label.getHeight(this, labelText, (availableWidth - iconSizeDp.pixels - iconPaddingDp.pixels).toInt())
-    }
+    override fun draw(context: ChartDrawContext): Unit =
+        with(context) {
+            var currentTop = bounds.top + padding.topDp.pixels
 
-    /**
-     * Defines the appearance of an item of a [VerticalLegend].
-     *
-     * @param icon the [Component] used as the item’s icon.
-     * @param label the [TextComponent] used for the label.
-     * @param labelText the text content of the label.
-     */
-    @Deprecated("Use `LegendItem` instead.")
-    public class Item(
-        public override val icon: Component,
-        public override val label: TextComponent,
-        public override val labelText: CharSequence,
-    ) : LegendItem(icon, label, labelText)
+            items.forEach { item ->
+
+                val height =
+                    heights.getOrPut(item) {
+                        item.getLabelHeight(this, chartBounds.width(), iconPaddingDp, iconSizeDp)
+                    }
+                val centerY = currentTop + height.half
+                var startX =
+                    if (isLtr) {
+                        chartBounds.left + padding.startDp.pixels
+                    } else {
+                        chartBounds.right - padding.startDp.pixels - iconSizeDp.pixels
+                    }
+
+                item.icon.draw(
+                    context = context,
+                    left = startX,
+                    top = centerY - iconSizeDp.half.pixels,
+                    right = startX + iconSizeDp.pixels,
+                    bottom = centerY + iconSizeDp.half.pixels,
+                )
+
+                startX +=
+                    if (isLtr) {
+                        (iconSizeDp + iconPaddingDp).pixels
+                    } else {
+                        -iconPaddingDp.pixels
+                    }
+
+                item.label.drawText(
+                    context = context,
+                    text = item.labelText,
+                    textX = startX,
+                    textY = centerY,
+                    horizontalPosition = HorizontalPosition.End,
+                    maxTextWidth =
+                        (chartBounds.width() - (iconSizeDp + iconPaddingDp + padding.horizontalDp).pixels)
+                            .toInt(),
+                )
+
+                currentTop += height + spacingDp.pixels
+            }
+        }
 }

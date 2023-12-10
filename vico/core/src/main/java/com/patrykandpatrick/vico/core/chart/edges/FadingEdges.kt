@@ -50,7 +50,6 @@ public open class FadingEdges(
     public var visibilityThresholdDp: Float = FADING_EDGE_VISIBILITY_THRESHOLD_DP,
     public var visibilityInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
 ) {
-
     private val paint: Paint = Paint()
 
     private val rect: RectF = RectF()
@@ -90,36 +89,37 @@ public open class FadingEdges(
     public fun applyFadingEdges(
         context: ChartDrawContext,
         bounds: RectF,
-    ): Unit = with(context) {
-        val maxScroll = getMaxScrollDistance()
-        var fadeAlphaFraction: Float
+    ): Unit =
+        with(context) {
+            val maxScroll = getMaxScrollDistance()
+            var fadeAlphaFraction: Float
 
-        if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
-            fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
+            if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
+                fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
-            drawFadingEdge(
-                left = bounds.left,
-                top = bounds.top,
-                right = bounds.left + startEdgeWidthDp.pixels,
-                bottom = bounds.bottom,
-                direction = -1,
-                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
-            )
+                drawFadingEdge(
+                    left = bounds.left,
+                    top = bounds.top,
+                    right = bounds.left + startEdgeWidthDp.pixels,
+                    bottom = bounds.bottom,
+                    direction = -1,
+                    alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
+                )
+            }
+
+            if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
+                fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
+
+                drawFadingEdge(
+                    left = bounds.right - endEdgeWidthDp.pixels,
+                    top = bounds.top,
+                    right = bounds.right,
+                    bottom = bounds.bottom,
+                    direction = 1,
+                    alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
+                )
+            }
         }
-
-        if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
-            fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
-
-            drawFadingEdge(
-                left = bounds.right - endEdgeWidthDp.pixels,
-                top = bounds.top,
-                right = bounds.right,
-                bottom = bounds.bottom,
-                direction = 1,
-                alpha = (visibilityInterpolator.getInterpolation(fadeAlphaFraction) * FULL_ALPHA).toInt(),
-            )
-        }
-    }
 
     private fun ChartDrawContext.drawFadingEdge(
         left: Float,
@@ -133,15 +133,16 @@ public open class FadingEdges(
 
         val faded = FULL_FADE.copyColor(alpha = alpha)
 
-        paint.shader = LinearGradient(
-            rect.left,
-            0f,
-            rect.right,
-            0f,
-            if (direction < 0) faded else NO_FADE,
-            if (direction < 0) NO_FADE else faded,
-            Shader.TileMode.CLAMP,
-        )
+        paint.shader =
+            LinearGradient(
+                rect.left,
+                0f,
+                rect.right,
+                0f,
+                if (direction < 0) faded else NO_FADE,
+                if (direction < 0) NO_FADE else faded,
+                Shader.TileMode.CLAMP,
+            )
         canvas.drawRect(rect, paint)
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,7 @@ private val lock = Any()
 /**
  * Calls the given function block with this [TypedArray] as its argument, then recycles this [TypedArray].
  */
-public inline fun <R> TypedArray.use(block: (TypedArray) -> R): R =
-    block(this).also { recycle() }
+public inline fun <R> TypedArray.use(block: (TypedArray) -> R): R = block(this).also { recycle() }
 
 /**
  * Retrieves the color at the given index.
@@ -50,14 +49,15 @@ public fun TypedArray.getRawDimension(
     context: Context,
     @StyleableRes index: Int,
     defaultValue: Float,
-): Float = synchronized(lock) {
-    if (getValue(index, rawValueTypedValue)) {
-        rawValueTypedValue.getDimension(context.resources.displayMetrics) / context.density
-        TypedValue.complexToFloat(rawValueTypedValue.data)
-    } else {
-        defaultValue
+): Float =
+    synchronized(lock) {
+        if (getValue(index, rawValueTypedValue)) {
+            rawValueTypedValue.getDimension(context.resources.displayMetrics) / context.density
+            TypedValue.complexToFloat(rawValueTypedValue.data)
+        } else {
+            defaultValue
+        }
     }
-}
 
 /**
  * Returns a [TypedArray] nested inside the receiver [TypedArray].
@@ -73,19 +73,25 @@ public fun TypedArray.getNestedTypedArray(
 /**
  * Retrieves the fraction at the given index as a [Float].
  */
-public fun TypedArray.getFraction(@StyleableRes index: Int, defaultValue: Float = -1f): Float =
-    getFraction(index, 1, 1, defaultValue)
+public fun TypedArray.getFraction(
+    @StyleableRes index: Int,
+    defaultValue: Float = -1f,
+): Float = getFraction(index, 1, 1, defaultValue)
 
 /**
  * Returns a boolean indicating whether the value at the given index is a fraction.
  */
-public fun TypedArray.isFraction(@StyleableRes index: Int): Boolean =
-    getTypeCompat(index) == TypedValue.TYPE_FRACTION
+public fun TypedArray.isFraction(
+    @StyleableRes index: Int,
+): Boolean = getTypeCompat(index) == TypedValue.TYPE_FRACTION
 
 /**
  * Returns the type of the value at the given index.
  */
-public fun TypedArray.getTypeCompat(@StyleableRes index: Int): Int = synchronized(lock) {
-    getValue(index, typeCompatTypedValue)
-    typeCompatTypedValue.type
-}
+public fun TypedArray.getTypeCompat(
+    @StyleableRes index: Int,
+): Int =
+    synchronized(lock) {
+        getValue(index, typeCompatTypedValue)
+        typeCompatTypedValue.type
+    }

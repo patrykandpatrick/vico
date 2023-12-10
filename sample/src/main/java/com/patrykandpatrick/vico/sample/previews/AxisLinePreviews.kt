@@ -25,10 +25,11 @@ import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.component.lineComponent
-import com.patrykandpatrick.vico.compose.component.shapeComponent
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.component.shape.Shapes
@@ -36,30 +37,35 @@ import com.patrykandpatrick.vico.core.component.shape.cornered.Corner
 import com.patrykandpatrick.vico.core.component.shape.cornered.CorneredShape
 import com.patrykandpatrick.vico.core.component.shape.cornered.CutCornerTreatment
 import com.patrykandpatrick.vico.core.component.shape.cornered.RoundedCornerTreatment
-import com.patrykandpatrick.vico.core.entry.entryModelOf
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
 
-private val model = entryModelOf(1, 2, 3, 4)
+private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 4) })
 
 @Composable
 private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
-    val chartStyle = LocalChartStyle.current.copy(
-        axis = LocalChartStyle.current.axis.copy(
-            axisLabelColor = Color.Black,
-            axisLineColor = Color.Black.copy(alpha = 0.5f),
-            axisGuidelineColor = Color.Black.copy(alpha = 0.2f),
-        ),
-        columnChart = LocalChartStyle.current.columnChart.copy(
-            columns = LocalChartStyle.current.columnChart.columns.map {
-                lineComponent(
-                    color = Color.Gray,
-                    thickness = it.thicknessDp.dp,
-                    shape = it.shape,
-                    dynamicShader = it.dynamicShader,
-                    margins = it.margins,
-                )
-            },
-        ),
-    )
+    val chartStyle =
+        LocalChartStyle.current.copy(
+            axis =
+                LocalChartStyle.current.axis.copy(
+                    axisLabelColor = Color.Black,
+                    axisLineColor = Color.Black.copy(alpha = 0.5f),
+                    axisGuidelineColor = Color.Black.copy(alpha = 0.2f),
+                ),
+            columnLayer =
+                LocalChartStyle.current.columnLayer.copy(
+                    columns =
+                        LocalChartStyle.current.columnLayer.columns.map {
+                            rememberLineComponent(
+                                color = Color.Gray,
+                                thickness = it.thicknessDp.dp,
+                                shape = it.shape,
+                                dynamicShader = it.dynamicShader,
+                                margins = it.margins,
+                            )
+                        },
+                ),
+        )
     CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
 }
 
@@ -67,39 +73,49 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
 @Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisTextInside() {
     ProvidePreviewChartStyle {
-        val label = axisLabelComponent(
-            background = shapeComponent(
-                shape = CorneredShape(
-                    topLeft = Corner.Relative(
-                        percentage = 50,
-                        cornerTreatment = CutCornerTreatment,
+        val label =
+            axisLabelComponent(
+                background =
+                    rememberShapeComponent(
+                        shape =
+                            CorneredShape(
+                                topLeft =
+                                    Corner.Relative(
+                                        percentage = 50,
+                                        cornerTreatment = CutCornerTreatment,
+                                    ),
+                                bottomRight =
+                                    Corner.Relative(
+                                        percentage = 50,
+                                        cornerTreatment = RoundedCornerTreatment,
+                                    ),
+                            ),
+                        color = Color.LightGray,
+                        strokeColor = Color.Gray,
+                        strokeWidth = 1.dp,
                     ),
-                    bottomRight = Corner.Relative(
-                        percentage = 50,
-                        cornerTreatment = RoundedCornerTreatment,
-                    ),
+                verticalPadding = 2.dp,
+                horizontalPadding = 8.dp,
+                verticalMargin = 4.dp,
+                horizontalMargin = 4.dp,
+            )
+        CartesianChartHost(
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(),
+                    startAxis =
+                        rememberStartAxis(
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                            label = label,
+                        ),
+                    endAxis =
+                        rememberEndAxis(
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                            guideline = null,
+                            label = label,
+                        ),
                 ),
-                color = Color.LightGray,
-                strokeColor = Color.Gray,
-                strokeWidth = 1.dp,
-            ),
-            verticalPadding = 2.dp,
-            horizontalPadding = 8.dp,
-            verticalMargin = 4.dp,
-            horizontalMargin = 4.dp,
-        )
-        Chart(
-            chart = columnChart(),
             model = model,
-            startAxis = rememberStartAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                label = label,
-            ),
-            endAxis = rememberEndAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                guideline = null,
-                label = label,
-            ),
         )
     }
 }
@@ -108,29 +124,36 @@ public fun HorizontalAxisTextInside() {
 @Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisTextInsideAndBottomAxis() {
     ProvidePreviewChartStyle {
-        val label = axisLabelComponent(
-            background = shapeComponent(
-                shape = Shapes.pillShape,
-                color = Color.LightGray,
-            ),
-            verticalPadding = 2.dp,
-            horizontalPadding = 8.dp,
-            verticalMargin = 4.dp,
-            horizontalMargin = 4.dp,
-        )
-        Chart(
-            chart = columnChart(),
+        val label =
+            axisLabelComponent(
+                background =
+                    rememberShapeComponent(
+                        shape = Shapes.pillShape,
+                        color = Color.LightGray,
+                    ),
+                verticalPadding = 2.dp,
+                horizontalPadding = 8.dp,
+                verticalMargin = 4.dp,
+                horizontalMargin = 4.dp,
+            )
+        CartesianChartHost(
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(),
+                    startAxis =
+                        rememberStartAxis(
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                            label = label,
+                        ),
+                    endAxis =
+                        rememberEndAxis(
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                            guideline = null,
+                            label = label,
+                        ),
+                    bottomAxis = rememberBottomAxis(),
+                ),
             model = model,
-            startAxis = rememberStartAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                label = label,
-            ),
-            endAxis = rememberEndAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                guideline = null,
-                label = label,
-            ),
-            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -139,16 +162,21 @@ public fun HorizontalAxisTextInsideAndBottomAxis() {
 @Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisTextOutside() {
     ProvidePreviewChartStyle {
-        Chart(
-            chart = columnChart(),
+        CartesianChartHost(
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(),
+                    startAxis =
+                        rememberStartAxis(
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+                        ),
+                    endAxis =
+                        rememberEndAxis(
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+                            guideline = null,
+                        ),
+                ),
             model = model,
-            startAxis = rememberStartAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-            ),
-            endAxis = rememberEndAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-                guideline = null,
-            ),
         )
     }
 }
@@ -157,13 +185,15 @@ public fun HorizontalAxisTextOutside() {
 @Preview(showBackground = true, widthDp = 250)
 public fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
     ProvidePreviewChartStyle {
-        Chart(
-            chart = columnChart(),
+        CartesianChartHost(
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(),
+                    startAxis =
+                        rememberStartAxis(horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside),
+                    bottomAxis = rememberBottomAxis(),
+                ),
             model = model,
-            startAxis = rememberStartAxis(
-                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-            ),
-            bottomAxis = rememberBottomAxis(),
         )
     }
 }

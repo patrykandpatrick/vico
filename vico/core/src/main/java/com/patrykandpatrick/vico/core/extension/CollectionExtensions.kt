@@ -65,8 +65,7 @@ private fun <T> ArrayList<ArrayList<T>>.ensureSize(size: Int) {
 /**
  * Creates a copy of this [ArrayList] and each child [ArrayList] contained in this [ArrayList].
  */
-public fun <T> ArrayList<ArrayList<T>>.copy(): List<List<T>> =
-    List(size) { index -> ArrayList(get(index)) }
+public fun <T> ArrayList<ArrayList<T>>.copy(): List<List<T>> = List(size) { index -> ArrayList(get(index)) }
 
 /**
  * Replaces all of the elements of this [MutableMap] with the elements of the provided map.
@@ -116,11 +115,12 @@ internal fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
     if (isEmpty()) return null
     var closestValue: Float? = null
     forEach { checkedValue ->
-        closestValue = when {
-            closestValue == null -> checkedValue
-            abs(closestValue!! - value) > abs(checkedValue - value) -> checkedValue
-            else -> closestValue
-        }
+        closestValue =
+            when {
+                closestValue == null -> checkedValue
+                abs(closestValue!! - value) > abs(checkedValue - value) -> checkedValue
+                else -> closestValue
+            }
     }
     return closestValue
 }

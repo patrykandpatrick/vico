@@ -18,7 +18,7 @@
     <string name="app_name">Vico</string>
     <string name="compose">Compose</string>
     <string name="views">Views</string>
-    <string name="data_set_x">Data set %d</string>
+    <string name="series_x">Series %d</string>
     <string name="x_axis">x-axis</string>
     <string name="y_axis">y-axis</string>
 </resources>

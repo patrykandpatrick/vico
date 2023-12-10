@@ -24,10 +24,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.Chart
-import com.patrykandpatrick.vico.compose.chart.column.columnChart
-import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
+import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
@@ -41,38 +42,43 @@ import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
-internal fun Chart2(uiSystem: UISystem, chartEntryModelProducer: ChartEntryModelProducer) {
+internal fun Chart2(
+    uiSystem: UISystem,
+    modelProducer: CartesianChartModelProducer,
+) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart2(chartEntryModelProducer)
-        UISystem.Views -> ViewChart2(chartEntryModelProducer)
+        UISystem.Compose -> ComposeChart2(modelProducer)
+        UISystem.Views -> ViewChart2(modelProducer)
     }
 }
 
 @Composable
-private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ComposeChart2(modelProducer: CartesianChartModelProducer) {
     val thresholdLine = rememberThresholdLine()
     ProvideChartStyle(rememberChartStyle(chartColors)) {
-        val defaultColumns = currentChartStyle.columnChart.columns
-        Chart(
-            chart = columnChart(
-                columns = remember(defaultColumns) {
-                    defaultColumns.map { defaultColumn ->
-                        LineComponent(defaultColumn.color, COLUMN_WIDTH_DP, defaultColumn.shape)
-                    }
-                },
-                decorations = remember(thresholdLine) { listOf(thresholdLine) },
-            ),
-            chartModelProducer = chartEntryModelProducer,
-            startAxis = rememberStartAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
-            bottomAxis = rememberBottomAxis(itemPlacer = bottomAxisItemPlacer),
+        val defaultColumns = currentChartStyle.columnLayer.columns
+        CartesianChartHost(
+            chart =
+                rememberCartesianChart(
+                    rememberColumnCartesianLayer(
+                        remember(defaultColumns) {
+                            defaultColumns.map { LineComponent(it.color, COLUMN_WIDTH_DP, it.shape) }
+                        },
+                    ),
+                    startAxis =
+                        rememberStartAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
+                    bottomAxis = rememberBottomAxis(itemPlacer = bottomAxisItemPlacer),
+                    decorations = remember(thresholdLine) { listOf(thresholdLine) },
+                ),
+            modelProducer = modelProducer,
             marker = rememberMarker(),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
@@ -81,19 +87,19 @@ private fun ComposeChart2(chartEntryModelProducer: ChartEntryModelProducer) {
 }
 
 @Composable
-private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
+private fun ViewChart2(modelProducer: CartesianChartModelProducer) {
     val thresholdLine = rememberThresholdLine()
     val marker = rememberMarker()
     AndroidViewBinding(Chart2Binding::inflate) {
         with(chartView) {
             chart?.addDecoration(thresholdLine)
             runInitialAnimation = false
-            entryProducer = chartEntryModelProducer
-            with(startAxis as VerticalAxis) {
+            this.modelProducer = modelProducer
+            with(chart?.startAxis as VerticalAxis) {
                 itemPlacer = startAxisItemPlacer
                 valueFormatter = startAxisValueFormatter
             }
-            (bottomAxis as HorizontalAxis).itemPlacer = bottomAxisItemPlacer
+            (chart?.bottomAxis as HorizontalAxis).itemPlacer = bottomAxisItemPlacer
             this.marker = marker
         }
     }
@@ -101,14 +107,15 @@ private fun ViewChart2(chartEntryModelProducer: ChartEntryModelProducer) {
 
 @Composable
 private fun rememberThresholdLine(): ThresholdLine {
-    val line = shapeComponent(color = color2)
-    val label = textComponent(
-        color = Color.Black,
-        background = shapeComponent(Shapes.pillShape, color2),
-        padding = thresholdLineLabelPadding,
-        margins = thresholdLineLabelMargins,
-        typeface = Typeface.MONOSPACE,
-    )
+    val line = rememberShapeComponent(color = color2)
+    val label =
+        rememberTextComponent(
+            color = Color.Black,
+            background = rememberShapeComponent(Shapes.pillShape, color2),
+            padding = thresholdLineLabelPadding,
+            margins = thresholdLineLabelMargins,
+            typeface = Typeface.MONOSPACE,
+        )
     return remember(line, label) {
         ThresholdLine(thresholdValue = THRESHOLD_LINE_VALUE, lineComponent = line, labelComponent = label)
     }
@@ -132,9 +139,10 @@ private val thresholdLineLabelPadding =
     dimensionsOf(thresholdLineLabelHorizontalPaddingValue, thresholdLineLabelVerticalPaddingValue)
 private val thresholdLineLabelMargins = dimensionsOf(thresholdLineLabelMarginValue)
 private val startAxisValueFormatter = PercentageFormatAxisValueFormatter<AxisPosition.Vertical.Start>()
-private val horizontalLayout = HorizontalLayout.FullWidth(
-    scalableStartPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
-    scalableEndPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
-)
+private val horizontalLayout =
+    HorizontalLayout.FullWidth(
+        scalableStartPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+        scalableEndPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+    )
 private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(MAX_START_AXIS_ITEM_COUNT)
 private val bottomAxisItemPlacer = AxisItemPlacer.Horizontal.default(BOTTOM_AXIS_ITEM_SPACING, BOTTOM_AXIS_ITEM_OFFSET)

@@ -36,7 +36,6 @@ public class DashedShape(
     public val gapLengthDp: Float = DefaultDimens.DASH_GAP,
     public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
-
     private var drawDashLength = dashLengthDp
     private var drawGapLength = gapLengthDp
 
@@ -70,21 +69,22 @@ public class DashedShape(
         var index = 0
         var drawnLength = 0f
         while (right - left - drawnLength > 0) {
-            drawnLength += if (index % 2 == 0) {
-                path.reset()
-                shape.drawShape(
-                    context = context,
-                    paint = paint,
-                    path = path,
-                    left = left + drawnLength,
-                    top = top,
-                    right = left + drawnLength + drawDashLength,
-                    bottom = bottom,
-                )
-                drawDashLength
-            } else {
-                drawGapLength
-            }
+            drawnLength +=
+                if (index % 2 == 0) {
+                    path.reset()
+                    shape.drawShape(
+                        context = context,
+                        paint = paint,
+                        path = path,
+                        left = left + drawnLength,
+                        top = top,
+                        right = left + drawnLength + drawDashLength,
+                        bottom = bottom,
+                    )
+                    drawDashLength
+                } else {
+                    drawGapLength
+                }
             index++
         }
     }
@@ -103,28 +103,33 @@ public class DashedShape(
         var index = 0
         var drawnLength = 0f
         while (bottom - top - drawnLength > 0) {
-            drawnLength += if (index % 2 == 0) {
-                path.reset()
-                shape.drawShape(
-                    context = context,
-                    paint = paint,
-                    path = path,
-                    left = left,
-                    top = top + drawnLength,
-                    right = right,
-                    bottom = top + drawnLength + drawDashLength,
-                )
-                drawDashLength
-            } else {
-                drawGapLength
-            }
+            drawnLength +=
+                if (index % 2 == 0) {
+                    path.reset()
+                    shape.drawShape(
+                        context = context,
+                        paint = paint,
+                        path = path,
+                        left = left,
+                        top = top + drawnLength,
+                        right = right,
+                        bottom = top + drawnLength + drawDashLength,
+                    )
+                    drawDashLength
+                } else {
+                    drawGapLength
+                }
             index++
         }
     }
 
-    private fun calculateDrawLengths(context: DrawContext, length: Float): Unit = with(context) {
-        calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length)
-    }
+    private fun calculateDrawLengths(
+        context: DrawContext,
+        length: Float,
+    ): Unit =
+        with(context) {
+            calculateDrawLengths(dashLengthDp.pixels, gapLengthDp.pixels, length)
+        }
 
     private fun calculateDrawLengths(
         dashLength: Float,
@@ -136,18 +141,19 @@ public class DashedShape(
             return
         }
         when (fitStrategy) {
-            FitStrategy.Resize -> when {
-                length < dashLength + gapLength -> {
-                    drawDashLength = length
-                    drawGapLength = 0f
+            FitStrategy.Resize ->
+                when {
+                    length < dashLength + gapLength -> {
+                        drawDashLength = length
+                        drawGapLength = 0f
+                    }
+                    else -> {
+                        val gapAndDashLength = gapLength + dashLength
+                        val ratio = length / (dashLength + (length / gapAndDashLength).ceil * gapAndDashLength)
+                        drawDashLength = dashLength * ratio
+                        drawGapLength = gapLength * ratio
+                    }
                 }
-                else -> {
-                    val gapAndDashLength = gapLength + dashLength
-                    val ratio = length / (dashLength + (length / gapAndDashLength).ceil * gapAndDashLength)
-                    drawDashLength = dashLength * ratio
-                    drawGapLength = gapLength * ratio
-                }
-            }
             FitStrategy.Fixed -> {
                 drawDashLength = dashLength
                 drawGapLength = gapLength

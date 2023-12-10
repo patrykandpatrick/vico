@@ -23,10 +23,17 @@ import kotlin.reflect.KProperty
 public class ValueWrapper<T>(public var value: T)
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public operator fun <T> ValueWrapper<T>.getValue(thisObj: Any?, property: KProperty<*>): T = value
+public operator fun <T> ValueWrapper<T>.getValue(
+    thisObj: Any?,
+    property: KProperty<*>,
+): T = value
 
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public operator fun <T> ValueWrapper<T>.setValue(thisObj: Any?, property: KProperty<*>, value: T) {
+public operator fun <T> ValueWrapper<T>.setValue(
+    thisObj: Any?,
+    property: KProperty<*>,
+    value: T,
+) {
     this.value = value
 }
 

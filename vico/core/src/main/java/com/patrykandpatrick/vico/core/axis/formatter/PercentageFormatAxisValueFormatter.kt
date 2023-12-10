@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import java.text.DecimalFormat
  */
 public class PercentageFormatAxisValueFormatter<Position : AxisPosition.Vertical>(pattern: String) :
     AxisValueFormatter<Position>, PercentageFormatValueFormatter(pattern = pattern) {
-
     /**
      * Creates a [PercentageFormatAxisValueFormatter] using the default percentage pattern.
      */

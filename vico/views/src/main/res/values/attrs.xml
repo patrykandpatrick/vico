@@ -16,6 +16,8 @@
 
 <resources>
     <attr name="color" format="color" />
+    <attr name="positiveColor" format="color" />
+    <attr name="negativeColor" format="color" />
     <attr name="shapeStyle" format="reference" />
     <attr name="strokeColor" format="color" />
     <attr name="strokeWidth" format="dimension" />
@@ -29,30 +31,18 @@
         <enum name="bottom" value="2" />
     </attr>
 
-    <declare-styleable name="ChartView">
-        <attr name="chart" format="enum">
-            <enum name="column" value="1" />
-            <enum name="stackedColumn" value="2" />
-            <enum name="line" value="4" />
-        </attr>
-    </declare-styleable>
-
-    <declare-styleable name="ComposedChartView">
-        <attr name="charts" format="integer">
+    <declare-styleable name="CartesianChartView">
+        <attr name="layers" format="integer">
             <flag name="column" value="1" />
-            <flag name="stackedColumn" value="2" />
-            <flag name="line" value="4" />
+            <flag name="line" value="2" />
         </attr>
-    </declare-styleable>
-
-    <declare-styleable name="BaseChartView">
         <attr name="axisStyle" format="reference" />
         <attr name="startAxisStyle" format="reference" />
         <attr name="topAxisStyle" format="reference" />
         <attr name="endAxisStyle" format="reference" />
         <attr name="bottomAxisStyle" format="reference" />
-        <attr name="columnChartStyle" />
-        <attr name="lineChartStyle" />
+        <attr name="columnLayerStyle" />
+        <attr name="lineLayerStyle" />
         <attr name="showStartAxis" format="boolean" />
         <attr name="showTopAxis" format="boolean" />
         <attr name="showEndAxis" format="boolean" />
@@ -72,10 +62,12 @@
         <attr name="scalableEndContentPadding" format="dimension" />
         <attr name="unscalableStartContentPadding" format="dimension" />
         <attr name="unscalableEndContentPadding" format="dimension" />
-        <!-- Deprecated. Use `scalableStartContentPadding` instead. -->
-        <attr name="startContentPadding" format="dimension" />
-        <!-- Deprecated. Use `scalableEndContentPadding` instead. -->
-        <attr name="endContentPadding" format="dimension" />
+        <attr name="previewMinX" format="integer" />
+        <attr name="previewMaxX" format="integer" />
+        <attr name="previewMinY" format="integer" />
+        <attr name="previewMaxY" format="integer" />
+        <attr name="previewColumnSeriesCount" format="integer" />
+        <attr name="previewLineSeriesCount" format="integer" />
     </declare-styleable>
 
     <!-- Defines the appearance of chart axes. -->
@@ -149,12 +141,6 @@
         <attr name="marginBottom" format="dimension" />
         <attr name="marginVertical" format="dimension" />
         <attr name="marginHorizontal" format="dimension" />
-        <!-- Deprecated. Use `textAlignment` instead. -->
-        <attr name="textAlign" format="enum">
-            <enum name="left" value="0" />
-            <enum name="center" value="1" />
-            <enum name="right" value="2" />
-        </attr>
         <attr name="textAlignment" format="enum">
             <enum name="normal" value="0" />
             <enum name="opposite" value="1" />

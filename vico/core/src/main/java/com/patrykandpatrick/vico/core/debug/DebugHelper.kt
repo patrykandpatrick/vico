@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,11 @@ internal object DebugHelper {
     public var enabled: Boolean = false
 
     public var strokeWidthDp: Float = 1f
-    public var debugPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        style = Paint.Style.STROKE
-        color = Color.MAGENTA
-    }
+    public var debugPaint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            style = Paint.Style.STROKE
+            color = Color.MAGENTA
+        }
 
     public fun drawDebugBounds(
         context: DrawContext,
@@ -35,9 +36,10 @@ internal object DebugHelper {
         top: Float,
         right: Float,
         bottom: Float,
-    ): Unit = with(context) {
-        if (!enabled) return@with
-        debugPaint.strokeWidth = strokeWidthDp.pixels
-        canvas.drawRect(left, top, right, bottom, debugPaint)
-    }
+    ): Unit =
+        with(context) {
+            if (!enabled) return@with
+            debugPaint.strokeWidth = strokeWidthDp.pixels
+            canvas.drawRect(left, top, right, bottom, debugPaint)
+        }
 }

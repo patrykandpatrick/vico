@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.formatter
 
+import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.extension.toPrettyString
 
@@ -26,5 +27,6 @@ public open class DefaultValueFormatter : ValueFormatter {
     override fun formatValue(
         value: Float,
         chartValues: ChartValues,
+        verticalAxisPosition: AxisPosition.Vertical?,
     ): String = value.toPrettyString()
 }

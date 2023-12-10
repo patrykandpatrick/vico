@@ -13,15 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Modifications copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Modifications copyright 2023 by Patryk Goworowski and Patrick Michalik.
  */
-@file:Suppress("NOTHING_TO_INLINE", "MagicNumber")
+@file:Suppress("NOTHING_TO_INLINE")
 
 package com.patrykandpatrick.vico.core.util
+
 /**
  * Packs two [Float] values into one [Long] value for use in inline classes.
  */
-internal inline fun packFloats(val1: Float, val2: Float): Long {
+internal inline fun packFloats(
+    val1: Float,
+    val2: Float,
+): Long {
     val v1 = val1.toBits().toLong()
     val v2 = val2.toBits().toLong()
     return v1.shl(32) or (v2 and 0xFFFFFFFF)
@@ -40,7 +44,10 @@ internal inline fun unpackFloat2(value: Long) = Float.fromBits(value.and(0xFFFFF
 /**
  * Packs two [Int] values into one [Long] value for use in inline classes.
  */
-internal inline fun packInts(val1: Int, val2: Int) = val1.toLong().shl(32) or (val2.toLong() and 0xFFFFFFFF)
+internal inline fun packInts(
+    val1: Int,
+    val2: Int,
+) = val1.toLong().shl(32) or (val2.toLong() and 0xFFFFFFFF)
 
 /**
  * Unpacks the first [Int] value in [packInts] from its returned [ULong].

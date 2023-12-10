@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ internal class ChartScaleGestureListener(
     private val getChartBounds: () -> RectF?,
     private val onZoom: (focusX: Float, zoomChange: Float) -> Unit,
 ) : ScaleGestureDetector.OnScaleGestureListener {
-
     override fun onScale(detector: ScaleGestureDetector): Boolean {
         onZoom(detector.focusX, detector.scaleFactor)
         return true

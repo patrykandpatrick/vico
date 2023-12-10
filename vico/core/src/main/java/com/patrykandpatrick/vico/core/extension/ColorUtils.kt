@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import android.graphics.Color
 
 private const val BYTE_MAX_VALUE: Int = 0xFF
 
-@Suppress("MagicNumber")
 internal val Long.alpha: Float
     get() = if (this and 0x3fL == 0L) (this shr 56 and 0xff) / 255.0f else (this shr 6 and 0x3ff) / 1023.0f
 
@@ -34,8 +33,15 @@ internal fun Int.overlayColor(overlayingColor: Int): Int {
     return Color.argb(alpha, red, green, blue)
 }
 
-private fun compositeAlpha(foregroundAlpha: Int, backgroundAlpha: Int): Int =
-    BYTE_MAX_VALUE - (BYTE_MAX_VALUE - backgroundAlpha) * (BYTE_MAX_VALUE - foregroundAlpha) / BYTE_MAX_VALUE
+private fun compositeAlpha(
+    foregroundAlpha: Int,
+    backgroundAlpha: Int,
+): Int = BYTE_MAX_VALUE - (BYTE_MAX_VALUE - backgroundAlpha) * (BYTE_MAX_VALUE - foregroundAlpha) / BYTE_MAX_VALUE
 
-private fun compositeComponent(fgC: Int, fgA: Int, bgC: Int, bgA: Int, a: Int): Int =
-    if (a == 0) 0 else (BYTE_MAX_VALUE * fgC * fgA + bgC * bgA * (BYTE_MAX_VALUE - fgA)) / (a * BYTE_MAX_VALUE)
+private fun compositeComponent(
+    fgC: Int,
+    fgA: Int,
+    bgC: Int,
+    bgA: Int,
+    a: Int,
+): Int = if (a == 0) 0 else (BYTE_MAX_VALUE * fgC * fgA + bgC * bgA * (BYTE_MAX_VALUE - fgA)) / (a * BYTE_MAX_VALUE)

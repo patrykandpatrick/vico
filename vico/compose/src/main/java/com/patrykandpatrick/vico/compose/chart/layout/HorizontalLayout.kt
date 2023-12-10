@@ -33,9 +33,10 @@ public fun HorizontalLayout.Companion.fullWidth(
     scalableEndPadding: Dp = 0.dp,
     unscalableStartPadding: Dp = 0.dp,
     unscalableEndPadding: Dp = 0.dp,
-): HorizontalLayout.FullWidth = HorizontalLayout.FullWidth(
-    scalableStartPadding.value,
-    scalableEndPadding.value,
-    unscalableStartPadding.value,
-    unscalableEndPadding.value,
-)
+): HorizontalLayout.FullWidth =
+    HorizontalLayout.FullWidth(
+        scalableStartPadding.value,
+        scalableEndPadding.value,
+        unscalableStartPadding.value,
+        unscalableEndPadding.value,
+    )

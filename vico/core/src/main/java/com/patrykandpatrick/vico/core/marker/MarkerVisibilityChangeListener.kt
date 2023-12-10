@@ -20,7 +20,6 @@ package com.patrykandpatrick.vico.core.marker
  * Allows for listening to [Marker] visibility changes.
  */
 public interface MarkerVisibilityChangeListener {
-
     /**
      * Called when the linked [Marker] is shown.
      *
@@ -31,10 +30,7 @@ public interface MarkerVisibilityChangeListener {
     public fun onMarkerShown(
         marker: Marker,
         markerEntryModels: List<Marker.EntryModel>,
-    ) {
-        @Suppress("DEPRECATION_ERROR")
-        onMarkerVisibilityChanged(isVisible = true, marker = marker)
-    }
+    )
 
     /**
      * Called when the linked [Marker] moves (that is, when there’s a change in which chart entries it highlights).
@@ -53,20 +49,5 @@ public interface MarkerVisibilityChangeListener {
      *
      * @param marker the linked [Marker], which has been hidden.
      */
-    public fun onMarkerHidden(marker: Marker) {
-        @Suppress("DEPRECATION_ERROR")
-        onMarkerVisibilityChanged(isVisible = false, marker = marker)
-    }
-
-    /**
-     * Called when the linked [Marker]ʼs visibility changes.
-     *
-     * @param isVisible whether the linked [Marker] is visible.
-     * @param marker the linked [Marker], whose visibility has changed.
-     */
-    @Deprecated(message = "Use `onMarkerShown` and `onMarkerHidden` instead.", level = DeprecationLevel.ERROR)
-    public fun onMarkerVisibilityChanged(
-        isVisible: Boolean,
-        marker: Marker,
-    ): Unit = Unit
+    public fun onMarkerHidden(marker: Marker)
 }
