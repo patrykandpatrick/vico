@@ -1,7 +1,5 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": ["config:base"],
-    "baseBranches": ["development"],
-    "dependencyDashboard": false,
-    "useBaseBranchConfig": "merge"
+    "dependencyDashboard": false
 }
