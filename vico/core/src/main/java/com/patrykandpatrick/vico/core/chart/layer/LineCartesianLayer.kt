@@ -58,7 +58,6 @@ import com.patrykandpatrick.vico.core.model.drawing.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.model.drawing.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.model.forEachInIndexed
 import com.patrykandpatrick.vico.core.util.Point
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -277,7 +276,7 @@ public open class LineCartesianLayer(
 
             val drawingModel = model.extraStore.getOrNull(drawingModelKey)
             val yRange = chartValues.getYRange(verticalAxisPosition)
-            val zeroLineYFraction = 1f - (drawingModel?.zeroY ?: abs(yRange.minY / yRange.length))
+            val zeroLineYFraction = drawingModel?.zeroY ?: (yRange.minY / yRange.length + 1f).coerceIn(0f..1f)
 
             model.series.forEachIndexed { entryListIndex, entries ->
 
@@ -617,7 +616,7 @@ public open class LineCartesianLayer(
                 }
             }
             .let { pointInfo ->
-                LineCartesianLayerDrawingModel(pointInfo, abs(yRange.minY / yRange.length))
+                LineCartesianLayerDrawingModel(pointInfo, (yRange.minY / yRange.length + 1f).coerceIn(0f..1f))
             }
     }
 }

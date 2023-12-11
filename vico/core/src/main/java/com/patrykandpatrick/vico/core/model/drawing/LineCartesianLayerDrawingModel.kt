@@ -21,9 +21,9 @@ import com.patrykandpatrick.vico.core.extension.lerp
 import com.patrykandpatrick.vico.core.extension.orZero
 
 /**
- * Houses drawing information for a [LineCartesianLayer]. [opacity] is the lines’ opacity. [zeroY] specifies the
- * position of the zero line (_y_ = 0) from the bottom of the [LineCartesianLayer] as a fraction of the
- * [LineCartesianLayer]’s height.
+ * Houses drawing information for a [LineCartesianLayer]. [opacity] is the lines’ opacity. [zeroY], restricted to the
+ * interval [0, 1], specifies the position of the zero line (_y_ = 0) from the top of the [LineCartesianLayer] as a
+ * fraction of the [LineCartesianLayer]’s height.
  */
 public class LineCartesianLayerDrawingModel(
     pointInfo: List<Map<Float, PointInfo>>,
