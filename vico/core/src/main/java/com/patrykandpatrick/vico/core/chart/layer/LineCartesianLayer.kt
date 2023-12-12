@@ -583,7 +583,7 @@ public open class LineCartesianLayer(
         with(context) {
             outInsets.setVertical(
                 lines
-                    .maxOf { if (it.point != null) max(it.thicknessDp, it.thicknessDp) else it.thicknessDp }
+                    .maxOf { if (it.point != null) max(it.thicknessDp, it.pointSizeDp) else it.thicknessDp }
                     .pixels,
             )
         }
