@@ -44,7 +44,6 @@ import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
-import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.extension.withOpacity
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
@@ -483,12 +482,8 @@ public open class LineCartesianLayer(
         val maxX = chartValues.maxX
         val xStep = chartValues.xStep
 
-        var x: Float = Float.NEGATIVE_INFINITY
+        var x: Float? = null
         var nextX: Float? = null
-        var y: Float
-
-        var prevEntry: LineCartesianLayerModel.Entry? = null
-        var lastEntry: LineCartesianLayerModel.Entry? = null
 
         val boundsStart = bounds.getStart(isLtr = isLtr)
         val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
@@ -503,31 +498,19 @@ public open class LineCartesianLayer(
                 bounds.height()
         }
 
-        series.forEachInIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
-
-            val previousX = x.takeIf { it.isFinite() }
-            x = nextX ?: getDrawX(entry)
-            nextX = next?.let(::getDrawX)
-            y = getDrawY(entry)
-
-            when {
-                isLtr && x < boundsStart || isLtr.not() && x > boundsStart -> {
-                    prevEntry = entry
-                }
-
-                x in boundsStart.rangeWith(other = boundsEnd) -> {
-                    prevEntry?.also {
-                        action(index, it, getDrawX(it), getDrawY(it), previousX, nextX)
-                        prevEntry = null
-                    }
-                    action(index, entry, x, y, previousX, nextX)
-                }
-
-                (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
-                    action(index, entry, x, y, previousX, nextX)
-                    lastEntry = entry
-                }
+        series.forEachInIndexed(range = minX..maxX, padding = 1) { index, entry, next ->
+            val previousX = x
+            val immutableX = nextX ?: getDrawX(entry)
+            val immutableNextX = next?.let(::getDrawX)
+            x = immutableX
+            nextX = immutableNextX
+            if (immutableNextX != null && (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
+                (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
+            ) {
+                return@forEachInIndexed
             }
+            action(index, entry, immutableX, getDrawY(entry), previousX, nextX)
+            if (isLtr && immutableX > boundsEnd || isLtr.not() && immutableX < boundsEnd) return
         }
     }
 

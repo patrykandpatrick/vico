@@ -150,7 +150,7 @@ public open class ColumnCartesianLayer(
             column = columns.getRepeating(index)
             drawingStart = getDrawingStart(index, model.series.size, mergeMode) - horizontalScroll
 
-            entryCollection.forEachInIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry ->
+            entryCollection.forEachInIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry, _ ->
 
                 val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
                 height = (columnInfo?.height ?: (abs(entry.y) / yRange.length)) * bounds.height()

@@ -102,19 +102,21 @@ internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Float {
         ?: 1f
 }
 
-internal fun <T : CartesianLayerModel.Entry> Iterable<T>.forEachInIndexed(
+internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachInIndexed(
     range: ClosedFloatingPointRange<Float>,
-    action: (Int, T) -> Unit,
-) {
-    var index = 0
-    forEach { if (it.x in range) action(index++, it) }
-}
-
-internal fun <T : CartesianLayerModel.Entry> List<T>.forEachInIndexed(
-    range: ClosedFloatingPointRange<Float>,
+    padding: Int = 0,
     action: (Int, T, T?) -> Unit,
 ) {
-    forEachInIndexed(range) { index, entry ->
-        action(index, entry, getOrNull(index + 1)?.takeIf { it.x in range })
+    var start = 0
+    var end = 0
+    for (entry in this) {
+        when {
+            entry.x < range.start -> start++
+            entry.x > range.endInclusive -> break
+        }
+        end++
     }
+    start = (start - padding).coerceAtLeast(0)
+    end = (end + padding).coerceAtMost(lastIndex)
+    (start..end).forEach { action(it, this[it], getOrNull(it + 1)) }
 }
