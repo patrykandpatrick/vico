@@ -350,8 +350,10 @@ public open class ColumnCartesianLayer(
             axisPosition = verticalAxisPosition,
             minX = axisValueOverrider?.getMinX(model) ?: model.minX,
             maxX = axisValueOverrider?.getMaxX(model) ?: model.maxX,
-            minY = axisValueOverrider?.getMinY(model) ?: mergeMode.getMinY(model),
-            maxY = axisValueOverrider?.getMaxY(model) ?: mergeMode.getMaxY(model),
+            minY = axisValueOverrider?.getMinY(model) ?: mergeMode.getMinY(model).coerceAtMost(0f),
+            maxY =
+                axisValueOverrider?.getMaxY(model)
+                    ?: if (model.minY == 0f && model.maxY == 0f) 1f else mergeMode.getMaxY(model).coerceAtLeast(0f),
         )
     }
 
@@ -446,8 +448,8 @@ public open class ColumnCartesianLayer(
          */
         public fun getMinY(model: ColumnCartesianLayerModel): Float =
             when (this) {
-                Grouped -> model.minY.coerceAtMost(0f)
-                Stacked -> model.minAggregateY.coerceAtMost(0f)
+                Grouped -> model.minY
+                Stacked -> model.minAggregateY
             }
 
         /**
