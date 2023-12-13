@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,8 @@
 
 package com.patrykandpatrick.vico.core.extension
 
-/**
- * Calls the [selector] function for each value in the collection and returns the range of the produced values.
- */
-public inline fun <T> Iterable<T>.rangeOfOrNull(selector: (T) -> Float): ClosedFloatingPointRange<Float>? {
+internal inline fun <T> Iterable<T>.rangeOf(selector: (T) -> Float): ClosedFloatingPointRange<Float> {
     val iterator = iterator()
-    if (!iterator.hasNext()) return null
     var minValue = selector(iterator.next())
     var maxValue = minValue
     while (iterator.hasNext()) {
@@ -32,14 +28,8 @@ public inline fun <T> Iterable<T>.rangeOfOrNull(selector: (T) -> Float): ClosedF
     return minValue..maxValue
 }
 
-/**
- * Calls the [selector] function for each value in the collection and returns the range of the produced values.
- */
-public inline fun <T> Iterable<T>.rangeOfPairOrNull(
-    selector: (T) -> Pair<Float, Float>,
-): ClosedFloatingPointRange<Float>? {
+internal inline fun <T> Iterable<T>.rangeOfPair(selector: (T) -> Pair<Float, Float>): ClosedFloatingPointRange<Float> {
     val iterator = iterator()
-    if (!iterator.hasNext()) return null
     var (minValue, maxValue) = selector(iterator.next())
     while (iterator.hasNext()) {
         val (negValue, posValue) = selector(iterator.next())

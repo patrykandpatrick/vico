@@ -58,9 +58,6 @@ internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>)
 
 internal fun ClosedFloatingPointRange<Float>.random(): Float = start + (endInclusive - start) * Random.nextFloat()
 
-internal val ClosedFloatingPointRange<Float>?.orZero: ClosedFloatingPointRange<Float>
-    get() = this ?: 0f..0f
-
 /**
  * Half of this value.
  */

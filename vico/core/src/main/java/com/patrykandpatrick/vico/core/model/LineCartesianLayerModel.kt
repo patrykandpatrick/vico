@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.model
 
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.extension.orZero
-import com.patrykandpatrick.vico.core.extension.rangeOfOrNull
+import com.patrykandpatrick.vico.core.extension.rangeOf
+import com.patrykandpatrick.vico.core.extension.rangeOfPair
 
 /**
  * Stores a [LineCartesianLayer]’s data.
@@ -46,11 +46,16 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     public constructor(series: List<List<Entry>>) : this(series, ExtraStore.empty)
 
     private constructor(series: List<List<Entry>>, extraStore: ExtraStore) {
-        val entries = series.flatten()
-        val xRange = entries.rangeOfOrNull { it.x }.orZero
-        val yRange = entries.rangeOfOrNull { it.y }.orZero
-        this.series = series
-        this.id = series.hashCode()
+        require(series.isNotEmpty()) { "At least one series should be added." }
+        this.series =
+            series.map { entries ->
+                require(entries.isNotEmpty()) { "Series can’t be empty." }
+                entries.sortedBy { entry -> entry.x }
+            }
+        val entries = this.series.flatten()
+        val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
+        val yRange = entries.rangeOf { it.y }
+        this.id = this.series.hashCode()
         this.minX = xRange.start
         this.maxX = xRange.endInclusive
         this.minY = yRange.start
