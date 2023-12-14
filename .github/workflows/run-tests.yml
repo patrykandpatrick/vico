@@ -19,7 +19,7 @@ jobs:
       - id: paparazzi
         if: ${{ success() || steps.unit-tests.conclusion == 'failure' }}
         run: ./gradlew sample:verifyPaparazziDebug
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() && steps.paparazzi.conclusion == 'failure' }}
         with:
           name: Paparazzi deltas
