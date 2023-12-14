@@ -13,7 +13,7 @@ jobs:
           distribution: zulu
       - uses: gradle/gradle-build-action@v2
       - run: ./gradlew assembleDebug
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: Debug APK
           path: sample/build/outputs/apk/debug/**.apk
