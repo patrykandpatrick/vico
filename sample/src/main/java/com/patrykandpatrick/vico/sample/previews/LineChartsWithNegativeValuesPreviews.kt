@@ -68,7 +68,7 @@ public fun SingleLineChartWithNegativeValues() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
                             guideline = axisLineComponent(),
                         ),
                     bottomAxis =
@@ -117,7 +117,9 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
                 rememberCartesianChart(
                     rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
@@ -134,7 +136,9 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
                 rememberCartesianChart(
                     rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 3 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,

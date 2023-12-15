@@ -144,5 +144,5 @@ private val horizontalLayout =
         scalableStartPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
         scalableEndPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
     )
-private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(MAX_START_AXIS_ITEM_COUNT)
+private val startAxisItemPlacer = AxisItemPlacer.Vertical.default({ MAX_START_AXIS_ITEM_COUNT })
 private val bottomAxisItemPlacer = AxisItemPlacer.Horizontal.default(BOTTOM_AXIS_ITEM_SPACING, BOTTOM_AXIS_ITEM_OFFSET)

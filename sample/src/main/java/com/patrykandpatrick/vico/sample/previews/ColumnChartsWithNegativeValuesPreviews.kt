@@ -48,7 +48,9 @@ public fun SingleColumnChartWithNegativeValues() {
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 9) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 9 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
                 ),
@@ -82,7 +84,9 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
@@ -99,7 +103,9 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 3 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,

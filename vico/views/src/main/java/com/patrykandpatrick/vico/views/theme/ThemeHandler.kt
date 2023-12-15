@@ -262,11 +262,13 @@ internal class ThemeHandler(
         }
     }
 
-    private fun TypedArray.getVerticalAxisItemPlacer(): AxisItemPlacer.Vertical =
-        AxisItemPlacer.Vertical.default(
-            maxItemCount = getInteger(R.styleable.Axis_maxVerticalAxisItemCount, DEF_LABEL_COUNT),
+    private fun TypedArray.getVerticalAxisItemPlacer(): AxisItemPlacer.Vertical {
+        val maxItemCount = getInteger(R.styleable.Axis_maxVerticalAxisItemCount, DEF_LABEL_COUNT)
+        return AxisItemPlacer.Vertical.default(
+            maxItemCount = { maxItemCount },
             shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true),
         )
+    }
 
     private fun TypedArray.getStartAxis(): AxisRenderer<AxisPosition.Vertical.Start>? =
         if (getBoolean(R.styleable.CartesianChartView_showStartAxis, false)) {

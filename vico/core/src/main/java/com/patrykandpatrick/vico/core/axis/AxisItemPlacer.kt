@@ -181,6 +181,7 @@ public interface AxisItemPlacer {
          * Returns the top inset required by the [VerticalAxis].
          */
         public fun getTopVerticalAxisInset(
+            context: MeasureContext,
             verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
             maxLabelHeight: Float,
             maxLineThickness: Float,
@@ -190,6 +191,7 @@ public interface AxisItemPlacer {
          * Returns the bottom inset required by the [VerticalAxis].
          */
         public fun getBottomVerticalAxisInset(
+            context: MeasureContext,
             verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
             maxLabelHeight: Float,
             maxLineThickness: Float,
@@ -205,7 +207,7 @@ public interface AxisItemPlacer {
              * shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
              */
             public fun default(
-                maxItemCount: Int = DEF_LABEL_COUNT,
+                maxItemCount: (ChartValues) -> Int = { DEF_LABEL_COUNT },
                 shiftTopLines: Boolean = true,
             ): Vertical = DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
         }

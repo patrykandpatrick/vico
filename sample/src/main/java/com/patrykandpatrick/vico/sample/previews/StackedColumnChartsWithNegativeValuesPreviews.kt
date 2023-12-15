@@ -71,7 +71,9 @@ public fun StackedColumnChartWithNegativeValues() {
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 8) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 8 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
                 ),
@@ -93,7 +95,9 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 8) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 8 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
@@ -114,7 +118,9 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
@@ -135,7 +141,9 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                     startAxis =
-                        rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 3 }) },
+                        ),
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,

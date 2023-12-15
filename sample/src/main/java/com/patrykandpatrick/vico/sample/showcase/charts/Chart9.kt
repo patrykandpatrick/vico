@@ -147,7 +147,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                                             )
                                         },
                                 ),
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
                         ),
                     bottomAxis =
                         rememberBottomAxis(
