@@ -39,12 +39,12 @@ jobs:
           cd ${{ github.workspace }}/vico
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/vico.git
           ./gradlew dokkaHtmlMultiModule
-          API_REFERENCE_DESTINATION=${{ github.workspace }}/patrykandpatrick.com/src/vico/api/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo main; fi)
+          API_REFERENCE_DESTINATION=${{ github.workspace }}/patrykandpatrick.com/src/vico/static/api/$(if $IS_PRERELEASE; then echo $VERSION_NAME; else echo main; fi)
           rm -fr $API_REFERENCE_DESTINATION/*
           cp -R ${{ github.workspace }}/vico/vico/build/dokka/htmlMultiModule/. $API_REFERENCE_DESTINATION
           cd ${{ github.workspace }}/patrykandpatrick.com
           git remote set-url origin https://patrykandpatrickbot:${{ secrets.BOT_PAT }}@github.com/patrykandpatrick/patrykandpatrick.com.git
-          git add src/vico/api
+          git add src/vico/static/api
           git diff --staged --quiet HEAD || git commit -m "Update Vico API reference"
           git push origin
           cd ${{ github.workspace }}/vico
