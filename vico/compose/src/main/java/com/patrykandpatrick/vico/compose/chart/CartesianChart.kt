@@ -48,7 +48,7 @@ public fun rememberCartesianChart(
     decorations: List<Decoration>? = null,
     persistentMarkers: Map<Float, Marker>? = null,
 ): CartesianChart =
-    remember(layers) { CartesianChart(*layers) }
+    remember(*layers) { CartesianChart(*layers) }
         .apply {
             this.startAxis = startAxis
             this.topAxis = topAxis
