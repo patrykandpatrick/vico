@@ -72,7 +72,6 @@ public fun CartesianChartModelProducer.collectAsState(
         var finalAnimationFrameJob: Job? = null
         var isAnimationRunning: Boolean
         var isAnimationFrameGenerationRunning = false
-        var chartValues: ChartValues = ChartValues.Empty
         val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit = { transformModel ->
             if (animationSpec != null && !isInPreview &&
                 (modelWrapperState.value.model != null || runInitialAnimation)
@@ -136,9 +135,9 @@ public fun CartesianChartModelProducer.collectAsState(
                         mutableChartValues.toImmutable()
                     } else {
                         ChartValues.Empty
-                    }.also { values -> chartValues = values }
+                    }
                 },
-            ) { model ->
+            ) { model, chartValues ->
                 modelWrapperState.set(model, chartValues)
             }
         }

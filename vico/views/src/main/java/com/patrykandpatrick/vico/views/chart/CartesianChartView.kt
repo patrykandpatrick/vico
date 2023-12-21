@@ -67,6 +67,7 @@ import com.patrykandpatrick.vico.views.extension.dpInt
 import com.patrykandpatrick.vico.views.extension.isLtr
 import com.patrykandpatrick.vico.views.extension.specMode
 import com.patrykandpatrick.vico.views.extension.specSize
+import com.patrykandpatrick.vico.views.extension.start
 import com.patrykandpatrick.vico.views.extension.verticalPadding
 import com.patrykandpatrick.vico.views.gestures.ChartScaleGestureListener
 import com.patrykandpatrick.vico.views.gestures.MotionEventHandler
@@ -136,7 +137,6 @@ public open class CartesianChartView
             ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
                 duration = Animation.DIFF_DURATION.toLong()
                 interpolator = FastOutSlowInInterpolator()
-                addUpdateListener { transformModelForAnimation(it.animatedFraction) }
             }
 
         private val scrollValueAnimator: ValueAnimator =
@@ -168,8 +168,6 @@ public open class CartesianChartView
         private var zoom = 0f
 
         private var wasZoomOverridden = false
-
-        private var chartValues: ChartValues = ChartValues.Empty
 
         private var horizontalDimensions = MutableHorizontalDimensions()
 
@@ -251,19 +249,7 @@ public open class CartesianChartView
                         isAnimationRunning = false
                         isAnimationFrameGenerationRunning = false
                     },
-                    startAnimation = { transformModel ->
-                        if (model != null || runInitialAnimation) {
-                            handler?.post {
-                                isAnimationRunning = true
-                                animator.start()
-                            }
-                        } else {
-                            finalAnimationFrameJob =
-                                coroutineScope?.launch(dispatcher) {
-                                    transformModel(this@CartesianChartView, Animation.range.endInclusive)
-                                }
-                        }
-                    },
+                    startAnimation = ::startAnimation,
                     prepareForTransformation = { model, extraStore, chartValues ->
                         chart?.prepareForTransformation(model, extraStore, chartValues)
                     },
@@ -276,10 +262,9 @@ public open class CartesianChartView
                             mutableChartValues.toImmutable()
                         } else {
                             ChartValues.Empty
-                        }.also { values -> chartValues = values }
+                        }
                     },
-                ) { model ->
-                    val chartValues = chartValues
+                ) { model, chartValues ->
                     post {
                         setModel(model = model, updateChartValues = false)
                         measureContext.chartValues = chartValues
@@ -518,25 +503,37 @@ public open class CartesianChartView
             }
         }
 
-        private fun transformModelForAnimation(fraction: Float) {
-            when {
-                !isAnimationRunning -> return
-                !isAnimationFrameGenerationRunning -> {
-                    isAnimationFrameGenerationRunning = true
-                    animationFrameJob =
-                        coroutineScope?.launch(dispatcher) {
-                            modelProducer?.transformModel(this@CartesianChartView, fraction)
-                            isAnimationFrameGenerationRunning = false
+        private fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
+            if (model != null || runInitialAnimation) {
+                handler?.post {
+                    isAnimationRunning = true
+                    animator.start { fraction ->
+                        when {
+                            !isAnimationRunning -> return@start
+                            !isAnimationFrameGenerationRunning -> {
+                                isAnimationFrameGenerationRunning = true
+                                animationFrameJob =
+                                    coroutineScope?.launch(dispatcher) {
+                                        transformModel(this@CartesianChartView, fraction)
+                                        isAnimationFrameGenerationRunning = false
+                                    }
+                            }
+                            fraction == 1f -> {
+                                finalAnimationFrameJob =
+                                    coroutineScope?.launch(dispatcher) {
+                                        animationFrameJob?.cancelAndJoin()
+                                        transformModel(this@CartesianChartView, fraction)
+                                        isAnimationFrameGenerationRunning = false
+                                    }
+                            }
                         }
+                    }
                 }
-                fraction == 1f -> {
-                    finalAnimationFrameJob =
-                        coroutineScope?.launch(dispatcher) {
-                            animationFrameJob?.cancelAndJoin()
-                            modelProducer?.transformModel(this@CartesianChartView, fraction)
-                            isAnimationFrameGenerationRunning = false
-                        }
-                }
+            } else {
+                finalAnimationFrameJob =
+                    coroutineScope?.launch(dispatcher) {
+                        transformModel(this@CartesianChartView, Animation.range.endInclusive)
+                    }
             }
         }
 

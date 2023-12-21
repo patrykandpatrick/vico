@@ -87,12 +87,11 @@ public class CartesianChartModel {
     }
 
     /**
-     * Creates a copy of this [CartesianLayerModel] with the given [CartesianLayerModel]s and [ExtraStore].
+     * Creates a copy of this [CartesianChartModel] with the given [ExtraStore], which is also applied to the
+     * [CartesianLayerModel]s.
      */
-    public fun copy(
-        models: List<CartesianLayerModel>,
-        extraStore: ExtraStore,
-    ): CartesianChartModel = CartesianChartModel(models, id, width, xDeltaGcd, extraStore)
+    public fun copy(extraStore: ExtraStore): CartesianChartModel =
+        CartesianChartModel(models.map { it.copy(extraStore) }, id, width, xDeltaGcd, extraStore)
 
     /**
      * Creates an immutable copy of this [CartesianChartModel].
