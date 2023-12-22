@@ -65,6 +65,10 @@ public interface CartesianLayerModel {
      */
     public fun copy(extraStore: ExtraStore): CartesianLayerModel
 
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
+
     /**
      * Represents a single entity in a [CartesianLayerModel].
      */
@@ -73,6 +77,10 @@ public interface CartesianLayerModel {
          * The _x_ coordinate.
          */
         public val x: Float
+
+        override fun equals(other: Any?): Boolean
+
+        override fun hashCode(): Int
     }
 
     /**

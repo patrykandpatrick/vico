@@ -16,16 +16,14 @@
 
 package com.patrykandpatrick.vico.core.model
 
+import io.mockk.every
+import io.mockk.mockk
 import org.junit.Test
 import kotlin.test.assertEquals
 
 public class XDeltaGcdTest {
     private fun getEntries(vararg x: Number) =
-        x.map { value ->
-            object : CartesianLayerModel.Entry {
-                override val x: Float get() = value.toFloat()
-            }
-        }
+        x.map { value -> mockk<CartesianLayerModel.Entry> { every { this@mockk.x } returns value.toFloat() } }
 
     @Test
     public fun `Ensure 1 is returned for empty collection`() {

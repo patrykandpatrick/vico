@@ -26,7 +26,7 @@ import com.patrykandpatrick.vico.core.extension.orZero
  * fraction of the [LineCartesianLayer]’s height.
  */
 public class LineCartesianLayerDrawingModel(
-    pointInfo: List<Map<Float, PointInfo>>,
+    private val pointInfo: List<Map<Float, PointInfo>>,
     public val zeroY: Float,
     public val opacity: Float = 1f,
 ) :
@@ -45,6 +45,20 @@ public class LineCartesianLayerDrawingModel(
         )
     }
 
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+            other is LineCartesianLayerDrawingModel &&
+            pointInfo == other.pointInfo &&
+            zeroY == other.zeroY &&
+            opacity == other.opacity
+
+    override fun hashCode(): Int {
+        var result = pointInfo.hashCode()
+        result = 31 * result + zeroY.hashCode()
+        result = 31 * result + opacity.hashCode()
+        return result
+    }
+
     /**
      * Houses positional information for a [LineCartesianLayer]’s point. [y] expresses the distance of the point from
      * the bottom of the [LineCartesianLayer] as a fraction of the [LineCartesianLayer]’s height.
@@ -57,5 +71,9 @@ public class LineCartesianLayerDrawingModel(
             val oldY = (from as? PointInfo)?.y.orZero
             return PointInfo(oldY.lerp(y, fraction))
         }
+
+        override fun equals(other: Any?): Boolean = this === other || other is PointInfo && y == other.y
+
+        override fun hashCode(): Int = y.hashCode()
     }
 }
