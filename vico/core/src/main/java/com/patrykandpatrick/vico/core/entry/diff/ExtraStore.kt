@@ -51,6 +51,11 @@ public abstract class ExtraStore internal constructor() {
      */
     public abstract operator fun plus(other: ExtraStore): ExtraStore
 
+    override fun equals(other: Any?): Boolean =
+        this === other || other is ExtraStore && mapDelegate == other.mapDelegate
+
+    override fun hashCode(): Int = mapDelegate.hashCode()
+
     /**
      * Used for writing to and reading from [ExtraStore]s.
      */
