@@ -16,14 +16,19 @@
 
 package com.patrykandpatrick.vico.core.math
 
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
 /**
  * Translates given [point] by the given [angle] (in radians) relative to the [center].
  */
-public fun translatePointByAngle(center: Point, point: Point, angle: Double): Point =
+public fun translatePointByAngle(
+    center: Point,
+    point: Point,
+    angle: Double,
+): Point =
     Point(
         ((point.x - center.x) * cos(angle) - (point.y - center.y) * sin(angle) + center.x).toFloat(),
         ((point.y - center.y) * cos(angle) + (point.x - center.x) * sin(angle) + center.y).toFloat(),
@@ -40,3 +45,8 @@ public val Number.radians: Float
  */
 public val Number.radiansDouble: Double
     get() = Math.toRadians(this.toDouble())
+
+public fun interpolateOpacity(fraction: Float): Float {
+    require(fraction in 0f..1f) { "x must be in the range (0, 1)" }
+    return abs(-2 * fraction + 1)
+}

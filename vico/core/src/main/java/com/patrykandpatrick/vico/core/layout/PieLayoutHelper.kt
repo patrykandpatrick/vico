@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.core.extension.updateBounds
  * A layout helper class used to measure and adjust the bounds of a label placed inside of a slice.
  */
 public open class PieLayoutHelper {
-
     protected val textBoundPath: Path = Path()
 
     protected val textIntersectPathTop: Path = Path()

@@ -19,32 +19,28 @@ package com.patrykandpatrick.vico.core.context
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 
 /**
  * A [CartesianMeasureContext] implementation that facilitates the mutation of some of its properties.
  */
-public data class MutableCartesianMeasureContext(
+public class MutableCartesianMeasureContext(
     override val canvasBounds: RectF,
     override var density: Float,
-    override var fontScale: Float,
     override var isLtr: Boolean,
     override var isHorizontalScrollEnabled: Boolean = false,
-    override var chartScale: Float = 1f,
-    override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented(),
-) : CartesianMeasureContext, Extras by DefaultExtras() {
-
-    override val chartValuesManager: ChartValuesManager = ChartValuesManager()
-
+    override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
+    override var chartValues: ChartValues,
+    spToPx: (Float) -> Float,
+) : MutableMeasureContext(
+        canvasBounds = canvasBounds,
+        density = density,
+        isLtr = isLtr,
+        spToPx = spToPx,
+    ),
+    CartesianMeasureContext {
     override fun reset() {
         clearExtras()
-        chartValuesManager.resetChartValues()
     }
 
-    /**
-     * Resets the values stored in each of the [ChartValues] instances in the [ChartValuesManager.chartValues] map.
-     */
-    public fun resetChartValues() {
-        chartValuesManager.resetChartValues()
-    }
+    override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

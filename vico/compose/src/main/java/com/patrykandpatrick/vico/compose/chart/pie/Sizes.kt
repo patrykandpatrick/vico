@@ -24,12 +24,10 @@ import com.patrykandpatrick.vico.core.chart.pie.Size.OuterSize
  * Creates a fixed [OuterSize], with the size specified by the [maxDiameter] (in dp unit).
  * If the available space is smaller than [maxDiameter], all available space is used.
  */
-public fun OuterSize.Companion.fixed(maxDiameter: Dp): OuterSize =
-    fixed(maxDiameter.value)
+public fun OuterSize.Companion.fixed(maxDiameter: Dp): OuterSize = fixed(maxDiameter.value)
 
 /**
  * Creates a fixed [InnerSize], with the size specified by the [maxDiameter] (in dp unit).
  * If the available space is smaller than [maxDiameter], all available space is used.
  */
-public fun InnerSize.Companion.fixed(maxDiameter: Dp): InnerSize =
-    fixed(maxDiameter.value)
+public fun InnerSize.Companion.fixed(maxDiameter: Dp): InnerSize = fixed(maxDiameter.value)

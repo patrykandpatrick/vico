@@ -20,16 +20,17 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
+import com.patrykandpatrick.vico.core.chart.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.extension.getEntryModel
 import com.patrykandpatrick.vico.core.extension.inClip
@@ -52,7 +53,7 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
 
     private val drawingModelAndLayerConsumer =
         object : ModelAndLayerConsumer {
-            lateinit var context: ChartDrawContext
+            lateinit var context: CartesianChartDrawContext
 
             override fun <T : CartesianLayerModel> invoke(
                 model: T?,
@@ -65,7 +66,7 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
 
     private val horizontalDimensionUpdateModelAndLayerConsumer =
         object : ModelAndLayerConsumer {
-            lateinit var context: MeasureContext
+            lateinit var context: CartesianMeasureContext
             lateinit var horizontalDimensions: MutableHorizontalDimensions
 
             override fun <T : CartesianLayerModel> invoke(
@@ -134,7 +135,7 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
      * Calls [Decoration.onDrawBehindChart] for each [Decoration] and draws the [CartesianChart].
      */
     public fun draw(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         model: CartesianChartModel,
     ) {
         entryLocationMap.clear()
@@ -145,7 +146,7 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
     /**
      * Calls [Decoration.onDrawAboveChart] for each [Decoration] and draws the persistent [Marker]s.
      */
-    public fun drawOverlays(context: ChartDrawContext) {
+    public fun drawOverlays(context: CartesianChartDrawContext) {
         with(context) {
             canvas.inClip(
                 left = bounds.left,
@@ -167,7 +168,7 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
      * Updates [horizontalDimensions] to match the [CartesianLayer]s’ dimensions.
      */
     public fun updateHorizontalDimensions(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: MutableHorizontalDimensions,
         model: CartesianChartModel,
     ) {
@@ -192,7 +193,7 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
     }
 
     override fun getInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
     ) {
@@ -202,7 +203,7 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
     }
 
     override fun getHorizontalInsets(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         availableHeight: Float,
         outInsets: HorizontalInsets,
     ) {
@@ -286,6 +287,7 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
             when (layer) {
                 is ColumnCartesianLayer -> freeModels.consume(layer, consumer)
                 is LineCartesianLayer -> freeModels.consume(layer, consumer)
+                is CandlestickCartesianLayer -> freeModels.consume(layer, consumer)
                 else -> throw IllegalArgumentException("Unexpected `CartesianLayer` implementation.")
             }
         }

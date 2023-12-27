@@ -22,6 +22,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -29,12 +30,15 @@ import com.patrykandpatrick.vico.compose.state.CartesianChartModelWrapper
 import com.patrykandpatrick.vico.compose.state.CartesianChartModelWrapperState
 import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.CartesianChart
+import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
 import com.patrykandpatrick.vico.core.chart.values.toImmutable
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.MutableExtraStore
+import com.patrykandpatrick.vico.core.model.PieChartModelProducer
+import com.patrykandpatrick.vico.core.model.PieModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -95,6 +99,7 @@ public fun CartesianChartModelProducer.collectAsState(
                                             isAnimationFrameGenerationRunning = false
                                         }
                                 }
+
                                 fraction == 1f -> {
                                     finalAnimationFrameJob =
                                         scope.launch(dispatcher) {
@@ -150,4 +155,96 @@ public fun CartesianChartModelProducer.collectAsState(
         }
     }
     return modelWrapperState
+}
+
+/**
+ * Observes the data provided by this [CartesianChartModelProducer] and launches an animation for each update.
+ */
+@Composable
+public fun PieChartModelProducer.collectAsState(
+    chart: PieChart,
+    producerKey: Any,
+    animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
+    runInitialAnimation: Boolean = true,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+): State<PieModel?> {
+    val modelState = remember(chart, producerKey) { mutableStateOf<PieModel?>(null) }
+    val (model, setModel) = modelState
+    val extraStore = remember(chart) { MutableExtraStore() }
+    val scope = rememberCoroutineScope()
+    val isInPreview = LocalInspectionMode.current
+    DisposableEffect(chart, producerKey, runInitialAnimation, isInPreview) {
+        var mainAnimationJob: Job? = null
+        var animationFrameJob: Job? = null
+        var finalAnimationFrameJob: Job? = null
+        var isAnimationRunning: Boolean
+        var isAnimationFrameGenerationRunning = false
+        val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit = { transformModel ->
+            if (animationSpec != null && !isInPreview &&
+                (model != null || runInitialAnimation)
+            ) {
+                isAnimationRunning = true
+                mainAnimationJob =
+                    scope.launch(dispatcher) {
+                        animate(
+                            initialValue = Animation.range.start,
+                            targetValue = Animation.range.endInclusive,
+                            animationSpec = animationSpec,
+                        ) { fraction, _ ->
+                            when {
+                                !isAnimationRunning -> return@animate
+                                !isAnimationFrameGenerationRunning -> {
+                                    isAnimationFrameGenerationRunning = true
+                                    animationFrameJob =
+                                        scope.launch(dispatcher) {
+                                            transformModel(chart, fraction)
+                                            isAnimationFrameGenerationRunning = false
+                                        }
+                                }
+
+                                fraction == 1f -> {
+                                    finalAnimationFrameJob =
+                                        scope.launch(dispatcher) {
+                                            animationFrameJob?.cancelAndJoin()
+                                            transformModel(chart, fraction)
+                                            isAnimationFrameGenerationRunning = false
+                                        }
+                                }
+                            }
+                        }
+                    }
+            } else {
+                finalAnimationFrameJob =
+                    scope.launch(dispatcher) {
+                        transformModel(chart, Animation.range.endInclusive)
+                    }
+            }
+        }
+        scope.launch(dispatcher) {
+            registerForUpdates(
+                key = chart,
+                cancelAnimation = {
+                    runBlocking {
+                        mainAnimationJob?.cancelAndJoin()
+                        animationFrameJob?.cancelAndJoin()
+                        finalAnimationFrameJob?.cancelAndJoin()
+                    }
+                    isAnimationRunning = false
+                    isAnimationFrameGenerationRunning = false
+                },
+                startAnimation = startAnimation,
+                prepareForTransformation = chart::prepareForTransformation,
+                transform = chart::transform,
+                extraStore = extraStore,
+                onModelCreated = setModel,
+            )
+        }
+        onDispose {
+            mainAnimationJob?.cancel()
+            animationFrameJob?.cancel()
+            finalAnimationFrameJob?.cancel()
+            unregisterFromUpdates(chart)
+        }
+    }
+    return modelState
 }

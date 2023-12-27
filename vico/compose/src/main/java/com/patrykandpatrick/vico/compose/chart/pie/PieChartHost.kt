@@ -27,31 +27,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.chart.ChartBox
-import com.patrykandpatrick.vico.compose.chart.entry.collectAsState
-import com.patrykandpatrick.vico.compose.chart.entry.defaultDiffAnimationSpec
-import com.patrykandpatrick.vico.compose.layout.getDensity
-import com.patrykandpatrick.vico.compose.layout.getFontScale
-import com.patrykandpatrick.vico.compose.layout.getIsLtr
-import com.patrykandpatrick.vico.compose.state.MutableSharedState
+import com.patrykandpatrick.vico.compose.model.collectAsState
+import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.draw.drawContext
-import com.patrykandpatrick.vico.core.entry.pie.PieEntryModel
-import com.patrykandpatrick.vico.core.entry.pie.PieEntryModelProducer
 import com.patrykandpatrick.vico.core.extension.set
+import com.patrykandpatrick.vico.core.extension.spToPx
+import com.patrykandpatrick.vico.core.model.PieChartModelProducer
+import com.patrykandpatrick.vico.core.model.PieModel
 
 /**
  * Draws a pie chart.
  *
  * @param modifier the modifier to be applied to the chart.
  * @param slices the [List] of [Slice]s which define the appearance of each slice of the pie chart.
- * @param pieEntryModelProducer creates and updates the [PieEntryModel] for the chart.
+ * @param pieChartModelProducer creates and updates the [PieChartModelProducer] for the chart.
  * @param spacing defines spacing between [slices].
  * @param outerSize defines the size of the chart.
  * @param innerSize defines the size of the hole in the middle of the chart.
@@ -59,7 +60,7 @@ import com.patrykandpatrick.vico.core.extension.set
  */
 @Composable
 public fun PieChartHost(
-    pieEntryModelProducer: PieEntryModelProducer,
+    pieChartModelProducer: PieChartModelProducer,
     modifier: Modifier = Modifier,
     slices: List<Slice> = currentChartStyle.pieChart.slices,
     spacing: Dp = currentChartStyle.pieChart.spacing,
@@ -71,23 +72,37 @@ public fun PieChartHost(
     runInitialAnimation: Boolean = true,
     onEmptyState: (@Composable () -> Unit)? = null,
 ) {
-    val model: MutableSharedState<PieEntryModel?, PieEntryModel?> = pieEntryModelProducer.collectAsState(
-        chartKey = Unit,
-        producerKey = pieEntryModelProducer,
-        animationSpec = diffAnimationSpec,
-        runInitialAnimation = runInitialAnimation,
-    )
+    val pieChart =
+        remember {
+            PieChart(
+                slices = slices,
+                spacingDp = spacing.value,
+                innerSize = innerSize,
+                outerSize = outerSize,
+                startAngle = startAngle,
+            )
+        }.apply {
+            this.slices = slices
+            this.spacingDp = spacing.value
+            this.innerSize = innerSize
+            this.outerSize = outerSize
+            this.startAngle = startAngle
+        }
+
+    val model =
+        pieChartModelProducer.collectAsState(
+            chart = pieChart,
+            producerKey = pieChartModelProducer,
+            animationSpec = diffAnimationSpec,
+            runInitialAnimation = runInitialAnimation,
+        )
 
     ChartBox(modifier = modifier) {
         model.value?.also { model ->
             PieChartHost(
-                modifier = modifier,
                 model = model,
-                slices = slices,
-                spacing = spacing,
-                outerSize = outerSize,
-                innerSize = innerSize,
-                startAngle = startAngle,
+                pieChart = pieChart,
+                modifier = modifier,
                 elevationOverlayColor = elevationOverlayColor,
             )
         } ?: onEmptyState?.invoke()
@@ -97,63 +112,42 @@ public fun PieChartHost(
 /**
  * Draws a pie chart.
  *
- * @param modifier the modifier to be applied to the chart.
- * @param slices the [List] of [Slice]s which define the appearance of each slice of the pie chart.
  * @param model the [PieEntryModel] containing data to render the pie chart.
- * @param spacing defines spacing between [slices].
- * @param outerSize defines the size of the chart.
- * @param innerSize defines the size of the hole in the middle of the chart.
- * @param startAngle defines the angle at which the first slice starts.
+ * @param pieChart TODO,
+ * @param modifier the modifier to be applied to the chart.
+ * @param elevationOverlayColor the color to use for the elevation overlay.
  */
 @Composable
+// TODO Legend
 public fun PieChartHost(
-    model: PieEntryModel,
+    model: PieModel,
+    pieChart: PieChart,
     modifier: Modifier = Modifier,
-    slices: List<Slice> = currentChartStyle.pieChart.slices,
-    spacing: Dp = currentChartStyle.pieChart.spacing,
-    outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
-    innerSize: Size.InnerSize = currentChartStyle.pieChart.innerSize,
-    startAngle: Float = currentChartStyle.pieChart.startAngle,
     elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
 ) {
     val bounds = remember { RectF() }
-
-    val density = getDensity()
-    val fontScale = getFontScale()
-    val isLtr = getIsLtr()
-
-    val pieChart = remember {
-        PieChart(
-            slices = slices,
-            spacingDp = spacing.value,
-            innerSize = innerSize,
-            outerSize = outerSize,
-            startAngle = startAngle,
-        )
-    }.apply {
-        this.slices = slices
-        this.spacingDp = spacing.value
-        this.innerSize = innerSize
-        this.outerSize = outerSize
-        this.startAngle = startAngle
-    }
+    val density = LocalDensity.current.density
+    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    val context = LocalContext.current
 
     Canvas(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(DefaultDimens.CHART_HEIGHT.dp),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .height(DefaultDimens.CHART_HEIGHT.dp),
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
         pieChart.setBounds(bounds.left, bounds.top, bounds.right, bounds.bottom)
 
-        val drawContext = drawContext(
-            canvas = drawContext.canvas.nativeCanvas,
-            density = density,
-            fontScale = fontScale,
-            isLtr = isLtr,
-            elevationOverlayColor = elevationOverlayColor.toArgb().toLong(),
-        )
+        val drawContext =
+            drawContext(
+                canvas = drawContext.canvas.nativeCanvas,
+                density = density,
+                isLtr = isLtr,
+                elevationOverlayColor = elevationOverlayColor.toArgb().toLong(),
+                spToPx = context::spToPx,
+            )
 
         pieChart.draw(
             context = drawContext,

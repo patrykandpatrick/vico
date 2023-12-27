@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.context.MutableCartesianMeasureContext
-import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 
 /**
@@ -38,30 +37,6 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModel
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param spToPx converts dimensions from sp to px.
  * @param chartValues houses the [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
- */
-@Composable
-public fun getMeasureContext(
-    canvasBounds: RectF,
-): MutableMeasureContext = remember {
-    MutableMeasureContext(
-        canvasBounds = canvasBounds,
-        density = 0f,
-        fontScale = 0f,
-        isLtr = true,
-    )
-}.apply {
-    density = getDensity()
-    fontScale = getFontScale()
-    isLtr = getIsLtr()
-}
-
-/**
- * The anonymous implementation of the [CartesianMeasureContext].
- *
- * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
- * @param chartScale the scale of the chart. Used to handle zooming in and out.
- * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
- * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  */
 @Composable
 public fun getCartesianMeasureContext(

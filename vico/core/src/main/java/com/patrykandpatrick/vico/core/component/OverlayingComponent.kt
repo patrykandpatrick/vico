@@ -38,7 +38,6 @@ public class OverlayingComponent(
     public val innerPaddingEndDp: Float = 0f,
     public val innerPaddingBottomDp: Float = 0f,
 ) : Component, Margins by DefaultMargins() {
-
     public constructor(
         outer: Component,
         inner: Component,

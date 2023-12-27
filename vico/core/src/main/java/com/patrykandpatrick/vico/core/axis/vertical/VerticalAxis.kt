@@ -160,7 +160,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         }
 
     override fun updateHorizontalDimensions(
-        context: CartesianChartDrawContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: MutableHorizontalDimensions,
     ): Unit = Unit
 
@@ -279,7 +279,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 ).orZero + tickLength + axisThickness.half
         }
 
-    private fun MeasureContext.getMaxLabelHeight() =
+    private fun CartesianMeasureContext.getMaxLabelHeight() =
         label?.let { label ->
             itemPlacer
                 .getHeightMeasurementLabelValues(this, position)
@@ -295,7 +295,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 .maxOfOrNull { value -> label.getWidth(this, valueFormatter.formatValue(value, chartValues, position)) }
         }.orZero
 
-    private fun ChartDrawContext.getLineCanvasYCorrection(
+    private fun CartesianChartDrawContext.getLineCanvasYCorrection(
         thickness: Float,
         y: Float,
     ) = if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {

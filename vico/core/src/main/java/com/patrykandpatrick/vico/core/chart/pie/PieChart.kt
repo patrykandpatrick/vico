@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.component.shape.extension.moveTo
 import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
-import com.patrykandpatrick.vico.core.entry.pie.PieEntryModel
 import com.patrykandpatrick.vico.core.extension.PI_RAD
 import com.patrykandpatrick.vico.core.extension.centerPoint
 import com.patrykandpatrick.vico.core.extension.getRepeating
@@ -39,7 +38,14 @@ import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.math.radians
 import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.model.ExtraStore
+import com.patrykandpatrick.vico.core.model.MutableExtraStore
+import com.patrykandpatrick.vico.core.model.PieModel
+import com.patrykandpatrick.vico.core.model.drawing.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.model.drawing.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.model.drawing.PieDrawingModel
+import com.patrykandpatrick.vico.core.util.Point
+import kotlin.math.max
 import kotlin.math.sin
 
 /**
@@ -58,8 +64,11 @@ public open class PieChart(
     public var outerSize: Size.OuterSize,
     public var innerSize: Size.InnerSize,
     public var startAngle: Float,
+    public var drawingModelInterpolator: DrawingModelInterpolator<
+        PieDrawingModel.SliceInfo,
+        PieDrawingModel,
+        > = DefaultDrawingModelInterpolator(),
 ) : BoundsAware {
-
     init {
         checkParameters()
     }
@@ -83,6 +92,8 @@ public open class PieChart(
 
     protected val insets: Insets = Insets()
 
+    protected val drawingModelKey: ExtraStore.Key<PieDrawingModel> = ExtraStore.Key()
+
     protected fun checkParameters() {
         require(slices.isNotEmpty()) { "Slices cannot be empty." }
         require(spacingDp >= 0f) { "The spacing cannot be negative." }
@@ -93,54 +104,55 @@ public open class PieChart(
      */
     public open fun updateOvalBounds(
         context: DrawContext,
-        model: PieEntryModel,
-    ): Unit = with(context) {
-        checkParameters()
-        insets.clear()
+        model: PieModel,
+    ): Unit =
+        with(context) {
+            checkParameters()
+            insets.clear()
 
-        var ovalRadius = outerSize.getRadius(context, bounds.width(), bounds.height())
+            var ovalRadius = outerSize.getRadius(context, bounds.width(), bounds.height())
 
-        var startAngle = startAngle
+            var startAngle = startAngle
 
-        val maxOffsetFromCenter = model.entries.maxOfOrNullIndexed { index, entry ->
-            val slice = slices.getRepeating(index)
+            val maxOffsetFromCenter =
+                model.entries.maxOfOrNullIndexed { index, entry ->
+                    val slice = slices.getRepeating(index)
 
-            val sweepAngle = entry.value / model.sumOfValues * FULL_DEGREES
+                    val sweepAngle = entry.value / model.sumOfValues * FULL_DEGREES
 
-            ifNotNull(slice.label, entry.label) { labelComponent, label ->
+                    ifNotNull(slice.label, entry.label) { labelComponent, label ->
+                        oval.set(
+                            left = bounds.centerX() - ovalRadius,
+                            top = bounds.centerY() - ovalRadius,
+                            right = bounds.centerX() + ovalRadius,
+                            bottom = bounds.centerY() + ovalRadius,
+                        )
 
-                oval.set(
-                    left = bounds.centerX() - ovalRadius,
-                    top = bounds.centerY() - ovalRadius,
-                    right = bounds.centerX() + ovalRadius,
-                    bottom = bounds.centerY() + ovalRadius,
-                )
+                        labelComponent.getInsets(
+                            context = context,
+                            contentBounds = bounds,
+                            oval = oval,
+                            label = label,
+                            outInsets = insets,
+                            angle = startAngle + sweepAngle.half,
+                        )
+                    }
 
-                labelComponent.getInsets(
-                    context = context,
-                    contentBounds = bounds,
-                    oval = oval,
-                    label = label,
-                    outInsets = insets,
-                    angle = startAngle + sweepAngle.half,
-                )
-            }
+                    startAngle += sweepAngle
 
-            startAngle += sweepAngle
+                    slice.offsetFromCenterDp.pixels
+                }.orZero
 
-            slice.offsetFromCenterDp.pixels
-        }.orZero
+            ovalRadius -= maxOffsetFromCenter + insets.largestEdge
+            ovalRadius = ovalRadius.round
 
-        ovalRadius -= maxOffsetFromCenter + insets.largestEdge
-        ovalRadius = ovalRadius.round
-
-        oval.set(
-            left = bounds.centerX() - ovalRadius,
-            top = bounds.centerY() - ovalRadius,
-            right = bounds.centerX() + ovalRadius,
-            bottom = bounds.centerY() + ovalRadius,
-        )
-    }
+            oval.set(
+                left = bounds.centerX() - ovalRadius,
+                top = bounds.centerY() - ovalRadius,
+                right = bounds.centerX() + ovalRadius,
+                bottom = bounds.centerY() + ovalRadius,
+            )
+        }
 
     /**
      * Draws the pie chart.
@@ -150,47 +162,55 @@ public open class PieChart(
      */
     public fun draw(
         context: DrawContext,
-        model: PieEntryModel,
-    ): Unit = with(context) {
-        val innerRadius = innerSize.getRadius(context, bounds.width(), bounds.height())
+        model: PieModel,
+    ): Unit =
+        with(context) {
+            val innerRadius = innerSize.getRadius(context, bounds.width(), bounds.height())
+            val drawingModel = model.extraStore.getOrNull(drawingModelKey)
+            val sliceIno = drawingModel?.getOrNull(0)
+            updateOvalBounds(context, model)
 
-        updateOvalBounds(context, model)
+            require(oval.radius > innerRadius) { "The outer size must be greater than the inner size." }
 
-        require(oval.radius > innerRadius) { "The outer size must be greater than the inner size." }
+            val restoreCount = if (spacingDp > 0f) saveLayer() else -1
 
-        val restoreCount = if (spacingDp > 0f) saveLayer() else -1
+            val sliceCount = sliceIno?.size ?: model.entries.size
+            var drawAngle = startAngle
 
-        model.entries.foldIndexed(startAngle) { index, startAngle, entry ->
+            for (index in 0 until sliceCount) {
+                val slice = slices.getRepeating(index)
 
-            if (entry.value <= 0f) return@foldIndexed startAngle
-            val slice = slices.getRepeating(index)
+                val sliceInfo = sliceIno?.get(index.toFloat())
+                val sliceInfoDegrees = sliceInfo?.degrees
+                val entry = model.entries.getOrNull(index)
+                val sweepAngle = sliceInfoDegrees ?: (checkNotNull(entry).value / model.sumOfValues * FULL_DEGREES)
 
-            val sweepAngle = entry.value / model.sumOfValues * FULL_DEGREES
+                spacingPathBuilder.rewind()
 
-            spacingPathBuilder.rewind()
+                if (spacingDp > 0f) {
+                    addSpacingSegment(spacingPathBuilder, sweepAngle, sweepAngle)
+                    addSpacingSegment(spacingPathBuilder, drawAngle, sweepAngle)
+                    addHole(spacingPathBuilder, innerRadius)
+                }
 
-            if (spacingDp > 0f) {
-                addSpacingSegment(spacingPathBuilder, sweepAngle, sweepAngle)
-                addSpacingSegment(spacingPathBuilder, startAngle, sweepAngle)
-                addHole(spacingPathBuilder, innerRadius)
+                slice.draw(
+                    context = context,
+                    contentBounds = bounds,
+                    oval = oval,
+                    startAngle = drawAngle,
+                    sweepAngle = sweepAngle,
+                    holeRadius = innerRadius,
+                    label = sliceInfo?.label ?: entry?.label,
+                    spacingPath = spacingPathBuilder,
+                    sliceOpacity = sliceInfo?.sliceOpacity ?: 1f,
+                    labelOpacity = sliceInfo?.labelOpacity ?: 1f,
+                )
+
+                drawAngle += sweepAngle
             }
 
-            slice.draw(
-                context = context,
-                contentBounds = bounds,
-                oval = oval,
-                startAngle = startAngle,
-                sweepAngle = sweepAngle,
-                holeRadius = innerRadius,
-                label = entry.label,
-                spacingPath = spacingPathBuilder,
-            )
-
-            startAngle + sweepAngle
+            if (restoreCount >= 0) restoreCanvasToCount(restoreCount)
         }
-
-        if (restoreCount >= 0) restoreCanvasToCount(restoreCount)
-    }
 
     protected open fun DrawContext.addSpacingSegment(
         pathBuilder: Path,
@@ -203,24 +223,27 @@ public open class PieChart(
 
             if (sweepAngle > PI_RAD.half) {
                 val correctedSpacing = spacing / sin(sweepAngle.half.radians)
-                val correctedAngle = if (sweepAngle == startAngle) {
-                    PI_RAD - sweepAngle.half
-                } else {
-                    sweepAngle.half
-                }
-                val correctedSpacingFactor = if (startAngle == sweepAngle && sweepAngle > PI_RAD) {
-                    -1f
-                } else {
-                    1f
-                }
+                val correctedAngle =
+                    if (sweepAngle == startAngle) {
+                        PI_RAD - sweepAngle.half
+                    } else {
+                        sweepAngle.half
+                    }
+                val correctedSpacingFactor =
+                    if (startAngle == sweepAngle && sweepAngle > PI_RAD) {
+                        -1f
+                    } else {
+                        1f
+                    }
 
                 moveTo(
                     translatePointByAngle(
                         center = oval.centerPoint,
-                        point = Point(
-                            x = oval.centerX() + correctedSpacing.half * correctedSpacingFactor,
-                            y = oval.centerY(),
-                        ),
+                        point =
+                            Point(
+                                x = oval.centerX() + correctedSpacing.half * correctedSpacingFactor,
+                                y = oval.centerY(),
+                            ),
                         angle = correctedAngle.radiansDouble,
                     ),
                 )
@@ -240,7 +263,53 @@ public open class PieChart(
     protected open fun DrawContext.addHole(
         pathBuilder: Path,
         innerRadius: Float,
-    ): Unit = with(pathBuilder) {
-        addCircle(oval.centerX(), oval.centerY(), innerRadius, Path.Direction.CCW)
+    ): Unit =
+        with(pathBuilder) {
+            addCircle(oval.centerX(), oval.centerY(), innerRadius, Path.Direction.CCW)
+        }
+
+    /**
+     * Prepares the [PieChart] for a difference animation.
+     */
+    public fun prepareForTransformation(
+        model: PieModel?,
+        extraStore: MutableExtraStore,
+    ) {
+        val oldModel = extraStore.getOrNull(drawingModelKey)
+        val customSize =
+            if (oldModel != null) {
+                max(oldModel.first().values.filter { it.degrees > 0f }.size, model?.entries?.size ?: 0)
+            } else {
+                model?.entries?.size
+            }
+        drawingModelInterpolator.setModels(
+            old = oldModel,
+            new = model?.toDrawingModel(customSize),
+        )
     }
+
+    /**
+     * Carries out the pending difference animation.
+     */
+    public suspend fun transform(
+        extraStore: MutableExtraStore,
+        fraction: Float,
+    ) {
+        drawingModelInterpolator
+            .transform(fraction)
+            ?.let { extraStore[drawingModelKey] = it }
+            ?: extraStore.remove(drawingModelKey)
+    }
+
+    private fun PieModel.toDrawingModel(customSize: Int?): PieDrawingModel =
+        PieDrawingModel(
+            slices =
+                List(customSize ?: entries.size) { index ->
+                    val entry = entries.getOrNull(index)
+                    PieDrawingModel.SliceInfo(
+                        degrees = entry?.value?.let { it / sumOfValues * FULL_DEGREES } ?: 0f,
+                        label = entry?.label,
+                    )
+                },
+        )
 }

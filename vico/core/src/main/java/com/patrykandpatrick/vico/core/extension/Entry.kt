@@ -21,7 +21,6 @@ package com.patrykandpatrick.vico.core.entry
  * It holds information about the location of the entry on the x-axis.
  */
 public interface Entry {
-
     /**
      * The position of this [Entry] on the x-axis.
      */

@@ -169,13 +169,14 @@ public open class LineComponent(
         margins: Dimensions = this.margins,
         strokeWidthDp: Float = this.strokeWidthDp,
         strokeColor: Int = this.strokeColor,
-    ): LineComponent = LineComponent(
-        color = color,
-        thicknessDp = thicknessDp,
-        shape = shape,
-        dynamicShader = dynamicShader,
-        margins = margins,
-        strokeWidthDp = strokeWidthDp,
-        strokeColor = strokeColor,
-    )
+    ): LineComponent =
+        LineComponent(
+            color = color,
+            thicknessDp = thicknessDp,
+            shape = shape,
+            dynamicShader = dynamicShader,
+            margins = margins,
+            strokeWidthDp = strokeWidthDp,
+            strokeColor = strokeColor,
+        )
 }

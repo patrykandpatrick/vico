@@ -31,10 +31,6 @@ import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.candlestickentry.CandlestickEntryModel
-import com.patrykandpatrick.vico.core.chart.Chart
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
@@ -49,28 +45,28 @@ internal class ThemeHandler(
     private val context: Context,
     attrs: AttributeSet?,
 ) {
-    public var startAxis: Axis<AxisPosition.Vertical.Start>? = null
+    var startAxis: Axis<AxisPosition.Vertical.Start>? = null
         private set
 
-    public var topAxis: Axis<AxisPosition.Horizontal.Top>? = null
+    var topAxis: Axis<AxisPosition.Horizontal.Top>? = null
         private set
 
-    public var endAxis: Axis<AxisPosition.Vertical.End>? = null
+    var endAxis: Axis<AxisPosition.Vertical.End>? = null
         private set
 
-    public var bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null
+    var bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null
         private set
 
-    public var isHorizontalScrollEnabled: Boolean = false
+    var isHorizontalScrollEnabled: Boolean = false
         private set
 
-    public var isChartZoomEnabled: Boolean = false
+    var isChartZoomEnabled: Boolean = false
         private set
 
-    public var chart: CartesianChart? = null
+    var chart: CartesianChart? = null
         private set
 
-    public var fadingEdges: FadingEdges? = null
+    var fadingEdges: FadingEdges? = null
         private set
 
     lateinit var horizontalLayout: HorizontalLayout
@@ -251,11 +247,14 @@ internal class ThemeHandler(
             if (layerFlags.hasFlag(COLUMN_LAYER)) baseTypedArray.getColumnCartesianLayer(context) else null
         val lineLayer =
             if (layerFlags.hasFlag(LINE_LAYER)) baseTypedArray.getLineCartesianLayer(context) else null
+        val candlestickLayer =
+            if (layerFlags.hasFlag(CANDLESTICK_LAYER)) baseTypedArray.getCandlestickCartesianLayer(context) else null
 
         return CartesianChart(
             buildList {
                 if (columnLayer != null) add(columnLayer)
                 if (lineLayer != null) add(lineLayer)
+                if (candlestickLayer != null) add(candlestickLayer)
             },
         )
     }
@@ -311,6 +310,6 @@ internal class ThemeHandler(
     private companion object {
         const val COLUMN_LAYER = 1
         const val LINE_LAYER = 2
-        const val CANDLESTICK_LAYER = 3
+        const val CANDLESTICK_LAYER = 4
     }
 }

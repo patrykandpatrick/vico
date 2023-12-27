@@ -20,10 +20,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import com.patrykandpatrick.vico.core.DefaultColors
 
-// TODO Local colors
 /**
  * TODO
  */
 @Composable
-public fun getDefaultColors(): DefaultColors =
-    if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light
+public fun getDefaultColors(): DefaultColors = if (isSystemInDarkTheme()) DefaultColors.Dark else DefaultColors.Light

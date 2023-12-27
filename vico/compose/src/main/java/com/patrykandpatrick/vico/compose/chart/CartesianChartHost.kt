@@ -55,6 +55,7 @@ import com.patrykandpatrick.vico.compose.state.component3
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
+import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.AxisManager
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
@@ -92,7 +93,7 @@ import kotlinx.coroutines.launch
  * @param modelProducer creates and updates the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
  * @param startAxis the axis displayed at the start of the chart.
-chartentrym * @param topAxis the axis displayed at the top of the chart.
+ * @param topAxis the axis displayed at the top of the chart.
  * @param endAxis the axis displayed at the end of the chart.
  * @param bottomAxis the axis displayed at the bottom of the chart.
  * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
@@ -360,16 +361,17 @@ internal fun CartesianChartHostImpl(
 
         chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
-        val chartDrawContext = cartesianChartDrawContext(
-            canvas = drawContext.canvas.nativeCanvas,
-            elevationOverlayColor = elevationOverlayColor,
-            measureContext = measureContext,
-            markerTouchPoint = markerTouchPoint.value,
-            horizontalDimensions = horizontalDimensions,
-            chartBounds = chart.bounds,
-            horizontalScroll = chartScrollState.value,
-            zoom = finalZoom,
-        )
+        val chartDrawContext =
+            cartesianChartDrawContext(
+                canvas = drawContext.canvas.nativeCanvas,
+                elevationOverlayColor = elevationOverlayColor,
+                measureContext = measureContext,
+                markerTouchPoint = markerTouchPoint.value,
+                horizontalDimensions = horizontalDimensions,
+                chartBounds = chart.bounds,
+                horizontalScroll = chartScrollState.value,
+                zoom = finalZoom,
+            )
 
         val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
 

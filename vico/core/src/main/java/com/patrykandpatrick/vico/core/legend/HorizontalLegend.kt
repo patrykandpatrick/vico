@@ -73,7 +73,7 @@ public open class HorizontalLegend(
             height + (lines.size - 1) * lineSpacingDp.pixels + padding.verticalDp.pixels
         }
 
-    override fun draw(context: CartesianMeasureContext): Unit =
+    override fun draw(context: CartesianChartDrawContext): Unit =
         with(context) {
             var currentTop = bounds.top + padding.topDp.pixels
             // isLtr? startX means the line starts at X from left : it starts at X from right

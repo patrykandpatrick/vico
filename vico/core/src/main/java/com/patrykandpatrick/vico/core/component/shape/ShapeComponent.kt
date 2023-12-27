@@ -54,7 +54,6 @@ public open class ShapeComponent(
     public val strokeWidthDp: Float = 0f,
     strokeColor: Int = Color.TRANSPARENT,
 ) : PaintComponent<ShapeComponent>(), Component, Margins by DefaultMargins() {
-
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
@@ -100,36 +99,43 @@ public open class ShapeComponent(
             val strokeWidth = strokeWidthDp.pixels
             strokePaint.strokeWidth = strokeWidth
 
-        fun drawShape(paint: Paint, isStroke: Boolean) {
-            val strokeCompensation = if (isStroke) strokeWidth.half else 0f
+            fun drawShape(
+                paint: Paint,
+                isStroke: Boolean,
+            ) {
+                val strokeCompensation = if (isStroke) strokeWidth.half else 0f
 
-            shape.drawShape(
-                context = context,
-                paint = paint,
-                path = path,
-                left = minOf(
-                    left + margins.startDp.pixels + strokeWidth.half,
-                    centerX - strokeCompensation,
-                ).round,
-                top = minOf(
-                    top + margins.topDp.pixels + strokeWidth.half,
-                    centerY - strokeCompensation,
-                ).round,
-                right = maxOf(
-                    right - margins.endDp.pixels - strokeWidth.half,
-                    centerX + strokeCompensation,
-                ).round,
-                bottom = maxOf(
-                    bottom - margins.bottomDp.pixels - strokeWidth.half,
-                    centerY + strokeCompensation,
-                ).round,
-            )
-        }
+                shape.drawShape(
+                    context = context,
+                    paint = paint,
+                    path = path,
+                    left =
+                        minOf(
+                            left + margins.startDp.pixels + strokeWidth.half,
+                            centerX - strokeCompensation,
+                        ).round,
+                    top =
+                        minOf(
+                            top + margins.topDp.pixels + strokeWidth.half,
+                            centerY - strokeCompensation,
+                        ).round,
+                    right =
+                        maxOf(
+                            right - margins.endDp.pixels - strokeWidth.half,
+                            centerX + strokeCompensation,
+                        ).round,
+                    bottom =
+                        maxOf(
+                            bottom - margins.bottomDp.pixels - strokeWidth.half,
+                            centerY + strokeCompensation,
+                        ).round,
+                )
+            }
 
-        paint.withOpacity(opacity) { paint ->
-            drawShape(paint = paint, isStroke = false)
-        }
-        if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(paint = strokePaint, isStroke = true)
+            paint.withOpacity(opacity) { paint ->
+                drawShape(paint = paint, isStroke = false)
+            }
+            if (strokeWidth > 0f && strokeColor.alpha > 0) drawShape(paint = strokePaint, isStroke = true)
 
             DebugHelper.drawDebugBounds(
                 context = context,

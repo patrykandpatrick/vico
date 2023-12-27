@@ -19,17 +19,13 @@ package com.patrykandpatrick.vico.views.chart
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.ViewGroup
 import android.view.animation.Interpolator
-import android.widget.FrameLayout
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
-import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
@@ -40,7 +36,7 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getAutoZoom
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
@@ -50,26 +46,23 @@ import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
 import com.patrykandpatrick.vico.core.chart.values.toImmutable
-import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.context.MutableMeasureContext
+import com.patrykandpatrick.vico.core.context.MutableCartesianMeasureContext
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
-import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.model.MutableExtraStore
 import com.patrykandpatrick.vico.core.scroll.ScrollHandler
 import com.patrykandpatrick.vico.core.scroll.ScrollListener
 import com.patrykandpatrick.vico.core.scroll.ScrollListenerHost
 import com.patrykandpatrick.vico.core.util.Point
 import com.patrykandpatrick.vico.core.util.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.views.R
-import com.patrykandpatrick.vico.views.extension.defaultColors
 import com.patrykandpatrick.vico.views.extension.density
 import com.patrykandpatrick.vico.views.extension.dpInt
+import com.patrykandpatrick.vico.views.extension.isAttachedToWindowCompat
 import com.patrykandpatrick.vico.views.extension.isLtr
 import com.patrykandpatrick.vico.views.extension.specMode
 import com.patrykandpatrick.vico.views.extension.specSize
@@ -81,15 +74,9 @@ import com.patrykandpatrick.vico.views.gestures.movedYDistance
 import com.patrykandpatrick.vico.views.scroll.ChartScrollSpec
 import com.patrykandpatrick.vico.views.scroll.copy
 import com.patrykandpatrick.vico.views.theme.ThemeHandler
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.properties.Delegates.observable
 import kotlin.properties.ReadWriteProperty
 
@@ -102,9 +89,7 @@ public open class CartesianChartView
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,
-    ) : FrameLayout(context, attrs, defStyleAttr), ScrollListenerHost {
-        private val contentBounds = RectF()
-
+    ) : BaseChartView(context, attrs, defStyleAttr), ScrollListenerHost {
         private val scrollHandler = ScrollHandler()
 
         private val scroller = OverScroller(context)
@@ -124,8 +109,8 @@ public open class CartesianChartView
                 requestInvalidate = ::invalidate,
             )
 
-        private val measureContext =
-            MutableMeasureContext(
+        override val measureContext: MutableCartesianMeasureContext =
+            MutableCartesianMeasureContext(
                 canvasBounds = contentBounds,
                 density = context.density,
                 isLtr = context.isLtr,
@@ -142,30 +127,11 @@ public open class CartesianChartView
 
         private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
-        private val animator: ValueAnimator =
-            ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
-                duration = Animation.DIFF_DURATION.toLong()
-                interpolator = FastOutSlowInInterpolator()
-                addUpdateListener { transformModelForAnimation(it.animatedFraction) }
-            }
-
         private val scrollValueAnimator: ValueAnimator =
             ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
                 duration = Animation.ANIMATED_SCROLL_DURATION.toLong()
                 interpolator = FastOutSlowInInterpolator()
             }
-
-        private val extraStore = MutableExtraStore()
-
-        private var coroutineScope: CoroutineScope? = null
-
-        private var animationFrameJob: Job? = null
-
-        private var finalAnimationFrameJob: Job? = null
-
-        private var isAnimationRunning = false
-
-        private var isAnimationFrameGenerationRunning: Boolean = false
 
         private var markerTouchPoint: Point? = null
 
@@ -184,8 +150,6 @@ public open class CartesianChartView
         private var horizontalDimensions = MutableHorizontalDimensions()
 
         private val themeHandler: ThemeHandler = ThemeHandler(context, attrs)
-
-        protected var placeholder: View? = null
 
         /**
          * The [AxisRenderer] for the start axis.
@@ -235,17 +199,6 @@ public open class CartesianChartView
         public var isZoomEnabled: Boolean = true
 
         /**
-         * Whether to display an animation when the chart is created. In this animation, the value of each chart entry
-         * is animated from zero to the actual value.
-         */
-        public var runInitialAnimation: Boolean = true
-
-        /**
-         * The [CoroutineDispatcher] to be used for the handling of difference animations.
-         */
-        public var dispatcher: CoroutineDispatcher = Dispatchers.Default
-
-        /**
          * The [CartesianChart] displayed by this [View].
          */
         public var chart: CartesianChart? by observable(null) { _, _, _ ->
@@ -263,9 +216,10 @@ public open class CartesianChartView
          */
         public var modelProducer: CartesianChartModelProducer? = null
             set(value) {
+                if (field === value) return
                 field?.unregisterFromUpdates(key = this)
                 field = value
-                if (ViewCompat.isAttachedToWindow(this)) registerForUpdates()
+                if (isAttachedToWindowCompat) registerForUpdates()
             }
 
         private fun registerForUpdates() {
@@ -321,16 +275,11 @@ public open class CartesianChartView
 
         override fun onAttachedToWindow() {
             super.onAttachedToWindow()
-            coroutineScope = CoroutineScope(EmptyCoroutineContext)
             if (modelProducer?.isRegistered(key = this) != true) registerForUpdates()
         }
 
         override fun onDetachedFromWindow() {
             super.onDetachedFromWindow()
-            coroutineScope?.cancel()
-            coroutineScope = null
-            animator.cancel()
-            isAnimationRunning = false
             modelProducer?.unregisterFromUpdates(key = this)
         }
 
@@ -343,16 +292,6 @@ public open class CartesianChartView
          * Allows for listening to [marker] visibility changes.
          */
         public var markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null
-
-        /**
-         * The legend for this chart.
-         */
-        public var legend: Legend? = null
-
-        /**
-         * The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows.
-         */
-        public var elevationOverlayColor: Int = context.defaultColors.elevationOverlayColor.toInt()
 
         /**
          * Applies a horizontal fade to the edges of the chart area for scrollable charts.
@@ -415,6 +354,8 @@ public open class CartesianChartView
             setModel(model = model, updateChartValues = true)
         }
 
+        override fun shouldShowPlaceholder(): Boolean = model == null
+
         private fun setModel(
             model: CartesianChartModel?,
             updateChartValues: Boolean,
@@ -445,7 +386,7 @@ public open class CartesianChartView
                 chart.updateChartValues(mutableChartValues, model, getXStep?.invoke(model))
                 measureContext.chartValues = mutableChartValues.toImmutable()
             }
-            if (ViewCompat.isAttachedToWindow(this)) invalidate()
+            if (isAttachedToWindowCompat) invalidate()
         }
 
         protected inline fun <T> invalidatingObservable(
@@ -551,7 +492,7 @@ public open class CartesianChartView
                 scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
                 val chartDrawContext =
-                    chartDrawContext(
+                    cartesianChartDrawContext(
                         canvas = canvas,
                         elevationOverlayColor = elevationOverlayColor,
                         measureContext = measureContext,
@@ -592,7 +533,7 @@ public open class CartesianChartView
             }
         }
 
-        private fun transformModelForAnimation(fraction: Float) {
+        override fun transformModelForAnimation(fraction: Float) {
             when {
                 !isAnimationRunning -> return
                 !isAnimationFrameGenerationRunning -> {
@@ -603,6 +544,7 @@ public open class CartesianChartView
                             isAnimationFrameGenerationRunning = false
                         }
                 }
+
                 fraction == 1f -> {
                     finalAnimationFrameJob =
                         coroutineScope?.launch(dispatcher) {
@@ -639,58 +581,10 @@ public open class CartesianChartView
                 )
         }
 
-        override fun addView(
-            child: View,
-            index: Int,
-            params: ViewGroup.LayoutParams?,
-        ) {
-            check(childCount == 0) { "Only one placeholder can be added." }
-            super.addView(child, index, params)
-            placeholder = child
-            updatePlaceholderVisibility()
-        }
-
-        override fun onViewRemoved(child: View?) {
-            super.onViewRemoved(child)
-            placeholder = null
-        }
-
-        /**
-         * Updates the placeholder, which is shown when no [CartesianChartModel] is available.
-         */
-        public fun setPlaceholder(
-            view: View?,
-            params: LayoutParams? = null,
-        ) {
-            if (view === placeholder) return
-            removeAllViews()
-            if (view != null) addView(view, params)
-            placeholder = view
-            updatePlaceholderVisibility()
-        }
-
-        protected fun updatePlaceholderVisibility() {
-            placeholder?.isVisible = model == null
-        }
-
         private inline fun withChartAndModel(block: (chart: CartesianChart, model: CartesianChartModel) -> Unit) {
             val chart = chart ?: return
             val model = model ?: return
             block(chart, model)
-        }
-
-        /**
-         * Sets the duration (in milliseconds) of difference animations.
-         */
-        public fun setDiffAnimationDuration(durationMillis: Long) {
-            animator.duration = durationMillis
-        }
-
-        /**
-         * Sets the [Interpolator] for difference animations.
-         */
-        public fun setDiffAnimationInterpolator(interpolator: Interpolator) {
-            animator.interpolator = interpolator
         }
 
         /**
@@ -737,13 +631,5 @@ public open class CartesianChartView
                 addUpdateListener { scrollHandler.handleScroll(initialValue + it.animatedFraction * delta) }
                 start()
             }
-        }
-
-        @Suppress("UNNECESSARY_SAFE_CALL")
-        override fun onRtlPropertiesChanged(layoutDirection: Int) {
-            // This function may be invoked inside of the View’s constructor, before the measureContext is initialized.
-            // In this case, we can ignore this callback, as the layout direction will be determined when the
-            // MeasureContext instance is created.
-            measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
         }
     }

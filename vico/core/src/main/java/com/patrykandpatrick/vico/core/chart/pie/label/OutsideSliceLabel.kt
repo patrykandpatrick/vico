@@ -36,7 +36,7 @@ import com.patrykandpatrick.vico.core.extension.radius
 import com.patrykandpatrick.vico.core.math.radians
 import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 import kotlin.math.abs
 import kotlin.math.sin
 
@@ -59,14 +59,14 @@ public open class OutsideSliceLabel(
     public var horizontalSegmentLengthDp: Float,
     public var maxWidthToBoundsRatio: Float,
 ) : SliceLabel() {
-
     protected var measuredTextWidth: Int = 0
 
-    protected var line: PathComponent = PathComponent(
-        color = Color.TRANSPARENT,
-        strokeWidthDp = lineWidthDp,
-        strokeColor = lineColor,
-    )
+    protected var line: PathComponent =
+        PathComponent(
+            color = Color.TRANSPARENT,
+            strokeWidthDp = lineWidthDp,
+            strokeColor = lineColor,
+        )
 
     /**
      * The color of the line.
@@ -92,62 +92,69 @@ public open class OutsideSliceLabel(
         angle: Float,
         label: CharSequence,
         outInsets: Insets,
-    ): Unit = with(context) {
-        val finalLinePoint = getFinalLinePoint(oval, angle)
+    ): Unit =
+        with(context) {
+            val finalLinePoint = getFinalLinePoint(oval, angle)
 
-        val (leftBound, topBound, rightBound, bottomBound) = contentBounds
+            val (leftBound, topBound, rightBound, bottomBound) = contentBounds
 
-        val availableWidth = if (finalLinePoint.x < oval.centerX()) {
-            finalLinePoint.x - leftBound
-        } else {
-            rightBound - finalLinePoint.x
-        }.toInt()
+            val availableWidth =
+                if (finalLinePoint.x < oval.centerX()) {
+                    finalLinePoint.x - leftBound
+                } else {
+                    rightBound - finalLinePoint.x
+                }.toInt()
 
-        measuredTextWidth = getTextMaxWidth(contentBounds).coerceAtLeast(availableWidth)
+            measuredTextWidth = getTextMaxWidth(contentBounds).coerceAtLeast(availableWidth)
 
-        val textBounds = textComponent.getTextBounds(
-            context = context,
-            text = label,
-            width = measuredTextWidth,
-        )
+            val textBounds =
+                textComponent.getTextBounds(
+                    context = context,
+                    text = label,
+                    width = measuredTextWidth,
+                )
 
-        val alpha = angle.radians
+            val alpha = angle.radians
 
-        val left = if (finalLinePoint.x < oval.centerX()) {
-            val leftInset = (leftBound + finalLinePoint.x - textBounds.width()) / sin(-Math.PI.half - alpha)
-            if (leftInset < 0) abs(leftInset).toFloat() else 0f
-        } else {
-            0f
+            val left =
+                if (finalLinePoint.x < oval.centerX()) {
+                    val leftInset = (leftBound + finalLinePoint.x - textBounds.width()) / sin(-Math.PI.half - alpha)
+                    if (leftInset < 0) abs(leftInset).toFloat() else 0f
+                } else {
+                    0f
+                }
+
+            val top =
+                if (finalLinePoint.y < oval.centerY()) {
+                    val topInset = (topBound + finalLinePoint.y - textBounds.height().half) / sin(-alpha)
+                    if (topInset < 0) abs(topInset) else 0f
+                } else {
+                    0f
+                }
+
+            val right =
+                if (finalLinePoint.x > oval.centerX()) {
+                    val rightInset = (finalLinePoint.x + textBounds.width() - rightBound) / sin(Math.PI.half - alpha)
+                    if (rightInset > 0) rightInset.toFloat() else 0f
+                } else {
+                    0f
+                }
+
+            val bottom =
+                if (finalLinePoint.y > oval.centerY()) {
+                    val bottomInset = (finalLinePoint.y + textBounds.height().half - bottomBound) / sin(alpha)
+                    if (bottomInset > 0) bottomInset else 0f
+                } else {
+                    0f
+                }
+
+            outInsets.setAllIfGreater(
+                start = if (isLtr) left else right,
+                top = top,
+                end = if (isLtr) right else left,
+                bottom = bottom,
+            )
         }
-
-        val top = if (finalLinePoint.y < oval.centerY()) {
-            val topInset = (topBound + finalLinePoint.y - textBounds.height().half) / sin(-alpha)
-            if (topInset < 0) abs(topInset) else 0f
-        } else {
-            0f
-        }
-
-        val right = if (finalLinePoint.x > oval.centerX()) {
-            val rightInset = (finalLinePoint.x + textBounds.width() - rightBound) / sin(Math.PI.half - alpha)
-            if (rightInset > 0) rightInset.toFloat() else 0f
-        } else {
-            0f
-        }
-
-        val bottom = if (finalLinePoint.y > oval.centerY()) {
-            val bottomInset = (finalLinePoint.y + textBounds.height().half - bottomBound) / sin(alpha)
-            if (bottomInset > 0) bottomInset else 0f
-        } else {
-            0f
-        }
-
-        outInsets.setAllIfGreater(
-            start = if (isLtr) left else right,
-            top = top,
-            end = if (isLtr) right else left,
-            bottom = bottom,
-        )
-    }
 
     public override fun drawLabel(
         context: DrawContext,
@@ -156,30 +163,35 @@ public open class OutsideSliceLabel(
         angle: Float,
         slicePath: Path,
         label: CharSequence,
-    ): Unit = with(context) {
-        val (textX, textY) = drawLine(oval, angle)
+        sliceOpacity: Float,
+        labelOpacity: Float,
+    ): Unit =
+        with(context) {
+            val (textX, textY) = drawLine(oval, angle, sliceOpacity)
 
-        val textBounds = textComponent.getTextBounds(this, label, measuredTextWidth)
+            val textBounds = textComponent.getTextBounds(this, label, measuredTextWidth)
 
-        textBounds.offset(
-            textX - textBounds.width().toInt().half,
-            textY - textBounds.height().toInt().half,
-        )
+            textBounds.offset(
+                textX - textBounds.width().toInt().half,
+                textY - textBounds.height().toInt().half,
+            )
 
-        val horizontalPosition = when (angle % FULL_DEGREES) {
-            in horizontalPositionStartDegreesRange -> HorizontalPosition.Start
-            else -> HorizontalPosition.End
+            val horizontalPosition =
+                when (angle % FULL_DEGREES) {
+                    in horizontalPositionStartDegreesRange -> HorizontalPosition.Start
+                    else -> HorizontalPosition.End
+                }
+
+            textComponent.drawText(
+                context = this,
+                text = label,
+                textX = textBounds.centerX(),
+                textY = textY,
+                horizontalPosition = horizontalPosition,
+                maxTextWidth = measuredTextWidth,
+                opacity = sliceOpacity,
+            )
         }
-
-        textComponent.drawText(
-            context = this,
-            text = label,
-            textX = textBounds.centerX(),
-            textY = textY,
-            horizontalPosition = horizontalPosition,
-            maxTextWidth = measuredTextWidth,
-        )
-    }
 
     protected open fun DrawContext.getFinalLinePoint(
         drawOval: RectF,
@@ -187,14 +199,16 @@ public open class OutsideSliceLabel(
     ): Point {
         val radiusWithTranslation = drawOval.radius + angledSegmentLengthDp.pixels
 
-        val (baseX, y) = translatePointByAngle(
-            center = drawOval.centerPoint,
-            point = Point(
-                x = drawOval.centerX() + radiusWithTranslation,
-                y = drawOval.centerY(),
-            ),
-            angle = angle.radiansDouble,
-        )
+        val (baseX, y) =
+            translatePointByAngle(
+                center = drawOval.centerPoint,
+                point =
+                    Point(
+                        x = drawOval.centerX() + radiusWithTranslation,
+                        y = drawOval.centerY(),
+                    ),
+                angle = angle.radiansDouble,
+            )
 
         return Point(
             x = baseX + horizontalSegmentLengthDp.pixels * if (baseX < drawOval.centerX()) -1f else 1f,
@@ -205,28 +219,33 @@ public open class OutsideSliceLabel(
     protected open fun DrawContext.drawLine(
         drawOval: RectF,
         angle: Float,
+        opacity: Float,
     ): Point {
-        var linePoint = translatePointByAngle(
-            center = drawOval.centerPoint,
-            point = Point(
-                x = drawOval.centerX() + drawOval.radius,
-                y = drawOval.centerY(),
-            ),
-            angle = angle.radiansDouble,
-        )
+        var linePoint =
+            translatePointByAngle(
+                center = drawOval.centerPoint,
+                point =
+                    Point(
+                        x = drawOval.centerX() + drawOval.radius,
+                        y = drawOval.centerY(),
+                    ),
+                angle = angle.radiansDouble,
+            )
 
         line.draw(this) {
             moveTo(linePoint)
 
             lineTo(
-                point = translatePointByAngle(
-                    center = drawOval.centerPoint,
-                    point = Point(
-                        x = drawOval.centerX() + drawOval.radius + angledSegmentLengthDp.pixels,
-                        y = drawOval.centerY(),
+                point =
+                    translatePointByAngle(
+                        center = drawOval.centerPoint,
+                        point =
+                            Point(
+                                x = drawOval.centerX() + drawOval.radius + angledSegmentLengthDp.pixels,
+                                y = drawOval.centerY(),
+                            ),
+                        angle = angle.radiansDouble,
                     ),
-                    angle = angle.radiansDouble,
-                ),
             )
 
             rLineTo(
@@ -241,7 +260,6 @@ public open class OutsideSliceLabel(
     }
 
     protected companion object {
-
         public val horizontalPositionStartDegreesRange: ClosedFloatingPointRange<Float> = 90f..270f
     }
 }

@@ -18,27 +18,31 @@ package com.patrykandpatrick.vico.sample.previews
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
-import com.patrykandpatrick.vico.compose.axis.horizontal.bottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.startAxis
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.candlestick.rememberHollow
-import com.patrykandpatrick.vico.core.chart.candlestick.CandlestickChart
+import com.patrykandpatrick.vico.compose.chart.layer.rememberHollow
+import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.core.chart.layer.CandlestickCartesianLayer
+import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.util.SampleCandlestickEntryProvider
 
 @Preview(widthDp = 350)
 @Composable
-public fun CandlestickLinePreview() {
+fun CandlestickLinePreview() {
     Surface {
-        val candlestickChart = CandlestickChart(
-            config = CandlestickChart.Config.rememberHollow(),
-        )
+        val candlestickCartesianLayer =
+            CandlestickCartesianLayer(
+                config = CandlestickCartesianLayer.Config.rememberHollow(),
+            )
 
         CartesianChartHost(
-            chart = candlestickChart,
-            model = SampleCandlestickEntryProvider.sampleModel,
-            startAxis = startAxis(),
-            bottomAxis = bottomAxis(),
+            chart = rememberCartesianChart(candlestickCartesianLayer),
+            model = remember { CartesianChartModel(SampleCandlestickEntryProvider.sampleModel) },
+            startAxis = rememberStartAxis(),
+            bottomAxis = rememberBottomAxis(),
         )
     }
 }

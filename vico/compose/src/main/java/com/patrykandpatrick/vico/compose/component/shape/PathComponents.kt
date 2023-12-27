@@ -39,16 +39,17 @@ public fun pathComponent(
     dynamicShader: DynamicShader? = null,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
-): PathComponent = remember {
-    PathComponent(
-        color = color.toArgb(),
-        dynamicShader = dynamicShader,
-        strokeWidthDp = strokeWidth.value,
-        strokeColor = strokeColor.toArgb(),
-    )
-}.apply {
-    this.color = color.toArgb()
-    this.dynamicShader = dynamicShader
-    this.strokeWidthDp = strokeWidth.value
-    this.strokeColor = strokeColor.toArgb()
-}
+): PathComponent =
+    remember {
+        PathComponent(
+            color = color.toArgb(),
+            dynamicShader = dynamicShader,
+            strokeWidthDp = strokeWidth.value,
+            strokeColor = strokeColor.toArgb(),
+        )
+    }.apply {
+        this.color = color.toArgb()
+        this.dynamicShader = dynamicShader
+        this.strokeWidthDp = strokeWidth.value
+        this.strokeColor = strokeColor.toArgb()
+    }

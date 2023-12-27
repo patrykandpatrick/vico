@@ -167,3 +167,13 @@ public inline fun <T, R : Comparable<R>> Iterable<T>.maxOfOrNullIndexed(selector
     }
     return maxValue
 }
+
+internal inline fun <T, R> Iterable<T>.mapWithPrevious(action: (previous: T?, current: T) -> R): List<R> {
+    val result = mutableListOf<R>()
+    var previous: T? = null
+    for (element in this) {
+        result.add(action(previous, element))
+        previous = element
+    }
+    return result
+}

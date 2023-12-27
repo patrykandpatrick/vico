@@ -31,9 +31,8 @@ import com.patrykandpatrick.vico.core.component.text.textComponent
  *
  * @see InsideSliceLabel
  */
-public fun SliceLabel.Companion.inside(
-    textComponent: TextComponent = textComponent(),
-): SliceLabel = InsideSliceLabel(textComponent = textComponent)
+public fun SliceLabel.Companion.inside(textComponent: TextComponent = textComponent()): SliceLabel =
+    InsideSliceLabel(textComponent = textComponent)
 
 /**
  * The factory function for [OutsideSliceLabel].
@@ -55,11 +54,12 @@ public fun SliceLabel.Companion.outside(
     angledSegmentLengthDp: Float = DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH,
     horizontalSegmentLengthDp: Float = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH,
     maxWidthToBoundsRatio: Float = DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
-): OutsideSliceLabel = OutsideSliceLabel(
-    textComponent = textComponent,
-    lineColor = lineColor,
-    lineWidthDp = lineWidthDp,
-    angledSegmentLengthDp = angledSegmentLengthDp,
-    horizontalSegmentLengthDp = horizontalSegmentLengthDp,
-    maxWidthToBoundsRatio = maxWidthToBoundsRatio,
-)
+): OutsideSliceLabel =
+    OutsideSliceLabel(
+        textComponent = textComponent,
+        lineColor = lineColor,
+        lineWidthDp = lineWidthDp,
+        angledSegmentLengthDp = angledSegmentLengthDp,
+        horizontalSegmentLengthDp = horizontalSegmentLengthDp,
+        maxWidthToBoundsRatio = maxWidthToBoundsRatio,
+    )

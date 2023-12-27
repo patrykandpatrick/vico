@@ -76,7 +76,7 @@ public object Animation {
     /**
      * The default duration for difference animations.
      */
-    public const val DIFF_DURATION: Int = 500
+    public const val DIFF_DURATION: Int = 2500
 
     /**
      * The default duration for animated scrolls (in milliseconds;
@@ -182,7 +182,7 @@ public object DefaultDimens {
     /**
      * The default spacing between candles in the candlestick chart.
      */
-    public const val CANDLESTICK_CHART_DEFAULT_SPACING: Float = 16f
+    public const val CANDLESTICK_CHART_DEFAULT_SPACING_DP: Float = 16f
 
     /**
      * The default cubic bezier strength for line charts.
@@ -370,7 +370,7 @@ public interface DefaultColors {
         override val lineColor: Long = 0xFFEFEFEF
 
         override val candlestickGreen: Int = 0xFF02C898.toInt()
-        override val candlestickGray: Int = 0xFF212121.toInt()
+        override val candlestickGray: Int = 0xFF8A8A8A.toInt()
         override val candlestickRed: Int = 0xFFEA284B.toInt()
     }
 }

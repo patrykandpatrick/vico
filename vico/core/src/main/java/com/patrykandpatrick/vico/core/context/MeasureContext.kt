@@ -17,8 +17,6 @@
 package com.patrykandpatrick.vico.core.context
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.values.ChartValues
 
 /**
  * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
@@ -30,11 +28,6 @@ public interface MeasureContext : Extras {
     public val canvasBounds: RectF
 
     /**
-     * The chart’s [ChartValues].
-     */
-    public val chartValues: ChartValues
-
-    /**
      * The pixel density.
      */
     public val density: Float
@@ -43,16 +36,6 @@ public interface MeasureContext : Extras {
      * Whether the layout direction is left-to-right.
      */
     public val isLtr: Boolean
-
-    /**
-     * Whether horizontal scrolling is enabled.
-     */
-    public val isHorizontalScrollEnabled: Boolean
-
-    /**
-     * Defines how the chart’s content is positioned horizontally.
-     */
-    public val horizontalLayout: HorizontalLayout
 
     /**
      * A multiplier used to ensure support for both left-to-right and right-to-left layouts. Values such as translation

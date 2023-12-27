@@ -16,13 +16,12 @@
 
 package com.patrykandpatrick.vico.core.component.shape
 
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 
 /**
  * Abstracts the path building process.
  */
 public interface PathBuilder {
-
     /**
      * Returns the last x coordinate of the path.
      */
@@ -41,7 +40,10 @@ public interface PathBuilder {
     /**
      * Moves the path to the provided coordinates.
      */
-    public fun moveTo(x: Float, y: Float)
+    public fun moveTo(
+        x: Float,
+        y: Float,
+    )
 
     /**
      * A convenience method for [moveTo] that takes a [Point] as an argument.
@@ -53,7 +55,10 @@ public interface PathBuilder {
     /**
      * Adds a line to the path from the last point to the provided coordinates.
      */
-    public fun lineTo(x: Float, y: Float)
+    public fun lineTo(
+        x: Float,
+        y: Float,
+    )
 
     /**
      * A convenience method for [lineTo] that takes a [Point] as an argument.
@@ -65,7 +70,10 @@ public interface PathBuilder {
     /**
      * Similar to [moveTo] but relative to the provided coordinates.
      */
-    public fun rLineTo(x: Float, y: Float)
+    public fun rLineTo(
+        x: Float,
+        y: Float,
+    )
 
     /**
      * A convenience method for [rLineTo] that takes a [Point] as an argument.

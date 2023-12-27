@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.chart.candlestick
+package com.patrykandpatrick.vico.core.extension
 
-/**
- * The type of a candlestick chart.
- */
-public enum class CandlestickChartType {
-    Standard,
-    Hollow,
-}
+import kotlin.random.Random
+import kotlin.random.nextInt
+
+internal fun IntRange.random(): Int = Random.nextInt(this)

@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 
 /**
@@ -60,7 +60,7 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
      * Updates the chart’s [MutableHorizontalDimensions] instance.
      */
     public fun updateHorizontalDimensions(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: MutableHorizontalDimensions,
     )
 }

@@ -26,7 +26,6 @@ import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensio
 import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
-import com.patrykandpatrick.vico.core.context.CartesianDrawContext
 import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.doubled
@@ -153,7 +152,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             drawGuidelines(baseCanvasX, fullXRange, labelValues, lineValues)
         }
 
-    private fun ChartDrawContext.drawGuidelines(
+    private fun CartesianChartDrawContext.drawGuidelines(
         baseCanvasX: Float,
         fullXRange: ClosedFloatingPointRange<Float>,
         labelValues: List<Float>,
@@ -188,7 +187,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
-    private fun ChartDrawContext.getLinesCorrectionX(
+    private fun CartesianChartDrawContext.getLinesCorrectionX(
         entryX: Float,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): Float =
@@ -202,7 +201,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override fun drawAboveChart(context: CartesianChartDrawContext): Unit = Unit
 
     override fun updateHorizontalDimensions(
-        context: CartesianChartDrawContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: MutableHorizontalDimensions,
     ) {
         val chartValues = context.chartValues

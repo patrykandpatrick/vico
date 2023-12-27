@@ -37,13 +37,12 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
  * @see InsideSliceLabel
  */
 @Composable
-public fun SliceLabel.Companion.inside(
-    textComponent: TextComponent = textComponent(),
-): InsideSliceLabel = remember {
-    InsideSliceLabel(textComponent)
-}.apply {
-    this.textComponent = textComponent
-}
+public fun SliceLabel.Companion.inside(textComponent: TextComponent = textComponent()): InsideSliceLabel =
+    remember {
+        InsideSliceLabel(textComponent)
+    }.apply {
+        this.textComponent = textComponent
+    }
 
 /**
  * The factory function for [OutsideSliceLabel].
@@ -65,20 +64,21 @@ public fun SliceLabel.Companion.outside(
     angledSegmentLength: Dp = DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH.dp,
     horizontalSegmentLength: Dp = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH.dp,
     maxWidthToBoundsRatio: Float = DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
-): OutsideSliceLabel = remember {
-    OutsideSliceLabel(
-        textComponent = textComponent,
-        lineColor = lineColor.toArgb(),
-        lineWidthDp = lineWidth.value,
-        angledSegmentLengthDp = angledSegmentLength.value,
-        horizontalSegmentLengthDp = horizontalSegmentLength.value,
-        maxWidthToBoundsRatio = maxWidthToBoundsRatio,
-    )
-}.apply {
-    this.textComponent = textComponent
-    this.lineColor = lineColor.toArgb()
-    this.lineWidthDp = lineWidth.value
-    this.angledSegmentLengthDp = angledSegmentLength.value
-    this.horizontalSegmentLengthDp = horizontalSegmentLength.value
-    this.maxWidthToBoundsRatio = maxWidthToBoundsRatio
-}
+): OutsideSliceLabel =
+    remember {
+        OutsideSliceLabel(
+            textComponent = textComponent,
+            lineColor = lineColor.toArgb(),
+            lineWidthDp = lineWidth.value,
+            angledSegmentLengthDp = angledSegmentLength.value,
+            horizontalSegmentLengthDp = horizontalSegmentLength.value,
+            maxWidthToBoundsRatio = maxWidthToBoundsRatio,
+        )
+    }.apply {
+        this.textComponent = textComponent
+        this.lineColor = lineColor.toArgb()
+        this.lineWidthDp = lineWidth.value
+        this.angledSegmentLengthDp = angledSegmentLength.value
+        this.horizontalSegmentLengthDp = horizontalSegmentLength.value
+        this.maxWidthToBoundsRatio = maxWidthToBoundsRatio
+    }

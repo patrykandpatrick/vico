@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.extension
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
@@ -152,7 +152,10 @@ public fun RectF.getEnd(isLtr: Boolean): Float = if (isLtr) right else left
 /**
  * Updates the coordinates of this [RectF] if the provided coordinates exceed the current ones.
  */
-public fun RectF.updateIfExceeds(x: Float, y: Float) {
+public fun RectF.updateIfExceeds(
+    x: Float,
+    y: Float,
+) {
     updateBounds(
         left = left.coerceAtMost(x),
         top = top.coerceAtMost(y),

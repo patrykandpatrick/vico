@@ -23,10 +23,10 @@ import com.patrykandpatrick.vico.core.axis.vertical.DefaultVerticalAxisItemPlace
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 
 /**
  * Determines for what values an [Axis] is to display labels, ticks, and guidelines.
@@ -40,28 +40,28 @@ public interface AxisItemPlacer {
          * Whether ticks whose _x_ values are bounds of the _x_-axis value range should be shifted to the edges of the
          * axis bounds, to be aligned with the vertical axes.
          */
-        public fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = true
+        public fun getShiftExtremeTicks(context: CartesianChartDrawContext): Boolean = true
 
         /**
          * Returns a boolean indicating whether the [HorizontalAxis] should reserve room for a label for
          * [ChartValues.minX]. If `true` is returned, indicating that this behavior is desired, then [getLabelValues]
          * should request a label for [ChartValues.minX].
          */
-        public fun getAddFirstLabelPadding(context: MeasureContext): Boolean
+        public fun getAddFirstLabelPadding(context: CartesianMeasureContext): Boolean
 
         /**
          * Returns a boolean indicating whether the [HorizontalAxis] should reserve room for a label for
          * [ChartValues.maxX]. If `true` is returned, indicating that this behavior is desired, then [getLabelValues]
          * should request a label for [ChartValues.maxX].
          */
-        public fun getAddLastLabelPadding(context: MeasureContext): Boolean
+        public fun getAddLastLabelPadding(context: CartesianMeasureContext): Boolean
 
         /**
          * Returns, as a list, the _x_ values for which labels are to be displayed, restricted to [visibleXRange] and
          * with two extra values on either side (if applicable).
          */
         public fun getLabelValues(
-            context: ChartDrawContext,
+            context: CartesianChartDrawContext,
             visibleXRange: ClosedFloatingPointRange<Float>,
             fullXRange: ClosedFloatingPointRange<Float>,
         ): List<Float>
@@ -71,7 +71,7 @@ public interface AxisItemPlacer {
          * phase. This affects how much vertical space the [HorizontalAxis] requests.
          */
         public fun getMeasuredLabelValues(
-            context: MeasureContext,
+            context: CartesianMeasureContext,
             horizontalDimensions: HorizontalDimensions,
             fullXRange: ClosedFloatingPointRange<Float>,
         ): List<Float>
@@ -82,7 +82,7 @@ public interface AxisItemPlacer {
          * returned by [getLabelValues] are used.
          */
         public fun getLineValues(
-            context: ChartDrawContext,
+            context: CartesianChartDrawContext,
             visibleXRange: ClosedFloatingPointRange<Float>,
             fullXRange: ClosedFloatingPointRange<Float>,
         ): List<Float>? = null
@@ -91,7 +91,7 @@ public interface AxisItemPlacer {
          * Returns the start inset required by the [HorizontalAxis].
          */
         public fun getStartHorizontalAxisInset(
-            context: MeasureContext,
+            context: CartesianMeasureContext,
             horizontalDimensions: HorizontalDimensions,
             tickThickness: Float,
         ): Float
@@ -100,7 +100,7 @@ public interface AxisItemPlacer {
          * Returns the end inset required by the [HorizontalAxis].
          */
         public fun getEndHorizontalAxisInset(
-            context: MeasureContext,
+            context: CartesianMeasureContext,
             horizontalDimensions: HorizontalDimensions,
             tickThickness: Float,
         ): Float
@@ -134,13 +134,13 @@ public interface AxisItemPlacer {
          * [CartesianChart]’s bounds. If the chart has a top axis, the shifted tick will then be aligned with this axis,
          * and the shifted guideline will be hidden.
          */
-        public fun getShiftTopLines(chartDrawContext: ChartDrawContext): Boolean = true
+        public fun getShiftTopLines(context: CartesianChartDrawContext): Boolean = true
 
         /**
          * Returns, as a list, the _y_ values for which labels are to be displayed.
          */
         public fun getLabelValues(
-            context: ChartDrawContext,
+            context: CartesianChartDrawContext,
             axisHeight: Float,
             maxLabelHeight: Float,
             position: AxisPosition.Vertical,
@@ -152,7 +152,7 @@ public interface AxisItemPlacer {
          * [getLabelValues].
          */
         public fun getHeightMeasurementLabelValues(
-            context: MeasureContext,
+            context: CartesianMeasureContext,
             position: AxisPosition.Vertical,
         ): List<Float>
 
@@ -161,7 +161,7 @@ public interface AxisItemPlacer {
          * during the measuring phase. This affects how much horizontal space the [VerticalAxis] requests.
          */
         public fun getWidthMeasurementLabelValues(
-            context: MeasureContext,
+            context: CartesianMeasureContext,
             axisHeight: Float,
             maxLabelHeight: Float,
             position: AxisPosition.Vertical,
@@ -171,7 +171,7 @@ public interface AxisItemPlacer {
          * Returns, as a list, the _y_ values for which ticks and guidelines are to be displayed.
          */
         public fun getLineValues(
-            context: ChartDrawContext,
+            context: CartesianChartDrawContext,
             axisHeight: Float,
             maxLabelHeight: Float,
             position: AxisPosition.Vertical,

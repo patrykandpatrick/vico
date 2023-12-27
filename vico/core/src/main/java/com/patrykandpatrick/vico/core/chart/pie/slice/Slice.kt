@@ -29,12 +29,13 @@ import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
 import com.patrykandpatrick.vico.core.extension.isNotTransparent
 import com.patrykandpatrick.vico.core.extension.isTransparent
+import com.patrykandpatrick.vico.core.extension.opacity
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.updateBy
 import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
 import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 
 /**
  * A component that defines an appearance of a slice in a pie chart.
@@ -54,16 +55,17 @@ public open class Slice(
     public var offsetFromCenterDp: Float = 0f,
     public var label: SliceLabel? = null,
 ) : PaintComponent<Slice>() {
-
     protected val layoutHelper: PieLayoutHelper = PieLayoutHelper()
 
-    protected val fillPaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        this.color = color
-    }
+    protected val fillPaint: Paint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            this.color = color
+        }
 
-    protected val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        this.color = strokeColor
-    }
+    protected val strokePaint: Paint =
+        Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            this.color = strokeColor
+        }
 
     protected val drawOval: RectF = RectF()
 
@@ -92,107 +94,123 @@ public open class Slice(
         holeRadius: Float,
         label: CharSequence?,
         spacingPath: Path,
-    ): Unit = with(context) {
-        drawOval.set(oval)
-        applyOffset(drawOval, startAngle + sweepAngle.half)
+        sliceOpacity: Float,
+        labelOpacity: Float,
+    ): Unit =
+        with(context) {
+            drawOval.set(oval)
+            applyOffset(drawOval, startAngle + sweepAngle.half)
 
-        if (color.isNotTransparent) {
-            maybeUpdateShadowLayer(context, fillPaint, fillPaint.color)
-            drawFilledSlice(context, startAngle, sweepAngle, spacingPath)
-        }
-
-        if (strokeColor.isNotTransparent && strokeWidthDp > 0f) {
-            if (color.isTransparent) {
-                maybeUpdateShadowLayer(context, strokePaint, strokePaint.color)
+            if (color.isNotTransparent) {
+                maybeUpdateShadowLayer(context, fillPaint, fillPaint.color)
+                drawFilledSlice(context, startAngle, sweepAngle, spacingPath, sliceOpacity)
             }
 
-            drawStrokedSlice(context, startAngle, sweepAngle, spacingPath)
-        }
+            if (strokeColor.isNotTransparent && strokeWidthDp > 0f) {
+                if (color.isTransparent) {
+                    maybeUpdateShadowLayer(context, strokePaint, strokePaint.color)
+                }
 
-        ifNotNull(this@Slice.label, label) { labelComponent, label ->
-            labelComponent.drawLabel(
-                context = context,
-                oval = drawOval,
-                holeRadius = holeRadius,
-                angle = startAngle + sweepAngle.half,
-                slicePath = slicePath,
-                label = label,
-            )
+                drawStrokedSlice(context, startAngle, sweepAngle, spacingPath, sliceOpacity)
+            }
+
+            ifNotNull(this@Slice.label, label) { labelComponent, label ->
+                labelComponent.drawLabel(
+                    context = context,
+                    oval = drawOval,
+                    holeRadius = holeRadius,
+                    angle = startAngle + sweepAngle.half,
+                    slicePath = slicePath,
+                    label = label,
+                    sliceOpacity = sliceOpacity,
+                    labelOpacity = labelOpacity,
+                )
+            }
         }
-    }
 
     protected open fun drawFilledSlice(
         context: DrawContext,
         startAngle: Float,
         sweepAngle: Float,
         spacingPath: Path,
-    ): Unit = with(context) {
-        fillPaint.style = Paint.Style.FILL
-        fillPaint.color = color
+        sliceOpacity: Float,
+    ): Unit =
+        with(context) {
+            fillPaint.style = Paint.Style.FILL
+            fillPaint.color = color
+            fillPaint.opacity = sliceOpacity
 
-        slicePath.rewind()
+            slicePath.rewind()
 
-        slicePath.addArc(drawOval, startAngle, sweepAngle)
+            slicePath.addArc(drawOval, startAngle, sweepAngle)
 
-        slicePath.lineTo(drawOval.centerX(), drawOval.centerY())
+            slicePath.lineTo(drawOval.centerX(), drawOval.centerY())
 
-        slicePath.close()
+            slicePath.close()
 
-        if (dynamicShader != null) {
-            slicePath.computeBounds(sliceBounds, false)
-            fillPaint.shader = dynamicShader?.provideShader(context, sliceBounds)
+            if (dynamicShader != null) {
+                slicePath.computeBounds(sliceBounds, false)
+                fillPaint.shader = dynamicShader?.provideShader(context, sliceBounds)
+            }
+
+            if (spacingPath.isEmpty.not()) {
+                slicePath.op(spacingPath, Path.Op.DIFFERENCE)
+            }
+
+            canvas.drawPath(slicePath, fillPaint)
         }
-
-        if (spacingPath.isEmpty.not()) {
-            slicePath.op(spacingPath, Path.Op.DIFFERENCE)
-        }
-
-        canvas.drawPath(slicePath, fillPaint)
-    }
 
     protected open fun drawStrokedSlice(
         context: DrawContext,
         startAngle: Float,
         sweepAngle: Float,
         spacingPath: Path,
-    ): Unit = with(context) {
-        val strokeWidth = strokeWidthDp.pixels
+        sliceOpacity: Float,
+    ): Unit =
+        with(context) {
+            val strokeWidth = strokeWidthDp.pixels
 
-        strokePaint.style = Paint.Style.STROKE
-        strokePaint.color = strokeColor
-        strokePaint.strokeWidth = strokeWidth
+            strokePaint.style = Paint.Style.STROKE
+            strokePaint.color = strokeColor
+            strokePaint.strokeWidth = strokeWidth
+            strokePaint.opacity = sliceOpacity
 
-        drawOval.updateBy(
-            left = strokeWidth.half,
-            top = strokeWidth.half,
-            right = -strokeWidth.half,
-            bottom = -strokeWidth.half,
-        )
+            drawOval.updateBy(
+                left = strokeWidth.half,
+                top = strokeWidth.half,
+                right = -strokeWidth.half,
+                bottom = -strokeWidth.half,
+            )
 
-        slicePath.rewind()
+            slicePath.rewind()
 
-        slicePath.addArc(drawOval, startAngle, sweepAngle)
+            slicePath.addArc(drawOval, startAngle, sweepAngle)
 
-        slicePath.lineTo(drawOval.centerX(), drawOval.centerY())
+            slicePath.lineTo(drawOval.centerX(), drawOval.centerY())
 
-        slicePath.close()
+            slicePath.close()
 
-        if (spacingPath.isEmpty.not()) {
-            slicePath.op(spacingPath, Path.Op.DIFFERENCE)
+            if (spacingPath.isEmpty.not()) {
+                slicePath.op(spacingPath, Path.Op.DIFFERENCE)
+            }
+
+            canvas.drawPath(slicePath, strokePaint)
         }
 
-        canvas.drawPath(slicePath, strokePaint)
-    }
-
-    protected fun MeasureContext.applyOffset(rectF: RectF, angle: Float) {
-        val (dx, dy) = translatePointByAngle(
-            center = Point(0, 0),
-            point = Point(
-                x = offsetFromCenterDp.pixels,
-                y = 0f,
-            ),
-            angle = angle.radiansDouble,
-        )
+    protected fun MeasureContext.applyOffset(
+        rectF: RectF,
+        angle: Float,
+    ) {
+        val (dx, dy) =
+            translatePointByAngle(
+                center = Point(0, 0),
+                point =
+                    Point(
+                        x = offsetFromCenterDp.pixels,
+                        y = 0f,
+                    ),
+                angle = angle.radiansDouble,
+            )
 
         rectF.offset(dx.round, dy.round)
     }

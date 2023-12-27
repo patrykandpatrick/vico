@@ -18,12 +18,12 @@ package com.patrykandpatrick.vico.core.chart.layer
 
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.model.CartesianLayerModel
@@ -47,7 +47,7 @@ public interface CartesianLayer<T : CartesianLayerModel> : BoundsAware, ChartIns
      * Draws the [CartesianLayer].
      */
     public fun draw(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         model: T,
     )
 
@@ -55,7 +55,7 @@ public interface CartesianLayer<T : CartesianLayerModel> : BoundsAware, ChartIns
      * Updates [horizontalDimensions] to match this [CartesianLayer]’s dimensions.
      */
     public fun updateHorizontalDimensions(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: MutableHorizontalDimensions,
         model: T,
     )

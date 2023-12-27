@@ -16,33 +16,23 @@
 
 package com.patrykandpatrick.vico.core.context
 
-import com.patrykandpatrick.vico.core.chart.Chart
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.chart.values.ChartValuesManager
 
 /**
  * [CartesianMeasureContext] holds data used by various cartesian chart components during the measuring and drawing
  * phases.
  */
 public interface CartesianMeasureContext : MeasureContext {
-
     /**
-     * Manages the associated [Chart]’s [ChartValues].
-     *
-     * @see [ChartValuesManager]
+     * The chart’s [ChartValues].
      */
-    public val chartValuesManager: ChartValuesManager
+    public val chartValues: ChartValues
 
     /**
      * Whether horizontal scrolling is enabled.
      */
     public val isHorizontalScrollEnabled: Boolean
-
-    /**
-     * The scale of the chart. Used to handle zooming in and out.
-     */
-    public val chartScale: Float
 
     /**
      * Defines how the chart’s content is positioned horizontally.

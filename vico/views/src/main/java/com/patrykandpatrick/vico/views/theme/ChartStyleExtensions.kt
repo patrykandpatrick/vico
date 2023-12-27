@@ -20,11 +20,13 @@ import android.content.Context
 import android.content.res.TypedArray
 import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.chart.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.views.R
+import com.patrykandpatrick.vico.views.chart.layer.standardBuilder
 import com.patrykandpatrick.vico.views.extension.defaultColors
 
 internal fun TypedArray.getColumnCartesianLayer(
@@ -149,3 +151,9 @@ internal fun TypedArray.getLineCartesianLayer(
                 ),
         )
     }
+
+// TODO
+internal fun TypedArray.getCandlestickCartesianLayer(context: Context): CandlestickCartesianLayer =
+    CandlestickCartesianLayer(
+        config = CandlestickCartesianLayer.Config.standardBuilder(context),
+    )

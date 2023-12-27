@@ -56,8 +56,6 @@
 
     <style name="PieChartSliceStyle4">
         <item name="sliceColor">@color/pieChartSlice4Color</item>
-        <item name="sliceOffsetFromCenter">18dp</item>
-        <item name="pieSliceLabelStyle">@style/PieSliceOutsideLabelStyle</item>
     </style>
 
     <style name="PieChartSliceStyle5">
@@ -95,14 +93,6 @@
     <style name="PieChartSliceLabelInsideTextBackgroundStyle">
         <item name="shapeStyle">@style/PieChartSliceLabelOutsideTextBackgroundShapeStyle</item>
         <item name="color">@android:color/black</item>
-    </style>
-
-    <style name="PieSliceOutsideLabelStyle">
-        <item name="pieSliceLabelType">outside</item>
-        <item name="pieSliceLabelLineColor">@android:color/darker_gray</item>
-        <item name="pieSliceLabelHorizontalSegmentLength">24dp</item>
-        <item name="pieSliceLabelLineWidth">1dp</item>
-        <item name="pieSliceLabelTextStyle">@style/PieChartSliceLabelOutsideTextStyle</item>
     </style>
 
     <style name="PieChartSliceLabelOutsideTextStyle">

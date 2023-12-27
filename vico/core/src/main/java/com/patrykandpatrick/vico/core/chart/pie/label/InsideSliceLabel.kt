@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
 import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 
 /**
  * A label for a slice used in a pie chart. The label is drawn inside the slice.
@@ -38,7 +38,6 @@ import com.patrykandpatrick.vico.core.model.Point
 public open class InsideSliceLabel(
     public var textComponent: TextComponent,
 ) : SliceLabel() {
-
     protected val layoutHelper: PieLayoutHelper = PieLayoutHelper()
 
     protected val sliceBounds: RectF = RectF()
@@ -52,44 +51,50 @@ public open class InsideSliceLabel(
         angle: Float,
         slicePath: Path,
         label: CharSequence,
-    ): Unit = with(context) {
-        val radius = oval.width().half
+        sliceOpacity: Float,
+        labelOpacity: Float,
+    ): Unit =
+        with(context) {
+            val radius = oval.width().half
 
-        transform.setRotate(-angle, oval.centerX(), oval.centerY())
-        slicePath.transform(transform)
-        slicePath.computeBounds(sliceBounds, false)
-        transform.setRotate(angle, oval.centerX(), oval.centerY())
-        slicePath.transform(transform)
+            transform.setRotate(-angle, oval.centerX(), oval.centerY())
+            slicePath.transform(transform)
+            slicePath.computeBounds(sliceBounds, false)
+            transform.setRotate(angle, oval.centerX(), oval.centerY())
+            slicePath.transform(transform)
 
-        val (textX, textY) = translatePointByAngle(
-            center = oval.centerPoint,
-            point = Point(
-                x = oval.centerX() + holeRadius + (radius - holeRadius).half,
-                y = oval.centerY(),
-            ),
-            angle = angle.radiansDouble,
-        )
+            val (textX, textY) =
+                translatePointByAngle(
+                    center = oval.centerPoint,
+                    point =
+                        Point(
+                            x = oval.centerX() + holeRadius + (radius - holeRadius).half,
+                            y = oval.centerY(),
+                        ),
+                    angle = angle.radiansDouble,
+                )
 
-        val minWidth = textComponent.getTextBounds(this, ELLIPSIS).width()
-        val textBounds = textComponent.getTextBounds(this, label)
+            val minWidth = textComponent.getTextBounds(this, ELLIPSIS).width()
+            val textBounds = textComponent.getTextBounds(this, label)
 
-        textBounds.offset(
-            textX - textBounds.width().toInt().half,
-            textY - textBounds.height().toInt().half,
-        )
-
-        layoutHelper.adjustTextBounds(textBounds, slicePath)
-
-        val maxTextWidth = textBounds.width().ceil.toInt()
-
-        if (maxTextWidth > minWidth) {
-            textComponent.drawText(
-                context = this,
-                text = label,
-                textX = textBounds.centerX(),
-                textY = textY,
-                maxTextWidth = textBounds.width().ceil.toInt(),
+            textBounds.offset(
+                textX - textBounds.width().toInt().half,
+                textY - textBounds.height().toInt().half,
             )
+
+            layoutHelper.adjustTextBounds(textBounds, slicePath)
+
+            val maxTextWidth = textBounds.width().ceil.toInt()
+
+            if (maxTextWidth > minWidth) {
+                textComponent.drawText(
+                    context = this,
+                    text = label,
+                    textX = textBounds.centerX(),
+                    textY = textY,
+                    maxTextWidth = textBounds.width().ceil.toInt(),
+                    opacity = labelOpacity,
+                )
+            }
         }
-    }
 }

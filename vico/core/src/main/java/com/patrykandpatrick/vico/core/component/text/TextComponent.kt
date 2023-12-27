@@ -43,6 +43,7 @@ import com.patrykandpatrick.vico.core.extension.lineHeight
 import com.patrykandpatrick.vico.core.extension.piRad
 import com.patrykandpatrick.vico.core.extension.rotate
 import com.patrykandpatrick.vico.core.extension.translate
+import com.patrykandpatrick.vico.core.extension.withOpacity
 import com.patrykandpatrick.vico.core.text.getBounds
 import com.patrykandpatrick.vico.core.text.staticLayout
 import com.patrykandpatrick.vico.core.text.widestLineWidth
@@ -148,6 +149,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         maxTextWidth: Int = DEF_LAYOUT_SIZE,
         maxTextHeight: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
+        opacity: Float = 1f,
     ): Unit =
         with(context) {
             if (text.isBlank()) return
@@ -207,6 +209,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                     top = bounds.top,
                     right = bounds.right,
                     bottom = bounds.bottom,
+                    opacity = opacity,
                 )
 
                 translate(
@@ -214,7 +217,9 @@ public open class TextComponent protected constructor() : Padding, Margins {
                     bounds.top + padding.topDp.pixels,
                 )
 
-                layout.draw(this)
+                textPaint.withOpacity(opacity) {
+                    layout.draw(this)
+                }
                 restore()
             }
         }

@@ -39,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart1
+import com.patrykandpatrick.vico.sample.showcase.charts.Chart10
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart2
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart3
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart4
@@ -93,7 +94,6 @@ private fun LazyListScope.chartItems(
     uiSystem: UISystem,
     viewModel: ShowcaseViewModel,
 ) {
-    cardItem { PieChart1(uiSystem, viewModel.pieChartEntryModelProducer) }
     cardItem { Chart1(uiSystem, viewModel.modelProducer1) }
     cardItem { Chart2(uiSystem, viewModel.modelProducer2) }
     cardItem { Chart3(uiSystem, viewModel.modelProducer1) }
@@ -103,6 +103,8 @@ private fun LazyListScope.chartItems(
     cardItem { Chart7(uiSystem, viewModel.modelProducer5) }
     cardItem { Chart8(uiSystem, viewModel.modelProducer3) }
     cardItem { Chart9(uiSystem, viewModel.modelProducer6) }
+    cardItem { Chart10(uiSystem, viewModel.modelProducer10) }
+    cardItem { PieChart1(uiSystem, viewModel.pieModelProducer1) }
 }
 
 private fun LazyListScope.cardItem(content: @Composable () -> Unit) {

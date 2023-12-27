@@ -26,7 +26,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  */
 @Suppress("UNCHECKED_CAST")
 public open class PaintComponent<C> protected constructor() {
-
     protected val componentShadow: ComponentShadow = ComponentShadow()
 
     /**
@@ -36,11 +35,12 @@ public open class PaintComponent<C> protected constructor() {
         context: DrawContext,
         paint: Paint,
         backgroundColor: Int,
-    ): Unit = componentShadow.maybeUpdateShadowLayer(
-        context = context,
-        paint = paint,
-        backgroundColor = backgroundColor,
-    )
+    ): Unit =
+        componentShadow.maybeUpdateShadowLayer(
+            context = context,
+            paint = paint,
+            backgroundColor = backgroundColor,
+        )
 
     /**
      * Applies a drop shadow.
@@ -57,25 +57,27 @@ public open class PaintComponent<C> protected constructor() {
         dy: Float = 0f,
         color: Int = DEF_SHADOW_COLOR,
         applyElevationOverlay: Boolean = false,
-    ): C = apply {
-        componentShadow.apply {
-            this.radius = radius
-            this.dx = dx
-            this.dy = dy
-            this.color = color
-            this.applyElevationOverlay = applyElevationOverlay
-        }
-    } as C
+    ): C =
+        apply {
+            componentShadow.apply {
+                this.radius = radius
+                this.dx = dx
+                this.dy = dy
+                this.color = color
+                this.applyElevationOverlay = applyElevationOverlay
+            }
+        } as C
 
     /**
      * Removes this [ShapeComponent]’s drop shadow.
      */
-    public fun clearShadow(): C = apply {
-        componentShadow.apply {
-            this.radius = 0f
-            this.dx = 0f
-            this.dy = 0f
-            this.color = 0
-        }
-    } as C
+    public fun clearShadow(): C =
+        apply {
+            componentShadow.apply {
+                this.radius = 0f
+                this.dx = 0f
+                this.dy = 0f
+                this.color = 0
+            }
+        } as C
 }

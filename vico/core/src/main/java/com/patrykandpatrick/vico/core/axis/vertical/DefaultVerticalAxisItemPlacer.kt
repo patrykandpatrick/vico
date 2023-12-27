@@ -18,9 +18,9 @@ package com.patrykandpatrick.vico.core.axis.vertical
 
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 import kotlin.math.max
 
@@ -32,17 +32,17 @@ internal class DefaultVerticalAxisItemPlacer(
         require(maxItemCount >= 0) { "`maxItemCount` must be nonnegative." }
     }
 
-    override fun getShiftTopLines(chartDrawContext: ChartDrawContext): Boolean = shiftTopLines
+    override fun getShiftTopLines(context: CartesianChartDrawContext): Boolean = shiftTopLines
 
     override fun getLabelValues(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
     ) = getWidthMeasurementLabelValues(context, axisHeight, maxLabelHeight, position)
 
     public override fun getWidthMeasurementLabelValues(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
@@ -57,7 +57,7 @@ internal class DefaultVerticalAxisItemPlacer(
     }
 
     public override fun getHeightMeasurementLabelValues(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         position: AxisPosition.Vertical,
     ): List<Float> {
         val yRange = context.chartValues.getYRange(position)

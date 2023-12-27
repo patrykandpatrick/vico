@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.core.extension.half
  * Defines the size of a component.
  */
 public interface Size {
-
     /**
      * Returns the radius of a [Slice] based on the available width and height.
      */
@@ -38,9 +37,7 @@ public interface Size {
      * Defines the size of the outer part of a [Slice].
      */
     public interface OuterSize : Size {
-
         public companion object {
-
             /**
              * Fills the available space.
              */
@@ -58,9 +55,7 @@ public interface Size {
      * Defines the size of the inner (donut) part of a [Slice].
      */
     public interface InnerSize : Size {
-
         public companion object {
-
             /**
              * Creates a fixed size with the value of 0.
              */
@@ -75,7 +70,6 @@ public interface Size {
     }
 
     private object Fill : OuterSize {
-
         override fun getRadius(
             context: MeasureContext,
             availableWidth: Float,
@@ -84,7 +78,6 @@ public interface Size {
     }
 
     private class Fixed(public val maxDiameterDp: Float) : OuterSize, InnerSize {
-
         init {
             require(maxDiameterDp >= 0f) {
                 "The max diameter cannot be negative, but was $maxDiameterDp."
@@ -95,8 +88,9 @@ public interface Size {
             context: MeasureContext,
             availableWidth: Float,
             availableHeight: Float,
-        ): Float = with(context) {
-            minOf(availableWidth, availableHeight, maxDiameterDp.pixels).half
-        }
+        ): Float =
+            with(context) {
+                minOf(availableWidth, availableHeight, maxDiameterDp.pixels).half
+            }
     }
 }

@@ -29,7 +29,6 @@ import com.patrykandpatrick.vico.core.util.Point
  * An extension of [CartesianDrawContext] that holds additional data required to render a [CartesianChart].
  */
 public interface CartesianChartDrawContext : CartesianDrawContext {
-
     /**
      * The bounds in which the [CartesianChart] will be drawn.
      */
@@ -86,7 +85,7 @@ public fun CartesianChartDrawContext.getMaxScrollDistance(): Float =
 /**
  * Returns the automatic zoom factor for a chart.
  */
-public fun MeasureContext.getAutoZoom(
+public fun CartesianMeasureContext.getAutoZoom(
     horizontalDimensions: HorizontalDimensions,
     chartBounds: RectF,
     autoScaleUp: AutoScaleUp,

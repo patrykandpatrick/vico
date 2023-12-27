@@ -19,7 +19,6 @@ package com.patrykandpatrick.vico.core.draw
 import android.graphics.Canvas
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultColors
-import com.patrykandpatrick.vico.core.context.CartesianDrawContext
 import com.patrykandpatrick.vico.core.context.DefaultExtras
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.Extras
@@ -54,7 +53,6 @@ public fun drawContext(
         override var canvas: Canvas = canvas
         override val density: Float = density
         override val isLtr: Boolean = isLtr
-        override val isHorizontalScrollEnabled: Boolean = false
 
         override fun withOtherCanvas(
             canvas: Canvas,

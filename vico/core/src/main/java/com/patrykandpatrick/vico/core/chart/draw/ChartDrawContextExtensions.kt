@@ -53,8 +53,7 @@ public fun cartesianChartDrawContext(
     zoom: Float,
 ): CartesianChartDrawContext =
     object : CartesianChartDrawContext, CartesianMeasureContext by measureContext {
-
-    override val chartBounds: RectF = chartBounds
+        override val chartBounds: RectF = chartBounds
 
         override var canvas: Canvas = canvas
 

@@ -20,7 +20,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.updateIfExceeds
-import com.patrykandpatrick.vico.core.model.Point
+import com.patrykandpatrick.vico.core.util.Point
 
 /**
  * A helper class for building paths.
@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.core.model.Point
 public abstract class PathBuilderHelper(
     public val path: Path = Path(),
 ) : PathBuilder {
-
     /**
      * The bounds of the path.
      */
@@ -55,7 +54,10 @@ public abstract class PathBuilderHelper(
      */
     public abstract fun setUp(context: DrawContext)
 
-    override fun moveTo(x: Float, y: Float) {
+    override fun moveTo(
+        x: Float,
+        y: Float,
+    ) {
         pathBuilderBounds.updateIfExceeds(x, y)
         path.moveTo(x, y)
 
@@ -63,7 +65,10 @@ public abstract class PathBuilderHelper(
         lastY = y
     }
 
-    override fun lineTo(x: Float, y: Float) {
+    override fun lineTo(
+        x: Float,
+        y: Float,
+    ) {
         pathBuilderBounds.updateIfExceeds(x, y)
         path.lineTo(x, y)
 
@@ -71,7 +76,10 @@ public abstract class PathBuilderHelper(
         lastY = y
     }
 
-    override fun rLineTo(x: Float, y: Float) {
+    override fun rLineTo(
+        x: Float,
+        y: Float,
+    ) {
         val correctedX = lastX + x
         val correctedY = lastY + y
 
@@ -88,5 +96,8 @@ public abstract class PathBuilderHelper(
     /**
      * Draws the built path.
      */
-    public abstract fun draw(context: DrawContext)
+    public abstract fun draw(
+        context: DrawContext,
+        opacity: Float = 1f,
+    )
 }

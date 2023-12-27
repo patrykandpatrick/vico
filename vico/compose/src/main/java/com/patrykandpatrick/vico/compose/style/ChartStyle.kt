@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
-import com.patrykandpatrick.vico.compose.chart.pie.slice.slice
+import com.patrykandpatrick.vico.compose.chart.pie.slice.rememberSlice
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.DefaultColors
@@ -44,8 +44,6 @@ import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer.LineSpec
-import com.patrykandpatrick.vico.core.chart.column.ColumnChart.MergeMode
-import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
 import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.label.InsideSliceLabel
 import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
@@ -197,7 +195,7 @@ public data class ChartStyle(
      * @property outerSize the size of the pie chart.
      * @property innerSize the size of the hole in the middle of the pie chart.
      * @property startAngle the angle at which the first slice starts.
-     * @property sliceLabel the [SliceLabel] used as a default label style in [slice] function.
+     * @property sliceLabel the [SliceLabel] used as a default label style in [rememberSlice] function.
      */
     public data class PieChart(
         val slices: List<Slice>,
@@ -251,13 +249,15 @@ public data class ChartStyle(
                     ),
                 marker = Marker(),
                 elevationOverlayColor = elevationOverlayColor,
-                pieChart = PieChart(
-                    slices = entityColors.map { entityColor ->
-                        Slice(
-                            color = entityColor.toArgb(),
-                        )
-                    },
-                ),
+                pieChart =
+                    PieChart(
+                        slices =
+                            entityColors.map { entityColor ->
+                                Slice(
+                                    color = entityColor.toArgb(),
+                                )
+                            },
+                    ),
             )
 
         internal fun fromDefaultColors(defaultColors: DefaultColors) =

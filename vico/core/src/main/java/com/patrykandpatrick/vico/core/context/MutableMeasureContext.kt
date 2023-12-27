@@ -17,22 +17,15 @@
 package com.patrykandpatrick.vico.core.context
 
 import android.graphics.RectF
-import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.values.ChartValues
 
 /**
  * A [MeasureContext] implementation that facilitates the mutation of some of its properties.
  */
-public data class MutableMeasureContext(
+public open class MutableMeasureContext(
     override val canvasBounds: RectF,
     override var density: Float,
     override var isLtr: Boolean,
-    override var isHorizontalScrollEnabled: Boolean = false,
-    override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
-    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var spToPx: (Float) -> Float,
-    override var chartValues: ChartValues,
 ) : MeasureContext, Extras by DefaultExtras() {
     override fun reset() {
         clearExtras()

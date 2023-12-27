@@ -40,30 +40,31 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
  * @param label the [SliceLabel] to use for the slice.
  */
 @Composable
-public fun slice(
+public fun rememberSlice(
     color: Color,
     dynamicShader: DynamicShader? = null,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Black,
     offsetFromCenter: Dp = 0.dp,
     label: SliceLabel? = currentChartStyle.pieChart.sliceLabel,
-): Slice = remember {
-    Slice(
-        color = color.toArgb(),
-        dynamicShader = dynamicShader,
-        strokeWidthDp = strokeWidth.value,
-        strokeColor = strokeColor.toArgb(),
-        offsetFromCenterDp = offsetFromCenter.value,
-        label = label,
-    )
-}.apply {
-    this.color = color.toArgb()
-    this.dynamicShader = dynamicShader
-    this.strokeWidthDp = strokeWidth.value
-    this.strokeColor = strokeColor.toArgb()
-    this.offsetFromCenterDp = offsetFromCenter.value
-    this.label = label
-}
+): Slice =
+    remember {
+        Slice(
+            color = color.toArgb(),
+            dynamicShader = dynamicShader,
+            strokeWidthDp = strokeWidth.value,
+            strokeColor = strokeColor.toArgb(),
+            offsetFromCenterDp = offsetFromCenter.value,
+            label = label,
+        )
+    }.apply {
+        this.color = color.toArgb()
+        this.dynamicShader = dynamicShader
+        this.strokeWidthDp = strokeWidth.value
+        this.strokeColor = strokeColor.toArgb()
+        this.offsetFromCenterDp = offsetFromCenter.value
+        this.label = label
+    }
 
 /**
  * A factory function for [Slice].
@@ -76,18 +77,19 @@ public fun slice(
  * @param label the [SliceLabel] to use for the slice.
  */
 @Composable
-public fun slice(
+public fun rememberSlice(
     color: Color,
     brush: Brush?,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Black,
     offsetFromCenter: Dp = 0.dp,
     label: SliceLabel? = currentChartStyle.pieChart.sliceLabel,
-): Slice = slice(
-    color = color,
-    dynamicShader = brush?.toDynamicShader(),
-    strokeWidth = strokeWidth,
-    strokeColor = strokeColor,
-    offsetFromCenter = offsetFromCenter,
-    label = label,
-)
+): Slice =
+    rememberSlice(
+        color = color,
+        dynamicShader = brush?.toDynamicShader(),
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+        offsetFromCenter = offsetFromCenter,
+        label = label,
+    )

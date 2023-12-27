@@ -23,6 +23,7 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shadow.PaintComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
+import com.patrykandpatrick.vico.core.extension.opacity
 
 /**
  * [PathComponent] is a type of component that allows drawing a path built outside of the component.
@@ -38,7 +39,6 @@ public open class PathComponent(
     public var strokeWidthDp: Float = 0f,
     public var strokeColor: Int = Color.TRANSPARENT,
 ) : PaintComponent<PathComponent>() {
-
     protected val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 
     protected val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -51,31 +51,37 @@ public open class PathComponent(
     protected val pathBuilder: PathBuilderHelper by lazy {
 
         object : PathBuilderHelper(path) {
+            override fun setUp(context: DrawContext) =
+                with(context) {
+                    path.rewind()
 
-            override fun setUp(context: DrawContext) = with(context) {
-                path.rewind()
-
-                paint.color = color
-                strokePaint.color = strokeColor
-                strokePaint.strokeWidth = strokeWidthDp.pixels
-            }
-
-            override fun draw(context: DrawContext): Unit = with(context) {
-                applyShader(context, pathBuilderBounds)
-                componentShadow.maybeUpdateShadowLayer(
-                    context = context,
-                    paint = paint,
-                    backgroundColor = color,
-                )
-
-                if (color != Color.TRANSPARENT) {
-                    canvas.drawPath(path, paint)
+                    paint.color = color
+                    strokePaint.color = strokeColor
+                    strokePaint.strokeWidth = strokeWidthDp.pixels
                 }
 
-                if (strokeColor != Color.TRANSPARENT && strokeWidthDp > 0f) {
-                    canvas.drawPath(path, strokePaint)
+            override fun draw(
+                context: DrawContext,
+                opacity: Float,
+            ): Unit =
+                with(context) {
+                    applyShader(context, pathBuilderBounds)
+                    componentShadow.maybeUpdateShadowLayer(
+                        context = context,
+                        paint = paint,
+                        backgroundColor = color,
+                    )
+
+                    if (color != Color.TRANSPARENT) {
+                        paint.opacity = opacity
+                        canvas.drawPath(path, paint)
+                    }
+
+                    if (strokeColor != Color.TRANSPARENT && strokeWidthDp > 0f) {
+                        strokePaint.opacity = opacity
+                        canvas.drawPath(path, strokePaint)
+                    }
                 }
-            }
         }
     }
 
@@ -100,12 +106,13 @@ public open class PathComponent(
      */
     public fun draw(
         context: DrawContext,
+        opacity: Float = 1f,
         buildPath: PathBuilder.() -> Unit,
     ) {
         pathBuilder.setUp(context)
         buildPath(pathBuilder)
         if (pathBuilder.isEmpty) return
 
-        pathBuilder.draw(context)
+        pathBuilder.draw(context, opacity)
     }
 }

@@ -20,6 +20,12 @@ import android.graphics.Paint
 
 private val fm: Paint.FontMetrics = Paint.FontMetrics()
 
+internal var Paint.opacity: Float
+    get() = alpha / MAX_HEX_VALUE
+    set(value) {
+        alpha = (value * MAX_HEX_VALUE).toInt()
+    }
+
 internal fun Paint.withOpacity(
     opacity: Float,
     action: (Paint) -> Unit,

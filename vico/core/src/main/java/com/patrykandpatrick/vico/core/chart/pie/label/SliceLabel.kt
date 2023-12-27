@@ -27,7 +27,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  * A base class for a label for a [Slice].
  */
 public abstract class SliceLabel {
-
     /**
      * Draws the label for the [Slice].
      *
@@ -45,6 +44,8 @@ public abstract class SliceLabel {
         angle: Float,
         slicePath: Path,
         label: CharSequence,
+        sliceOpacity: Float,
+        labelOpacity: Float,
     )
 
     /**

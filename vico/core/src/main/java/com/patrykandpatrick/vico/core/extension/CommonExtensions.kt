@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.entry.pie
+package com.patrykandpatrick.vico.core.extension
 
 /**
- * The default implementation of [PieEntry].
+ * Calls the specified function block with [t1] and [t2] as its arguments if [t1] and [t2] are not null.
+ * Returns the function block’s result if it was called, and `null` if it wasn’t.
  */
-public data class FloatPieEntry(
-    override val value: Float,
-    override val label: CharSequence? = null,
-) : PieEntry {
-
-    override fun withValue(value: Float): PieEntry =
-        copy(value = value)
-}
+public inline fun <T1, T2, R> ifNotNull(
+    t1: T1?,
+    t2: T2?,
+    onNotNull: (T1, T2) -> R,
+): R? =
+    if (t1 != null && t2 != null) {
+        onNotNull(t1, t2)
+    } else {
+        null
+    }

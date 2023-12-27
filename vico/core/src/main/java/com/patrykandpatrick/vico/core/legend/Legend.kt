@@ -28,12 +28,12 @@ public interface Legend : BoundsAware {
      * Returns the height of the legend.
      */
     public fun getHeight(
-        context: CartesianMeasureContext,
+        context: CartesianMeasureContext, // TODO consider regular `MeasureContext`
         availableWidth: Float,
     ): Float
 
     /**
      * Draws the legend.
      */
-    public fun draw(context: CartesianChartDrawContext)
+    public fun draw(context: CartesianChartDrawContext) // TODO consider regular `DrawContext`
 }

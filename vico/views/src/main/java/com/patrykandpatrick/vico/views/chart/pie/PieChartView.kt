@@ -20,162 +20,253 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
+import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
-import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.draw.drawContext
-import com.patrykandpatrick.vico.core.entry.pie.FloatPieEntry
-import com.patrykandpatrick.vico.core.entry.pie.PieEntryModel
-import com.patrykandpatrick.vico.core.entry.pie.pieEntryModelOf
 import com.patrykandpatrick.vico.core.extension.set
+import com.patrykandpatrick.vico.core.extension.spToPx
+import com.patrykandpatrick.vico.core.model.PieChartModelProducer
+import com.patrykandpatrick.vico.core.model.PieModel
 import com.patrykandpatrick.vico.views.chart.BaseChartView
-import com.patrykandpatrick.vico.views.extension.defaultColors
 import com.patrykandpatrick.vico.views.extension.isAttachedToWindowCompat
 import com.patrykandpatrick.vico.views.extension.measureDimension
 import com.patrykandpatrick.vico.views.extension.specSize
 import com.patrykandpatrick.vico.views.theme.PieChartStyleHandler
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 /**
  * A [View] that displays a pie chart.
  */
-public open class PieChartView @JvmOverloads constructor(
-    context: Context,
-    attrs: AttributeSet? = null,
-    defStyleAttr: Int = 0,
-) : BaseChartView<PieEntryModel>(context, attrs, defStyleAttr) {
+public open class PieChartView
+    @JvmOverloads
+    constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0,
+    ) : BaseChartView(context, attrs, defStyleAttr) {
+        private val pieChartStyleHandler: PieChartStyleHandler =
+            PieChartStyleHandler(
+                context = context,
+                attrs = attrs,
+            )
 
-    private val pieChartStyleHandler: PieChartStyleHandler = PieChartStyleHandler(
-        context = context,
-        attrs = attrs,
-    )
+        protected val pieChart: PieChart =
+            PieChart(
+                slices = pieChartStyleHandler.slices,
+                spacingDp = pieChartStyleHandler.sliceSpacing,
+                outerSize = pieChartStyleHandler.outerSize,
+                innerSize = pieChartStyleHandler.innerSize,
+                startAngle = pieChartStyleHandler.startAngle,
+            )
 
-    protected val pieChart: PieChart = PieChart(
-        slices = pieChartStyleHandler.slices,
-        spacingDp = pieChartStyleHandler.sliceSpacing,
-        outerSize = pieChartStyleHandler.outerSize,
-        innerSize = pieChartStyleHandler.innerSize,
-        startAngle = pieChartStyleHandler.startAngle,
-    )
+        /**
+         * The [List] of [Slice]s which define the appearance of each slice of the pie chart.
+         */
+        public var slices: List<Slice>
+            get() = pieChart.slices
+            set(value) {
+                pieChart.slices = value
+                invalidate()
+            }
 
-    /**
-     * The [List] of [Slice]s which define the appearance of each slice of the pie chart.
-     */
-    public var slices: List<Slice>
-        get() = pieChart.slices
-        set(value) {
-            pieChart.slices = value
-            invalidate()
+        /**
+         * The spacing between each slice of the pie chart (in dp).
+         */
+        public var sliceSpacingDp: Float
+            get() = pieChart.spacingDp
+            set(value) {
+                pieChart.spacingDp = value
+                invalidate()
+            }
+
+        /**
+         * Defines the outer size of the pie chart.
+         */
+        public var pieOuterSize: Size.OuterSize
+            get() = pieChart.outerSize
+            set(value) {
+                pieChart.outerSize = value
+                invalidate()
+            }
+
+        /**
+         * Defines the inner size of the pie chart.
+         */
+        public var pieInnerSize: Size.InnerSize
+            get() = pieChart.innerSize
+            set(value) {
+                pieChart.innerSize = value
+                invalidate()
+            }
+
+        /**
+         * Defines the start angle of the pie chart (in degrees).
+         */
+        public var startAngle: Float
+            get() = pieChart.startAngle
+            set(value) {
+                pieChart.startAngle = value
+                invalidate()
+            }
+
+        public var model: PieModel? = null
+            private set
+
+        public var modelProducer: PieChartModelProducer? = null
+            set(value) {
+                if (field === value) return
+                field?.unregisterFromUpdates(key = this)
+                field = value
+                if (isAttachedToWindowCompat) registerForUpdates()
+            }
+
+        init {
+            if (isInEditMode) {
+                setModel(model = sampleModel)
+            }
         }
 
-    /**
-     * The spacing between each slice of the pie chart (in dp).
-     */
-    public var sliceSpacingDp: Float
-        get() = pieChart.spacingDp
-        set(value) {
-            pieChart.spacingDp = value
-            invalidate()
+        /**
+         * Sets the [PieModel] to display.
+         */
+        public fun setModel(model: PieModel?) {
+            this.model = model
+            if (isAttachedToWindowCompat) {
+                updatePlaceholderVisibility()
+                invalidate()
+            }
         }
 
-    /**
-     * Defines the outer size of the pie chart.
-     */
-    public var pieOuterSize: Size.OuterSize
-        get() = pieChart.outerSize
-        set(value) {
-            pieChart.outerSize = value
-            invalidate()
+        override fun shouldShowPlaceholder(): Boolean = model == null
+
+        override fun onMeasure(
+            widthMeasureSpec: Int,
+            heightMeasureSpec: Int,
+        ) {
+            val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
+
+            val height =
+                when (MeasureSpec.getMode(heightMeasureSpec)) {
+                    MeasureSpec.UNSPECIFIED -> width
+                    MeasureSpec.AT_MOST -> minOf(width, heightMeasureSpec.specSize)
+                    else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
+                }
+
+            setMeasuredDimension(width, height)
+
+            contentBounds.set(
+                paddingLeft,
+                paddingTop,
+                width - paddingRight,
+                height - paddingBottom,
+            )
         }
 
-    /**
-     * Defines the inner size of the pie chart.
-     */
-    public var pieInnerSize: Size.InnerSize
-        get() = pieChart.innerSize
-        set(value) {
-            pieChart.innerSize = value
-            invalidate()
+        // TODO draw legend
+        override fun dispatchDraw(canvas: Canvas) {
+            super.dispatchDraw(canvas)
+            val model = model ?: return
+
+            measureContext.clearExtras()
+
+            val drawContext =
+                drawContext(
+                    canvas = canvas,
+                    density = measureContext.density,
+                    isLtr = measureContext.isLtr,
+                    elevationOverlayColor = elevationOverlayColor.toLong(),
+                    spToPx = context::spToPx,
+                )
+
+            pieChart.setBounds(contentBounds)
+            pieChart.draw(context = drawContext, model = model)
         }
 
-    /**
-     * Defines the start angle of the pie chart (in degrees).
-     */
-    public var startAngle: Float
-        get() = pieChart.startAngle
-        set(value) {
-            pieChart.startAngle = value
-            invalidate()
+        private fun registerForUpdates() {
+            coroutineScope?.launch(dispatcher) {
+                modelProducer?.registerForUpdates(
+                    key = this@PieChartView,
+                    cancelAnimation = {
+                        handler?.post(animator::cancel)
+                        runBlocking {
+                            animationFrameJob?.cancelAndJoin()
+                            finalAnimationFrameJob?.cancelAndJoin()
+                        }
+                        isAnimationRunning = false
+                        isAnimationFrameGenerationRunning = false
+                    },
+                    startAnimation = { transformModel ->
+                        if (model != null || runInitialAnimation) {
+                            handler?.post {
+                                isAnimationRunning = true
+                                animator.start()
+                            }
+                        } else {
+                            finalAnimationFrameJob =
+                                coroutineScope?.launch(dispatcher) {
+                                    transformModel(this@PieChartView, Animation.range.endInclusive)
+                                }
+                        }
+                    },
+                    prepareForTransformation = { model, extraStore ->
+                        pieChart.prepareForTransformation(model, extraStore)
+                    },
+                    transform = { extraStore, fraction -> pieChart.transform(extraStore, fraction) },
+                    extraStore = extraStore,
+                ) { model ->
+                    post {
+                        setModel(model = model)
+                        postInvalidateOnAnimation()
+                    }
+                }
+            }
         }
 
-    /**
-     * The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows.
-     */
-    public var elevationOverlayColor: Long = context.defaultColors.elevationOverlayColor
+        override fun transformModelForAnimation(fraction: Float) {
+            when {
+                !isAnimationRunning -> return
+                !isAnimationFrameGenerationRunning -> {
+                    isAnimationFrameGenerationRunning = true
+                    animationFrameJob =
+                        coroutineScope?.launch(dispatcher) {
+                            modelProducer?.transformModel(this@PieChartView, fraction)
+                            isAnimationFrameGenerationRunning = false
+                        }
+                }
 
-    final override var model: PieEntryModel? = null
-        private set
+                fraction == 1f -> {
+                    finalAnimationFrameJob =
+                        coroutineScope?.launch(dispatcher) {
+                            animationFrameJob?.cancelAndJoin()
+                            modelProducer?.transformModel(this@PieChartView, fraction)
+                            isAnimationFrameGenerationRunning = false
+                        }
+                }
+            }
+        }
 
-    init {
-        if (isInEditMode) {
-            setModel(model = sampleModel)
+        override fun onAttachedToWindow() {
+            super.onAttachedToWindow()
+            if (modelProducer?.isRegistered(key = this) != true) registerForUpdates()
+        }
+
+        override fun onDetachedFromWindow() {
+            super.onDetachedFromWindow()
+            modelProducer?.unregisterFromUpdates(key = this)
+        }
+
+        public companion object {
+            @Suppress("MagicNumber")
+            internal val sampleModel =
+                PieModel.build(
+                    PieModel.Entry(value = 1f, label = "One"),
+                    PieModel.Entry(value = 2f, label = "Two"),
+                    PieModel.Entry(value = 3f, label = "Three"),
+                    PieModel.Entry(value = 1f, label = "Four"),
+                )
         }
     }
-
-    /**
-     * Sets the [PieEntryModel] to display.
-     */
-    public final override fun setModel(model: PieEntryModel) {
-        this.model = model
-        if (isAttachedToWindowCompat) {
-            invalidate()
-        }
-    }
-
-    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
-
-        val height = when (MeasureSpec.getMode(heightMeasureSpec)) {
-            MeasureSpec.UNSPECIFIED -> width
-            MeasureSpec.AT_MOST -> minOf(width, heightMeasureSpec.specSize)
-            else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
-        }
-
-        setMeasuredDimension(width, height)
-
-        contentBounds.set(
-            paddingLeft,
-            paddingTop,
-            width - paddingRight,
-            height - paddingBottom,
-        )
-    }
-
-    override fun dispatchDraw(canvas: Canvas) {
-        val model = model ?: return
-
-        measureContext.clearExtras()
-
-        val drawContext = drawContext(
-            canvas = canvas,
-            density = measureContext.density,
-            fontScale = measureContext.fontScale,
-            isLtr = measureContext.isLtr,
-            elevationOverlayColor = elevationOverlayColor,
-        )
-
-        pieChart.setBounds(contentBounds)
-        pieChart.draw(context = drawContext, model = model)
-    }
-
-    public companion object {
-
-        @Suppress("MagicNumber")
-        internal val sampleModel = pieEntryModelOf(
-            FloatPieEntry(value = 1f, label = "One"),
-            FloatPieEntry(value = 2f, label = "Two"),
-            FloatPieEntry(value = 3f, label = "Three"),
-            FloatPieEntry(value = 1f, label = "Four"),
-        )
-    }
-}

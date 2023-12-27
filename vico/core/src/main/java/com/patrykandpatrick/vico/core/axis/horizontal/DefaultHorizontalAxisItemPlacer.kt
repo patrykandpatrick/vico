@@ -18,9 +18,9 @@ package com.patrykandpatrick.vico.core.axis.horizontal
 
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
+import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.round
 
@@ -30,19 +30,19 @@ internal class DefaultHorizontalAxisItemPlacer(
     private val shiftExtremeTicks: Boolean,
     private val addExtremeLabelPadding: Boolean,
 ) : AxisItemPlacer.Horizontal {
-    override fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = shiftExtremeTicks
+    override fun getShiftExtremeTicks(context: CartesianChartDrawContext): Boolean = shiftExtremeTicks
 
-    override fun getAddFirstLabelPadding(context: MeasureContext) =
+    override fun getAddFirstLabelPadding(context: CartesianMeasureContext) =
         context.horizontalLayout is HorizontalLayout.FullWidth && addExtremeLabelPadding && offset == 0
 
-    override fun getAddLastLabelPadding(context: MeasureContext): Boolean =
+    override fun getAddLastLabelPadding(context: CartesianMeasureContext): Boolean =
         with(context) {
             context.horizontalLayout is HorizontalLayout.FullWidth && addExtremeLabelPadding &&
                 (chartValues.maxX - chartValues.minX - chartValues.xStep * offset) % (chartValues.xStep * spacing) == 0f
         }
 
     override fun getLabelValues(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         visibleXRange: ClosedFloatingPointRange<Float>,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): List<Float> {
@@ -67,14 +67,14 @@ internal class DefaultHorizontalAxisItemPlacer(
     }
 
     override fun getMeasuredLabelValues(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: HorizontalDimensions,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): List<Float> =
         with(context) { listOf(chartValues.minX, (chartValues.minX + chartValues.maxX).half, chartValues.maxX) }
 
     override fun getLineValues(
-        context: ChartDrawContext,
+        context: CartesianChartDrawContext,
         visibleXRange: ClosedFloatingPointRange<Float>,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): List<Float>? =
@@ -99,7 +99,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         }
 
     override fun getStartHorizontalAxisInset(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: HorizontalDimensions,
         tickThickness: Float,
     ): Float {
@@ -111,7 +111,7 @@ internal class DefaultHorizontalAxisItemPlacer(
     }
 
     override fun getEndHorizontalAxisInset(
-        context: MeasureContext,
+        context: CartesianMeasureContext,
         horizontalDimensions: HorizontalDimensions,
         tickThickness: Float,
     ): Float {

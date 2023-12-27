@@ -22,6 +22,7 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.extension.appendCompat
 import com.patrykandpatrick.vico.core.extension.sumOf
 import com.patrykandpatrick.vico.core.extension.transformToSpannable
+import com.patrykandpatrick.vico.core.model.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
@@ -58,6 +59,7 @@ public class DefaultMarkerLabelFormatter(private val colorCode: Boolean = true) 
             when (this) {
                 is ColumnCartesianLayerModel.Entry -> y
                 is LineCartesianLayerModel.Entry -> y
+                is CandlestickCartesianLayerModel.Entry -> high
                 else -> throw IllegalArgumentException("Unexpected `CartesianLayerModel.Entry` implementation.")
             }
 
