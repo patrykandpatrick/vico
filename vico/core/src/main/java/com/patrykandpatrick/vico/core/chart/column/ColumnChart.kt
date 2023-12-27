@@ -339,8 +339,10 @@ public open class ColumnChart(
         chartValuesManager.tryUpdate(
             minX = axisValuesOverrider?.getMinX(model) ?: minX ?: model.minX,
             maxX = axisValuesOverrider?.getMaxX(model) ?: maxX ?: model.maxX,
-            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: mergeMode.getMinY(model),
-            maxY = axisValuesOverrider?.getMaxY(model) ?: maxY ?: mergeMode.getMaxY(model),
+            minY = axisValuesOverrider?.getMinY(model) ?: minY ?: mergeMode.getMinY(model).coerceAtMost(0f),
+            maxY = axisValuesOverrider?.getMaxY(model)
+                ?: maxY
+                ?: if (model.minY == 0f && model.maxY == 0f) 1f else mergeMode.getMaxY(model).coerceAtLeast(0f),
             xStep = xStep ?: model.xGcd,
             chartEntryModel = model,
             axisPosition = targetVerticalAxisPosition,
@@ -437,8 +439,8 @@ public open class ColumnChart(
          * Returns the minimum y-axis value, taking into account the current [MergeMode].
          */
         public fun getMinY(model: ChartEntryModel): Float = when (this) {
-            Grouped -> model.minY.coerceAtMost(0f)
-            Stack -> model.stackedNegativeY.coerceAtMost(0f)
+            Grouped -> model.minY
+            Stack -> model.stackedNegativeY
         }
 
         /**
