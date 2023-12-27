@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.core.chart.composed.ComposedChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.chart.forEachInAbsolutelyIndexed
+import com.patrykandpatrick.vico.core.chart.forEachInIndexed
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.line.LineChart.LineSpec
@@ -56,7 +56,6 @@ import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
-import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.extension.withOpacity
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
@@ -494,12 +493,8 @@ public open class LineChart(
         val maxX = chartValues.maxX
         val xStep = chartValues.xStep
 
-        var x: Float = Float.NEGATIVE_INFINITY
+        var x: Float? = null
         var nextX: Float? = null
-        var y: Float
-
-        var prevEntry: ChartEntry? = null
-        var lastEntry: ChartEntry? = null
 
         val boundsStart = bounds.getStart(isLtr = isLtr)
         val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
@@ -511,31 +506,19 @@ public open class LineChart(
             bounds.bottom - (pointInfoMap?.get(entry.x)?.y ?: ((entry.y - chartValues.minY) / chartValues.lengthY)) *
                 bounds.height()
 
-        entries.forEachInAbsolutelyIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
-
-            val previousX = x.takeIf { it.isFinite() }
-            x = nextX ?: getDrawX(entry)
-            nextX = next?.let(::getDrawX)
-            y = getDrawY(entry)
-
-            when {
-                isLtr && x < boundsStart || isLtr.not() && x > boundsStart -> {
-                    prevEntry = entry
-                }
-
-                x in boundsStart.rangeWith(other = boundsEnd) -> {
-                    prevEntry?.also {
-                        action(index, it, getDrawX(it), getDrawY(it), previousX, nextX)
-                        prevEntry = null
-                    }
-                    action(index, entry, x, y, previousX, nextX)
-                }
-
-                (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
-                    action(index, entry, x, y, previousX, nextX)
-                    lastEntry = entry
-                }
+        entries.forEachInIndexed(range = minX..maxX, padding = 1) { index, entry, next ->
+            val previousX = x
+            val immutableX = nextX ?: getDrawX(entry)
+            val immutableNextX = next?.let(::getDrawX)
+            x = immutableX
+            nextX = immutableNextX
+            if (immutableNextX != null && (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
+                (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
+            ) {
+                return@forEachInIndexed
             }
+            action(index, entry, immutableX, getDrawY(entry), previousX, nextX)
+            if (isLtr && immutableX > boundsEnd || isLtr.not() && immutableX < boundsEnd) return
         }
     }
 

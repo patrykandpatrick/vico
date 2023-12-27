@@ -18,10 +18,30 @@ package com.patrykandpatrick.vico.core.chart
 
 import com.patrykandpatrick.vico.core.entry.ChartEntry
 
+internal inline fun List<ChartEntry>.forEachInIndexed(
+    range: ClosedFloatingPointRange<Float>,
+    padding: Int = 0,
+    action: (Int, ChartEntry, ChartEntry?) -> Unit,
+) {
+    var start = 0
+    var end = 0
+    for (entry in this) {
+        when {
+            entry.x < range.start -> start++
+            entry.x > range.endInclusive -> break
+        }
+        end++
+    }
+    start = (start - padding).coerceAtLeast(0)
+    end = (end + padding).coerceAtMost(lastIndex)
+    for (index in start..end) action(index, this[index], getOrNull(index + 1))
+}
+
 /**
  * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
  * block with the [ChartEntry] as the block’s argument.
  */
+@Deprecated("This is no longer used.")
 public inline fun List<ChartEntry>.forEachIn(range: ClosedFloatingPointRange<Float>, action: (ChartEntry) -> Unit) {
     forEach { if (it.x in range) action(it) }
 }
@@ -30,6 +50,7 @@ public inline fun List<ChartEntry>.forEachIn(range: ClosedFloatingPointRange<Flo
  * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
  * block with the [ChartEntry] and its index in the list as the block’s arguments.
  */
+@Deprecated("This is no longer used.")
 public inline fun List<ChartEntry>.forEachInAbsolutelyIndexed(
     range: ClosedFloatingPointRange<Float>,
     action: (Int, ChartEntry) -> Unit,
@@ -46,10 +67,12 @@ public inline fun List<ChartEntry>.forEachInAbsolutelyIndexed(
  * block with the [ChartEntry], its index in the list, and the next [ChartEntry] in the filtered list as the block’s
  * arguments.
  */
+@Deprecated("This is no longer used.")
 public inline fun List<ChartEntry>.forEachInAbsolutelyIndexed(
     range: ClosedFloatingPointRange<Float>,
     action: (Int, ChartEntry, ChartEntry?) -> Unit,
 ) {
+    @Suppress("DEPRECATION")
     forEachInAbsolutelyIndexed(range) { index, entry ->
         action(index, entry, getOrNull(index + 1)?.takeIf { it.x in range })
     }
@@ -59,11 +82,13 @@ public inline fun List<ChartEntry>.forEachInAbsolutelyIndexed(
  * For each [ChartEntry] in the list such that [ChartEntry.x] belongs to the provided range, calls the [action] function
  * block with the [ChartEntry] and its index in the filtered list as the block’s arguments.
  */
+@Deprecated("This is no longer used.")
 public inline fun List<ChartEntry>.forEachInRelativelyIndexed(
     range: ClosedFloatingPointRange<Float>,
     action: (Int, ChartEntry) -> Unit,
 ) {
     var index = 0
+    @Suppress("DEPRECATION")
     forEachIn(range) { action(index++, it) }
 }
 
@@ -72,11 +97,13 @@ public inline fun List<ChartEntry>.forEachInRelativelyIndexed(
  * block with the [ChartEntry], its index in the filtered list, and the next [ChartEntry] in the filtered list as the
  * block’s arguments.
  */
+@Deprecated("This is no longer used.")
 public inline fun List<ChartEntry>.forEachInRelativelyIndexed(
     range: ClosedFloatingPointRange<Float>,
     action: (Int, ChartEntry, ChartEntry?) -> Unit,
 ) {
     var relativeIndex = 0
+    @Suppress("DEPRECATION")
     forEachInAbsolutelyIndexed(range) { absoluteIndex, entry ->
         action(relativeIndex++, entry, getOrNull(absoluteIndex + 1)?.takeIf { it.x in range })
     }
