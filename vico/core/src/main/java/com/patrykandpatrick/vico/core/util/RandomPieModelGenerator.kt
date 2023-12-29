@@ -47,7 +47,8 @@ public object RandomPieModelGenerator {
                     add(
                         PieModel.Entry(
                             value = valueRange.random().toFloat(),
-                            label = UUID.randomUUID().toString().subSequence(0, 4), // TODO nice labels
+                            // TODO nice labels
+                            label = UUID.randomUUID().toString().subSequence(0, 4),
                         ),
                     )
                 }

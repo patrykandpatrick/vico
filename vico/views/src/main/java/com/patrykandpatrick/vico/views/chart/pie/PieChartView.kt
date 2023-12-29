@@ -25,13 +25,11 @@ import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.draw.drawContext
-import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.model.PieModel
 import com.patrykandpatrick.vico.views.chart.BaseChartView
 import com.patrykandpatrick.vico.views.extension.isAttachedToWindowCompat
-import com.patrykandpatrick.vico.views.extension.measureDimension
 import com.patrykandpatrick.vico.views.extension.specSize
 import com.patrykandpatrick.vico.views.theme.PieChartStyleHandler
 import kotlinx.coroutines.cancelAndJoin
@@ -147,26 +145,26 @@ public open class PieChartView
             widthMeasureSpec: Int,
             heightMeasureSpec: Int,
         ) {
-            val width = measureDimension(widthMeasureSpec.specSize, widthMeasureSpec)
-
-            val height =
-                when (MeasureSpec.getMode(heightMeasureSpec)) {
-                    MeasureSpec.UNSPECIFIED -> width
-                    MeasureSpec.AT_MOST -> minOf(width, heightMeasureSpec.specSize)
-                    else -> measureDimension(heightMeasureSpec.specSize, heightMeasureSpec)
-                }
-
-            setMeasuredDimension(width, height)
-
-            contentBounds.set(
-                paddingLeft,
-                paddingTop,
-                width - paddingRight,
-                height - paddingBottom,
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+            pieChart.setBounds(
+                left = contentBounds.left,
+                top = contentBounds.top,
+                right = contentBounds.right,
+                bottom = measuredHeight - measuredLegendHeight - paddingBottom,
+            )
+            legend?.setBounds(
+                left = contentBounds.left,
+                top = pieChart.bounds.bottom,
+                right = contentBounds.right,
+                bottom = measuredHeight - paddingBottom,
             )
         }
 
-        // TODO draw legend
+        override fun getChartDesiredHeight(
+            widthMeasureSpec: Int,
+            heightMeasureSpec: Int,
+        ): Int = widthMeasureSpec.specSize
+
         override fun dispatchDraw(canvas: Canvas) {
             super.dispatchDraw(canvas)
             val model = model ?: return
@@ -182,8 +180,8 @@ public open class PieChartView
                     spToPx = context::spToPx,
                 )
 
-            pieChart.setBounds(contentBounds)
             pieChart.draw(context = drawContext, model = model)
+            legend?.draw(context = drawContext, chartBounds = pieChart.bounds)
         }
 
         private fun registerForUpdates() {

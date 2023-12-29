@@ -19,8 +19,6 @@ package com.patrykandpatrick.vico.compose.chart.pie
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -32,18 +30,19 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.chart.ChartBox
+import com.patrykandpatrick.vico.compose.chart.ChartHostBox
+import com.patrykandpatrick.vico.compose.extension.chartLayout
+import com.patrykandpatrick.vico.compose.layout.getPreMeasureContext
 import com.patrykandpatrick.vico.compose.model.collectAsState
 import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
-import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.draw.drawContext
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
+import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.model.PieModel
 
@@ -67,6 +66,7 @@ public fun PieChartHost(
     outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
     innerSize: Size.InnerSize = currentChartStyle.pieChart.innerSize,
     startAngle: Float = currentChartStyle.pieChart.startAngle,
+    legend: Legend? = null,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
     runInitialAnimation: Boolean = true,
@@ -97,12 +97,12 @@ public fun PieChartHost(
             runInitialAnimation = runInitialAnimation,
         )
 
-    ChartBox(modifier = modifier) {
+    ChartHostBox(modifier = modifier) {
         model.value?.also { model ->
             PieChartHost(
                 model = model,
                 pieChart = pieChart,
-                modifier = modifier,
+                legend = legend,
                 elevationOverlayColor = elevationOverlayColor,
             )
         } ?: onEmptyState?.invoke()
@@ -112,33 +112,33 @@ public fun PieChartHost(
 /**
  * Draws a pie chart.
  *
- * @param model the [PieEntryModel] containing data to render the pie chart.
+ * @param model the [PieModel] containing data to render the pie chart.
  * @param pieChart TODO,
  * @param modifier the modifier to be applied to the chart.
  * @param elevationOverlayColor the color to use for the elevation overlay.
  */
 @Composable
-// TODO Legend
-public fun PieChartHost(
+internal fun PieChartHost(
     model: PieModel,
     pieChart: PieChart,
+    legend: Legend?,
+    elevationOverlayColor: Color,
     modifier: Modifier = Modifier,
-    elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
 ) {
     val bounds = remember { RectF() }
     val density = LocalDensity.current.density
     val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     val context = LocalContext.current
+    val preMeasureContext = getPreMeasureContext()
 
     Canvas(
         modifier =
             modifier
-                .fillMaxWidth()
-                .height(DefaultDimens.CHART_HEIGHT.dp),
+                .chartLayout(preMeasureContext, legend) { constraints -> constraints.maxWidth },
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
-
-        pieChart.setBounds(bounds.left, bounds.top, bounds.right, bounds.bottom)
+        val pieChartHeight = minOf(bounds.width(), bounds.height())
+        pieChart.setBounds(bounds.left, bounds.top, pieChartHeight, pieChartHeight)
 
         val drawContext =
             drawContext(
@@ -153,5 +153,18 @@ public fun PieChartHost(
             context = drawContext,
             model = model,
         )
+
+        legend?.apply {
+            setBounds(
+                left = pieChart.bounds.left,
+                top = pieChart.bounds.bottom,
+                right = pieChart.bounds.right,
+                bottom = pieChart.bounds.bottom + getHeight(drawContext, bounds.width()),
+            )
+            draw(
+                context = drawContext,
+                chartBounds = pieChart.bounds,
+            )
+        }
     }
 }

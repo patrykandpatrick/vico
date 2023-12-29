@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.core.legend
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.PreMeasureContext
 
 /**
  * Defines the appearance of an item of a [Legend].
@@ -41,7 +42,7 @@ public open class LegendItem(
      * @param iconSizeDp the size of the icon.
      */
     public fun getLabelHeight(
-        context: MeasureContext,
+        context: PreMeasureContext,
         availableWidth: Float,
         iconPaddingDp: Float,
         iconSizeDp: Float,
@@ -63,7 +64,7 @@ public open class LegendItem(
      * @param iconSizeDp the size of the icon.
      */
     public fun getLabelWidth(
-        context: MeasureContext,
+        context: PreMeasureContext,
         availableWidth: Float,
         iconPaddingDp: Float,
         iconSizeDp: Float,
@@ -85,7 +86,7 @@ public open class LegendItem(
      * @param iconSizeDp the size of the icon.
      */
     public fun getWidth(
-        context: MeasureContext,
+        context: PreMeasureContext,
         availableWidth: Float,
         iconPaddingDp: Float,
         iconSizeDp: Float,

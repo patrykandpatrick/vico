@@ -38,7 +38,7 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 internal fun rememberChartStyle(
     columnLayerColors: List<Color>,
     lineLayerColors: List<Color>,
-    pieSliceColors: List<Color> = emptyList(), // TODO resolve what to do
+    pieSliceColors: List<Color> = emptyList(),
 ): ChartStyle {
     val isSystemInDarkTheme = isSystemInDarkTheme()
     return remember(columnLayerColors, lineLayerColors, isSystemInDarkTheme) {

@@ -18,16 +18,13 @@ package com.patrykandpatrick.vico.compose.chart
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.DefaultDimens
 
 @Composable
-internal fun ChartBox(
+internal fun ChartHostBox(
     modifier: Modifier,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    Box(modifier = modifier.height(DefaultDimens.CHART_HEIGHT.dp), content = content)
+    Box(modifier = modifier, content = content)
 }

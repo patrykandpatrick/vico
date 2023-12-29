@@ -47,7 +47,6 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
 import com.patrykandpatrick.vico.core.chart.values.toImmutable
 import com.patrykandpatrick.vico.core.context.MutableCartesianMeasureContext
-import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -64,9 +63,6 @@ import com.patrykandpatrick.vico.views.extension.density
 import com.patrykandpatrick.vico.views.extension.dpInt
 import com.patrykandpatrick.vico.views.extension.isAttachedToWindowCompat
 import com.patrykandpatrick.vico.views.extension.isLtr
-import com.patrykandpatrick.vico.views.extension.specMode
-import com.patrykandpatrick.vico.views.extension.specSize
-import com.patrykandpatrick.vico.views.extension.verticalPadding
 import com.patrykandpatrick.vico.views.gestures.ChartScaleGestureListener
 import com.patrykandpatrick.vico.views.gestures.MotionEventHandler
 import com.patrykandpatrick.vico.views.gestures.movedXDistance
@@ -515,7 +511,7 @@ public open class CartesianChartView
 
                 axisManager.drawAboveChart(chartDrawContext)
                 chart.drawOverlays(chartDrawContext)
-                legend?.draw(chartDrawContext)
+                legend?.draw(chartDrawContext, chartDrawContext.chartBounds)
 
                 marker?.also { marker ->
                     chartDrawContext.drawMarker(
@@ -556,30 +552,10 @@ public open class CartesianChartView
             }
         }
 
-        override fun onMeasure(
+        override fun getChartDesiredHeight(
             widthMeasureSpec: Int,
             heightMeasureSpec: Int,
-        ) {
-            val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
-            val defaultHeight = DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
-            val height =
-                when (heightMeasureSpec.specMode) {
-                    MeasureSpec.EXACTLY -> heightMeasureSpec.specSize
-                    MeasureSpec.AT_MOST -> defaultHeight.coerceAtMost(heightMeasureSpec.specSize)
-                    else -> defaultHeight
-                }.coerceAtLeast(suggestedMinimumHeight)
-            super.onMeasure(
-                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
-                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
-            )
-            contentBounds
-                .set(
-                    left = paddingLeft,
-                    top = paddingTop,
-                    right = width - paddingRight,
-                    bottom = height - paddingBottom,
-                )
-        }
+        ): Int = DefaultDimens.CHART_HEIGHT.dpInt
 
         private inline fun withChartAndModel(block: (chart: CartesianChart, model: CartesianChartModel) -> Unit) {
             val chart = chart ?: return

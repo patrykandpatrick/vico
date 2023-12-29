@@ -17,11 +17,11 @@
 package com.patrykandpatrick.vico.core.legend
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
-import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.context.DrawContext
+import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.extension.half
@@ -51,7 +51,7 @@ public open class HorizontalLegend(
     override val bounds: RectF = RectF()
 
     override fun getHeight(
-        context: CartesianMeasureContext,
+        context: PreMeasureContext,
         availableWidth: Float,
     ): Float =
         with(context) {
@@ -73,7 +73,10 @@ public open class HorizontalLegend(
             height + (lines.size - 1) * lineSpacingDp.pixels + padding.verticalDp.pixels
         }
 
-    override fun draw(context: CartesianChartDrawContext): Unit =
+    override fun draw(
+        context: DrawContext,
+        chartBounds: RectF,
+    ): Unit =
         with(context) {
             var currentTop = bounds.top + padding.topDp.pixels
             // isLtr? startX means the line starts at X from left : it starts at X from right
@@ -139,7 +142,7 @@ public open class HorizontalLegend(
         }
 
     protected fun buildLines(
-        context: CartesianMeasureContext,
+        context: PreMeasureContext,
         availableWidth: Float,
         callback: (it: LegendItem) -> Unit = {},
     ): Unit =

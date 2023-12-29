@@ -16,8 +16,9 @@
 
 package com.patrykandpatrick.vico.core.legend
 
-import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
-import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
+import android.graphics.RectF
+import com.patrykandpatrick.vico.core.context.DrawContext
+import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 
 /**
@@ -28,12 +29,15 @@ public interface Legend : BoundsAware {
      * Returns the height of the legend.
      */
     public fun getHeight(
-        context: CartesianMeasureContext, // TODO consider regular `MeasureContext`
+        context: PreMeasureContext,
         availableWidth: Float,
     ): Float
 
     /**
      * Draws the legend.
      */
-    public fun draw(context: CartesianChartDrawContext) // TODO consider regular `DrawContext`
+    public fun draw(
+        context: DrawContext,
+        chartBounds: RectF,
+    )
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.util.RandomCartesianModelGenerator
+import com.patrykandpatrick.vico.core.util.RandomPieModelGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -36,6 +38,8 @@ internal class ShowcaseViewModel : ViewModel() {
     internal val modelProducer4 = CartesianChartModelProducer.build()
     internal val modelProducer5 = CartesianChartModelProducer.build()
     internal val modelProducer6 = CartesianChartModelProducer.build()
+    internal val modelProducer10 = CartesianChartModelProducer.build()
+    internal val pieModelProducer1 = PieChartModelProducer.build()
 
     var uiSystem by mutableStateOf(UISystem.Compose)
         private set
@@ -61,6 +65,12 @@ internal class ShowcaseViewModel : ViewModel() {
                 }
                 modelProducer6.tryRunTransaction {
                     add(RandomCartesianModelGenerator.getRandomLineLayerModelPartial(y = -10f..20f))
+                }
+                modelProducer10.tryRunTransaction {
+                    add(RandomCartesianModelGenerator.getRandomCandlestickLayerModelPartial())
+                }
+                pieModelProducer1.tryRunTransaction {
+                    set(RandomPieModelGenerator.getRandomPartial())
                 }
                 delay(UPDATE_FREQUENCY)
             }

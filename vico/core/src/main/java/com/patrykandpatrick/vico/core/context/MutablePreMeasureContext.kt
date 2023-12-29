@@ -16,14 +16,17 @@
 
 package com.patrykandpatrick.vico.core.context
 
-import android.graphics.RectF
-
 /**
- * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
+ * A [MeasureContext] implementation that facilitates the mutation of some of its properties.
  */
-public interface MeasureContext : PreMeasureContext {
-    /**
-     * The bounds of the canvas that will be used to draw the chart and its components.
-     */
-    public val canvasBounds: RectF
+public data class MutablePreMeasureContext(
+    override val density: Float,
+    override val isLtr: Boolean,
+    public val spToPx: (Float) -> Float,
+) : PreMeasureContext, Extras by DefaultExtras() {
+    override fun reset() {
+        clearExtras()
+    }
+
+    override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.compose.layout
 import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
@@ -27,7 +28,28 @@ import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.context.MutableCartesianMeasureContext
+import com.patrykandpatrick.vico.core.context.MutablePreMeasureContext
+import com.patrykandpatrick.vico.core.context.PreMeasureContext
+import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
+
+/**
+ * Creates the [PreMeasureContext].
+ */
+@Composable
+public fun getPreMeasureContext(): PreMeasureContext {
+    val density = LocalDensity.current.density
+    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
+    val context = LocalContext.current
+    val spToPx = context::spToPx
+    return remember(density, isLtr, spToPx(1f)) {
+        MutablePreMeasureContext(
+            density = density,
+            isLtr = isLtr,
+            spToPx = spToPx,
+        )
+    }
+}
 
 /**
  * The anonymous implementation of the [CartesianMeasureContext].

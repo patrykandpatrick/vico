@@ -21,11 +21,7 @@ import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
@@ -44,9 +40,11 @@ import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollSpec
 import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollState
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
+import com.patrykandpatrick.vico.compose.extension.chartLayout
 import com.patrykandpatrick.vico.compose.extension.chartTouchEvent
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
 import com.patrykandpatrick.vico.compose.layout.getCartesianMeasureContext
+import com.patrykandpatrick.vico.compose.layout.getPreMeasureContext
 import com.patrykandpatrick.vico.compose.model.collectAsState
 import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.state.component1
@@ -141,7 +139,7 @@ public fun CartesianChartHost(
         .collectAsState(chart, modelProducer, diffAnimationSpec, runInitialAnimation, mutableChartValues, getXStep)
     val (model, previousModel, chartValues) = modelWrapper
 
-    CartesianChartHostBox(modifier = modifier) {
+    ChartHostBox(modifier = modifier) {
         if (model != null) {
             CartesianChartHostImpl(
                 chart = chart,
@@ -221,7 +219,7 @@ public fun CartesianChartHost(
         chartValues.reset()
         chart.updateChartValues(chartValues, model, getXStep?.invoke(model))
     }
-    CartesianChartHostBox(modifier = modifier) {
+    ChartHostBox(modifier = modifier) {
         CartesianChartHostImpl(
             chart = chart,
             model = model,
@@ -269,6 +267,7 @@ internal fun CartesianChartHostImpl(
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val zoom = remember { mutableFloatStateOf(0f) }
     val wasZoomOverridden = remember { mutableStateOf(false) }
+    val preMeasureContext = getPreMeasureContext()
     val measureContext =
         getCartesianMeasureContext(
             chartScrollSpec.isScrollEnabled,
@@ -302,7 +301,7 @@ internal fun CartesianChartHostImpl(
     Canvas(
         modifier =
             Modifier
-                .fillMaxSize()
+                .chartLayout(preMeasureContext, legend) { DefaultDimens.CHART_HEIGHT.dp.roundToPx() }
                 .chartTouchEvent(
                     setTouchPoint =
                         remember(marker == null) {
@@ -385,7 +384,7 @@ internal fun CartesianChartHostImpl(
 
         axisManager.drawAboveChart(chartDrawContext)
         chart.drawOverlays(chartDrawContext)
-        legend?.draw(chartDrawContext)
+        legend?.draw(chartDrawContext, chartDrawContext.chartBounds)
 
         if (marker != null) {
             chartDrawContext.drawMarker(
@@ -402,17 +401,6 @@ internal fun CartesianChartHostImpl(
 
         measureContext.reset()
     }
-}
-
-@Composable
-internal fun CartesianChartHostBox(
-    modifier: Modifier,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    Box(
-        modifier = modifier.height(DefaultDimens.CHART_HEIGHT.dp).fillMaxWidth(),
-        content = content,
-    )
 }
 
 @Composable

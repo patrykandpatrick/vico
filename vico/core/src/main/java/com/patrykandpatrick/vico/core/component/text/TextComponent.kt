@@ -33,6 +33,7 @@ import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.context.getOrPutExtra
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
@@ -286,7 +287,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getWidth(
-        context: MeasureContext,
+        context: PreMeasureContext,
         text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
@@ -307,7 +308,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getHeight(
-        context: MeasureContext,
+        context: PreMeasureContext,
         text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
@@ -328,7 +329,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * [pad] defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getTextBounds(
-        context: MeasureContext,
+        context: PreMeasureContext,
         text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
@@ -357,7 +358,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 }
         }
 
-    private fun MeasureContext.getLayout(
+    private fun PreMeasureContext.getLayout(
         text: CharSequence,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,

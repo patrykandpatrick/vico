@@ -31,13 +31,18 @@ import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
+import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.model.MutableExtraStore
 import com.patrykandpatrick.vico.views.extension.defaultColors
 import com.patrykandpatrick.vico.views.extension.density
+import com.patrykandpatrick.vico.views.extension.horizontalPadding
+import com.patrykandpatrick.vico.views.extension.isAttachedToWindowCompat
 import com.patrykandpatrick.vico.views.extension.isLtr
+import com.patrykandpatrick.vico.views.extension.specSize
+import com.patrykandpatrick.vico.views.extension.verticalPadding
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -97,6 +102,11 @@ public abstract class BaseChartView
          */
         public var dispatcher: CoroutineDispatcher = Dispatchers.Default
 
+        /**
+         * The last measured height of the [legend].
+         */
+        public var measuredLegendHeight: Int = 0
+
         protected abstract fun transformModelForAnimation(fraction: Float)
 
         override fun onAttachedToWindow() {
@@ -116,6 +126,11 @@ public abstract class BaseChartView
          * The legend for this chart.
          */
         public var legend: Legend? = null
+            set(value) {
+                if (field === value) return
+                field = value
+                if (isAttachedToWindowCompat) requestLayout()
+            }
 
         /**
          * The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows.
@@ -157,6 +172,41 @@ public abstract class BaseChartView
         }
 
         protected abstract fun shouldShowPlaceholder(): Boolean
+
+        override fun onMeasure(
+            widthMeasureSpec: Int,
+            heightMeasureSpec: Int,
+        ) {
+            val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
+            measuredLegendHeight = legend?.getHeight(measureContext, width.toFloat() - horizontalPadding)
+                ?.toInt() ?: 0
+            val defaultHeight =
+                getChartDesiredHeight(widthMeasureSpec, heightMeasureSpec) + measuredLegendHeight +
+                    verticalPadding
+
+            val height =
+                when (MeasureSpec.getMode(heightMeasureSpec)) {
+                    MeasureSpec.EXACTLY -> heightMeasureSpec.specSize
+                    MeasureSpec.AT_MOST -> defaultHeight.coerceAtMost(heightMeasureSpec.specSize)
+                    else -> defaultHeight
+                }
+
+            super.onMeasure(
+                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+            )
+            contentBounds.set(
+                left = paddingLeft,
+                top = paddingTop,
+                right = width - paddingRight,
+                bottom = height - paddingBottom,
+            )
+        }
+
+        protected abstract fun getChartDesiredHeight(
+            widthMeasureSpec: Int,
+            heightMeasureSpec: Int,
+        ): Int
 
         /**
          * Sets the duration (in milliseconds) of difference animations.
