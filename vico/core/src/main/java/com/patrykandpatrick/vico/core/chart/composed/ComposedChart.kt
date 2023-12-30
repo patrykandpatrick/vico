@@ -99,6 +99,11 @@ public class ComposedChart<Model : ChartEntryModel>(
         }
     }
 
+    override fun drawNonScrollableContent(context: ChartDrawContext, model: ComposedChartEntryModel<Model>) {
+        model.forEachModelWithChart { item, chart -> chart.drawNonScrollableContent(context, item) }
+        super.drawNonScrollableContent(context, model)
+    }
+
     override fun updateHorizontalDimensions(
         context: MeasureContext,
         horizontalDimensions: MutableHorizontalDimensions,
