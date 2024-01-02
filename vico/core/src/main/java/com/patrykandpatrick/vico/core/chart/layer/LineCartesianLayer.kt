@@ -44,7 +44,6 @@ import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
-import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.extension.withOpacity
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
@@ -58,7 +57,6 @@ import com.patrykandpatrick.vico.core.model.drawing.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.model.drawing.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.model.forEachInIndexed
 import com.patrykandpatrick.vico.core.util.Point
-import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
 
@@ -277,7 +275,7 @@ public open class LineCartesianLayer(
 
             val drawingModel = model.extraStore.getOrNull(drawingModelKey)
             val yRange = chartValues.getYRange(verticalAxisPosition)
-            val zeroLineYFraction = 1f - (drawingModel?.zeroY ?: abs(yRange.minY / yRange.length))
+            val zeroLineYFraction = drawingModel?.zeroY ?: (yRange.minY / yRange.length + 1f).coerceIn(0f..1f)
 
             model.series.forEachIndexed { entryListIndex, entries ->
 
@@ -484,12 +482,8 @@ public open class LineCartesianLayer(
         val maxX = chartValues.maxX
         val xStep = chartValues.xStep
 
-        var x: Float = Float.NEGATIVE_INFINITY
+        var x: Float? = null
         var nextX: Float? = null
-        var y: Float
-
-        var prevEntry: LineCartesianLayerModel.Entry? = null
-        var lastEntry: LineCartesianLayerModel.Entry? = null
 
         val boundsStart = bounds.getStart(isLtr = isLtr)
         val boundsEnd = boundsStart + layoutDirectionMultiplier * bounds.width()
@@ -504,31 +498,19 @@ public open class LineCartesianLayer(
                 bounds.height()
         }
 
-        series.forEachInIndexed(minX - xStep..maxX + xStep) { index, entry, next ->
-
-            val previousX = x.takeIf { it.isFinite() }
-            x = nextX ?: getDrawX(entry)
-            nextX = next?.let(::getDrawX)
-            y = getDrawY(entry)
-
-            when {
-                isLtr && x < boundsStart || isLtr.not() && x > boundsStart -> {
-                    prevEntry = entry
-                }
-
-                x in boundsStart.rangeWith(other = boundsEnd) -> {
-                    prevEntry?.also {
-                        action(index, it, getDrawX(it), getDrawY(it), previousX, nextX)
-                        prevEntry = null
-                    }
-                    action(index, entry, x, y, previousX, nextX)
-                }
-
-                (isLtr && x > boundsEnd || isLtr.not() && x < boundsEnd) && lastEntry == null -> {
-                    action(index, entry, x, y, previousX, nextX)
-                    lastEntry = entry
-                }
+        series.forEachInIndexed(range = minX..maxX, padding = 1) { index, entry, next ->
+            val previousX = x
+            val immutableX = nextX ?: getDrawX(entry)
+            val immutableNextX = next?.let(::getDrawX)
+            x = immutableX
+            nextX = immutableNextX
+            if (immutableNextX != null && (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
+                (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
+            ) {
+                return@forEachInIndexed
             }
+            action(index, entry, immutableX, getDrawY(entry), previousX, nextX)
+            if (isLtr && immutableX > boundsEnd || isLtr.not() && immutableX < boundsEnd) return
         }
     }
 
@@ -569,8 +551,10 @@ public open class LineCartesianLayer(
         chartValues.tryUpdate(
             minX = axisValueOverrider?.getMinX(model) ?: model.minX,
             maxX = axisValueOverrider?.getMaxX(model) ?: model.maxX,
-            minY = axisValueOverrider?.getMinY(model) ?: min(model.minY, 0f),
-            maxY = axisValueOverrider?.getMaxY(model) ?: model.maxY,
+            minY = axisValueOverrider?.getMinY(model) ?: model.minY.coerceAtMost(0f),
+            maxY =
+                axisValueOverrider?.getMaxY(model)
+                    ?: if (model.minY == 0f && model.maxY == 0f) 1f else model.maxY.coerceAtLeast(0f),
             axisPosition = verticalAxisPosition,
         )
     }
@@ -583,7 +567,7 @@ public open class LineCartesianLayer(
         with(context) {
             outInsets.setVertical(
                 lines
-                    .maxOf { if (it.point != null) max(it.thicknessDp, it.thicknessDp) else it.thicknessDp }
+                    .maxOf { if (it.point != null) max(it.thicknessDp, it.pointSizeDp) else it.thicknessDp }
                     .pixels,
             )
         }
@@ -618,7 +602,7 @@ public open class LineCartesianLayer(
                 }
             }
             .let { pointInfo ->
-                LineCartesianLayerDrawingModel(pointInfo, abs(yRange.minY / yRange.length))
+                LineCartesianLayerDrawingModel(pointInfo, (yRange.minY / yRange.length + 1f).coerceIn(0f..1f))
             }
     }
 }

@@ -35,6 +35,10 @@ public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(private val dra
         fraction: Float,
     ): DrawingModel<T>
 
+    abstract override fun equals(other: Any?): Boolean
+
+    abstract override fun hashCode(): Int
+
     /**
      * Houses positional information for a single [CartesianLayer] entity (e.g., a column or a point).
      */
@@ -49,5 +53,9 @@ public abstract class DrawingModel<T : DrawingModel.DrawingInfo>(private val dra
             from: DrawingInfo?,
             fraction: Float,
         ): DrawingInfo
+
+        override fun equals(other: Any?): Boolean
+
+        override fun hashCode(): Int
     }
 }

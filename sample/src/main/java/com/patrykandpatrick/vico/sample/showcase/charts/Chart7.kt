@@ -31,9 +31,9 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
-import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
@@ -69,16 +69,16 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer) {
                     rememberLineCartesianLayer(
                         remember(defaultLines) { defaultLines.map { it.copy(backgroundShader = null) } },
                     ),
+                    startAxis =
+                        rememberStartAxis(
+                            label = rememberStartAxisLabel(),
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                        ),
+                    bottomAxis = rememberBottomAxis(),
+                    legend = rememberLegend(),
                 ),
             modelProducer = modelProducer,
-            startAxis =
-                rememberStartAxis(
-                    label = rememberStartAxisLabel(),
-                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                ),
-            bottomAxis = rememberBottomAxis(),
             marker = rememberMarker(),
-            legend = rememberLegend(),
             runInitialAnimation = false,
         )
     }
@@ -93,10 +93,10 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (startAxis as VerticalAxis).horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
-            (startAxis as VerticalAxis).label = startAxisLabel
+            (chart?.startAxis as VerticalAxis).horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
+            (chart?.startAxis as VerticalAxis).label = startAxisLabel
             this.marker = marker
-            this.legend = legend
+            chart?.legend = legend
         }
     }
 }
@@ -109,7 +109,7 @@ private fun rememberStartAxisLabel() =
         horizontalPadding = startAxisLabelHorizontalPaddingValue,
         verticalMargin = startAxisLabelMarginValue,
         horizontalMargin = startAxisLabelMarginValue,
-        background = shapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
+        background = rememberShapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
     )
 
 @Composable
@@ -118,9 +118,9 @@ private fun rememberLegend() =
         items =
             chartColors.mapIndexed { index, chartColor ->
                 legendItem(
-                    icon = shapeComponent(Shapes.pillShape, chartColor),
+                    icon = rememberShapeComponent(Shapes.pillShape, chartColor),
                     label =
-                        textComponent(
+                        rememberTextComponent(
                             color = currentChartStyle.axis.axisLabelColor,
                             textSize = legendItemLabelTextSize,
                             typeface = Typeface.MONOSPACE,

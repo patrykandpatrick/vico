@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,7 +171,7 @@ public interface AxisItemPlacer {
          * Returns, as a list, the _y_ values for which ticks and guidelines are to be displayed.
          */
         public fun getLineValues(
-            context: CartesianChartDrawContext,
+            context: CartesianMeasureContext,
             axisHeight: Float,
             maxLabelHeight: Float,
             position: AxisPosition.Vertical,
@@ -181,6 +181,7 @@ public interface AxisItemPlacer {
          * Returns the top inset required by the [VerticalAxis].
          */
         public fun getTopVerticalAxisInset(
+            context: CartesianMeasureContext,
             verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
             maxLabelHeight: Float,
             maxLineThickness: Float,
@@ -190,6 +191,7 @@ public interface AxisItemPlacer {
          * Returns the bottom inset required by the [VerticalAxis].
          */
         public fun getBottomVerticalAxisInset(
+            context: CartesianMeasureContext,
             verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
             maxLabelHeight: Float,
             maxLineThickness: Float,
@@ -205,7 +207,7 @@ public interface AxisItemPlacer {
              * shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
              */
             public fun default(
-                maxItemCount: Int = DEF_LABEL_COUNT,
+                maxItemCount: (ChartValues) -> Int = { DEF_LABEL_COUNT },
                 shiftTopLines: Boolean = true,
             ): Vertical = DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
         }

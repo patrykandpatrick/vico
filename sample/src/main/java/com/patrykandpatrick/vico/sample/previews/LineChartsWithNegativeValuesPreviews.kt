@@ -32,8 +32,8 @@ import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
@@ -66,22 +66,19 @@ public fun SingleLineChartWithNegativeValues() {
                                 ),
                             ),
                     ),
+                    startAxis =
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                            guideline = axisLineComponent(),
+                        ),
+                    bottomAxis =
+                        rememberBottomAxis(
+                            guideline = axisLineComponent(),
+                            itemPlacer = AxisItemPlacer.Horizontal.default(spacing = 2),
+                        ),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
                 ),
             model = model,
-            startAxis =
-                rememberStartAxis(
-                    itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
-                    guideline = axisLineComponent(),
-                ),
-            bottomAxis =
-                rememberBottomAxis(
-                    guideline = axisLineComponent(),
-                    itemPlacer =
-                        AxisItemPlacer.Horizontal.default(
-                            spacing = 2,
-                        ),
-                ),
             horizontalLayout = HorizontalLayout.fullWidth(),
         )
     }
@@ -97,13 +94,16 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
                     rememberLineCartesianLayer(
                         lines =
                             listOf(
-                                lineSpec(shader = DynamicShaders.color(Color.DarkGray), dataLabel = textComponent()),
+                                lineSpec(
+                                    shader = DynamicShaders.color(Color.DarkGray),
+                                    dataLabel = rememberTextComponent(),
+                                ),
                             ),
                     ),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -116,10 +116,13 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
             chart =
                 rememberCartesianChart(
                     rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)),
+                    startAxis =
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                        ),
+                    bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) }),
-            bottomAxis = rememberBottomAxis(),
         )
     }
 }
@@ -132,10 +135,13 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
             chart =
                 rememberCartesianChart(
                     rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)),
+                    startAxis =
+                        rememberStartAxis(
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 3 }) },
+                        ),
+                    bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            startAxis = rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 3) }),
-            bottomAxis = rememberBottomAxis(),
         )
     }
 }

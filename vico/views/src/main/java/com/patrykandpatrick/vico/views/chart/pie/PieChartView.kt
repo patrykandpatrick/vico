@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,12 +20,13 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
+import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.draw.drawContext
 import com.patrykandpatrick.vico.core.extension.spToPx
+import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.model.PieModel
 import com.patrykandpatrick.vico.views.chart.BaseChartView
@@ -45,7 +46,7 @@ public open class PieChartView
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,
-    ) : BaseChartView(context, attrs, defStyleAttr) {
+    ) : BaseChartView<PieModel>(context, attrs, defStyleAttr) {
         private val pieChartStyleHandler: PieChartStyleHandler =
             PieChartStyleHandler(
                 context = context,
@@ -111,8 +112,15 @@ public open class PieChartView
                 invalidate()
             }
 
-        public var model: PieModel? = null
-            private set
+        /**
+         * The legend for this pie chart.
+         */
+        public var legend: Legend? = null
+            set(value) {
+                if (field === value) return
+                field = value
+                if (isAttachedToWindowCompat) requestLayout()
+            }
 
         public var modelProducer: PieChartModelProducer? = null
             set(value) {
@@ -160,6 +168,11 @@ public open class PieChartView
             )
         }
 
+        override fun getLegendHeight(
+            context: PreMeasureContext,
+            availableWidth: Float,
+        ): Int = legend?.getHeight(context, availableWidth)?.toInt() ?: 0
+
         override fun getChartDesiredHeight(
             widthMeasureSpec: Int,
             heightMeasureSpec: Int,
@@ -197,19 +210,7 @@ public open class PieChartView
                         isAnimationRunning = false
                         isAnimationFrameGenerationRunning = false
                     },
-                    startAnimation = { transformModel ->
-                        if (model != null || runInitialAnimation) {
-                            handler?.post {
-                                isAnimationRunning = true
-                                animator.start()
-                            }
-                        } else {
-                            finalAnimationFrameJob =
-                                coroutineScope?.launch(dispatcher) {
-                                    transformModel(this@PieChartView, Animation.range.endInclusive)
-                                }
-                        }
-                    },
+                    startAnimation = ::startAnimation,
                     prepareForTransformation = { model, extraStore ->
                         pieChart.prepareForTransformation(model, extraStore)
                     },
@@ -220,29 +221,6 @@ public open class PieChartView
                         setModel(model = model)
                         postInvalidateOnAnimation()
                     }
-                }
-            }
-        }
-
-        override fun transformModelForAnimation(fraction: Float) {
-            when {
-                !isAnimationRunning -> return
-                !isAnimationFrameGenerationRunning -> {
-                    isAnimationFrameGenerationRunning = true
-                    animationFrameJob =
-                        coroutineScope?.launch(dispatcher) {
-                            modelProducer?.transformModel(this@PieChartView, fraction)
-                            isAnimationFrameGenerationRunning = false
-                        }
-                }
-
-                fraction == 1f -> {
-                    finalAnimationFrameJob =
-                        coroutineScope?.launch(dispatcher) {
-                            animationFrameJob?.cancelAndJoin()
-                            modelProducer?.transformModel(this@PieChartView, fraction)
-                            isAnimationFrameGenerationRunning = false
-                        }
                 }
             }
         }

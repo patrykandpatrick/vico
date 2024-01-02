@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     continue-on-error: true
     steps:
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: zulu
@@ -15,5 +15,5 @@ jobs:
           curl -sSLO https://github.com/pinterest/ktlint/releases/download/1.0.1/ktlint
           chmod +x ktlint
           sudo mv ktlint /usr/local/bin
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: ktlint

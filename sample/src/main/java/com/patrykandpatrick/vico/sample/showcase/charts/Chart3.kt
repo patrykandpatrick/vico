@@ -30,8 +30,8 @@ import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -61,37 +61,40 @@ internal fun Chart3(
 private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         CartesianChartHost(
-            chart = rememberCartesianChart(rememberLineCartesianLayer(axisValueOverrider = axisValueOverrider)),
+            chart =
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(axisValueOverrider = axisValueOverrider),
+                    startAxis =
+                        rememberStartAxis(
+                            guideline = null,
+                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                            titleComponent =
+                                rememberTextComponent(
+                                    color = Color.Black,
+                                    background = rememberShapeComponent(Shapes.pillShape, color1),
+                                    padding = axisTitlePadding,
+                                    margins = startAxisTitleMargins,
+                                    typeface = Typeface.MONOSPACE,
+                                ),
+                            title = stringResource(R.string.y_axis),
+                        ),
+                    bottomAxis =
+                        rememberBottomAxis(
+                            titleComponent =
+                                rememberTextComponent(
+                                    background = rememberShapeComponent(Shapes.pillShape, color2),
+                                    color = Color.White,
+                                    padding = axisTitlePadding,
+                                    margins = bottomAxisTitleMargins,
+                                    typeface = Typeface.MONOSPACE,
+                                ),
+                            title = stringResource(R.string.x_axis),
+                        ),
+                    fadingEdges = rememberFadingEdges(),
+                ),
             modelProducer = modelProducer,
-            startAxis =
-                rememberStartAxis(
-                    guideline = null,
-                    horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                    titleComponent =
-                        textComponent(
-                            color = Color.Black,
-                            background = shapeComponent(Shapes.pillShape, color1),
-                            padding = axisTitlePadding,
-                            margins = startAxisTitleMargins,
-                            typeface = Typeface.MONOSPACE,
-                        ),
-                    title = stringResource(R.string.y_axis),
-                ),
-            bottomAxis =
-                rememberBottomAxis(
-                    titleComponent =
-                        textComponent(
-                            background = shapeComponent(Shapes.pillShape, color2),
-                            color = Color.White,
-                            padding = axisTitlePadding,
-                            margins = bottomAxisTitleMargins,
-                            typeface = Typeface.MONOSPACE,
-                        ),
-                    title = stringResource(R.string.x_axis),
-                ),
             marker = rememberMarker(),
             runInitialAnimation = false,
-            fadingEdges = rememberFadingEdges(),
             horizontalLayout = horizontalLayout,
         )
     }

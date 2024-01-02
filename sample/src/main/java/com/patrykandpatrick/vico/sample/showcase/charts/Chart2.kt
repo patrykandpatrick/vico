@@ -27,8 +27,8 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
@@ -73,11 +73,12 @@ private fun ComposeChart2(modelProducer: CartesianChartModelProducer) {
                             defaultColumns.map { LineComponent(it.color, COLUMN_WIDTH_DP, it.shape) }
                         },
                     ),
+                    startAxis =
+                        rememberStartAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
+                    bottomAxis = rememberBottomAxis(itemPlacer = bottomAxisItemPlacer),
                     decorations = remember(thresholdLine) { listOf(thresholdLine) },
                 ),
             modelProducer = modelProducer,
-            startAxis = rememberStartAxis(valueFormatter = startAxisValueFormatter, itemPlacer = startAxisItemPlacer),
-            bottomAxis = rememberBottomAxis(itemPlacer = bottomAxisItemPlacer),
             marker = rememberMarker(),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
@@ -94,11 +95,11 @@ private fun ViewChart2(modelProducer: CartesianChartModelProducer) {
             chart?.addDecoration(thresholdLine)
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            with(startAxis as VerticalAxis) {
+            with(chart?.startAxis as VerticalAxis) {
                 itemPlacer = startAxisItemPlacer
                 valueFormatter = startAxisValueFormatter
             }
-            (bottomAxis as HorizontalAxis).itemPlacer = bottomAxisItemPlacer
+            (chart?.bottomAxis as HorizontalAxis).itemPlacer = bottomAxisItemPlacer
             this.marker = marker
         }
     }
@@ -106,11 +107,11 @@ private fun ViewChart2(modelProducer: CartesianChartModelProducer) {
 
 @Composable
 private fun rememberThresholdLine(): ThresholdLine {
-    val line = shapeComponent(color = color2)
+    val line = rememberShapeComponent(color = color2)
     val label =
-        textComponent(
+        rememberTextComponent(
             color = Color.Black,
-            background = shapeComponent(Shapes.pillShape, color2),
+            background = rememberShapeComponent(Shapes.pillShape, color2),
             padding = thresholdLineLabelPadding,
             margins = thresholdLineLabelMargins,
             typeface = Typeface.MONOSPACE,
@@ -143,5 +144,5 @@ private val horizontalLayout =
         scalableStartPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
         scalableEndPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
     )
-private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(MAX_START_AXIS_ITEM_COUNT)
+private val startAxisItemPlacer = AxisItemPlacer.Vertical.default({ MAX_START_AXIS_ITEM_COUNT })
 private val bottomAxisItemPlacer = AxisItemPlacer.Horizontal.default(BOTTOM_AXIS_ITEM_SPACING, BOTTOM_AXIS_ITEM_OFFSET)

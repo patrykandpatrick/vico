@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,14 @@
 package com.patrykandpatrick.vico.core.chart
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.axis.AxisManager
+import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.chart.insets.Insets
@@ -37,6 +41,8 @@ import com.patrykandpatrick.vico.core.extension.inClip
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.setAll
 import com.patrykandpatrick.vico.core.extension.updateAll
+import com.patrykandpatrick.vico.core.layout.VirtualLayout
+import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.model.CartesianLayerModel
@@ -45,11 +51,20 @@ import java.util.TreeMap
 
 /**
  * A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s.
+ *
+ * @property legend the legend.
+ * @property fadingEdges applies a horizontal fade to the edges of the [CartesianChart], provided that it’s scrollable.
  */
-public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware, ChartInsetter {
+public open class CartesianChart(
+    layers: List<CartesianLayer<*>>,
+    public var legend: Legend? = null,
+    public var fadingEdges: FadingEdges? = null,
+) : BoundsAware, ChartInsetter {
     private val decorations = mutableListOf<Decoration>()
     private val persistentMarkers = mutableMapOf<Float, Marker>()
     private val tempInsets = Insets()
+    private val axisManager = AxisManager()
+    private val virtualLayout = VirtualLayout(axisManager)
 
     private val drawingModelAndLayerConsumer =
         object : ModelAndLayerConsumer {
@@ -117,9 +132,30 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
      */
     public val entryLocationMap: TreeMap<Float, MutableList<Marker.EntryModel>> = TreeMap()
 
+    /**
+     * The start axis.
+     */
+    public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
+
+    /**
+     * The top axis.
+     */
+    public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
+
+    /**
+     * The end axis.
+     */
+    public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
+
+    /**
+     * The bottom axis.
+     */
+    public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
+
     override val bounds: RectF = RectF()
 
-    public constructor(vararg layers: CartesianLayer<*>) : this(layers.toList())
+    public constructor(vararg layers: CartesianLayer<*>, legend: Legend? = null, fadingEdges: FadingEdges? = null) :
+        this(layers.toList(), legend, fadingEdges)
 
     override fun setBounds(
         left: Number,
@@ -132,52 +168,54 @@ public open class CartesianChart(layers: List<CartesianLayer<*>>) : BoundsAware,
     }
 
     /**
-     * Calls [Decoration.onDrawBehindChart] for each [Decoration] and draws the [CartesianChart].
+     * Prepares the [CartesianChart] for drawing.
      */
-    public fun draw(
-        context: CartesianChartDrawContext,
+    public fun prepare(
+        context: CartesianMeasureContext,
         model: CartesianChartModel,
+        horizontalDimensions: MutableHorizontalDimensions,
+        bounds: RectF,
+        marker: Marker?,
     ) {
         entryLocationMap.clear()
-        decorations.forEach { it.onDrawBehindChart(context, bounds) }
-        model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
-    }
-
-    /**
-     * Calls [Decoration.onDrawAboveChart] for each [Decoration] and draws the persistent [Marker]s.
-     */
-    public fun drawOverlays(context: CartesianChartDrawContext) {
-        with(context) {
-            canvas.inClip(
-                left = bounds.left,
-                top = 0f,
-                right = bounds.right,
-                bottom = context.canvas.height.toFloat(),
-            ) {
-                decorations.forEach { it.onDrawAboveChart(this, bounds) }
-            }
-            persistentMarkers.forEach { (x, marker) ->
-                entryLocationMap.getEntryModel(x)?.let { model ->
-                    marker.draw(context, bounds, model, chartValues)
-                }
-            }
-        }
-    }
-
-    /**
-     * Updates [horizontalDimensions] to match the [CartesianLayer]s’ dimensions.
-     */
-    public fun updateHorizontalDimensions(
-        context: CartesianMeasureContext,
-        horizontalDimensions: MutableHorizontalDimensions,
-        model: CartesianChartModel,
-    ) {
         model.forEachWithLayer(
             horizontalDimensionUpdateModelAndLayerConsumer.apply {
                 this.context = context
                 this.horizontalDimensions = horizontalDimensions
             },
         )
+        startAxis?.updateHorizontalDimensions(context, horizontalDimensions)
+        topAxis?.updateHorizontalDimensions(context, horizontalDimensions)
+        endAxis?.updateHorizontalDimensions(context, horizontalDimensions)
+        bottomAxis?.updateHorizontalDimensions(context, horizontalDimensions)
+        virtualLayout.setBounds(context, bounds, this, legend, horizontalDimensions, marker)
+    }
+
+    /**
+     * Draws the [CartesianChart].
+     */
+    public fun draw(
+        context: CartesianChartDrawContext,
+        model: CartesianChartModel,
+    ) {
+        val canvasSaveCount = if (fadingEdges != null) context.saveLayer() else -1
+        axisManager.drawBehindChart(context)
+        decorations.forEach { it.onDrawBehindChart(context, bounds) }
+        model.forEachWithLayer(drawingModelAndLayerConsumer.apply { this.context = context })
+        fadingEdges?.run {
+            applyFadingEdges(context, bounds)
+            context.restoreCanvasToCount(canvasSaveCount)
+        }
+        axisManager.drawAboveChart(context)
+        context.canvas.inClip(bounds.left, 0f, bounds.right, context.canvas.height.toFloat()) {
+            decorations.forEach { it.onDrawAboveChart(context, bounds) }
+        }
+        persistentMarkers.forEach { (x, marker) ->
+            entryLocationMap.getEntryModel(x)?.let { model ->
+                marker.draw(context, bounds, model, context.chartValues)
+            }
+        }
+        legend?.draw(context, bounds)
     }
 
     /**

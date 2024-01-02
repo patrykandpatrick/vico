@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.textComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.pie.label.InsideSliceLabel
 import com.patrykandpatrick.vico.core.chart.pie.label.OutsideSliceLabel
@@ -37,7 +37,7 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
  * @see InsideSliceLabel
  */
 @Composable
-public fun SliceLabel.Companion.inside(textComponent: TextComponent = textComponent()): InsideSliceLabel =
+public fun SliceLabel.Companion.inside(textComponent: TextComponent = rememberTextComponent()): InsideSliceLabel =
     remember {
         InsideSliceLabel(textComponent)
     }.apply {
@@ -58,7 +58,7 @@ public fun SliceLabel.Companion.inside(textComponent: TextComponent = textCompon
  */
 @Composable
 public fun SliceLabel.Companion.outside(
-    textComponent: TextComponent = textComponent(),
+    textComponent: TextComponent = rememberTextComponent(),
     lineColor: Color = Color.Black,
     lineWidth: Dp = 1.dp,
     angledSegmentLength: Dp = DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH.dp,

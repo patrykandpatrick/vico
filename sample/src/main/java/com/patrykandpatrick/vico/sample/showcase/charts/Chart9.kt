@@ -35,12 +35,12 @@ import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.axis.Axis
@@ -90,7 +90,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                                                 DynamicShaders.fromComponent(
                                                     componentSize = 6.dp,
                                                     component =
-                                                        shapeComponent(
+                                                        rememberShapeComponent(
                                                             shape = Shapes.pillShape,
                                                             color = chartColors[0],
                                                             margins = remember { dimensionsOf(1.dp) },
@@ -103,7 +103,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                                                 DynamicShaders.fromComponent(
                                                     componentSize = 5.dp,
                                                     component =
-                                                        shapeComponent(
+                                                        rememberShapeComponent(
                                                             shape = Shapes.rectShape,
                                                             color = chartColors[1],
                                                             margins = remember { dimensionsOf(horizontal = 2.dp) },
@@ -117,51 +117,51 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                                 ),
                             ),
                     ),
-                ),
-            modelProducer = modelProducer,
-            startAxis =
-                rememberStartAxis(
-                    label =
-                        axisLabelComponent(
-                            color = MaterialTheme.colorScheme.onBackground,
-                            background =
-                                shapeComponent(
-                                    shape = Shapes.pillShape,
-                                    color = MaterialTheme.colorScheme.background,
-                                    strokeColor = MaterialTheme.colorScheme.outlineVariant,
-                                    strokeWidth = 1.dp,
+                    startAxis =
+                        rememberStartAxis(
+                            label =
+                                axisLabelComponent(
+                                    color = MaterialTheme.colorScheme.onBackground,
+                                    background =
+                                        rememberShapeComponent(
+                                            shape = Shapes.pillShape,
+                                            color = MaterialTheme.colorScheme.background,
+                                            strokeColor = MaterialTheme.colorScheme.outlineVariant,
+                                            strokeWidth = 1.dp,
+                                        ),
+                                    padding = remember { dimensionsOf(horizontal = 6.dp, vertical = 2.dp) },
+                                    margins = remember { dimensionsOf(end = 8.dp) },
                                 ),
-                            padding = remember { dimensionsOf(horizontal = 6.dp, vertical = 2.dp) },
-                            margins = remember { dimensionsOf(end = 8.dp) },
+                            axis = null,
+                            tick = null,
+                            guideline =
+                                rememberLineComponent(
+                                    thickness = 1.dp,
+                                    color = MaterialTheme.colorScheme.outlineVariant,
+                                    shape =
+                                        remember {
+                                            Shapes.dashedShape(
+                                                shape = Shapes.pillShape,
+                                                dashLength = 4.dp,
+                                                gapLength = 8.dp,
+                                            )
+                                        },
+                                ),
+                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
                         ),
-                    axis = null,
-                    tick = null,
-                    guideline =
-                        lineComponent(
-                            thickness = 1.dp,
-                            color = MaterialTheme.colorScheme.outlineVariant,
-                            shape =
+                    bottomAxis =
+                        rememberBottomAxis(
+                            guideline = null,
+                            itemPlacer =
                                 remember {
-                                    Shapes.dashedShape(
-                                        shape = Shapes.pillShape,
-                                        dashLength = 4.dp,
-                                        gapLength = 8.dp,
+                                    AxisItemPlacer.Horizontal.default(
+                                        spacing = 3,
+                                        addExtremeLabelPadding = true,
                                     )
                                 },
                         ),
-                    itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 4) },
                 ),
-            bottomAxis =
-                rememberBottomAxis(
-                    guideline = null,
-                    itemPlacer =
-                        remember {
-                            AxisItemPlacer.Horizontal.default(
-                                spacing = 3,
-                                addExtremeLabelPadding = true,
-                            )
-                        },
-                ),
+            modelProducer = modelProducer,
             marker = marker,
             runInitialAnimation = false,
             horizontalLayout = HorizontalLayout.fullWidth(),
@@ -177,7 +177,7 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (bottomAxis as Axis).guideline = null
+            (chart?.bottomAxis as Axis).guideline = null
             this.marker = marker
             with(chart?.layers?.get(0) as LineCartesianLayer) {
                 lines =

@@ -36,6 +36,9 @@ internal fun TypedArray.getColumnCartesianLayer(
 ): ColumnCartesianLayer =
     getNestedTypedArray(context, resourceId, styleableResourceId).run {
         val defaultShape = Shapes.roundedCornerShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT)
+        val mergeMode =
+            getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)
+                .let(ColumnCartesianLayer.MergeMode.entries::get)
         ColumnCartesianLayer(
             columns =
                 listOf(
@@ -82,9 +85,7 @@ internal fun TypedArray.getColumnCartesianLayer(
                     index = R.styleable.ColumnCartesianLayerStyle_columnInnerSpacing,
                     defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING,
                 ),
-            mergeMode =
-                getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)
-                    .let(ColumnCartesianLayer.MergeMode.entries::get),
+            mergeMode = { mergeMode },
             dataLabel =
                 if (getBoolean(R.styleable.ColumnCartesianLayerStyle_showDataLabels, false)) {
                     getNestedTypedArray(

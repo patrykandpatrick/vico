@@ -25,14 +25,10 @@ import com.patrykandpatrick.vico.core.extension.half
 import kotlin.math.max
 
 internal class DefaultVerticalAxisItemPlacer(
-    private val maxItemCount: Int,
+    private val maxItemCount: (ChartValues) -> Int,
     private val shiftTopLines: Boolean,
 ) : AxisItemPlacer.Vertical {
-    init {
-        require(maxItemCount >= 0) { "`maxItemCount` must be nonnegative." }
-    }
-
-    override fun getShiftTopLines(context: CartesianChartDrawContext): Boolean = shiftTopLines
+    override fun getShiftTopLines(chartDrawContext: CartesianChartDrawContext): Boolean = shiftTopLines
 
     override fun getLabelValues(
         context: CartesianChartDrawContext,
@@ -41,22 +37,23 @@ internal class DefaultVerticalAxisItemPlacer(
         position: AxisPosition.Vertical,
     ) = getWidthMeasurementLabelValues(context, axisHeight, maxLabelHeight, position)
 
-    public override fun getWidthMeasurementLabelValues(
+    override fun getWidthMeasurementLabelValues(
         context: CartesianMeasureContext,
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
     ): List<Float> {
+        val maxItemCount = context.getMaxItemCount()
         if (maxItemCount == 0) return emptyList()
         val yRange = context.chartValues.getYRange(position)
         return if (yRange.minY * yRange.maxY >= 0) {
-            getSimpleLabelValues(axisHeight, maxLabelHeight, yRange)
+            getSimpleLabelValues(maxItemCount, axisHeight, maxLabelHeight, yRange)
         } else {
-            getMixedLabelValues(axisHeight, maxLabelHeight, yRange)
+            getMixedLabelValues(maxItemCount, axisHeight, maxLabelHeight, yRange)
         }
     }
 
-    public override fun getHeightMeasurementLabelValues(
+    override fun getHeightMeasurementLabelValues(
         context: CartesianMeasureContext,
         position: AxisPosition.Vertical,
     ): List<Float> {
@@ -65,11 +62,12 @@ internal class DefaultVerticalAxisItemPlacer(
     }
 
     override fun getTopVerticalAxisInset(
+        context: CartesianMeasureContext,
         verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
         maxLabelHeight: Float,
         maxLineThickness: Float,
     ) = when {
-        maxItemCount == 0 -> 0f
+        context.getMaxItemCount() == 0 -> 0f
 
         verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top ->
             maxLabelHeight + (if (shiftTopLines) maxLineThickness else -maxLineThickness).half
@@ -81,12 +79,13 @@ internal class DefaultVerticalAxisItemPlacer(
     }
 
     override fun getBottomVerticalAxisInset(
+        context: CartesianMeasureContext,
         verticalLabelPosition: VerticalAxis.VerticalLabelPosition,
         maxLabelHeight: Float,
         maxLineThickness: Float,
     ): Float =
         when {
-            maxItemCount == 0 -> 0f
+            context.getMaxItemCount() == 0 -> 0f
             verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top -> maxLineThickness
 
             verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
@@ -96,6 +95,7 @@ internal class DefaultVerticalAxisItemPlacer(
         }
 
     private fun getSimpleLabelValues(
+        maxItemCount: Int,
         axisHeight: Float,
         maxLabelHeight: Float,
         yRange: ChartValues.YRange,
@@ -109,6 +109,7 @@ internal class DefaultVerticalAxisItemPlacer(
     }
 
     private fun getMixedLabelValues(
+        maxItemCount: Int,
         axisHeight: Float,
         maxLabelHeight: Float,
         yRange: ChartValues.YRange,
@@ -144,4 +145,7 @@ internal class DefaultVerticalAxisItemPlacer(
         }
         return values
     }
+
+    private fun CartesianMeasureContext.getMaxItemCount() =
+        maxItemCount(chartValues).also { require(it >= 0) { "`maxItemCount` must return a nonnegative value." } }
 }

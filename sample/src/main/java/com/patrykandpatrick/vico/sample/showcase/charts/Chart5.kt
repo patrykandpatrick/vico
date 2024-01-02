@@ -81,16 +81,16 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer) {
                                     )
                                 }
                             },
-                        mergeMode = ColumnCartesianLayer.MergeMode.Stacked,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
+                    startAxis =
+                        rememberStartAxis(
+                            itemPlacer = startAxisItemPlacer,
+                            labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
+                        ),
+                    bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
                 ),
             modelProducer = modelProducer,
-            startAxis =
-                rememberStartAxis(
-                    itemPlacer = startAxisItemPlacer,
-                    labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES,
-                ),
-            bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -104,7 +104,7 @@ private fun ViewChart5(modelProducer: CartesianChartModelProducer) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
+            (chart?.startAxis as VerticalAxis).itemPlacer = startAxisItemPlacer
             this.marker = marker
         }
     }
@@ -120,4 +120,4 @@ private val color1 = Color(COLOR_1_CODE)
 private val color2 = Color(COLOR_2_CODE)
 private val color3 = Color(COLOR_3_CODE)
 private val chartColors = listOf(color1, color2, color3)
-private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(MAX_START_AXIS_ITEM_COUNT)
+private val startAxisItemPlacer = AxisItemPlacer.Vertical.default({ MAX_START_AXIS_ITEM_COUNT })

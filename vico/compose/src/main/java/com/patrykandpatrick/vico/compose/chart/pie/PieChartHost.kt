@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.compose.chart.ChartHostBox
 import com.patrykandpatrick.vico.compose.extension.chartLayout
-import com.patrykandpatrick.vico.compose.layout.getPreMeasureContext
+import com.patrykandpatrick.vico.compose.layout.rememberPreMeasureContext
 import com.patrykandpatrick.vico.compose.model.collectAsState
 import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
@@ -129,7 +129,7 @@ internal fun PieChartHost(
     val density = LocalDensity.current.density
     val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     val context = LocalContext.current
-    val preMeasureContext = getPreMeasureContext()
+    val preMeasureContext = rememberPreMeasureContext()
 
     Canvas(
         modifier =

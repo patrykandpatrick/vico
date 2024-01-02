@@ -39,10 +39,13 @@ public fun DefaultLineChart(
 ) {
     PreviewSurface {
         CartesianChartHost(
-            chart = rememberCartesianChart(rememberLineCartesianLayer()),
+            chart =
+                rememberCartesianChart(
+                    rememberLineCartesianLayer(),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(),
+                ),
             model = model,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(),
             chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = scrollable, initialScroll = initialScroll),
         )
     }

@@ -240,8 +240,20 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             val maxLabelHeight = getMaxLabelHeight()
             val maxLineThickness = maxOf(axisThickness, tickThickness)
             outInsets.set(
-                top = itemPlacer.getTopVerticalAxisInset(verticalLabelPosition, maxLabelHeight, maxLineThickness),
-                bottom = itemPlacer.getBottomVerticalAxisInset(verticalLabelPosition, maxLabelHeight, maxLineThickness),
+                top =
+                    itemPlacer.getTopVerticalAxisInset(
+                        context,
+                        verticalLabelPosition,
+                        maxLabelHeight,
+                        maxLineThickness,
+                    ),
+                bottom =
+                    itemPlacer.getBottomVerticalAxisInset(
+                        context,
+                        verticalLabelPosition,
+                        maxLabelHeight,
+                        maxLineThickness,
+                    ),
             )
         }
 

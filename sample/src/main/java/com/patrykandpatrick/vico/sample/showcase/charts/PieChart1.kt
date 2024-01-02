@@ -31,8 +31,8 @@ import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.chart.pie.PieChartHost
 import com.patrykandpatrick.vico.compose.chart.pie.label.inside
 import com.patrykandpatrick.vico.compose.chart.pie.slice.rememberSlice
-import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
@@ -77,10 +77,10 @@ private fun ComposePieChart1(
     val labelInside =
         SliceLabel.inside(
             textComponent =
-                textComponent(
+                rememberTextComponent(
                     color = Color.White,
                     padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
-                    background = shapeComponent(shape = Shapes.pillShape, color = Color.Black),
+                    background = rememberShapeComponent(shape = Shapes.pillShape, color = Color.Black),
                     margins = dimensionsOf(2.dp),
                 ),
         )

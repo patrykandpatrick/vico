@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.context.MutableCartesianMeasureContext
+import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 import com.patrykandpatrick.vico.core.context.MutablePreMeasureContext
 import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.extension.spToPx
@@ -37,7 +37,7 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModel
  * Creates the [PreMeasureContext].
  */
 @Composable
-public fun getPreMeasureContext(): PreMeasureContext {
+public fun rememberPreMeasureContext(): PreMeasureContext {
     val density = LocalDensity.current.density
     val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     val context = LocalContext.current
@@ -52,7 +52,7 @@ public fun getPreMeasureContext(): PreMeasureContext {
 }
 
 /**
- * The anonymous implementation of the [CartesianMeasureContext].
+ * Creates and remembers a [MutableMeasureContext] instance.
  *
  * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
  * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
@@ -61,7 +61,7 @@ public fun getPreMeasureContext(): PreMeasureContext {
  * @param chartValues houses the [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
  */
 @Composable
-public fun getCartesianMeasureContext(
+public fun rememberCartesianMeasureContext(
     isHorizontalScrollEnabled: Boolean,
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,

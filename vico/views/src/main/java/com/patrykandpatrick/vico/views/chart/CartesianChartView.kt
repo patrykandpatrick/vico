@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,24 +31,20 @@ import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.axis.AxisManager
-import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getAutoZoom
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
-import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
 import com.patrykandpatrick.vico.core.chart.values.toImmutable
 import com.patrykandpatrick.vico.core.context.MutableCartesianMeasureContext
+import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.extension.spToPx
-import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
@@ -85,14 +81,10 @@ public open class CartesianChartView
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,
-    ) : BaseChartView(context, attrs, defStyleAttr), ScrollListenerHost {
+    ) : BaseChartView<CartesianChartModel>(context, attrs, defStyleAttr), ScrollListenerHost {
         private val scrollHandler = ScrollHandler()
 
         private val scroller = OverScroller(context)
-
-        private val axisManager = AxisManager()
-
-        private val virtualLayout = VirtualLayout(axisManager)
 
         private val mutableChartValues = MutableChartValues()
 
@@ -141,31 +133,9 @@ public open class CartesianChartView
 
         private var wasZoomOverridden = false
 
-        private var chartValues: ChartValues = ChartValues.Empty
-
         private var horizontalDimensions = MutableHorizontalDimensions()
 
         private val themeHandler: ThemeHandler = ThemeHandler(context, attrs)
-
-        /**
-         * The [AxisRenderer] for the start axis.
-         */
-        public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
-
-        /**
-         * The [AxisRenderer] for the top axis.
-         */
-        public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
-
-        /**
-         * The [AxisRenderer] for the end axis.
-         */
-        public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
-
-        /**
-         * The [AxisRenderer] for the bottom axis.
-         */
-        public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
         /**
          * Houses scrolling-related settings.
@@ -202,12 +172,6 @@ public open class CartesianChartView
         }
 
         /**
-         * The [CartesianChartModel].
-         */
-        public var model: CartesianChartModel? = null
-            private set
-
-        /**
          * Creates and updates the [CartesianChartModel].
          */
         public var modelProducer: CartesianChartModelProducer? = null
@@ -231,19 +195,7 @@ public open class CartesianChartView
                         isAnimationRunning = false
                         isAnimationFrameGenerationRunning = false
                     },
-                    startAnimation = { transformModel ->
-                        if (model != null || runInitialAnimation) {
-                            handler?.post {
-                                isAnimationRunning = true
-                                animator.start()
-                            }
-                        } else {
-                            finalAnimationFrameJob =
-                                coroutineScope?.launch(dispatcher) {
-                                    transformModel(this@CartesianChartView, Animation.range.endInclusive)
-                                }
-                        }
-                    },
+                    startAnimation = ::startAnimation,
                     prepareForTransformation = { model, extraStore, chartValues ->
                         chart?.prepareForTransformation(model, extraStore, chartValues)
                     },
@@ -256,10 +208,9 @@ public open class CartesianChartView
                             mutableChartValues.toImmutable()
                         } else {
                             ChartValues.Empty
-                        }.also { values -> chartValues = values }
+                        }
                     },
-                ) { model ->
-                    val chartValues = chartValues
+                ) { model, chartValues ->
                     post {
                         setModel(model = model, updateChartValues = false)
                         measureContext.chartValues = chartValues
@@ -290,11 +241,6 @@ public open class CartesianChartView
         public var markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null
 
         /**
-         * Applies a horizontal fade to the edges of the chart area for scrollable charts.
-         */
-        public var fadingEdges: FadingEdges? by invalidatingObservable(themeHandler.fadingEdges)
-
-        /**
          * Defines whether the content of the chart should be scaled up when the dimensions are such that, at a scale
          * factor of 1, an empty space would be visible near the end edge of the chart.
          */
@@ -302,10 +248,6 @@ public open class CartesianChartView
 
         init {
             chart = themeHandler.chart
-            startAxis = themeHandler.startAxis
-            topAxis = themeHandler.topAxis
-            endAxis = themeHandler.endAxis
-            bottomAxis = themeHandler.bottomAxis
             chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = themeHandler.isHorizontalScrollEnabled)
             isZoomEnabled = themeHandler.isChartZoomEnabled
             if (isInEditMode && attrs != null) {
@@ -396,6 +338,11 @@ public open class CartesianChartView
             }
         }
 
+        override fun getLegendHeight(
+            context: PreMeasureContext,
+            availableWidth: Float,
+        ): Int = chart?.legend?.getHeight(context, availableWidth)?.toInt() ?: 0
+
         override fun onTouchEvent(event: MotionEvent): Boolean {
             val scaleHandled =
                 if (isZoomEnabled && event.pointerCount > 1 && chartScrollSpec.isScrollEnabled) {
@@ -443,27 +390,9 @@ public open class CartesianChartView
             withChartAndModel { chart, model ->
                 measureContext.clearExtras()
                 horizontalDimensions.clear()
-                chart.updateHorizontalDimensions(measureContext, horizontalDimensions, model)
+                chart.prepare(measureContext, model, horizontalDimensions, contentBounds, marker)
 
-                startAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-                topAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-                endAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-                bottomAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-
-                if (
-                    virtualLayout
-                        .setBounds(
-                            context = measureContext,
-                            contentBounds = contentBounds,
-                            chart = chart,
-                            legend = legend,
-                            horizontalDimensions = horizontalDimensions,
-                            marker,
-                        )
-                        .isEmpty
-                ) {
-                    return@withChartAndModel
-                }
+                if (chart.bounds.isEmpty) return@withChartAndModel
 
                 motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
                 if (scroller.computeScrollOffset()) {
@@ -499,19 +428,7 @@ public open class CartesianChartView
                         zoom = finalZoom,
                     )
 
-                val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
-
-                axisManager.drawBehindChart(chartDrawContext)
                 chart.draw(chartDrawContext, model)
-
-                fadingEdges?.apply {
-                    applyFadingEdges(chartDrawContext, chart.bounds)
-                    chartDrawContext.restoreCanvasToCount(count)
-                }
-
-                axisManager.drawAboveChart(chartDrawContext)
-                chart.drawOverlays(chartDrawContext)
-                legend?.draw(chartDrawContext, chartDrawContext.chartBounds)
 
                 marker?.also { marker ->
                     chartDrawContext.drawMarker(
@@ -526,29 +443,6 @@ public open class CartesianChartView
                     )
                 }
                 measureContext.reset()
-            }
-        }
-
-        override fun transformModelForAnimation(fraction: Float) {
-            when {
-                !isAnimationRunning -> return
-                !isAnimationFrameGenerationRunning -> {
-                    isAnimationFrameGenerationRunning = true
-                    animationFrameJob =
-                        coroutineScope?.launch(dispatcher) {
-                            modelProducer?.transformModel(this@CartesianChartView, fraction)
-                            isAnimationFrameGenerationRunning = false
-                        }
-                }
-
-                fraction == 1f -> {
-                    finalAnimationFrameJob =
-                        coroutineScope?.launch(dispatcher) {
-                            animationFrameJob?.cancelAndJoin()
-                            modelProducer?.transformModel(this@CartesianChartView, fraction)
-                            isAnimationFrameGenerationRunning = false
-                        }
-                }
             }
         }
 

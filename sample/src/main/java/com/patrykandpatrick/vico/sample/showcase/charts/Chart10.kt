@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,10 +51,10 @@ private fun ComposeChart10(modelProducer: CartesianChartModelProducer) {
             chart =
                 rememberCartesianChart(
                     rememberCandlestickCartesianLayer(),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(guideline = null),
                 ),
             modelProducer = modelProducer,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(guideline = null),
             marker = marker,
         )
     }
@@ -67,7 +67,7 @@ private fun ViewChart10(modelProducer: CartesianChartModelProducer) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (bottomAxis as Axis).guideline = null
+            (chart?.bottomAxis as Axis).guideline = null
             this.marker = marker
         }
     }

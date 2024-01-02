@@ -50,10 +50,10 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Shape
 
 /**
- * Creates a [LineComponent] with the specified properties.
+ * Creates and remembers a [LineComponent] with the specified properties.
  */
 @Composable
-public fun lineComponent(
+public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp,
     shape: ChartShape,
@@ -83,10 +83,10 @@ public fun lineComponent(
     }
 
 /**
- * Creates a [LineComponent] with the specified properties.
+ * Creates and remembers a [LineComponent] with the specified properties.
  */
 @Composable
-public fun lineComponent(
+public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp = DefaultDimens.COLUMN_WIDTH.dp,
     shape: Shape = RectangleShape,
@@ -95,7 +95,7 @@ public fun lineComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): LineComponent =
-    lineComponent(
+    rememberLineComponent(
         color = color,
         thickness = thickness,
         shape = shape.chartShape(),
@@ -106,10 +106,10 @@ public fun lineComponent(
     )
 
 /**
- * Creates a [ShapeComponent] with the specified properties.
+ * Creates and remembers a [ShapeComponent] with the specified properties.
  */
 @Composable
-public fun shapeComponent(
+public fun rememberShapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
@@ -136,10 +136,10 @@ public fun shapeComponent(
     }
 
 /**
- * Creates a [ShapeComponent] with the specified properties.
+ * Creates and remembers a [ShapeComponent] with the specified properties.
  */
 @Composable
-public fun shapeComponent(
+public fun rememberShapeComponent(
     shape: Shape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
@@ -147,7 +147,7 @@ public fun shapeComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent =
-    shapeComponent(
+    rememberShapeComponent(
         shape = shape.chartShape(),
         color = color,
         dynamicShader = dynamicShader,
@@ -157,10 +157,10 @@ public fun shapeComponent(
     )
 
 /**
- * Creates a [ShapeComponent] with the specified properties.
+ * Creates and remembers a [ShapeComponent] with the specified properties.
  */
 @Composable
-public fun shapeComponent(
+public fun rememberShapeComponent(
     shape: ChartShape = Shapes.rectShape,
     color: Color = Color.Black,
     brush: Brush,
@@ -168,7 +168,7 @@ public fun shapeComponent(
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent =
-    shapeComponent(
+    rememberShapeComponent(
         shape = shape,
         color = color,
         dynamicShader = brush.toDynamicShader(),
@@ -237,7 +237,7 @@ public fun overlayingComponent(
     )
 
 /**
- * Creates a [TextComponent].
+ * Creates and remembers a [TextComponent].
  *
  * @param color the text color.
  * @param textSize the text size.
@@ -250,7 +250,7 @@ public fun overlayingComponent(
  * @param textAlignment the text alignment.
  */
 @Composable
-public fun textComponent(
+public fun rememberTextComponent(
     color: Color = Color.Black,
     textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
     background: ShapeComponent? = null,

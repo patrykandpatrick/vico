@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.style.getDefaultColors
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.layer.CandlestickCartesianLayer
@@ -38,7 +38,7 @@ public fun Candle.Companion.sharpFilledCandle(
     color: Color,
     thickness: Dp = DefaultDimens.REAL_BODY_WIDTH_DP.dp,
 ): Candle {
-    val filledBody = lineComponent(color, thickness)
+    val filledBody = rememberLineComponent(color, thickness)
 
     return remember(filledBody) {
         Candle(realBody = filledBody)
@@ -55,7 +55,7 @@ public fun Candle.Companion.sharpHollowCandle(
     strokeWidth: Dp = DefaultDimens.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
 ): Candle {
     val hollowBody =
-        lineComponent(
+        rememberLineComponent(
             color = Color.Transparent,
             thickness = thickness,
             strokeWidth = strokeWidth,

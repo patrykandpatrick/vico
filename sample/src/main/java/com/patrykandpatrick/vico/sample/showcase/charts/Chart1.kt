@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,11 +52,11 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer) {
             chart =
                 rememberCartesianChart(
                     rememberLineCartesianLayer(),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(guideline = null),
                     persistentMarkers = remember(marker) { mapOf(PERSISTENT_MARKER_X to marker) },
                 ),
             modelProducer = modelProducer,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(guideline = null),
             marker = marker,
             runInitialAnimation = false,
         )
@@ -71,7 +71,7 @@ private fun ViewChart1(modelProducer: CartesianChartModelProducer) {
             chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (bottomAxis as Axis).guideline = null
+            (chart?.bottomAxis as Axis).guideline = null
             this.marker = marker
         }
     }

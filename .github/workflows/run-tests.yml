@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           lfs: true
-      - uses: actions/setup-java@v3
+      - uses: actions/setup-java@v4
         with:
           java-version: 17
           distribution: adopt
@@ -19,7 +19,7 @@ jobs:
       - id: paparazzi
         if: ${{ success() || steps.unit-tests.conclusion == 'failure' }}
         run: ./gradlew sample:verifyPaparazziDebug
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() && steps.paparazzi.conclusion == 'failure' }}
         with:
           name: Paparazzi deltas

@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.model
 
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.extension.orZero
-import com.patrykandpatrick.vico.core.extension.rangeOfOrNull
+import com.patrykandpatrick.vico.core.extension.rangeOf
+import com.patrykandpatrick.vico.core.extension.rangeOfPair
 
 /**
  * Stores a [LineCartesianLayer]’s data.
@@ -46,11 +46,16 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     public constructor(series: List<List<Entry>>) : this(series, ExtraStore.empty)
 
     private constructor(series: List<List<Entry>>, extraStore: ExtraStore) {
-        val entries = series.flatten()
-        val xRange = entries.rangeOfOrNull { it.x }.orZero
-        val yRange = entries.rangeOfOrNull { it.y }.orZero
-        this.series = series
-        this.id = series.hashCode()
+        require(series.isNotEmpty()) { "At least one series should be added." }
+        this.series =
+            series.map { entries ->
+                require(entries.isNotEmpty()) { "Series can’t be empty." }
+                entries.sortedBy { entry -> entry.x }
+            }
+        val entries = this.series.flatten()
+        val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
+        val yRange = entries.rangeOf { it.y }
+        this.id = this.series.hashCode()
         this.minX = xRange.start
         this.maxX = xRange.endInclusive
         this.minY = yRange.start
@@ -82,11 +87,39 @@ public class LineCartesianLayerModel : CartesianLayerModel {
     override fun copy(extraStore: ExtraStore): CartesianLayerModel =
         LineCartesianLayerModel(series, id, minX, maxX, minY, maxY, xDeltaGcd, extraStore)
 
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+            other is LineCartesianLayerModel &&
+            series == other.series &&
+            id == other.id &&
+            minX == other.minX &&
+            maxX == other.maxX &&
+            minY == other.minY &&
+            maxY == other.maxY &&
+            xDeltaGcd == other.xDeltaGcd &&
+            extraStore == other.extraStore
+
+    override fun hashCode(): Int {
+        var result = series.hashCode()
+        result = 31 * result + id
+        result = 31 * result + minX.hashCode()
+        result = 31 * result + maxX.hashCode()
+        result = 31 * result + minY.hashCode()
+        result = 31 * result + maxY.hashCode()
+        result = 31 * result + xDeltaGcd.hashCode()
+        result = 31 * result + extraStore.hashCode()
+        return result
+    }
+
     /**
      * Represents a line node at ([x], [y]).
      */
     public class Entry internal constructor(override val x: Float, public val y: Float) : CartesianLayerModel.Entry {
         public constructor(x: Number, y: Number) : this(x.toFloat(), y.toFloat())
+
+        override fun equals(other: Any?): Boolean = this === other || other is Entry && x == other.x && y == other.y
+
+        override fun hashCode(): Int = 31 * x.hashCode() + y.hashCode()
     }
 
     /**

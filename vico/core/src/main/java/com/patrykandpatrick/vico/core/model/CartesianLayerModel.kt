@@ -65,6 +65,10 @@ public interface CartesianLayerModel {
      */
     public fun copy(extraStore: ExtraStore): CartesianLayerModel
 
+    override fun equals(other: Any?): Boolean
+
+    override fun hashCode(): Int
+
     /**
      * Represents a single entity in a [CartesianLayerModel].
      */
@@ -73,6 +77,10 @@ public interface CartesianLayerModel {
          * The _x_ coordinate.
          */
         public val x: Float
+
+        override fun equals(other: Any?): Boolean
+
+        override fun hashCode(): Int
     }
 
     /**
@@ -86,24 +94,37 @@ public interface CartesianLayerModel {
     }
 }
 
-internal fun Iterable<CartesianLayerModel.Entry>.getXDeltaGcd() =
-    zipWithNext { firstEntry, secondEntry -> abs(secondEntry.x - firstEntry.x) }
-        .fold<Float, Float?>(null) { gcd, delta -> gcd?.gcdWith(delta) ?: delta }
+internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Float {
+    if (isEmpty()) return 1f
+    val iterator = iterator()
+    var prevX = iterator.next().x
+    var gcd: Float? = null
+    while (iterator.hasNext()) {
+        val x = iterator.next().x
+        val delta = abs(x - prevX)
+        prevX = x
+        if (delta != 0f) gcd = gcd?.gcdWith(delta) ?: delta
+    }
+    return gcd
+        ?.also { require(it != 0f) { "The x values are too precise. The maximum precision is two decimal places." } }
         ?: 1f
-
-internal fun <T : CartesianLayerModel.Entry> Iterable<T>.forEachInIndexed(
-    range: ClosedFloatingPointRange<Float>,
-    action: (Int, T) -> Unit,
-) {
-    var index = 0
-    forEach { if (it.x in range) action(index++, it) }
 }
 
-internal fun <T : CartesianLayerModel.Entry> List<T>.forEachInIndexed(
+internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachInIndexed(
     range: ClosedFloatingPointRange<Float>,
+    padding: Int = 0,
     action: (Int, T, T?) -> Unit,
 ) {
-    forEachInIndexed(range) { index, entry ->
-        action(index, entry, getOrNull(index + 1)?.takeIf { it.x in range })
+    var start = 0
+    var end = 0
+    for (entry in this) {
+        when {
+            entry.x < range.start -> start++
+            entry.x > range.endInclusive -> break
+        }
+        end++
     }
+    start = (start - padding).coerceAtLeast(0)
+    end = (end + padding).coerceAtMost(lastIndex)
+    (start..end).forEach { action(it, this[it], getOrNull(it + 1)) }
 }

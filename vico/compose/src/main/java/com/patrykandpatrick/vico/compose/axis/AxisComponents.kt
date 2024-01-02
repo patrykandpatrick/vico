@@ -27,10 +27,10 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.chartShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -72,7 +72,7 @@ public fun axisLabelComponent(
     typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
     textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
 ): TextComponent =
-    textComponent(
+    rememberTextComponent(
         color,
         textSize,
         background,
@@ -117,7 +117,7 @@ public fun axisLabelComponent(
     typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
     textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
 ): TextComponent =
-    textComponent(
+    rememberTextComponent(
         color,
         textSize,
         background,
@@ -150,7 +150,7 @@ public fun axisLineComponent(
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent =
-    lineComponent(
+    rememberLineComponent(
         color = color,
         thickness = thickness,
         dynamicShader = dynamicShader,
@@ -181,7 +181,7 @@ public fun axisLineComponent(
     brush: Brush? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent =
-    lineComponent(
+    rememberLineComponent(
         color = color,
         thickness = thickness,
         dynamicShader = brush?.let(::BrushShader),
@@ -210,7 +210,7 @@ public fun axisTickComponent(
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
 ): LineComponent =
-    lineComponent(
+    rememberLineComponent(
         color = color,
         thickness = thickness,
         dynamicShader = dynamicShader,
@@ -238,7 +238,7 @@ public fun axisTickComponent(
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
 ): LineComponent =
-    lineComponent(
+    rememberLineComponent(
         color = color,
         thickness = thickness,
         dynamicShader = brush?.let(::BrushShader),
@@ -268,7 +268,7 @@ public fun axisGuidelineComponent(
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent =
-    lineComponent(
+    rememberLineComponent(
         color = color,
         thickness = thickness,
         dynamicShader = dynamicShader,

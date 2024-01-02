@@ -69,35 +69,29 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
         return completableDeferred
     }
 
-    private fun getModel(extraStore: ExtraStore? = null) =
+    private fun getModel(extraStore: ExtraStore) =
         if (partials.isEmpty()) {
             null
         } else {
-            val mergedExtraStore = this.extraStore.let { if (extraStore != null) it + extraStore else it }
+            val mergedExtraStore = this.extraStore + extraStore
             cachedModel
-                ?.let { chartModel ->
-                    chartModel.copy(
-                        chartModel.models.map { layerModel -> layerModel.copy(mergedExtraStore) },
-                        mergedExtraStore,
-                    )
+                ?.copy(mergedExtraStore)
+                ?: CartesianChartModel(partials.map { it.complete(mergedExtraStore) }, mergedExtraStore).also {
+                    cachedModel = it
                 }
-                ?: CartesianChartModel(partials.map { it.complete(mergedExtraStore) }, mergedExtraStore)
-                    .also { cachedModel = it }
         }
 
-    /**
-     * Creates an intermediate [CartesianChartModel] for difference animations. [fraction] is the balance between the
-     * initial and target [CartesianChartModel]s.
-     */
-    public suspend fun transformModel(
+    private suspend fun transformModel(
         key: Any,
         fraction: Float,
+        model: CartesianChartModel?,
+        chartValues: ChartValues,
     ) {
         with(updateReceivers[key] ?: return) {
             transform(extraStore, fraction)
-            val internalModel = getModel(extraStore.copy())
+            val transformedModel = model?.copy(this@CartesianChartModelProducer.extraStore + extraStore.copy())
             currentCoroutineContext().ensureActive()
-            onModelCreated(internalModel)
+            onModelCreated(transformedModel, chartValues)
         }
     }
 
@@ -113,12 +107,12 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
     public fun registerForUpdates(
         key: Any,
         cancelAnimation: () -> Unit,
-        startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
+        startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
         prepareForTransformation: (CartesianChartModel?, MutableExtraStore, ChartValues) -> Unit,
         transform: suspend (MutableExtraStore, Float) -> Unit,
         extraStore: MutableExtraStore,
         updateChartValues: (CartesianChartModel?) -> ChartValues,
-        onModelCreated: (CartesianChartModel?) -> Unit,
+        onModelCreated: (CartesianChartModel?, ChartValues) -> Unit,
     ) {
         UpdateReceiver(
             cancelAnimation,
@@ -201,8 +195,8 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
 
     private inner class UpdateReceiver(
         val cancelAnimation: () -> Unit,
-        val startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
-        val onModelCreated: (CartesianChartModel?) -> Unit,
+        val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
+        val onModelCreated: (CartesianChartModel?, ChartValues) -> Unit,
         val extraStore: MutableExtraStore,
         val prepareForTransformation: (CartesianChartModel?, MutableExtraStore, ChartValues) -> Unit,
         val transform: suspend (MutableExtraStore, Float) -> Unit,
@@ -210,8 +204,10 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
     ) {
         fun handleUpdate() {
             cancelAnimation()
-            prepareForTransformation(getModel(), extraStore, updateChartValues(getModel()))
-            startAnimation(::transformModel)
+            val model = getModel(extraStore)
+            val chartValues = updateChartValues(model)
+            prepareForTransformation(model, extraStore, chartValues)
+            startAnimation { key, fraction -> transformModel(key, fraction, model, chartValues) }
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import kotlin.math.max
 /**
  * Houses drawing information for a [PieChart]. [opacity] is the slices’ opacity.
  */
-public class PieDrawingModel(slices: List<SliceInfo>, public val opacity: Float = 1f) :
+public class PieDrawingModel(public val slices: List<SliceInfo>, public val opacity: Float = 1f) :
     DrawingModel<PieDrawingModel.SliceInfo>(slices.toTransformationMap()) {
     override fun transform(
         drawingInfo: List<Map<Float, SliceInfo>>,
@@ -42,6 +42,14 @@ public class PieDrawingModel(slices: List<SliceInfo>, public val opacity: Float 
             }
         return PieDrawingModel(combinedSlices, oldOpacity.lerp(opacity, fraction))
     }
+
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+            other is PieDrawingModel &&
+            opacity == other.opacity &&
+            slices == other.slices
+
+    override fun hashCode(): Int = slices.hashCode() * 31 + opacity.hashCode() * 31
 
     /**
      * Houses positional information for a [PieChart]’s slice.
@@ -73,6 +81,20 @@ public class PieDrawingModel(slices: List<SliceInfo>, public val opacity: Float 
                 labelOpacity = if (labelChanged) interpolateOpacity(fraction) else 1f,
             )
         }
+
+        override fun equals(other: Any?): Boolean =
+            this === other ||
+                other is SliceInfo &&
+                degrees == other.degrees &&
+                label == other.label &&
+                sliceOpacity == other.sliceOpacity &&
+                labelOpacity == other.labelOpacity
+
+        override fun hashCode(): Int =
+            degrees.hashCode() +
+                label.hashCode() * 31 +
+                sliceOpacity.hashCode() * 31 +
+                labelOpacity.hashCode() * 31
     }
 
     private companion object {

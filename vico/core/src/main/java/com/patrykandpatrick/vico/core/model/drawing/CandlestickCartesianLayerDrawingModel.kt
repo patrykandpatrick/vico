@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,15 @@ public class CandlestickCartesianLayerDrawingModel(
         )
     }
 
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+            other is CandlestickCartesianLayerDrawingModel &&
+            entries == other.entries &&
+            zeroY == other.zeroY &&
+            opacity == other.opacity
+
+    override fun hashCode(): Int = entries.hashCode() * 31 + zeroY.hashCode() * 31 + opacity.hashCode() * 31
+
     /**
      * Houses positional information for a [CandlestickCartesianLayer]’s column. TODO
      */
@@ -67,5 +76,16 @@ public class CandlestickCartesianLayerDrawingModel(
                 oldClose.lerp(close, fraction),
             )
         }
+
+        override fun equals(other: Any?): Boolean =
+            this === other ||
+                other is CandleInfo &&
+                low == other.low &&
+                high == other.high &&
+                open == other.open &&
+                close == other.close
+
+        override fun hashCode(): Int =
+            low.hashCode() * 31 + high.hashCode() * 31 + open.hashCode() * 31 + close.hashCode() * 31
     }
 }

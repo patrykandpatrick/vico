@@ -30,10 +30,10 @@ import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.lineComponent
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
@@ -61,7 +61,7 @@ private fun getColumnLayer(verticalAxisPosition: Vertical? = null) =
     rememberColumnCartesianLayer(
         columns =
             listOf(
-                lineComponent(
+                rememberLineComponent(
                     color = Color.Black,
                     thickness = 8.dp,
                     shape = Shapes.pillShape,
@@ -89,26 +89,30 @@ private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
 private val startAxis: Axis<Start>
     @Composable get() =
         rememberStartAxis(
-            label = textComponent(color = Color.Black),
-            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 5) },
+            label = rememberTextComponent(color = Color.Black),
+            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 5 }) },
         )
 
 private val endAxis: Axis<End>
     @Composable get() =
         rememberEndAxis(
-            label = textComponent(color = Color.DarkGray),
-            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = 7) },
+            label = rememberTextComponent(color = Color.DarkGray),
+            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 7 }) },
         )
 
 @Composable
 @Preview("Chart with independent axes", widthDp = 350)
 public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
     CartesianChartHost(
-        chart = rememberCartesianChart(getColumnLayer(Start), getLineLayer(End)),
+        chart =
+            rememberCartesianChart(
+                getColumnLayer(Start),
+                getLineLayer(End),
+                startAxis = startAxis,
+                bottomAxis = rememberBottomAxis(),
+                endAxis = endAxis,
+            ),
         model = model,
-        startAxis = startAxis,
-        bottomAxis = rememberBottomAxis(),
-        endAxis = endAxis,
         modifier = modifier,
     )
 }
@@ -117,11 +121,16 @@ public fun ChartWithIndependentAxes(modifier: Modifier = Modifier) {
 @Preview("Chart with dependent axes", widthDp = 350)
 public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
     CartesianChartHost(
-        chart = rememberCartesianChart(getColumnLayer(), getLineLayer(), persistentMarkers = markerMap),
+        chart =
+            rememberCartesianChart(
+                getColumnLayer(),
+                getLineLayer(),
+                startAxis = startAxis,
+                bottomAxis = rememberBottomAxis(),
+                endAxis = endAxis,
+                persistentMarkers = markerMap,
+            ),
         model = model,
-        startAxis = startAxis,
-        bottomAxis = rememberBottomAxis(),
-        endAxis = endAxis,
         modifier = modifier,
     )
 }
@@ -130,10 +139,14 @@ public fun ChartWithDependentAxes(modifier: Modifier = Modifier) {
 @Preview("Column chart", widthDp = 350)
 public fun ColumnChart(modifier: Modifier = Modifier) {
     CartesianChartHost(
-        chart = rememberCartesianChart(getColumnLayer(), persistentMarkers = markerMap),
+        chart =
+            rememberCartesianChart(
+                getColumnLayer(),
+                startAxis = startAxis,
+                bottomAxis = rememberBottomAxis(),
+                persistentMarkers = markerMap,
+            ),
         model = model,
-        startAxis = startAxis,
-        bottomAxis = rememberBottomAxis(),
         modifier = modifier,
     )
 }
@@ -142,10 +155,14 @@ public fun ColumnChart(modifier: Modifier = Modifier) {
 @Preview("Line chart", widthDp = 350)
 public fun LineChart(modifier: Modifier = Modifier) {
     CartesianChartHost(
-        chart = rememberCartesianChart(getLineLayer(), persistentMarkers = markerMap),
+        chart =
+            rememberCartesianChart(
+                getLineLayer(),
+                startAxis = startAxis,
+                bottomAxis = rememberBottomAxis(),
+                persistentMarkers = markerMap,
+            ),
         model = model,
-        startAxis = startAxis,
-        bottomAxis = rememberBottomAxis(),
         modifier = modifier,
     )
 }

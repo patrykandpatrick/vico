@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,8 +43,8 @@ import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollState
 import com.patrykandpatrick.vico.compose.extension.chartLayout
 import com.patrykandpatrick.vico.compose.extension.chartTouchEvent
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
-import com.patrykandpatrick.vico.compose.layout.getCartesianMeasureContext
-import com.patrykandpatrick.vico.compose.layout.getPreMeasureContext
+import com.patrykandpatrick.vico.compose.layout.rememberCartesianMeasureContext
+import com.patrykandpatrick.vico.compose.layout.rememberPreMeasureContext
 import com.patrykandpatrick.vico.compose.model.collectAsState
 import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.state.component1
@@ -54,16 +54,12 @@ import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.axis.AxisManager
-import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.draw.drawMarker
 import com.patrykandpatrick.vico.core.chart.draw.getAutoZoom
 import com.patrykandpatrick.vico.core.chart.draw.getMaxScrollDistance
-import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
@@ -71,8 +67,6 @@ import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
 import com.patrykandpatrick.vico.core.chart.values.toImmutable
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
-import com.patrykandpatrick.vico.core.layout.VirtualLayout
-import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
@@ -90,19 +84,13 @@ import kotlinx.coroutines.launch
  * @param chart the [CartesianChart].
  * @param modelProducer creates and updates the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
- * @param startAxis the axis displayed at the start of the chart.
- * @param topAxis the axis displayed at the top of the chart.
- * @param endAxis the axis displayed at the end of the chart.
- * @param bottomAxis the axis displayed at the bottom of the chart.
  * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
  * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
- * @param legend an optional legend for the chart.
  * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param diffAnimationSpec the animation spec used for difference animations.
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value. This animation isn’t run in previews.
- * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
  * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
  * a scale factor of 1, an empty space would be visible near the end edge of the chart.
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
@@ -116,18 +104,12 @@ public fun CartesianChartHost(
     chart: CartesianChart,
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
-    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
-    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
-    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
-    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
     marker: Marker? = null,
     markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null,
-    legend: Legend? = null,
     chartScrollSpec: ChartScrollSpec = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
     diffAnimationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
-    fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
@@ -145,16 +127,10 @@ public fun CartesianChartHost(
                 chart = chart,
                 model = model,
                 oldModel = previousModel,
-                startAxis = startAxis,
-                topAxis = topAxis,
-                endAxis = endAxis,
-                bottomAxis = bottomAxis,
                 marker = marker,
                 markerVisibilityChangeListener = markerVisibilityChangeListener,
-                legend = legend,
                 chartScrollSpec = chartScrollSpec,
                 isZoomEnabled = isZoomEnabled,
-                fadingEdges = fadingEdges,
                 autoScaleUp = autoScaleUp,
                 chartScrollState = chartScrollState,
                 horizontalLayout = horizontalLayout,
@@ -173,18 +149,12 @@ public fun CartesianChartHost(
  * @param chart the [CartesianChart].
  * @param model the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
- * @param startAxis the axis displayed at the start of the chart.
- * @param topAxis the axis displayed at the top of the chart.
- * @param endAxis the axis displayed at the end of the chart.
- * @param bottomAxis the axis displayed at the bottom of the chart.
  * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
  * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
- * @param legend an optional legend for the chart.
  * @param chartScrollSpec houses scrolling-related settings.
  * @param isZoomEnabled whether zooming in and out is enabled.
  * @param oldModel the chart’s previous [CartesianChartModel]. This is used to determine whether to perform an automatic
  * scroll.
- * @param fadingEdges applies a horizontal fade to the edges of the chart area for scrollable charts.
  * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
  * a scale factor of 1, an empty space would be visible near the end edge of the chart.
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
@@ -198,17 +168,11 @@ public fun CartesianChartHost(
     chart: CartesianChart,
     model: CartesianChartModel,
     modifier: Modifier = Modifier,
-    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
-    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
-    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
-    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
     marker: Marker? = null,
     markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null,
-    legend: Legend? = null,
     chartScrollSpec: ChartScrollSpec = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
     oldModel: CartesianChartModel? = null,
-    fadingEdges: FadingEdges? = null,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
@@ -223,17 +187,11 @@ public fun CartesianChartHost(
         CartesianChartHostImpl(
             chart = chart,
             model = model,
-            startAxis = startAxis,
-            topAxis = topAxis,
-            endAxis = endAxis,
-            bottomAxis = bottomAxis,
             marker = marker,
             markerVisibilityChangeListener = markerVisibilityChangeListener,
-            legend = legend,
             chartScrollSpec = chartScrollSpec,
             isZoomEnabled = isZoomEnabled,
             oldModel = oldModel,
-            fadingEdges = fadingEdges,
             autoScaleUp = autoScaleUp,
             chartScrollState = chartScrollState,
             horizontalLayout = horizontalLayout,
@@ -246,30 +204,23 @@ public fun CartesianChartHost(
 internal fun CartesianChartHostImpl(
     chart: CartesianChart,
     model: CartesianChartModel,
-    startAxis: AxisRenderer<AxisPosition.Vertical.Start>?,
-    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>?,
-    endAxis: AxisRenderer<AxisPosition.Vertical.End>?,
-    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>?,
     marker: Marker?,
     markerVisibilityChangeListener: MarkerVisibilityChangeListener?,
-    legend: Legend?,
     chartScrollSpec: ChartScrollSpec,
     isZoomEnabled: Boolean,
     oldModel: CartesianChartModel? = null,
-    fadingEdges: FadingEdges?,
     autoScaleUp: AutoScaleUp,
     chartScrollState: ChartScrollState = rememberChartScrollState(),
     horizontalLayout: HorizontalLayout,
     chartValues: ChartValues,
 ) {
-    val axisManager = remember { AxisManager() }
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
     val zoom = remember { mutableFloatStateOf(0f) }
     val wasZoomOverridden = remember { mutableStateOf(false) }
-    val preMeasureContext = getPreMeasureContext()
+    val preMeasureContext = rememberPreMeasureContext()
     val measureContext =
-        getCartesianMeasureContext(
+        rememberCartesianMeasureContext(
             chartScrollSpec.isScrollEnabled,
             bounds,
             horizontalLayout,
@@ -279,10 +230,8 @@ internal fun CartesianChartHostImpl(
     val scrollListener = rememberScrollListener(markerTouchPoint)
     val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }
 
-    axisManager.setAxes(startAxis, topAxis, endAxis, bottomAxis)
     chartScrollState.registerScrollListener(scrollListener)
 
-    val virtualLayout = remember { VirtualLayout(axisManager) }
     val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -301,7 +250,7 @@ internal fun CartesianChartHostImpl(
     Canvas(
         modifier =
             Modifier
-                .chartLayout(preMeasureContext, legend) { DefaultDimens.CHART_HEIGHT.dp.roundToPx() }
+                .chartLayout(preMeasureContext, chart.legend) { DefaultDimens.CHART_HEIGHT.dp.roundToPx() }
                 .chartTouchEvent(
                     setTouchPoint =
                         remember(marker == null) {
@@ -317,27 +266,9 @@ internal fun CartesianChartHostImpl(
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
 
         horizontalDimensions.clear()
-        chart.updateHorizontalDimensions(measureContext, horizontalDimensions, model)
+        chart.prepare(measureContext, model, horizontalDimensions, bounds, marker)
 
-        startAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-        topAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-        endAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-        bottomAxis?.updateHorizontalDimensions(measureContext, horizontalDimensions)
-
-        if (
-            virtualLayout
-                .setBounds(
-                    context = measureContext,
-                    contentBounds = bounds,
-                    chart = chart,
-                    legend = legend,
-                    horizontalDimensions = horizontalDimensions,
-                    marker,
-                )
-                .isEmpty
-        ) {
-            return@Canvas
-        }
+        if (chart.bounds.isEmpty) return@Canvas
 
         var finalZoom = zoom.floatValue
 
@@ -372,19 +303,7 @@ internal fun CartesianChartHostImpl(
                 zoom = finalZoom,
             )
 
-        val count = if (fadingEdges != null) chartDrawContext.saveLayer() else -1
-
-        axisManager.drawBehindChart(chartDrawContext)
         chart.draw(chartDrawContext, model)
-
-        fadingEdges?.apply {
-            applyFadingEdges(chartDrawContext, chart.bounds)
-            chartDrawContext.restoreCanvasToCount(count)
-        }
-
-        axisManager.drawAboveChart(chartDrawContext)
-        chart.drawOverlays(chartDrawContext)
-        legend?.draw(chartDrawContext, chartDrawContext.chartBounds)
 
         if (marker != null) {
             chartDrawContext.drawMarker(

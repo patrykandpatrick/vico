@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,8 @@ package com.patrykandpatrick.vico.core.model
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.extension.mapWithPrevious
 import com.patrykandpatrick.vico.core.extension.orZero
-import com.patrykandpatrick.vico.core.extension.rangeOfOrNull
-import com.patrykandpatrick.vico.core.extension.rangeOfOrNullRanged
+import com.patrykandpatrick.vico.core.extension.rangeOf
+import com.patrykandpatrick.vico.core.extension.rangeOfRanged
 
 /**
  * Stores a [ColumnCartesianLayer]’s data.
@@ -49,8 +49,8 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
     private constructor(series: List<Entry>, extraStore: ExtraStore) {
         val entries = series
-        val xRange = entries.rangeOfOrNull { it.x }.orZero
-        val yRange = entries.rangeOfOrNullRanged { it.yRange }.orZero
+        val xRange = entries.rangeOf { it.x }
+        val yRange = entries.rangeOfRanged { it.yRange }
         this.series = series.mapWithPrevious { previous, current -> TypedEntry(current, previous?.close) }
         this.id = series.hashCode()
         this.minX = xRange.start
@@ -93,6 +93,26 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
             extraStore,
         )
 
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+            other is CandlestickCartesianLayerModel &&
+            series == other.series &&
+            id == other.id &&
+            minX == other.minX &&
+            maxX == other.maxX &&
+            minY == other.minY &&
+            maxY == other.maxY &&
+            xDeltaGcd == other.xDeltaGcd
+
+    override fun hashCode(): Int =
+        series.hashCode() +
+            31 * id.hashCode() +
+            31 * minX.hashCode() +
+            31 * maxX.hashCode() +
+            31 * minY.hashCode() +
+            31 * maxY.hashCode() +
+            31 * xDeltaGcd.hashCode()
+
     /**
      * TODO
      */
@@ -116,6 +136,19 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
          */
         public val yRange: ClosedFloatingPointRange<Float>
             get() = minOf(low, open, close)..maxOf(high, open, close)
+
+        override fun equals(other: Any?): Boolean =
+            this === other || other is Entry && x == other.x && low == other.low && high == other.high &&
+                open == other.open && close == other.close
+
+        override fun hashCode(): Int {
+            var result = x.hashCode()
+            result = 31 * result + low.hashCode()
+            result = 31 * result + high.hashCode()
+            result = 31 * result + open.hashCode()
+            result = 31 * result + close.hashCode()
+            return result
+        }
     }
 
     public open class TypedEntry internal constructor(
@@ -181,6 +214,11 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
                     )
             }
         }
+
+        override fun equals(other: Any?): Boolean =
+            this === other || other is TypedEntry && super.equals(other) && type == other.type
+
+        override fun hashCode(): Int = 31 * super.hashCode() + type.hashCode()
     }
 
     /**

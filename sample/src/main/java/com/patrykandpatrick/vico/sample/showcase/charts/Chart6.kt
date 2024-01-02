@@ -27,8 +27,8 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
+import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
@@ -74,13 +74,13 @@ private fun ComposeChart6(modelProducer: CartesianChartModelProducer) {
                                 )
                             }
                         },
-                        mergeMode = ColumnCartesianLayer.MergeMode.Grouped,
+                        mergeMode = { ColumnCartesianLayer.MergeMode.Grouped },
                     ),
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
                     decorations = remember(thresholdLine) { listOf(thresholdLine) },
                 ),
             modelProducer = modelProducer,
-            startAxis = rememberStartAxis(),
-            bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -97,7 +97,8 @@ private fun ViewChart6(modelProducer: CartesianChartModelProducer) {
             chart?.setDecorations(decorations)
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (bottomAxis as? HorizontalAxis<AxisPosition.Horizontal.Bottom>)?.valueFormatter = bottomAxisValueFormatter
+            (chart?.bottomAxis as HorizontalAxis<AxisPosition.Horizontal.Bottom>).valueFormatter =
+                bottomAxisValueFormatter
             this.marker = marker
         }
     }
@@ -106,14 +107,14 @@ private fun ViewChart6(modelProducer: CartesianChartModelProducer) {
 @Composable
 private fun rememberThresholdLine(): ThresholdLine {
     val label =
-        textComponent(
+        rememberTextComponent(
             color = Color.Black,
-            background = shapeComponent(Shapes.rectShape, color4),
+            background = rememberShapeComponent(Shapes.rectShape, color4),
             padding = thresholdLineLabelPadding,
             margins = thresholdLineLabelMargins,
             typeface = Typeface.MONOSPACE,
         )
-    val line = shapeComponent(color = thresholdLineColor)
+    val line = rememberShapeComponent(color = thresholdLineColor)
     return remember(label, line) {
         ThresholdLine(thresholdRange = thresholdLineValueRange, labelComponent = label, lineComponent = line)
     }

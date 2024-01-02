@@ -106,6 +106,6 @@ public fun columnCartesianLayer(
         columns = columns,
         spacingDp = spacingDp,
         innerSpacingDp = innerSpacingDp,
-        mergeMode = mergeMode,
+        mergeMode = { mergeMode },
     )
 }

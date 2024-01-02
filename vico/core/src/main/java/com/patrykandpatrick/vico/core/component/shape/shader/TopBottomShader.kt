@@ -26,7 +26,7 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
  * Splits the shaded area into two parts and applies two other [DynamicShader]s, [topShader] and [bottomShader].
- * [splitY] expresses the distance of the split from the bottom of the shaded area as a fraction of the area’s height.
+ * [splitY] expresses the distance of the split from the top of the shaded area as a fraction of the area’s height.
  */
 public class TopBottomShader(
     public var topShader: DynamicShader,

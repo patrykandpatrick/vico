@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -138,7 +138,7 @@ public open class CandlestickCartesianLayer(
         val zeroLinePosition = (bounds.bottom + zeroLineYFraction * bounds.height()).round
         val minRealBodyHeight = minRealBodyHeightDp.pixels
 
-        model.series.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { index, entry ->
+        model.series.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { index, entry, _ ->
             candle = config.getCandle(entry.type)
             val candleInfo = drawingModel?.entries?.get(entry.x)
 

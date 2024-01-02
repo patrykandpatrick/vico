@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.context.MutableMeasureContext
+import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
 import com.patrykandpatrick.vico.core.legend.Legend
@@ -39,9 +40,9 @@ import com.patrykandpatrick.vico.core.model.MutableExtraStore
 import com.patrykandpatrick.vico.views.extension.defaultColors
 import com.patrykandpatrick.vico.views.extension.density
 import com.patrykandpatrick.vico.views.extension.horizontalPadding
-import com.patrykandpatrick.vico.views.extension.isAttachedToWindowCompat
 import com.patrykandpatrick.vico.views.extension.isLtr
 import com.patrykandpatrick.vico.views.extension.specSize
+import com.patrykandpatrick.vico.views.extension.start
 import com.patrykandpatrick.vico.views.extension.verticalPadding
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
@@ -49,11 +50,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.launch
 
 /**
  * Displays a [CartesianChart].
  */
-public abstract class BaseChartView
+public abstract class BaseChartView<Model>
     @JvmOverloads
     constructor(
         context: Context,
@@ -70,11 +73,16 @@ public abstract class BaseChartView
                 spToPx = context::spToPx,
             )
 
+        /**
+         * The chart model.
+         */
+        public var model: Model? = null
+            protected set
+
         protected val animator: ValueAnimator =
             ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
                 duration = Animation.DIFF_DURATION.toLong()
                 interpolator = FastOutSlowInInterpolator()
-                addUpdateListener { transformModelForAnimation(it.animatedFraction) }
             }
 
         protected val extraStore: MutableExtraStore = MutableExtraStore()
@@ -103,11 +111,9 @@ public abstract class BaseChartView
         public var dispatcher: CoroutineDispatcher = Dispatchers.Default
 
         /**
-         * The last measured height of the [legend].
+         * The last measured height of q [Legend].
          */
         public var measuredLegendHeight: Int = 0
-
-        protected abstract fun transformModelForAnimation(fraction: Float)
 
         override fun onAttachedToWindow() {
             super.onAttachedToWindow()
@@ -121,16 +127,6 @@ public abstract class BaseChartView
             animator.cancel()
             isAnimationRunning = false
         }
-
-        /**
-         * The legend for this chart.
-         */
-        public var legend: Legend? = null
-            set(value) {
-                if (field === value) return
-                field = value
-                if (isAttachedToWindowCompat) requestLayout()
-            }
 
         /**
          * The color of elevation overlays, which are applied to [ShapeComponent]s that cast shadows.
@@ -178,8 +174,7 @@ public abstract class BaseChartView
             heightMeasureSpec: Int,
         ) {
             val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
-            measuredLegendHeight = legend?.getHeight(measureContext, width.toFloat() - horizontalPadding)
-                ?.toInt() ?: 0
+            measuredLegendHeight = getLegendHeight(measureContext, width.toFloat() - horizontalPadding)
             val defaultHeight =
                 getChartDesiredHeight(widthMeasureSpec, heightMeasureSpec) + measuredLegendHeight +
                     verticalPadding
@@ -201,6 +196,45 @@ public abstract class BaseChartView
                 right = width - paddingRight,
                 bottom = height - paddingBottom,
             )
+        }
+
+        protected abstract fun getLegendHeight(
+            context: PreMeasureContext,
+            availableWidth: Float,
+        ): Int
+
+        protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
+            if (model != null || runInitialAnimation) {
+                handler?.post {
+                    isAnimationRunning = true
+                    animator.start { fraction ->
+                        when {
+                            !isAnimationRunning -> return@start
+                            !isAnimationFrameGenerationRunning -> {
+                                isAnimationFrameGenerationRunning = true
+                                animationFrameJob =
+                                    coroutineScope?.launch(dispatcher) {
+                                        transformModel(this@BaseChartView, fraction)
+                                        isAnimationFrameGenerationRunning = false
+                                    }
+                            }
+                            fraction == 1f -> {
+                                finalAnimationFrameJob =
+                                    coroutineScope?.launch(dispatcher) {
+                                        animationFrameJob?.cancelAndJoin()
+                                        transformModel(this@BaseChartView, fraction)
+                                        isAnimationFrameGenerationRunning = false
+                                    }
+                            }
+                        }
+                    }
+                }
+            } else {
+                finalAnimationFrameJob =
+                    coroutineScope?.launch(dispatcher) {
+                        transformModel(this@BaseChartView, Animation.range.endInclusive)
+                    }
+            }
         }
 
         protected abstract fun getChartDesiredHeight(
