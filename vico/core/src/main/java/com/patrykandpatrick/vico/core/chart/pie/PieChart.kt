@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.radius
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.set
+import com.patrykandpatrick.vico.core.formatter.PieValueFormatter
 import com.patrykandpatrick.vico.core.math.radians
 import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
@@ -72,6 +73,11 @@ public open class PieChart(
     init {
         checkParameters()
     }
+
+    /**
+     * The [PieValueFormatter] used to format the values of the pie chart.
+     */
+    public var valueFormatter: PieValueFormatter = PieValueFormatter.Default
 
     override val bounds: RectF = RectF()
 
@@ -120,7 +126,10 @@ public open class PieChart(
 
                     val sweepAngle = entry.value / model.sumOfValues * FULL_DEGREES
 
-                    ifNotNull(slice.label, entry.label) { labelComponent, label ->
+                    ifNotNull(
+                        slice.label,
+                        valueFormatter.formatValue(index, entry.value, model),
+                    ) { labelComponent, label ->
                         oval.set(
                             left = bounds.centerX() - ovalRadius,
                             top = bounds.centerY() - ovalRadius,
@@ -200,7 +209,7 @@ public open class PieChart(
                     startAngle = drawAngle,
                     sweepAngle = sweepAngle,
                     holeRadius = innerRadius,
-                    label = sliceInfo?.label ?: entry?.label,
+                    label = sliceInfo?.label ?: entry?.formattedValue(index, model),
                     spacingPath = spacingPathBuilder,
                     sliceOpacity = sliceInfo?.sliceOpacity ?: 1f,
                     labelOpacity = sliceInfo?.labelOpacity ?: 1f,
@@ -301,6 +310,11 @@ public open class PieChart(
             ?: extraStore.remove(drawingModelKey)
     }
 
+    private fun PieModel.Entry.formattedValue(
+        index: Int,
+        model: PieModel,
+    ): CharSequence = valueFormatter.formatValue(index, value, model)
+
     private fun PieModel.toDrawingModel(customSize: Int?): PieDrawingModel =
         PieDrawingModel(
             slices =
@@ -308,7 +322,7 @@ public open class PieChart(
                     val entry = entries.getOrNull(index)
                     PieDrawingModel.SliceInfo(
                         degrees = entry?.value?.let { it / sumOfValues * FULL_DEGREES } ?: 0f,
-                        label = entry?.label,
+                        label = entry?.formattedValue(index, this),
                     )
                 },
         )

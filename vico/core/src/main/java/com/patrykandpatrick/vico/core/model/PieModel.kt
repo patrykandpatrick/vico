@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,16 +70,15 @@ public open class PieModel {
      */
     public open class Entry(
         public open val value: Float,
-        public open val label: CharSequence? = null,
     ) {
         override fun equals(other: Any?): Boolean =
             when {
                 this === other -> true
                 other !is Entry -> false
-                else -> value == other.value && label == other.label
+                else -> value == other.value
             }
 
-        override fun hashCode(): Int = 31 * value.hashCode() + (label?.hashCode() ?: 0)
+        override fun hashCode(): Int = value.hashCode()
     }
 
     /**

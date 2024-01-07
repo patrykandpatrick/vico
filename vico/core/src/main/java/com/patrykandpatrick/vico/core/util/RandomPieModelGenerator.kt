@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.model.ExtraStore
 import com.patrykandpatrick.vico.core.model.PieModel
-import java.util.UUID
 
 /**
  * Generates randomized [CartesianLayerModel.Partial]s and [CartesianChartModel]s.
@@ -47,8 +46,6 @@ public object RandomPieModelGenerator {
                     add(
                         PieModel.Entry(
                             value = valueRange.random().toFloat(),
-                            // TODO nice labels
-                            label = UUID.randomUUID().toString().subSequence(0, 4),
                         ),
                     )
                 }

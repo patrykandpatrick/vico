@@ -42,6 +42,7 @@ import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.draw.drawContext
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
+import com.patrykandpatrick.vico.core.formatter.PieValueFormatter
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.model.PieModel
@@ -56,6 +57,12 @@ import com.patrykandpatrick.vico.core.model.PieModel
  * @param outerSize defines the size of the chart.
  * @param innerSize defines the size of the hole in the middle of the chart.
  * @param startAngle defines the angle at which the first slice starts.
+ * @param valueFormatter formats the values of the pie chart.
+ * @param legend the legend for the chart.
+ * @param diffAnimationSpec the animation spec used for difference animations.
+ * @param elevationOverlayColor the color to use for the elevation overlay.
+ * @param runInitialAnimation whether to run the initial animation.
+ * @param onEmptyState the composable to display when the chart is empty.
  */
 @Composable
 public fun PieChartHost(
@@ -66,6 +73,7 @@ public fun PieChartHost(
     outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
     innerSize: Size.InnerSize = currentChartStyle.pieChart.innerSize,
     startAngle: Float = currentChartStyle.pieChart.startAngle,
+    valueFormatter: PieValueFormatter = PieValueFormatter.Default,
     legend: Legend? = null,
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
@@ -87,6 +95,7 @@ public fun PieChartHost(
             this.innerSize = innerSize
             this.outerSize = outerSize
             this.startAngle = startAngle
+            this.valueFormatter = valueFormatter
         }
 
     val model =
@@ -109,14 +118,6 @@ public fun PieChartHost(
     }
 }
 
-/**
- * Draws a pie chart.
- *
- * @param model the [PieModel] containing data to render the pie chart.
- * @param pieChart TODO,
- * @param modifier the modifier to be applied to the chart.
- * @param elevationOverlayColor the color to use for the elevation overlay.
- */
 @Composable
 internal fun PieChartHost(
     model: PieModel,

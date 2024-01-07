@@ -26,6 +26,7 @@ import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.draw.drawContext
 import com.patrykandpatrick.vico.core.extension.spToPx
+import com.patrykandpatrick.vico.core.formatter.PieValueFormatter
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.model.PieModel
@@ -109,6 +110,13 @@ public open class PieChartView
             get() = pieChart.startAngle
             set(value) {
                 pieChart.startAngle = value
+                invalidate()
+            }
+
+        public var valueFormatter: PieValueFormatter
+            get() = pieChart.valueFormatter
+            set(value) {
+                pieChart.valueFormatter = value
                 invalidate()
             }
 
@@ -239,10 +247,10 @@ public open class PieChartView
             @Suppress("MagicNumber")
             internal val sampleModel =
                 PieModel.build(
-                    PieModel.Entry(value = 1f, label = "One"),
-                    PieModel.Entry(value = 2f, label = "Two"),
-                    PieModel.Entry(value = 3f, label = "Three"),
-                    PieModel.Entry(value = 1f, label = "Four"),
+                    PieModel.Entry(value = 1f),
+                    PieModel.Entry(value = 2f),
+                    PieModel.Entry(value = 3f),
+                    PieModel.Entry(value = 1f),
                 )
         }
     }
