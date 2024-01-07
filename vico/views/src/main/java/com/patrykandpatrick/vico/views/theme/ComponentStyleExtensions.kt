@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -144,64 +144,54 @@ internal fun TypedArray.getLineSpec(
     defaultColor: Int = context.defaultColors.entity1Color.toInt(),
 ): LineCartesianLayer.LineSpec {
     val positiveLineColor =
+        getColor(R.styleable.LineSpec_positiveColor, getColor(R.styleable.LineSpec_color, defaultColor))
+
+    val negativeLineColor =
+        getColor(R.styleable.LineSpec_negativeColor, getColor(R.styleable.LineSpec_color, defaultColor))
+
+    val positiveGradientTopColor =
         getColor(
-            R.styleable.LineSpec_positiveColor,
-            getColor(R.styleable.LineSpec_color, defaultColor),
+            R.styleable.LineSpec_positiveGradientTopColor,
+            getColor(
+                R.styleable.LineSpec_gradientTopColor,
+                positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+            ),
         )
 
-    val negativeLineColor = getColorExtended(R.styleable.LineSpec_negativeColor)
-
-    val lineShader =
-        if (hasValue(R.styleable.LineSpec_negativeColor)) {
-            TopBottomShader(ColorShader(positiveLineColor), ColorShader(negativeLineColor))
-        } else {
-            ColorShader(positiveLineColor)
-        }
-
-    val positiveShader =
-        if (
-            hasValue(R.styleable.LineSpec_gradientTopColor) ||
-            hasValue(R.styleable.LineSpec_gradientBottomColor) ||
-            hasValue(R.styleable.LineSpec_positiveGradientTopColor) ||
-            hasValue(R.styleable.LineSpec_positiveGradientBottomColor)
-        ) {
-            val gradientTopColor =
-                getColorExtended(
-                    index = R.styleable.LineSpec_positiveGradientTopColor,
-                    defaultColor = getColorExtended(R.styleable.LineSpec_gradientTopColor),
-                )
-            val gradientBottomColor =
-                getColorExtended(
-                    index = R.styleable.LineSpec_positiveGradientBottomColor,
-                    defaultColor = getColorExtended(R.styleable.LineSpec_gradientBottomColor),
-                )
-
-            DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
-        } else {
-            DynamicShaders.verticalGradient(
-                positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+    val positiveGradientBottomColor =
+        getColor(
+            R.styleable.LineSpec_positiveGradientBottomColor,
+            getColor(
+                R.styleable.LineSpec_gradientBottomColor,
                 positiveLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
-            )
-        }
+            ),
+        )
 
-    val negativeShader =
-        if (
-            hasValue(R.styleable.LineSpec_negativeGradientTopColor) ||
-            hasValue(R.styleable.LineSpec_negativeGradientBottomColor)
-        ) {
-            val gradientTopColor = getColorExtended(R.styleable.LineSpec_negativeGradientTopColor)
-            val gradientBottomColor = getColorExtended(R.styleable.LineSpec_negativeGradientBottomColor)
-
-            DynamicShaders.verticalGradient(gradientTopColor, gradientBottomColor)
-        } else {
-            DynamicShaders.verticalGradient(
+    val negativeGradientTopColor =
+        getColor(
+            R.styleable.LineSpec_negativeGradientTopColor,
+            getColor(
+                R.styleable.LineSpec_gradientBottomColor,
                 negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_END),
+            ),
+        )
+
+    val negativeGradientBottomColor =
+        getColor(
+            R.styleable.LineSpec_negativeGradientBottomColor,
+            getColor(
+                R.styleable.LineSpec_gradientTopColor,
                 negativeLineColor.copyColor(alpha = DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-            )
-        }
+            ),
+        )
 
     return LineCartesianLayer.LineSpec(
-        shader = lineShader,
+        shader =
+            if (positiveLineColor != negativeLineColor) {
+                TopBottomShader(ColorShader(positiveLineColor), ColorShader(negativeLineColor))
+            } else {
+                ColorShader(positiveLineColor)
+            },
         point =
             getNestedTypedArray(
                 context = context,
@@ -220,7 +210,11 @@ internal fun TypedArray.getLineSpec(
                 index = R.styleable.LineSpec_lineThickness,
                 defaultValue = DefaultDimens.LINE_THICKNESS,
             ),
-        backgroundShader = TopBottomShader(positiveShader, negativeShader),
+        backgroundShader =
+            TopBottomShader(
+                DynamicShaders.verticalGradient(positiveGradientTopColor, positiveGradientBottomColor),
+                DynamicShaders.verticalGradient(negativeGradientTopColor, negativeGradientBottomColor),
+            ),
         dataLabel =
             if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {
                 getNestedTypedArray(
