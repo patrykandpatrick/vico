@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,9 +74,9 @@ public open class InsideSliceLabel(
                     angle = angle.radiansDouble,
                 )
 
-            val minWidth = textComponent.getTextBounds(this, ELLIPSIS).width()
+            var minWidth = textComponent.getTextBounds(this, ELLIPSIS).width()
             val textBounds = textComponent.getTextBounds(this, label)
-
+            minWidth = minWidth.coerceAtMost(textBounds.width())
             textBounds.offset(
                 textX - textBounds.width().toInt().half,
                 textY - textBounds.height().toInt().half,
