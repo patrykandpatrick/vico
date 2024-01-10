@@ -28,6 +28,7 @@ composeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "
 composeFoundation = { group = "androidx.compose.foundation", name = "foundation" }
 composeMaterial = { group = "androidx.compose.material", name = "material" }
 composeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
+composePreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 composeUI = { group = "androidx.compose.ui", name = "ui" }
 composeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeViewBinding = { group = "androidx.compose.ui", name = "ui-viewbinding" }

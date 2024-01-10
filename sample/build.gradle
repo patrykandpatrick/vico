@@ -67,8 +67,8 @@ dependencies {
     implementation libs.appcompat
     implementation libs.composeMaterial
     implementation libs.composeMaterial3
+    implementation libs.composePreview
     implementation libs.composeUI
-    implementation libs.composeUITooling
     implementation libs.composeViewBinding
     implementation libs.coroutinesCore
     implementation libs.kotlinStdLib
@@ -76,6 +76,7 @@ dependencies {
     implementation libs.material
     implementation libs.systemUIController
     implementation libs.viewModelCompose
+    debugImplementation libs.composeUITooling
     testImplementation libs.JUnit
     testImplementation libs.JUnitExt
     testImplementation libs.kotlinTest
