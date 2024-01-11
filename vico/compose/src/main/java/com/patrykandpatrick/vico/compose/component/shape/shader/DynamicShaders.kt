@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,19 @@
 
 package com.patrykandpatrick.vico.compose.component.shape.shader
 
+import android.graphics.LinearGradient
 import android.graphics.Shader
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import com.patrykandpatrick.vico.core.component.Component
+import com.patrykandpatrick.vico.core.component.shape.shader.CacheableDynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.ColorShader
 import com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.context.DrawContext
 
 /**
  * Creates a [ComponentShader] out of the provided [component].
@@ -63,3 +67,55 @@ public fun DynamicShaders.fromBrush(brush: Brush): BrushShader = BrushShader(bru
  * Creates a [ColorShader].
  */
 public fun DynamicShaders.color(color: Color): ColorShader = ColorShader(color.toArgb())
+
+/**
+ * Creates a [DynamicShader] with a horizontal gradient. [colors] houses the gradient colors, and [positions] specifies
+ * the color offsets (between 0 and 1), with `null` producing an even distribution.
+ */
+public fun DynamicShaders.horizontalGradient(
+    colors: Array<Color>,
+    positions: FloatArray? = null,
+): DynamicShader =
+    object : CacheableDynamicShader() {
+        override fun createShader(
+            context: DrawContext,
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ) = LinearGradient(
+            left,
+            top,
+            right,
+            top,
+            IntArray(colors.size) { colors[it].toArgb() },
+            positions,
+            Shader.TileMode.CLAMP,
+        )
+    }
+
+/**
+ * Creates a [DynamicShader] with a vertical gradient. [colors] houses the gradient colors, and [positions] specifies
+ * the color offsets (between 0 and 1), with `null` producing an even distribution.
+ */
+public fun DynamicShaders.verticalGradient(
+    colors: Array<Color>,
+    positions: FloatArray? = null,
+): DynamicShader =
+    object : CacheableDynamicShader() {
+        override fun createShader(
+            context: DrawContext,
+            left: Float,
+            top: Float,
+            right: Float,
+            bottom: Float,
+        ) = LinearGradient(
+            left,
+            top,
+            left,
+            bottom,
+            IntArray(colors.size) { colors[it].toArgb() },
+            positions,
+            Shader.TileMode.CLAMP,
+        )
+    }

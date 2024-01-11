@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
                 lineSpec(
                     shader = DynamicShaders.color(Color.DarkGray),
                     backgroundShader =
-                        verticalGradient(
+                        DynamicShaders.verticalGradient(
                             arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f)),
                         ),
                 ),

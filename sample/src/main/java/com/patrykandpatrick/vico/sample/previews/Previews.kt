@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,7 +79,8 @@ public fun ColumnChartCard(): Unit =
                                     color = colors.primary,
                                     thickness = 8.dp,
                                     shape = RoundedCornerShape(4.dp),
-                                    dynamicShader = verticalGradient(arrayOf(colors.primary, colors.secondary)),
+                                    dynamicShader =
+                                        DynamicShaders.verticalGradient(arrayOf(colors.primary, colors.secondary)),
                                 ),
                             ),
                         ),

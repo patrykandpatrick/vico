@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,14 +71,14 @@ public fun LineChartDark() {
                             lineSpec(
                                 shader = DynamicShaders.color(yellow),
                                 backgroundShader =
-                                    verticalGradient(
+                                    DynamicShaders.verticalGradient(
                                         arrayOf(yellow.copy(alpha = 0.5f), yellow.copy(alpha = 0f)),
                                     ),
                             ),
                             lineSpec(
                                 shader = DynamicShaders.color(pink),
                                 backgroundShader =
-                                    verticalGradient(
+                                    DynamicShaders.verticalGradient(
                                         arrayOf(pink.copy(alpha = 0.5f), pink.copy(alpha = 0f)),
                                     ),
                             ),
@@ -138,7 +138,7 @@ public fun ComposedLineChart() {
                         lineSpec(
                             shader = DynamicShaders.color(Color.Blue),
                             backgroundShader =
-                                verticalGradient(
+                                DynamicShaders.verticalGradient(
                                     arrayOf(Color.Blue.copy(alpha = 0.4f), Color.Blue.copy(alpha = 0f)),
                                 ),
                         ),
