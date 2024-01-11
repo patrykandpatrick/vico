@@ -52,8 +52,6 @@ internal fun Float.gcdWith(other: Float): Float =
         threshold = 10f.pow(n = -FLOAT_GCD_DECIMALS - 1),
     ).round(decimals = FLOAT_GCD_DECIMALS)
 
-internal fun Float.toPrettyString(): String = if (this < 0f) "−${-this}" else this.toString()
-
 internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>) =
     this == range.start || this == range.endInclusive
 

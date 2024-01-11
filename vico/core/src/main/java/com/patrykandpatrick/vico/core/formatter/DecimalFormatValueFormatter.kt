@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,15 +26,10 @@ import java.text.DecimalFormat
  */
 public open class DecimalFormatValueFormatter(private val decimalFormat: DecimalFormat) : ValueFormatter {
     /**
-     * Creates a [DecimalFormatValueFormatter] using the default pattern.
-     */
-    public constructor() : this(DEF_FORMAT)
-
-    /**
      * Creates a [DecimalFormatValueFormatter] that will format values based on the given [pattern] and [roundingMode].
      */
     public constructor(
-        pattern: String,
+        pattern: String = DEF_FORMAT,
         roundingMode: RoundingMode = RoundingMode.HALF_UP,
     ) : this(getDecimalFormat(pattern, roundingMode))
 

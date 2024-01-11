@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
-import com.patrykandpatrick.vico.core.axis.formatter.DefaultAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -86,7 +85,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     /**
      * The [AxisValueFormatter] for the axis.
      */
-    public var valueFormatter: AxisValueFormatter<Position> = DefaultAxisValueFormatter()
+    public var valueFormatter: AxisValueFormatter<Position> = DecimalFormatAxisValueFormatter()
 
     /**
      * The rotation of axis labels (in degrees).
