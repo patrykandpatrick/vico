@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,7 @@ import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.legend.Legend
 
-/**
- * [VirtualLayout] measures and lays out the components of a chart.
- *
- * @param axisManager the [AxisManager] that manages the associated chart’s axes.
- */
-public open class VirtualLayout(
+internal class VirtualLayout(
     private val axisManager: AxisManager,
 ) {
     private val tempInsetters = ArrayList<ChartInsetter>(TEMP_INSETTERS_INITIAL_SIZE)
@@ -52,7 +47,7 @@ public open class VirtualLayout(
      *
      * @return the bounds applied to the chart.
      */
-    public open fun setBounds(
+    fun setBounds(
         context: MeasureContext,
         contentBounds: RectF,
         chart: CartesianChart,

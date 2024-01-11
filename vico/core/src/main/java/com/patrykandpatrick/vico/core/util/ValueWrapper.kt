@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,18 @@ package com.patrykandpatrick.vico.core.util
 import androidx.annotation.RestrictTo
 import kotlin.reflect.KProperty
 
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class ValueWrapper<T>(public var value: T)
 
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public operator fun <T> ValueWrapper<T>.getValue(
     thisObj: Any?,
     property: KProperty<*>,
 ): T = value
 
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public operator fun <T> ValueWrapper<T>.setValue(
     thisObj: Any?,
@@ -37,8 +40,10 @@ public operator fun <T> ValueWrapper<T>.setValue(
     this.value = value
 }
 
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public operator fun <T> ValueWrapper<T>.component1(): T = value
 
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public operator fun <T> ValueWrapper<T>.component2(): (T) -> Unit = { value = it }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.extension
 
+import androidx.annotation.RestrictTo
+
 private const val ALPHA_BIT_SHIFT = 24
 private const val RED_BIT_SHIFT = 16
 private const val GREEN_BIT_SHIFT = 8
@@ -23,9 +25,8 @@ private const val BLUE_BIT_SHIFT = 0
 private const val COLOR_MASK = 0xff
 internal const val MAX_HEX_VALUE = 255f
 
-/**
- * Copies this color, updating any or all of the color channels.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Int.copyColor(
     alpha: Int = this.extractColorChannel(ALPHA_BIT_SHIFT),
     red: Int = this.extractColorChannel(RED_BIT_SHIFT),
@@ -37,9 +38,8 @@ public fun Int.copyColor(
         (green shl GREEN_BIT_SHIFT) or
         (blue shl BLUE_BIT_SHIFT)
 
-/**
- * Copies this color, updating any or all of the color channels.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun Int.copyColor(
     alpha: Float = this.extractColorChannel(ALPHA_BIT_SHIFT) / MAX_HEX_VALUE,
     red: Float = this.extractColorChannel(RED_BIT_SHIFT) / MAX_HEX_VALUE,
@@ -53,17 +53,7 @@ public fun Int.copyColor(
         blue = (blue * MAX_HEX_VALUE).toInt(),
     )
 
-/**
- * The hex code for this color.
- */
-@Suppress("ImplicitDefaultLocale")
-public val Int.colorHex: String
-    get() = String.format("#%08X", 0xFFFFFFFF and this.toLong())
-
-/**
- * The value of the alpha channel of this color.
- */
-public val Int.alpha: Int
+internal val Int.alpha: Int
     get() = extractColorChannel(ALPHA_BIT_SHIFT)
 
 private fun Int.extractColorChannel(bitShift: Int): Int = this shr bitShift and COLOR_MASK

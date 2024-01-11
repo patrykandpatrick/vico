@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,77 +17,28 @@
 package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.collections.cacheInList
 import com.patrykandpatrick.vico.core.context.MeasureContext
 
-/**
- * Manages a chart’s axes, setting their bounds and drawing them.
- *
- * @see AxisRenderer
- */
-public open class AxisManager {
+internal class AxisManager {
     internal val axisCache = ArrayList<AxisRenderer<*>>(MAX_AXIS_COUNT)
 
-    /**
-     * The [AxisRenderer] for the start axis.
-     */
-    public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by cacheInList()
+    var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by cacheInList()
+    var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by cacheInList()
+    var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by cacheInList()
+    var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by cacheInList()
 
-    /**
-     * The [AxisRenderer] for the top axis.
-     */
-    public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by cacheInList()
-
-    /**
-     * The [AxisRenderer] for the end axis.
-     */
-    public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by cacheInList()
-
-    /**
-     * The [AxisRenderer] for the bottom axis.
-     */
-    public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by cacheInList()
-
-    /**
-     * Adds the [AxisRenderer]s controlled by this [AxisManager] to the given [MutableList] of [ChartInsetter]s.
-     *
-     * @see ChartInsetter
-     */
-    public fun addInsetters(destination: MutableList<ChartInsetter>) {
+    fun addInsetters(destination: MutableList<ChartInsetter>) {
         startAxis?.let(destination::add)
         topAxis?.let(destination::add)
         endAxis?.let(destination::add)
         bottomAxis?.let(destination::add)
     }
 
-    /**
-     * Sets the axes managed by this [AxisManager].
-     */
-    public fun setAxes(
-        startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = this.startAxis,
-        topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = this.topAxis,
-        endAxis: AxisRenderer<AxisPosition.Vertical.End>? = this.endAxis,
-        bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = this.bottomAxis,
-    ) {
-        this.startAxis = startAxis
-        this.topAxis = topAxis
-        this.endAxis = endAxis
-        this.bottomAxis = bottomAxis
-    }
-
-    /**
-     * Sets each axis’s bounds.
-     *
-     * @param measureContext holds data used for component measurements.
-     * @param contentBounds the bounds in which the content of the chart should be drawn.
-     * @param insets the final insets, as specified by the associated chart’s [ChartInsetter]s. In order to be drawn
-     * properly, axes should take these insets into account while setting their bounds.
-     */
-    public fun setAxesBounds(
+    fun setAxesBounds(
         measureContext: MeasureContext,
         contentBounds: RectF,
         chartBounds: RectF,
@@ -193,35 +144,19 @@ public open class AxisManager {
         bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
     }
 
-    /**
-     * Called before the associated [CartesianChart] is drawn. This forwards a call to all [Axis] subclasses that causes
-     * them to be drawn behind the chart.
-     *
-     * @param context holds the information necessary to draw the axes.
-     *
-     * @see Axis.drawBehindChart
-     */
-    public fun drawBehindChart(context: ChartDrawContext) {
+    fun drawBehindChart(context: ChartDrawContext) {
         axisCache.forEach { axis ->
             axis.drawBehindChart(context)
         }
     }
 
-    /**
-     * Called after the associated [CartesianChart] is drawn. This forwards a call to all [Axis] subclasses that causes
-     * them to be drawn above the chart.
-     *
-     * @param context holds the information necessary to draw the axes.
-     *
-     * @see Axis.drawAboveChart
-     */
-    public fun drawAboveChart(context: ChartDrawContext) {
+    fun drawAboveChart(context: ChartDrawContext) {
         axisCache.forEach { axis ->
             axis.drawAboveChart(context)
         }
     }
 
-    public companion object {
-        private const val MAX_AXIS_COUNT = 4
+    private companion object {
+        const val MAX_AXIS_COUNT = 4
     }
 }

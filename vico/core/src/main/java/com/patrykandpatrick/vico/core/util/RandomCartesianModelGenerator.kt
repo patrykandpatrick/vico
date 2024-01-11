@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,11 @@ import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
  * Generates randomized [CartesianLayerModel.Partial]s and [CartesianChartModel]s.
  */
 public object RandomCartesianModelGenerator {
+    /** @suppress */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val defaultX: IntProgression = 0..96
 
+    /** @suppress */
     @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val defaultY: ClosedFloatingPointRange<Float> = 2f..20f
 

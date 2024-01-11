@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,7 @@
 
 package com.patrykandpatrick.vico.core.extension
 
-/**
- * Updates the value of the field with the specified name to the given value.
- * This involves temporarily setting the `accessible` flag to `true`.
- */
-public inline fun <reified T, V> T.setFieldValue(
+internal inline fun <reified T, V> T.setFieldValue(
     fieldName: String,
     value: V,
 ) {

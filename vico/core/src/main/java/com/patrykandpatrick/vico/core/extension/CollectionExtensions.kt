@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,85 +30,16 @@ internal fun <T> List<List<T>>.copy() = map { it.toList() }
 @JvmName("copyTriple")
 internal fun <T> List<List<List<T>>>.copy() = map { it.copy() }
 
-/**
- * Replaces all of the elements of this [MutableList] with the elements of the provided collection.
- */
-public fun <T> MutableList<T>.setAll(other: Collection<T>) {
+internal fun <T> MutableList<T>.setAll(other: Collection<T>) {
     clear()
     addAll(other)
 }
 
-/**
- * For each child [ArrayList] contained in this [ArrayList], replaces the elements of the child [ArrayList] with the
- * elements of the corresponding [Collection] from the provided [List]. The child [ArrayList] and [Collection] are
- * associated by index. If a given child [ArrayList] contained in this [ArrayList] has no corresponding [Collection] in
- * the provided [List], the child [ArrayList] will be cleared. If the size of this [ArrayList] is smaller than the size
- * of the provided [List], an appropriate number of empty child [ArrayList]s will first be added to this [ArrayList].
- */
-public fun <T> ArrayList<ArrayList<T>>.setToAllChildren(other: List<Collection<T>>) {
-    ensureSize(other.size)
-    forEachIndexed { index, childArrayList ->
-        childArrayList.clear()
-        if (other.lastIndex >= index) {
-            childArrayList.addAll(other[index])
-        }
-    }
-}
+internal fun <T> ArrayList<ArrayList<T>>.copy(): List<List<T>> = List(size) { index -> ArrayList(get(index)) }
 
-private fun <T> ArrayList<ArrayList<T>>.ensureSize(size: Int) {
-    if (this.size >= size) return
-    repeat(size - this.size) {
-        add(ArrayList())
-    }
-}
-
-/**
- * Creates a copy of this [ArrayList] and each child [ArrayList] contained in this [ArrayList].
- */
-public fun <T> ArrayList<ArrayList<T>>.copy(): List<List<T>> = List(size) { index -> ArrayList(get(index)) }
-
-/**
- * Replaces all of the elements of this [MutableMap] with the elements of the provided map.
- */
-public fun <K, V> MutableMap<K, V>.setAll(other: Map<K, V>) {
+internal fun <K, V> MutableMap<K, V>.setAll(other: Map<K, V>) {
     clear()
     other.forEach { (key, value) -> set(key, value) }
-}
-
-/**
- * Replaces all of the elements of this [MutableList] with the elements of the provided array.
- */
-public fun <T> MutableList<T>.setAll(other: Array<out T>) {
-    clear()
-    addAll(other)
-}
-
-/**
- * Calls the [selector] function for each value in the collection and returns the sum of the produced [Float]s.
- */
-public inline fun <T> Iterable<T>.sumByFloat(selector: (T) -> Float): Float {
-    var sum = 0f
-    for (element in this) {
-        sum += selector(element)
-    }
-    return sum
-}
-
-/**
- * Calls the [selector] function for each element in the collection, providing the index of the element and [Boolean]s
- * indicating whether the element is the first or last element in the collection.
- */
-public inline fun <T> Iterable<T>.forEachIndexedExtended(
-    selector: (index: Int, isFirst: Boolean, isLast: Boolean, value: T) -> Unit,
-) {
-    var index = 0
-    val iterator = iterator()
-    var next: T
-    while (iterator.hasNext()) {
-        next = iterator.next()
-        selector(index, index == 0, !iterator.hasNext(), next)
-        index++
-    }
 }
 
 internal fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
@@ -125,18 +56,12 @@ internal fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
     return closestValue
 }
 
-/**
- * Calls the [selector] function for each value in the collection and returns the average of the produced values.
- */
 internal fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =
     fold(0f) { sum, element ->
         sum + selector(element)
     } / size
 
-/**
- * Calls the [selector] function for each value in the collection and returns the sum of the produced values.
- */
-public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
+internal inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
     var sum = 0f
     for (element in this) {
         sum += selector(element)
@@ -144,8 +69,5 @@ public inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
     return sum
 }
 
-/**
- * Creates a [MutableList] containing all elements of the specified source collection.
- */
-public fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
+internal fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
     ArrayList<T>(sourceCollection.size).apply { addAll(sourceCollection) }

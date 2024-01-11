@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.extension
 
+import androidx.annotation.RestrictTo
 import kotlin.math.abs
 import kotlin.math.ceil
 import kotlin.math.floor
@@ -58,86 +59,53 @@ internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>)
 
 internal fun ClosedFloatingPointRange<Float>.random(): Float = start + (endInclusive - start) * Random.nextFloat()
 
-/**
- * Half of this value.
- */
-public inline val Int.half: Int
+internal inline val Int.half: Int
     get() = this / 2
 
-/**
- * Half of this value.
- */
+/** @suppress */
 public inline val Float.half: Float
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     get() = this / 2
 
-/**
- * Half of this value.
- */
-public inline val Double.half: Double
+internal inline val Double.half: Double
     get() = this / 2
 
-/**
- * Two times this value.
- */
-public inline val Float.doubled: Float
+internal inline val Float.doubled: Float
     get() = this * 2
 
-/**
- * This value as an integer if this value is not null, or zero otherwise.
- */
+/** @suppress */
 public inline val Float?.orZero: Float
+    @RestrictTo(RestrictTo.Scope.LIBRARY)
     get() = this ?: 0f
 
-/**
- * This value as an integer if this value is not null, or zero otherwise.
- */
-public inline val Int?.orZero: Int
+internal inline val Int?.orZero: Int
     get() = this ?: 0
 
-/**
- * This value rounded to the nearest whole [Float].
- */
-public inline val Float.round: Float
+internal inline val Float.round: Float
     get() = roundToInt().toFloat()
 
-/**
- * 180 degrees (π radians) times this value.
- */
-public inline val Float.piRad: Float
+internal inline val Float.piRad: Float
     get() = this * PI_RAD
 
-/**
- * The largest whole [Float] smaller than or equal to this value.
- */
-public inline val Float.floor: Float
+internal inline val Float.floor: Float
     get() = floor(this)
 
-/**
- * The smallest whole [Float] greater than or equal to this value.
- */
-public inline val Float.ceil: Float
+internal inline val Float.ceil: Float
     get() = ceil(this)
 
-/**
- * The median of the values in this range.
- */
-public inline val ClosedFloatingPointRange<Float>.median: Float
+internal inline val ClosedFloatingPointRange<Float>.median: Float
     get() = (endInclusive + start) / 2
 
-/**
- * Whether this value contains the provided bit flag.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public fun Int.hasFlag(flag: Int): Boolean = this and flag == flag
 
-/**
- * The first non-negative value of the values provided, or `null` if none of the values is non-negative.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public fun firstNonNegativeOf(vararg floats: Float): Float? = floats.firstOrNull { it >= 0f }
 
-/**
- * Creates a range from this value to the provided value or from the
- * provided value to this value, depending on which value is larger.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY)
 public fun Float.rangeWith(other: Float): ClosedFloatingPointRange<Float> =
     if (other > this) this..other else other..this
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,5 @@ internal fun OverScroller.fling(
     fling(startX, startY, velocityX, velocityY, minScrollX, maxScrollX, Int.MIN_VALUE, Int.MAX_VALUE)
 }
 
-/**
- * Returns the _x_ and _y_ coordinates of this event as a [Point] for the first pointer index.
- */
-public val MotionEvent.point: Point
+internal val MotionEvent.point: Point
     get() = Point(x, y)

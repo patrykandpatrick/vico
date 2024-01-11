@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,11 +43,7 @@ private fun getElevationOverlayColorWithCorrectAlpha(
     }
 }
 
-/**
- * Overlays the given [color] with [DrawContext.elevationOverlayColor], changing the opacity of
- * [DrawContext.elevationOverlayColor] depending on the value of [elevationDp].
- */
-public fun DrawContext.applyElevationOverlayToColor(
+internal fun DrawContext.applyElevationOverlayToColor(
     color: Int,
     elevationDp: Float,
 ): Int =
