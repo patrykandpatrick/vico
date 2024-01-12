@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,51 @@
 
 package com.patrykandpatrick.vico.compose.chart
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.layout.rememberPreMeasureContext
+import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.legend.Legend
 
 @Composable
 internal fun ChartHostBox(
     modifier: Modifier,
-    content: @Composable BoxScope.() -> Unit,
+    legend: Legend?,
+    hasModel: Boolean,
+    desiredHeight: MeasureScope.(Constraints) -> Int,
+    content: @Composable () -> Unit,
 ) {
-    Box(modifier = modifier, content = content)
+    val preMeasureContext = rememberPreMeasureContext()
+    Layout(content, modifier.heightIn(min = DefaultDimens.CHART_HEIGHT.dp)) { measurable, constraints ->
+        val chartMeasurable = measurable.firstOrNull()
+        val additionalHeight =
+            if (hasModel && legend != null) {
+                legend.getHeight(preMeasureContext, constraints.maxWidth.toFloat()).toInt()
+            } else {
+                0
+            }
+        val height =
+            (constraints.minHeight.coerceAtLeast(desiredHeight(constraints)) + additionalHeight)
+                .coerceAtMost(constraints.maxHeight)
+
+        val chartConstraints =
+            constraints.copy(
+                minWidth = constraints.maxWidth,
+                minHeight = height,
+                maxHeight = height,
+            )
+        val placeable = chartMeasurable?.measure(chartConstraints)
+        if (placeable != null) {
+            layout(placeable.width, placeable.height) {
+                placeable.place(0, 0)
+            }
+        } else {
+            layout(0, 0) {}
+        }
+    }
 }

@@ -19,7 +19,10 @@ package com.patrykandpatrick.vico.compose.chart.pie
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,8 +34,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.compose.chart.ChartHostBox
-import com.patrykandpatrick.vico.compose.extension.chartLayout
-import com.patrykandpatrick.vico.compose.layout.rememberPreMeasureContext
 import com.patrykandpatrick.vico.compose.model.collectAsState
 import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
@@ -62,7 +63,7 @@ import com.patrykandpatrick.vico.core.model.PieModel
  * @param diffAnimationSpec the animation spec used for difference animations.
  * @param elevationOverlayColor the color to use for the elevation overlay.
  * @param runInitialAnimation whether to run the initial animation.
- * @param onEmptyState the composable to display when the chart is empty.
+ * @param placeholder the composable to display when the chart is empty.
  */
 @Composable
 public fun PieChartHost(
@@ -78,7 +79,7 @@ public fun PieChartHost(
     diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
     elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
     runInitialAnimation: Boolean = true,
-    onEmptyState: (@Composable () -> Unit)? = null,
+    placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
     val pieChart =
         remember {
@@ -98,7 +99,7 @@ public fun PieChartHost(
             this.valueFormatter = valueFormatter
         }
 
-    val model =
+    val model by
         pieChartModelProducer.collectAsState(
             chart = pieChart,
             producerKey = pieChartModelProducer,
@@ -106,15 +107,20 @@ public fun PieChartHost(
             runInitialAnimation = runInitialAnimation,
         )
 
-    ChartHostBox(modifier = modifier) {
-        model.value?.also { model ->
+    ChartHostBox(
+        modifier = modifier,
+        legend = legend,
+        hasModel = model != null,
+        desiredHeight = { constraints -> constraints.maxWidth },
+    ) {
+        model?.also { model ->
             PieChartHost(
                 model = model,
                 pieChart = pieChart,
                 legend = legend,
                 elevationOverlayColor = elevationOverlayColor,
             )
-        } ?: onEmptyState?.invoke()
+        } ?: Box { placeholder() }
     }
 }
 
@@ -130,13 +136,8 @@ internal fun PieChartHost(
     val density = LocalDensity.current.density
     val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     val context = LocalContext.current
-    val preMeasureContext = rememberPreMeasureContext()
 
-    Canvas(
-        modifier =
-            modifier
-                .chartLayout(preMeasureContext, legend) { constraints -> constraints.maxWidth },
-    ) {
+    Canvas(modifier = modifier) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
         val pieChartHeight = minOf(bounds.width(), bounds.height())
         pieChart.setBounds(bounds.left, bounds.top, pieChartHeight, pieChartHeight)
