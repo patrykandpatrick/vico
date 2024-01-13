@@ -100,6 +100,11 @@ public open class PieModel {
         public fun build(vararg series: Entry): PieModel = PieModel(series.toList())
 
         /**
+         * Creates a [PieModel].
+         */
+        public fun build(vararg series: Float): PieModel = PieModel(series.map(::Entry))
+
+        /**
          * Creates a [Partial].
          */
         public fun partial(series: List<Entry>): Partial = Partial(series)
