@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -250,14 +250,19 @@ public object DefaultDimens {
     public const val PIE_CHART_START_ANGLE: Float = -90f
 
     /**
-     * The default thickness for outside label’s angled line in pie chart slice (in dp).
+     * The default width for outside label’s line in pie chart slice (in dp).
      */
-    public const val SLICE_ANGLED_SEGMENT_WIDTH: Float = 12f
+    public const val SLICE_LINE_WIDTH: Float = 1f
 
     /**
-     * The default thickness for outside label’s horizontal line in pie chart slice (in dp).
+     * The default length for outside label’s angled line in pie chart slice (in dp).
      */
-    public const val SLICE_HORIZONTAL_SEGMENT_WIDTH: Float = 16f
+    public const val SLICE_ANGLED_SEGMENT_LENGTH: Float = 12f
+
+    /**
+     * The default length for outside label’s horizontal line in pie chart slice (in dp).
+     */
+    public const val SLICE_HORIZONTAL_SEGMENT_LENGTH: Float = 16f
 
     /**
      * The default ratio of the maximum width of the outside label to the bounds of the pie chart.

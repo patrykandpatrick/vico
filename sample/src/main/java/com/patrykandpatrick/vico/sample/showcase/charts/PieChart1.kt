@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.chart.pie.PieChartHost
-import com.patrykandpatrick.vico.compose.chart.pie.label.inside
+import com.patrykandpatrick.vico.compose.chart.pie.label.rememberInsideLabel
 import com.patrykandpatrick.vico.compose.chart.pie.slice.rememberSlice
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
@@ -75,7 +75,7 @@ private fun ComposePieChart1(
     modelProducer: PieChartModelProducer,
 ) {
     val labelInside =
-        SliceLabel.inside(
+        SliceLabel.rememberInsideLabel(
             textComponent =
                 rememberTextComponent(
                     color = Color.White,

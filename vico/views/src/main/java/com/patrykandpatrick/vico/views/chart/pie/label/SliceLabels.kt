@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.core.component.text.textComponent
  *
  * @see InsideSliceLabel
  */
-public fun SliceLabel.Companion.inside(textComponent: TextComponent = textComponent()): SliceLabel =
+public fun SliceLabel.Companion.insideLabel(textComponent: TextComponent = textComponent()): SliceLabel =
     InsideSliceLabel(textComponent = textComponent)
 
 /**
@@ -47,12 +47,12 @@ public fun SliceLabel.Companion.inside(textComponent: TextComponent = textCompon
  *
  * @see OutsideSliceLabel
  */
-public fun SliceLabel.Companion.outside(
+public fun SliceLabel.Companion.outsideLabel(
     textComponent: TextComponent = textComponent(),
     lineColor: Int = Color.BLACK,
     lineWidthDp: Float = 1f,
-    angledSegmentLengthDp: Float = DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH,
-    horizontalSegmentLengthDp: Float = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH,
+    angledSegmentLengthDp: Float = DefaultDimens.SLICE_ANGLED_SEGMENT_LENGTH,
+    horizontalSegmentLengthDp: Float = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_LENGTH,
     maxWidthToBoundsRatio: Float = DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
 ): OutsideSliceLabel =
     OutsideSliceLabel(

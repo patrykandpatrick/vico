@@ -37,7 +37,9 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
  * @see InsideSliceLabel
  */
 @Composable
-public fun SliceLabel.Companion.inside(textComponent: TextComponent = rememberTextComponent()): InsideSliceLabel =
+public fun SliceLabel.Companion.rememberInsideLabel(
+    textComponent: TextComponent = rememberTextComponent(),
+): InsideSliceLabel =
     remember {
         InsideSliceLabel(textComponent)
     }.apply {
@@ -57,12 +59,12 @@ public fun SliceLabel.Companion.inside(textComponent: TextComponent = rememberTe
  * @see OutsideSliceLabel
  */
 @Composable
-public fun SliceLabel.Companion.outside(
+public fun SliceLabel.Companion.rememberOutsideLabel(
     textComponent: TextComponent = rememberTextComponent(),
     lineColor: Color = Color.Black,
-    lineWidth: Dp = 1.dp,
-    angledSegmentLength: Dp = DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH.dp,
-    horizontalSegmentLength: Dp = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH.dp,
+    lineWidth: Dp = DefaultDimens.SLICE_LINE_WIDTH.dp,
+    angledSegmentLength: Dp = DefaultDimens.SLICE_ANGLED_SEGMENT_LENGTH.dp,
+    horizontalSegmentLength: Dp = DefaultDimens.SLICE_HORIZONTAL_SEGMENT_LENGTH.dp,
     maxWidthToBoundsRatio: Float = DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO,
 ): OutsideSliceLabel =
     remember {

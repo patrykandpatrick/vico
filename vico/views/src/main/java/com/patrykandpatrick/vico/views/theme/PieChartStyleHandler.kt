@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,16 @@ import android.util.AttributeSet
 import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.DefaultColors
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_ANGLED_SEGMENT_WIDTH
-import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_HORIZONTAL_SEGMENT_WIDTH
+import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_ANGLED_SEGMENT_LENGTH
+import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_HORIZONTAL_SEGMENT_LENGTH
 import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO
 import com.patrykandpatrick.vico.core.chart.pie.Size
 import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.views.R
-import com.patrykandpatrick.vico.views.chart.pie.label.inside
-import com.patrykandpatrick.vico.views.chart.pie.label.outside
+import com.patrykandpatrick.vico.views.chart.pie.label.insideLabel
+import com.patrykandpatrick.vico.views.chart.pie.label.outsideLabel
 import com.patrykandpatrick.vico.views.extension.defaultColors
 
 internal class PieChartStyleHandler(
@@ -168,9 +168,9 @@ internal class PieChartStyleHandler(
             }
 
         return when (type) {
-            SLICE_LABEL_TYPE_INSIDE -> SliceLabel.inside(textComponent = textComponent)
+            SLICE_LABEL_TYPE_INSIDE -> SliceLabel.insideLabel(textComponent = textComponent)
             SLICE_LABEL_TYPE_OUTSIDE ->
-                SliceLabel.outside(
+                SliceLabel.outsideLabel(
                     textComponent = textComponent,
                     lineColor =
                         typedArray.getColor(
@@ -187,13 +187,13 @@ internal class PieChartStyleHandler(
                         typedArray.getRawDimension(
                             context = context,
                             index = R.styleable.PieChartSliceLabelStyle_pieSliceLabelAngledSegmentLength,
-                            defaultValue = SLICE_ANGLED_SEGMENT_WIDTH,
+                            defaultValue = SLICE_ANGLED_SEGMENT_LENGTH,
                         ),
                     horizontalSegmentLengthDp =
                         typedArray.getRawDimension(
                             context = context,
                             index = R.styleable.PieChartSliceLabelStyle_pieSliceLabelHorizontalSegmentLength,
-                            defaultValue = SLICE_HORIZONTAL_SEGMENT_WIDTH,
+                            defaultValue = SLICE_HORIZONTAL_SEGMENT_LENGTH,
                         ),
                     maxWidthToBoundsRatio =
                         typedArray.getFraction(
