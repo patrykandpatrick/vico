@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@ package com.patrykandpatrick.vico.core.component.shape.shadow
 
 import android.graphics.Paint
 import com.patrykandpatrick.vico.core.context.DrawContext
+import com.patrykandpatrick.vico.core.extension.alphaFloat
 import com.patrykandpatrick.vico.core.extension.applyElevationOverlayToColor
+import com.patrykandpatrick.vico.core.extension.copyColor
 
 /**
  * A class that stores shadow properties.
@@ -49,23 +51,25 @@ public data class ComponentShadow(
         context: DrawContext,
         paint: Paint,
         backgroundColor: Int,
+        opacity: Float = 1f,
     ): Unit =
         with(context) {
-            if (shouldUpdateShadowLayer()) {
-                updateShadowLayer(paint, backgroundColor)
+            if (shouldUpdateShadowLayer(opacity)) {
+                updateShadowLayer(paint, backgroundColor, opacity)
             }
         }
 
     private fun DrawContext.updateShadowLayer(
         paint: Paint,
         backgroundColor: Int,
+        opacity: Float,
     ) {
         if (color == 0 || radius == 0f && dx == 0f && dy == 0f) {
             paint.clearShadowLayer()
         } else {
             paint.color =
                 if (applyElevationOverlay) {
-                    applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius)
+                    applyElevationOverlayToColor(color = backgroundColor, elevationDp = radius * opacity)
                 } else {
                     backgroundColor
                 }
@@ -73,26 +77,28 @@ public data class ComponentShadow(
                 radius.pixels,
                 dx.pixels,
                 dy.pixels,
-                color,
+                color.copyColor(color.alphaFloat * opacity),
             )
         }
     }
 
-    private fun DrawContext.shouldUpdateShadowLayer(): Boolean =
-        if (
+    private fun DrawContext.shouldUpdateShadowLayer(opacity: Float): Boolean {
+        val adjustedColor = color.copyColor(color.alphaFloat * opacity)
+        return if (
             radius != laRadius ||
             dx != laDx ||
             dy != laDy ||
-            color != laColor ||
+            adjustedColor != laColor ||
             density != laDensity
         ) {
             laRadius = radius
             laDx = dx
             laDy = dy
-            laColor = color
+            laColor = adjustedColor
             laDensity = density
             true
         } else {
             false
         }
+    }
 }

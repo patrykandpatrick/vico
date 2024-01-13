@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,6 +67,12 @@ public val Int.colorHex: String
  */
 public val Int.alpha: Int
     get() = extractColorChannel(ALPHA_BIT_SHIFT)
+
+/**
+ * The value of the alpha channel of this color.
+ */
+public val Int.alphaFloat: Float
+    get() = alpha / MAX_HEX_VALUE
 
 /**
  * Checks whether this color int is not transparent.

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,13 +102,13 @@ public open class Slice(
             applyOffset(drawOval, startAngle + sweepAngle.half)
 
             if (color.isNotTransparent) {
-                maybeUpdateShadowLayer(context, fillPaint, fillPaint.color)
+                maybeUpdateShadowLayer(context, fillPaint, fillPaint.color, sliceOpacity)
                 drawFilledSlice(context, startAngle, sweepAngle, spacingPath, sliceOpacity)
             }
 
             if (strokeColor.isNotTransparent && strokeWidthDp > 0f) {
                 if (color.isTransparent) {
-                    maybeUpdateShadowLayer(context, strokePaint, strokePaint.color)
+                    maybeUpdateShadowLayer(context, strokePaint, strokePaint.color, sliceOpacity)
                 }
 
                 drawStrokedSlice(context, startAngle, sweepAngle, spacingPath, sliceOpacity)

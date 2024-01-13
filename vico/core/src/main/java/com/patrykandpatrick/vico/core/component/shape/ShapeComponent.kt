@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,12 @@ public open class ShapeComponent(
             applyShader(context, left, top, right, bottom)
             val centerX = (left + right).half
             val centerY = (top + bottom).half
-            componentShadow.maybeUpdateShadowLayer(context = this, paint = paint, backgroundColor = color)
+            componentShadow.maybeUpdateShadowLayer(
+                context = this,
+                paint = paint,
+                backgroundColor = color,
+                opacity = opacity,
+            )
 
             val strokeWidth = strokeWidthDp.pixels
             strokePaint.strokeWidth = strokeWidth
