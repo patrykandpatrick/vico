@@ -53,7 +53,7 @@ import com.patrykandpatrick.vico.core.model.PieModel
  *
  * @param modifier the modifier to be applied to the chart.
  * @param slices the [List] of [Slice]s which define the appearance of each slice of the pie chart.
- * @param pieChartModelProducer creates and updates the [PieChartModelProducer] for the chart.
+ * @param modelProducer creates and updates the [PieChartModelProducer] for the chart.
  * @param spacing defines spacing between [slices].
  * @param outerSize defines the size of the chart.
  * @param innerSize defines the size of the hole in the middle of the chart.
@@ -67,7 +67,7 @@ import com.patrykandpatrick.vico.core.model.PieModel
  */
 @Composable
 public fun PieChartHost(
-    pieChartModelProducer: PieChartModelProducer,
+    modelProducer: PieChartModelProducer,
     modifier: Modifier = Modifier,
     slices: List<Slice> = currentChartStyle.pieChart.slices,
     spacing: Dp = currentChartStyle.pieChart.spacing,
@@ -81,28 +81,12 @@ public fun PieChartHost(
     runInitialAnimation: Boolean = true,
     placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
-    val pieChart =
-        remember {
-            PieChart(
-                slices = slices,
-                spacingDp = spacing.value,
-                innerSize = innerSize,
-                outerSize = outerSize,
-                startAngle = startAngle,
-            )
-        }.apply {
-            this.slices = slices
-            this.spacingDp = spacing.value
-            this.innerSize = innerSize
-            this.outerSize = outerSize
-            this.startAngle = startAngle
-            this.valueFormatter = valueFormatter
-        }
+    val pieChart = rememberPieChart(slices, spacing, outerSize, innerSize, startAngle, valueFormatter)
 
     val model by
-        pieChartModelProducer.collectAsState(
+        modelProducer.collectAsState(
             chart = pieChart,
-            producerKey = pieChartModelProducer,
+            producerKey = modelProducer,
             animationSpec = diffAnimationSpec,
             runInitialAnimation = runInitialAnimation,
         )
@@ -122,6 +106,75 @@ public fun PieChartHost(
             )
         } ?: Box { placeholder() }
     }
+}
+
+/**
+ * Draws a pie chart.
+ *
+ * @param modifier the modifier to be applied to the chart.
+ * @param slices the [List] of [Slice]s which define the appearance of each slice of the pie chart.
+ * @param model the [PieModel].
+ * @param spacing defines spacing between [slices].
+ * @param outerSize defines the size of the chart.
+ * @param innerSize defines the size of the hole in the middle of the chart.
+ * @param startAngle defines the angle at which the first slice starts.
+ * @param valueFormatter formats the values of the pie chart.
+ * @param legend the legend for the chart.
+ * @param elevationOverlayColor the color to use for the elevation overlay.
+ */
+@Composable
+public fun PieChartHost(
+    model: PieModel,
+    modifier: Modifier = Modifier,
+    slices: List<Slice> = currentChartStyle.pieChart.slices,
+    spacing: Dp = currentChartStyle.pieChart.spacing,
+    outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
+    innerSize: Size.InnerSize = currentChartStyle.pieChart.innerSize,
+    startAngle: Float = currentChartStyle.pieChart.startAngle,
+    valueFormatter: PieValueFormatter = PieValueFormatter.Default,
+    legend: Legend? = null,
+    elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
+) {
+    val pieChart = rememberPieChart(slices, spacing, outerSize, innerSize, startAngle, valueFormatter)
+
+    ChartHostBox(
+        modifier = modifier,
+        legend = legend,
+        hasModel = true,
+        desiredHeight = { constraints -> constraints.maxWidth },
+    ) {
+        PieChartHost(
+            model = model,
+            pieChart = pieChart,
+            legend = legend,
+            elevationOverlayColor = elevationOverlayColor,
+        )
+    }
+}
+
+@Composable
+private fun rememberPieChart(
+    slices: List<Slice> = currentChartStyle.pieChart.slices,
+    spacing: Dp = currentChartStyle.pieChart.spacing,
+    outerSize: Size.OuterSize = currentChartStyle.pieChart.outerSize,
+    innerSize: Size.InnerSize = currentChartStyle.pieChart.innerSize,
+    startAngle: Float = currentChartStyle.pieChart.startAngle,
+    valueFormatter: PieValueFormatter = PieValueFormatter.Default,
+) = remember {
+    PieChart(
+        slices = slices,
+        spacingDp = spacing.value,
+        innerSize = innerSize,
+        outerSize = outerSize,
+        startAngle = startAngle,
+    )
+}.apply {
+    this.slices = slices
+    this.spacingDp = spacing.value
+    this.innerSize = innerSize
+    this.outerSize = outerSize
+    this.startAngle = startAngle
+    this.valueFormatter = valueFormatter
 }
 
 @Composable

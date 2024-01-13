@@ -97,7 +97,7 @@ private fun ComposePieChart1(
         },
     ) {
         PieChartHost(
-            pieChartModelProducer = modelProducer,
+            modelProducer = modelProducer,
             startAngle = startAngle,
             slices =
                 listOf(
