@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import com.patrykandpatrick.vico.core.extension.rangeOfPair
  * Stores a [LineCartesianLayer]’s data.
  */
 public class LineCartesianLayerModel : CartesianLayerModel {
+    private val entries: List<Entry>
+
     /**
      * The series (lists of [Entry] instances).
      */
@@ -39,8 +41,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
 
     override val maxY: Float
 
-    override val xDeltaGcd: Float
-
     override val extraStore: ExtraStore
 
     public constructor(series: List<List<Entry>>) : this(series, ExtraStore.empty)
@@ -52,7 +52,7 @@ public class LineCartesianLayerModel : CartesianLayerModel {
                 require(entries.isNotEmpty()) { "Series can’t be empty." }
                 entries.sortedBy { entry -> entry.x }
             }
-        val entries = this.series.flatten()
+        this.entries = this.series.flatten()
         val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
         val yRange = entries.rangeOf { it.y }
         this.id = this.series.hashCode()
@@ -60,32 +60,33 @@ public class LineCartesianLayerModel : CartesianLayerModel {
         this.maxX = xRange.endInclusive
         this.minY = yRange.start
         this.maxY = yRange.endInclusive
-        this.xDeltaGcd = entries.getXDeltaGcd()
         this.extraStore = extraStore
     }
 
     private constructor(
+        entries: List<Entry>,
         series: List<List<Entry>>,
         id: Int,
         minX: Float,
         maxX: Float,
         minY: Float,
         maxY: Float,
-        xDeltaGcd: Float,
         extraStore: ExtraStore,
     ) {
+        this.entries = entries
         this.series = series
         this.id = id
         this.minX = minX
         this.maxX = maxX
         this.minY = minY
         this.maxY = maxY
-        this.xDeltaGcd = xDeltaGcd
         this.extraStore = extraStore
     }
 
+    override fun getXDeltaGcd(): Float = entries.getXDeltaGcd()
+
     override fun copy(extraStore: ExtraStore): CartesianLayerModel =
-        LineCartesianLayerModel(series, id, minX, maxX, minY, maxY, xDeltaGcd, extraStore)
+        LineCartesianLayerModel(entries, series, id, minX, maxX, minY, maxY, extraStore)
 
     override fun equals(other: Any?): Boolean =
         this === other ||
@@ -96,7 +97,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
             maxX == other.maxX &&
             minY == other.minY &&
             maxY == other.maxY &&
-            xDeltaGcd == other.xDeltaGcd &&
             extraStore == other.extraStore
 
     override fun hashCode(): Int {
@@ -106,7 +106,6 @@ public class LineCartesianLayerModel : CartesianLayerModel {
         result = 31 * result + maxX.hashCode()
         result = 31 * result + minY.hashCode()
         result = 31 * result + maxY.hashCode()
-        result = 31 * result + xDeltaGcd.hashCode()
         result = 31 * result + extraStore.hashCode()
         return result
     }

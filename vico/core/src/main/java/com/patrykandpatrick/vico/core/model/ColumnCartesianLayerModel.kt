@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,8 @@ import com.patrykandpatrick.vico.core.extension.rangeOfPair
  * Stores a [ColumnCartesianLayer]’s data.
  */
 public class ColumnCartesianLayerModel : CartesianLayerModel {
+    private val entries: List<Entry>
+
     /**
      * The series (lists of [Entry] instances).
      */
@@ -49,8 +51,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
      */
     public val maxAggregateY: Float
 
-    override val xDeltaGcd: Float
-
     override val extraStore: ExtraStore
 
     public constructor(series: List<List<Entry>>) : this(series, ExtraStore.empty)
@@ -62,7 +62,7 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
                 require(entries.isNotEmpty()) { "Series can’t be empty." }
                 entries.sortedBy { entry -> entry.x }
             }
-        val entries = this.series.flatten()
+        this.entries = this.series.flatten()
         val xRange = this.series.rangeOfPair { it.first().x to it.last().x }
         val yRange = entries.rangeOf { it.y }
         val aggregateYRange = entries.getAggregateYRange()
@@ -73,11 +73,11 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
         this.maxY = yRange.endInclusive
         this.minAggregateY = aggregateYRange.start
         this.maxAggregateY = aggregateYRange.endInclusive
-        this.xDeltaGcd = entries.getXDeltaGcd()
         this.extraStore = extraStore
     }
 
     private constructor(
+        entries: List<Entry>,
         series: List<List<Entry>>,
         id: Int,
         minX: Float,
@@ -86,9 +86,9 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
         maxY: Float,
         minAggregateY: Float,
         maxAggregateY: Float,
-        xDeltaGcd: Float,
         extraStore: ExtraStore,
     ) {
+        this.entries = entries
         this.series = series
         this.id = id
         this.minX = minX
@@ -97,12 +97,14 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
         this.maxY = maxY
         this.minAggregateY = minAggregateY
         this.maxAggregateY = maxAggregateY
-        this.xDeltaGcd = xDeltaGcd
         this.extraStore = extraStore
     }
 
+    override fun getXDeltaGcd(): Float = entries.getXDeltaGcd()
+
     override fun copy(extraStore: ExtraStore): CartesianLayerModel =
         ColumnCartesianLayerModel(
+            entries,
             series,
             id,
             minX,
@@ -111,7 +113,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
             maxY,
             minAggregateY,
             maxAggregateY,
-            xDeltaGcd,
             extraStore,
         )
 
@@ -126,7 +127,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
             maxY == other.maxY &&
             minAggregateY == other.minAggregateY &&
             maxAggregateY == other.maxAggregateY &&
-            xDeltaGcd == other.xDeltaGcd &&
             extraStore == other.extraStore
 
     override fun hashCode(): Int {
@@ -138,7 +138,6 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
         result = 31 * result + maxY.hashCode()
         result = 31 * result + minAggregateY.hashCode()
         result = 31 * result + maxAggregateY.hashCode()
-        result = 31 * result + xDeltaGcd.hashCode()
         result = 31 * result + extraStore.hashCode()
         return result
     }
