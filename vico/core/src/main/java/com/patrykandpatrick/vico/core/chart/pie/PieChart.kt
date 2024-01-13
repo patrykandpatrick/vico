@@ -199,6 +199,9 @@ public open class PieChart(
                 if (spacingDp > 0f) {
                     addSpacingSegment(spacingPathBuilder, sweepAngle, sweepAngle)
                     addSpacingSegment(spacingPathBuilder, drawAngle, sweepAngle)
+                }
+
+                if (innerRadius > 0f) {
                     addHole(spacingPathBuilder, innerRadius)
                 }
 
