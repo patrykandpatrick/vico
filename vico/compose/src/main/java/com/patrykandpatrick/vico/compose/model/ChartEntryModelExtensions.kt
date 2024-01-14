@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,11 +47,19 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 /**
- * The default [AnimationSpec] for difference animations.
+ * The default [AnimationSpec] for difference animations in cartesian charts.
  *
  * @see collectAsState
  */
-public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis = Animation.DIFF_DURATION)
+public val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
+    tween(durationMillis = Animation.CARTESIAN_CHART_DIFF_DURATION)
+
+/**
+ * The default [AnimationSpec] for difference animations in pie charts.
+ *
+ * @see collectAsState
+ */
+public val defaultPieDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis = Animation.PIE_CHART_DIFF_DURATION)
 
 /**
  * Observes the data provided by this [CartesianChartModelProducer] and launches an animation for each update.
@@ -60,7 +68,7 @@ public val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis
 public fun CartesianChartModelProducer.collectAsState(
     chart: CartesianChart,
     producerKey: Any,
-    animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
+    animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
     mutableChartValues: MutableChartValues,
     getXStep: ((CartesianChartModel) -> Float)?,
@@ -163,7 +171,7 @@ public fun CartesianChartModelProducer.collectAsState(
 public fun PieChartModelProducer.collectAsState(
     chart: PieChart,
     producerKey: Any,
-    animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
+    animationSpec: AnimationSpec<Float>? = defaultPieDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ): State<PieModel?> {

@@ -81,7 +81,7 @@ public abstract class BaseChartView<Model>
 
         protected val animator: ValueAnimator =
             ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
-                duration = Animation.DIFF_DURATION.toLong()
+                duration = Animation.CARTESIAN_CHART_DIFF_DURATION.toLong()
                 interpolator = FastOutSlowInInterpolator()
             }
 

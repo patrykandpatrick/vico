@@ -20,36 +20,38 @@ import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.extension.lerp
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.math.interpolateOpacity
+import java.util.Objects
 import kotlin.math.max
 
 /**
- * Houses drawing information for a [PieChart]. [opacity] is the slices’ opacity.
+ * Houses drawing information for a [PieChart].
  */
-public class PieDrawingModel(public val slices: List<SliceInfo>, public val opacity: Float = 1f) :
+public class PieDrawingModel(
+    public val slices: List<SliceInfo>,
+) :
     DrawingModel<PieDrawingModel.SliceInfo>(slices.toTransformationMap()) {
     override fun transform(
         drawingInfo: List<Map<Float, SliceInfo>>,
         from: DrawingModel<SliceInfo>?,
         fraction: Float,
     ): DrawingModel<SliceInfo> {
-        val oldOpacity = (from as PieDrawingModel?)?.opacity.orZero
-        val oldSlices = from?.firstOrNull()?.values?.toList() ?: emptyList()
+        val oldModel = (from as? PieDrawingModel)
+        val oldSlices = oldModel?.slices ?: emptyList()
         val slices = drawingInfo.firstOrNull()?.values?.toList() ?: emptyList()
         val sliceCount = max(oldSlices.size, slices.size)
         val combinedSlices =
             List(sliceCount) { index ->
                 slices.getOrNull(index) ?: oldSlices[index]
             }
-        return PieDrawingModel(combinedSlices, oldOpacity.lerp(opacity, fraction))
+        return PieDrawingModel(slices = combinedSlices)
     }
 
     override fun equals(other: Any?): Boolean =
         this === other ||
             other is PieDrawingModel &&
-            opacity == other.opacity &&
             slices == other.slices
 
-    override fun hashCode(): Int = slices.hashCode() * 31 + opacity.hashCode() * 31
+    override fun hashCode(): Int = Objects.hash(slices)
 
     /**
      * Houses positional information for a [PieChart]’s slice.
@@ -90,11 +92,7 @@ public class PieDrawingModel(public val slices: List<SliceInfo>, public val opac
                 sliceOpacity == other.sliceOpacity &&
                 labelOpacity == other.labelOpacity
 
-        override fun hashCode(): Int =
-            degrees.hashCode() +
-                label.hashCode() * 31 +
-                sliceOpacity.hashCode() * 31 +
-                labelOpacity.hashCode() * 31
+        override fun hashCode(): Int = Objects.hash(degrees, label, sliceOpacity, labelOpacity)
     }
 
     private companion object {

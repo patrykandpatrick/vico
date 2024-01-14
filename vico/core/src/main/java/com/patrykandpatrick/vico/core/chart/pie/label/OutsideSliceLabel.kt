@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -167,8 +167,7 @@ public open class OutsideSliceLabel(
         labelOpacity: Float,
     ): Unit =
         with(context) {
-            val (textX, textY) = drawLine(oval, angle, sliceOpacity)
-
+            val (textX, textY) = drawLine(oval, angle, labelOpacity)
             val textBounds = textComponent.getTextBounds(this, label, measuredTextWidth)
 
             textBounds.offset(
@@ -189,7 +188,7 @@ public open class OutsideSliceLabel(
                 textY = textY,
                 horizontalPosition = horizontalPosition,
                 maxTextWidth = measuredTextWidth,
-                opacity = sliceOpacity,
+                opacity = labelOpacity,
             )
         }
 
@@ -232,7 +231,7 @@ public open class OutsideSliceLabel(
                 angle = angle.radiansDouble,
             )
 
-        line.draw(this) {
+        line.draw(this, opacity) {
             moveTo(linePoint)
 
             lineTo(

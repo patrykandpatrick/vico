@@ -45,7 +45,7 @@ import com.patrykandpatrick.vico.compose.extension.chartTouchEvent
 import com.patrykandpatrick.vico.compose.gesture.OnZoom
 import com.patrykandpatrick.vico.compose.layout.rememberCartesianMeasureContext
 import com.patrykandpatrick.vico.compose.model.collectAsState
-import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
+import com.patrykandpatrick.vico.compose.model.defaultCartesianDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.state.component1
 import com.patrykandpatrick.vico.compose.state.component2
 import com.patrykandpatrick.vico.compose.state.component3
@@ -107,7 +107,7 @@ public fun CartesianChartHost(
     markerVisibilityChangeListener: MarkerVisibilityChangeListener? = null,
     chartScrollSpec: ChartScrollSpec = rememberChartScrollSpec(),
     isZoomEnabled: Boolean = true,
-    diffAnimationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
+    diffAnimationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
     autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
     chartScrollState: ChartScrollState = rememberChartScrollState(),

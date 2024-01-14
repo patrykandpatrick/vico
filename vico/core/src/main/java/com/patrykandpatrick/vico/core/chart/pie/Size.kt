@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public interface Size {
         ): Float = minOf(availableWidth, availableHeight).half
     }
 
-    private class Fixed(public val maxDiameterDp: Float) : OuterSize, InnerSize {
+    private class Fixed(val maxDiameterDp: Float) : OuterSize, InnerSize {
         init {
             require(maxDiameterDp >= 0f) {
                 "The max diameter cannot be negative, but was $maxDiameterDp."

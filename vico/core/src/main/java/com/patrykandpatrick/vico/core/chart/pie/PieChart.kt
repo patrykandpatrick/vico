@@ -30,8 +30,6 @@ import com.patrykandpatrick.vico.core.extension.centerPoint
 import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.ifNotNull
-import com.patrykandpatrick.vico.core.extension.maxOfOrNullIndexed
-import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.radius
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.set
@@ -111,46 +109,48 @@ public open class PieChart(
     public open fun updateOvalBounds(
         context: DrawContext,
         model: PieModel,
+        sliceInfo: List<PieDrawingModel.SliceInfo>?,
     ): Unit =
         with(context) {
             checkParameters()
             insets.clear()
 
             var ovalRadius = outerSize.getRadius(context, bounds.width(), bounds.height())
-
             var startAngle = startAngle
 
-            val maxOffsetFromCenter =
-                model.entries.maxOfOrNullIndexed { index, entry ->
-                    val slice = slices.getRepeating(index)
+            val sliceCount = sliceInfo?.size ?: model.entries.size
+            var maxOffsetFromCenter = 0f
 
-                    val sweepAngle = entry.value / model.sumOfValues * FULL_DEGREES
+            for (index in 0 until sliceCount) {
+                val slice = slices.getRepeating(index)
+                val info = sliceInfo?.get(index)
+                val entry = model.entries.getOrNull(index)
+                val sweepAngle = info?.degrees ?: (checkNotNull(entry).value / model.sumOfValues * FULL_DEGREES)
 
-                    ifNotNull(
-                        slice.label,
-                        valueFormatter.formatValue(index, entry.value, model),
-                    ) { labelComponent, label ->
-                        oval.set(
-                            left = bounds.centerX() - ovalRadius,
-                            top = bounds.centerY() - ovalRadius,
-                            right = bounds.centerX() + ovalRadius,
-                            bottom = bounds.centerY() + ovalRadius,
-                        )
+                ifNotNull(
+                    slice.label,
+                    info?.label ?: entry?.formattedValue(index, model),
+                ) { labelComponent, label ->
+                    oval.set(
+                        left = bounds.centerX() - ovalRadius,
+                        top = bounds.centerY() - ovalRadius,
+                        right = bounds.centerX() + ovalRadius,
+                        bottom = bounds.centerY() + ovalRadius,
+                    )
 
-                        labelComponent.getInsets(
-                            context = context,
-                            contentBounds = bounds,
-                            oval = oval,
-                            label = label,
-                            outInsets = insets,
-                            angle = startAngle + sweepAngle.half,
-                        )
-                    }
+                    labelComponent.getInsets(
+                        context = context,
+                        contentBounds = bounds,
+                        oval = oval,
+                        angle = startAngle + sweepAngle.half,
+                        label = label,
+                        outInsets = insets,
+                    )
+                }
 
-                    startAngle += sweepAngle
-
-                    slice.offsetFromCenterDp.pixels
-                }.orZero
+                startAngle += sweepAngle
+                maxOffsetFromCenter = maxOf(slice.offsetFromCenterDp.pixels, maxOffsetFromCenter)
+            }
 
             ovalRadius -= maxOffsetFromCenter + insets.largestEdge
             ovalRadius = ovalRadius.round
@@ -176,23 +176,21 @@ public open class PieChart(
         with(context) {
             val innerRadius = innerSize.getRadius(context, bounds.width(), bounds.height())
             val drawingModel = model.extraStore.getOrNull(drawingModelKey)
-            val sliceIno = drawingModel?.getOrNull(0)
-            updateOvalBounds(context, model)
+            val sliceInfo = drawingModel?.slices
+            updateOvalBounds(context, model, sliceInfo)
 
             require(oval.radius > innerRadius) { "The outer size must be greater than the inner size." }
 
             val restoreCount = if (spacingDp > 0f) saveLayer() else -1
 
-            val sliceCount = sliceIno?.size ?: model.entries.size
+            val sliceCount = sliceInfo?.size ?: model.entries.size
             var drawAngle = startAngle
 
             for (index in 0 until sliceCount) {
                 val slice = slices.getRepeating(index)
-
-                val sliceInfo = sliceIno?.get(index.toFloat())
-                val sliceInfoDegrees = sliceInfo?.degrees
+                val info = sliceInfo?.get(index)
                 val entry = model.entries.getOrNull(index)
-                val sweepAngle = sliceInfoDegrees ?: (checkNotNull(entry).value / model.sumOfValues * FULL_DEGREES)
+                val sweepAngle = info?.degrees ?: (checkNotNull(entry).value / model.sumOfValues * FULL_DEGREES)
 
                 spacingPathBuilder.rewind()
 
@@ -212,10 +210,10 @@ public open class PieChart(
                     startAngle = drawAngle,
                     sweepAngle = sweepAngle,
                     holeRadius = innerRadius,
-                    label = sliceInfo?.label ?: entry?.formattedValue(index, model),
+                    label = info?.label ?: entry?.formattedValue(index, model),
                     spacingPath = spacingPathBuilder,
-                    sliceOpacity = sliceInfo?.sliceOpacity ?: 1f,
-                    labelOpacity = sliceInfo?.labelOpacity ?: 1f,
+                    sliceOpacity = info?.sliceOpacity ?: 1f,
+                    labelOpacity = info?.labelOpacity ?: 1f,
                 )
 
                 drawAngle += sweepAngle

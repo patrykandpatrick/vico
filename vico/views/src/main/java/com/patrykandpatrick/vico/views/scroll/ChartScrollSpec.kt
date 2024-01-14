@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class ChartScrollSpec(
     public val initialScroll: InitialScroll = InitialScroll.Start,
     public val autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
     public val autoScrollInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
-    public val autoScrollDuration: Long = Animation.DIFF_DURATION.toLong(),
+    public val autoScrollDuration: Long = Animation.CARTESIAN_CHART_DIFF_DURATION.toLong(),
 ) {
     private val animator: ValueAnimator =
         ValueAnimator.ofFloat(

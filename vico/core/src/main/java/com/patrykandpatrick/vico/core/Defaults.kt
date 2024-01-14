@@ -74,9 +74,14 @@ public object Animation {
     public val range: ClosedFloatingPointRange<Float> = 0f..1f
 
     /**
-     * The default duration for difference animations.
+     * The default duration for difference animations in cartesian charts.
      */
-    public const val DIFF_DURATION: Int = 2500
+    public const val CARTESIAN_CHART_DIFF_DURATION: Int = 500
+
+    /**
+     * The default duration for difference animations in pie charts.
+     */
+    public const val PIE_CHART_DIFF_DURATION: Int = 1_000
 
     /**
      * The default duration for animated scrolls (in milliseconds;

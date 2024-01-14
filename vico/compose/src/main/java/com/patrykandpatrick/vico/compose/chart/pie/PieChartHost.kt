@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.compose.chart.ChartHostBox
 import com.patrykandpatrick.vico.compose.model.collectAsState
-import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
+import com.patrykandpatrick.vico.compose.model.defaultPieDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.pie.Size
@@ -76,7 +76,7 @@ public fun PieChartHost(
     startAngle: Float = currentChartStyle.pieChart.startAngle,
     valueFormatter: PieValueFormatter = PieValueFormatter.Default,
     legend: Legend? = null,
-    diffAnimationSpec: AnimationSpec<Float> = defaultDiffAnimationSpec,
+    diffAnimationSpec: AnimationSpec<Float> = defaultPieDiffAnimationSpec,
     elevationOverlayColor: Color = currentChartStyle.elevationOverlayColor,
     runInitialAnimation: Boolean = true,
     placeholder: @Composable BoxScope.() -> Unit = {},
