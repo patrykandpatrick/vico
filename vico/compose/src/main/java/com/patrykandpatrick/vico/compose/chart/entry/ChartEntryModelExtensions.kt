@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,6 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
         var finalAnimationFrameJob: Job? = null
         var isAnimationRunning: Boolean
         var isAnimationFrameGenerationRunning = false
-        var chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
         val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit = { transformModel ->
             if (animationSpec != null && !isInPreview &&
                 (chartEntryModelWrapperState.value.chartEntryModel != null || runInitialAnimation)
@@ -135,9 +134,9 @@ public fun <Model : ChartEntryModel> ChartModelProducer<Model>.collectAsState(
                         chartValuesManager.toChartValuesProvider()
                     } else {
                         ChartValuesProvider.Empty
-                    }.also { provider -> chartValuesProvider = provider }
+                    }
                 },
-            ) { chartEntryModel ->
+            ) { chartEntryModel, chartValuesProvider ->
                 chartEntryModelWrapperState.set(chartEntryModel, chartValuesProvider)
             }
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,6 +71,7 @@ import com.patrykandpatrick.vico.views.extension.dpInt
 import com.patrykandpatrick.vico.views.extension.isLtr
 import com.patrykandpatrick.vico.views.extension.specMode
 import com.patrykandpatrick.vico.views.extension.specSize
+import com.patrykandpatrick.vico.views.extension.start
 import com.patrykandpatrick.vico.views.extension.verticalPadding
 import com.patrykandpatrick.vico.views.gestures.ChartScaleGestureListener
 import com.patrykandpatrick.vico.views.gestures.MotionEventHandler
@@ -142,7 +143,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
             duration = Animation.DIFF_DURATION.toLong()
             interpolator = FastOutSlowInInterpolator()
-            addUpdateListener { transformModelForAnimation(it.animatedFraction) }
         }
 
     private val scrollValueAnimator: ValueAnimator =
@@ -174,8 +174,6 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     private var zoom = 0f
 
     private var wasZoomOverridden = false
-
-    private var chartValuesProvider: ChartValuesProvider = ChartValuesProvider.Empty
 
     private var horizontalDimensions = MutableHorizontalDimensions()
 
@@ -290,18 +288,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                     isAnimationRunning = false
                     isAnimationFrameGenerationRunning = false
                 },
-                startAnimation = { transformModel ->
-                    if (model != null || runInitialAnimation) {
-                        handler?.post {
-                            isAnimationRunning = true
-                            animator.start()
-                        }
-                    } else {
-                        finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
-                            transformModel(this@BaseChartView, Animation.range.endInclusive)
-                        }
-                    }
-                },
+                startAnimation = ::startAnimation,
                 getOldModel = { model },
                 modelTransformerProvider = chart?.modelTransformerProvider,
                 extraStore = extraStore,
@@ -312,10 +299,9 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
                         chartValuesManager.toChartValuesProvider()
                     } else {
                         ChartValuesProvider.Empty
-                    }.also { provider -> chartValuesProvider = provider }
+                    }
                 },
-            ) { model ->
-                val chartValuesProvider = chartValuesProvider
+            ) { model, chartValuesProvider ->
                 post {
                     setModel(model = model, updateChartValues = false)
                     measureContext.chartValuesProvider = chartValuesProvider
@@ -551,23 +537,38 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
         }
     }
 
-    private fun transformModelForAnimation(fraction: Float) {
-        when {
-            !isAnimationRunning -> return
-            !isAnimationFrameGenerationRunning -> {
-                isAnimationFrameGenerationRunning = true
-                animationFrameJob = coroutineScope?.launch(dispatcher) {
-                    entryProducer?.transformModel(this@BaseChartView, fraction)
-                    isAnimationFrameGenerationRunning = false
+    private fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
+        if (model != null || runInitialAnimation) {
+            handler?.post {
+                isAnimationRunning = true
+                animator.start { fraction ->
+                    when {
+                        !isAnimationRunning -> return@start
+                        !isAnimationFrameGenerationRunning -> {
+                            isAnimationFrameGenerationRunning = true
+                            animationFrameJob =
+                                coroutineScope?.launch(dispatcher) {
+                                    transformModel(this@BaseChartView, fraction)
+                                    isAnimationFrameGenerationRunning = false
+                                }
+                        }
+
+                        fraction == 1f -> {
+                            finalAnimationFrameJob =
+                                coroutineScope?.launch(dispatcher) {
+                                    animationFrameJob?.cancelAndJoin()
+                                    transformModel(this@BaseChartView, fraction)
+                                    isAnimationFrameGenerationRunning = false
+                                }
+                        }
+                    }
                 }
             }
-            fraction == 1f -> {
-                finalAnimationFrameJob = coroutineScope?.launch(dispatcher) {
-                    animationFrameJob?.cancelAndJoin()
-                    entryProducer?.transformModel(this@BaseChartView, fraction)
-                    isAnimationFrameGenerationRunning = false
+        } else {
+            finalAnimationFrameJob =
+                coroutineScope?.launch(dispatcher) {
+                    transformModel(this@BaseChartView, Animation.range.endInclusive)
                 }
-            }
         }
     }
 

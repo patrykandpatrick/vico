@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,16 +41,9 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
     public fun requireModel(): Model = getModel()!!
 
     /**
-     * Creates an intermediate [ChartEntryModel] for difference animations. [fraction] is the balance between the
-     * initial and target [ChartEntryModel]s.
-     */
-    public suspend fun transformModel(key: Any, fraction: Float)
-
-    /**
      * Registers an update listener associated with a [key]. [cancelAnimation] and [startAnimation] are
      * called after a data update is requested, with [cancelAnimation] being called before the update starts
-     * being processed (at which point [transformModel] should stop being used), and [startAnimation] being
-     * called once the update has been processed (at which point it’s safe to use [transformModel]). [updateChartValues]
+     * being processed, and [startAnimation] being called once the update has been processed. [updateChartValues]
      * updates the chart’s [ChartValues] and returns its [ChartValuesProvider]. [onModelCreated] is called when a new
      * [Model] has been generated.
      */
@@ -62,7 +55,7 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
         modelTransformerProvider: Chart.ModelTransformerProvider?,
         extraStore: MutableExtraStore,
         updateChartValues: (Model?) -> ChartValuesProvider,
-        onModelCreated: (Model?) -> Unit,
+        onModelCreated: (Model?, ChartValuesProvider) -> Unit,
     )
 
     /**
