@@ -82,6 +82,6 @@ internal class ShowcaseViewModel : ViewModel() {
     }
 
     private companion object {
-        const val UPDATE_FREQUENCY = 2000L
+        const val UPDATE_FREQUENCY = 3_000L
     }
 }
