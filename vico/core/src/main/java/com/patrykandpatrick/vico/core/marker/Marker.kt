@@ -66,16 +66,17 @@ public interface Marker : ChartInsetter {
          *
          * The label will be rendered on the top of the chart
          */
-        public data object Top: LabelPosition
+        public data object Top : LabelPosition
 
         /**
          * The label will be rendered on the top of the indicator.
          *
          * For the case of the chart holds dynamic values, the label will update its position  one the indicator updates too.
          *
-         * @param spacingDp it's an additional space between the indicator and the label. That makes the appearance a bit more customizable.
+         * @param spacingDp it's an additional space between the indicator and the label. That makes the appearance
+         * a bit more customizable for the case of custom indicators or custom label layouts.
          */
-        public data class AboveIndicator(val spacingDp: Float = 0f) : LabelPosition
+        public data class AboveIndicator(val spacingDp: Float = 2f) : LabelPosition
     }
 }
 

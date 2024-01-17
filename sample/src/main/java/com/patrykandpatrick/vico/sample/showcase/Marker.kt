@@ -41,7 +41,7 @@ import com.patrykandpatrick.vico.core.extension.copyColor
 import com.patrykandpatrick.vico.core.marker.Marker
 
 @Composable
-internal fun rememberMarker(): Marker {
+internal fun rememberMarker(labelPosition: Marker.LabelPosition = Marker.LabelPosition.Top): Marker {
     val labelBackgroundColor = MaterialTheme.colorScheme.surface
     val labelBackground =
         remember(labelBackgroundColor) {
@@ -79,7 +79,7 @@ internal fun rememberMarker(): Marker {
             guidelineShape,
         )
     return remember(label, indicator, guideline) {
-        object : MarkerComponent(label, indicator, guideline) {
+        object : MarkerComponent(label, indicator, guideline, labelPosition) {
             init {
                 indicatorSizeDp = INDICATOR_SIZE_DP
                 onApplyEntryColor = { entryColor ->
