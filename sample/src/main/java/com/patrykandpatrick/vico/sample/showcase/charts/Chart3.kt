@@ -39,6 +39,7 @@ import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.Shapes
+import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.databinding.Chart3Binding
@@ -93,7 +94,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
                     fadingEdges = rememberFadingEdges(),
                 ),
             modelProducer = modelProducer,
-            marker = rememberMarker(),
+            marker = rememberMarker(labelPosition = Marker.LabelPosition.AboveIndicator()),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
         )
@@ -102,7 +103,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
 
 @Composable
 private fun ViewChart3(modelProducer: CartesianChartModelProducer) {
-    val marker = rememberMarker()
+    val marker = rememberMarker(labelPosition = Marker.LabelPosition.AboveIndicator())
     AndroidViewBinding(Chart3Binding::inflate) {
         with(chartView) {
             (chart?.layers?.get(0) as LineCartesianLayer?)?.axisValueOverrider = axisValueOverrider
