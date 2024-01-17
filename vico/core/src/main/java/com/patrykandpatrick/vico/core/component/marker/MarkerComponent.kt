@@ -100,29 +100,30 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValues: ChartValues,
-    ): Unit = with(context) {
-        val text = labelFormatter.getLabel(markedEntries, chartValues)
-        val entryX = markedEntries.averageOf { it.location.x }
-        val labelBounds =
-            label.getTextBounds(
+    ): Unit =
+        with(context) {
+            val text = labelFormatter.getLabel(markedEntries, chartValues)
+            val entryX = markedEntries.averageOf { it.location.x }
+            val labelBounds =
+                label.getTextBounds(
+                    context = context,
+                    text = text,
+                    width = bounds.width().toInt(),
+                    outRect = tempBounds,
+                )
+            val halfOfTextWidth = labelBounds.width().half
+            val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
+            this[MarkerCorneredShape.TICK_X_KEY] = entryX
+
+            label.drawText(
                 context = context,
                 text = text,
-                width = bounds.width().toInt(),
-                outRect = tempBounds,
+                textX = x,
+                textY = getLabelY(bounds, labelBounds, markedEntries.last()),
+                verticalPosition = VerticalPosition.Bottom,
+                maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
             )
-        val halfOfTextWidth = labelBounds.width().half
-        val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
-        this[MarkerCorneredShape.TICK_X_KEY] = entryX
-
-        label.drawText(
-            context = context,
-            text = text,
-            textX = x,
-            textY = getLabelY(bounds, labelBounds, markedEntries.last()),
-            verticalPosition = VerticalPosition.Bottom,
-            maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
-        )
-    }
+        }
 
     private fun DrawContext.getLabelY(
         bounds: RectF,
@@ -132,15 +133,19 @@ public open class MarkerComponent(
         return when (labelPosition) {
             Marker.LabelPosition.Top -> getLabelYTop(bounds, labelBounds)
 
-            is Marker.LabelPosition.AboveIndicator -> getLabelYAboveIndicator(
-                referenceMarkerModel,
-                labelBounds,
-                labelPosition.spacingDp,
-            )
+            is Marker.LabelPosition.AboveIndicator ->
+                getLabelYAboveIndicator(
+                    referenceMarkerModel,
+                    labelBounds,
+                    labelPosition.spacingDp,
+                )
         }
     }
 
-    private fun DrawContext.getLabelYTop(bounds: RectF, labelBounds: RectF): Float {
+    private fun DrawContext.getLabelYTop(
+        bounds: RectF,
+        labelBounds: RectF,
+    ): Float {
         return bounds.top - labelBounds.height() - label.tickSizeDp.pixels
     }
 
@@ -149,7 +154,11 @@ public open class MarkerComponent(
         labelBounds: RectF,
         additionalSpacing: Float,
     ): Float {
-        return referenceMarkerModel.location.y - labelBounds.height() - label.tickSizeDp.pixels - indicatorSizeDp - additionalSpacing
+        return referenceMarkerModel.location.y -
+            labelBounds.height() -
+            label.tickSizeDp.pixels -
+            indicatorSizeDp -
+            additionalSpacing
     }
 
     private fun overrideXPositionToFit(
