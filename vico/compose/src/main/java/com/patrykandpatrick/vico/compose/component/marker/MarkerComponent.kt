@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
+import com.patrykandpatrick.vico.core.marker.Marker
 
 /**
  * Creates a [MarkerComponent].
@@ -32,11 +33,13 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
 @Composable
 public fun markerComponent(
     label: TextComponent,
+    labelPosition: Marker.LabelPosition,
     indicator: Component,
     guideline: LineComponent,
 ): MarkerComponent =
     MarkerComponent(
         label = label,
+        labelPosition = labelPosition,
         indicator = indicator,
         guideline = guideline,
     )

@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
  * The default implementation of the [Marker] interface.
  *
  * @param label the [TextComponent] used to draw the label.
+ * @param labelPosition the [Marker.LabelPosition] to set the position of the marker label
  * @param indicator an optional indicator drawn at a given point belonging to the data entry.
  * @param guideline an optional line drawn from the bottom of the chart to the bottom edge of the [label].
  */
@@ -48,6 +49,7 @@ public open class MarkerComponent(
     public val label: TextComponent,
     public val indicator: Component?,
     public val guideline: LineComponent?,
+    private val labelPosition: Marker.LabelPosition = Marker.LabelPosition.Top,
 ) : Marker {
     private val tempBounds = RectF()
 
@@ -75,7 +77,6 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValues: ChartValues,
-        labelPosition: Marker.LabelPosition,
     ): Unit =
         with(context) {
             drawGuideline(context, bounds, markedEntries)
@@ -91,7 +92,7 @@ public open class MarkerComponent(
                     model.location.y + halfIndicatorSize,
                 )
             }
-            drawLabel(context, bounds, markedEntries, chartValues, labelPosition)
+            drawLabel(context, bounds, markedEntries, chartValues)
         }
 
     private fun drawLabel(
@@ -99,7 +100,6 @@ public open class MarkerComponent(
         bounds: RectF,
         markedEntries: List<Marker.EntryModel>,
         chartValues: ChartValues,
-        labelPosition: Marker.LabelPosition,
     ): Unit = with(context) {
         val text = labelFormatter.getLabel(markedEntries, chartValues)
         val entryX = markedEntries.averageOf { it.location.x }
@@ -118,14 +118,13 @@ public open class MarkerComponent(
             context = context,
             text = text,
             textX = x,
-            textY = getLabelY(labelPosition, bounds, labelBounds, markedEntries.last()),
+            textY = getLabelY(bounds, labelBounds, markedEntries.last()),
             verticalPosition = VerticalPosition.Bottom,
             maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
         )
     }
 
     private fun DrawContext.getLabelY(
-        labelPosition: Marker.LabelPosition,
         bounds: RectF,
         labelBounds: RectF,
         referenceMarkerModel: Marker.EntryModel,

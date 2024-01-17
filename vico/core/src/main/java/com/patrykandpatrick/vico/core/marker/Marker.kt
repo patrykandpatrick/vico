@@ -35,14 +35,12 @@ public interface Marker : ChartInsetter {
      * @param bounds the bounds in which the marker is drawn.
      * @param markedEntries a list of [EntryModel]s representing the entries to which the marker refers.
      * @param chartValues the [CartesianChart]’s [ChartValues].
-     * @param labelPosition the position of the marker label
      */
     public fun draw(
         context: DrawContext,
         bounds: RectF,
         markedEntries: List<EntryModel>,
         chartValues: ChartValues,
-        labelPosition: LabelPosition = LabelPosition.Top
     )
 
     /**
