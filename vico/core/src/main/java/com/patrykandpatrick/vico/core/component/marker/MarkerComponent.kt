@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.component.Component
+import com.patrykandpatrick.vico.core.component.marker.MarkerComponent.LabelPosition.Top.getY
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.cornered.MarkerCorneredShape
@@ -53,7 +54,7 @@ public open class MarkerComponent(
 ) : Marker {
     private val tempBounds = RectF()
 
-    private val TextComponent.tickSizeDp: Float
+    public val TextComponent.tickSizeDp: Float
         get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
     /**
@@ -76,12 +77,30 @@ public open class MarkerComponent(
      * This sealed class represents the position where the label should be rendered
      */
     public sealed interface LabelPosition {
+        public fun getY(
+            labelTickSizeInPixels: Float,
+            chartBounds: RectF,
+            labelBounds: RectF,
+            markerModel: Marker.EntryModel,
+            indicatorSize: Float,
+        ): Float
+
         /**
          * This is the default position.
          *
          * The label will be rendered on the top of the chart
          */
-        public data object Top : LabelPosition
+        public data object Top : LabelPosition {
+            override fun getY(
+                labelTickSizeInPixels: Float,
+                chartBounds: RectF,
+                labelBounds: RectF,
+                markerModel: Marker.EntryModel,
+                indicatorSize: Float,
+            ): Float {
+                return chartBounds.top - labelBounds.height() - labelTickSizeInPixels
+            }
+        }
 
         /**
          * The label will be rendered on the top of the indicator.
@@ -91,7 +110,22 @@ public open class MarkerComponent(
          * @param spacingDp it's an additional space between the indicator and the label. That makes the appearance
          * a bit more customizable for the case of custom indicators or custom label layouts.
          */
-        public data class AboveIndicator(val spacingDp: Float = 2f) : LabelPosition
+        public data class AboveIndicator(val spacingDp: Float = 2f) : LabelPosition {
+            override fun getY(
+                labelTickSizeInPixels: Float,
+                chartBounds: RectF,
+                labelBounds: RectF,
+                markerModel: Marker.EntryModel,
+                indicatorSize: Float,
+            ): Float {
+                return markerModel.location.y -
+                    labelBounds.height() -
+                    labelTickSizeInPixels -
+                    indicatorSize -
+                    spacingDp
+            }
+
+        }
 
         public companion object
     }
@@ -143,47 +177,17 @@ public open class MarkerComponent(
                 context = context,
                 text = text,
                 textX = x,
-                textY = getLabelY(bounds, labelBounds, markedEntries.last()),
+                textY = labelPosition.getY(
+                    labelTickSizeInPixels = label.tickSizeDp.pixels,
+                    chartBounds = bounds,
+                    labelBounds = labelBounds,
+                    markerModel = markedEntries.last(),
+                    indicatorSize = indicatorSizeDp,
+                ),
                 verticalPosition = VerticalPosition.Bottom,
                 maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
             )
         }
-
-    private fun DrawContext.getLabelY(
-        bounds: RectF,
-        labelBounds: RectF,
-        referenceMarkerModel: Marker.EntryModel,
-    ): Float {
-        return when (labelPosition) {
-            LabelPosition.Top -> getLabelYTop(bounds, labelBounds)
-
-            is LabelPosition.AboveIndicator ->
-                getLabelYAboveIndicator(
-                    referenceMarkerModel,
-                    labelBounds,
-                    labelPosition.spacingDp,
-                )
-        }
-    }
-
-    private fun DrawContext.getLabelYTop(
-        bounds: RectF,
-        labelBounds: RectF,
-    ): Float {
-        return bounds.top - labelBounds.height() - label.tickSizeDp.pixels
-    }
-
-    private fun DrawContext.getLabelYAboveIndicator(
-        referenceMarkerModel: Marker.EntryModel,
-        labelBounds: RectF,
-        additionalSpacing: Float,
-    ): Float {
-        return referenceMarkerModel.location.y -
-            labelBounds.height() -
-            label.tickSizeDp.pixels -
-            indicatorSizeDp -
-            additionalSpacing
-    }
 
     private fun overrideXPositionToFit(
         xPosition: Float,
