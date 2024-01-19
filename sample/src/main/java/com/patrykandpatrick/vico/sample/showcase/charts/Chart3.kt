@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -61,6 +62,10 @@ internal fun Chart3(
 
 @Composable
 private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
+    val labelPosition = remember {
+        MarkerComponent.LabelPosition.aboveIndicator()
+    }
+
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         CartesianChartHost(
             chart =
@@ -95,7 +100,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
                     fadingEdges = rememberFadingEdges(),
                 ),
             modelProducer = modelProducer,
-            marker = rememberMarker(labelPosition = MarkerComponent.LabelPosition.aboveIndicator()),
+            marker = rememberMarker(labelPosition = labelPosition),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
         )
@@ -104,7 +109,11 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
 
 @Composable
 private fun ViewChart3(modelProducer: CartesianChartModelProducer) {
-    val marker = rememberMarker(labelPosition = MarkerComponent.LabelPosition.AboveIndicator())
+    val labelPosition = remember {
+        MarkerComponent.LabelPosition.aboveIndicator()
+    }
+    val marker = rememberMarker(labelPosition = labelPosition)
+
     AndroidViewBinding(Chart3Binding::inflate) {
         with(chartView) {
             (chart?.layers?.get(0) as LineCartesianLayer?)?.axisValueOverrider = axisValueOverrider
