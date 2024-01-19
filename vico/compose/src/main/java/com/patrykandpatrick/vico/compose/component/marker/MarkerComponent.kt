@@ -34,7 +34,7 @@ import com.patrykandpatrick.vico.core.marker.Marker
 @Composable
 public fun markerComponent(
     label: TextComponent,
-    labelPosition: MarkerComponent.LabelPosition,
+    labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.top(),
     indicator: Component,
     guideline: LineComponent,
 ): MarkerComponent =

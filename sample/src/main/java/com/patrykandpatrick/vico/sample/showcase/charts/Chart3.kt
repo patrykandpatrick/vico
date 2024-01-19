@@ -40,13 +40,13 @@ import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import com.patrykandpatrick.vico.compose.component.marker.aboveIndicator
 
 @Composable
 internal fun Chart3(
@@ -95,7 +95,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
                     fadingEdges = rememberFadingEdges(),
                 ),
             modelProducer = modelProducer,
-            marker = rememberMarker(labelPosition = MarkerComponent.LabelPosition.AboveIndicator()),
+            marker = rememberMarker(labelPosition = MarkerComponent.LabelPosition.aboveIndicator()),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
         )

@@ -92,6 +92,8 @@ public open class MarkerComponent(
          * a bit more customizable for the case of custom indicators or custom label layouts.
          */
         public data class AboveIndicator(val spacingDp: Float = 2f) : LabelPosition
+
+        public companion object
     }
 
     override fun draw(
