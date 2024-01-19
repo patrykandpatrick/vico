@@ -27,13 +27,14 @@ import com.patrykandpatrick.vico.core.marker.Marker
  * Creates a [MarkerComponent].
  *
  * @param label the [TextComponent] to use for the label.
+ * @param labelPosition the [MarkerComponent.LabelPosition] to set the label position inside the chart
  * @param indicator the [Component] to use for the indicator.
  * @param guideline the [LineComponent] to use for the guideline.
  */
 @Composable
 public fun markerComponent(
     label: TextComponent,
-    labelPosition: Marker.LabelPosition,
+    labelPosition: MarkerComponent.LabelPosition,
     indicator: Component,
     guideline: LineComponent,
 ): MarkerComponent =

@@ -56,28 +56,6 @@ public interface Marker : ChartInsetter {
         public val color: Int,
         public val index: Int,
     )
-
-    /**
-     * This sealed class represents the position where the label should be rendered
-     */
-    public sealed interface LabelPosition {
-        /**
-         * This is the default position.
-         *
-         * The label will be rendered on the top of the chart
-         */
-        public data object Top : LabelPosition
-
-        /**
-         * The label will be rendered on the top of the indicator.
-         *
-         * For the case of the chart holds dynamic values, the label will update its position  one the indicator updates too.
-         *
-         * @param spacingDp it's an additional space between the indicator and the label. That makes the appearance
-         * a bit more customizable for the case of custom indicators or custom label layouts.
-         */
-        public data class AboveIndicator(val spacingDp: Float = 2f) : LabelPosition
-    }
 }
 
 internal fun HashMap<Float, MutableList<Marker.EntryModel>>.put(

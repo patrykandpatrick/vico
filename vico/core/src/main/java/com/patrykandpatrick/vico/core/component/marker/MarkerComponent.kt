@@ -41,15 +41,15 @@ import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
  * The default implementation of the [Marker] interface.
  *
  * @param label the [TextComponent] used to draw the label.
- * @param labelPosition the [Marker.LabelPosition] to set the position of the marker label
+ * @param labelPosition the [LabelPosition] to set the position of the marker label
  * @param indicator an optional indicator drawn at a given point belonging to the data entry.
  * @param guideline an optional line drawn from the bottom of the chart to the bottom edge of the [label].
  */
 public open class MarkerComponent(
     public val label: TextComponent,
+    private val labelPosition: LabelPosition = LabelPosition.Top,
     public val indicator: Component?,
     public val guideline: LineComponent?,
-    private val labelPosition: Marker.LabelPosition = Marker.LabelPosition.Top,
 ) : Marker {
     private val tempBounds = RectF()
 
@@ -71,6 +71,28 @@ public open class MarkerComponent(
      * The [MarkerLabelFormatter] for this marker.
      */
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter()
+
+    /**
+     * This sealed class represents the position where the label should be rendered
+     */
+    public sealed interface LabelPosition {
+        /**
+         * This is the default position.
+         *
+         * The label will be rendered on the top of the chart
+         */
+        public data object Top : LabelPosition
+
+        /**
+         * The label will be rendered on the top of the indicator.
+         *
+         * For the case of the chart holds dynamic values, the label will update its position  one the indicator updates too.
+         *
+         * @param spacingDp it's an additional space between the indicator and the label. That makes the appearance
+         * a bit more customizable for the case of custom indicators or custom label layouts.
+         */
+        public data class AboveIndicator(val spacingDp: Float = 2f) : LabelPosition
+    }
 
     override fun draw(
         context: DrawContext,
@@ -131,9 +153,9 @@ public open class MarkerComponent(
         referenceMarkerModel: Marker.EntryModel,
     ): Float {
         return when (labelPosition) {
-            Marker.LabelPosition.Top -> getLabelYTop(bounds, labelBounds)
+            LabelPosition.Top -> getLabelYTop(bounds, labelBounds)
 
-            is Marker.LabelPosition.AboveIndicator ->
+            is LabelPosition.AboveIndicator ->
                 getLabelYAboveIndicator(
                     referenceMarkerModel,
                     labelBounds,
