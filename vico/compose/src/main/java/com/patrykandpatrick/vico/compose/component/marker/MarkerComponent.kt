@@ -21,7 +21,6 @@ import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.marker.Marker
 
 /**
  * Creates a [MarkerComponent].

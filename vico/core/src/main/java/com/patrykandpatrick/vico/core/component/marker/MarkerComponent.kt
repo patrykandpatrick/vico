@@ -124,7 +124,6 @@ public open class MarkerComponent(
                     indicatorSize -
                     spacingDp
             }
-
         }
 
         public companion object
@@ -177,13 +176,14 @@ public open class MarkerComponent(
                 context = context,
                 text = text,
                 textX = x,
-                textY = labelPosition.getY(
-                    labelTickSizeInPixels = label.tickSizeDp.pixels,
-                    chartBounds = bounds,
-                    labelBounds = labelBounds,
-                    markerModel = markedEntries.last(),
-                    indicatorSize = indicatorSizeDp,
-                ),
+                textY =
+                    labelPosition.getY(
+                        labelTickSizeInPixels = label.tickSizeDp.pixels,
+                        chartBounds = bounds,
+                        labelBounds = labelBounds,
+                        markerModel = markedEntries.last(),
+                        indicatorSize = indicatorSizeDp,
+                    ),
                 verticalPosition = VerticalPosition.Bottom,
                 maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
             )

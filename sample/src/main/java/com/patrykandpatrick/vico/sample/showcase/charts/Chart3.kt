@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.component.marker.aboveIndicator
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
@@ -47,7 +48,6 @@ import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
-import com.patrykandpatrick.vico.compose.component.marker.aboveIndicator
 
 @Composable
 internal fun Chart3(
@@ -62,9 +62,10 @@ internal fun Chart3(
 
 @Composable
 private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
-    val labelPosition = remember {
-        MarkerComponent.LabelPosition.aboveIndicator()
-    }
+    val labelPosition =
+        remember {
+            MarkerComponent.LabelPosition.aboveIndicator()
+        }
 
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         CartesianChartHost(
@@ -109,9 +110,10 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
 
 @Composable
 private fun ViewChart3(modelProducer: CartesianChartModelProducer) {
-    val labelPosition = remember {
-        MarkerComponent.LabelPosition.aboveIndicator()
-    }
+    val labelPosition =
+        remember {
+            MarkerComponent.LabelPosition.aboveIndicator()
+        }
     val marker = rememberMarker(labelPosition = labelPosition)
 
     AndroidViewBinding(Chart3Binding::inflate) {

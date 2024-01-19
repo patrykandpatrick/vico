@@ -65,11 +65,11 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
         overlayingComponent(
             outer = indicatorOuterComponent,
             inner =
-            overlayingComponent(
-                outer = indicatorCenterComponent,
-                inner = indicatorInnerComponent,
-                innerPaddingAll = indicatorInnerAndCenterComponentPaddingValue,
-            ),
+                overlayingComponent(
+                    outer = indicatorCenterComponent,
+                    inner = indicatorInnerComponent,
+                    innerPaddingAll = indicatorInnerAndCenterComponentPaddingValue,
+                ),
             innerPaddingAll = indicatorCenterAndOuterComponentPaddingValue,
         )
     val guideline =
