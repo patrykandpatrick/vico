@@ -79,12 +79,7 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
             guidelineShape,
         )
     return remember(label, labelPosition, indicator, guideline) {
-        object : MarkerComponent(
-            label = label,
-            labelPosition = labelPosition,
-            indicator = indicator,
-            guideline = guideline,
-        ) {
+        object : MarkerComponent(label, labelPosition, indicator, guideline) {
             init {
                 indicatorSizeDp = INDICATOR_SIZE_DP
                 onApplyEntryColor = { entryColor ->

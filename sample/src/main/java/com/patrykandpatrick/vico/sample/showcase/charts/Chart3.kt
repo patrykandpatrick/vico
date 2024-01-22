@@ -62,11 +62,6 @@ internal fun Chart3(
 
 @Composable
 private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
-    val labelPosition =
-        remember {
-            MarkerComponent.LabelPosition.aboveIndicator()
-        }
-
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         CartesianChartHost(
             chart =
@@ -101,7 +96,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
                     fadingEdges = rememberFadingEdges(),
                 ),
             modelProducer = modelProducer,
-            marker = rememberMarker(labelPosition = labelPosition),
+            marker = rememberMarker(remember { MarkerComponent.LabelPosition.aboveIndicator() }),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
         )
@@ -110,11 +105,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
 
 @Composable
 private fun ViewChart3(modelProducer: CartesianChartModelProducer) {
-    val labelPosition =
-        remember {
-            MarkerComponent.LabelPosition.aboveIndicator()
-        }
-    val marker = rememberMarker(labelPosition = labelPosition)
+    val marker = rememberMarker(remember { MarkerComponent.LabelPosition.aboveIndicator() })
 
     AndroidViewBinding(Chart3Binding::inflate) {
         with(chartView) {

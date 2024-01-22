@@ -54,7 +54,7 @@ public open class MarkerComponent(
 ) : Marker {
     private val tempBounds = RectF()
 
-    public val TextComponent.tickSizeDp: Float
+    private val TextComponent.tickSizeDp: Float
         get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
     /**
@@ -97,9 +97,7 @@ public open class MarkerComponent(
                 labelBounds: RectF,
                 markerModel: Marker.EntryModel,
                 indicatorSize: Float,
-            ): Float {
-                return chartBounds.top - labelBounds.height() - labelTickSizeInPixels
-            }
+            ): Float = chartBounds.top - labelBounds.height() - labelTickSizeInPixels
         }
 
         /**
@@ -117,13 +115,7 @@ public open class MarkerComponent(
                 labelBounds: RectF,
                 markerModel: Marker.EntryModel,
                 indicatorSize: Float,
-            ): Float {
-                return markerModel.location.y -
-                    labelBounds.height() -
-                    labelTickSizeInPixels -
-                    indicatorSize -
-                    spacingDp
-            }
+            ): Float = markerModel.location.y - labelBounds.height() - labelTickSizeInPixels - indicatorSize - spacingDp
         }
 
         public companion object
