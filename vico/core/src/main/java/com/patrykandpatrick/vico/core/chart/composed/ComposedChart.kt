@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ public class ComposedChart<Model : ChartEntryModel>(
         xStep: Float?,
     ) {
         model.forEachModelWithChart { item, chart ->
-            chart.updateChartValues(chartValuesManager, item, xStep)
+            chart.updateChartValues(chartValuesManager, item, xStep ?: model.xGcd)
         }
     }
 
