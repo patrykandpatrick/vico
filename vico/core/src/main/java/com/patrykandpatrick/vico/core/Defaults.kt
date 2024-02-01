@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,11 +48,6 @@ public const val DEF_MIN_ZOOM: Float = 0.1f
  * The default color for shadows.
  */
 public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
-
-/**
- * The default size of the thread pools used for difference animations.
- */
-public const val DEF_THREAD_POOL_SIZE: Int = 4
 
 /**
  * The default scroll distance over which fading edges fade in and out (in dp).
