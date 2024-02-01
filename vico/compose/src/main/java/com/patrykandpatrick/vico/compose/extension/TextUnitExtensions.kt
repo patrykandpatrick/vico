@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import com.patrykandpatrick.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
 
-/**
- * Converts the receiver [TextUnit] to a physical pixel size.
- */
-public fun TextUnit.pixelSize(): Float =
+internal fun TextUnit.pixelSize() =
     when (type) {
         TextUnitType.Sp -> value
         TextUnitType.Em -> value
