@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.layout
+package com.patrykandpatrick.vico.core.chart
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.axis.AxisManager
-import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets

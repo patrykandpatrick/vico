@@ -41,7 +41,6 @@ import com.patrykandpatrick.vico.core.extension.inClip
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.setAll
 import com.patrykandpatrick.vico.core.extension.updateAll
-import com.patrykandpatrick.vico.core.layout.VirtualLayout
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
