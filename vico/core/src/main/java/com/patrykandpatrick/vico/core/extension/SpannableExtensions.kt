@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.extension
 import android.os.Build
 import android.text.Spannable
 import android.text.SpannableStringBuilder
-import com.patrykandpatrick.vico.core.constants.ELLIPSIS
+import com.patrykandpatrick.vico.core.ELLIPSIS
 
 internal fun SpannableStringBuilder.appendCompat(
     text: CharSequence,

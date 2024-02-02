@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.extension
 
-import com.patrykandpatrick.vico.core.constants.ERR_REPEATING_COLLECTION_EMPTY
+import com.patrykandpatrick.vico.core.ERR_REPEATING_COLLECTION_EMPTY
 import kotlin.math.abs
 
 internal fun <T> List<T>.getRepeating(index: Int): T {

@@ -20,7 +20,7 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.chart.insets.Insets
-import com.patrykandpatrick.vico.core.collections.cacheInList
+import com.patrykandpatrick.vico.core.collection.cacheInList
 import com.patrykandpatrick.vico.core.context.CartesianMeasureContext
 
 internal class AxisManager {
