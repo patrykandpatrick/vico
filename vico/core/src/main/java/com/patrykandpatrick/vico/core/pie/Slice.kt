@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.chart.pie.slice
+package com.patrykandpatrick.vico.core.pie
 
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.shape.shadow.PaintComponent
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -32,7 +31,6 @@ import com.patrykandpatrick.vico.core.extension.isTransparent
 import com.patrykandpatrick.vico.core.extension.opacity
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.extension.updateBy
-import com.patrykandpatrick.vico.core.layout.PieLayoutHelper
 import com.patrykandpatrick.vico.core.math.radiansDouble
 import com.patrykandpatrick.vico.core.math.translatePointByAngle
 import com.patrykandpatrick.vico.core.util.Point

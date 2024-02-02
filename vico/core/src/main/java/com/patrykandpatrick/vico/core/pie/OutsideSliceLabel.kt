@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.chart.pie.label
+package com.patrykandpatrick.vico.core.pie
 
 import android.graphics.Color
 import android.graphics.Path
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.FULL_DEGREES
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.component.shape.PathComponent
 import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.centerPoint

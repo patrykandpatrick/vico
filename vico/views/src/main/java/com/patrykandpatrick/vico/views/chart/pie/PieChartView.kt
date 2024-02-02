@@ -20,9 +20,6 @@ import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.View
-import com.patrykandpatrick.vico.core.chart.pie.PieChart
-import com.patrykandpatrick.vico.core.chart.pie.Size
-import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.context.PreMeasureContext
 import com.patrykandpatrick.vico.core.draw.drawContext
 import com.patrykandpatrick.vico.core.extension.spToPx
@@ -30,6 +27,9 @@ import com.patrykandpatrick.vico.core.formatter.PieValueFormatter
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.model.PieModel
+import com.patrykandpatrick.vico.core.pie.PieChart
+import com.patrykandpatrick.vico.core.pie.Size
+import com.patrykandpatrick.vico.core.pie.Slice
 import com.patrykandpatrick.vico.views.chart.BaseChartView
 import com.patrykandpatrick.vico.views.extension.isAttachedToWindowCompat
 import com.patrykandpatrick.vico.views.extension.specSize

@@ -36,9 +36,9 @@ import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
-import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
+import com.patrykandpatrick.vico.core.pie.SliceLabel
 import com.patrykandpatrick.vico.databinding.PieChart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 

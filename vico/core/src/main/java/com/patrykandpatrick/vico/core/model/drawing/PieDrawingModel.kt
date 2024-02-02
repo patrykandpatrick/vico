@@ -16,10 +16,10 @@
 
 package com.patrykandpatrick.vico.core.model.drawing
 
-import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.extension.lerp
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.math.interpolateOpacity
+import com.patrykandpatrick.vico.core.pie.PieChart
 import java.util.Objects
 import kotlin.math.max
 

@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.compose.state.CartesianChartModelWrapper
 import com.patrykandpatrick.vico.compose.state.CartesianChartModelWrapperState
 import com.patrykandpatrick.vico.core.Animation
 import com.patrykandpatrick.vico.core.chart.CartesianChart
-import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
 import com.patrykandpatrick.vico.core.chart.values.toImmutable
@@ -39,6 +38,7 @@ import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.MutableExtraStore
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.model.PieModel
+import com.patrykandpatrick.vico.core.pie.PieChart
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job

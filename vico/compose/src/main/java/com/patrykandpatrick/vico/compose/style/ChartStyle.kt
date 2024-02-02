@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,10 +44,6 @@ import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer.LineSpec
-import com.patrykandpatrick.vico.core.chart.pie.Size
-import com.patrykandpatrick.vico.core.chart.pie.label.InsideSliceLabel
-import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
-import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -58,6 +54,10 @@ import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
+import com.patrykandpatrick.vico.core.pie.InsideSliceLabel
+import com.patrykandpatrick.vico.core.pie.Size
+import com.patrykandpatrick.vico.core.pie.Slice
+import com.patrykandpatrick.vico.core.pie.SliceLabel
 
 /**
  * Defines the appearance of charts.

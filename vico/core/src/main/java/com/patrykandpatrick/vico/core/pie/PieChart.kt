@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.chart.pie
+package com.patrykandpatrick.vico.core.pie
 
 import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.FULL_DEGREES
 import com.patrykandpatrick.vico.core.chart.insets.Insets
-import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.shape.extension.moveTo
-import com.patrykandpatrick.vico.core.constants.FULL_DEGREES
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 import com.patrykandpatrick.vico.core.extension.PI_RAD

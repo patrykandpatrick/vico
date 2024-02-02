@@ -26,10 +26,10 @@ import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_ANGLED_SEGMENT_LENGTH
 import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_HORIZONTAL_SEGMENT_LENGTH
 import com.patrykandpatrick.vico.core.DefaultDimens.SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO
-import com.patrykandpatrick.vico.core.chart.pie.Size
-import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
-import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.component.text.textComponent
+import com.patrykandpatrick.vico.core.pie.Size
+import com.patrykandpatrick.vico.core.pie.Slice
+import com.patrykandpatrick.vico.core.pie.SliceLabel
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.chart.pie.label.insideLabel
 import com.patrykandpatrick.vico.views.chart.pie.label.outsideLabel

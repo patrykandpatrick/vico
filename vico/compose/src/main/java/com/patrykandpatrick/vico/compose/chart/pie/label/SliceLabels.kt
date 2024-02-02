@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.chart.pie.label.InsideSliceLabel
-import com.patrykandpatrick.vico.core.chart.pie.label.OutsideSliceLabel
-import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.component.text.TextComponent
+import com.patrykandpatrick.vico.core.pie.InsideSliceLabel
+import com.patrykandpatrick.vico.core.pie.OutsideSliceLabel
+import com.patrykandpatrick.vico.core.pie.SliceLabel
 
 /**
  * The factory function for [InsideSliceLabel].

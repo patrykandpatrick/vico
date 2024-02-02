@@ -14,9 +14,8 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.chart.pie
+package com.patrykandpatrick.vico.core.pie
 
-import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.half
 

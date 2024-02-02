@@ -16,9 +16,9 @@
 
 package com.patrykandpatrick.vico.core.model
 
-import com.patrykandpatrick.vico.core.chart.pie.PieChart
 import com.patrykandpatrick.vico.core.extension.sumOf
 import com.patrykandpatrick.vico.core.model.drawing.DrawingModel
+import com.patrykandpatrick.vico.core.pie.PieChart
 
 /**
  * Stores a [PieChart]’s data.

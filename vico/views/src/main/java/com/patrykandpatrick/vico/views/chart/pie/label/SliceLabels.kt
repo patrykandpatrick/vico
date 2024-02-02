@@ -18,11 +18,11 @@ package com.patrykandpatrick.vico.views.chart.pie.label
 
 import android.graphics.Color
 import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.chart.pie.label.InsideSliceLabel
-import com.patrykandpatrick.vico.core.chart.pie.label.OutsideSliceLabel
-import com.patrykandpatrick.vico.core.chart.pie.label.SliceLabel
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.textComponent
+import com.patrykandpatrick.vico.core.pie.InsideSliceLabel
+import com.patrykandpatrick.vico.core.pie.OutsideSliceLabel
+import com.patrykandpatrick.vico.core.pie.SliceLabel
 
 /**
  * The factory function for [InsideSliceLabel].

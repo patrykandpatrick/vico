@@ -37,9 +37,6 @@ import com.patrykandpatrick.vico.compose.chart.ChartHostBox
 import com.patrykandpatrick.vico.compose.model.collectAsState
 import com.patrykandpatrick.vico.compose.model.defaultPieDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
-import com.patrykandpatrick.vico.core.chart.pie.PieChart
-import com.patrykandpatrick.vico.core.chart.pie.Size
-import com.patrykandpatrick.vico.core.chart.pie.slice.Slice
 import com.patrykandpatrick.vico.core.draw.drawContext
 import com.patrykandpatrick.vico.core.extension.set
 import com.patrykandpatrick.vico.core.extension.spToPx
@@ -47,6 +44,9 @@ import com.patrykandpatrick.vico.core.formatter.PieValueFormatter
 import com.patrykandpatrick.vico.core.legend.Legend
 import com.patrykandpatrick.vico.core.model.PieChartModelProducer
 import com.patrykandpatrick.vico.core.model.PieModel
+import com.patrykandpatrick.vico.core.pie.PieChart
+import com.patrykandpatrick.vico.core.pie.Size
+import com.patrykandpatrick.vico.core.pie.Slice
 
 /**
  * Draws a pie chart.
