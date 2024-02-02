@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.component.Component
+import com.patrykandpatrick.vico.core.component.marker.MarkerComponent.LabelPosition.Top.getY
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.cornered.MarkerCorneredShape
@@ -41,11 +42,13 @@ import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
  * The default implementation of the [Marker] interface.
  *
  * @param label the [TextComponent] used to draw the label.
+ * @param labelPosition the [LabelPosition] to set the position of the marker label
  * @param indicator an optional indicator drawn at a given point belonging to the data entry.
  * @param guideline an optional line drawn from the bottom of the chart to the bottom edge of the [label].
  */
 public open class MarkerComponent(
     public val label: TextComponent,
+    private val labelPosition: LabelPosition = LabelPosition.Top,
     public val indicator: Component?,
     public val guideline: LineComponent?,
 ) : Marker {
@@ -69,6 +72,54 @@ public open class MarkerComponent(
      * The [MarkerLabelFormatter] for this marker.
      */
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter()
+
+    /**
+     * This sealed class represents the position where the label should be rendered
+     */
+    public sealed interface LabelPosition {
+        public fun getY(
+            labelTickSizeInPixels: Float,
+            chartBounds: RectF,
+            labelBounds: RectF,
+            markerModel: Marker.EntryModel,
+            indicatorSize: Float,
+        ): Float
+
+        /**
+         * This is the default position.
+         *
+         * The label will be rendered on the top of the chart
+         */
+        public data object Top : LabelPosition {
+            override fun getY(
+                labelTickSizeInPixels: Float,
+                chartBounds: RectF,
+                labelBounds: RectF,
+                markerModel: Marker.EntryModel,
+                indicatorSize: Float,
+            ): Float = chartBounds.top - labelBounds.height() - labelTickSizeInPixels
+        }
+
+        /**
+         * The label will be rendered on the top of the indicator.
+         *
+         * For the case of the chart holds dynamic values, the label will update its position  one the indicator updates too.
+         *
+         * @param spacingDp it's an additional space between the indicator and the label. That makes the appearance
+         * a bit more customizable for the case of custom indicators or custom label layouts.
+         */
+        public data class AboveIndicator(val spacingDp: Float = 2f) : LabelPosition {
+            override fun getY(
+                labelTickSizeInPixels: Float,
+                chartBounds: RectF,
+                labelBounds: RectF,
+                markerModel: Marker.EntryModel,
+                indicatorSize: Float,
+            ): Float = markerModel.location.y - labelBounds.height() - labelTickSizeInPixels - indicatorSize - spacingDp
+        }
+
+        public companion object
+    }
 
     override fun draw(
         context: CartesianDrawContext,
@@ -117,7 +168,14 @@ public open class MarkerComponent(
                 context = context,
                 text = text,
                 textX = x,
-                textY = bounds.top - labelBounds.height() - label.tickSizeDp.pixels,
+                textY =
+                    labelPosition.getY(
+                        labelTickSizeInPixels = label.tickSizeDp.pixels,
+                        chartBounds = bounds,
+                        labelBounds = labelBounds,
+                        markerModel = markedEntries.last(),
+                        indicatorSize = indicatorSizeDp,
+                    ),
                 verticalPosition = VerticalPosition.Bottom,
                 maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
             )

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,27 +17,9 @@
 package com.patrykandpatrick.vico.core.extension
 
 import android.graphics.Canvas
-import android.graphics.RectF
 import android.os.Build
 
-/**
- * Clips the given [rect] in the receiver [Canvas], runs the [block], and releases the clip.
- *
- * @see [Canvas.clipRect]
- */
-public inline fun Canvas.inClip(
-    rect: RectF,
-    block: () -> Unit,
-) {
-    inClip(rect.left, rect.top, rect.right, rect.bottom, block)
-}
-
-/**
- * Clips the given rectangle in the receiver [Canvas], runs the [block], and releases the clip.
- *
- * @see [Canvas.clipRect]
- */
-public inline fun Canvas.inClip(
+internal inline fun Canvas.inClip(
     left: Float,
     top: Float,
     right: Float,
@@ -50,11 +32,8 @@ public inline fun Canvas.inClip(
     restoreToCount(clipRestoreCount)
 }
 
-/**
- * A convenience function for [Canvas.saveLayer].
- */
 @Suppress("DEPRECATION")
-public fun Canvas.saveLayer(
+internal fun Canvas.saveLayer(
     left: Float,
     top: Float,
     right: Float,

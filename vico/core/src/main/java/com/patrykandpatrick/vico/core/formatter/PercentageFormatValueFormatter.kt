@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,8 @@ import java.text.DecimalFormat
  *
  * @param pattern the pattern used by [DecimalFormat] to format values as percentages.
  */
-public open class PercentageFormatValueFormatter(pattern: String) : ValueFormatter {
+public open class PercentageFormatValueFormatter(pattern: String = DEF_PATTERN) : ValueFormatter {
     private val decimalFormat = DecimalFormat(pattern)
-
-    /**
-     * Creates a [PercentageFormatValueFormatter] using the default percentage pattern.
-     */
-    public constructor() : this(DEF_PATTERN)
 
     override fun formatValue(
         value: Float,

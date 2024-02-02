@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,11 +40,6 @@ public class CartesianChartModel {
     public val width: Float
 
     /**
-     * The greatest common divisor of the _x_ values’ differences.
-     */
-    public val xDeltaGcd: Float
-
-    /**
      * Stores auxiliary data, including [DrawingModel]s.
      */
     public val extraStore: ExtraStore
@@ -63,12 +58,6 @@ public class CartesianChartModel {
         models = models,
         id = models.map { it.id }.hashCode(),
         width = models.maxOf { it.maxX } - models.minOf { it.minX },
-        xDeltaGcd =
-            models
-                .fold<CartesianLayerModel, Float?>(null) { gcd, model ->
-                    gcd?.gcdWith(model.xDeltaGcd) ?: model.xDeltaGcd
-                }
-                ?: 1f,
         extraStore = extraStore,
     )
 
@@ -76,22 +65,31 @@ public class CartesianChartModel {
         models: List<CartesianLayerModel>,
         id: Int,
         width: Float,
-        xDeltaGcd: Float,
         extraStore: ExtraStore,
     ) {
         this.models = models
         this.id = id
         this.width = width
-        this.xDeltaGcd = xDeltaGcd
         this.extraStore = extraStore
     }
+
+    /**
+     * Returns the greatest common divisor of the _x_ values’ differences.
+     */
+    public fun getXDeltaGcd(): Float =
+        models
+            .fold<CartesianLayerModel, Float?>(null) { gcd, layerModel ->
+                val layerModelGcd = layerModel.getXDeltaGcd()
+                gcd?.gcdWith(layerModelGcd) ?: layerModelGcd
+            }
+            ?: 1f
 
     /**
      * Creates a copy of this [CartesianChartModel] with the given [ExtraStore], which is also applied to the
      * [CartesianLayerModel]s.
      */
     public fun copy(extraStore: ExtraStore): CartesianChartModel =
-        CartesianChartModel(models.map { it.copy(extraStore) }, id, width, xDeltaGcd, extraStore)
+        CartesianChartModel(models.map { it.copy(extraStore) }, id, width, extraStore)
 
     /**
      * Creates an immutable copy of this [CartesianChartModel].
@@ -103,6 +101,6 @@ public class CartesianChartModel {
          * An empty [CartesianChartModel].
          */
         public val empty: CartesianChartModel =
-            CartesianChartModel(models = emptyList(), id = 0, width = 0f, xDeltaGcd = 0f, extraStore = ExtraStore.empty)
+            CartesianChartModel(models = emptyList(), id = 0, width = 0f, extraStore = ExtraStore.empty)
     }
 }

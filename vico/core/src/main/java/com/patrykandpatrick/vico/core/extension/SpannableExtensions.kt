@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,7 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import com.patrykandpatrick.vico.core.constants.ELLIPSIS
 
-/**
- * An SDK version-dependant compat function for appending text to [SpannableStringBuilder] and setting the span.
- */
-public fun SpannableStringBuilder.appendCompat(
+internal fun SpannableStringBuilder.appendCompat(
     text: CharSequence,
     what: Any,
     flags: Int,
@@ -37,18 +34,7 @@ public fun SpannableStringBuilder.appendCompat(
         this
     }
 
-/**
- * Converts the receiver [Iterable] to a [Spannable].
- *
- * @param separator separates items.
- * @param prefix the prefix of the generated [Spannable].
- * @param postfix the postfix of the generated [Spannable].
- * @param limit the maximum number of items transformed.
- * @param truncated the truncation indicator added to the [Spannable] when the [limit] is reached.
- * @param transform a lambda function yielding [SpannableStringBuilder] as its receiver. It is called for each item.
- * The caller function is responsible for adding the text to the builder.
- */
-public fun <T> Iterable<T>.transformToSpannable(
+internal fun <T> Iterable<T>.transformToSpannable(
     separator: CharSequence = ", ",
     prefix: CharSequence = "",
     postfix: CharSequence = "",

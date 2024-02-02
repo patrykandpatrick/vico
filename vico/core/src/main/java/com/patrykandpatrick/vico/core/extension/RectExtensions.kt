@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,43 +17,14 @@
 package com.patrykandpatrick.vico.core.extension
 
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.util.Point
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.sin
 
-/**
- * Updates the coordinates of this [RectF].
- */
-public fun RectF.updateBounds(
-    left: Float = this.left,
-    top: Float = this.top,
-    right: Float = this.right,
-    bottom: Float = this.bottom,
-) {
-    set(left, top, right, bottom)
-}
-
-/**
- * Increments the coordinates of this [RectF] by the provided values.
- */
-public fun RectF.updateBy(
-    left: Float = 0f,
-    top: Float = 0f,
-    right: Float = 0f,
-    bottom: Float = 0f,
-) {
-    set(
-        left = this.left + left,
-        top = this.top + top,
-        right = this.right + right,
-        bottom = this.bottom + bottom,
-    )
-}
-
-/**
- * Sets the coordinates of this [RectF] to the provided values converted to [Float]s.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun RectF.set(
     left: Number,
     top: Number,
@@ -63,36 +34,13 @@ public fun RectF.set(
     set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
 }
 
-/**
- * Sets all coordinates of this [RectF] to 0.
- */
-public fun RectF.clear() {
+internal fun RectF.clear() {
     set(0, 0, 0, 0)
 }
 
-/**
- * Applies the provided coordinates to this [RectF] and rotates it by the given number of degrees.
- */
-public fun RectF.setAndRotate(
-    left: Number,
-    top: Number,
-    right: Number,
-    bottom: Number,
-    rotationDegrees: Float,
-): RectF {
-    set(left.toFloat(), top.toFloat(), right.toFloat(), bottom.toFloat())
-    return rotate(rotationDegrees)
-}
+internal fun RectF.copy(): RectF = RectF(this)
 
-/**
- * Creates a new [RectF] with the same coordinates as this [RectF] without modifying this [RectF].
- */
-public fun RectF.copy(): RectF = RectF(this)
-
-/**
- * Creates a [RectF] representing the bounding box of this [RectF] rotated by the provided number of degrees.
- */
-public fun RectF.rotate(degrees: Float): RectF {
+internal fun RectF.rotate(degrees: Float): RectF {
     when {
         degrees % PI_RAD == 0f -> Unit
         degrees % 0.5f.piRad == 0f -> {
@@ -125,10 +73,7 @@ public fun RectF.rotate(degrees: Float): RectF {
     return this
 }
 
-/**
- * Moves this [RectF] horizontally and vertically by the specified distances.
- */
-public fun RectF.translate(
+internal fun RectF.translate(
     x: Float,
     y: Float,
 ): RectF =
@@ -139,15 +84,32 @@ public fun RectF.translate(
         bottom += y
     }
 
-/**
- * Returns [RectF.left] if [isLtr] is true, and [RectF.right] otherwise.
- */
-public fun RectF.getStart(isLtr: Boolean): Float = if (isLtr) left else right
+internal fun RectF.getStart(isLtr: Boolean): Float = if (isLtr) left else right
 
-/**
- * Returns [RectF.right] if [isLtr] is true, and [RectF.left] otherwise.
- */
-public fun RectF.getEnd(isLtr: Boolean): Float = if (isLtr) right else left
+internal fun RectF.getEnd(isLtr: Boolean): Float = if (isLtr) right else left
+
+public fun RectF.updateBounds(
+    left: Float = this.left,
+    top: Float = this.top,
+    right: Float = this.right,
+    bottom: Float = this.bottom,
+) {
+    set(left, top, right, bottom)
+}
+
+public fun RectF.updateBy(
+    left: Float = 0f,
+    top: Float = 0f,
+    right: Float = 0f,
+    bottom: Float = 0f,
+) {
+    set(
+        left = this.left + left,
+        top = this.top + top,
+        right = this.right + right,
+        bottom = this.bottom + bottom,
+    )
+}
 
 /**
  * Updates the coordinates of this [RectF] if the provided coordinates exceed the current ones.

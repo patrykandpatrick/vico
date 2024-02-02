@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,25 +36,8 @@ internal fun Paint.withOpacity(
     this.alpha = previousOpacity
 }
 
-/**
- * Returns the height of a single line of text.
- */
-public val Paint.lineHeight: Float
+internal val Paint.lineHeight: Float
     get() {
         getFontMetrics(fm)
         return fm.bottom - fm.top + fm.leading
     }
-
-/**
- * Returns the height of text.
- */
-public val Paint.textHeight: Float
-    get() {
-        getFontMetrics(fm)
-        return fm.descent - fm.ascent
-    }
-
-/**
- * Returns the width of the provided text.
- */
-public fun Paint.measureText(text: CharSequence): Float = measureText(text, 0, text.length)

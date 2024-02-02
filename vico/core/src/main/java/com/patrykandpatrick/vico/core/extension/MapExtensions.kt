@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,38 +17,20 @@
 package com.patrykandpatrick.vico.core.extension
 
 import com.patrykandpatrick.vico.core.marker.Marker
-import com.patrykandpatrick.vico.core.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.util.Point
 import java.util.TreeMap
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
-/**
- * Returns that of the [Marker.EntryModel]s stored in the [Map] whose x-axis map key is the closest to the [Point.x]
- * value.
- *
- * @see Marker.EntryModel
- */
-public fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
+internal fun Map<Float, List<Marker.EntryModel>>.getClosestMarkerEntryModel(
     touchPoint: Point,
 ): List<Marker.EntryModel>? = keys.findClosestPositiveValue(touchPoint.x)?.let(::get)
 
-/**
- * Returns those of the [Marker.EntryModel]s stored in the [Map] whose [CartesianLayerModel.Entry.x] is equal to
- * [xValue].
- *
- * @see Marker.EntryModel
- */
-public fun Map<Float, List<Marker.EntryModel>>.getEntryModel(xValue: Float): List<Marker.EntryModel>? =
+internal fun Map<Float, List<Marker.EntryModel>>.getEntryModel(xValue: Float): List<Marker.EntryModel>? =
     values
         .mapNotNull { entries -> entries.takeIf { it.firstOrNull()?.entry?.x == xValue } }
         .flatten()
         .takeIf { it.isNotEmpty() }
 
-/**
- * Updates the receiver [TreeMap] with the contents of another [Map].
- */
-public fun <K, V> TreeMap<K, MutableList<V>>.updateAll(other: Map<K, List<V>>) {
+internal fun <K, V> TreeMap<K, MutableList<V>>.updateAll(other: Map<K, List<V>>) {
     other.forEach { (key, value) ->
         put(key, get(key)?.apply { addAll(value) } ?: mutableListOf(value))
     }

@@ -41,8 +41,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
 
     override val maxY: Float
 
-    override val xDeltaGcd: Float
-
     override val extraStore: ExtraStore
 
     public constructor(series: List<Entry>) : this(series, ExtraStore.empty)
@@ -57,7 +55,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
         this.maxX = xRange.endInclusive
         this.minY = yRange.start
         this.maxY = yRange.endInclusive
-        this.xDeltaGcd = entries.getXDeltaGcd()
         this.extraStore = extraStore
     }
 
@@ -68,7 +65,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
         maxX: Float,
         minY: Float,
         maxY: Float,
-        xDeltaGcd: Float,
         extraStore: ExtraStore,
     ) {
         this.series = series
@@ -77,9 +73,10 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
         this.maxX = maxX
         this.minY = minY
         this.maxY = maxY
-        this.xDeltaGcd = xDeltaGcd
         this.extraStore = extraStore
     }
+
+    override fun getXDeltaGcd(): Float = series.getXDeltaGcd()
 
     override fun copy(extraStore: ExtraStore): CartesianLayerModel =
         CandlestickCartesianLayerModel(
@@ -89,7 +86,6 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
             maxX,
             minY,
             maxY,
-            xDeltaGcd,
             extraStore,
         )
 
@@ -101,8 +97,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
             minX == other.minX &&
             maxX == other.maxX &&
             minY == other.minY &&
-            maxY == other.maxY &&
-            xDeltaGcd == other.xDeltaGcd
+            maxY == other.maxY
 
     override fun hashCode(): Int =
         series.hashCode() +
@@ -110,8 +105,7 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
             31 * minX.hashCode() +
             31 * maxX.hashCode() +
             31 * minY.hashCode() +
-            31 * maxY.hashCode() +
-            31 * xDeltaGcd.hashCode()
+            31 * maxY.hashCode()
 
     /**
      * TODO

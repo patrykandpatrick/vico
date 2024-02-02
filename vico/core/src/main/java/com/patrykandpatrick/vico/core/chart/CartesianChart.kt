@@ -226,7 +226,7 @@ public open class CartesianChart(
         model: CartesianChartModel,
         xStep: Float?,
     ) {
-        chartValues.update(xStep ?: model.xDeltaGcd, model)
+        chartValues.update(xStep ?: model.getXDeltaGcd(), model)
         model.forEachWithLayer(chartValueUpdateModelAndLayerConsumer.apply { this.chartValues = chartValues })
     }
 

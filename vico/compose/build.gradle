@@ -78,7 +78,6 @@ dependencies {
     implementation libs.appcompat
     implementation libs.composeFoundation
     implementation libs.composeUI
-    implementation libs.composeUITooling
     implementation libs.kotlinStdLib
     testImplementation libs.JUnit
     testImplementation libs.JUnitExt

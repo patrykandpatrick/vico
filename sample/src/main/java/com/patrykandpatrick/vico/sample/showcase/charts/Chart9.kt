@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,9 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                                                             margins = remember { dimensionsOf(1.dp) },
                                                         ),
                                                 ),
-                                                verticalGradient(arrayOf(Color.Black, Color.Transparent)),
+                                                DynamicShaders.verticalGradient(
+                                                    arrayOf(Color.Black, Color.Transparent),
+                                                ),
                                                 PorterDuff.Mode.DST_IN,
                                             ),
                                             DynamicShaders.composeShader(
@@ -110,7 +112,9 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                                                         ),
                                                     checkeredArrangement = false,
                                                 ),
-                                                verticalGradient(arrayOf(Color.Transparent, Color.Black)),
+                                                DynamicShaders.verticalGradient(
+                                                    arrayOf(Color.Transparent, Color.Black),
+                                                ),
                                                 PorterDuff.Mode.DST_IN,
                                             ),
                                         ),
@@ -200,7 +204,7 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer) {
                                                     margins = dimensionsOf(1.dp),
                                                 ),
                                         ),
-                                        verticalGradient(arrayOf(Color.Black, Color.Transparent)),
+                                        DynamicShaders.verticalGradient(arrayOf(Color.Black, Color.Transparent)),
                                         PorterDuff.Mode.DST_IN,
                                     ),
                                     DynamicShaders.composeShader(
@@ -214,7 +218,7 @@ private fun ViewChart9(modelProducer: CartesianChartModelProducer) {
                                                 ),
                                             checkeredArrangement = false,
                                         ),
-                                        verticalGradient(arrayOf(Color.Transparent, Color.Black)),
+                                        DynamicShaders.verticalGradient(arrayOf(Color.Transparent, Color.Black)),
                                         PorterDuff.Mode.DST_IN,
                                     ),
                                 ),

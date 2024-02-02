@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,14 +51,14 @@ public interface CartesianLayerModel {
     public val maxY: Float
 
     /**
-     * The greatest common divisor of the _x_ values’ differences.
-     */
-    public val xDeltaGcd: Float
-
-    /**
      * Stores auxiliary data, including [DrawingModel]s.
      */
     public val extraStore: ExtraStore
+
+    /**
+     * Returns the greatest common divisor of the _x_ values’ differences.
+     */
+    public fun getXDeltaGcd(): Float
 
     /**
      * Creates a copy of this [CartesianLayerModel] with the given [ExtraStore].
