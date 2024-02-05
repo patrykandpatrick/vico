@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -42,17 +43,21 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
 internal fun Chart4(
-    uiSystem: UISystem,
     modelProducer: CartesianChartModelProducer,
+    uiSystem: UISystem,
+    modifier: Modifier,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart4(modelProducer)
-        UISystem.Views -> ViewChart4(modelProducer)
+        UISystem.Compose -> ComposeChart4(modelProducer, modifier)
+        UISystem.Views -> ViewChart4(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart4(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart4(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
         val defaultColumns = currentChartStyle.columnLayer.columns
         val defaultLines = currentChartStyle.lineLayer.lines
@@ -73,6 +78,7 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer) {
                     endAxis = rememberEndAxis(),
                 ),
             modelProducer = modelProducer,
+            modifier = modifier,
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -80,9 +86,12 @@ private fun ComposeChart4(modelProducer: CartesianChartModelProducer) {
 }
 
 @Composable
-private fun ViewChart4(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart4(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
-    AndroidViewBinding(Chart4Binding::inflate) {
+    AndroidViewBinding(Chart4Binding::inflate, modifier) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer

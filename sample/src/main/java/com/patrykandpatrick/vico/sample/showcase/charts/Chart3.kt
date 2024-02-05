@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -51,17 +52,21 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
 internal fun Chart3(
-    uiSystem: UISystem,
     modelProducer: CartesianChartModelProducer,
+    uiSystem: UISystem,
+    modifier: Modifier,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart3(modelProducer)
-        UISystem.Views -> ViewChart3(modelProducer)
+        UISystem.Compose -> ComposeChart3(modelProducer, modifier)
+        UISystem.Views -> ViewChart3(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart3(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         CartesianChartHost(
             chart =
@@ -96,6 +101,7 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
                     fadingEdges = rememberFadingEdges(),
                 ),
             modelProducer = modelProducer,
+            modifier = modifier,
             marker = rememberMarker(remember { MarkerComponent.LabelPosition.aboveIndicator() }),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
@@ -104,10 +110,13 @@ private fun ComposeChart3(modelProducer: CartesianChartModelProducer) {
 }
 
 @Composable
-private fun ViewChart3(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart3(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker(remember { MarkerComponent.LabelPosition.aboveIndicator() })
 
-    AndroidViewBinding(Chart3Binding::inflate) {
+    AndroidViewBinding(Chart3Binding::inflate, modifier) {
         with(chartView) {
             (chart?.layers?.get(0) as LineCartesianLayer?)?.axisValueOverrider = axisValueOverrider
             runInitialAnimation = false

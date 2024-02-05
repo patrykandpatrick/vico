@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.sample.previews.resource
 
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import com.patrykandpatrick.vico.sample.utils.VicoTheme
+import com.patrykandpatrick.vico.sample.VicoTheme
 
 @Composable
 public fun PreviewSurface(content: @Composable () -> Unit) {

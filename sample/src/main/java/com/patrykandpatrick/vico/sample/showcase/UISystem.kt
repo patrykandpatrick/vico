@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,12 @@
 
 package com.patrykandpatrick.vico.sample.showcase
 
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.patrykandpatrick.vico.R
 
 internal enum class UISystem(
     @StringRes val labelResourceID: Int,
-    @DrawableRes val iconResourceID: Int,
 ) {
-    Compose(R.string.compose, R.drawable.ic_compose),
-    Views(R.string.views, R.drawable.ic_views),
+    Compose(R.string.compose),
+    Views(R.string.views),
 }

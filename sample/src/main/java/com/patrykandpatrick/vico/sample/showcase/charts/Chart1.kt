@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -35,17 +36,21 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
 internal fun Chart1(
-    uiSystem: UISystem,
     modelProducer: CartesianChartModelProducer,
+    uiSystem: UISystem,
+    modifier: Modifier,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart1(modelProducer)
-        UISystem.Views -> ViewChart1(modelProducer)
+        UISystem.Compose -> ComposeChart1(modelProducer, modifier)
+        UISystem.Views -> ViewChart1(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart1(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart1(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         CartesianChartHost(
@@ -57,6 +62,7 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer) {
                     persistentMarkers = remember(marker) { mapOf(PERSISTENT_MARKER_X to marker) },
                 ),
             modelProducer = modelProducer,
+            modifier = modifier,
             marker = marker,
             runInitialAnimation = false,
         )
@@ -64,9 +70,12 @@ private fun ComposeChart1(modelProducer: CartesianChartModelProducer) {
 }
 
 @Composable
-private fun ViewChart1(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart1(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
-    AndroidViewBinding(Chart1Binding::inflate) {
+    AndroidViewBinding(Chart1Binding::inflate, modifier) {
         with(chartView) {
             chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
             runInitialAnimation = false

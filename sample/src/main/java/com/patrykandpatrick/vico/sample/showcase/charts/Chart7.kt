@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -50,17 +51,21 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
 internal fun Chart7(
-    uiSystem: UISystem,
     modelProducer: CartesianChartModelProducer,
+    uiSystem: UISystem,
+    modifier: Modifier,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart7(modelProducer)
-        UISystem.Views -> ViewChart7(modelProducer)
+        UISystem.Compose -> ComposeChart7(modelProducer, modifier)
+        UISystem.Views -> ViewChart7(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart7(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart7(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultLines = currentChartStyle.lineLayer.lines
         CartesianChartHost(
@@ -78,6 +83,7 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer) {
                     legend = rememberLegend(),
                 ),
             modelProducer = modelProducer,
+            modifier = modifier,
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -85,11 +91,14 @@ private fun ComposeChart7(modelProducer: CartesianChartModelProducer) {
 }
 
 @Composable
-private fun ViewChart7(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart7(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val startAxisLabel = rememberStartAxisLabel()
     val marker = rememberMarker()
     val legend = rememberLegend()
-    AndroidViewBinding(Chart7Binding::inflate) {
+    AndroidViewBinding(Chart7Binding::inflate, modifier) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer

@@ -1,0 +1,72 @@
+/*
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatrick.vico.sample.showcase
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.patrykandpatrick.vico.R
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun ChartListScreen(navController: NavController) {
+    var uiSystem by rememberSaveable { mutableStateOf(UISystem.Compose) }
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+    Scaffold(
+        Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        { TopAppBar(title = { Text(stringResource(R.string.app_name)) }, scrollBehavior = scrollBehavior) },
+    ) { paddingValues ->
+        LazyColumn(contentPadding = paddingValues) {
+            item {
+                Row(Modifier.padding(horizontal = 16.dp), Arrangement.spacedBy(8.dp)) {
+                    UISystem.entries.forEach { chipUISystem ->
+                        FilterChip(
+                            selected = uiSystem == chipUISystem,
+                            onClick = { uiSystem = chipUISystem },
+                            label = { Text(stringResource(chipUISystem.labelResourceID)) },
+                        )
+                    }
+                }
+            }
+            items(charts.size) { chartID ->
+                ListItem(
+                    { Text(stringResource(R.string.chart_x, chartID + 1)) },
+                    Modifier.clickable { navController.navigate("chart/$chartID/${uiSystem.ordinal}") },
+                )
+            }
+        }
+    }
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,36 +16,39 @@
 
 package com.patrykandpatrick.vico.sample
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
-import com.patrykandpatrick.vico.sample.showcase.ShowcaseScreen
-import com.patrykandpatrick.vico.sample.utils.VicoTheme
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.patrykandpatrick.vico.sample.showcase.ChartListScreen
+import com.patrykandpatrick.vico.sample.showcase.ChartScreen
+import com.patrykandpatrick.vico.sample.showcase.ChartViewModel
 
 @Composable
 internal fun VicoApp() {
-    val systemUiController = rememberSystemUiController()
-    val useDarkIcons = isSystemInDarkTheme().not()
-    SideEffect {
-        systemUiController.setSystemBarsColor(
-            color = Color.Transparent,
-            darkIcons = useDarkIcons,
-            isNavigationBarContrastEnforced = false,
-        )
-    }
+    val navController = rememberNavController()
+    val chartViewModel = viewModel<ChartViewModel>()
     VicoTheme {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(color = MaterialTheme.colorScheme.background),
-        ) { ShowcaseScreen() }
+        NavHost(navController = navController, startDestination = "chartList") {
+            composable("chartList") { ChartListScreen(navController) }
+            composable(
+                "chart/{initialChartID}/{uiSystemID}",
+                listOf(
+                    navArgument("initialChartID") { type = NavType.IntType },
+                    navArgument("uiSystemID") { type = NavType.IntType },
+                ),
+            ) { backStackEntry ->
+                val arguments = requireNotNull(backStackEntry.arguments)
+                ChartScreen(
+                    chartViewModel,
+                    navController,
+                    arguments.getInt("initialChartID"),
+                    arguments.getInt("uiSystemID"),
+                )
+            }
+        }
     }
 }

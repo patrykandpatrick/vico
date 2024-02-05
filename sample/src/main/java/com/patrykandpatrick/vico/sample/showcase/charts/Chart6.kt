@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -47,17 +48,21 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
 internal fun Chart6(
-    uiSystem: UISystem,
     modelProducer: CartesianChartModelProducer,
+    uiSystem: UISystem,
+    modifier: Modifier,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart6(modelProducer)
-        UISystem.Views -> ViewChart6(modelProducer)
+        UISystem.Compose -> ComposeChart6(modelProducer, modifier)
+        UISystem.Views -> ViewChart6(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart6(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart6(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val thresholdLine = rememberThresholdLine()
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultColumns = currentChartStyle.columnLayer.columns
@@ -81,6 +86,7 @@ private fun ComposeChart6(modelProducer: CartesianChartModelProducer) {
                     decorations = remember(thresholdLine) { listOf(thresholdLine) },
                 ),
             modelProducer = modelProducer,
+            modifier = modifier,
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -88,11 +94,14 @@ private fun ComposeChart6(modelProducer: CartesianChartModelProducer) {
 }
 
 @Composable
-private fun ViewChart6(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart6(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val thresholdLine = rememberThresholdLine()
     val decorations = remember(thresholdLine) { listOf(thresholdLine) }
     val marker = rememberMarker()
-    AndroidViewBinding(Chart6Binding::inflate) {
+    AndroidViewBinding(Chart6Binding::inflate, modifier) {
         with(chartView) {
             chart?.setDecorations(decorations)
             runInitialAnimation = false

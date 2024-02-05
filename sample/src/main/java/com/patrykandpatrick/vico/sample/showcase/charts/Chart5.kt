@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -41,17 +42,21 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
 internal fun Chart5(
-    uiSystem: UISystem,
     modelProducer: CartesianChartModelProducer,
+    uiSystem: UISystem,
+    modifier: Modifier,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart5(modelProducer)
-        UISystem.Views -> ViewChart5(modelProducer)
+        UISystem.Compose -> ComposeChart5(modelProducer, modifier)
+        UISystem.Views -> ViewChart5(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart5(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart5(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         val defaultColumns = currentChartStyle.columnLayer.columns
         CartesianChartHost(
@@ -91,6 +96,7 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer) {
                     bottomAxis = rememberBottomAxis(labelRotationDegrees = AXIS_LABEL_ROTATION_DEGREES),
                 ),
             modelProducer = modelProducer,
+            modifier = modifier,
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -98,9 +104,12 @@ private fun ComposeChart5(modelProducer: CartesianChartModelProducer) {
 }
 
 @Composable
-private fun ViewChart5(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart5(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
-    AndroidViewBinding(Chart5Binding::inflate) {
+    AndroidViewBinding(Chart5Binding::inflate, modifier) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer

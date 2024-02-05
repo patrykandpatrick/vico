@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.sample.showcase.charts
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
@@ -38,17 +39,21 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
 internal fun Chart8(
-    uiSystem: UISystem,
     modelProducer: CartesianChartModelProducer,
+    uiSystem: UISystem,
+    modifier: Modifier,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart8(modelProducer)
-        UISystem.Views -> ViewChart8(modelProducer)
+        UISystem.Compose -> ComposeChart8(modelProducer, modifier)
+        UISystem.Views -> ViewChart8(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart8(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart8(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
         CartesianChartHost(
             chart =
@@ -62,6 +67,7 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer) {
                     endAxis = rememberEndAxis(),
                 ),
             modelProducer = modelProducer,
+            modifier = modifier,
             marker = rememberMarker(),
             runInitialAnimation = false,
         )
@@ -69,9 +75,12 @@ private fun ComposeChart8(modelProducer: CartesianChartModelProducer) {
 }
 
 @Composable
-private fun ViewChart8(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart8(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
-    AndroidViewBinding(Chart8Binding::inflate) {
+    AndroidViewBinding(Chart8Binding::inflate, modifier) {
         with(chartView) {
             (chart?.layers?.get(0) as ColumnCartesianLayer).verticalAxisPosition = AxisPosition.Vertical.Start
             (chart?.layers?.get(1) as LineCartesianLayer).verticalAxisPosition = AxisPosition.Vertical.End

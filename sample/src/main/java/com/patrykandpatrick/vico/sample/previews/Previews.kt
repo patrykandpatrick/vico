@@ -58,7 +58,7 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
-import com.patrykandpatrick.vico.sample.utils.VicoTheme
+import com.patrykandpatrick.vico.sample.VicoTheme
 
 private val chartModifier = Modifier.height(100.dp)
 

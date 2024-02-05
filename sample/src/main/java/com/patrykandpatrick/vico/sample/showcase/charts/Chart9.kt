@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
@@ -59,17 +60,21 @@ import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 @Composable
 internal fun Chart9(
-    uiSystem: UISystem,
     modelProducer: CartesianChartModelProducer,
+    uiSystem: UISystem,
+    modifier: Modifier,
 ) {
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart9(modelProducer)
-        UISystem.Views -> ViewChart9(modelProducer)
+        UISystem.Compose -> ComposeChart9(modelProducer, modifier)
+        UISystem.Views -> ViewChart9(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart9(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
     ProvideChartStyle(rememberChartStyle(chartColors)) {
         CartesianChartHost(
@@ -166,6 +171,7 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
                         ),
                 ),
             modelProducer = modelProducer,
+            modifier = modifier,
             marker = marker,
             runInitialAnimation = false,
             horizontalLayout = HorizontalLayout.fullWidth(),
@@ -174,10 +180,13 @@ private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
 }
 
 @Composable
-private fun ViewChart9(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart9(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
     val colors = chartColors
-    AndroidViewBinding(Chart9Binding::inflate) {
+    AndroidViewBinding(Chart9Binding::inflate, modifier) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer

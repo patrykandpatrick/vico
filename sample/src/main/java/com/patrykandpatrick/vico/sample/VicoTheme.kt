@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,34 +14,31 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.sample.utils
+package com.patrykandpatrick.vico.sample
 
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Typography
 import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.dynamicDarkColorScheme
+import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 
 @Composable
 fun VicoTheme(content: @Composable () -> Unit) {
-    val darkColorScheme =
-        darkColorScheme(
-            surface = Color(color = DARK_SURFACE),
-            background = Color.Black,
-        )
-    val lightColorScheme =
-        lightColorScheme(
-            surface = Color.White,
-            background = Color(color = LIGHT_BACKGROUND),
-        )
+    val isSystemInDarkTheme = isSystemInDarkTheme()
     MaterialTheme(
-        colorScheme = if (isSystemInDarkTheme()) darkColorScheme else lightColorScheme,
-        typography = Typography(),
+        colorScheme =
+            when {
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+                    val context = LocalContext.current
+                    if (isSystemInDarkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+                }
+                isSystemInDarkTheme -> darkColorScheme()
+                else -> lightColorScheme()
+            },
         content = content,
     )
 }
-
-private const val LIGHT_BACKGROUND = 0xFFF5F5F7
-private const val DARK_SURFACE = 0xFF1C1E21
