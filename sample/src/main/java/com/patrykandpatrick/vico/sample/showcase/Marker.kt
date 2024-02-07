@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,10 +95,13 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
                 context: MeasureContext,
                 outInsets: Insets,
                 horizontalDimensions: HorizontalDimensions,
-            ) = with(context) {
-                outInsets.top = label.getHeight(context) + labelBackgroundShape.tickSizeDp.pixels +
-                    LABEL_BACKGROUND_SHADOW_RADIUS.pixels * SHADOW_RADIUS_MULTIPLIER -
-                    LABEL_BACKGROUND_SHADOW_DY.pixels
+            ) {
+                with(context) {
+                    outInsets.top =
+                        (SHADOW_RADIUS_MULTIPLIER * LABEL_BACKGROUND_SHADOW_RADIUS - LABEL_BACKGROUND_SHADOW_DY).pixels
+                    if (labelPosition == LabelPosition.AroundPoint) return
+                    outInsets.top += label.getHeight(context) + labelBackgroundShape.tickSizeDp.pixels
+                }
             }
         }
     }

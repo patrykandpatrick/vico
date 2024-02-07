@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,7 @@ public open class MarkerCorneredShape(
         with(context) {
             val tickX: Float? = context[TICK_X_KEY]
             if (tickX != null) {
+                val tickPosition: TickPosition = context[TICK_POSITION_KEY] ?: TickPosition.Bottom
                 createPath(
                     context = context,
                     path = path,
@@ -89,10 +90,20 @@ public open class MarkerCorneredShape(
                 (tickX - coercedTickSize)
                     .takeIf { minLeft < maxLeft }
                     ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
-                    ?.also { tickTopLeft ->
-                        path.moveTo(tickTopLeft, bottom)
-                        path.lineTo(tickX, bottom + tickSize)
-                        path.lineTo(tickTopLeft + coercedTickSize.doubled, bottom)
+                    ?.also { tickBaseLeft ->
+                        val tickBaseY =
+                            when (tickPosition) {
+                                TickPosition.Top -> top
+                                TickPosition.Bottom -> bottom
+                            }
+                        val tickDirection =
+                            when (tickPosition) {
+                                TickPosition.Top -> -1
+                                TickPosition.Bottom -> 1
+                            }
+                        path.moveTo(tickBaseLeft, tickBaseY)
+                        path.lineTo(tickX, tickBaseY + tickDirection * tickSize)
+                        path.lineTo(tickBaseLeft + coercedTickSize.doubled, tickBaseY)
                     }
 
                 path.close()
@@ -102,12 +113,30 @@ public open class MarkerCorneredShape(
             }
         }
 
+    /**
+     * Specifies the position of a [MarkerCorneredShape]’s tick.
+     */
+    public enum class TickPosition {
+        /**
+         * Positions the tick at the top of the [MarkerCorneredShape].
+         */
+        Top,
+
+        /**
+         * Positions the tick at the bottom of the [MarkerCorneredShape].
+         */
+        Bottom,
+    }
+
     public companion object {
         /**
-         * Used to store and retrieve the _x_ coordinate of the tick.
-         *
-         * @see Extras
+         * Used to store and retrieve the _x_ coordinate of a [MarkerCorneredShape]’s tick (via [Extras]).
          */
         public const val TICK_X_KEY: String = "tickX"
+
+        /**
+         * Used to store and retrieve a [MarkerCorneredShape]’s [TickPosition] (via [Extras]).
+         */
+        public const val TICK_POSITION_KEY: String = "tickPosition"
     }
 }

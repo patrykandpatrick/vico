@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -32,7 +31,6 @@ import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.marker.aboveIndicator
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
@@ -102,7 +100,7 @@ private fun ComposeChart3(
                 ),
             modelProducer = modelProducer,
             modifier = modifier,
-            marker = rememberMarker(remember { MarkerComponent.LabelPosition.aboveIndicator() }),
+            marker = rememberMarker(MarkerComponent.LabelPosition.AroundPoint),
             runInitialAnimation = false,
             horizontalLayout = horizontalLayout,
         )
@@ -114,7 +112,7 @@ private fun ViewChart3(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier,
 ) {
-    val marker = rememberMarker(remember { MarkerComponent.LabelPosition.aboveIndicator() })
+    val marker = rememberMarker(MarkerComponent.LabelPosition.AroundPoint)
 
     AndroidViewBinding(Chart3Binding::inflate, modifier) {
         with(chartView) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,29 +17,20 @@
 package com.patrykandpatrick.vico.compose.component.marker
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 
 /**
- * Creates a [MarkerComponent].
- *
- * @param label the [TextComponent] to use for the label.
- * @param labelPosition the [MarkerComponent.LabelPosition] to set the label position inside the chart
- * @param indicator the [Component] to use for the indicator.
- * @param guideline the [LineComponent] to use for the guideline.
+ * Creates and remembers a [MarkerComponent].
  */
 @Composable
-public fun markerComponent(
+public fun rememberMarkerComponent(
     label: TextComponent,
-    labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.top(),
+    labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top,
     indicator: Component,
     guideline: LineComponent,
 ): MarkerComponent =
-    MarkerComponent(
-        label = label,
-        labelPosition = labelPosition,
-        indicator = indicator,
-        guideline = guideline,
-    )
+    remember(label, labelPosition, indicator, guideline) { MarkerComponent(label, labelPosition, indicator, guideline) }
