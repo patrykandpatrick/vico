@@ -22,7 +22,7 @@ import com.patrykandpatrick.vico.sample.VicoTheme
 
 @Composable
 public fun PreviewSurface(content: @Composable () -> Unit) {
-    VicoTheme {
+    VicoTheme(useDynamicColor = false) {
         Surface {
             content()
         }
