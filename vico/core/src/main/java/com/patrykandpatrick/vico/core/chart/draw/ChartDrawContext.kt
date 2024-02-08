@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,10 +63,7 @@ public fun MeasureContext.getMaxScrollDistance(
     horizontalDimensions: HorizontalDimensions,
     zoom: Float? = null,
 ): Float {
-    val contentWidth =
-        horizontalDimensions
-            .run { if (zoom != null) scaled(zoom) else this }
-            .getContentWidth(chartValues.getMaxMajorEntryCount())
+    val contentWidth = horizontalDimensions.run { if (zoom != null) scaled(zoom) else this }.getContentWidth(this)
 
     return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
         if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
@@ -90,8 +87,7 @@ public fun MeasureContext.getAutoZoom(
     chartBounds: RectF,
     autoScaleUp: AutoScaleUp,
 ): Float {
-    val scalableContentWidth =
-        horizontalDimensions.getScalableContentWidth(chartValues.getMaxMajorEntryCount())
+    val scalableContentWidth = horizontalDimensions.getScalableContentWidth(this)
     val reducedChartWidth = chartBounds.width() - horizontalDimensions.unscalablePadding
     val fillingZoom = reducedChartWidth / scalableContentWidth
     return when {

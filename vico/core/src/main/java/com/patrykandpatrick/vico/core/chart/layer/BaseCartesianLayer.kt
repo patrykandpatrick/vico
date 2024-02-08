@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,13 @@
 package com.patrykandpatrick.vico.core.chart.layer
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.dimensions.BoundsAware
+import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.inClip
 import com.patrykandpatrick.vico.core.model.CartesianLayerModel
 
@@ -38,6 +41,17 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
         context: ChartDrawContext,
         model: T,
     )
+
+    protected fun MutableHorizontalDimensions.ensureSegmentedValues(
+        xSpacing: Float,
+        chartValues: ChartValues,
+    ) {
+        ensureValuesAtLeast(
+            xSpacing = xSpacing,
+            scalableStartPadding = xSpacing.half,
+            scalableEndPadding = ((-chartValues.xLength / chartValues.xStep - 0.5f) % 1f + 1f) % 1f * xSpacing,
+        )
+    }
 
     override fun draw(
         context: ChartDrawContext,

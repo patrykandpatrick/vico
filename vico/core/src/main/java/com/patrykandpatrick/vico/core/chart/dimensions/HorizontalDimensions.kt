@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.chart.dimensions
 
 import com.patrykandpatrick.vico.core.chart.CartesianChart
+import com.patrykandpatrick.vico.core.context.MeasureContext
 
 /**
  * Holds information on a [CartesianChart]’s horizontal dimensions.
@@ -73,18 +74,15 @@ public interface HorizontalDimensions {
     public val padding: Float get() = startPadding + endPadding
 
     /**
-     * Given the chart’s maximum number of major entries, calculates the width of the [CartesianChart]’s scalable
-     * content (in pixels).
+     * Calculates the width of the [CartesianChart]’s scalable content (in pixels).
      */
-    public fun getScalableContentWidth(maxMajorEntryCount: Int): Float =
-        xSpacing * (maxMajorEntryCount - 1) + scalablePadding
+    public fun getScalableContentWidth(context: MeasureContext): Float =
+        with(context) { xSpacing * chartValues.xLength / chartValues.xStep + scalablePadding }
 
     /**
-     * Given the chart’s maximum number of major entries, calculates the width of the [CartesianChart]’s content (in
-     * pixels).
+     * Calculates the width of the [CartesianChart]’s content (in pixels).
      */
-    public fun getContentWidth(maxMajorEntryCount: Int): Float =
-        getScalableContentWidth(maxMajorEntryCount) + unscalablePadding
+    public fun getContentWidth(context: MeasureContext): Float = getScalableContentWidth(context) + unscalablePadding
 
     /**
      * Creates a new [HorizontalDimensions] instance by multiplying this one’s scalable values by the given factor.

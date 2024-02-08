@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -523,13 +523,7 @@ public open class LineCartesianLayer(
             val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
             val xSpacing = maxPointSize + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
-                is HorizontalLayout.Segmented -> {
-                    horizontalDimensions.ensureValuesAtLeast(
-                        xSpacing = xSpacing,
-                        scalableStartPadding = xSpacing.half,
-                        scalableEndPadding = xSpacing.half,
-                    )
-                }
+                is HorizontalLayout.Segmented -> horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
                 is HorizontalLayout.FullWidth -> {
                     horizontalDimensions.ensureValuesAtLeast(
                         xSpacing = xSpacing,
