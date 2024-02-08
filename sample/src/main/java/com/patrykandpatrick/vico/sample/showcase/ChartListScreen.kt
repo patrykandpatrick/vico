@@ -17,14 +17,15 @@
 package com.patrykandpatrick.vico.sample.showcase
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -51,13 +52,17 @@ internal fun ChartListScreen(navController: NavController) {
     ) { paddingValues ->
         LazyColumn(contentPadding = paddingValues) {
             item {
-                Row(Modifier.padding(horizontal = 16.dp), Arrangement.spacedBy(8.dp)) {
-                    UISystem.entries.forEach { chipUISystem ->
-                        FilterChip(
-                            selected = uiSystem == chipUISystem,
-                            onClick = { uiSystem = chipUISystem },
-                            label = { Text(stringResource(chipUISystem.labelResourceID)) },
-                        )
+                SingleChoiceSegmentedButtonRow(
+                    Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+                ) {
+                    UISystem.entries.forEachIndexed { index, segmentUISystem ->
+                        SegmentedButton(
+                            selected = uiSystem == segmentUISystem,
+                            onClick = { uiSystem = segmentUISystem },
+                            shape = SegmentedButtonDefaults.itemShape(index, UISystem.entries.size),
+                        ) {
+                            Text(stringResource(segmentUISystem.labelResourceID))
+                        }
                     }
                 }
             }
