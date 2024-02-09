@@ -20,7 +20,9 @@ import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
+import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.round
 
@@ -30,36 +32,51 @@ internal class DefaultHorizontalAxisItemPlacer(
     private val shiftExtremeTicks: Boolean,
     private val addExtremeLabelPadding: Boolean,
 ) : AxisItemPlacer.Horizontal {
+    private val MeasureContext.addExtremeLabelPadding
+        get() =
+            this@DefaultHorizontalAxisItemPlacer.addExtremeLabelPadding &&
+                horizontalLayout is HorizontalLayout.FullWidth
+
+    private val ChartValues.measuredLabelValues get() = listOf(minX, (minX + maxX).half, maxX)
+
     override fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = shiftExtremeTicks
 
-    override fun getFirstLabelValue(context: MeasureContext): Float? =
-        if (addExtremeLabelPadding && context.horizontalLayout is HorizontalLayout.FullWidth) {
-            offset * context.chartValues.xStep
-        } else {
-            null
-        }
+    override fun getFirstLabelValue(
+        context: MeasureContext,
+        maxLabelWidth: Float,
+    ) = if (context.addExtremeLabelPadding) offset * context.chartValues.xStep else null
 
-    override fun getLastLabelValue(context: MeasureContext): Float? =
-        if (addExtremeLabelPadding && context.horizontalLayout is HorizontalLayout.FullWidth) {
-            with(context.chartValues) { maxX - (xLength - xStep * offset) % (xStep * spacing) }
-        } else {
-            null
-        }
+    override fun getLastLabelValue(
+        context: MeasureContext,
+        maxLabelWidth: Float,
+    ) = if (context.addExtremeLabelPadding) {
+        with(context.chartValues) { maxX - (xLength - xStep * offset) % (xStep * spacing) }
+    } else {
+        null
+    }
 
     override fun getLabelValues(
         context: ChartDrawContext,
         visibleXRange: ClosedFloatingPointRange<Float>,
         fullXRange: ClosedFloatingPointRange<Float>,
+        maxLabelWidth: Float,
     ): List<Float> {
         with(context) {
-            val remainder = ((visibleXRange.start - chartValues.minX) / chartValues.xStep - offset) % spacing
-            val firstValue = visibleXRange.start + (spacing - remainder) % spacing * chartValues.xStep
+            val dynamicSpacing =
+                spacing *
+                    if (this.addExtremeLabelPadding) {
+                        (maxLabelWidth / (horizontalDimensions.xSpacing * spacing)).ceil.toInt()
+                    } else {
+                        1
+                    }
+            val remainder = ((visibleXRange.start - chartValues.minX) / chartValues.xStep - offset) % dynamicSpacing
+            val firstValue = visibleXRange.start + (dynamicSpacing - remainder) % dynamicSpacing * chartValues.xStep
             val minXOffset = chartValues.minX % chartValues.xStep
             val values = mutableListOf<Float>()
             var multiplier = -LABEL_OVERFLOW_SIZE
             var hasEndOverflow = false
             while (true) {
-                var potentialValue = firstValue + multiplier++ * spacing * chartValues.xStep
+                var potentialValue = firstValue + multiplier++ * dynamicSpacing * chartValues.xStep
                 potentialValue = chartValues.xStep * ((potentialValue - minXOffset) / chartValues.xStep).round +
                     minXOffset
                 if (potentialValue < chartValues.minX || potentialValue == fullXRange.start) continue
@@ -71,20 +88,27 @@ internal class DefaultHorizontalAxisItemPlacer(
         }
     }
 
-    override fun getMeasuredLabelValues(
+    override fun getWidthMeasurementLabelValues(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
         fullXRange: ClosedFloatingPointRange<Float>,
-    ): List<Float> =
-        with(context) { listOf(chartValues.minX, (chartValues.minX + chartValues.maxX).half, chartValues.maxX) }
+    ) = if (context.addExtremeLabelPadding) context.chartValues.measuredLabelValues else emptyList()
+
+    override fun getHeightMeasurementLabelValues(
+        context: MeasureContext,
+        horizontalDimensions: HorizontalDimensions,
+        fullXRange: ClosedFloatingPointRange<Float>,
+        maxLabelWidth: Float,
+    ) = context.chartValues.measuredLabelValues
 
     override fun getLineValues(
         context: ChartDrawContext,
         visibleXRange: ClosedFloatingPointRange<Float>,
         fullXRange: ClosedFloatingPointRange<Float>,
+        maxLabelWidth: Float,
     ): List<Float>? =
         with(context) {
-            when (context.horizontalLayout) {
+            when (horizontalLayout) {
                 is HorizontalLayout.Segmented -> {
                     val remainder = (visibleXRange.start - fullXRange.start) % chartValues.xStep
                     val firstValue = visibleXRange.start + (chartValues.xStep - remainder) % chartValues.xStep
@@ -107,6 +131,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
         tickThickness: Float,
+        maxLabelWidth: Float,
     ): Float {
         val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
         return when (context.horizontalLayout) {
@@ -119,6 +144,7 @@ internal class DefaultHorizontalAxisItemPlacer(
         context: MeasureContext,
         horizontalDimensions: HorizontalDimensions,
         tickThickness: Float,
+        maxLabelWidth: Float,
     ): Float {
         val tickSpace = if (shiftExtremeTicks) tickThickness else tickThickness.half
         return when (context.horizontalLayout) {

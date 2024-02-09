@@ -46,13 +46,19 @@ public interface AxisItemPlacer {
          * If the [HorizontalAxis] is to reserve room for the first label, returns the first label’s _x_ value.
          * Otherwise, returns `null`.
          */
-        public fun getFirstLabelValue(context: MeasureContext): Float?
+        public fun getFirstLabelValue(
+            context: MeasureContext,
+            maxLabelWidth: Float,
+        ): Float? = null
 
         /**
          * If the [HorizontalAxis] is to reserve room for the last label, returns the last label’s _x_ value. Otherwise,
          * returns `null`.
          */
-        public fun getLastLabelValue(context: MeasureContext): Float?
+        public fun getLastLabelValue(
+            context: MeasureContext,
+            maxLabelWidth: Float,
+        ): Float? = null
 
         /**
          * Returns, as a list, the _x_ values for which labels are to be displayed, restricted to [visibleXRange] and
@@ -62,16 +68,28 @@ public interface AxisItemPlacer {
             context: ChartDrawContext,
             visibleXRange: ClosedFloatingPointRange<Float>,
             fullXRange: ClosedFloatingPointRange<Float>,
+            maxLabelWidth: Float,
         ): List<Float>
 
         /**
-         * Returns, as a list, the _x_ values for which labels are to be created and measured during the measuring
-         * phase. This affects how much vertical space the [HorizontalAxis] requests.
+         * Returns, as a list, the _x_ values for which the [HorizontalAxis] is to create labels and measure their
+         * widths during the measuring phase. The width of the widest label is passed to other functions.
          */
-        public fun getMeasuredLabelValues(
+        public fun getWidthMeasurementLabelValues(
             context: MeasureContext,
             horizontalDimensions: HorizontalDimensions,
             fullXRange: ClosedFloatingPointRange<Float>,
+        ): List<Float>
+
+        /**
+         * Returns, as a list, the _x_ values for which the [HorizontalAxis] is to create labels and measure their
+         * heights during the measuring phase. This affects how much vertical space the [HorizontalAxis] requests.
+         */
+        public fun getHeightMeasurementLabelValues(
+            context: MeasureContext,
+            horizontalDimensions: HorizontalDimensions,
+            fullXRange: ClosedFloatingPointRange<Float>,
+            maxLabelWidth: Float,
         ): List<Float>
 
         /**
@@ -83,6 +101,7 @@ public interface AxisItemPlacer {
             context: ChartDrawContext,
             visibleXRange: ClosedFloatingPointRange<Float>,
             fullXRange: ClosedFloatingPointRange<Float>,
+            maxLabelWidth: Float,
         ): List<Float>? = null
 
         /**
@@ -92,6 +111,7 @@ public interface AxisItemPlacer {
             context: MeasureContext,
             horizontalDimensions: HorizontalDimensions,
             tickThickness: Float,
+            maxLabelWidth: Float,
         ): Float
 
         /**
@@ -101,6 +121,7 @@ public interface AxisItemPlacer {
             context: MeasureContext,
             horizontalDimensions: HorizontalDimensions,
             tickThickness: Float,
+            maxLabelWidth: Float,
         ): Float
 
         public companion object {
@@ -145,16 +166,6 @@ public interface AxisItemPlacer {
         ): List<Float>
 
         /**
-         * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and measure their heights
-         * during the measuring phase. The height of the tallest label is passed to [getWidthMeasurementLabelValues] and
-         * [getLabelValues].
-         */
-        public fun getHeightMeasurementLabelValues(
-            context: MeasureContext,
-            position: AxisPosition.Vertical,
-        ): List<Float>
-
-        /**
          * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and measure their widths
          * during the measuring phase. This affects how much horizontal space the [VerticalAxis] requests.
          */
@@ -162,6 +173,15 @@ public interface AxisItemPlacer {
             context: MeasureContext,
             axisHeight: Float,
             maxLabelHeight: Float,
+            position: AxisPosition.Vertical,
+        ): List<Float>
+
+        /**
+         * Returns, as a list, the _y_ values for which the [VerticalAxis] is to create labels and measure their heights
+         * during the measuring phase. The height of the tallest label is passed to other functions.
+         */
+        public fun getHeightMeasurementLabelValues(
+            context: MeasureContext,
             position: AxisPosition.Vertical,
         ): List<Float>
 
