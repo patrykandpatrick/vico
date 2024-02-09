@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -88,11 +88,22 @@ internal inline val Iterable<Iterable<ChartEntry>>.yRange: ClosedFloatingPointRa
 internal inline val Iterable<Iterable<ChartEntry>>.xRange: ClosedFloatingPointRange<Float>
     get() = flatten().rangeOfOrNull { it.x } ?: 0f..0f
 
-internal fun Iterable<Iterable<ChartEntry>>.calculateXGcd() = flatten()
-    .zipWithNext { firstEntry, secondEntry -> abs(secondEntry.x - firstEntry.x) }
-    .fold<Float, Float?>(null) { gcd, delta -> gcd?.gcdWith(delta) ?: delta }
-    ?.also { require(it != 0f) { "The precision of the x values is too large. The maximum is two decimal places." } }
-    ?: 1f
+internal fun List<List<ChartEntry>>.calculateXGcd(): Float {
+    val entries = flatten()
+    if (entries.isEmpty()) return 1f
+    val iterator = entries.iterator()
+    var prevX = iterator.next().x
+    var gcd: Float? = null
+    while (iterator.hasNext()) {
+        val x = iterator.next().x
+        val delta = abs(x - prevX)
+        prevX = x
+        if (delta != 0f) gcd = gcd?.gcdWith(delta) ?: delta
+    }
+    return gcd
+        ?.also { require(it != 0f) { "The x values are too precise. The maximum precision is two decimal places." } }
+        ?: 1f
+}
 
 internal fun Iterable<Iterable<ChartEntry>>.calculateStackedYRange(): ClosedFloatingPointRange<Float> =
     flatten().fold(HashMap<Float, Pair<Float, Float>>()) { map, entry ->
