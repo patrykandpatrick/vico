@@ -128,9 +128,6 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
                         maxY = models.maxOf { it.maxY },
                         stackedPositiveY = models.maxOf { it.stackedPositiveY },
                         stackedNegativeY = models.minOf { it.stackedNegativeY },
-                        xGcd = models.fold<ChartEntryModel, Float?>(null) { gcd, model ->
-                            gcd?.gcdWith(model.xGcd) ?: model.xGcd
-                        } ?: 1f,
                         id = models.map { it.id }.hashCode(),
                         extraStore = mergedExtraStore,
                     ).also { cachedInternalComposedModel = it }
@@ -370,10 +367,14 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
         override val maxY: Float,
         override val stackedPositiveY: Float,
         override val stackedNegativeY: Float,
-        override val xGcd: Float,
         override val id: Int,
         override val extraStore: ExtraStore,
-    ) : ComposedChartEntryModel<ChartEntryModel>
+    ) : ComposedChartEntryModel<ChartEntryModel> {
+        override val xGcd: Float
+            get() = composedEntryCollections
+                .fold<ChartEntryModel, Float?>(null) { gcd, model -> gcd?.gcdWith(model.xGcd) ?: model.xGcd }
+                ?: 1f
+    }
 
     public companion object {
         /**
