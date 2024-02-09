@@ -134,7 +134,7 @@ private fun ComposeChart9(
                                     background =
                                         rememberShapeComponent(
                                             shape = Shapes.pillShape,
-                                            color = MaterialTheme.colorScheme.background,
+                                            color = Color.Transparent,
                                             strokeColor = MaterialTheme.colorScheme.outlineVariant,
                                             strokeWidth = 1.dp,
                                         ),
