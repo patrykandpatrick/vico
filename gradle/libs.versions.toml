@@ -1,11 +1,11 @@
 [versions]
-accompanist = "0.32.0"
+accompanist = "0.34.0"
 activity = "1.8.2"
 agp = "8.2.2"
 androidXAnnotation = "1.7.1"
 androidXCore = "1.12.0"
 appcompat = "1.6.1"
-composeBom = "2023.10.01"
+composeBom = "2024.02.00"
 composeCompiler = "1.5.8"
 coroutines = "1.7.3"
 detekt = "1.23.4"
