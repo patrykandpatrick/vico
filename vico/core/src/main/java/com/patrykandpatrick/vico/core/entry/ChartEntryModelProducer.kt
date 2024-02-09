@@ -148,7 +148,6 @@ public class ChartEntryModelProducer(
                         maxY = yRange.endInclusive,
                         stackedPositiveY = aggregateYRange.endInclusive,
                         stackedNegativeY = aggregateYRange.start,
-                        xGcd = series.calculateXGcd(),
                         id = series.hashCode(),
                         extraStore = mergedExtraStore,
                     ).also { cachedInternalModel = it }
@@ -233,8 +232,9 @@ public class ChartEntryModelProducer(
         override val maxY: Float,
         override val stackedPositiveY: Float,
         override val stackedNegativeY: Float,
-        override val xGcd: Float,
         override val id: Int,
         override val extraStore: ExtraStore,
-    ) : ChartEntryModel
+    ) : ChartEntryModel {
+        override val xGcd: Float get() = entries.calculateXGcd()
+    }
 }

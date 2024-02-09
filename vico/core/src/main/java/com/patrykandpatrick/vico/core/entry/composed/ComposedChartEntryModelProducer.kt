@@ -116,7 +116,6 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
                             maxY = yRange.endInclusive,
                             stackedPositiveY = aggregateYRange.endInclusive,
                             stackedNegativeY = aggregateYRange.start,
-                            xGcd = dataSet.calculateXGcd(),
                             extraStore = mergedExtraStore,
                         )
                     }
@@ -323,9 +322,10 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
         override val maxY: Float,
         override val stackedPositiveY: Float,
         override val stackedNegativeY: Float,
-        override val xGcd: Float,
         override val extraStore: ExtraStore,
-    ) : ChartEntryModel
+    ) : ChartEntryModel {
+        override val xGcd: Float get() = entries.calculateXGcd()
+    }
 
     private data class InternalComposedModel(
         override val composedEntryCollections: List<InternalModel>,
