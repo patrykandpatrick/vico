@@ -43,18 +43,16 @@ public interface AxisItemPlacer {
         public fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = true
 
         /**
-         * Returns a boolean indicating whether the [HorizontalAxis] should reserve room for a label for
-         * [ChartValues.minX]. If `true` is returned, indicating that this behavior is desired, then [getLabelValues]
-         * should request a label for [ChartValues.minX].
+         * If the [HorizontalAxis] is to reserve room for the first label, returns the first label’s _x_ value.
+         * Otherwise, returns `null`.
          */
-        public fun getAddFirstLabelPadding(context: MeasureContext): Boolean
+        public fun getFirstLabelValue(context: MeasureContext): Float?
 
         /**
-         * Returns a boolean indicating whether the [HorizontalAxis] should reserve room for a label for
-         * [ChartValues.maxX]. If `true` is returned, indicating that this behavior is desired, then [getLabelValues]
-         * should request a label for [ChartValues.maxX].
+         * If the [HorizontalAxis] is to reserve room for the last label, returns the last label’s _x_ value. Otherwise,
+         * returns `null`.
          */
-        public fun getAddLastLabelPadding(context: MeasureContext): Boolean
+        public fun getLastLabelValue(context: MeasureContext): Float?
 
         /**
          * Returns, as a list, the _x_ values for which labels are to be displayed, restricted to [visibleXRange] and

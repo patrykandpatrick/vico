@@ -204,39 +204,38 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         context: MeasureContext,
         horizontalDimensions: MutableHorizontalDimensions,
     ) {
+        val label = label ?: return
         val chartValues = context.chartValues
-        horizontalDimensions.ensureValuesAtLeast(
-            unscalableStartPadding =
-                label
-                    .takeIf { itemPlacer.getAddFirstLabelPadding(context) }
-                    ?.getWidth(
-                        context = context,
-                        text =
-                            valueFormatter.formatValue(
-                                value = chartValues.minX,
-                                chartValues = chartValues,
-                                verticalAxisPosition = null,
-                            ),
-                        pad = true,
-                    )
-                    ?.half
-                    .orZero,
-            unscalableEndPadding =
-                label
-                    .takeIf { itemPlacer.getAddLastLabelPadding(context) }
-                    ?.getWidth(
-                        context = context,
-                        text =
-                            valueFormatter.formatValue(
-                                value = chartValues.maxX,
-                                chartValues = chartValues,
-                                verticalAxisPosition = null,
-                            ),
-                        pad = true,
-                    )
-                    ?.half
-                    .orZero,
-        )
+        val firstLabelValue = itemPlacer.getFirstLabelValue(context)
+        val lastLabelValue = itemPlacer.getLastLabelValue(context)
+        if (firstLabelValue != null) {
+            val text =
+                valueFormatter.formatValue(
+                    value = firstLabelValue,
+                    chartValues = chartValues,
+                    verticalAxisPosition = null,
+                )
+            horizontalDimensions.ensureValuesAtLeast(
+                unscalableStartPadding =
+                    label
+                        .getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true)
+                        .half - (firstLabelValue - chartValues.minX) * horizontalDimensions.xSpacing,
+            )
+        }
+        if (lastLabelValue != null) {
+            val text =
+                valueFormatter.formatValue(
+                    value = lastLabelValue,
+                    chartValues = chartValues,
+                    verticalAxisPosition = null,
+                )
+            horizontalDimensions.ensureValuesAtLeast(
+                unscalableEndPadding =
+                    label
+                        .getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true)
+                        .half - (chartValues.maxX - lastLabelValue) * horizontalDimensions.xSpacing,
+            )
+        }
     }
 
     override fun getInsets(

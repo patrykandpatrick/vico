@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,13 +32,18 @@ internal class DefaultHorizontalAxisItemPlacer(
 ) : AxisItemPlacer.Horizontal {
     override fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = shiftExtremeTicks
 
-    override fun getAddFirstLabelPadding(context: MeasureContext) =
-        context.horizontalLayout is HorizontalLayout.FullWidth && addExtremeLabelPadding && offset == 0
+    override fun getFirstLabelValue(context: MeasureContext): Float? =
+        if (addExtremeLabelPadding && context.horizontalLayout is HorizontalLayout.FullWidth) {
+            offset * context.chartValues.xStep
+        } else {
+            null
+        }
 
-    override fun getAddLastLabelPadding(context: MeasureContext): Boolean =
-        with(context) {
-            context.horizontalLayout is HorizontalLayout.FullWidth && addExtremeLabelPadding &&
-                (chartValues.maxX - chartValues.minX - chartValues.xStep * offset) % (chartValues.xStep * spacing) == 0f
+    override fun getLastLabelValue(context: MeasureContext): Float? =
+        if (addExtremeLabelPadding && context.horizontalLayout is HorizontalLayout.FullWidth) {
+            with(context.chartValues) { maxX - (xLength - xStep * offset) % (xStep * spacing) }
+        } else {
+            null
         }
 
     override fun getLabelValues(
