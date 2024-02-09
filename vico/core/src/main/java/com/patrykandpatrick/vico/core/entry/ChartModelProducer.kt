@@ -41,6 +41,16 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
     public fun requireModel(): Model = getModel()!!
 
     /**
+     * Creates an intermediate [ChartEntryModel] for difference animations. [fraction] is the balance between the
+     * initial and target [ChartEntryModel]s.
+     */
+    @Deprecated(
+        "Use the function passed to the `startAnimation` lambda of `registerForUpdates`. In custom " +
+            "`ChartModelProducer` implementations, this deprecated function can do nothing.",
+    )
+    public suspend fun transformModel(key: Any, fraction: Float)
+
+    /**
      * Registers an update listener associated with a [key]. [cancelAnimation] and [startAnimation] are
      * called after a data update is requested, with [cancelAnimation] being called before the update starts
      * being processed, and [startAnimation] being called once the update has been processed. [updateChartValues]
@@ -56,6 +66,42 @@ public interface ChartModelProducer<Model : ChartEntryModel> {
         extraStore: MutableExtraStore,
         updateChartValues: (Model?) -> ChartValuesProvider,
         onModelCreated: (Model?, ChartValuesProvider) -> Unit,
+    ) {
+        @Suppress("DEPRECATION")
+        registerForUpdates(
+            key,
+            cancelAnimation,
+            startAnimation,
+            getOldModel,
+            modelTransformerProvider,
+            extraStore,
+            updateChartValues,
+        ) { model ->
+            onModelCreated(model, updateChartValues(model))
+        }
+    }
+
+    /**
+     * Registers an update listener associated with a [key]. [cancelAnimation] and [startAnimation] are called after a
+     * data update is requested, with [cancelAnimation] being called before the update starts being processed (at which
+     * point [transformModel] should stop being used), and [startAnimation] being called once the update has been
+     * processed (at which point it’s safe to use [transformModel]). [updateChartValues] updates the chart’s
+     * [ChartValues] and returns its [ChartValuesProvider]. [onModelCreated] is called when a new [Model] has been
+     * generated.
+     */
+    @Deprecated(
+        "Use the overload in which `onModelCreated` has two parameters. In custom `ChartModelProducer` " +
+            "implementations, the aforementioned overload should be overridden, and this one can do nothing.",
+    )
+    public fun registerForUpdates(
+        key: Any,
+        cancelAnimation: () -> Unit,
+        startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
+        getOldModel: () -> Model?,
+        modelTransformerProvider: Chart.ModelTransformerProvider?,
+        extraStore: MutableExtraStore,
+        updateChartValues: (Model?) -> ChartValuesProvider,
+        onModelCreated: (Model?) -> Unit,
     )
 
     /**

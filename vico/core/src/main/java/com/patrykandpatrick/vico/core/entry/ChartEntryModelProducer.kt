@@ -170,6 +170,16 @@ public class ChartEntryModelProducer(
         }
     }
 
+    @Deprecated("Use the function passed to the `startAnimation` lambda of `registerForUpdates`.")
+    override suspend fun transformModel(key: Any, fraction: Float) {
+        with(updateReceivers[key] ?: return) {
+            modelTransformer?.transform(extraStore, fraction)
+            val internalModel = getInternalModel(extraStore.copy())
+            currentCoroutineContext().ensureActive()
+            onModelCreated(internalModel, updateChartValues(internalModel))
+        }
+    }
+
     @WorkerThread
     override fun registerForUpdates(
         key: Any,
@@ -192,6 +202,31 @@ public class ChartEntryModelProducer(
         ).run {
             updateReceivers[key] = this
             handleUpdate()
+        }
+    }
+
+    @WorkerThread
+    @Deprecated("Use the overload in which `onModelCreated` has two parameters.")
+    override fun registerForUpdates(
+        key: Any,
+        cancelAnimation: () -> Unit,
+        startAnimation: (transformModel: suspend (chartKey: Any, fraction: Float) -> Unit) -> Unit,
+        getOldModel: () -> ChartEntryModel?,
+        modelTransformerProvider: Chart.ModelTransformerProvider?,
+        extraStore: MutableExtraStore,
+        updateChartValues: (ChartEntryModel?) -> ChartValuesProvider,
+        onModelCreated: (ChartEntryModel?) -> Unit,
+    ) {
+        registerForUpdates(
+            key,
+            cancelAnimation,
+            startAnimation,
+            getOldModel,
+            modelTransformerProvider,
+            extraStore,
+            updateChartValues,
+        ) { model, _ ->
+            onModelCreated(model)
         }
     }
 
