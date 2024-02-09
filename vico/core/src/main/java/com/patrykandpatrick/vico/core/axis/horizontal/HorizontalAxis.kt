@@ -16,9 +16,9 @@
 
 package com.patrykandpatrick.vico.core.axis.horizontal
 
+import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
@@ -37,9 +37,9 @@ import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 import kotlin.math.min
 
 /**
- * An implementation of [AxisRenderer] used for horizontal axes. This class extends [BaseAxis].
+ * An implementation of [Axis] used for horizontal axes. This class extends [BaseAxis].
  *
- * @see AxisRenderer
+ * @see Axis
  * @see BaseAxis
  */
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(

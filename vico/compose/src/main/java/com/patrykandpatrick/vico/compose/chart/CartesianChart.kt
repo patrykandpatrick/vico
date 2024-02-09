@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.decoration.Decoration
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
@@ -39,10 +39,10 @@ import com.patrykandpatrick.vico.core.marker.Marker
 @Composable
 public fun rememberCartesianChart(
     vararg layers: CartesianLayer<*>,
-    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
-    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
-    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
-    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
+    startAxis: Axis<AxisPosition.Vertical.Start>? = null,
+    topAxis: Axis<AxisPosition.Horizontal.Top>? = null,
+    endAxis: Axis<AxisPosition.Vertical.End>? = null,
+    bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null,
     legend: Legend? = null,
     fadingEdges: FadingEdges? = null,
     decorations: List<Decoration>? = null,

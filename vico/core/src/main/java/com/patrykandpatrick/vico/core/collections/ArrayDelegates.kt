@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 
 package com.patrykandpatrick.vico.core.collections
 
+import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisManager
-import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-internal fun <S, T : AxisRenderer<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =
+internal fun <S, T : Axis<S>?> cacheInList(): ReadWriteProperty<AxisManager, T?> =
     object : ReadWriteProperty<AxisManager, T?> {
         var field: T? = null
 

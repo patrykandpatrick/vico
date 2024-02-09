@@ -34,11 +34,11 @@ import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
+import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.End
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.Start
-import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -86,14 +86,14 @@ private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
         verticalAxisPosition = verticalAxisPosition,
     )
 
-private val startAxis: AxisRenderer<Start>
+private val startAxis: Axis<Start>
     @Composable get() =
         rememberStartAxis(
             label = rememberTextComponent(color = Color.Black),
             itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 5 }) },
         )
 
-private val endAxis: AxisRenderer<End>
+private val endAxis: Axis<End>
     @Composable get() =
         rememberEndAxis(
             label = rememberTextComponent(color = Color.DarkGray),

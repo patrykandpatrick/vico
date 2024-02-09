@@ -24,12 +24,12 @@ import com.patrykandpatrick.vico.core.collections.cacheInList
 import com.patrykandpatrick.vico.core.context.MeasureContext
 
 internal class AxisManager {
-    internal val axisCache = ArrayList<AxisRenderer<*>>(MAX_AXIS_COUNT)
+    internal val axisCache = ArrayList<Axis<*>>(MAX_AXIS_COUNT)
 
-    var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by cacheInList()
-    var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by cacheInList()
-    var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by cacheInList()
-    var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by cacheInList()
+    var startAxis: Axis<AxisPosition.Vertical.Start>? by cacheInList()
+    var topAxis: Axis<AxisPosition.Horizontal.Top>? by cacheInList()
+    var endAxis: Axis<AxisPosition.Vertical.End>? by cacheInList()
+    var bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? by cacheInList()
 
     fun addInsetters(destination: MutableList<ChartInsetter>) {
         startAxis?.let(destination::add)
@@ -74,7 +74,7 @@ internal class AxisManager {
         setRestrictedBounds()
     }
 
-    private fun AxisRenderer<AxisPosition.Vertical.Start>.setStartAxisBounds(
+    private fun Axis<AxisPosition.Vertical.Start>.setStartAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
         chartBounds: RectF,
@@ -90,7 +90,7 @@ internal class AxisManager {
         }
     }
 
-    private fun AxisRenderer<AxisPosition.Horizontal.Top>.setTopAxisBounds(
+    private fun Axis<AxisPosition.Horizontal.Top>.setTopAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
         insets: Insets,
@@ -105,7 +105,7 @@ internal class AxisManager {
         }
     }
 
-    private fun AxisRenderer<AxisPosition.Vertical.End>.setEndAxisBounds(
+    private fun Axis<AxisPosition.Vertical.End>.setEndAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
         chartBounds: RectF,
@@ -121,7 +121,7 @@ internal class AxisManager {
         }
     }
 
-    private fun AxisRenderer<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
+    private fun Axis<AxisPosition.Horizontal.Bottom>.setBottomAxisBounds(
         context: MeasureContext,
         contentBounds: RectF,
         chartBounds: RectF,

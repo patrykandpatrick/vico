@@ -26,9 +26,9 @@ import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.DEF_LABEL_COUNT
 import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -270,7 +270,7 @@ internal class ThemeHandler(
         )
     }
 
-    private fun TypedArray.getStartAxis(): AxisRenderer<AxisPosition.Vertical.Start>? =
+    private fun TypedArray.getStartAxis(): Axis<AxisPosition.Vertical.Start>? =
         if (getBoolean(R.styleable.CartesianChartView_showStartAxis, false)) {
             getAxisBuilder(R.styleable.CartesianChartView_startAxisStyle, VerticalAxis.Builder())
                 .build<AxisPosition.Vertical.Start>()
@@ -278,7 +278,7 @@ internal class ThemeHandler(
             null
         }
 
-    private fun TypedArray.getTopAxis(): AxisRenderer<AxisPosition.Horizontal.Top>? =
+    private fun TypedArray.getTopAxis(): Axis<AxisPosition.Horizontal.Top>? =
         if (getBoolean(R.styleable.CartesianChartView_showTopAxis, false)) {
             getAxisBuilder(R.styleable.CartesianChartView_topAxisStyle, HorizontalAxis.Builder())
                 .build<AxisPosition.Horizontal.Top>()
@@ -286,7 +286,7 @@ internal class ThemeHandler(
             null
         }
 
-    private fun TypedArray.getEndAxis(): AxisRenderer<AxisPosition.Vertical.End>? =
+    private fun TypedArray.getEndAxis(): Axis<AxisPosition.Vertical.End>? =
         if (getBoolean(R.styleable.CartesianChartView_showEndAxis, false)) {
             getAxisBuilder(R.styleable.CartesianChartView_endAxisStyle, VerticalAxis.Builder())
                 .build<AxisPosition.Vertical.End>()
@@ -294,7 +294,7 @@ internal class ThemeHandler(
             null
         }
 
-    private fun TypedArray.getBottomAxis(): AxisRenderer<AxisPosition.Horizontal.Bottom>? =
+    private fun TypedArray.getBottomAxis(): Axis<AxisPosition.Horizontal.Bottom>? =
         if (getBoolean(R.styleable.CartesianChartView_showBottomAxis, false)) {
             getAxisBuilder(R.styleable.CartesianChartView_bottomAxisStyle, HorizontalAxis.Builder())
                 .build<AxisPosition.Horizontal.Bottom>()

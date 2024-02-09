@@ -16,9 +16,9 @@
 
 package com.patrykandpatrick.vico.core.axis.vertical
 
+import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
@@ -43,9 +43,9 @@ import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 /**
- * An implementation of [AxisRenderer] used for vertical axes. This class extends [BaseAxis].
+ * An implementation of [Axis] used for vertical axes. This class extends [BaseAxis].
  *
- * @see AxisRenderer
+ * @see Axis
  * @see BaseAxis
  */
 public class VerticalAxis<Position : AxisPosition.Vertical>(

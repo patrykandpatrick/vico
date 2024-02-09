@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import com.patrykandpatrick.vico.core.dimensions.BoundsAware
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to draw an axis.
  */
-public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInsetter {
+public interface Axis<Position : AxisPosition> : BoundsAware, ChartInsetter {
     /**
      * Defines the position of the axis relative to the [CartesianChart].
      */
@@ -52,7 +52,7 @@ public interface AxisRenderer<Position : AxisPosition> : BoundsAware, ChartInset
     public fun drawAboveChart(context: ChartDrawContext)
 
     /**
-     * The bounds ([RectF]) passed here define the area where the [AxisRenderer] shouldn’t draw anything.
+     * The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything.
      */
     public fun setRestrictedBounds(vararg bounds: RectF?)
 

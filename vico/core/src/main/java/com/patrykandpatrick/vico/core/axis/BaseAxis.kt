@@ -29,13 +29,13 @@ import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.setAll
 
 /**
- * A basic implementation of [AxisRenderer] used throughout the library.
+ * A basic implementation of [Axis] used throughout the library.
  *
- * @see AxisRenderer
+ * @see Axis
  * @see HorizontalAxis
  * @see VerticalAxis
  */
-public abstract class BaseAxis<Position : AxisPosition> : AxisRenderer<Position> {
+public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
     private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
     override val bounds: RectF = RectF()
