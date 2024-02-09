@@ -27,7 +27,7 @@ import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
-import com.patrykandpatrick.vico.core.axis.Axis
+import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -80,7 +80,7 @@ private fun ViewChart1(
             chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (chart?.bottomAxis as Axis).guideline = null
+            (chart?.bottomAxis as BaseAxis).guideline = null
             this.marker = marker
         }
     }

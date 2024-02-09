@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package com.patrykandpatrick.vico.core.axis.vertical
 
-import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
+import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
@@ -43,14 +43,14 @@ import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 /**
- * An implementation of [AxisRenderer] used for vertical axes. This class extends [Axis].
+ * An implementation of [AxisRenderer] used for vertical axes. This class extends [BaseAxis].
  *
  * @see AxisRenderer
- * @see Axis
+ * @see BaseAxis
  */
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
-) : Axis<Position>() {
+) : BaseAxis<Position>() {
     private val areLabelsOutsideAtStartOrInsideAtEnd
         get() =
             horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
@@ -337,11 +337,11 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     }
 
     /**
-     * A subclass of [Axis.Builder] used to build [VerticalAxis] instances.
+     * A subclass of [BaseAxis.Builder] used to build [VerticalAxis] instances.
      */
     public class Builder<Position : AxisPosition.Vertical>(
-        builder: Axis.Builder<Position>? = null,
-    ) : Axis.Builder<Position>(builder) {
+        builder: BaseAxis.Builder<Position>? = null,
+    ) : BaseAxis.Builder<Position>(builder) {
         /**
          * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
          */

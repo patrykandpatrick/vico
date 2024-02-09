@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.core.extension.setAll
  * @see HorizontalAxis
  * @see VerticalAxis
  */
-public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
+public abstract class BaseAxis<Position : AxisPosition> : AxisRenderer<Position> {
     private val restrictedBounds: MutableList<RectF> = mutableListOf()
 
     override val bounds: RectF = RectF()
@@ -78,7 +78,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     public var tickLengthDp: Float = 0f
 
     /**
-     * Used by [Axis] subclasses for sizing and layout.
+     * Used by [BaseAxis] subclasses for sizing and layout.
      */
     public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
@@ -117,7 +117,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
         }
 
     /**
-     * Used to construct [Axis] instances.
+     * Used to construct [BaseAxis] instances.
      */
     public open class Builder<Position : AxisPosition>(builder: Builder<Position>? = null) {
         /**
@@ -152,7 +152,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
             builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
 
         /**
-         * Used by [Axis] subclasses for sizing and layout.
+         * Used by [BaseAxis] subclasses for sizing and layout.
          */
         public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
@@ -173,7 +173,7 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
     }
 
     /**
-     * Defines how an [Axis] is to size itself.
+     * Defines how a [BaseAxis] is to size itself.
      * - For [VerticalAxis], this defines the width.
      * - For [HorizontalAxis], this defines the height.
      *
@@ -221,19 +221,19 @@ public abstract class Axis<Position : AxisPosition> : AxisRenderer<Position> {
 }
 
 /**
- * Provides a quick way to create an axis. Creates an [Axis.Builder] instance, calls the provided function block with
- * the [Axis.Builder] instance as its receiver, and returns the [Axis.Builder] instance.
+ * Provides a quick way to create an axis. Creates a [BaseAxis.Builder] instance, calls the provided function block with
+ * the [BaseAxis.Builder] instance as its receiver, and returns the [BaseAxis.Builder] instance.
  */
 public fun <Position : AxisPosition> axisBuilder(
-    block: Axis.Builder<Position>.() -> Unit = {},
-): Axis.Builder<Position> = Axis.Builder<Position>().apply(block)
+    block: BaseAxis.Builder<Position>.() -> Unit = {},
+): BaseAxis.Builder<Position> = BaseAxis.Builder<Position>().apply(block)
 
 /**
- * A convenience function that allows for applying the properties from an [Axis.Builder] to an [Axis] subclass.
+ * A convenience function that allows for applying the properties from a [BaseAxis.Builder] to a [BaseAxis] subclass.
  *
- * @param axis the [Axis] whose properties will be updated to this [Axis.Builder]’s properties.
+ * @param axis the [BaseAxis] whose properties will be updated to this [BaseAxis.Builder]’s properties.
  */
-public fun <Position : AxisPosition, A : Axis<Position>> Axis.Builder<Position>.setTo(axis: A): A {
+public fun <Position : AxisPosition, A : BaseAxis<Position>> BaseAxis.Builder<Position>.setTo(axis: A): A {
     axis.axisLine = this.axis
     axis.tick = tick
     axis.guideline = guideline

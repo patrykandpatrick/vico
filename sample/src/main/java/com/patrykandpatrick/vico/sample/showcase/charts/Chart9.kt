@@ -44,8 +44,8 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
-import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -190,7 +190,7 @@ private fun ViewChart9(
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (chart?.bottomAxis as Axis).guideline = null
+            (chart?.bottomAxis as BaseAxis).guideline = null
             this.marker = marker
             with(chart?.layers?.get(0) as LineCartesianLayer) {
                 lines =

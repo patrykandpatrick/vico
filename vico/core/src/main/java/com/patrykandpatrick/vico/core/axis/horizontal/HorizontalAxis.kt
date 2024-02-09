@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
 
 package com.patrykandpatrick.vico.core.axis.horizontal
 
-import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.AxisRenderer
+import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
@@ -37,14 +37,14 @@ import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 import kotlin.math.min
 
 /**
- * An implementation of [AxisRenderer] used for horizontal axes. This class extends [Axis].
+ * An implementation of [AxisRenderer] used for horizontal axes. This class extends [BaseAxis].
  *
  * @see AxisRenderer
- * @see Axis
+ * @see BaseAxis
  */
 public class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
-) : Axis<Position>() {
+) : BaseAxis<Position>() {
     private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Bottom else VerticalPosition.Top
 
@@ -316,11 +316,11 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
 
     /**
-     * A subclass of [Axis.Builder] used to build [HorizontalAxis] instances.
+     * A subclass of [BaseAxis.Builder] used to build [HorizontalAxis] instances.
      */
     public class Builder<Position : AxisPosition.Horizontal>(
-        builder: Axis.Builder<Position>? = null,
-    ) : Axis.Builder<Position>(builder) {
+        builder: BaseAxis.Builder<Position>? = null,
+    ) : BaseAxis.Builder<Position>(builder) {
         /**
          * Determines for what _x_ values the [HorizontalAxis] is to display labels, ticks, and guidelines.
          */

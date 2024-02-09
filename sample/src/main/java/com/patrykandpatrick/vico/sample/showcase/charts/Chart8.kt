@@ -27,8 +27,8 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
-import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisPosition
+import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
@@ -86,7 +86,7 @@ private fun ViewChart8(
             (chart?.layers?.get(1) as LineCartesianLayer).verticalAxisPosition = AxisPosition.Vertical.End
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (chart?.startAxis as Axis).guideline = null
+            (chart?.startAxis as BaseAxis).guideline = null
             this.marker = marker
         }
     }

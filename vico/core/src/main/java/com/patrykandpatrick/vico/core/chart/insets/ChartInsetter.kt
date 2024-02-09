@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,15 @@
 
 package com.patrykandpatrick.vico.core.chart.insets
 
-import com.patrykandpatrick.vico.core.axis.Axis
+import com.patrykandpatrick.vico.core.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.marker.Marker
 
 /**
- * Enables a component to add insets to [CartesianChart]s to make room for itself. This is used by [Axis], [Marker], and
- * the like.
+ * Enables a component to add insets to [CartesianChart]s to make room for itself. This is used by [AxisRenderer],
+ * [Marker], and the like.
  */
 public interface ChartInsetter {
     /**
