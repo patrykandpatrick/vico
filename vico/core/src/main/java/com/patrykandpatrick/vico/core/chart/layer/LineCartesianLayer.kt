@@ -73,10 +73,9 @@ public open class LineCartesianLayer(
     public var lines: List<LineSpec>,
     public var spacingDp: Float = DefaultDimens.POINT_SPACING,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
-    public var drawingModelInterpolator: DrawingModelInterpolator<
-        LineCartesianLayerDrawingModel.PointInfo,
-        LineCartesianLayerDrawingModel,
-        > = DefaultDrawingModelInterpolator(),
+    public var drawingModelInterpolator:
+        DrawingModelInterpolator<LineCartesianLayerDrawingModel.PointInfo, LineCartesianLayerDrawingModel> =
+        DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
     /**
      * Creates a [LineCartesianLayer] with a common style for all lines.

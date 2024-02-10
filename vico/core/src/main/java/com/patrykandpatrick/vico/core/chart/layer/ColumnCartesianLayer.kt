@@ -73,10 +73,9 @@ public open class ColumnCartesianLayer(
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
     public var dataLabelRotationDegrees: Float = 0f,
-    public var drawingModelInterpolator: DrawingModelInterpolator<
-        ColumnCartesianLayerDrawingModel.ColumnInfo,
-        ColumnCartesianLayerDrawingModel,
-        > = DefaultDrawingModelInterpolator(),
+    public var drawingModelInterpolator:
+        DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
+        DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
     /**
      * Creates a [ColumnCartesianLayer] with a common style for all columns.

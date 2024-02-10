@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,10 +65,9 @@ public fun rememberColumnCartesianLayer(
     dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnLayer.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = currentChartStyle.columnLayer.dataLabelRotationDegrees,
     axisValueOverrider: AxisValueOverrider<ColumnCartesianLayerModel>? = null,
-    drawingModelInterpolator: DrawingModelInterpolator<
-        ColumnCartesianLayerDrawingModel.ColumnInfo,
-        ColumnCartesianLayerDrawingModel,
-        > = remember { DefaultDrawingModelInterpolator() },
+    drawingModelInterpolator:
+        DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
+        remember { DefaultDrawingModelInterpolator() },
 ): ColumnCartesianLayer =
     remember { ColumnCartesianLayer() }.apply {
         this.columns = columns

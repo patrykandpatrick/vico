@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,10 +66,9 @@ public fun rememberLineCartesianLayer(
     spacing: Dp = currentChartStyle.lineLayer.spacing,
     axisValueOverrider: AxisValueOverrider<LineCartesianLayerModel>? = null,
     verticalAxisPosition: AxisPosition.Vertical? = null,
-    drawingModelInterpolator: DrawingModelInterpolator<
-        LineCartesianLayerDrawingModel.PointInfo,
-        LineCartesianLayerDrawingModel,
-        > = remember { DefaultDrawingModelInterpolator() },
+    drawingModelInterpolator:
+        DrawingModelInterpolator<LineCartesianLayerDrawingModel.PointInfo, LineCartesianLayerDrawingModel> =
+        remember { DefaultDrawingModelInterpolator() },
 ): LineCartesianLayer =
     remember { LineCartesianLayer(lines) }.apply {
         this.lines = lines
