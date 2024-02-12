@@ -49,8 +49,8 @@ import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
 public open class MarkerComponent(
     public val label: TextComponent,
     public val labelPosition: LabelPosition = LabelPosition.Top,
-    public val indicator: Component?,
-    public val guideline: LineComponent?,
+    public val indicator: Component? = null,
+    public val guideline: LineComponent? = null,
 ) : Marker {
     protected val tempBounds: RectF = RectF()
 

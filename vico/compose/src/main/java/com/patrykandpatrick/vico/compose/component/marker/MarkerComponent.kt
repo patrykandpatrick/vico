@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
 public fun rememberMarkerComponent(
     label: TextComponent,
     labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top,
-    indicator: Component,
-    guideline: LineComponent,
+    indicator: Component? = null,
+    guideline: LineComponent? = null,
 ): MarkerComponent =
     remember(label, labelPosition, indicator, guideline) { MarkerComponent(label, labelPosition, indicator, guideline) }
