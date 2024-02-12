@@ -34,3 +34,20 @@ public fun rememberMarkerComponent(
     guideline: LineComponent? = null,
 ): MarkerComponent =
     remember(label, labelPosition, indicator, guideline) { MarkerComponent(label, labelPosition, indicator, guideline) }
+
+/**
+ * Creates a [MarkerComponent].
+ */
+@Composable
+@Deprecated(
+    "Use `rememberMarkerComponent` instead.",
+    ReplaceWith(
+        "rememberMarkerComponent(label = label, indicator = indicator, guideline = guideline)",
+        "com.patrykandpatrick.vico.compose.component.marker.rememberMarkerComponent",
+    ),
+)
+public fun markerComponent(
+    label: TextComponent,
+    indicator: Component,
+    guideline: LineComponent,
+): MarkerComponent = rememberMarkerComponent(label = label, indicator = indicator, guideline = guideline)
