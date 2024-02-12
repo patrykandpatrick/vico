@@ -39,12 +39,12 @@ import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
 
 /**
- * The default implementation of the [Marker] interface.
+ * The default [Marker] implementation.
  *
- * @param label the [TextComponent] used to draw the label.
+ * @param label the [TextComponent] for the label.
  * @param labelPosition specifies the position of the label.
- * @param indicator an optional indicator drawn at a given point belonging to the data entry.
- * @param guideline an optional line drawn from the bottom of the chart to the bottom edge of the [label].
+ * @param indicator drawn at the marked points.
+ * @param guideline drawn vertically through the marked points.
  */
 public open class MarkerComponent(
     public val label: TextComponent,
@@ -72,6 +72,21 @@ public open class MarkerComponent(
      * The [MarkerLabelFormatter] for this marker.
      */
     public var labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter()
+
+    /**
+     * Creates a [MarkerComponent] with [LabelPosition.Top].
+     *
+     * @param label the [TextComponent] for the label.
+     * @param indicator drawn at the marked points.
+     * @param guideline drawn vertically through the marked points.
+     */
+    @Deprecated(
+        "Use the primary constructor, which has a `labelPosition` parameter and default values for `indicator` and " +
+            "`guideline`. (If you’re using named arguments, ignore this warning. The deprecated constructor is more " +
+            "specific, but the primary one matches and will be used once the deprecated one has been removed.)",
+    )
+    public constructor(label: TextComponent, indicator: Component?, guideline: LineComponent?) :
+        this(label, LabelPosition.Top, indicator, guideline)
 
     override fun draw(
         context: DrawContext,
