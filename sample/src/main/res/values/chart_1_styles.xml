@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -23,5 +23,9 @@
 
     <style name="Chart1LineLayerStyle">
         <item name="line1Spec">@style/Chart1Line1Style</item>
+    </style>
+
+    <style name="Chart1StartAxisStyle">
+        <item name="maxVerticalAxisItemCount">6</item>
     </style>
 </resources>

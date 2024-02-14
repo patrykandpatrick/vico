@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -26,5 +26,6 @@
         app:layers="line"
         app:lineLayerStyle="@style/Chart1LineLayerStyle"
         app:showBottomAxis="true"
-        app:showStartAxis="true" />
+        app:showStartAxis="true"
+        app:startAxisStyle="@style/Chart1StartAxisStyle" />
 </FrameLayout>

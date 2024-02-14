@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.sample.showcase.charts
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,19 +28,32 @@ import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.BaseAxis
+import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.core.model.lineSeries
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 @Composable
 internal fun Chart1(
-    modelProducer: CartesianChartModelProducer,
     uiSystem: UISystem,
     modifier: Modifier,
 ) {
+    val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            modelProducer.tryRunTransaction { lineSeries { series(x, x.map { Random.nextFloat() * MAX_Y }) } }
+        }
+    }
     when (uiSystem) {
         UISystem.Compose -> ComposeChart1(modelProducer, modifier)
         UISystem.Views -> ViewChart1(modelProducer, modifier)
@@ -56,15 +70,14 @@ private fun ComposeChart1(
         CartesianChartHost(
             chart =
                 rememberCartesianChart(
-                    rememberLineCartesianLayer(),
-                    startAxis = rememberStartAxis(),
+                    rememberLineCartesianLayer(axisValueOverrider = axisValueOverrider),
+                    startAxis = rememberStartAxis(itemPlacer = startAxisItemPlacer),
                     bottomAxis = rememberBottomAxis(guideline = null),
                     persistentMarkers = remember(marker) { mapOf(PERSISTENT_MARKER_X to marker) },
                 ),
             modelProducer = modelProducer,
             modifier = modifier,
             marker = marker,
-            runInitialAnimation = false,
         )
     }
 }
@@ -78,7 +91,7 @@ private fun ViewChart1(
     AndroidViewBinding(Chart1Binding::inflate, modifier) {
         with(chartView) {
             chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
-            runInitialAnimation = false
+            (chart?.layers?.get(0) as LineCartesianLayer).axisValueOverrider = axisValueOverrider
             this.modelProducer = modelProducer
             (chart?.bottomAxis as BaseAxis).guideline = null
             this.marker = marker
@@ -86,8 +99,11 @@ private fun ViewChart1(
     }
 }
 
-private const val COLOR_1_CODE = 0xffa485e0
-private const val PERSISTENT_MARKER_X = 5f
+private const val PERSISTENT_MARKER_X = 7f
+private const val MAX_Y = 15f
 
-private val color1 = Color(COLOR_1_CODE)
+private val color1 = Color(0xffa485e0)
 private val chartColors = listOf(color1)
+private val x = (1..50).toList()
+private val axisValueOverrider = AxisValueOverrider.fixed<LineCartesianLayerModel>(maxY = MAX_Y)
+private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(maxItemCount = { 6 })

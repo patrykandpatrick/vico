@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.sample.showcase.charts.Chart9
 
 internal val charts =
     listOf<@Composable (ChartViewModel, UISystem, Modifier) -> Unit>(
-        { viewModel, uiSystem, modifier -> Chart1(viewModel.modelProducer1, uiSystem, modifier) },
+        { _, uiSystem, modifier -> Chart1(uiSystem, modifier) },
         { viewModel, uiSystem, modifier -> Chart2(viewModel.modelProducer2, uiSystem, modifier) },
         { viewModel, uiSystem, modifier -> Chart3(viewModel.modelProducer1, uiSystem, modifier) },
         { viewModel, uiSystem, modifier -> Chart4(viewModel.modelProducer3, uiSystem, modifier) },
