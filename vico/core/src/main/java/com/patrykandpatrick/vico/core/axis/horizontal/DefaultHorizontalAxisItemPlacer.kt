@@ -44,7 +44,7 @@ internal class DefaultHorizontalAxisItemPlacer(
     override fun getFirstLabelValue(
         context: MeasureContext,
         maxLabelWidth: Float,
-    ) = if (context.addExtremeLabelPadding) offset * context.chartValues.xStep else null
+    ) = if (context.addExtremeLabelPadding) context.chartValues.minX + offset * context.chartValues.xStep else null
 
     override fun getLastLabelValue(
         context: MeasureContext,
