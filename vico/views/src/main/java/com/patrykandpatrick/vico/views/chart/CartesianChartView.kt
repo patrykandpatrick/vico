@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -193,7 +193,7 @@ public open class CartesianChartView
 
         /**
          * Overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this is null,
-         * the default _x_ step ([CartesianChartModel.xDeltaGcd]) is used.
+         * the output of [CartesianChartModel.getXDeltaGcd] is used.
          */
         public var getXStep: ((CartesianChartModel) -> Float)? by invalidatingObservable(null)
 
