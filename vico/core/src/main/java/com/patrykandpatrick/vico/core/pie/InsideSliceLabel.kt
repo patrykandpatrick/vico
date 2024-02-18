@@ -19,15 +19,15 @@ package com.patrykandpatrick.vico.core.pie
 import android.graphics.Matrix
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.ELLIPSIS
-import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.extension.ceil
-import com.patrykandpatrick.vico.core.extension.centerPoint
-import com.patrykandpatrick.vico.core.extension.half
-import com.patrykandpatrick.vico.core.math.radiansDouble
-import com.patrykandpatrick.vico.core.math.translatePointByAngle
-import com.patrykandpatrick.vico.core.util.Point
+import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.ELLIPSIS
+import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.extension.ceil
+import com.patrykandpatrick.vico.core.common.extension.centerPoint
+import com.patrykandpatrick.vico.core.common.extension.half
+import com.patrykandpatrick.vico.core.common.radiansDouble
+import com.patrykandpatrick.vico.core.common.translatePointByAngle
 
 /**
  * A label for a slice used in a pie chart. The label is drawn inside the slice.

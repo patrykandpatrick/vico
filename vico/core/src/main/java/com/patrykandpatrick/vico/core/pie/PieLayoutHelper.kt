@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.pie
 
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.extension.updateBounds
+import com.patrykandpatrick.vico.core.common.extension.updateBounds
 
 /**
  * A layout helper class used to measure and adjust the bounds of a label placed inside of a slice.

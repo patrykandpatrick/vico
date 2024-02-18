@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.pie
 
-import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.common.MeasureContext
+import com.patrykandpatrick.vico.core.common.extension.half
 
 /**
  * Defines the size of a component.

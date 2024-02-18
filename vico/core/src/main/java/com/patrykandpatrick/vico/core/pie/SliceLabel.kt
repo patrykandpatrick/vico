@@ -18,8 +18,8 @@ package com.patrykandpatrick.vico.core.pie
 
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.chart.insets.Insets
-import com.patrykandpatrick.vico.core.context.DrawContext
+import com.patrykandpatrick.vico.core.cartesian.insets.Insets
+import com.patrykandpatrick.vico.core.common.DrawContext
 
 /**
  * A base class for a label for a [Slice].

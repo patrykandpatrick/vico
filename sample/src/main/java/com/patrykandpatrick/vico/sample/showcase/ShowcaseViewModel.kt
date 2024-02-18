@@ -21,10 +21,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.model.PieChartModelProducer
-import com.patrykandpatrick.vico.core.util.RandomCartesianModelGenerator
-import com.patrykandpatrick.vico.core.util.RandomPieModelGenerator
+import com.patrykandpatrick.vico.core.cartesian.RandomCartesianModelGenerator
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.pie.PieChartModelProducer
+import com.patrykandpatrick.vico.core.pie.RandomPieModelGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay

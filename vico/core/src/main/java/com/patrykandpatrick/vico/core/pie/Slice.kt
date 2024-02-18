@@ -20,20 +20,20 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
-import com.patrykandpatrick.vico.core.component.shape.shadow.PaintComponent
-import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.extension.half
-import com.patrykandpatrick.vico.core.extension.ifNotNull
-import com.patrykandpatrick.vico.core.extension.isNotTransparent
-import com.patrykandpatrick.vico.core.extension.isTransparent
-import com.patrykandpatrick.vico.core.extension.opacity
-import com.patrykandpatrick.vico.core.extension.round
-import com.patrykandpatrick.vico.core.extension.updateBy
-import com.patrykandpatrick.vico.core.math.radiansDouble
-import com.patrykandpatrick.vico.core.math.translatePointByAngle
-import com.patrykandpatrick.vico.core.util.Point
+import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.MeasureContext
+import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.component.PaintComponent
+import com.patrykandpatrick.vico.core.common.extension.half
+import com.patrykandpatrick.vico.core.common.extension.ifNotNull
+import com.patrykandpatrick.vico.core.common.extension.isNotTransparent
+import com.patrykandpatrick.vico.core.common.extension.isTransparent
+import com.patrykandpatrick.vico.core.common.extension.opacity
+import com.patrykandpatrick.vico.core.common.extension.round
+import com.patrykandpatrick.vico.core.common.extension.updateBy
+import com.patrykandpatrick.vico.core.common.radiansDouble
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.translatePointByAngle
 
 /**
  * A component that defines an appearance of a slice in a pie chart.

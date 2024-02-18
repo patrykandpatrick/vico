@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.model
 
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.model.getXDeltaGcd
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test
