@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ import kotlinx.coroutines.launch
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
- * is null, the default _x_ step ([CartesianChartModel.xDeltaGcd]) is used.
+ * is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -162,7 +162,7 @@ public fun CartesianChartHost(
  * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
- * is null, the default _x_ step ([CartesianChartModel.xDeltaGcd]) is used.
+ * is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
  */
 @Composable
 @SuppressLint("RememberReturnType")
