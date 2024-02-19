@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,24 +20,17 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
-import com.patrykandpatrick.vico.core.marker.Marker
 import com.patrykandpatrick.vico.core.scroll.ScrollHandler
 import com.patrykandpatrick.vico.core.util.Point
 import com.patrykandpatrick.vico.views.extension.fling
 import com.patrykandpatrick.vico.views.extension.point
 import kotlin.math.abs
 
-/**
- * Handles [MotionEvent]s.
- *
- * @param density the pixel density.
- * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
- */
-public open class MotionEventHandler(
+internal class MotionEventHandler(
     private val scroller: OverScroller,
     private val scrollHandler: ScrollHandler,
     density: Float,
-    public var isHorizontalScrollEnabled: Boolean = false,
+    var isHorizontalScrollEnabled: Boolean = false,
     private val onTouchPoint: (Point?) -> Unit,
     private val requestInvalidate: () -> Unit,
 ) {
@@ -50,10 +43,7 @@ public open class MotionEventHandler(
     private var lastEventPointerCount = 0
     private var totalDragAmount: Float = 0f
 
-    /**
-     * Called to handle a [MotionEvent], which may result in scroll, zoom, or the appearance of a [Marker].
-     */
-    public fun handleMotionEvent(motionEvent: MotionEvent): Boolean {
+    fun handleMotionEvent(motionEvent: MotionEvent): Boolean {
         val ignoreEvent =
             motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
         lastEventPointerCount = motionEvent.pointerCount
