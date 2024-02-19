@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,8 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.DefaultColors
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
-import com.patrykandpatrick.vico.core.context.DefaultExtras
 import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.context.Extras
+import com.patrykandpatrick.vico.core.model.MutableExtraStore
 
 /**
  * Calls the specified function block with [DrawContext.canvas] as its receiver.
@@ -48,7 +47,7 @@ public fun drawContext(
     elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
     spToPx: (Float) -> Float = { it },
 ): DrawContext =
-    object : DrawContext, Extras by DefaultExtras() {
+    object : DrawContext {
         override val canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat())
         override val elevationOverlayColor: Long = elevationOverlayColor
         override var canvas: Canvas = canvas
@@ -57,6 +56,7 @@ public fun drawContext(
         override val isHorizontalScrollEnabled: Boolean = false
         override val chartValues: ChartValues = ChartValues.Empty
         override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented
+        override val extraStore: MutableExtraStore = MutableExtraStore()
 
         override fun withOtherCanvas(
             canvas: Canvas,
@@ -66,10 +66,6 @@ public fun drawContext(
             this.canvas = canvas
             block(this)
             this.canvas = originalCanvas
-        }
-
-        override fun reset() {
-            clearExtras()
         }
 
         override fun spToPx(sp: Float): Float = spToPx(sp)

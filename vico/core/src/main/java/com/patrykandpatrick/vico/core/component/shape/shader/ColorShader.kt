@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class ColorShader(public val color: Int) : DynamicShader {
 
     override fun getColorAt(
         point: Point,
-        drawContext: DrawContext,
-        rectF: RectF,
+        context: DrawContext,
+        bounds: RectF,
     ): Int = color
 }

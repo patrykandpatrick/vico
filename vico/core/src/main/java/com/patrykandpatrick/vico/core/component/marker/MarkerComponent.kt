@@ -129,7 +129,7 @@ public open class MarkerComponent(
                 )
             val halfOfTextWidth = labelBounds.width().half
             val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
-            this[MarkerCorneredShape.TICK_X_KEY] = entryX
+            extraStore[MarkerCorneredShape.tickXKey] = entryX
             val tickPosition: MarkerCorneredShape.TickPosition
             val y: Float
             val verticalPosition: VerticalPosition
@@ -147,7 +147,7 @@ public open class MarkerComponent(
                 y = topEntryY + (if (flip) 1 else -1) * label.tickSizeDp.pixels
                 verticalPosition = if (flip) VerticalPosition.Bottom else VerticalPosition.Top
             }
-            this[MarkerCorneredShape.TICK_POSITION_KEY] = tickPosition
+            extraStore[MarkerCorneredShape.tickPositionKey] = tickPosition
 
             label.drawText(
                 context = context,

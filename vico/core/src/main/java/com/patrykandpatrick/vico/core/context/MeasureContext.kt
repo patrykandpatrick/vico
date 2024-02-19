@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,12 @@ package com.patrykandpatrick.vico.core.context
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
+import com.patrykandpatrick.vico.core.model.MutableExtraStore
 
 /**
  * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
  */
-public interface MeasureContext : Extras {
+public interface MeasureContext {
     /**
      * The bounds of the canvas that will be used to draw the chart and its components.
      */
@@ -53,6 +54,11 @@ public interface MeasureContext : Extras {
      * Defines how the chart’s content is positioned horizontally.
      */
     public val horizontalLayout: HorizontalLayout
+
+    /**
+     * Stores auxiliary data.
+     */
+    public val extraStore: MutableExtraStore
 
     /**
      * A multiplier used to ensure support for both left-to-right and right-to-left layouts. Values such as translation
@@ -87,7 +93,9 @@ public interface MeasureContext : Extras {
     /**
      * Removes all stored extras.
      *
-     * @see Extras.clearExtras
+     * @see MutableExtraStore.clear
      */
-    public fun reset()
+    public fun reset() {
+        extraStore.clear()
+    }
 }

@@ -21,9 +21,9 @@ import android.graphics.Path
 import com.patrykandpatrick.vico.core.DEF_MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.context.DrawContext
-import com.patrykandpatrick.vico.core.context.Extras
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.model.ExtraStore
 
 /**
  * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick at a given point.
@@ -67,9 +67,9 @@ public open class MarkerCorneredShape(
         bottom: Float,
     ): Unit =
         with(context) {
-            val tickX: Float? = context[TICK_X_KEY]
+            val tickX: Float? = context.extraStore.getOrNull(tickXKey)
             if (tickX != null) {
-                val tickPosition: TickPosition = context[TICK_POSITION_KEY] ?: TickPosition.Bottom
+                val tickPosition: TickPosition = context.extraStore.getOrNull(tickPositionKey) ?: TickPosition.Bottom
                 createPath(
                     context = context,
                     path = path,
@@ -130,13 +130,13 @@ public open class MarkerCorneredShape(
 
     public companion object {
         /**
-         * Used to store and retrieve the _x_ coordinate of a [MarkerCorneredShape]’s tick (via [Extras]).
+         * Used to store and retrieve the _x_ coordinate of a [MarkerCorneredShape]’s tick.
          */
-        public const val TICK_X_KEY: String = "tickX"
+        public val tickXKey: ExtraStore.Key<Float> = ExtraStore.Key()
 
         /**
-         * Used to store and retrieve a [MarkerCorneredShape]’s [TickPosition] (via [Extras]).
+         * Used to store and retrieve a [MarkerCorneredShape]’s [TickPosition].
          */
-        public const val TICK_POSITION_KEY: String = "tickPosition"
+        public val tickPositionKey: ExtraStore.Key<TickPosition> = ExtraStore.Key()
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.component.dimension.Padding
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.context.getOrPutExtra
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 import com.patrykandpatrick.vico.core.draw.withCanvas
@@ -43,6 +42,8 @@ import com.patrykandpatrick.vico.core.extension.lineHeight
 import com.patrykandpatrick.vico.core.extension.piRad
 import com.patrykandpatrick.vico.core.extension.rotate
 import com.patrykandpatrick.vico.core.extension.translate
+import com.patrykandpatrick.vico.core.model.ExtraStore
+import com.patrykandpatrick.vico.core.model.getOrSetCached
 import com.patrykandpatrick.vico.core.text.getBounds
 import com.patrykandpatrick.vico.core.text.staticLayout
 import com.patrykandpatrick.vico.core.text.widestLineWidth
@@ -69,6 +70,7 @@ private const val DEF_LAYOUT_SIZE = 100000
 public open class TextComponent protected constructor() : Padding, Margins {
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
     private val tempMeasureBounds = RectF()
+    private val layoutCacheKey: ExtraStore.Key<Pair<String, StaticLayout>> = ExtraStore.Key()
 
     /**
      * The text’s color.
@@ -378,8 +380,10 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 } - padding.horizontalDp.wholePixels
             ).coerceAtLeast(0)
 
-        val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode()
-        return getOrPutExtra(key = key) {
+        return extraStore.getOrSetCached(
+            cacheKey = layoutCacheKey,
+            valueKey = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode(),
+        ) {
             textPaint.textSize = spToPx(textSizeSp)
             staticLayout(
                 source = text,

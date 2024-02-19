@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,8 +57,14 @@ public object DynamicShaders {
         second: DynamicShader,
         mode: BlendMode,
     ): DynamicShader =
-        DynamicShader { context, left, top, right, bottom ->
-            ComposeShader(
+        object : BaseDynamicShader() {
+            override fun provideShader(
+                context: DrawContext,
+                left: Float,
+                top: Float,
+                right: Float,
+                bottom: Float,
+            ) = ComposeShader(
                 first.provideShader(context, left, top, right, bottom),
                 second.provideShader(context, left, top, right, bottom),
                 mode,
@@ -73,8 +79,14 @@ public object DynamicShaders {
         second: DynamicShader,
         mode: PorterDuff.Mode,
     ): DynamicShader =
-        DynamicShader { context, left, top, right, bottom ->
-            ComposeShader(
+        object : BaseDynamicShader() {
+            override fun provideShader(
+                context: DrawContext,
+                left: Float,
+                top: Float,
+                right: Float,
+                bottom: Float,
+            ) = ComposeShader(
                 first.provideShader(context, left, top, right, bottom),
                 second.provideShader(context, left, top, right, bottom),
                 mode,

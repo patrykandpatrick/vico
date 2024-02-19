@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,6 +98,13 @@ public class MutableExtraStore internal constructor(mapDelegate: Map<Key<*>, Any
         mapDelegate.remove(key)
     }
 
+    /**
+     * Removes all stored values.
+     */
+    public fun clear() {
+        mapDelegate.clear()
+    }
+
     override fun copy(): ExtraStore = MutableExtraStore(mapDelegate)
 
     override fun copyContentTo(destination: MutableMap<Key<*>, Any>) {
@@ -111,4 +118,18 @@ public class MutableExtraStore internal constructor(mapDelegate: Map<Key<*>, Any
                 other.copyContentTo(this)
             },
         )
+}
+
+internal fun <T : Any> MutableExtraStore.getOrSet(
+    key: ExtraStore.Key<T>,
+    block: () -> T,
+): T = getOrNull(key) ?: block().also { this[key] = it }
+
+internal fun <K : Any, V> MutableExtraStore.getOrSetCached(
+    cacheKey: ExtraStore.Key<Pair<K, V>>,
+    valueKey: K,
+    block: () -> V,
+): V {
+    val cache = getOrNull(cacheKey)
+    return if (cache?.first == valueKey) cache.second else block().also { this[cacheKey] = valueKey to it }
 }

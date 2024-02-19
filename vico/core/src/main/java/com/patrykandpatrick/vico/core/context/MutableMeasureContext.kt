@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
+import com.patrykandpatrick.vico.core.model.MutableExtraStore
 
 /**
  * A [MeasureContext] implementation that facilitates the mutation of some of its properties.
@@ -33,10 +34,8 @@ public data class MutableMeasureContext(
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var spToPx: (Float) -> Float,
     override var chartValues: ChartValues,
-) : MeasureContext, Extras by DefaultExtras() {
-    override fun reset() {
-        clearExtras()
-    }
+) : MeasureContext {
+    override val extraStore: MutableExtraStore = MutableExtraStore()
 
     override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

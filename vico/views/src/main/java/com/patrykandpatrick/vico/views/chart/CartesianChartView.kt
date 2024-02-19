@@ -445,7 +445,7 @@ public open class CartesianChartView
             super.dispatchDraw(canvas)
 
             withChartAndModel { chart, model ->
-                measureContext.clearExtras()
+                measureContext.reset()
                 horizontalDimensions.clear()
                 chart.prepare(measureContext, model, horizontalDimensions, contentBounds, marker)
 
