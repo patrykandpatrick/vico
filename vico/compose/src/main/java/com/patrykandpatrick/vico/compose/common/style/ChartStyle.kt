@@ -34,7 +34,6 @@ import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.cartesian.layer.lineSpec
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shape.dashedShape
-import com.patrykandpatrick.vico.compose.pie.rememberSlice
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.axis.DecimalFormatAxisValueFormatter
@@ -49,15 +48,10 @@ import com.patrykandpatrick.vico.core.common.DefaultDimens
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.component.textComponent
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.core.common.shape.Shapes
-import com.patrykandpatrick.vico.core.pie.InsideSliceLabel
-import com.patrykandpatrick.vico.core.pie.Size
-import com.patrykandpatrick.vico.core.pie.Slice
-import com.patrykandpatrick.vico.core.pie.SliceLabel
 
 /**
  * Defines the appearance of charts.
@@ -67,7 +61,6 @@ import com.patrykandpatrick.vico.core.pie.SliceLabel
  * @property lineLayer the appearance of [LineCartesianLayer]s.
  * @property marker the appearance of chart markers.
  * @property elevationOverlayColor the color used for elevation overlays.
- * @property pieChart the appearance of pie charts.
  */
 public data class ChartStyle(
     val axis: Axis,
@@ -75,7 +68,6 @@ public data class ChartStyle(
     val lineLayer: LineLayer,
     val marker: Marker,
     val elevationOverlayColor: Color,
-    val pieChart: PieChart,
 ) {
     /**
      * Defines the appearance of chart axes.
@@ -187,25 +179,6 @@ public data class ChartStyle(
         val verticalPadding: Dp = DefaultDimens.MARKER_VERTICAL_PADDING.dp,
     )
 
-    /**
-     * Defines the appearance of pie charts.
-     *
-     * @property slices the [Slice]s to use for the pie chart.
-     * @property spacing the spacing between slices.
-     * @property outerSize the size of the pie chart.
-     * @property innerSize the size of the hole in the middle of the pie chart.
-     * @property startAngle the angle at which the first slice starts.
-     * @property sliceLabel the [SliceLabel] used as a default label style in [rememberSlice] function.
-     */
-    public data class PieChart(
-        val slices: List<Slice>,
-        val spacing: Dp = DefaultDimens.PIE_CHART_SPACING.dp,
-        val outerSize: Size.OuterSize = Size.OuterSize.fill(),
-        val innerSize: Size.InnerSize = Size.InnerSize.zero(),
-        val startAngle: Float = DefaultDimens.PIE_CHART_START_ANGLE,
-        val sliceLabel: SliceLabel = InsideSliceLabel(textComponent = textComponent()),
-    )
-
     public companion object {
         /**
          * Creates a base implementation of [ChartStyle] using the provided colors.
@@ -249,15 +222,6 @@ public data class ChartStyle(
                     ),
                 marker = Marker(),
                 elevationOverlayColor = elevationOverlayColor,
-                pieChart =
-                    PieChart(
-                        slices =
-                            entityColors.map { entityColor ->
-                                Slice(
-                                    color = entityColor.toArgb(),
-                                )
-                            },
-                    ),
             )
 
         internal fun fromDefaultColors(defaultColors: DefaultColors) =

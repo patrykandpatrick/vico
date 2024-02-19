@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,6 @@ import com.patrykandpatrick.vico.sample.showcase.charts.Chart6
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart7
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart8
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart9
-import com.patrykandpatrick.vico.sample.showcase.charts.PieChart1
 import com.patrykandpatrick.vico.sample.utils.plus
 
 @Composable
@@ -104,7 +103,6 @@ private fun LazyListScope.chartItems(
     cardItem { Chart8(uiSystem, viewModel.modelProducer3) }
     cardItem { Chart9(uiSystem, viewModel.modelProducer6) }
     cardItem { Chart10(uiSystem, viewModel.modelProducer10) }
-    cardItem { PieChart1(uiSystem, viewModel.pieModelProducer1) }
 }
 
 private fun LazyListScope.cardItem(content: @Composable () -> Unit) {

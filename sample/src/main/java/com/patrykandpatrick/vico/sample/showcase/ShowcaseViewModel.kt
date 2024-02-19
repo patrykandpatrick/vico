@@ -23,8 +23,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.patrykandpatrick.vico.core.cartesian.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.pie.PieChartModelProducer
-import com.patrykandpatrick.vico.core.pie.RandomPieModelGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
@@ -39,7 +37,6 @@ internal class ShowcaseViewModel : ViewModel() {
     internal val modelProducer5 = CartesianChartModelProducer.build()
     internal val modelProducer6 = CartesianChartModelProducer.build()
     internal val modelProducer10 = CartesianChartModelProducer.build()
-    internal val pieModelProducer1 = PieChartModelProducer.build()
 
     var uiSystem by mutableStateOf(UISystem.Compose)
         private set
@@ -68,9 +65,6 @@ internal class ShowcaseViewModel : ViewModel() {
                 }
                 modelProducer10.tryRunTransaction {
                     add(RandomCartesianModelGenerator.getRandomCandlestickLayerModelPartial())
-                }
-                pieModelProducer1.tryRunTransaction {
-                    set(RandomPieModelGenerator.getRandomPartial())
                 }
                 delay(UPDATE_FREQUENCY)
             }

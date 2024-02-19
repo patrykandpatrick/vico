@@ -32,13 +32,11 @@ import com.patrykandpatrick.vico.core.common.DefaultDimens
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shape.Shapes
-import com.patrykandpatrick.vico.core.pie.Slice
 
 @Composable
 internal fun rememberChartStyle(
     columnLayerColors: List<Color>,
     lineLayerColors: List<Color>,
-    pieSliceColors: List<Color> = emptyList(),
 ): ChartStyle {
     val isSystemInDarkTheme = isSystemInDarkTheme()
     return remember(columnLayerColors, lineLayerColors, isSystemInDarkTheme) {
@@ -76,7 +74,6 @@ internal fun rememberChartStyle(
             ),
             ChartStyle.Marker(),
             Color(defaultColors.elevationOverlayColor),
-            ChartStyle.PieChart(slices = pieSliceColors.map { Slice(it.toArgb()) }),
         )
     }
 }

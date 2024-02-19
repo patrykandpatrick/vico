@@ -79,11 +79,6 @@ public object Animation {
     public const val CARTESIAN_CHART_DIFF_DURATION: Int = 500
 
     /**
-     * The default duration for difference animations in pie charts.
-     */
-    public const val PIE_CHART_DIFF_DURATION: Int = 1_000
-
-    /**
      * The default duration for animated scrolls (in milliseconds;
      * [com.patrykandpatrick.vico.views.cartesian.CartesianChartView.animateScrollBy]).
      */
@@ -248,36 +243,6 @@ public object DefaultDimens {
      * The default height for charts (in dp).
      */
     public const val CHART_HEIGHT: Float = 200f
-
-    /**
-     * The starting angle for pie charts (in degrees).
-     */
-    public const val PIE_CHART_START_ANGLE: Float = -90f
-
-    /**
-     * The default width for outside label’s line in pie chart slice (in dp).
-     */
-    public const val SLICE_LINE_WIDTH: Float = 1f
-
-    /**
-     * The default length for outside label’s angled line in pie chart slice (in dp).
-     */
-    public const val SLICE_ANGLED_SEGMENT_LENGTH: Float = 12f
-
-    /**
-     * The default length for outside label’s horizontal line in pie chart slice (in dp).
-     */
-    public const val SLICE_HORIZONTAL_SEGMENT_LENGTH: Float = 16f
-
-    /**
-     * The default ratio of the maximum width of the outside label to the bounds of the pie chart.
-     */
-    public const val SLICE_OUTSIDE_LABEL_MAX_WIDTH_TO_BOUNDS_RATIO: Float = 0.25f
-
-    /**
-     * The default spacing between pie chart slices (in dp).
-     */
-    public const val PIE_CHART_SPACING: Int = 0
 }
 
 /**

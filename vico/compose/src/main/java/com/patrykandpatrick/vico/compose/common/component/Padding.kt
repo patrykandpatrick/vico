@@ -13,9 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-@file:Suppress("LocalVariableName", "ComposableNaming")
-
 package com.patrykandpatrick.vico.compose.common.component
 
 import androidx.compose.runtime.Composable
