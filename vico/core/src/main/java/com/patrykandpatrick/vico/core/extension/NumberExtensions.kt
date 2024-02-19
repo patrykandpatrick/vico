@@ -24,10 +24,7 @@ import kotlin.math.pow
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
-/**
- * The number of degrees equivalent to π radians.
- */
-public const val PI_RAD: Float = 180f
+internal const val PI_RAD: Float = 180f
 
 internal const val FLOAT_GCD_DECIMALS = 2
 
