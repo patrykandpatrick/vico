@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
@@ -55,9 +56,8 @@ public interface ChartDrawContext : DrawContext {
     public val zoom: Float
 }
 
-/**
- * Returns the maximum scroll distance.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun MeasureContext.getMaxScrollDistance(
     chartWidth: Float,
     horizontalDimensions: HorizontalDimensions,
@@ -70,18 +70,16 @@ public fun MeasureContext.getMaxScrollDistance(
     }
 }
 
-/**
- * Returns the maximum scroll distance.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun ChartDrawContext.getMaxScrollDistance(): Float =
     getMaxScrollDistance(
         chartWidth = chartBounds.width(),
         horizontalDimensions = horizontalDimensions,
     )
 
-/**
- * Returns the automatic zoom factor for a chart.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun MeasureContext.getAutoZoom(
     horizontalDimensions: HorizontalDimensions,
     chartBounds: RectF,
