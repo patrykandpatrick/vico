@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,7 @@ package com.patrykandpatrick.vico.core.component.shape.extension
 
 import android.graphics.Path
 
-/**
- * A convenience function for [Path.cubicTo] that helps with adding a cubic curve with a certain [curvature].
- */
-public fun Path.horizontalCubicTo(
+internal fun Path.horizontalCubicTo(
     prevX: Float,
     prevY: Float,
     x: Float,
