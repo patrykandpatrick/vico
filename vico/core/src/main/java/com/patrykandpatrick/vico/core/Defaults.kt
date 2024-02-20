@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 
@@ -59,24 +60,11 @@ public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f
  */
 public const val FADING_EDGE_WIDTH_DP: Float = 32f
 
-/**
- * Defaults for animations.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object Animation {
-    /**
-     * The [Float] range of values used in difference animations.
-     */
     public val range: ClosedFloatingPointRange<Float> = 0f..1f
-
-    /**
-     * The default duration for difference animations.
-     */
     public const val DIFF_DURATION: Int = 500
-
-    /**
-     * The default duration for animated scrolls (in milliseconds;
-     * [com.patrykandpatrick.vico.views.chart.BaseChartView.animateScrollBy]).
-     */
     public const val ANIMATED_SCROLL_DURATION: Int = 300
 }
 
