@@ -34,7 +34,6 @@ import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.isBoundOf
 import com.patrykandpatrick.vico.core.extension.orZero
-import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 import kotlin.math.min
 
 /**
@@ -365,7 +364,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                 when (T::class.java) {
                     AxisPosition.Horizontal.Top::class.java -> AxisPosition.Horizontal.Top
                     AxisPosition.Horizontal.Bottom::class.java -> AxisPosition.Horizontal.Bottom
-                    else -> throw UnknownAxisPositionException(T::class.java)
+                    else -> throw IllegalStateException("Got unknown AxisPosition class ${T::class.java.name}")
                 } as Position
             return setTo(HorizontalAxis(position = position)).also { it.itemPlacer = itemPlacer } as HorizontalAxis<T>
         }

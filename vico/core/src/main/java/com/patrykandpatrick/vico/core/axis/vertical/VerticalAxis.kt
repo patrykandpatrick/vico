@@ -38,7 +38,6 @@ import com.patrykandpatrick.vico.core.extension.getStart
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.extension.translate
-import com.patrykandpatrick.vico.core.throwable.UnknownAxisPositionException
 
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
@@ -366,7 +365,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 when (T::class.java) {
                     AxisPosition.Vertical.Start::class.java -> AxisPosition.Vertical.Start
                     AxisPosition.Vertical.End::class.java -> AxisPosition.Vertical.End
-                    else -> throw UnknownAxisPositionException(T::class.java)
+                    else -> throw IllegalStateException("Got unknown AxisPosition class ${T::class.java.name}")
                 } as Position
             return setTo(VerticalAxis(position)).also { axis ->
                 axis.itemPlacer = itemPlacer
