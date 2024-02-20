@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,23 +98,8 @@ public fun rememberFadingEdges(
         visibilityEasing = visibilityEasing,
     )
 
-/**
- * The default values for [FadingEdges].
- */
-public object FadingEdgesDefaults {
-    /**
-     * The width of the fade overlays (in dp).
-     */
-    public val edgeWidth: Dp = FADING_EDGE_WIDTH_DP.dp
-
-    /**
-     * The scroll distance over which the overlays fade in and out (in dp).
-     */
-    public val visibilityThreshold: Dp = FADING_EDGE_VISIBILITY_THRESHOLD_DP.dp
-
-    /**
-     * Used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to which the fading
-     * edges’ visibility threshold has been satisfied to the opacity of the fading edges.
-     */
-    public val visibilityEasing: Easing = FastOutSlowInEasing
+private object FadingEdgesDefaults {
+    val edgeWidth = FADING_EDGE_WIDTH_DP.dp
+    val visibilityThreshold = FADING_EDGE_VISIBILITY_THRESHOLD_DP.dp
+    val visibilityEasing = FastOutSlowInEasing
 }
