@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.axis
 
-import com.patrykandpatrick.vico.core.DEF_LABEL_COUNT
+import com.patrykandpatrick.vico.core.Defaults.MAX_LABEL_COUNT
 import com.patrykandpatrick.vico.core.axis.horizontal.DefaultHorizontalAxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.DefaultVerticalAxisItemPlacer
@@ -225,7 +225,7 @@ public interface AxisItemPlacer {
              * shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
              */
             public fun default(
-                maxItemCount: (ChartValues) -> Int = { DEF_LABEL_COUNT },
+                maxItemCount: (ChartValues) -> Int = { MAX_LABEL_COUNT },
                 shiftTopLines: Boolean = true,
             ): Vertical = DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
         }

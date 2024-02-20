@@ -53,9 +53,9 @@ import com.patrykandpatrick.vico.compose.state.component1
 import com.patrykandpatrick.vico.compose.state.component2
 import com.patrykandpatrick.vico.compose.state.component3
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
-import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
-import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults.CHART_HEIGHT
+import com.patrykandpatrick.vico.core.Defaults.MAX_ZOOM
+import com.patrykandpatrick.vico.core.Defaults.MIN_ZOOM
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
@@ -329,7 +329,7 @@ internal fun CartesianChartHostBox(
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(
-        modifier = modifier.height(DefaultDimens.CHART_HEIGHT.dp).fillMaxWidth(),
+        modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(),
         content = content,
     )
 }
@@ -366,7 +366,7 @@ internal fun rememberZoomState(
     remember {
         onZoom@{ centroid, zoomChange ->
             val newZoom = zoom.floatValue * zoomChange
-            if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return@onZoom
+            if (newZoom !in MIN_ZOOM..MAX_ZOOM) return@onZoom
             val transformationAxisX = getScroll() + centroid.x - chartBounds.left
             val zoomedTransformationAxisX = transformationAxisX * zoomChange
             zoom.floatValue = newZoom

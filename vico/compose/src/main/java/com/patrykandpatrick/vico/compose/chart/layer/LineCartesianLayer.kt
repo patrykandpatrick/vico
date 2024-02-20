@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultAlpha
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
@@ -96,11 +96,11 @@ public fun rememberLineCartesianLayer(
  */
 public fun lineSpec(
     shader: DynamicShader,
-    thickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
+    thickness: Dp = Defaults.LINE_THICKNESS.dp,
     backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
     cap: StrokeCap = StrokeCap.Round,
     point: Component? = null,
-    pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
+    pointSize: Dp = Defaults.POINT_SIZE.dp,
     dataLabel: TextComponent? = null,
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),

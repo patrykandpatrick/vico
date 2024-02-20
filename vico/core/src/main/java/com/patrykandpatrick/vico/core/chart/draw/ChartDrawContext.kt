@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
+import com.patrykandpatrick.vico.core.Defaults.MAX_ZOOM
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
@@ -90,7 +90,7 @@ public fun MeasureContext.getAutoZoom(
     val fillingZoom = reducedChartWidth / scalableContentWidth
     return when {
         scalableContentWidth < reducedChartWidth ->
-            if (autoScaleUp == AutoScaleUp.Full) fillingZoom.coerceAtMost(DEF_MAX_ZOOM) else 1f
+            if (autoScaleUp == AutoScaleUp.Full) fillingZoom.coerceAtMost(MAX_ZOOM) else 1f
 
         !isHorizontalScrollEnabled -> fillingZoom
         else -> 1f

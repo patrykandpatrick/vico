@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.compose.extension
 
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import com.patrykandpatrick.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
+import com.patrykandpatrick.vico.core.Defaults.TEXT_COMPONENT_TEXT_SIZE
 
 internal fun TextUnit.pixelSize() =
     when (type) {

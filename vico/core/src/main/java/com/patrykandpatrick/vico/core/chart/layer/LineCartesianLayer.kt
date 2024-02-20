@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.chart.layer
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
@@ -71,7 +71,7 @@ import kotlin.math.min
  */
 public open class LineCartesianLayer(
     public var lines: List<LineSpec>,
-    public var spacingDp: Float = DefaultDimens.POINT_SPACING,
+    public var spacingDp: Float = Defaults.POINT_SPACING,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var drawingModelInterpolator:
         DrawingModelInterpolator<LineCartesianLayerDrawingModel.PointInfo, LineCartesianLayerDrawingModel> =
@@ -109,11 +109,11 @@ public open class LineCartesianLayer(
      */
     public open class LineSpec(
         public var shader: DynamicShader,
-        public var thicknessDp: Float = DefaultDimens.LINE_THICKNESS,
+        public var thicknessDp: Float = Defaults.LINE_THICKNESS,
         public var backgroundShader: DynamicShader? = null,
         public var cap: Paint.Cap = Paint.Cap.ROUND,
         public var point: Component? = null,
-        public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+        public var pointSizeDp: Float = Defaults.POINT_SIZE,
         public var dataLabel: TextComponent? = null,
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         public var dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.DEF_SHADOW_COLOR
+import com.patrykandpatrick.vico.core.Defaults.SHADOW_COLOR
 import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 
@@ -49,7 +49,7 @@ public fun <T : ShapeComponent> T.setShadow(
     radius: Dp,
     dx: Dp = 0.dp,
     dy: Dp = 0.dp,
-    color: Color = Color(DEF_SHADOW_COLOR),
+    color: Color = Color(SHADOW_COLOR),
     applyElevationOverlay: Boolean = false,
 ): T =
     setShadow(

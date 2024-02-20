@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.chart
 
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.extension.horizontalCubicTo
@@ -31,7 +31,7 @@ import kotlin.math.abs
  * @property cubicStrength the strength of the cubic bezier curve between each point on the line.
  */
 public class DefaultPointConnector(
-    private val cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
+    private val cubicStrength: Float = Defaults.CUBIC_STRENGTH,
 ) : LineCartesianLayer.LineSpec.PointConnector {
     public override fun connect(
         path: Path,

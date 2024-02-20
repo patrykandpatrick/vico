@@ -23,9 +23,9 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.animation.AccelerateInterpolator
 import androidx.annotation.StyleableRes
-import com.patrykandpatrick.vico.core.DEF_LABEL_COUNT
-import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatrick.vico.core.Defaults
+import com.patrykandpatrick.vico.core.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatrick.vico.core.Defaults.MAX_LABEL_COUNT
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -115,7 +115,7 @@ internal class ThemeHandler(
                 axisStyle.getRawDimension(
                     context = context,
                     R.styleable.Axis_axisTickLength,
-                    defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
+                    defaultValue = Defaults.AXIS_TICK_LENGTH,
                 )
             guideline =
                 axisStyle
@@ -263,7 +263,7 @@ internal class ThemeHandler(
     }
 
     private fun TypedArray.getVerticalAxisItemPlacer(): AxisItemPlacer.Vertical {
-        val maxItemCount = getInteger(R.styleable.Axis_maxVerticalAxisItemCount, DEF_LABEL_COUNT)
+        val maxItemCount = getInteger(R.styleable.Axis_maxVerticalAxisItemCount, MAX_LABEL_COUNT)
         return AxisItemPlacer.Vertical.default(
             maxItemCount = { maxItemCount },
             shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true),

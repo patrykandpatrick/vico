@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.PercentageFormatAxisValueFormatter
@@ -150,8 +150,8 @@ private val thresholdLineLabelMargins = dimensionsOf(thresholdLineLabelMarginVal
 private val startAxisValueFormatter = PercentageFormatAxisValueFormatter<AxisPosition.Vertical.Start>()
 private val horizontalLayout =
     HorizontalLayout.FullWidth(
-        scalableStartPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
-        scalableEndPaddingDp = DefaultDimens.COLUMN_OUTSIDE_SPACING.half,
+        scalableStartPaddingDp = Defaults.COLUMN_OUTSIDE_SPACING.half,
+        scalableEndPaddingDp = Defaults.COLUMN_OUTSIDE_SPACING.half,
     )
 private val startAxisItemPlacer = AxisItemPlacer.Vertical.default({ MAX_START_AXIS_ITEM_COUNT })
 private val bottomAxisItemPlacer = AxisItemPlacer.Horizontal.default(BOTTOM_AXIS_ITEM_SPACING, BOTTOM_AXIS_ITEM_OFFSET)

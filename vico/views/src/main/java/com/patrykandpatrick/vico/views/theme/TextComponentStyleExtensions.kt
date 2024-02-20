@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import android.text.Layout
 import android.text.TextUtils
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
-import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
-import com.patrykandpatrick.vico.core.DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING
-import com.patrykandpatrick.vico.core.DefaultDimens.AXIS_LABEL_VERTICAL_PADDING
-import com.patrykandpatrick.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
+import com.patrykandpatrick.vico.core.Defaults.AXIS_LABEL_HORIZONTAL_PADDING
+import com.patrykandpatrick.vico.core.Defaults.AXIS_LABEL_VERTICAL_PADDING
+import com.patrykandpatrick.vico.core.Defaults.LABEL_LINE_COUNT
+import com.patrykandpatrick.vico.core.Defaults.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
@@ -59,7 +59,7 @@ internal fun TypedArray.getTextComponent(context: Context): TextComponent =
                     index = R.styleable.TextComponentStyle_android_textSize,
                     defaultValue = TEXT_COMPONENT_TEXT_SIZE,
                 )
-            this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
+            this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, LABEL_LINE_COUNT)
             this.ellipsize = getTruncateAt()
             getTypeface(context)?.let { this.typeface = it }
             this.textAlignment = getTextAlignment()

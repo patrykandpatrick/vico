@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.component.shape.cornered
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.DEF_MARKER_TICK_SIZE
+import com.patrykandpatrick.vico.core.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.doubled
@@ -39,16 +39,16 @@ public open class MarkerCorneredShape(
     topRight: Corner,
     bottomRight: Corner,
     bottomLeft: Corner,
-    public val tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
+    public val tickSizeDp: Float = MARKER_TICK_SIZE,
 ) : CorneredShape(topLeft, topRight, bottomRight, bottomLeft) {
     public constructor(
         all: Corner,
-        tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
+        tickSizeDp: Float = MARKER_TICK_SIZE,
     ) : this(all, all, all, all, tickSizeDp)
 
     public constructor(
         corneredShape: CorneredShape,
-        tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
+        tickSizeDp: Float = MARKER_TICK_SIZE,
     ) : this(
         topLeft = corneredShape.topLeft,
         topRight = corneredShape.topRight,

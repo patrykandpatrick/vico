@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.axis.horizontal
 
-import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
+import com.patrykandpatrick.vico.core.Defaults.MIN_ZOOM
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -222,7 +222,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             var padding =
                 label.getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true).half
             if (context.isHorizontalScrollEnabled) {
-                padding -= (firstLabelValue - chartValues.minX) * horizontalDimensions.xSpacing * DEF_MIN_ZOOM
+                padding -= (firstLabelValue - chartValues.minX) * horizontalDimensions.xSpacing * MIN_ZOOM
             }
             horizontalDimensions.ensureValuesAtLeast(unscalableStartPadding = padding)
         }
@@ -236,7 +236,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             var padding =
                 label.getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true).half
             if (context.isHorizontalScrollEnabled) {
-                padding -= (chartValues.maxX - lastLabelValue) * horizontalDimensions.xSpacing * DEF_MIN_ZOOM
+                padding -= (chartValues.maxX - lastLabelValue) * horizontalDimensions.xSpacing * MIN_ZOOM
             }
             horizontalDimensions.ensureValuesAtLeast(unscalableEndPadding = padding)
         }

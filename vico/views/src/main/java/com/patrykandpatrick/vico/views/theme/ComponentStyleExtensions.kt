@@ -20,7 +20,7 @@ import android.content.Context
 import android.content.res.TypedArray
 import android.graphics.Color
 import com.patrykandpatrick.vico.core.DefaultAlpha
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.Component
@@ -41,7 +41,7 @@ import com.patrykandpatrick.vico.views.extension.defaultColors
 internal fun TypedArray.getLineComponent(
     context: Context,
     defaultColor: Int = context.defaultColors.axisLineColor.toInt(),
-    defaultThickness: Float = DefaultDimens.AXIS_LINE_WIDTH,
+    defaultThickness: Float = Defaults.AXIS_LINE_WIDTH,
     defaultShape: Shape = Shapes.rectShape,
 ): LineComponent =
     use { array ->
@@ -202,13 +202,13 @@ internal fun TypedArray.getLineSpec(
             getRawDimension(
                 context = context,
                 index = R.styleable.LineSpec_pointSize,
-                defaultValue = DefaultDimens.POINT_SIZE,
+                defaultValue = Defaults.POINT_SIZE,
             ),
         thicknessDp =
             getRawDimension(
                 context = context,
                 index = R.styleable.LineSpec_lineThickness,
-                defaultValue = DefaultDimens.LINE_THICKNESS,
+                defaultValue = Defaults.LINE_THICKNESS,
             ),
         backgroundShader =
             TopBottomShader(
@@ -240,7 +240,7 @@ internal fun TypedArray.getLineSpec(
                 cubicStrength =
                     getFraction(
                         index = R.styleable.LineSpec_cubicStrength,
-                        defaultValue = DefaultDimens.CUBIC_STRENGTH,
+                        defaultValue = Defaults.CUBIC_STRENGTH,
                     ),
             ),
     )

@@ -23,8 +23,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.FADING_EDGE_VISIBILITY_THRESHOLD_DP
-import com.patrykandpatrick.vico.core.FADING_EDGE_WIDTH_DP
+import com.patrykandpatrick.vico.core.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatrick.vico.core.Defaults.FADING_EDGE_WIDTH_DP
 import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
 
 /**

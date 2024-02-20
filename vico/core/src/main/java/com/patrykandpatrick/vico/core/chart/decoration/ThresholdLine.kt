@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.chart.decoration
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
@@ -60,7 +60,7 @@ public data class ThresholdLine(
             decimalFormat.format(thresholdRange.endInclusive),
         ),
     val lineComponent: ShapeComponent = ShapeComponent(),
-    val minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
+    val minimumLineThicknessDp: Float = Defaults.THRESHOLD_LINE_THICKNESS,
     val labelComponent: TextComponent = textComponent(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
@@ -86,7 +86,7 @@ public data class ThresholdLine(
         thresholdValue: Float,
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = ShapeComponent(),
-        minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
+        minimumLineThicknessDp: Float = Defaults.THRESHOLD_LINE_THICKNESS,
         labelComponent: TextComponent = textComponent(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,

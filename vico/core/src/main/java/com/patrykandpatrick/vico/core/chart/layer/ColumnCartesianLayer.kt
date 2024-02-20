@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.chart.layer
 
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
@@ -65,8 +65,8 @@ import kotlin.math.abs
  */
 public open class ColumnCartesianLayer(
     public var columns: List<LineComponent>,
-    public var spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
-    public var innerSpacingDp: Float = DefaultDimens.COLUMN_INSIDE_SPACING,
+    public var spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
+    public var innerSpacingDp: Float = Defaults.COLUMN_INSIDE_SPACING,
     public var mergeMode: (ColumnCartesianLayerModel) -> MergeMode = { MergeMode.Grouped },
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var dataLabel: TextComponent? = null,
@@ -87,7 +87,7 @@ public open class ColumnCartesianLayer(
      */
     public constructor(
         column: LineComponent,
-        spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
+        spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
         verticalAxisPosition: AxisPosition.Vertical? = null,
     ) : this(columns = listOf(column), spacingDp = spacingDp, verticalAxisPosition = verticalAxisPosition)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.component.shape.chartShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.extension.pixelSize
-import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.OverlayingComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -88,7 +87,7 @@ public fun rememberLineComponent(
 @Composable
 public fun rememberLineComponent(
     color: Color = Color.Black,
-    thickness: Dp = DefaultDimens.COLUMN_WIDTH.dp,
+    thickness: Dp = Defaults.COLUMN_WIDTH.dp,
     shape: Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
@@ -252,10 +251,10 @@ public fun overlayingComponent(
 @Composable
 public fun rememberTextComponent(
     color: Color = Color.Black,
-    textSize: TextUnit = DefaultDimens.TEXT_COMPONENT_TEXT_SIZE.sp,
+    textSize: TextUnit = Defaults.TEXT_COMPONENT_TEXT_SIZE.sp,
     background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = DEF_LABEL_LINE_COUNT,
+    lineCount: Int = Defaults.LABEL_LINE_COUNT,
     padding: MutableDimensions = emptyDimensions(),
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,

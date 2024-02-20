@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
@@ -138,7 +138,7 @@ public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
         /**
          * The tick length (in dp).
          */
-        public var tickLengthDp: Float = builder?.tickLengthDp ?: DefaultDimens.AXIS_TICK_LENGTH
+        public var tickLengthDp: Float = builder?.tickLengthDp ?: Defaults.AXIS_TICK_LENGTH
 
         /**
          * The [LineComponent] to use for guidelines.

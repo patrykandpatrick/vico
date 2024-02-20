@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.component.ChartShape
-import com.patrykandpatrick.vico.core.DEF_MARKER_TICK_SIZE
+import com.patrykandpatrick.vico.core.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.Shapes
@@ -214,7 +214,7 @@ public fun Shapes.markerCorneredShape(
     topRight: Corner,
     bottomRight: Corner,
     bottomLeft: Corner,
-    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+    tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape =
     MarkerCorneredShape(
         topLeft = topLeft,
@@ -232,7 +232,7 @@ public fun Shapes.markerCorneredShape(
  */
 public fun Shapes.markerCorneredShape(
     all: Corner,
-    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+    tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape =
     MarkerCorneredShape(
         topLeft = all,
@@ -250,7 +250,7 @@ public fun Shapes.markerCorneredShape(
  */
 public fun Shapes.markerCorneredShape(
     corneredShape: CorneredShape,
-    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+    tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape =
     MarkerCorneredShape(
         topLeft = corneredShape.topLeft,

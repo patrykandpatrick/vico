@@ -32,9 +32,9 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.Animation
-import com.patrykandpatrick.vico.core.DEF_MAX_ZOOM
-import com.patrykandpatrick.vico.core.DEF_MIN_ZOOM
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults.CHART_HEIGHT
+import com.patrykandpatrick.vico.core.Defaults.MAX_ZOOM
+import com.patrykandpatrick.vico.core.Defaults.MIN_ZOOM
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.chartDrawContext
@@ -427,7 +427,7 @@ public open class CartesianChartView
         ) {
             val chart = chart ?: return
             val newZoom = zoom * zoomChange
-            if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return
+            if (newZoom !in MIN_ZOOM..MAX_ZOOM) return
             val transformationAxisX = scrollHandler.value + focusX - chart.bounds.left
             val zoomedTransformationAxisX = transformationAxisX * zoomChange
             zoom = newZoom
@@ -542,7 +542,7 @@ public open class CartesianChartView
             heightMeasureSpec: Int,
         ) {
             val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
-            val defaultHeight = DefaultDimens.CHART_HEIGHT.dpInt + verticalPadding
+            val defaultHeight = CHART_HEIGHT.dpInt + verticalPadding
             val height =
                 when (heightMeasureSpec.specMode) {
                     MeasureSpec.EXACTLY -> heightMeasureSpec.specSize

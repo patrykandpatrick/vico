@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.component.shape
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.extension.ceil
 
@@ -32,8 +32,8 @@ import com.patrykandpatrick.vico.core.extension.ceil
  */
 public class DashedShape(
     public val shape: Shape = Shapes.rectShape,
-    public val dashLengthDp: Float = DefaultDimens.DASH_LENGTH,
-    public val gapLengthDp: Float = DefaultDimens.DASH_GAP,
+    public val dashLengthDp: Float = Defaults.DASH_LENGTH,
+    public val gapLengthDp: Float = Defaults.DASH_GAP,
     public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
     private var drawDashLength = dashLengthDp

@@ -26,8 +26,8 @@ import android.text.Spanned
 import android.text.StaticLayout
 import android.text.TextPaint
 import android.text.TextUtils
-import com.patrykandpatrick.vico.core.DEF_LABEL_LINE_COUNT
-import com.patrykandpatrick.vico.core.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
+import com.patrykandpatrick.vico.core.Defaults.LABEL_LINE_COUNT
+import com.patrykandpatrick.vico.core.Defaults.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.component.dimension.Padding
@@ -97,7 +97,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * The maximum number of lines for the text. For performance reasons, during the measurement phase, it is presumed
      * that the actual number of lines is equal to this value.
      */
-    public var lineCount: Int = DEF_LABEL_LINE_COUNT
+    public var lineCount: Int = LABEL_LINE_COUNT
 
     /**
      * The text’s background. Use [padding] to set the padding between the text and the background.
@@ -424,7 +424,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         /**
          * @see [TextComponent.lineCount]
          */
-        public var lineCount: Int = DEF_LABEL_LINE_COUNT
+        public var lineCount: Int = LABEL_LINE_COUNT
 
         /**
          * @see [TextComponent.background]

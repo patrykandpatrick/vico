@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
@@ -68,12 +68,12 @@ private fun ComposeChart5(
                                 defaultColumns.mapIndexed { index, defaultColumn ->
                                     val topCornerRadiusPercent =
                                         if (index == defaultColumns.lastIndex) {
-                                            DefaultDimens.COLUMN_ROUNDNESS_PERCENT
+                                            Defaults.COLUMN_ROUNDNESS_PERCENT
                                         } else {
                                             0
                                         }
                                     val bottomCornerRadiusPercent =
-                                        if (index == 0) DefaultDimens.COLUMN_ROUNDNESS_PERCENT else 0
+                                        if (index == 0) Defaults.COLUMN_ROUNDNESS_PERCENT else 0
                                     LineComponent(
                                         defaultColumn.color,
                                         defaultColumn.thicknessDp,

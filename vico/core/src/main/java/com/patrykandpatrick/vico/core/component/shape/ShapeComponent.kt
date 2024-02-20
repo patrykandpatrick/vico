@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Shader
-import com.patrykandpatrick.vico.core.DEF_SHADOW_COLOR
+import com.patrykandpatrick.vico.core.Defaults.SHADOW_COLOR
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.setMargins
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
@@ -147,7 +147,7 @@ public open class ShapeComponent(
         radius: Float,
         dx: Float = 0f,
         dy: Float = 0f,
-        color: Int = DEF_SHADOW_COLOR,
+        color: Int = SHADOW_COLOR,
         applyElevationOverlay: Boolean = false,
     ): ShapeComponent =
         apply {

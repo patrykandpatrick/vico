@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.DefaultColors
-import com.patrykandpatrick.vico.core.DefaultDimens
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
@@ -100,30 +100,30 @@ public data class ChartStyle(
     public data class Axis(
         val axisLabelBackground: ShapeComponent? = null,
         val axisLabelColor: Color,
-        val axisLabelTextSize: TextUnit = DefaultDimens.AXIS_LABEL_SIZE.sp,
-        val axisLabelLineCount: Int = DefaultDimens.AXIS_LABEL_MAX_LINES,
-        val axisLabelVerticalPadding: Dp = DefaultDimens.AXIS_LABEL_VERTICAL_PADDING.dp,
-        val axisLabelHorizontalPadding: Dp = DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING.dp,
-        val axisLabelVerticalMargin: Dp = DefaultDimens.AXIS_LABEL_VERTICAL_MARGIN.dp,
-        val axisLabelHorizontalMargin: Dp = DefaultDimens.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
-        val axisLabelRotationDegrees: Float = DefaultDimens.AXIS_LABEL_ROTATION_DEGREES,
+        val axisLabelTextSize: TextUnit = Defaults.AXIS_LABEL_SIZE.sp,
+        val axisLabelLineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
+        val axisLabelVerticalPadding: Dp = Defaults.AXIS_LABEL_VERTICAL_PADDING.dp,
+        val axisLabelHorizontalPadding: Dp = Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+        val axisLabelVerticalMargin: Dp = Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp,
+        val axisLabelHorizontalMargin: Dp = Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
+        val axisLabelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
         val axisLabelTypeface: Typeface = Typeface.MONOSPACE,
         val axisLabelTextAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
         val axisGuidelineColor: Color,
-        val axisGuidelineWidth: Dp = DefaultDimens.AXIS_GUIDELINE_WIDTH.dp,
+        val axisGuidelineWidth: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
         val axisGuidelineShape: Shape =
             Shapes.dashedShape(
                 shape = Shapes.rectShape,
-                dashLength = DefaultDimens.DASH_LENGTH.dp,
-                gapLength = DefaultDimens.DASH_GAP.dp,
+                dashLength = Defaults.DASH_LENGTH.dp,
+                gapLength = Defaults.DASH_GAP.dp,
             ),
         val axisLineColor: Color,
-        val axisLineWidth: Dp = DefaultDimens.AXIS_LINE_WIDTH.dp,
+        val axisLineWidth: Dp = Defaults.AXIS_LINE_WIDTH.dp,
         val axisLineShape: Shape = Shapes.rectShape,
         val axisTickColor: Color = axisLineColor,
         val axisTickWidth: Dp = axisLineWidth,
         val axisTickShape: Shape = Shapes.rectShape,
-        val axisTickLength: Dp = DefaultDimens.AXIS_TICK_LENGTH.dp,
+        val axisTickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
         val axisValueFormatter: AxisValueFormatter<AxisPosition> = DecimalFormatAxisValueFormatter(),
     )
 
@@ -144,8 +144,8 @@ public data class ChartStyle(
      */
     public data class ColumnLayer(
         val columns: List<LineComponent>,
-        val outsideSpacing: Dp = DefaultDimens.COLUMN_OUTSIDE_SPACING.dp,
-        val innerSpacing: Dp = DefaultDimens.COLUMN_INSIDE_SPACING.dp,
+        val outsideSpacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
+        val innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
         val mergeMode: MergeMode = MergeMode.Grouped,
         val dataLabel: TextComponent? = null,
         val dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
@@ -162,7 +162,7 @@ public data class ChartStyle(
      */
     public data class LineLayer(
         val lines: List<LineSpec>,
-        val spacing: Dp = DefaultDimens.POINT_SPACING.dp,
+        val spacing: Dp = Defaults.POINT_SPACING.dp,
     )
 
     /**
@@ -174,9 +174,9 @@ public data class ChartStyle(
      * @property verticalPadding the vertical padding for marker bubbles.
      */
     public data class Marker(
-        val indicatorSize: Dp = DefaultDimens.MARKER_INDICATOR_SIZE.dp,
-        val horizontalPadding: Dp = DefaultDimens.MARKER_HORIZONTAL_PADDING.dp,
-        val verticalPadding: Dp = DefaultDimens.MARKER_VERTICAL_PADDING.dp,
+        val indicatorSize: Dp = Defaults.MARKER_INDICATOR_SIZE.dp,
+        val horizontalPadding: Dp = Defaults.MARKER_HORIZONTAL_PADDING.dp,
+        val verticalPadding: Dp = Defaults.MARKER_VERTICAL_PADDING.dp,
     )
 
     public companion object {
@@ -203,10 +203,10 @@ public data class ChartStyle(
                             entityColors.map { entityColor ->
                                 LineComponent(
                                     color = entityColor.toArgb(),
-                                    thicknessDp = DefaultDimens.COLUMN_WIDTH,
+                                    thicknessDp = Defaults.COLUMN_WIDTH,
                                     shape =
                                         Shapes.roundedCornerShape(
-                                            allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT,
+                                            allPercent = Defaults.COLUMN_ROUNDNESS_PERCENT,
                                         ),
                                 )
                             },
