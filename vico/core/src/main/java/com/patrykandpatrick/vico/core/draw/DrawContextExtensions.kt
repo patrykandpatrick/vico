@@ -53,7 +53,7 @@ public fun drawContext(
         override var canvas: Canvas = canvas
         override val density: Float = density
         override val isLtr: Boolean = isLtr
-        override val isHorizontalScrollEnabled: Boolean = false
+        override val scrollEnabled: Boolean = false
         override val chartValues: ChartValues = ChartValues.Empty
         override val horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented
         override val extraStore: MutableExtraStore = MutableExtraStore()

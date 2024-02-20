@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,9 +22,9 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
+import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.scroll.InitialScroll
+import com.patrykandpatrick.vico.core.scroll.Scroll
 import com.patrykandpatrick.vico.sample.previews.annotation.ChartPreview
 import com.patrykandpatrick.vico.sample.previews.resource.PreviewSurface
 import com.patrykandpatrick.vico.sample.previews.resource.mediumLineModel
@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.sample.previews.resource.shortLineModel
 public fun DefaultLineChart(
     model: CartesianChartModel = shortLineModel,
     scrollable: Boolean = true,
-    initialScroll: InitialScroll = InitialScroll.Start,
+    initialScroll: Scroll = Scroll.Start,
 ) {
     PreviewSurface {
         CartesianChartHost(
@@ -46,7 +46,7 @@ public fun DefaultLineChart(
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = scrollable, initialScroll = initialScroll),
+            scrollState = rememberVicoScrollState(scrollable, initialScroll),
         )
     }
 }
@@ -60,7 +60,7 @@ public fun DefaultLineChartLongScrollable() {
 @ChartPreview
 @Composable
 public fun DefaultLineChartLongScrollableEnd() {
-    DefaultLineChart(model = mediumLineModel, initialScroll = InitialScroll.End)
+    DefaultLineChart(model = mediumLineModel, initialScroll = Scroll.End)
 }
 
 @ChartPreview

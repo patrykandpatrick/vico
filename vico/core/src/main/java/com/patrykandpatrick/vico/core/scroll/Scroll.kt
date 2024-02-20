@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,13 @@
 
 package com.patrykandpatrick.vico.core.scroll
 
-/**
- * Represents a chart’s initial scroll position.
- */
-public enum class InitialScroll {
+import com.patrykandpatrick.vico.core.chart.CartesianChart
+
+/** Represents a [CartesianChart]’s scroll value. */
+public enum class Scroll {
+    /** Corresponds to zero. */
     Start,
+
+    /** Corresponds to the maximum scroll value. */
     End,
 }

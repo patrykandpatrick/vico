@@ -18,12 +18,11 @@ package com.patrykandpatrick.vico.core.chart.draw
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.Defaults.MAX_ZOOM
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.scale.AutoScaleUp
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.util.Point
 
 /**
@@ -65,34 +64,9 @@ public fun MeasureContext.getMaxScrollDistance(
 ): Float {
     val contentWidth = horizontalDimensions.run { if (zoom != null) scaled(zoom) else this }.getContentWidth(this)
 
-    return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
-        if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
-    }
+    return (layoutDirectionMultiplier * (contentWidth - chartWidth))
+        .run { if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f) }
+        .ceil
 }
 
-/** @suppress */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun ChartDrawContext.getMaxScrollDistance(): Float =
-    getMaxScrollDistance(
-        chartWidth = chartBounds.width(),
-        horizontalDimensions = horizontalDimensions,
-    )
-
-/** @suppress */
-@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun MeasureContext.getAutoZoom(
-    horizontalDimensions: HorizontalDimensions,
-    chartBounds: RectF,
-    autoScaleUp: AutoScaleUp,
-): Float {
-    val scalableContentWidth = horizontalDimensions.getScalableContentWidth(this)
-    val reducedChartWidth = chartBounds.width() - horizontalDimensions.unscalablePadding
-    val fillingZoom = reducedChartWidth / scalableContentWidth
-    return when {
-        scalableContentWidth < reducedChartWidth ->
-            if (autoScaleUp == AutoScaleUp.Full) fillingZoom.coerceAtMost(MAX_ZOOM) else 1f
-
-        !isHorizontalScrollEnabled -> fillingZoom
-        else -> 1f
-    }
-}
+internal fun ChartDrawContext.getMaxScrollDistance() = getMaxScrollDistance(chartBounds.width(), horizontalDimensions)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
+import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
-import com.patrykandpatrick.vico.core.scroll.InitialScroll
+import com.patrykandpatrick.vico.core.scroll.Scroll
 import com.patrykandpatrick.vico.sample.previews.annotation.ChartPreview
 import com.patrykandpatrick.vico.sample.previews.resource.PreviewSurface
 import com.patrykandpatrick.vico.sample.previews.resource.mediumColumnModel
@@ -37,7 +37,7 @@ public fun DefaultColumnChart(
     model: CartesianChartModel = shortColumnModel,
     oldModel: CartesianChartModel? = null,
     scrollable: Boolean = true,
-    initialScroll: InitialScroll = InitialScroll.Start,
+    initialScroll: Scroll = Scroll.Start,
     autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
 ) {
     PreviewSurface {
@@ -50,12 +50,7 @@ public fun DefaultColumnChart(
                 ),
             model = model,
             oldModel = oldModel,
-            chartScrollSpec =
-                rememberChartScrollSpec(
-                    isScrollEnabled = scrollable,
-                    initialScroll = initialScroll,
-                    autoScrollCondition = autoScrollCondition,
-                ),
+            scrollState = rememberVicoScrollState(scrollable, initialScroll, autoScrollCondition),
         )
     }
 }
@@ -69,7 +64,7 @@ public fun DefaultColumnChartLongScrollable() {
 @ChartPreview
 @Composable
 public fun DefaultColumnChartLongScrollableEnd() {
-    DefaultColumnChart(model = mediumColumnModel, initialScroll = InitialScroll.End)
+    DefaultColumnChart(model = mediumColumnModel, initialScroll = Scroll.End)
 }
 
 @ChartPreview

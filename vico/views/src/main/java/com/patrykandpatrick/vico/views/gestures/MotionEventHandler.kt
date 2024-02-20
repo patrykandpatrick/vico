@@ -20,15 +20,14 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
-import com.patrykandpatrick.vico.core.scroll.ScrollHandler
 import com.patrykandpatrick.vico.core.util.Point
 import com.patrykandpatrick.vico.views.extension.fling
 import com.patrykandpatrick.vico.views.extension.point
+import com.patrykandpatrick.vico.views.scroll.ScrollHandler
 import kotlin.math.abs
 
 internal class MotionEventHandler(
     private val scroller: OverScroller,
-    private val scrollHandler: ScrollHandler,
     density: Float,
     var isHorizontalScrollEnabled: Boolean = false,
     private val onTouchPoint: (Point?) -> Unit,
@@ -43,7 +42,10 @@ internal class MotionEventHandler(
     private var lastEventPointerCount = 0
     private var totalDragAmount: Float = 0f
 
-    fun handleMotionEvent(motionEvent: MotionEvent): Boolean {
+    fun handleMotionEvent(
+        motionEvent: MotionEvent,
+        scrollHandler: ScrollHandler,
+    ): Boolean {
         val ignoreEvent =
             motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
         lastEventPointerCount = motionEvent.pointerCount
@@ -67,12 +69,12 @@ internal class MotionEventHandler(
                     val shouldPerformScroll = totalDragAmount > dragThreshold
                     if (shouldPerformScroll && !ignoreEvent) {
                         velocityTracker.get().addMovement(motionEvent)
-                        scrollHandler.handleScrollDelta(currentX - lastX)
+                        scrollHandler.scrollBy(lastX - currentX)
                         onTouchPoint(motionEvent.point)
                         requestInvalidate()
                         initialX = -dragThreshold
                     }
-                    scrollHandled = shouldPerformScroll.not() || scrollHandler.canScrollBy(currentX - lastX)
+                    scrollHandled = shouldPerformScroll.not() || scrollHandler.canScroll(lastX - currentX)
                     lastX = motionEvent.x
                 } else {
                     onTouchPoint(motionEvent.point)

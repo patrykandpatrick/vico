@@ -48,7 +48,7 @@ public interface MeasureContext {
     /**
      * Whether horizontal scrolling is enabled.
      */
-    public val isHorizontalScrollEnabled: Boolean
+    public val scrollEnabled: Boolean
 
     /**
      * Defines how the chart’s content is positioned horizontally.

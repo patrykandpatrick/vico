@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberChartScrollSpec
+import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
@@ -108,7 +108,7 @@ public fun ThresholdLine() {
                         ),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }
@@ -184,7 +184,7 @@ public fun ThresholdLineWithCustomText() {
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }
@@ -214,7 +214,7 @@ public fun RangedThresholdLine() {
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }
@@ -255,7 +255,7 @@ public fun RangedThresholdLineWithBrushShader() {
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }
@@ -295,7 +295,7 @@ public fun RangedThresholdLineWithComponentShader() {
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }

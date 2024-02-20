@@ -94,7 +94,7 @@ public open class FadingEdges(
             val maxScroll = getMaxScrollDistance()
             var fadeAlphaFraction: Float
 
-            if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
+            if (scrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
                 fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
                 drawFadingEdge(
@@ -107,7 +107,7 @@ public open class FadingEdges(
                 )
             }
 
-            if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
+            if (scrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
                 fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
                 drawFadingEdge(

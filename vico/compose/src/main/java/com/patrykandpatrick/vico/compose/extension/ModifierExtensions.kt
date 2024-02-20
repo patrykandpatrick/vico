@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,18 +23,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
-import com.patrykandpatrick.vico.compose.chart.scroll.ChartScrollState
-import com.patrykandpatrick.vico.compose.gesture.OnZoom
+import com.patrykandpatrick.vico.compose.chart.scroll.VicoScrollState
 import com.patrykandpatrick.vico.core.util.Point
 
 internal fun Modifier.chartTouchEvent(
     setTouchPoint: ((Point?) -> Unit)?,
     isScrollEnabled: Boolean,
-    scrollableState: ChartScrollState,
-    onZoom: OnZoom?,
+    scrollState: VicoScrollState,
+    onZoom: ((Float, Offset) -> Unit)?,
 ): Modifier =
     scrollable(
-        state = scrollableState,
+        state = scrollState,
         orientation = Orientation.Horizontal,
         reverseDirection = true,
         enabled = isScrollEnabled,
@@ -74,7 +73,7 @@ internal fun Modifier.chartTouchEvent(
                 pointerInput(setTouchPoint, onZoom) {
                     detectZoomGestures { centroid, zoom ->
                         setTouchPoint?.invoke(null)
-                        onZoom(centroid, zoom)
+                        onZoom(zoom, centroid)
                     }
                 }
             } else {

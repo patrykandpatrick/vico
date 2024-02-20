@@ -29,7 +29,7 @@ public data class MutableMeasureContext(
     override val canvasBounds: RectF,
     override var density: Float,
     override var isLtr: Boolean,
-    override var isHorizontalScrollEnabled: Boolean = false,
+    override var scrollEnabled: Boolean = false,
     override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
     @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var spToPx: (Float) -> Float,

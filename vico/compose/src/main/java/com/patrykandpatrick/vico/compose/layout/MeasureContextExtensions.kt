@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.core.context.MutableMeasureContext
 
 @Composable
 internal fun rememberMutableMeasureContext(
-    isHorizontalScrollEnabled: Boolean,
+    scrollEnabled: Boolean,
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,
     spToPx: (Float) -> Float,
@@ -45,7 +45,7 @@ internal fun rememberMutableMeasureContext(
     }.apply {
         this.density = LocalDensity.current.density
         this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-        this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+        this.scrollEnabled = scrollEnabled
         this.horizontalLayout = horizontalLayout
         this.spToPx = spToPx
         this.chartValues = chartValues

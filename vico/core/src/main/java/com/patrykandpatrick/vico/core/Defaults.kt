@@ -55,7 +55,6 @@ public object Defaults {
     public const val MARKER_VERTICAL_PADDING: Float = 4f
     public const val MARKER_TICK_SIZE: Float = 6f
     public const val MAX_ZOOM: Float = 10f
-    public const val MIN_ZOOM: Float = 0.1f
     public const val MAX_LABEL_COUNT: Int = 100
     public const val POINT_SIZE: Float = 16f
     public const val POINT_SPACING: Float = 32f

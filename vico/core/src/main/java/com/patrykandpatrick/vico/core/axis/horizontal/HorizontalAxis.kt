@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.axis.horizontal
 
-import com.patrykandpatrick.vico.core.Defaults.MIN_ZOOM
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -219,12 +218,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     chartValues = chartValues,
                     verticalAxisPosition = null,
                 )
-            var padding =
-                label.getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true).half
-            if (context.isHorizontalScrollEnabled) {
-                padding -= (firstLabelValue - chartValues.minX) * horizontalDimensions.xSpacing * MIN_ZOOM
-            }
-            horizontalDimensions.ensureValuesAtLeast(unscalableStartPadding = padding)
+            label
+                .getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true)
+                .half
+                .let { horizontalDimensions.ensureValuesAtLeast(unscalableStartPadding = it) }
         }
         if (lastLabelValue != null) {
             val text =
@@ -233,12 +230,10 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
                     chartValues = chartValues,
                     verticalAxisPosition = null,
                 )
-            var padding =
-                label.getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true).half
-            if (context.isHorizontalScrollEnabled) {
-                padding -= (chartValues.maxX - lastLabelValue) * horizontalDimensions.xSpacing * MIN_ZOOM
-            }
-            horizontalDimensions.ensureValuesAtLeast(unscalableEndPadding = padding)
+            label
+                .getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true)
+                .half
+                .let { horizontalDimensions.ensureValuesAtLeast(unscalableEndPadding = it) }
         }
     }
 
