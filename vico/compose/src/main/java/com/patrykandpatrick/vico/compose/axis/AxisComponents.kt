@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -34,6 +33,7 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
+import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
@@ -130,6 +130,37 @@ public fun axisLabelComponent(
     )
 
 /**
+ * Creates and remembers a [LineComponent] styled as an axis line.
+ *
+ * @param color the background color.
+ * @param thickness the thickness of the line.
+ * @param shape the [Shape] to use for the line.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param brush an optional [Brush] to apply to the line.
+ * @param margins the margins of the line.
+ */
+@Composable
+public fun rememberAxisLineComponent(
+    color: Color = currentChartStyle.axis.axisLineColor,
+    thickness: Dp = currentChartStyle.axis.axisLineWidth,
+    shape: Shape = currentChartStyle.axis.axisLineShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
+    brush: Brush? = null,
+    margins: Dimensions = emptyDimensions(),
+): LineComponent =
+    rememberLineComponent(
+        color = color,
+        thickness = thickness,
+        shape = shape,
+        dynamicShader = brush?.let(::BrushShader),
+        margins = margins,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
+
+/**
  * Creates a [LineComponent] styled as an axis line.
  *
  * @param color the background color.
@@ -140,11 +171,21 @@ public fun axisLabelComponent(
  * @param dynamicShader an optional [DynamicShader] to apply to the line.
  * @param margins the margins of the line.
  */
+@Deprecated(
+    message = "Use `rememberAxisLineComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberAxisLineComponent(color, thickness, shape, strokeWidth, strokeColor, " +
+                    "dynamicShader, margins)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent"),
+        ),
+)
 @Composable
 public fun axisLineComponent(
     color: Color = currentChartStyle.axis.axisLineColor,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    shape: ChartShape = currentChartStyle.axis.axisLineShape,
+    shape: Shape = currentChartStyle.axis.axisLineShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -171,38 +212,52 @@ public fun axisLineComponent(
  * @param brush an optional [Brush] to apply to the line.
  * @param margins the margins of the line.
  */
+@Deprecated(
+    message = "Use `rememberAxisLineComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberAxisLineComponent(color, thickness, shape.chartShape(), strokeWidth, strokeColor, " +
+                    "brush, margins)",
+            imports =
+                arrayOf(
+                    "com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent",
+                    "com.patrykandpatrick.vico.compose.component.shape.chartShape",
+                ),
+        ),
+)
 @Composable
 public fun axisLineComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    shape: Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent =
-    rememberLineComponent(
+    rememberAxisLineComponent(
         color = color,
         thickness = thickness,
-        dynamicShader = brush?.let(::BrushShader),
-        shape = shape,
+        shape = shape.chartShape(),
+        brush = brush,
         margins = margins,
         strokeWidth = strokeWidth,
         strokeColor = strokeColor,
     )
 
 /**
- * Creates a [LineComponent] styled as a tick line.
+ * Creates and remembers a [LineComponent] styled as a tick line.
  *
  * @param color the background color.
  * @param thickness the thickness of the tick.
- * @param shape the [ChartShape] to use for the tick.
+ * @param shape the [Shape] to use for the tick.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param dynamicShader an optional [DynamicShader] to apply to the tick.
  */
 @Composable
-public fun axisTickComponent(
+public fun rememberAxisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
     shape: ChartShape = currentChartStyle.axis.axisTickShape,
@@ -223,17 +278,55 @@ public fun axisTickComponent(
  * Creates a [LineComponent] styled as a tick line.
  *
  * @param color the background color.
+ * @param thickness the thickness of the tick.
+ * @param shape the [ChartShape] to use for the tick.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param dynamicShader an optional [DynamicShader] to apply to the tick.
+ */
+@Deprecated(
+    message = "Use `rememberAxisTickComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberAxisTickComponent(color, thickness, shape, strokeWidth, strokeColor, " +
+                    "dynamicShader)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent"),
+        ),
+)
+@Composable
+public fun axisTickComponent(
+    color: Color = currentChartStyle.axis.axisTickColor,
+    thickness: Dp = currentChartStyle.axis.axisTickWidth,
+    shape: ChartShape = currentChartStyle.axis.axisTickShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
+    dynamicShader: DynamicShader? = null,
+): LineComponent =
+    rememberAxisTickComponent(
+        color = color,
+        thickness = thickness,
+        dynamicShader = dynamicShader,
+        shape = shape,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
+
+/**
+ * Creates and remembers a [LineComponent] styled as a tick line.
+ *
+ * @param color the background color.
  * @param thickness the thickness of the line.
- * @param shape the [Shape] to use for the line.
+ * @param shape the [androidx.compose.ui.graphics.Shape] to use for the line.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param brush an optional [Brush] to apply to the line.
  */
 @Composable
-public fun axisTickComponent(
+public fun rememberAxisTickComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    shape: Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
@@ -243,6 +336,75 @@ public fun axisTickComponent(
         thickness = thickness,
         dynamicShader = brush?.let(::BrushShader),
         shape = shape.chartShape(),
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
+
+/**
+ * Creates a [LineComponent] styled as a tick line.
+ *
+ * @param color the background color.
+ * @param thickness the thickness of the line.
+ * @param shape the [androidx.compose.ui.graphics.Shape] to use for the line.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param brush an optional [Brush] to apply to the line.
+ */
+@Deprecated(
+    message = "Use `rememberAxisTickComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberAxisTickComponent(color, thickness, shape, strokeWidth, strokeColor, " +
+                    "brush)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent"),
+        ),
+)
+@Composable
+public fun axisTickComponent(
+    color: Color,
+    thickness: Dp = currentChartStyle.axis.axisTickWidth,
+    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
+    brush: Brush? = null,
+): LineComponent =
+    rememberAxisTickComponent(
+        color = color,
+        thickness = thickness,
+        brush = brush,
+        shape = shape,
+        strokeWidth = strokeWidth,
+        strokeColor = strokeColor,
+    )
+
+/**
+ * Creates and remembers a [LineComponent] styled as a guideline.
+ *
+ * @param color the background color.
+ * @param thickness the line thickness.
+ * @param shape the [ChartShape] to use for the guideline.
+ * @param strokeWidth the stroke width.
+ * @param strokeColor the stroke color.
+ * @param dynamicShader an optional [DynamicShader] to apply to the guideline.
+ * @param margins the margins of the guideline.
+ */
+@Composable
+public fun rememberAxisGuidelineComponent(
+    color: Color = currentChartStyle.axis.axisGuidelineColor,
+    thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
+    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
+    strokeWidth: Dp = 0.dp,
+    strokeColor: Color = Color.Transparent,
+    dynamicShader: DynamicShader? = null,
+    margins: Dimensions = emptyDimensions(),
+): LineComponent =
+    rememberLineComponent(
+        color = color,
+        thickness = thickness,
+        dynamicShader = dynamicShader,
+        shape = shape,
+        margins = margins,
         strokeWidth = strokeWidth,
         strokeColor = strokeColor,
     )
@@ -258,6 +420,16 @@ public fun axisTickComponent(
  * @param dynamicShader an optional [DynamicShader] to apply to the guideline.
  * @param margins the margins of the guideline.
  */
+@Deprecated(
+    message = "Use `rememberAxisGuidelineComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberAxisGuidelineComponent(color, thickness, shape, strokeWidth, strokeColor, " +
+                    "dynamicShader, margins)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.axis.rememberAxisGuidelineComponent"),
+        ),
+)
 @Composable
 public fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
@@ -268,7 +440,7 @@ public fun axisGuidelineComponent(
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
 ): LineComponent =
-    rememberLineComponent(
+    rememberAxisGuidelineComponent(
         color = color,
         thickness = thickness,
         dynamicShader = dynamicShader,

@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.ChartShape
 import com.patrykandpatrick.vico.core.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.Shape
@@ -290,7 +289,7 @@ public fun Shapes.dashedShape(
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public fun Shapes.dashedShape(
-    shape: ChartShape,
+    shape: Shape,
     dashLength: Dp,
     gapLength: Dp,
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,

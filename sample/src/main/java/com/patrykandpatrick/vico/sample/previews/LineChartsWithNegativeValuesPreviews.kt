@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.axisLineComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
@@ -69,11 +69,11 @@ public fun SingleLineChartWithNegativeValues() {
                     startAxis =
                         rememberStartAxis(
                             itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
-                            guideline = axisLineComponent(),
+                            guideline = rememberAxisLineComponent(),
                         ),
                     bottomAxis =
                         rememberBottomAxis(
-                            guideline = axisLineComponent(),
+                            guideline = rememberAxisLineComponent(),
                             itemPlacer = AxisItemPlacer.Horizontal.default(spacing = 2),
                         ),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
