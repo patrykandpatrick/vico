@@ -44,11 +44,8 @@ import kotlinx.coroutines.runBlocking
 
 internal val defaultDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis = Animation.DIFF_DURATION)
 
-/**
- * Observes the data provided by this [CartesianChartModelProducer] and launches an animation for each update.
- */
 @Composable
-public fun CartesianChartModelProducer.collectAsState(
+internal fun CartesianChartModelProducer.collectAsState(
     chart: CartesianChart,
     producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultDiffAnimationSpec,
