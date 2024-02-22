@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -34,14 +33,13 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
+import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
-
-public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Shape
 
 /**
  * Creates a [TextComponent] to be used for axis labels.
@@ -134,7 +132,7 @@ public fun axisLabelComponent(
  *
  * @param color the background color.
  * @param thickness the line thickness.
- * @param shape the [ChartShape] to use for the line.
+ * @param shape the [Shape] to use for the line.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param dynamicShader an optional [DynamicShader] to apply to the line.
@@ -144,7 +142,7 @@ public fun axisLabelComponent(
 public fun axisLineComponent(
     color: Color = currentChartStyle.axis.axisLineColor,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    shape: ChartShape = currentChartStyle.axis.axisLineShape,
+    shape: Shape = currentChartStyle.axis.axisLineShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -165,7 +163,7 @@ public fun axisLineComponent(
  *
  * @param color the background color.
  * @param thickness the thickness of the line.
- * @param shape the [Shape] to use for the line.
+ * @param shape the [androidx.compose.ui.graphics.Shape] to use for the line.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param brush an optional [Brush] to apply to the line.
@@ -175,7 +173,7 @@ public fun axisLineComponent(
 public fun axisLineComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    shape: Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
@@ -196,7 +194,7 @@ public fun axisLineComponent(
  *
  * @param color the background color.
  * @param thickness the thickness of the tick.
- * @param shape the [ChartShape] to use for the tick.
+ * @param shape the [Shape] to use for the tick.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param dynamicShader an optional [DynamicShader] to apply to the tick.
@@ -205,7 +203,7 @@ public fun axisLineComponent(
 public fun axisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    shape: ChartShape = currentChartStyle.axis.axisTickShape,
+    shape: Shape = currentChartStyle.axis.axisTickShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -224,7 +222,7 @@ public fun axisTickComponent(
  *
  * @param color the background color.
  * @param thickness the thickness of the line.
- * @param shape the [Shape] to use for the line.
+ * @param shape the [androidx.compose.ui.graphics.Shape] to use for the line.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param brush an optional [Brush] to apply to the line.
@@ -233,7 +231,7 @@ public fun axisTickComponent(
 public fun axisTickComponent(
     color: Color,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    shape: Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
@@ -252,7 +250,7 @@ public fun axisTickComponent(
  *
  * @param color the background color.
  * @param thickness the line thickness.
- * @param shape the [ChartShape] to use for the guideline.
+ * @param shape the [Shape] to use for the guideline.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param dynamicShader an optional [DynamicShader] to apply to the guideline.
@@ -262,7 +260,7 @@ public fun axisTickComponent(
 public fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
     thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
-    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
+    shape: Shape = currentChartStyle.axis.axisGuidelineShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,

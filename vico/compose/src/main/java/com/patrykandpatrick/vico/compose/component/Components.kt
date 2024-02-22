@@ -24,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -37,6 +36,7 @@ import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.OverlayingComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
+import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
@@ -46,8 +46,6 @@ import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 
-public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Shape
-
 /**
  * Creates and remembers a [LineComponent] with the specified properties.
  */
@@ -55,7 +53,7 @@ public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Sha
 public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp,
-    shape: ChartShape,
+    shape: Shape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
@@ -88,7 +86,7 @@ public fun rememberLineComponent(
 public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp = Defaults.COLUMN_WIDTH.dp,
-    shape: Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
@@ -109,7 +107,7 @@ public fun rememberLineComponent(
  */
 @Composable
 public fun rememberShapeComponent(
-    shape: ChartShape = Shapes.rectShape,
+    shape: Shape = Shapes.rectShape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
@@ -139,7 +137,7 @@ public fun rememberShapeComponent(
  */
 @Composable
 public fun rememberShapeComponent(
-    shape: Shape,
+    shape: androidx.compose.ui.graphics.Shape,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
@@ -160,7 +158,7 @@ public fun rememberShapeComponent(
  */
 @Composable
 public fun rememberShapeComponent(
-    shape: ChartShape = Shapes.rectShape,
+    shape: Shape = Shapes.rectShape,
     color: Color = Color.Black,
     brush: Brush,
     margins: Dimensions = emptyDimensions(),

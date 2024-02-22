@@ -29,7 +29,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.ChartShape
 import com.patrykandpatrick.vico.core.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.Shape
@@ -40,7 +39,6 @@ import com.patrykandpatrick.vico.core.component.shape.cornered.CutCornerTreatmen
 import com.patrykandpatrick.vico.core.component.shape.cornered.MarkerCorneredShape
 import com.patrykandpatrick.vico.core.component.shape.cornered.RoundedCornerTreatment
 import com.patrykandpatrick.vico.core.context.DrawContext
-import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private typealias ComposePath = androidx.compose.ui.graphics.AndroidPath
 
@@ -69,7 +67,7 @@ private fun Path.addRoundRect(
  * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
  * [com.patrykandpatrick.vico.core.component.shape.Shape].
  */
-public fun ComposeShape.chartShape(): Shape =
+public fun androidx.compose.ui.graphics.Shape.chartShape(): Shape =
     object : Shape {
         private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
         private val matrix: Matrix by lazy { Matrix() }
@@ -125,8 +123,8 @@ public fun ComposeShape.chartShape(): Shape =
 /**
  * Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape].
  */
-public fun CorneredShape.composeShape(): ComposeShape =
-    object : ComposeShape {
+public fun CorneredShape.composeShape(): androidx.compose.ui.graphics.Shape =
+    object : androidx.compose.ui.graphics.Shape {
         override fun createOutline(
             size: Size,
             layoutDirection: LayoutDirection,
@@ -263,7 +261,7 @@ public fun Shapes.markerCorneredShape(
 /**
  * Creates a [DashedShape].
  *
- * @param shape the [Shape] from which to create the [DashedShape].
+ * @param shape the [androidx.compose.ui.graphics.Shape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
@@ -284,13 +282,13 @@ public fun Shapes.dashedShape(
 /**
  * Creates a [DashedShape].
  *
- * @param shape the [ChartShape] from which to create the [DashedShape].
+ * @param shape the [Shape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public fun Shapes.dashedShape(
-    shape: ChartShape,
+    shape: Shape,
     dashLength: Dp,
     gapLength: Dp,
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
