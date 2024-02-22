@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,31 +24,18 @@ import androidx.compose.runtime.setValue
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 
-/**
- * Holds a chart’s current [CartesianChartModel] ([model]), previous [CartesianChartModel] ([previousModel]), and
- * [ChartValues] ([chartValues]).
- */
 @Immutable
-public class CartesianChartModelWrapper(
-    public val model: CartesianChartModel? = null,
-    public val previousModel: CartesianChartModel? = null,
-    public val chartValues: ChartValues = ChartValues.Empty,
+internal class CartesianChartModelWrapper(
+    val model: CartesianChartModel? = null,
+    val previousModel: CartesianChartModel? = null,
+    val chartValues: ChartValues = ChartValues.Empty,
 )
 
-/**
- * Returns [CartesianChartModelWrapper.model].
- */
-public operator fun CartesianChartModelWrapper.component1(): CartesianChartModel? = model
+internal operator fun CartesianChartModelWrapper.component1(): CartesianChartModel? = model
 
-/**
- * Returns [CartesianChartModelWrapper.previousModel].
- */
-public operator fun CartesianChartModelWrapper.component2(): CartesianChartModel? = previousModel
+internal operator fun CartesianChartModelWrapper.component2(): CartesianChartModel? = previousModel
 
-/**
- * Returns [CartesianChartModelWrapper.chartValues].
- */
-public operator fun CartesianChartModelWrapper.component3(): ChartValues = chartValues
+internal operator fun CartesianChartModelWrapper.component3(): ChartValues = chartValues
 
 internal class CartesianChartModelWrapperState : State<CartesianChartModelWrapper> {
     private var previousModel: CartesianChartModel? = null
