@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
@@ -71,10 +71,10 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
 
 @Composable
 @Preview(showBackground = true, widthDp = 250)
-public fun HorizontalAxisTextInside() {
+fun HorizontalAxisTextInside() {
     ProvidePreviewChartStyle {
         val label =
-            axisLabelComponent(
+            rememberAxisLabelComponent(
                 background =
                     rememberShapeComponent(
                         shape =
@@ -122,10 +122,10 @@ public fun HorizontalAxisTextInside() {
 
 @Composable
 @Preview(showBackground = true, widthDp = 250)
-public fun HorizontalAxisTextInsideAndBottomAxis() {
+fun HorizontalAxisTextInsideAndBottomAxis() {
     ProvidePreviewChartStyle {
         val label =
-            axisLabelComponent(
+            rememberAxisLabelComponent(
                 background =
                     rememberShapeComponent(
                         shape = Shapes.pillShape,
@@ -160,7 +160,7 @@ public fun HorizontalAxisTextInsideAndBottomAxis() {
 
 @Composable
 @Preview(showBackground = true, widthDp = 250)
-public fun HorizontalAxisTextOutside() {
+fun HorizontalAxisTextOutside() {
     ProvidePreviewChartStyle {
         CartesianChartHost(
             chart =
@@ -183,7 +183,7 @@ public fun HorizontalAxisTextOutside() {
 
 @Composable
 @Preview(showBackground = true, widthDp = 250)
-public fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
+fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
     ProvidePreviewChartStyle {
         CartesianChartHost(
             chart =

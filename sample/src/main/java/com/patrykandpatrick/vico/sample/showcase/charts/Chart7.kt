@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
-import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
@@ -112,7 +112,7 @@ private fun ViewChart7(
 
 @Composable
 private fun rememberStartAxisLabel() =
-    axisLabelComponent(
+    rememberAxisLabelComponent(
         color = Color.Black,
         verticalPadding = startAxisLabelVerticalPaddingValue,
         horizontalPadding = startAxisLabelHorizontalPaddingValue,

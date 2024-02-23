@@ -19,8 +19,8 @@ package com.patrykandpatrick.vico.compose.axis.vertical
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
-import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.rememberAxisGuidelineComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent
 import com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
@@ -53,7 +53,7 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
  */
 @Composable
 public fun rememberStartAxis(
-    label: TextComponent? = axisLabelComponent(),
+    label: TextComponent? = rememberAxisLabelComponent(),
     axis: LineComponent? = rememberAxisLineComponent(),
     tick: LineComponent? = rememberAxisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
@@ -102,7 +102,7 @@ public fun rememberStartAxis(
  */
 @Composable
 public fun rememberEndAxis(
-    label: TextComponent? = axisLabelComponent(),
+    label: TextComponent? = rememberAxisLabelComponent(),
     axis: LineComponent? = rememberAxisLineComponent(),
     tick: LineComponent? = rememberAxisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,

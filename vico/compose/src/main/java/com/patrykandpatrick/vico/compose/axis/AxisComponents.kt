@@ -41,7 +41,91 @@ import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 
-public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Shape
+/**
+ * Creates and remembers a [TextComponent] to be used for axis labels.
+ *
+ * @param color the text color.
+ * @param textSize the text size.
+ * @param background an optional [ShapeComponent] to be displayed behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param verticalPadding the amount of top and bottom padding between the text and the background.
+ * @param horizontalPadding the amount of start and end padding between the text and the background.
+ * @param verticalMargin the size of the top and bottom margins around the background.
+ * @param horizontalMargin the size of the start and end margins around the background.
+ * @param typeface the [Typeface] for the text.
+ * @param textAlignment the text alignment.
+ */
+@Composable
+public fun rememberAxisLabelComponent(
+    color: Color = currentChartStyle.axis.axisLabelColor,
+    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
+    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    verticalPadding: Dp = currentChartStyle.axis.axisLabelVerticalPadding,
+    horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
+    verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
+    horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
+    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
+    textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
+): TextComponent =
+    rememberTextComponent(
+        color,
+        textSize,
+        background,
+        ellipsize,
+        lineCount,
+        dimensionsOf(horizontalPadding, verticalPadding),
+        dimensionsOf(horizontalMargin, verticalMargin),
+        typeface,
+        textAlignment,
+    )
+
+/**
+ * Creates and remembers a [TextComponent] to be used for axis labels.
+ *
+ * @param color the text color.
+ * @param textSize the text size.
+ * @param background an optional [ShapeComponent] to be displayed behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param padding the padding between the text and the background.
+ * @param margins the margins around the background.
+ * @param typeface the [Typeface] for the text.
+ * @param textAlignment the text alignment.
+ */
+@Composable
+public fun rememberAxisLabelComponent(
+    color: Color = currentChartStyle.axis.axisLabelColor,
+    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
+    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    padding: MutableDimensions =
+        dimensionsOf(
+            horizontal = currentChartStyle.axis.axisLabelHorizontalPadding,
+            vertical = currentChartStyle.axis.axisLabelVerticalPadding,
+        ),
+    margins: MutableDimensions =
+        dimensionsOf(
+            horizontal = currentChartStyle.axis.axisLabelHorizontalMargin,
+            vertical = currentChartStyle.axis.axisLabelVerticalMargin,
+        ),
+    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
+    textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
+): TextComponent =
+    rememberTextComponent(
+        color,
+        textSize,
+        background,
+        ellipsize,
+        lineCount,
+        padding,
+        margins,
+        typeface,
+        textAlignment,
+    )
 
 /**
  * Creates a [TextComponent] to be used for axis labels.
@@ -58,6 +142,17 @@ public typealias ChartShape = com.patrykandpatrick.vico.core.component.shape.Sha
  * @param typeface the [Typeface] for the text.
  * @param textAlignment the text alignment.
  */
+@Deprecated(
+    message = "Use `rememberAxisLabelComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberAxisLabelComponent(color, textSize, background, ellipsize, lineCount, " +
+                    "verticalPadding, horizontalPadding, verticalMargin, horizontalMargin, typeface, textAlignment)",
+            imports =
+                arrayOf("com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent"),
+        ),
+)
 @Composable
 public fun axisLabelComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,
@@ -97,6 +192,16 @@ public fun axisLabelComponent(
  * @param typeface the [Typeface] for the text.
  * @param textAlignment the text alignment.
  */
+@Deprecated(
+    message = "Use `rememberAxisLabelComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberAxisLabelComponent(color, textSize, background, ellipsize, lineCount, " +
+                    "padding, margins, typeface, textAlignment)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent"),
+        ),
+)
 @Composable
 public fun axisLabelComponent(
     color: Color = currentChartStyle.axis.axisLabelColor,
@@ -165,7 +270,7 @@ public fun rememberAxisLineComponent(
  *
  * @param color the background color.
  * @param thickness the line thickness.
- * @param shape the [ChartShape] to use for the line.
+ * @param shape the [Shape] to use for the line.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param dynamicShader an optional [DynamicShader] to apply to the line.
@@ -260,7 +365,7 @@ public fun axisLineComponent(
 public fun rememberAxisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    shape: ChartShape = currentChartStyle.axis.axisTickShape,
+    shape: Shape = currentChartStyle.axis.axisTickShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -279,7 +384,7 @@ public fun rememberAxisTickComponent(
  *
  * @param color the background color.
  * @param thickness the thickness of the tick.
- * @param shape the [ChartShape] to use for the tick.
+ * @param shape the [Shape] to use for the tick.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param dynamicShader an optional [DynamicShader] to apply to the tick.
@@ -298,7 +403,7 @@ public fun rememberAxisTickComponent(
 public fun axisTickComponent(
     color: Color = currentChartStyle.axis.axisTickColor,
     thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    shape: ChartShape = currentChartStyle.axis.axisTickShape,
+    shape: Shape = currentChartStyle.axis.axisTickShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -383,7 +488,7 @@ public fun axisTickComponent(
  *
  * @param color the background color.
  * @param thickness the line thickness.
- * @param shape the [ChartShape] to use for the guideline.
+ * @param shape the [Shape] to use for the guideline.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param dynamicShader an optional [DynamicShader] to apply to the guideline.
@@ -393,7 +498,7 @@ public fun axisTickComponent(
 public fun rememberAxisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
     thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
-    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
+    shape: Shape = currentChartStyle.axis.axisGuidelineShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -414,7 +519,7 @@ public fun rememberAxisGuidelineComponent(
  *
  * @param color the background color.
  * @param thickness the line thickness.
- * @param shape the [ChartShape] to use for the guideline.
+ * @param shape the [Shape] to use for the guideline.
  * @param strokeWidth the stroke width.
  * @param strokeColor the stroke color.
  * @param dynamicShader an optional [DynamicShader] to apply to the guideline.
@@ -434,7 +539,7 @@ public fun rememberAxisGuidelineComponent(
 public fun axisGuidelineComponent(
     color: Color = currentChartStyle.axis.axisGuidelineColor,
     thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
-    shape: ChartShape = currentChartStyle.axis.axisGuidelineShape,
+    shape: Shape = currentChartStyle.axis.axisGuidelineShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
