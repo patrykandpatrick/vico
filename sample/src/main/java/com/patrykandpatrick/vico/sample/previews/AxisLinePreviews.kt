@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.component.shape.Shapes
@@ -94,10 +95,16 @@ fun HorizontalAxisTextInside() {
                         strokeColor = Color.Gray,
                         strokeWidth = 1.dp,
                     ),
-                verticalPadding = 2.dp,
-                horizontalPadding = 8.dp,
-                verticalMargin = 4.dp,
-                horizontalMargin = 4.dp,
+                padding =
+                    dimensionsOf(
+                        horizontal = 2.dp,
+                        vertical = 8.dp,
+                    ),
+                margins =
+                    dimensionsOf(
+                        horizontal = 4.dp,
+                        vertical = 4.dp,
+                    ),
             )
         CartesianChartHost(
             chart =
@@ -131,10 +138,16 @@ fun HorizontalAxisTextInsideAndBottomAxis() {
                         shape = Shapes.pillShape,
                         color = Color.LightGray,
                     ),
-                verticalPadding = 2.dp,
-                horizontalPadding = 8.dp,
-                verticalMargin = 4.dp,
-                horizontalMargin = 4.dp,
+                padding =
+                    dimensionsOf(
+                        horizontal = 2.dp,
+                        vertical = 8.dp,
+                    ),
+                margins =
+                    dimensionsOf(
+                        horizontal = 4.dp,
+                        vertical = 4.dp,
+                    ),
             )
         CartesianChartHost(
             chart =

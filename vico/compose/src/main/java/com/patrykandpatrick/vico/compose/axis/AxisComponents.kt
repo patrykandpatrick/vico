@@ -49,47 +49,6 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
  * @param background an optional [ShapeComponent] to be displayed behind the text.
  * @param ellipsize the text truncation behavior.
  * @param lineCount the line count.
- * @param verticalPadding the amount of top and bottom padding between the text and the background.
- * @param horizontalPadding the amount of start and end padding between the text and the background.
- * @param verticalMargin the size of the top and bottom margins around the background.
- * @param horizontalMargin the size of the start and end margins around the background.
- * @param typeface the [Typeface] for the text.
- * @param textAlignment the text alignment.
- */
-@Composable
-public fun rememberAxisLabelComponent(
-    color: Color = currentChartStyle.axis.axisLabelColor,
-    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
-    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
-    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
-    verticalPadding: Dp = currentChartStyle.axis.axisLabelVerticalPadding,
-    horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
-    verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
-    horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
-    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
-    textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
-): TextComponent =
-    rememberTextComponent(
-        color,
-        textSize,
-        background,
-        ellipsize,
-        lineCount,
-        dimensionsOf(horizontalPadding, verticalPadding),
-        dimensionsOf(horizontalMargin, verticalMargin),
-        typeface,
-        textAlignment,
-    )
-
-/**
- * Creates and remembers a [TextComponent] to be used for axis labels.
- *
- * @param color the text color.
- * @param textSize the text size.
- * @param background an optional [ShapeComponent] to be displayed behind the text.
- * @param ellipsize the text truncation behavior.
- * @param lineCount the line count.
  * @param padding the padding between the text and the background.
  * @param margins the margins around the background.
  * @param typeface the [Typeface] for the text.
@@ -147,10 +106,16 @@ public fun rememberAxisLabelComponent(
     replaceWith =
         ReplaceWith(
             expression =
-                "rememberAxisLabelComponent(color, textSize, background, ellipsize, lineCount, " +
-                    "verticalPadding, horizontalPadding, verticalMargin, horizontalMargin, typeface, textAlignment)",
+                "rememberAxisLabelComponent(color = color, textSize = textSize, background = background, " +
+                    "ellipsize = ellipsize, lineCount = lineCount, " +
+                    "padding = dimensionsOf(verticalPadding, horizontalPadding), " +
+                    "margins = dimensionsOf(verticalMargin, horizontalMargin), typeface = typeface, " +
+                    "textAlignment = textAlignment)",
             imports =
-                arrayOf("com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent"),
+                arrayOf(
+                    "com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent",
+                    "com.patrykandpatrick.vico.compose.dimensions.dimensionsOf",
+                ),
         ),
 )
 @Composable

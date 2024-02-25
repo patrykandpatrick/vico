@@ -114,11 +114,17 @@ private fun ViewChart7(
 private fun rememberStartAxisLabel() =
     rememberAxisLabelComponent(
         color = Color.Black,
-        verticalPadding = startAxisLabelVerticalPaddingValue,
-        horizontalPadding = startAxisLabelHorizontalPaddingValue,
-        verticalMargin = startAxisLabelMarginValue,
-        horizontalMargin = startAxisLabelMarginValue,
         background = rememberShapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
+        padding =
+            dimensionsOf(
+                horizontal = startAxisLabelVerticalPaddingValue,
+                vertical = startAxisLabelHorizontalPaddingValue,
+            ),
+        margins =
+            dimensionsOf(
+                horizontal = startAxisLabelMarginValue,
+                vertical = startAxisLabelMarginValue,
+            ),
     )
 
 @Composable
