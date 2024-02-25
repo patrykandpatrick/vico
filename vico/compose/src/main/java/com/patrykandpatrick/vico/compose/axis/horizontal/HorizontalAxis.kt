@@ -19,10 +19,10 @@ package com.patrykandpatrick.vico.compose.axis.horizontal
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
-import com.patrykandpatrick.vico.compose.axis.axisGuidelineComponent
-import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
-import com.patrykandpatrick.vico.compose.axis.axisLineComponent
-import com.patrykandpatrick.vico.compose.axis.axisTickComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisGuidelineComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent
+import com.patrykandpatrick.vico.compose.axis.rememberAxisTickComponent
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -51,11 +51,11 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
  */
 @Composable
 public fun rememberTopAxis(
-    label: TextComponent? = axisLabelComponent(),
-    axis: LineComponent? = axisLineComponent(),
-    tick: LineComponent? = axisTickComponent(),
+    label: TextComponent? = rememberAxisLabelComponent(),
+    axis: LineComponent? = rememberAxisLineComponent(),
+    tick: LineComponent? = rememberAxisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
-    guideline: LineComponent? = axisGuidelineComponent(),
+    guideline: LineComponent? = rememberAxisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Top> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
     labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
@@ -94,11 +94,11 @@ public fun rememberTopAxis(
  */
 @Composable
 public fun rememberBottomAxis(
-    label: TextComponent? = axisLabelComponent(),
-    axis: LineComponent? = axisLineComponent(),
-    tick: LineComponent? = axisTickComponent(),
+    label: TextComponent? = rememberAxisLabelComponent(),
+    axis: LineComponent? = rememberAxisLineComponent(),
+    tick: LineComponent? = rememberAxisTickComponent(),
     tickLength: Dp = currentChartStyle.axis.axisTickLength,
-    guideline: LineComponent? = axisGuidelineComponent(),
+    guideline: LineComponent? = rememberAxisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Horizontal.Bottom> = DecimalFormatAxisValueFormatter(),
     sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
     titleComponent: TextComponent? = null,

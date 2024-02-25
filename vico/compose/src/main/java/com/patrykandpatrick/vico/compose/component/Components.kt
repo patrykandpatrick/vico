@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DeprecatedCallableAddReplaceWith")
+
 package com.patrykandpatrick.vico.compose.component
 
 import android.graphics.Typeface
@@ -23,14 +25,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.component.shape.chartShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
+import com.patrykandpatrick.vico.compose.component.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.extension.pixelSize
 import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.component.Component
@@ -52,8 +53,8 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 @Composable
 public fun rememberLineComponent(
     color: Color = Color.Black,
-    thickness: Dp,
-    shape: Shape,
+    thickness: Dp = Defaults.COLUMN_WIDTH.dp,
+    shape: Shape = Shapes.rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
@@ -82,11 +83,27 @@ public fun rememberLineComponent(
 /**
  * Creates and remembers a [LineComponent] with the specified properties.
  */
+@Deprecated(
+    message =
+        "Use `rememberLineComponent` overload that takes `com.patrykandpatrick.vico.core.component.shape.Shape`. " +
+            "Convert the Compose shape using `androidx.compose.ui.graphics.Shape.toVicoShape()`.",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberLineComponent(color, thickness, shape.toVicoShape(), dynamicShader, margins, " +
+                    "strokeWidth, strokeColor)",
+            imports =
+                arrayOf(
+                    "com.patrykandpatrick.vico.compose.component.rememberLineComponent",
+                    "com.patrykandpatrick.vico.compose.component.shape.toVicoShape",
+                ),
+        ),
+)
 @Composable
 public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp = Defaults.COLUMN_WIDTH.dp,
-    shape: androidx.compose.ui.graphics.Shape = RectangleShape,
+    shape: androidx.compose.ui.graphics.Shape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
     strokeWidth: Dp = 0.dp,
@@ -95,7 +112,7 @@ public fun rememberLineComponent(
     rememberLineComponent(
         color = color,
         thickness = thickness,
-        shape = shape.chartShape(),
+        shape = shape.toVicoShape(),
         dynamicShader = dynamicShader,
         margins = margins,
         strokeWidth = strokeWidth,
@@ -135,6 +152,19 @@ public fun rememberShapeComponent(
 /**
  * Creates and remembers a [ShapeComponent] with the specified properties.
  */
+@Deprecated(
+    message =
+        "Use `rememberLineComponent` which uses `com.patrykandpatrick.vico.core.component.shape.Shape`. " +
+            "Convert the Compose shape using `androidx.compose.ui.graphics.Shape.toVicoShape()`.",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberShapeComponent(shape = shape.toVicoShape(), color = color, " +
+                    "dynamicShader = dynamicShader, margins = margins, strokeWidth = strokeWidth, " +
+                    "strokeColor = strokeColor)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.component.shape.toVicoShape"),
+        ),
+)
 @Composable
 public fun rememberShapeComponent(
     shape: androidx.compose.ui.graphics.Shape,
@@ -145,7 +175,7 @@ public fun rememberShapeComponent(
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent =
     rememberShapeComponent(
-        shape = shape.chartShape(),
+        shape = shape.toVicoShape(),
         color = color,
         dynamicShader = dynamicShader,
         margins = margins,
@@ -184,8 +214,46 @@ public fun rememberShapeComponent(
  * @property innerPaddingEnd the end padding between the inner and outer components.
  * @property innerPaddingBottom the bottom padding between the inner and outer components.
  */
+@Deprecated(
+    message = "Use `rememberOverlayingComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberOverlayingComponent(outer, inner, innerPaddingStart, innerPaddingTop, " +
+                    "innerPaddingEnd, innerPaddingBottom)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.component.rememberOverlayingComponent"),
+        ),
+)
 @Composable
 public fun overlayingComponent(
+    outer: Component,
+    inner: Component,
+    innerPaddingStart: Dp = 0.dp,
+    innerPaddingTop: Dp = 0.dp,
+    innerPaddingBottom: Dp = 0.dp,
+    innerPaddingEnd: Dp = 0.dp,
+): OverlayingComponent =
+    rememberOverlayingComponent(
+        outer = outer,
+        inner = inner,
+        innerPaddingStart = innerPaddingStart,
+        innerPaddingTop = innerPaddingTop,
+        innerPaddingBottom = innerPaddingBottom,
+        innerPaddingEnd = innerPaddingEnd,
+    )
+
+/**
+ * Creates an [OverlayingComponent].
+ *
+ * @param outer the outer (background) [Component].
+ * @param inner the inner (foreground) [Component].
+ * @property innerPaddingStart the start padding between the inner and outer components.
+ * @property innerPaddingTop the top padding between the inner and outer components.
+ * @property innerPaddingEnd the end padding between the inner and outer components.
+ * @property innerPaddingBottom the bottom padding between the inner and outer components.
+ */
+@Composable
+public fun rememberOverlayingComponent(
     outer: Component,
     inner: Component,
     innerPaddingStart: Dp = 0.dp,
@@ -219,12 +287,12 @@ public fun overlayingComponent(
  * @param innerPaddingAll the padding between the inner and outer components.
  */
 @Composable
-public fun overlayingComponent(
+public fun rememberOverlayingComponent(
     outer: Component,
     inner: Component,
     innerPaddingAll: Dp,
 ): OverlayingComponent =
-    overlayingComponent(
+    rememberOverlayingComponent(
         outer = outer,
         inner = inner,
         innerPaddingStart = innerPaddingAll,
@@ -232,6 +300,28 @@ public fun overlayingComponent(
         innerPaddingBottom = innerPaddingAll,
         innerPaddingEnd = innerPaddingAll,
     )
+
+/**
+ * Creates an [OverlayingComponent].
+ *
+ * @param outer the outer (background) [Component].
+ * @param inner the inner (foreground) [Component].
+ * @param innerPaddingAll the padding between the inner and outer components.
+ */
+@Deprecated(
+    message = "Use `rememberOverlayingComponent`",
+    replaceWith =
+        ReplaceWith(
+            expression = "rememberOverlayingComponent(outer, inner, innerPaddingAll)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.component.rememberOverlayingComponent"),
+        ),
+)
+@Composable
+public fun overlayingComponent(
+    outer: Component,
+    inner: Component,
+    innerPaddingAll: Dp,
+): OverlayingComponent = rememberOverlayingComponent(outer = outer, inner = inner, innerPaddingAll = innerPaddingAll)
 
 /**
  * Creates and remembers a [TextComponent].

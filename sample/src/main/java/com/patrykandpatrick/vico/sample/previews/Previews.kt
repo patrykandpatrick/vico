@@ -45,6 +45,7 @@ import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
+import com.patrykandpatrick.vico.compose.component.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -78,7 +79,7 @@ public fun ColumnChartCard(): Unit =
                                 rememberLineComponent(
                                     color = colors.primary,
                                     thickness = 8.dp,
-                                    shape = RoundedCornerShape(4.dp),
+                                    shape = RoundedCornerShape(4.dp).toVicoShape(),
                                     dynamicShader =
                                         DynamicShaders.verticalGradient(arrayOf(colors.primary, colors.secondary)),
                                 ),
@@ -98,7 +99,7 @@ public fun ColumnChartCard(): Unit =
                                                         CornerSize(percent = 50),
                                                         CornerSize(percent = 50),
                                                         CornerSize(percent = 25),
-                                                    ),
+                                                    ).toVicoShape(),
                                                 color = colors.primary.copy(alpha = 0.1f),
                                             ),
                                         padding = dimensionsOf(end = 8.dp, start = 4.dp),

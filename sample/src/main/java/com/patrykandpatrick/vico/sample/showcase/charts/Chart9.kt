@@ -28,8 +28,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
-import com.patrykandpatrick.vico.compose.axis.axisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
@@ -129,7 +129,7 @@ private fun ComposeChart9(
                     startAxis =
                         rememberStartAxis(
                             label =
-                                axisLabelComponent(
+                                rememberAxisLabelComponent(
                                     color = MaterialTheme.colorScheme.onBackground,
                                     background =
                                         rememberShapeComponent(

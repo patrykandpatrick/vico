@@ -23,8 +23,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.overlayingComponent
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.component.rememberOverlayingComponent
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
@@ -62,10 +62,10 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
     val indicatorCenterComponent = rememberShapeComponent(Shapes.pillShape, Color.White)
     val indicatorOuterComponent = rememberShapeComponent(Shapes.pillShape, Color.White)
     val indicator =
-        overlayingComponent(
+        rememberOverlayingComponent(
             outer = indicatorOuterComponent,
             inner =
-                overlayingComponent(
+                rememberOverlayingComponent(
                     outer = indicatorCenterComponent,
                     inner = indicatorInnerComponent,
                     innerPaddingAll = indicatorInnerAndCenterComponentPaddingValue,
