@@ -102,7 +102,7 @@ public fun rememberAxisLabelComponent(
  * @param textAlignment the text alignment.
  */
 @Deprecated(
-    message = "Use `rememberAxisLabelComponent`",
+    message = "Use `rememberAxisLabelComponent`.",
     replaceWith =
         ReplaceWith(
             expression =
@@ -158,7 +158,7 @@ public fun axisLabelComponent(
  * @param textAlignment the text alignment.
  */
 @Deprecated(
-    message = "Use `rememberAxisLabelComponent`",
+    message = "Use `rememberAxisLabelComponent`.",
     replaceWith =
         ReplaceWith(
             expression =
@@ -242,7 +242,7 @@ public fun rememberAxisLineComponent(
  * @param margins the margins of the line.
  */
 @Deprecated(
-    message = "Use `rememberAxisLineComponent`",
+    message = "Use `rememberAxisLineComponent`.",
     replaceWith =
         ReplaceWith(
             expression =
@@ -283,7 +283,7 @@ public fun axisLineComponent(
  * @param margins the margins of the line.
  */
 @Deprecated(
-    message = "Use `rememberAxisLineComponent`",
+    message = "Use `rememberAxisLineComponent`.",
     replaceWith =
         ReplaceWith(
             expression =
@@ -355,7 +355,7 @@ public fun rememberAxisTickComponent(
  * @param dynamicShader an optional [DynamicShader] to apply to the tick.
  */
 @Deprecated(
-    message = "Use `rememberAxisTickComponent`",
+    message = "Use `rememberAxisTickComponent`.",
     replaceWith =
         ReplaceWith(
             expression =
@@ -421,7 +421,7 @@ public fun rememberAxisTickComponent(
  * @param brush an optional [Brush] to apply to the line.
  */
 @Deprecated(
-    message = "Use `rememberAxisTickComponent`",
+    message = "Use `rememberAxisTickComponent`.",
     replaceWith =
         ReplaceWith(
             expression =
@@ -491,7 +491,7 @@ public fun rememberAxisGuidelineComponent(
  * @param margins the margins of the guideline.
  */
 @Deprecated(
-    message = "Use `rememberAxisGuidelineComponent`",
+    message = "Use `rememberAxisGuidelineComponent`.",
     replaceWith =
         ReplaceWith(
             expression =

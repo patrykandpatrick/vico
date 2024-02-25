@@ -160,7 +160,8 @@ public fun rememberShapeComponent(
         ReplaceWith(
             expression =
                 "rememberShapeComponent(shape = shape.toVicoShape(), color = color, " +
-                    "dynamicShader = dynamicShader, margins = margins, strokeWidth = strokeWidth, strokeColor = strokeColor)",
+                    "dynamicShader = dynamicShader, margins = margins, strokeWidth = strokeWidth, " +
+                    "strokeColor = strokeColor)",
             imports = arrayOf("com.patrykandpatrick.vico.compose.component.shape.toVicoShape"),
         ),
 )
@@ -217,7 +218,9 @@ public fun rememberShapeComponent(
     message = "Use `rememberOverlayingComponent`",
     replaceWith =
         ReplaceWith(
-            expression = "rememberOverlayingComponent(outer, inner, innerPaddingStart, innerPaddingTop, innerPaddingEnd, innerPaddingBottom)",
+            expression =
+                "rememberOverlayingComponent(outer, inner, innerPaddingStart, innerPaddingTop, " +
+                    "innerPaddingEnd, innerPaddingBottom)",
             imports = arrayOf("com.patrykandpatrick.vico.compose.component.rememberOverlayingComponent"),
         ),
 )
