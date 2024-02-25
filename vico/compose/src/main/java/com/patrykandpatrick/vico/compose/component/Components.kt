@@ -30,8 +30,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.component.shape.chartShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
+import com.patrykandpatrick.vico.compose.component.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.extension.pixelSize
 import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.component.Component
@@ -85,17 +85,17 @@ public fun rememberLineComponent(
  */
 @Deprecated(
     message =
-        "Use `rememberLineComponent` which uses `com.patrykandpatrick.vico.core.component.shape.Shape`. " +
-            "Convert the Compose shape using `androidx.compose.ui.graphics.Shape.chartShape()`.",
+        "Use `rememberLineComponent` overload that takes `com.patrykandpatrick.vico.core.component.shape.Shape`. " +
+            "Convert the Compose shape using `androidx.compose.ui.graphics.Shape.toVicoShape()`.",
     replaceWith =
         ReplaceWith(
             expression =
-                "rememberLineComponent(color, thickness, shape.chartShape(), dynamicShader, margins, " +
+                "rememberLineComponent(color, thickness, shape.toVicoShape(), dynamicShader, margins, " +
                     "strokeWidth, strokeColor)",
             imports =
                 arrayOf(
                     "com.patrykandpatrick.vico.compose.component.rememberLineComponent",
-                    "com.patrykandpatrick.vico.compose.component.shape.chartShape",
+                    "com.patrykandpatrick.vico.compose.component.shape.toVicoShape",
                 ),
         ),
 )
@@ -112,7 +112,7 @@ public fun rememberLineComponent(
     rememberLineComponent(
         color = color,
         thickness = thickness,
-        shape = shape.chartShape(),
+        shape = shape.toVicoShape(),
         dynamicShader = dynamicShader,
         margins = margins,
         strokeWidth = strokeWidth,
@@ -155,7 +155,14 @@ public fun rememberShapeComponent(
 @Deprecated(
     message =
         "Use `rememberLineComponent` which uses `com.patrykandpatrick.vico.core.component.shape.Shape`. " +
-            "Convert the Compose shape using `androidx.compose.ui.graphics.Shape.chartShape()`.",
+            "Convert the Compose shape using `androidx.compose.ui.graphics.Shape.toVicoShape()`.",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberShapeComponent(shape = shape.toVicoShape(), color = color, " +
+                    "dynamicShader = dynamicShader, margins = margins, strokeWidth = strokeWidth, strokeColor = strokeColor)",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.component.shape.toVicoShape"),
+        ),
 )
 @Composable
 public fun rememberShapeComponent(
@@ -167,7 +174,7 @@ public fun rememberShapeComponent(
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent =
     rememberShapeComponent(
-        shape = shape.chartShape(),
+        shape = shape.toVicoShape(),
         color = color,
         dynamicShader = dynamicShader,
         margins = margins,

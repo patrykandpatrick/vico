@@ -68,7 +68,7 @@ private fun Path.addRoundRect(
  * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
  * [com.patrykandpatrick.vico.core.component.shape.Shape].
  */
-public fun ComposeShape.chartShape(): Shape =
+public fun ComposeShape.toVicoShape(): Shape =
     object : Shape {
         private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
         private val matrix: Matrix by lazy { Matrix() }
@@ -120,6 +120,20 @@ public fun ComposeShape.chartShape(): Shape =
             context.canvas.drawPath(path, paint)
         }
     }
+
+/**
+ * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
+ * [com.patrykandpatrick.vico.core.component.shape.Shape].
+ */
+@Deprecated(
+    message = "Use `toVicoShape`.",
+    replaceWith =
+        ReplaceWith(
+            expression = "toVicoShape()",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.component.shape.toVicoShape"),
+        ),
+)
+public fun ComposeShape.chartShape(): Shape = toVicoShape()
 
 /**
  * Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape].
@@ -274,7 +288,7 @@ public fun Shapes.dashedShape(
     fitStrategy: DashedShape.FitStrategy = DashedShape.FitStrategy.Resize,
 ): DashedShape =
     DashedShape(
-        shape = shape.chartShape(),
+        shape = shape.toVicoShape(),
         dashLengthDp = dashLength.value,
         gapLengthDp = gapLength.value,
         fitStrategy = fitStrategy,
@@ -283,7 +297,7 @@ public fun Shapes.dashedShape(
 /**
  * Creates a [DashedShape].
  *
- * @param shape the [ChartShape] from which to create the [DashedShape].
+ * @param shape the [Shape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.

@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.component.shape.chartShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
+import com.patrykandpatrick.vico.compose.component.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -287,12 +287,12 @@ public fun axisLineComponent(
     replaceWith =
         ReplaceWith(
             expression =
-                "rememberAxisLineComponent(color, thickness, shape.chartShape(), strokeWidth, strokeColor, " +
+                "rememberAxisLineComponent(color, thickness, shape.toVicoShape(), strokeWidth, strokeColor, " +
                     "brush, margins)",
             imports =
                 arrayOf(
                     "com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent",
-                    "com.patrykandpatrick.vico.compose.component.shape.chartShape",
+                    "com.patrykandpatrick.vico.compose.component.shape.toVicoShape",
                 ),
         ),
 )
@@ -309,7 +309,7 @@ public fun axisLineComponent(
     rememberAxisLineComponent(
         color = color,
         thickness = thickness,
-        shape = shape.chartShape(),
+        shape = shape.toVicoShape(),
         brush = brush,
         margins = margins,
         strokeWidth = strokeWidth,
@@ -405,7 +405,7 @@ public fun rememberAxisTickComponent(
         color = color,
         thickness = thickness,
         dynamicShader = brush?.let(::BrushShader),
-        shape = shape.chartShape(),
+        shape = shape.toVicoShape(),
         strokeWidth = strokeWidth,
         strokeColor = strokeColor,
     )
