@@ -23,6 +23,7 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:chartZoomEnabled="false"
         app:layers="line"
         app:lineLayerStyle="@style/Chart1LineLayerStyle"
         app:showBottomAxis="true"

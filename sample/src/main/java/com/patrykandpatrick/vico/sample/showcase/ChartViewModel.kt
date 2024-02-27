@@ -40,7 +40,7 @@ internal class ChartViewModel : ViewModel() {
         flow<Unit> {
             withContext(Dispatchers.Default) {
                 while (currentCoroutineContext().isActive) {
-                    delay(UPDATE_FREQUENCY)
+                    delay(Defaults.TRANSACTION_INTERVAL_MS)
                     runTransactions()
                 }
             }
@@ -70,9 +70,5 @@ internal class ChartViewModel : ViewModel() {
         modelProducer6.tryRunTransaction {
             add(RandomCartesianModelGenerator.getRandomLineLayerModelPartial(y = -10f..20f))
         }
-    }
-
-    private companion object {
-        const val UPDATE_FREQUENCY = 2000L
     }
 }

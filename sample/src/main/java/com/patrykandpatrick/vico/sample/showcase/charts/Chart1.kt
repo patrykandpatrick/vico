@@ -25,19 +25,21 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.lineSeries
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
-import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -66,20 +68,23 @@ private fun ComposeChart1(
     modifier: Modifier,
 ) {
     val marker = rememberMarker()
-    ProvideChartStyle(rememberChartStyle(chartColors)) {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(axisValueOverrider = axisValueOverrider),
-                    startAxis = rememberStartAxis(itemPlacer = startAxisItemPlacer),
-                    bottomAxis = rememberBottomAxis(guideline = null),
-                    persistentMarkers = remember(marker) { mapOf(PERSISTENT_MARKER_X to marker) },
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberLineCartesianLayer(
+                    lines = remember { listOf(lineSpec(DynamicShaders.color(Color(0xffa485e0)))) },
+                    axisValueOverrider = axisValueOverrider,
                 ),
-            modelProducer = modelProducer,
-            modifier = modifier,
-            marker = marker,
-        )
-    }
+                startAxis =
+                    rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 6 }) }),
+                bottomAxis = rememberBottomAxis(guideline = null),
+                persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker),
+            ),
+        modelProducer = modelProducer,
+        modifier = modifier,
+        marker = marker,
+        zoomState = rememberVicoZoomState(zoomEnabled = false),
+    )
 }
 
 @Composable
@@ -88,22 +93,26 @@ private fun ViewChart1(
     modifier: Modifier,
 ) {
     val marker = rememberMarker()
-    AndroidViewBinding(Chart1Binding::inflate, modifier) {
-        with(chartView) {
-            chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
-            (chart?.layers?.get(0) as LineCartesianLayer).axisValueOverrider = axisValueOverrider
-            this.modelProducer = modelProducer
-            (chart?.bottomAxis as BaseAxis).guideline = null
-            this.marker = marker
-        }
-    }
+    AndroidViewBinding(
+        { inflater, parent, attachToParent ->
+            Chart1Binding
+                .inflate(inflater, parent, attachToParent)
+                .apply {
+                    with(chartView) {
+                        chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
+                        (chart?.layers?.get(0) as LineCartesianLayer).axisValueOverrider = axisValueOverrider
+                        this.modelProducer = modelProducer
+                        (chart?.bottomAxis as BaseAxis).guideline = null
+                        this.marker = marker
+                    }
+                }
+        },
+        modifier,
+    )
 }
 
 private const val PERSISTENT_MARKER_X = 7f
 private const val MAX_Y = 15f
 
-private val color1 = Color(0xffa485e0)
-private val chartColors = listOf(color1)
 private val x = (1..50).toList()
 private val axisValueOverrider = AxisValueOverrider.fixed<LineCartesianLayerModel>(maxY = MAX_Y)
-private val startAxisItemPlacer = AxisItemPlacer.Vertical.default(maxItemCount = { 6 })
