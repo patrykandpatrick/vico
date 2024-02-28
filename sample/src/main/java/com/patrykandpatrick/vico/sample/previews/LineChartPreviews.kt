@@ -26,8 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
@@ -68,14 +68,14 @@ public fun LineChartDark() {
                 rememberCartesianChart(
                     rememberLineCartesianLayer(
                         listOf(
-                            lineSpec(
+                            rememberLineSpec(
                                 shader = DynamicShaders.color(yellow),
                                 backgroundShader =
                                     DynamicShaders.verticalGradient(
                                         arrayOf(yellow.copy(alpha = 0.5f), yellow.copy(alpha = 0f)),
                                     ),
                             ),
-                            lineSpec(
+                            rememberLineSpec(
                                 shader = DynamicShaders.color(pink),
                                 backgroundShader =
                                     DynamicShaders.verticalGradient(
@@ -135,7 +135,7 @@ public fun ComposedLineChart() {
                 rememberLineCartesianLayer(),
                 rememberLineCartesianLayer(
                     listOf(
-                        lineSpec(
+                        rememberLineSpec(
                             shader = DynamicShaders.color(Color.Blue),
                             backgroundShader =
                                 DynamicShaders.verticalGradient(

@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.DefaultAlpha
@@ -76,6 +77,64 @@ public fun rememberLineCartesianLayer(
         this.axisValueOverrider = axisValueOverrider
         this.verticalAxisPosition = verticalAxisPosition
         this.drawingModelInterpolator = drawingModelInterpolator
+    }
+
+/**
+ * Creates and remembers a [LineCartesianLayer.LineSpec] for use in [LineCartesianLayer]s.
+ *
+ * @param shader the [DynamicShader] for the line.
+ * @param thickness the thickness of the line.
+ * @param backgroundShader an optional [DynamicShader] to use for the areas bounded by the [LineCartesianLayer] line and
+ * the zero line (_y_ = 0).
+ * @param cap the stroke cap for the line.
+ * @param point an optional [Component] that can be drawn at a given point on the line.
+ * @param pointSize the size of the [point].
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+ * @param pointConnector the [LineSpec.PointConnector] for the line.
+ */
+@Composable
+public fun rememberLineSpec(
+    shader: DynamicShader = DynamicShaders.color(Color.Black),
+    thickness: Dp = Defaults.LINE_THICKNESS.dp,
+    backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
+    cap: StrokeCap = StrokeCap.Round,
+    point: Component? = null,
+    pointSize: Dp = Defaults.POINT_SIZE.dp,
+    dataLabel: TextComponent? = null,
+    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+    dataLabelRotationDegrees: Float = 0f,
+    pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
+): LineSpec =
+    remember(
+        shader,
+        thickness,
+        backgroundShader,
+        cap,
+        point,
+        pointSize,
+        dataLabel,
+        dataLabelVerticalPosition,
+        dataLabelRotationDegrees,
+        dataLabelRotationDegrees,
+        pointConnector,
+    ) {
+        LineSpec(
+            shader = shader,
+            thicknessDp = thickness.value,
+            backgroundShader = backgroundShader,
+            cap = cap.paintCap,
+            point = point,
+            pointSizeDp = pointSize.value,
+            dataLabel = dataLabel,
+            dataLabelVerticalPosition = dataLabelVerticalPosition,
+            dataLabelValueFormatter = dataLabelValueFormatter,
+            dataLabelRotationDegrees = dataLabelRotationDegrees,
+            pointConnector = pointConnector,
+        )
     }
 
 /**
@@ -146,6 +205,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
                             ),
                     ),
             )
+
         is TopBottomShader -> {
             val topShader = topShader
             val bottomShader = bottomShader
@@ -178,6 +238,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
                 null
             }
         }
+
         else -> null
     }
 
