@@ -20,6 +20,7 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
+import com.patrykandpatrick.vico.core.scroll.Scroll
 import com.patrykandpatrick.vico.core.util.Point
 import com.patrykandpatrick.vico.views.extension.fling
 import com.patrykandpatrick.vico.views.extension.point
@@ -69,7 +70,7 @@ internal class MotionEventHandler(
                     val shouldPerformScroll = totalDragAmount > dragThreshold
                     if (shouldPerformScroll && !ignoreEvent) {
                         velocityTracker.get().addMovement(motionEvent)
-                        scrollHandler.scrollBy(lastX - currentX)
+                        scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX))
                         onTouchPoint(motionEvent.point)
                         requestInvalidate()
                         initialX = -dragThreshold

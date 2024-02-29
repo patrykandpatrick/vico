@@ -60,13 +60,9 @@ public interface ChartDrawContext : DrawContext {
 public fun MeasureContext.getMaxScrollDistance(
     chartWidth: Float,
     horizontalDimensions: HorizontalDimensions,
-    zoom: Float? = null,
-): Float {
-    val contentWidth = horizontalDimensions.run { if (zoom != null) scaled(zoom) else this }.getContentWidth(this)
-
-    return (layoutDirectionMultiplier * (contentWidth - chartWidth))
+): Float =
+    (layoutDirectionMultiplier * (horizontalDimensions.getContentWidth(this) - chartWidth))
         .run { if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f) }
         .ceil
-}
 
 internal fun ChartDrawContext.getMaxScrollDistance() = getMaxScrollDistance(chartBounds.width(), horizontalDimensions)

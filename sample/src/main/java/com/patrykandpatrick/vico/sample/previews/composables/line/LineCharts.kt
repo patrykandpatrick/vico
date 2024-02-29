@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.sample.previews.resource.shortLineModel
 public fun DefaultLineChart(
     model: CartesianChartModel = shortLineModel,
     scrollable: Boolean = true,
-    initialScroll: Scroll = Scroll.Start,
+    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
 ) {
     PreviewSurface {
         CartesianChartHost(
@@ -60,7 +60,7 @@ public fun DefaultLineChartLongScrollable() {
 @ChartPreview
 @Composable
 public fun DefaultLineChartLongScrollableEnd() {
-    DefaultLineChart(model = mediumLineModel, initialScroll = Scroll.End)
+    DefaultLineChart(model = mediumLineModel, initialScroll = Scroll.Absolute.End)
 }
 
 @ChartPreview

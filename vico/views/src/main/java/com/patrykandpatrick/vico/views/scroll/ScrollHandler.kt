@@ -30,42 +30,38 @@ import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.Scroll
+import com.patrykandpatrick.vico.core.scroll.getDelta
 
 /**
  * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and programmatic scrolling.
  *
  * @property scrollEnabled whether scrolling is enabled.
  * @property initialScroll represents the initial scroll value.
+ * @property autoScroll represents the scroll value or delta for automatic scrolling.
  * @property autoScrollCondition defines when an automatic scroll should be performed.
  * @property autoScrollInterpolator the [TimeInterpolator] for automatic scrolling.
  * @property autoScrollDuration the animation duration for automatic scrolling.
- * @property animatedScrollInterpolator the [TimeInterpolator] for animated programmatic scrolling.
- * @property animatedScrollDuration the animation duration for animated programmatic scrolling.
  */
 public class ScrollHandler(
     internal val scrollEnabled: Boolean = true,
-    private val initialScroll: Scroll = Scroll.Start,
+    private val initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
+    private val autoScroll: Scroll = initialScroll,
     private val autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
     private val autoScrollInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
     private val autoScrollDuration: Long = Animation.DIFF_DURATION.toLong(),
-    private val animatedScrollInterpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
-    private val animatedScrollDuration: Long = Animation.DIFF_DURATION.toLong(),
 ) {
-    private var initialScrollHandled = false
     private val scrollListeners = mutableSetOf<Listener>()
+    private var initialScrollHandled = false
+    private var context: MeasureContext? = null
+    private var horizontalDimensions: HorizontalDimensions? = null
+    private var bounds: RectF? = null
     internal var postInvalidate: (() -> Unit)? = null
     internal var postInvalidateOnAnimation: (() -> Unit)? = null
 
-    private val autoScrollAnimator =
+    private val animator =
         ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
             duration = autoScrollDuration
             interpolator = autoScrollInterpolator
-        }
-
-    private val animatedScrollAnimator =
-        ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
-            duration = animatedScrollDuration
-            interpolator = animatedScrollInterpolator
         }
 
     /** The current scroll value (in pixels). */
@@ -90,42 +86,34 @@ public class ScrollHandler(
         context: MeasureContext,
         bounds: RectF,
         horizontalDimensions: HorizontalDimensions,
-        zoom: Float,
     ) {
-        maxValue = context.getMaxScrollDistance(bounds.width(), horizontalDimensions, zoom)
+        this.context = context
+        this.horizontalDimensions = horizontalDimensions
+        this.bounds = bounds
+        maxValue = context.getMaxScrollDistance(bounds.width(), horizontalDimensions)
+        if (!initialScrollHandled) {
+            value = initialScroll.getValue(context, horizontalDimensions, bounds, maxValue)
+            initialScrollHandled = true
+        }
+    }
+
+    private inline fun withUpdated(block: (MeasureContext, HorizontalDimensions, RectF) -> Unit) {
+        val context = this.context
+        val horizontalDimensions = this.horizontalDimensions
+        val bounds = this.bounds
+        if (context != null && horizontalDimensions != null && bounds != null) {
+            block(context, horizontalDimensions, bounds)
+        }
     }
 
     internal fun canScroll(delta: Float) = delta > 0 && value < maxValue || delta == 0f || delta < 0 && value > 0
-
-    internal fun handleInitialScroll() {
-        if (initialScrollHandled) return
-        value =
-            when (initialScroll) {
-                Scroll.Start -> 0f
-                Scroll.End -> maxValue
-            }
-        initialScrollHandled = true
-    }
 
     internal fun autoScroll(
         model: CartesianChartModel,
         oldModel: CartesianChartModel?,
     ) {
         if (!autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) return
-        with(autoScrollAnimator) {
-            cancel()
-            removeAllUpdateListeners()
-            addUpdateListener { animator ->
-                scrollTo(
-                    when (initialScroll) {
-                        Scroll.Start -> (1 - animator.animatedFraction) * value
-                        Scroll.End -> value + animator.animatedFraction * (maxValue - value)
-                    },
-                )
-                postInvalidateOnAnimation?.invoke()
-            }
-            start()
-        }
+        animateScroll(autoScroll, autoScrollInterpolator, autoScrollDuration)
     }
 
     internal fun saveInstanceState(bundle: Bundle) {
@@ -138,26 +126,35 @@ public class ScrollHandler(
         initialScrollHandled = bundle.getBoolean(INITIAL_SCROLL_HANDLED_KEY)
     }
 
-    /** Scrolls by [delta]. */
-    public fun scrollBy(delta: Float): Float {
+    internal fun clearUpdated() {
+        context = null
+        horizontalDimensions = null
+        bounds = null
+        postInvalidate = null
+        postInvalidateOnAnimation = null
+    }
+
+    private fun scrollBy(delta: Float): Float {
         val oldValue = value
         value += delta
         postInvalidate?.invoke()
         return value - oldValue
     }
 
-    /** Scrolls to [value]. */
-    public fun scrollTo(value: Float): Float = scrollBy(value - this.value)
-
-    /** Scrolls by [delta] with an animation. */
-    public fun animateScrollBy(delta: Float): Float {
+    private fun animateScrollBy(
+        delta: Float,
+        interpolator: TimeInterpolator,
+        duration: Long,
+    ): Float {
         val oldValue = value
         val limitedDelta = delta.coerceIn((-value).rangeWith(maxValue - value))
-        with(animatedScrollAnimator) {
+        with(animator) {
             cancel()
             removeAllUpdateListeners()
+            this.interpolator = interpolator
+            this.duration = duration
             addUpdateListener { animator ->
-                scrollTo(oldValue + animator.animatedFraction * limitedDelta)
+                scrollBy(oldValue + animator.animatedFraction * limitedDelta - value)
                 postInvalidateOnAnimation?.invoke()
             }
             start()
@@ -165,8 +162,27 @@ public class ScrollHandler(
         return limitedDelta
     }
 
-    /** Scrolls to [value] with an animation. */
-    public fun animateScrollTo(value: Float): Float = animateScrollBy(value - this.value)
+    /** Triggers a scroll. */
+    public fun scroll(scroll: Scroll) {
+        withUpdated { context, horizontalDimensions, bounds ->
+            scrollBy(scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value))
+        }
+    }
+
+    /** Triggers an animated scroll. */
+    public fun animateScroll(
+        scroll: Scroll,
+        interpolator: TimeInterpolator = AccelerateDecelerateInterpolator(),
+        duration: Long = Animation.DIFF_DURATION.toLong(),
+    ) {
+        withUpdated { context, horizontalDimensions, bounds ->
+            animateScrollBy(
+                scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value),
+                interpolator,
+                duration,
+            )
+        }
+    }
 
     /** Adds the provided [Listener]. */
     public fun addListener(listener: Listener): Boolean {

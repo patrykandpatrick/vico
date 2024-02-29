@@ -33,7 +33,7 @@ internal fun Modifier.chartTouchEvent(
     onZoom: ((Float, Offset) -> Unit)?,
 ): Modifier =
     scrollable(
-        state = scrollState,
+        state = scrollState.scrollableState,
         orientation = Orientation.Horizontal,
         reverseDirection = true,
         enabled = isScrollEnabled,

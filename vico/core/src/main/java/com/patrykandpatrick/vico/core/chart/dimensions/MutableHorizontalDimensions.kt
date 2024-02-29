@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 package com.patrykandpatrick.vico.core.chart.dimensions
+
+import androidx.annotation.RestrictTo
 
 /**
  * An implementation of [HorizontalDimensions] whose every property is mutable.
@@ -73,3 +75,14 @@ public data class MutableHorizontalDimensions(
         unscalableEndPadding = 0f
     }
 }
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun MutableHorizontalDimensions.scale(factor: Float): MutableHorizontalDimensions =
+    set(
+        factor * xSpacing,
+        factor * scalableStartPadding,
+        factor * scalableEndPadding,
+        unscalableStartPadding,
+        unscalableEndPadding,
+    )

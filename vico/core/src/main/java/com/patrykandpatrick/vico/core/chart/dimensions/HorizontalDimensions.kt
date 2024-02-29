@@ -83,18 +83,6 @@ public interface HorizontalDimensions {
      * Calculates the width of the [CartesianChart]’s content (in pixels).
      */
     public fun getContentWidth(context: MeasureContext): Float = getScalableContentWidth(context) + unscalablePadding
-
-    /**
-     * Creates a new [HorizontalDimensions] instance by multiplying this one’s scalable values by the given factor.
-     */
-    public fun scaled(scale: Float): HorizontalDimensions =
-        HorizontalDimensions(
-            xSpacing * scale,
-            scalableStartPadding * scale,
-            scalableEndPadding * scale,
-            unscalableStartPadding,
-            unscalableEndPadding,
-        )
 }
 
 /**

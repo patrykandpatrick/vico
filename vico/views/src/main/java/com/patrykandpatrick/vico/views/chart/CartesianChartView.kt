@@ -53,6 +53,7 @@ import com.patrykandpatrick.vico.core.marker.MarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.MutableExtraStore
+import com.patrykandpatrick.vico.core.scroll.Scroll
 import com.patrykandpatrick.vico.core.util.Point
 import com.patrykandpatrick.vico.core.util.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.views.R
@@ -155,8 +156,7 @@ public open class CartesianChartView
          */
         public var scrollHandler: ScrollHandler by
             invalidatingObservable(ScrollHandler(themeHandler.isHorizontalScrollEnabled)) { oldValue, newValue ->
-                oldValue?.postInvalidate = null
-                oldValue?.postInvalidateOnAnimation = null
+                oldValue?.clearUpdated()
                 newValue.postInvalidate = ::postInvalidate
                 newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
                 measureContext.scrollEnabled = newValue.scrollEnabled
@@ -273,6 +273,7 @@ public open class CartesianChartView
             animator.cancel()
             isAnimationRunning = false
             modelProducer?.unregisterFromUpdates(key = this)
+            scrollHandler.clearUpdated()
         }
 
         /**
@@ -397,7 +398,7 @@ public open class CartesianChartView
             zoomChange: Float,
         ) {
             val chart = chart ?: return
-            scrollHandler.scrollBy(zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.bounds))
+            scrollHandler.scroll(zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.bounds))
             handleTouchEvent(null)
             invalidate()
         }
@@ -418,13 +419,12 @@ public open class CartesianChartView
 
                 motionEventHandler.isHorizontalScrollEnabled = scrollHandler.scrollEnabled
                 if (scroller.computeScrollOffset()) {
-                    scrollHandler.scrollTo(scroller.currX.toFloat())
+                    scrollHandler.scroll(Scroll.Absolute.pixels(scroller.currX.toFloat()))
                     ViewCompat.postInvalidateOnAnimation(this)
                 }
 
                 zoomHandler.update(measureContext, horizontalDimensions, chart.bounds)
-                scrollHandler.update(measureContext, chart.bounds, horizontalDimensions, zoomHandler.value)
-                scrollHandler.handleInitialScroll()
+                scrollHandler.update(measureContext, chart.bounds, horizontalDimensions)
 
                 val chartDrawContext =
                     chartDrawContext(

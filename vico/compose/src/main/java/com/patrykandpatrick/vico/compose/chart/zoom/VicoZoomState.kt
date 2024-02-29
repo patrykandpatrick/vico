@@ -26,8 +26,10 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.chart.CartesianChart
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
+import com.patrykandpatrick.vico.core.chart.dimensions.scale
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.scroll.Scroll
 import com.patrykandpatrick.vico.core.zoom.Zoom
 
 /**
@@ -98,14 +100,14 @@ public class VicoZoomState {
 
     internal fun update(
         context: MeasureContext,
-        horizontalDimensions: HorizontalDimensions,
+        horizontalDimensions: MutableHorizontalDimensions,
         bounds: RectF,
     ) {
         val minValue = minZoom.getValue(context, horizontalDimensions, bounds)
         val maxValue = maxZoom.getValue(context, horizontalDimensions, bounds)
         valueRange = minValue..maxValue
-        if (overridden) return
-        value = initialZoom.getValue(context, horizontalDimensions, bounds)
+        if (!overridden) value = initialZoom.getValue(context, horizontalDimensions, bounds)
+        horizontalDimensions.scale(value)
     }
 
     internal fun zoom(
@@ -113,14 +115,14 @@ public class VicoZoomState {
         centroidX: Float,
         scroll: Float,
         bounds: RectF,
-    ): Float {
+    ): Scroll {
         overridden = true
         val oldValue = value
         value *= factor
-        if (value == oldValue) return 0f
+        if (value == oldValue) return Scroll.Relative.pixels(0f)
         val transformationAxisX = scroll + centroidX - bounds.left
         val zoomedTransformationAxisX = transformationAxisX * (value / oldValue)
-        return zoomedTransformationAxisX - transformationAxisX
+        return Scroll.Relative.pixels(zoomedTransformationAxisX - transformationAxisX)
     }
 
     internal companion object {

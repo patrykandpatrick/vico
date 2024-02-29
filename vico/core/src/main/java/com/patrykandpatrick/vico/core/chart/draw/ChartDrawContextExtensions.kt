@@ -51,7 +51,7 @@ public fun chartDrawContext(
 
         override val zoom: Float = zoom
 
-        override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(zoom)
+        override val horizontalDimensions: HorizontalDimensions = horizontalDimensions
 
         override val horizontalScroll: Float = horizontalScroll
 

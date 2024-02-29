@@ -37,7 +37,7 @@ public fun DefaultColumnChart(
     model: CartesianChartModel = shortColumnModel,
     oldModel: CartesianChartModel? = null,
     scrollable: Boolean = true,
-    initialScroll: Scroll = Scroll.Start,
+    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
     autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
 ) {
     PreviewSurface {
@@ -50,7 +50,12 @@ public fun DefaultColumnChart(
                 ),
             model = model,
             oldModel = oldModel,
-            scrollState = rememberVicoScrollState(scrollable, initialScroll, autoScrollCondition),
+            scrollState =
+                rememberVicoScrollState(
+                    scrollEnabled = scrollable,
+                    initialScroll = initialScroll,
+                    autoScrollCondition = autoScrollCondition,
+                ),
         )
     }
 }
@@ -64,7 +69,7 @@ public fun DefaultColumnChartLongScrollable() {
 @ChartPreview
 @Composable
 public fun DefaultColumnChartLongScrollableEnd() {
-    DefaultColumnChart(model = mediumColumnModel, initialScroll = Scroll.End)
+    DefaultColumnChart(model = mediumColumnModel, initialScroll = Scroll.Absolute.End)
 }
 
 @ChartPreview

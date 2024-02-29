@@ -20,13 +20,13 @@ import android.annotation.SuppressLint
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -219,6 +219,8 @@ internal fun CartesianChartHostImpl(
             }
     }
 
+    DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
+
     Canvas(
         modifier =
             Modifier
@@ -234,7 +236,7 @@ internal fun CartesianChartHostImpl(
                                 { factor, centroid ->
                                     zoomState
                                         .zoom(factor, centroid.x, scrollState.value, chart.bounds)
-                                        .let { delta -> coroutineScope.launch { scrollState.scrollBy(delta) } }
+                                        .let { scroll -> coroutineScope.launch { scrollState.scroll(scroll) } }
                                 }
                             } else {
                                 null
@@ -250,14 +252,12 @@ internal fun CartesianChartHostImpl(
         if (chart.bounds.isEmpty) return@Canvas
 
         zoomState.update(measureContext, horizontalDimensions, chart.bounds)
-        scrollState.update(measureContext, chart.bounds, horizontalDimensions, zoomState.value)
+        scrollState.update(measureContext, chart.bounds, horizontalDimensions)
 
         if (model.id != previousModelID) {
             coroutineScope.launch { scrollState.autoScroll(model, oldModel) }
             previousModelID = model.id
         }
-
-        scrollState.handleInitialScroll()
 
         val chartDrawContext =
             chartDrawContext(

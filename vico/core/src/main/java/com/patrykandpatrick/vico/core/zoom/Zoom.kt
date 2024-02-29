@@ -32,6 +32,7 @@ public fun interface Zoom {
         bounds: RectF,
     ): Float
 
+    /** Houses [Zoom] singletons and factory functions. */
     public companion object {
         /** Ensures all of the [CartesianChart]’s content is visible. */
         public val Content: Zoom =
@@ -43,6 +44,12 @@ public fun interface Zoom {
 
         /** Uses a zoom factor of [value]. */
         public fun static(value: Float = 1f): Zoom = Zoom { _, _, _ -> value }
+
+        /** Ensures the specified number of _x_ units is visible. */
+        public fun x(x: Float): Zoom =
+            Zoom { context, horizontalDimensions, bounds ->
+                bounds.width() * context.chartValues.xStep / (x * horizontalDimensions.xSpacing)
+            }
 
         /** Uses the smaller of [a]’s zoom factor and [b]’s zoom factor. */
         public fun min(

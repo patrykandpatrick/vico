@@ -20,9 +20,9 @@ import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.MutatePriority
-import androidx.compose.foundation.gestures.ScrollScope
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.gestures.stopScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableFloatState
@@ -38,22 +38,27 @@ import com.patrykandpatrick.vico.core.extension.rangeWith
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.scroll.AutoScrollCondition
 import com.patrykandpatrick.vico.core.scroll.Scroll
+import com.patrykandpatrick.vico.core.scroll.getDelta
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 /**
  * Houses information on a [CartesianChart]’s scroll value. Allows for scroll customization and programmatic scrolling.
  */
-public class VicoScrollState : ScrollableState {
-    private val initialScroll: Scroll
+public class VicoScrollState {
+    private val initialScroll: Scroll.Absolute
+    private val autoScroll: Scroll
     private val autoScrollCondition: AutoScrollCondition
     private val autoScrollAnimationSpec: AnimationSpec<Float>
     private val _value: MutableFloatState
     private val _maxValue = mutableFloatStateOf(0f)
     private var initialScrollHandled: Boolean
+    private var context: MeasureContext? = null
+    private var horizontalDimensions: HorizontalDimensions? = null
+    private var bounds: RectF? = null
     internal val scrollEnabled: Boolean
     internal val pointerXDeltas = MutableSharedFlow<Float>(extraBufferCapacity = 1)
 
-    private val scrollableState =
+    internal val scrollableState =
         ScrollableState { delta ->
             val oldValue = value
             value += delta
@@ -82,7 +87,8 @@ public class VicoScrollState : ScrollableState {
 
     internal constructor(
         scrollEnabled: Boolean,
-        initialScroll: Scroll,
+        initialScroll: Scroll.Absolute,
+        autoScroll: Scroll,
         autoScrollCondition: AutoScrollCondition,
         autoScrollAnimationSpec: AnimationSpec<Float>,
         value: Float,
@@ -90,6 +96,7 @@ public class VicoScrollState : ScrollableState {
     ) {
         this.scrollEnabled = scrollEnabled
         this.initialScroll = initialScroll
+        this.autoScroll = autoScroll
         this.autoScrollCondition = autoScrollCondition
         this.autoScrollAnimationSpec = autoScrollAnimationSpec
         _value = mutableFloatStateOf(value)
@@ -102,30 +109,48 @@ public class VicoScrollState : ScrollableState {
      *
      * @param scrollEnabled whether scrolling is enabled.
      * @param initialScroll represents the initial scroll value.
+     * @param autoScroll represents the scroll value or delta for automatic scrolling.
      * @param autoScrollCondition defines when an automatic scroll should occur.
      * @param autoScrollAnimationSpec the [AnimationSpec] for automatic scrolling.
      */
     public constructor(
         scrollEnabled: Boolean,
-        initialScroll: Scroll,
+        initialScroll: Scroll.Absolute,
+        autoScroll: Scroll,
         autoScrollCondition: AutoScrollCondition,
         autoScrollAnimationSpec: AnimationSpec<Float>,
     ) : this(
         scrollEnabled = scrollEnabled,
         initialScroll = initialScroll,
+        autoScroll = autoScroll,
         autoScrollCondition = autoScrollCondition,
         autoScrollAnimationSpec = autoScrollAnimationSpec,
         value = 0f,
         initialScrollHandled = false,
     )
 
+    private inline fun withUpdated(block: (MeasureContext, HorizontalDimensions, RectF) -> Unit) {
+        val context = this.context
+        val horizontalDimensions = this.horizontalDimensions
+        val bounds = this.bounds
+        if (context != null && horizontalDimensions != null && bounds != null) {
+            block(context, horizontalDimensions, bounds)
+        }
+    }
+
     internal fun update(
         context: MeasureContext,
         bounds: RectF,
         horizontalDimensions: HorizontalDimensions,
-        zoom: Float,
     ) {
-        maxValue = context.getMaxScrollDistance(bounds.width(), horizontalDimensions, zoom)
+        this.context = context
+        this.horizontalDimensions = horizontalDimensions
+        this.bounds = bounds
+        maxValue = context.getMaxScrollDistance(bounds.width(), horizontalDimensions)
+        if (!initialScrollHandled) {
+            value = initialScroll.getValue(context, horizontalDimensions, bounds, maxValue)
+            initialScrollHandled = true
+        }
     }
 
     internal suspend fun autoScroll(
@@ -133,42 +158,41 @@ public class VicoScrollState : ScrollableState {
         oldModel: CartesianChartModel?,
     ) {
         if (!autoScrollCondition.shouldPerformAutoScroll(model, oldModel)) return
-        if (isScrollInProgress) stopScroll(MutatePriority.PreventUserInput)
-        animateScrollBy(
-            value =
-                when (initialScroll) {
-                    Scroll.Start -> -value
-                    Scroll.End -> maxValue - value
-                },
-            animationSpec = autoScrollAnimationSpec,
-        )
+        if (scrollableState.isScrollInProgress) scrollableState.stopScroll(MutatePriority.PreventUserInput)
+        animateScroll(autoScroll, autoScrollAnimationSpec)
     }
 
-    internal fun handleInitialScroll() {
-        if (initialScrollHandled) return
-        value =
-            when (initialScroll) {
-                Scroll.Start -> 0f
-                Scroll.End -> maxValue
-            }
-        initialScrollHandled = true
+    internal fun clearUpdated() {
+        context = null
+        horizontalDimensions = null
+        bounds = null
     }
 
-    override val isScrollInProgress: Boolean get() = scrollableState.isScrollInProgress
+    /** Triggers a scroll. */
+    public suspend fun scroll(scroll: Scroll) {
+        withUpdated { context, horizontalDimensions, bounds ->
+            scrollableState.scrollBy(scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value))
+        }
+    }
 
-    override suspend fun scroll(
-        scrollPriority: MutatePriority,
-        block: suspend ScrollScope.() -> Unit,
+    /** Triggers an animated scroll. */
+    public suspend fun animateScroll(
+        scroll: Scroll,
+        animationSpec: AnimationSpec<Float> = spring(),
     ) {
-        scrollableState.scroll(scrollPriority, block)
+        withUpdated { context, horizontalDimensions, bounds ->
+            scrollableState.animateScrollBy(
+                scroll.getDelta(context, horizontalDimensions, bounds, maxValue, value),
+                animationSpec,
+            )
+        }
     }
-
-    override fun dispatchRawDelta(delta: Float): Float = scrollableState.dispatchRawDelta(delta)
 
     internal companion object {
         fun Saver(
             scrollEnabled: Boolean,
-            initialScroll: Scroll,
+            initialScroll: Scroll.Absolute,
+            autoScroll: Scroll,
             autoScrollCondition: AutoScrollCondition,
             autoScrollAnimationSpec: AnimationSpec<Float>,
         ) = Saver<VicoScrollState, Pair<Float, Boolean>>(
@@ -177,6 +201,7 @@ public class VicoScrollState : ScrollableState {
                 VicoScrollState(
                     scrollEnabled,
                     initialScroll,
+                    autoScroll,
                     autoScrollCondition,
                     autoScrollAnimationSpec,
                     value,
@@ -191,19 +216,27 @@ public class VicoScrollState : ScrollableState {
 @Composable
 public fun rememberVicoScrollState(
     scrollEnabled: Boolean = true,
-    initialScroll: Scroll = Scroll.Start,
+    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
+    autoScroll: Scroll = initialScroll,
     autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
     autoScrollAnimationSpec: AnimationSpec<Float> = spring(),
 ): VicoScrollState =
     rememberSaveable(
         scrollEnabled,
         initialScroll,
+        autoScroll,
         autoScrollCondition,
         autoScrollAnimationSpec,
         saver =
             remember(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec) {
-                VicoScrollState.Saver(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec)
+                VicoScrollState.Saver(
+                    scrollEnabled,
+                    initialScroll,
+                    autoScroll,
+                    autoScrollCondition,
+                    autoScrollAnimationSpec,
+                )
             },
     ) {
-        VicoScrollState(scrollEnabled, initialScroll, autoScrollCondition, autoScrollAnimationSpec)
+        VicoScrollState(scrollEnabled, initialScroll, autoScroll, autoScrollCondition, autoScrollAnimationSpec)
     }
