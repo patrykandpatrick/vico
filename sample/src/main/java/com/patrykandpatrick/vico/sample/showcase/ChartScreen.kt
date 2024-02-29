@@ -39,7 +39,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -52,12 +51,10 @@ import com.patrykandpatrick.vico.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun ChartScreen(
-    viewModel: ChartViewModel,
     navController: NavController,
     initialChartID: Int,
     uiSystemID: Int,
 ) {
-    viewModel.transactionFlow.collectAsStateWithLifecycle(null)
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val nestedNavController = rememberNavController()
     val chartID =
@@ -110,7 +107,6 @@ internal fun ChartScreen(
                 BackHandler { navController.popBackStack() }
                 val arguments = requireNotNull(backStackEntry.arguments)
                 charts[arguments.getInt("chartID")](
-                    viewModel,
                     UISystem.entries[uiSystemID],
                     Modifier.padding(horizontal = 16.dp),
                 )

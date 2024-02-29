@@ -29,14 +29,14 @@ import com.patrykandpatrick.vico.sample.showcase.charts.Chart8
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart9
 
 internal val charts =
-    listOf<@Composable (ChartViewModel, UISystem, Modifier) -> Unit>(
-        { _, uiSystem, modifier -> Chart1(uiSystem, modifier) },
-        { _, uiSystem, modifier -> Chart2(uiSystem, modifier) },
-        { viewModel, uiSystem, modifier -> Chart3(viewModel.modelProducer1, uiSystem, modifier) },
-        { viewModel, uiSystem, modifier -> Chart4(viewModel.modelProducer3, uiSystem, modifier) },
-        { viewModel, uiSystem, modifier -> Chart5(viewModel.modelProducer4, uiSystem, modifier) },
-        { viewModel, uiSystem, modifier -> Chart6(viewModel.modelProducer4, uiSystem, modifier) },
-        { viewModel, uiSystem, modifier -> Chart7(viewModel.modelProducer5, uiSystem, modifier) },
-        { viewModel, uiSystem, modifier -> Chart8(viewModel.modelProducer3, uiSystem, modifier) },
-        { viewModel, uiSystem, modifier -> Chart9(viewModel.modelProducer6, uiSystem, modifier) },
+    listOf<@Composable (UISystem, Modifier) -> Unit>(
+        { uiSystem, modifier -> Chart1(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart2(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart3(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart4(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart5(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart6(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart7(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart8(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart9(uiSystem, modifier) },
     )
