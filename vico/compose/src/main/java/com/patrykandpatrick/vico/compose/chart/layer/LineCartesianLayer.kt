@@ -153,6 +153,21 @@ public fun rememberLineSpec(
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
  * @param pointConnector the [LineSpec.PointConnector] for the line.
  */
+@Deprecated(
+    message =
+        "Use the `rememberLineSpec` composable function instead. If you are using this function in a " +
+            "non-composable scope, use the `LineSpec` constructor.",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberLineSpec(shader = shader, thickness = thickness, backgroundShader = backgroundShader, " +
+                    "cap = cap, point = point, pointSize = pointSize, dataLabel = dataLabel, " +
+                    "dataLabelVerticalPosition = dataLabelVerticalPosition, " +
+                    "dataLabelValueFormatter = dataLabelValueFormatter, " +
+                    "dataLabelRotationDegrees = dataLabelRotationDegrees, " +
+                    "pointConnector = pointConnector)",
+        ),
+)
 public fun lineSpec(
     shader: DynamicShader,
     thickness: Dp = Defaults.LINE_THICKNESS.dp,
