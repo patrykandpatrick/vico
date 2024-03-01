@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -31,30 +32,57 @@ import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
+import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.legend.rememberLegendItem
 import com.patrykandpatrick.vico.compose.legend.rememberVerticalLegend
-import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
 import com.patrykandpatrick.vico.compose.style.currentChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.chart.copy
 import com.patrykandpatrick.vico.core.component.shape.Shapes
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.model.lineSeries
 import com.patrykandpatrick.vico.databinding.Chart7Binding
+import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
-import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 @Composable
 internal fun Chart7(
-    modelProducer: CartesianChartModelProducer,
     uiSystem: UISystem,
     modifier: Modifier,
 ) {
+    val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            while (isActive) {
+                modelProducer.tryRunTransaction {
+                    lineSeries {
+                        repeat(Defaults.MULTI_SERIES_COUNT) {
+                            series(
+                                List(Defaults.ENTRY_COUNT) {
+                                    Defaults.COLUMN_LAYER_MIN_Y +
+                                        Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
+                                },
+                            )
+                        }
+                    }
+                }
+                delay(Defaults.TRANSACTION_INTERVAL_MS)
+            }
+        }
+    }
+
     when (uiSystem) {
         UISystem.Compose -> ComposeChart7(modelProducer, modifier)
         UISystem.Views -> ViewChart7(modelProducer, modifier)
@@ -66,28 +94,31 @@ private fun ComposeChart7(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier,
 ) {
-    ProvideChartStyle(rememberChartStyle(chartColors)) {
-        val defaultLines = currentChartStyle.lineLayer.lines
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(
-                        remember(defaultLines) { defaultLines.map { it.copy(backgroundShader = null) } },
-                    ),
-                    startAxis =
-                        rememberStartAxis(
-                            label = rememberStartAxisLabel(),
-                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                        ),
-                    bottomAxis = rememberBottomAxis(),
-                    legend = rememberLegend(),
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberLineCartesianLayer(
+                    lines =
+                        chartColors.map { color ->
+                            rememberLineSpec(
+                                shader = DynamicShaders.color(color),
+                                backgroundShader = null,
+                            )
+                        },
                 ),
-            modelProducer = modelProducer,
-            modifier = modifier,
-            marker = rememberMarker(),
-            runInitialAnimation = false,
-        )
-    }
+                startAxis =
+                    rememberStartAxis(
+                        label = rememberStartAxisLabel(),
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                    ),
+                bottomAxis = rememberBottomAxis(),
+                legend = rememberLegend(),
+            ),
+        modelProducer = modelProducer,
+        modifier = modifier,
+        marker = rememberMarker(),
+        runInitialAnimation = false,
+    )
 }
 
 @Composable
@@ -114,17 +145,13 @@ private fun ViewChart7(
 private fun rememberStartAxisLabel() =
     rememberAxisLabelComponent(
         color = Color.Black,
-        background = rememberShapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
-        padding =
-            dimensionsOf(
-                horizontal = startAxisLabelVerticalPaddingValue,
-                vertical = startAxisLabelHorizontalPaddingValue,
+        background =
+            rememberShapeComponent(
+                shape = Shapes.roundedCornerShape(4.dp),
+                color = Color(0xfffab94d),
             ),
-        margins =
-            dimensionsOf(
-                horizontal = startAxisLabelMarginValue,
-                vertical = startAxisLabelMarginValue,
-            ),
+        padding = dimensionsOf(horizontal = 2.dp, vertical = 8.dp),
+        margins = dimensionsOf(all = 4.dp),
     )
 
 @Composable
@@ -137,35 +164,16 @@ private fun rememberLegend() =
                     label =
                         rememberTextComponent(
                             color = currentChartStyle.axis.axisLabelColor,
-                            textSize = legendItemLabelTextSize,
+                            textSize = 12.sp,
                             typeface = Typeface.MONOSPACE,
                         ),
                     labelText = stringResource(R.string.series_x, index + 1),
                 )
             },
-        iconSize = legendItemIconSize,
-        iconPadding = legendItemIconPaddingValue,
-        spacing = legendItemSpacing,
-        padding = legendPadding,
+        iconSize = 8.dp,
+        iconPadding = 8.dp,
+        spacing = 4.dp,
+        padding = dimensionsOf(top = 8.dp),
     )
 
-private const val COLOR_1_CODE = 0xffb983ff
-private const val COLOR_2_CODE = 0xff91b1fd
-private const val COLOR_3_CODE = 0xff8fdaff
-private const val COLOR_4_CODE = 0xfffab94d
-
-private val color1 = Color(COLOR_1_CODE)
-private val color2 = Color(COLOR_2_CODE)
-private val color3 = Color(COLOR_3_CODE)
-private val color4 = Color(COLOR_4_CODE)
-private val chartColors = listOf(color1, color2, color3)
-private val startAxisLabelVerticalPaddingValue = 2.dp
-private val startAxisLabelHorizontalPaddingValue = 8.dp
-private val startAxisLabelMarginValue = 4.dp
-private val startAxisLabelBackgroundCornerRadius = 4.dp
-private val legendItemLabelTextSize = 12.sp
-private val legendItemIconSize = 8.dp
-private val legendItemIconPaddingValue = 10.dp
-private val legendItemSpacing = 4.dp
-private val legendTopPaddingValue = 8.dp
-private val legendPadding = dimensionsOf(top = legendTopPaddingValue)
+private val chartColors = listOf(Color(0xffb983ff), Color(0xff91b1fd), Color(0xff8fdaff))

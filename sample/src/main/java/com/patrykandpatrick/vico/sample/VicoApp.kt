@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.sample
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -25,12 +24,10 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.patrykandpatrick.vico.sample.showcase.ChartListScreen
 import com.patrykandpatrick.vico.sample.showcase.ChartScreen
-import com.patrykandpatrick.vico.sample.showcase.ChartViewModel
 
 @Composable
 internal fun VicoApp() {
     val navController = rememberNavController()
-    val chartViewModel = viewModel<ChartViewModel>()
     VicoTheme {
         NavHost(navController = navController, startDestination = "chartList") {
             composable("chartList") { ChartListScreen(navController) }
@@ -43,7 +40,6 @@ internal fun VicoApp() {
             ) { backStackEntry ->
                 val arguments = requireNotNull(backStackEntry.arguments)
                 ChartScreen(
-                    chartViewModel,
                     navController,
                     arguments.getInt("initialChartID"),
                     arguments.getInt("uiSystemID"),
