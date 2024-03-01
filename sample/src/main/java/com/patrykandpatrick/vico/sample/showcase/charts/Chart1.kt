@@ -30,7 +30,6 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
@@ -75,8 +74,7 @@ private fun ComposeChart1(
                     lines = remember { listOf(lineSpec(DynamicShaders.color(Color(0xffa485e0)))) },
                     axisValueOverrider = axisValueOverrider,
                 ),
-                startAxis =
-                    rememberStartAxis(itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 6 }) }),
+                startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(guideline = null),
                 persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker),
             ),

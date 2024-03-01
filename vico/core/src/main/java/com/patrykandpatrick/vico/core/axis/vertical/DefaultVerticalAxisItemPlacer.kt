@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,13 +19,19 @@ package com.patrykandpatrick.vico.core.axis.vertical
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
-import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.extension.ceil
+import com.patrykandpatrick.vico.core.extension.floor
+import com.patrykandpatrick.vico.core.extension.getDivisors
 import com.patrykandpatrick.vico.core.extension.half
+import com.patrykandpatrick.vico.core.model.ExtraStore
+import kotlin.math.abs
+import kotlin.math.log10
 import kotlin.math.max
+import kotlin.math.pow
 
 internal class DefaultVerticalAxisItemPlacer(
-    private val maxItemCount: (ChartValues) -> Int,
+    private val mode: Mode,
     private val shiftTopLines: Boolean,
 ) : AxisItemPlacer.Vertical {
     override fun getShiftTopLines(chartDrawContext: ChartDrawContext): Boolean = shiftTopLines
@@ -42,16 +48,7 @@ internal class DefaultVerticalAxisItemPlacer(
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,
-    ): List<Float> {
-        val maxItemCount = context.getMaxItemCount()
-        if (maxItemCount == 0) return emptyList()
-        val yRange = context.chartValues.getYRange(position)
-        return if (yRange.minY * yRange.maxY >= 0) {
-            getSimpleLabelValues(maxItemCount, axisHeight, maxLabelHeight, yRange)
-        } else {
-            getMixedLabelValues(maxItemCount, axisHeight, maxLabelHeight, yRange)
-        }
-    }
+    ): List<Float> = mode.getLabelValues(context, axisHeight, maxLabelHeight, position)
 
     override fun getHeightMeasurementLabelValues(
         context: MeasureContext,
@@ -67,7 +64,7 @@ internal class DefaultVerticalAxisItemPlacer(
         maxLabelHeight: Float,
         maxLineThickness: Float,
     ) = when {
-        context.getMaxItemCount() == 0 -> 0f
+        !mode.insetsRequired(context) -> 0f
 
         verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top ->
             maxLabelHeight + (if (shiftTopLines) maxLineThickness else -maxLineThickness).half
@@ -85,7 +82,7 @@ internal class DefaultVerticalAxisItemPlacer(
         maxLineThickness: Float,
     ): Float =
         when {
-            context.getMaxItemCount() == 0 -> 0f
+            !mode.insetsRequired(context) -> 0f
             verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Top -> maxLineThickness
 
             verticalLabelPosition == VerticalAxis.VerticalLabelPosition.Center ->
@@ -94,58 +91,182 @@ internal class DefaultVerticalAxisItemPlacer(
             else -> maxLabelHeight + maxLineThickness.half
         }
 
-    private fun getSimpleLabelValues(
-        maxItemCount: Int,
-        axisHeight: Float,
-        maxLabelHeight: Float,
-        yRange: ChartValues.YRange,
-    ): List<Float> {
-        val values = mutableListOf(yRange.minY)
-        if (maxItemCount == 1) return values
-        val extraItemCount = (axisHeight / maxLabelHeight).toInt().coerceAtMost(maxItemCount - 1)
-        val step = yRange.length / extraItemCount
-        repeat(extraItemCount) { values += yRange.minY + (it + 1) * step }
-        return values
-    }
+    sealed interface Mode {
+        fun getSimpleLabelValues(
+            context: MeasureContext,
+            axisHeight: Float,
+            maxLabelHeight: Float,
+            position: AxisPosition.Vertical,
+        ): List<Float>
 
-    private fun getMixedLabelValues(
-        maxItemCount: Int,
-        axisHeight: Float,
-        maxLabelHeight: Float,
-        yRange: ChartValues.YRange,
-    ): List<Float> {
-        val values = mutableListOf(0f)
-        if (maxItemCount == 1) return values
-        val topHeight = yRange.maxY / yRange.length * axisHeight
-        val bottomHeight = -yRange.minY / yRange.length * axisHeight
-        val maxTopItemCount = (maxItemCount - 1) * topHeight / axisHeight
-        val maxBottomItemCount = (maxItemCount - 1) * bottomHeight / axisHeight
-        val topItemCountByHeight = topHeight / maxLabelHeight
-        val bottomItemCountByHeight = bottomHeight / maxLabelHeight
-        var topItemCount = topItemCountByHeight.coerceAtMost(maxTopItemCount).toInt()
-        var bottomItemCount = bottomItemCountByHeight.coerceAtMost(maxBottomItemCount).toInt()
-        val currentItemCount = topItemCount + bottomItemCount + 1 // +1 for zero label
-        if (currentItemCount < maxItemCount) {
-            val isTopNotDenser = topItemCount / topHeight <= bottomItemCount / bottomHeight
-            val isTopFillable = topItemCountByHeight - topItemCount >= 1
-            val isBottomFillable = bottomItemCountByHeight - bottomItemCount >= 1
-            if (isTopFillable && (isTopNotDenser || !isBottomFillable)) {
-                topItemCount++
-            } else if (isBottomFillable) {
-                bottomItemCount++
+        fun getMixedLabelValues(
+            context: MeasureContext,
+            axisHeight: Float,
+            maxLabelHeight: Float,
+            position: AxisPosition.Vertical,
+        ): List<Float>
+
+        fun insetsRequired(context: MeasureContext): Boolean = true
+
+        fun getLabelValues(
+            context: MeasureContext,
+            axisHeight: Float,
+            maxLabelHeight: Float,
+            position: AxisPosition.Vertical,
+        ) = if (context.chartValues.getYRange(position).run { minY * maxY } >= 0) {
+            getSimpleLabelValues(context, axisHeight, maxLabelHeight, position)
+        } else {
+            getMixedLabelValues(context, axisHeight, maxLabelHeight, position)
+        }
+
+        class Step(private val step: (ExtraStore) -> Float?) : Mode {
+            private fun MeasureContext.getStepOrThrow() =
+                step(chartValues.model.extraStore)?.also { require(it > 0) { "`step` must return a positive value." } }
+
+            private fun getPartialLabelValues(
+                context: MeasureContext,
+                minY: Float,
+                maxY: Float,
+                freeHeight: Float,
+                maxLabelHeight: Float,
+                multiplier: Int = 1,
+            ): List<Float> {
+                val values = mutableListOf<Float>()
+                val requestedStep = context.getStepOrThrow() ?: 10f.pow(log10(maxY).floor - 1)
+                val minStep = (maxY - minY) / (freeHeight / maxLabelHeight).floor
+                var step = requestedStep * (minStep / requestedStep).ceil
+                if ((maxY / requestedStep).let { it == it.floor }) {
+                    val divisors = (maxY / requestedStep).toInt().getDivisors()
+                    if (divisors.size > 2) step = divisors.first { it >= step }.toFloat()
+                }
+                repeat(((maxY - minY) / step).toInt()) { values += multiplier * (minY + (it + 1) * step) }
+                return values
             }
-        }
-        if (topItemCount != 0) {
-            val step = yRange.maxY / topItemCount
-            repeat(topItemCount) { values += (it + 1) * step }
-        }
-        if (bottomItemCount != 0) {
-            val step = yRange.minY / bottomItemCount
-            repeat(bottomItemCount) { values += (it + 1) * step }
-        }
-        return values
-    }
 
-    private fun MeasureContext.getMaxItemCount() =
-        maxItemCount(chartValues).also { require(it >= 0) { "`maxItemCount` must return a nonnegative value." } }
+            override fun getSimpleLabelValues(
+                context: MeasureContext,
+                axisHeight: Float,
+                maxLabelHeight: Float,
+                position: AxisPosition.Vertical,
+            ): List<Float> =
+                context.chartValues.getYRange(position).run {
+                    if (maxY > 0) {
+                        getPartialLabelValues(context, minY, maxY, axisHeight, maxLabelHeight) + minY
+                    } else {
+                        getPartialLabelValues(
+                            context = context,
+                            minY = abs(maxY),
+                            maxY = abs(minY),
+                            freeHeight = axisHeight,
+                            maxLabelHeight = maxLabelHeight,
+                            multiplier = -1,
+                        ) + maxY
+                    }
+                }
+
+            override fun getMixedLabelValues(
+                context: MeasureContext,
+                axisHeight: Float,
+                maxLabelHeight: Float,
+                position: AxisPosition.Vertical,
+            ): List<Float> =
+                context.chartValues.getYRange(position).run {
+                    val topLabelValues =
+                        getPartialLabelValues(
+                            context = context,
+                            minY = 0f,
+                            maxY = maxY,
+                            freeHeight = maxY / length * axisHeight,
+                            maxLabelHeight = maxLabelHeight,
+                        )
+                    val bottomLabelValues =
+                        getPartialLabelValues(
+                            context = context,
+                            minY = 0f,
+                            maxY = abs(minY),
+                            freeHeight = -minY / length * axisHeight,
+                            maxLabelHeight = maxLabelHeight,
+                            multiplier = -1,
+                        )
+                    topLabelValues + bottomLabelValues + 0f
+                }
+        }
+
+        class Count(private val count: (ExtraStore) -> Int?) : Mode {
+            private fun MeasureContext.getCountOrThrow() =
+                count(chartValues.model.extraStore)?.also {
+                    require(it >= 0) { "`count` must return a nonnegative value." }
+                }
+
+            override fun getSimpleLabelValues(
+                context: MeasureContext,
+                axisHeight: Float,
+                maxLabelHeight: Float,
+                position: AxisPosition.Vertical,
+            ): List<Float> {
+                val values = mutableListOf<Float>()
+                val requestedItemCount = context.getCountOrThrow()
+                if (requestedItemCount == 0) return values
+                val yRange = context.chartValues.getYRange(position)
+                values += yRange.minY
+                if (requestedItemCount == 1) return values
+                var extraItemCount = (axisHeight / maxLabelHeight).toInt()
+                if (requestedItemCount != null) extraItemCount = extraItemCount.coerceAtMost(requestedItemCount - 1)
+                val step = yRange.length / extraItemCount
+                repeat(extraItemCount) { values += yRange.minY + (it + 1) * step }
+                return values
+            }
+
+            override fun getMixedLabelValues(
+                context: MeasureContext,
+                axisHeight: Float,
+                maxLabelHeight: Float,
+                position: AxisPosition.Vertical,
+            ): List<Float> {
+                val values = mutableListOf<Float>()
+                val requestedItemCount = context.getCountOrThrow()
+                if (requestedItemCount == 0) return values
+                values += 0f
+                if (requestedItemCount == 1) return values
+                val yRange = context.chartValues.getYRange(position)
+                val topHeight = yRange.maxY / yRange.length * axisHeight
+                val bottomHeight = -yRange.minY / yRange.length * axisHeight
+                val maxTopItemCount =
+                    if (requestedItemCount != null) (requestedItemCount - 1) * topHeight / axisHeight else null
+                val maxBottomItemCount =
+                    if (requestedItemCount != null) (requestedItemCount - 1) * bottomHeight / axisHeight else null
+                val topItemCountByHeight = topHeight / maxLabelHeight
+                val bottomItemCountByHeight = bottomHeight / maxLabelHeight
+                var topItemCount =
+                    topItemCountByHeight
+                        .let { if (maxTopItemCount != null) it.coerceAtMost(maxTopItemCount) else it }
+                        .toInt()
+                var bottomItemCount =
+                    bottomItemCountByHeight
+                        .let { if (maxBottomItemCount != null) it.coerceAtMost(maxBottomItemCount) else it }
+                        .toInt()
+                if (requestedItemCount == null || topItemCount + bottomItemCount + 1 < requestedItemCount) {
+                    val isTopNotDenser = topItemCount / topHeight <= bottomItemCount / bottomHeight
+                    val isTopFillable = topItemCountByHeight - topItemCount >= 1
+                    val isBottomFillable = bottomItemCountByHeight - bottomItemCount >= 1
+                    if (isTopFillable && (isTopNotDenser || !isBottomFillable)) {
+                        topItemCount++
+                    } else if (isBottomFillable) {
+                        bottomItemCount++
+                    }
+                }
+                if (topItemCount != 0) {
+                    val step = yRange.maxY / topItemCount
+                    repeat(topItemCount) { values += (it + 1) * step }
+                }
+                if (bottomItemCount != 0) {
+                    val step = yRange.minY / bottomItemCount
+                    repeat(bottomItemCount) { values += (it + 1) * step }
+                }
+                return values
+            }
+
+            override fun insetsRequired(context: MeasureContext): Boolean = context.getCountOrThrow() != 0
+        }
+    }
 }

@@ -72,7 +72,7 @@ public fun StackedColumnChartWithNegativeValues() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 8 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 8 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
@@ -96,7 +96,7 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 8 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 8 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),
@@ -119,7 +119,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),
@@ -142,7 +142,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 3 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 3 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),

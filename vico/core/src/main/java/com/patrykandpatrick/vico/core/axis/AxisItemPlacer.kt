@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.axis
 
-import com.patrykandpatrick.vico.core.Defaults.MAX_LABEL_COUNT
 import com.patrykandpatrick.vico.core.axis.horizontal.DefaultHorizontalAxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.DefaultVerticalAxisItemPlacer
@@ -27,6 +26,7 @@ import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.MeasureContext
+import com.patrykandpatrick.vico.core.model.ExtraStore
 
 /**
  * Determines for what values a [HorizontalAxis] or a [VerticalAxis] is to display labels, ticks, and guidelines.
@@ -124,6 +124,7 @@ public interface AxisItemPlacer {
             maxLabelWidth: Float,
         ): Float
 
+        /** Houses an [AxisItemPlacer.Horizontal] factory function. */
         public companion object {
             /**
              * Creates a base [AxisItemPlacer.Horizontal] implementation. [spacing] defines how often items should be
@@ -215,19 +216,53 @@ public interface AxisItemPlacer {
             maxLineThickness: Float,
         ): Float
 
+        /** Houses [AxisItemPlacer.Vertical] factory functions. */
         public companion object {
+            private const val DEFAULT_DEPRECATION_MESSAGE =
+                "Use `AxisItemPlacer.Vertical.count` for the same behavior, or switch to the new " +
+                    "`AxisItemPlacer.Vertical.step` if it better matches your use case. More information: " +
+                    "https://patrykandpatrick.com/vico/releases/2.0.0-alpha.9."
+
             /**
-             * Creates a base [AxisItemPlacer.Vertical] implementation. [maxItemCount] is the maximum number of labels
-             * (and their corresponding line pairs) to be displayed. The actual item count is the greatest number
-             * smaller than or equal to [maxItemCount] for which no overlaps occur. [shiftTopLines] defines whether
-             * to shift the lines whose _y_ values are equal to [ChartValues.YRange.maxY], if such lines are present,
-             * such that they’re immediately above the [CartesianChart]’s bounds. If the chart has a top axis, the
-             * shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
+             * Creates a step-based [AxisItemPlacer.Vertical] implementation. [step] returns the difference between the
+             * _y_ values of neighboring labels (and their corresponding line pairs). A multiple of this may be used for
+             * overlap prevention. If `null` is returned, the step will be determined automatically. [shiftTopLines]
+             * defines whether to shift the lines whose _y_ values are equal to [ChartValues.YRange.maxY], if such lines
+             * are present, such that they’re immediately above the [CartesianChart]’s bounds. If the chart has a top
+             * axis, the shifted tick will then be aligned with this axis, and the shifted guideline will be hidden.
              */
-            public fun default(
-                maxItemCount: (ChartValues) -> Int = { MAX_LABEL_COUNT },
+            public fun step(
+                step: (ExtraStore) -> Float? = { null },
                 shiftTopLines: Boolean = true,
-            ): Vertical = DefaultVerticalAxisItemPlacer(maxItemCount, shiftTopLines)
+            ): Vertical = DefaultVerticalAxisItemPlacer(DefaultVerticalAxisItemPlacer.Mode.Step(step), shiftTopLines)
+
+            /**
+             * Creates a count-based [AxisItemPlacer.Vertical] implementation. [count] returns the number of labels (and
+             * their corresponding line pairs) to be displayed. This may be reduced for overlap prevention. If `null` is
+             * returned, the [VerticalAxis] will display as many items as possible. [shiftTopLines] defines whether to
+             * shift the lines whose _y_ values are equal to [ChartValues.YRange.maxY], if such lines are present, such
+             * that they’re immediately above the [CartesianChart]’s bounds. If the chart has a top axis, the shifted
+             * tick will then be aligned with this axis, and the shifted guideline will be hidden.
+             */
+            public fun count(
+                count: (ExtraStore) -> Int? = { null },
+                shiftTopLines: Boolean = true,
+            ): Vertical = DefaultVerticalAxisItemPlacer(DefaultVerticalAxisItemPlacer.Mode.Count(count), shiftTopLines)
+
+            /**
+             * Creates a count-based [AxisItemPlacer.Vertical] implementation. [maxItemCount] returns the number of
+             * labels (and their corresponding line pairs) to be displayed. This may be reduced for overlap prevention.
+             * [shiftTopLines] defines whether to shift the lines whose _y_ values are equal to
+             * [ChartValues.YRange.maxY], if such lines are present, such that they’re immediately above the
+             * [CartesianChart]’s bounds. If the chart has a top axis, the shifted tick will then be aligned with this
+             * axis, and the shifted guideline will be hidden.
+             */
+            @Deprecated(message = DEFAULT_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
+            @Suppress("UNUSED_PARAMETER")
+            public fun default(
+                maxItemCount: (ChartValues) -> Int = { -1 },
+                shiftTopLines: Boolean = true,
+            ): Vertical = error("`AxisItemPlacer.Vertical.default` has been removed. $DEFAULT_DEPRECATION_MESSAGE")
         }
     }
 }

@@ -24,8 +24,4 @@
     <style name="Chart1LineLayerStyle">
         <item name="line1Spec">@style/Chart1Line1Style</item>
     </style>
-
-    <style name="Chart1StartAxisStyle">
-        <item name="maxVerticalAxisItemCount">6</item>
-    </style>
 </resources>

@@ -20,7 +20,6 @@ import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 import com.patrykandpatrick.vico.core.chart.insets.ChartInsetter
-import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.chart.values.MutableChartValues
 import com.patrykandpatrick.vico.core.context.MeasureContext
@@ -37,11 +36,6 @@ public interface CartesianLayer<T : CartesianLayerModel> : BoundsAware, ChartIns
      * Links _x_ values to [Marker.EntryModel]s.
      */
     public val entryLocationMap: Map<Float, MutableList<Marker.EntryModel>>
-
-    /**
-     * Overrides the _x_ and _y_ ranges.
-     */
-    public var axisValueOverrider: AxisValueOverrider<T>?
 
     /**
      * Draws the [CartesianLayer].

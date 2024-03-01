@@ -22,6 +22,7 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 import kotlin.random.Random
 
 internal const val PI_RAD: Float = 180f
@@ -53,6 +54,19 @@ internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>)
     this == range.start || this == range.endInclusive
 
 internal fun ClosedFloatingPointRange<Float>.random(): Float = start + (endInclusive - start) * Random.nextFloat()
+
+internal fun Int.getDivisors() =
+    buildList {
+        add(1)
+        for (i in 2..sqrt(toFloat()).toInt()) {
+            if (this@getDivisors % i == 0) {
+                add(i)
+                val derived = this@getDivisors / i
+                if (derived != i) add(derived)
+            }
+        }
+        sort()
+    }
 
 internal inline val Int.half: Int
     get() = this / 2

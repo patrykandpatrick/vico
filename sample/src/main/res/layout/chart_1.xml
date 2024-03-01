@@ -27,6 +27,5 @@
         app:layers="line"
         app:lineLayerStyle="@style/Chart1LineLayerStyle"
         app:showBottomAxis="true"
-        app:showStartAxis="true"
-        app:startAxisStyle="@style/Chart1StartAxisStyle" />
+        app:showStartAxis="true" />
 </FrameLayout>

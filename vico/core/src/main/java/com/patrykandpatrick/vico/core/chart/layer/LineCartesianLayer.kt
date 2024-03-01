@@ -541,13 +541,11 @@ public open class LineCartesianLayer(
         model: LineCartesianLayerModel,
     ) {
         chartValues.tryUpdate(
-            minX = axisValueOverrider?.getMinX(model) ?: model.minX,
-            maxX = axisValueOverrider?.getMaxX(model) ?: model.maxX,
-            minY = axisValueOverrider?.getMinY(model) ?: model.minY.coerceAtMost(0f),
-            maxY =
-                axisValueOverrider?.getMaxY(model)
-                    ?: if (model.minY == 0f && model.maxY == 0f) 1f else model.maxY.coerceAtLeast(0f),
-            axisPosition = verticalAxisPosition,
+            axisValueOverrider.getMinX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMaxX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMinY(model.minY, model.maxY, model.extraStore),
+            axisValueOverrider.getMaxY(model.minY, model.maxY, model.extraStore),
+            verticalAxisPosition,
         )
     }
 

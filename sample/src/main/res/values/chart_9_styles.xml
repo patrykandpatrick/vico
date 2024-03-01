@@ -34,7 +34,7 @@
     </style>
 
     <style name="Chart9StartAxisStyle">
-        <item name="maxVerticalAxisItemCount">4</item>
+        <item name="verticalAxisItemCount">4</item>
         <item name="axisLabelStyle">@style/Chart9StartAxisLabelStyle</item>
         <item name="showTick">false</item>
         <item name="showAxisLine">false</item>

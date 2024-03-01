@@ -65,7 +65,7 @@ import com.patrykandpatrick.vico.core.model.drawing.LineCartesianLayerDrawingMod
 public fun rememberLineCartesianLayer(
     lines: List<LineSpec> = currentChartStyle.lineLayer.lines,
     spacing: Dp = currentChartStyle.lineLayer.spacing,
-    axisValueOverrider: AxisValueOverrider<LineCartesianLayerModel>? = null,
+    axisValueOverrider: AxisValueOverrider<LineCartesianLayerModel> = remember { AxisValueOverrider.auto() },
     verticalAxisPosition: AxisPosition.Vertical? = null,
     drawingModelInterpolator:
         DrawingModelInterpolator<LineCartesianLayerDrawingModel.PointInfo, LineCartesianLayerDrawingModel> =

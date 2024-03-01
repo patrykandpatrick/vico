@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,68 +17,115 @@
 package com.patrykandpatrick.vico.core.chart.values
 
 import com.patrykandpatrick.vico.core.chart.layer.CartesianLayer
+import com.patrykandpatrick.vico.core.extension.ceil
+import com.patrykandpatrick.vico.core.extension.floor
 import com.patrykandpatrick.vico.core.extension.round
 import com.patrykandpatrick.vico.core.model.CartesianLayerModel
+import com.patrykandpatrick.vico.core.model.ExtraStore
 import kotlin.math.abs
+import kotlin.math.log10
+import kotlin.math.max
+import kotlin.math.pow
+import kotlin.math.sign
 
-/**
- * Overrides a [CartesianLayer]’s _x_ and _y_ ranges.
- */
+/** Overrides a [CartesianLayer]’s _x_ and _y_ ranges. */
 public interface AxisValueOverrider<T> {
-    /**
-     * The minimum value shown on the x-axis. If `null` is returned, the chart will fall back to the default value.
-     *
-     * @param model holds data about the chart’s entries, which can be used to calculate the new minimum x-axis value.
-     */
-    public fun getMinX(model: T): Float? = null
+    /** Returns the minimum _x_ value. */
+    public fun getMinX(
+        minX: Float,
+        maxX: Float,
+        extraStore: ExtraStore,
+    ): Float = minX
 
-    /**
-     * The maximum value shown on the x-axis. If `null` is returned, the chart will fall back to the default value.
-     *
-     * @param model holds data about the chart’s entries, which can be used to calculate the new maximum x-axis value.
-     */
-    public fun getMaxX(model: T): Float? = null
+    /** Returns the maximum _x_ value. */
+    public fun getMaxX(
+        minX: Float,
+        maxX: Float,
+        extraStore: ExtraStore,
+    ): Float = maxX
 
-    /**
-     * The minimum value shown on the y-axis. If `null` is returned, the chart will fall back to the default value.
-     *
-     * @param model holds data about the chart’s entries, which can be used to calculate the new minimum y-axis value.
-     */
-    public fun getMinY(model: T): Float? = null
+    /** Returns the minimum _y_ value. */
+    public fun getMinY(
+        minY: Float,
+        maxY: Float,
+        extraStore: ExtraStore,
+    ): Float = minY.coerceAtMost(0f)
 
-    /**
-     * The maximum value shown on the y-axis. If `null` is returned, the chart will fall back to the default value.
-     *
-     * @param model holds data about the chart’s entries, which can be used to calculate the new maximum y-axis value.
-     */
-    public fun getMaxY(model: T): Float? = null
+    /** Returns the maximum _y_ value. */
+    public fun getMaxY(
+        minY: Float,
+        maxY: Float,
+        extraStore: ExtraStore,
+    ): Float = if (minY == 0f && maxY == 0f) 1f else maxY.coerceAtLeast(0f)
 
     public companion object {
-        /**
-         * Creates an [AxisValueOverrider] with fixed values for [minX], [maxX], [minY], and [maxY]. If one of the
-         * values is `null`, the chart will fall back to the default value.
-         */
+        /** Uses dynamic rounding. */
+        public fun <T : CartesianLayerModel> auto(): AxisValueOverrider<T> =
+            object : AxisValueOverrider<T> {
+                override fun getMinY(
+                    minY: Float,
+                    maxY: Float,
+                    extraStore: ExtraStore,
+                ) = if (minY == 0f && maxY == 0f || minY >= 0f) 0f else minY.round(maxY)
+
+                override fun getMaxY(
+                    minY: Float,
+                    maxY: Float,
+                    extraStore: ExtraStore,
+                ) = when {
+                    minY == 0f && maxY == 0f -> 1f
+                    maxY <= 0f -> 0f
+                    else -> maxY.round(minY)
+                }
+
+                private fun Float.round(other: Float): Float {
+                    val absoluteValue = abs(this)
+                    val base = 10f.pow(log10(max(absoluteValue, abs(other))).floor - 1)
+                    return sign * (absoluteValue / base).ceil * base
+                }
+            }
+
+        /** Overrides the defaults with the provided values. */
         public fun <T : CartesianLayerModel> fixed(
             minX: Float? = null,
             maxX: Float? = null,
             minY: Float? = null,
             maxY: Float? = null,
-        ): AxisValueOverrider<T> =
-            object : AxisValueOverrider<T> {
-                override fun getMinX(model: T): Float? = minX
+        ): AxisValueOverrider<T> {
+            val newMinX = minX
+            val newMaxX = maxX
+            val newMinY = minY
+            val newMaxY = maxY
+            return object : AxisValueOverrider<T> {
+                override fun getMinX(
+                    minX: Float,
+                    maxX: Float,
+                    extraStore: ExtraStore,
+                ) = newMinX ?: super.getMinX(minX, maxX, extraStore)
 
-                override fun getMaxX(model: T): Float? = maxX
+                override fun getMaxX(
+                    minX: Float,
+                    maxX: Float,
+                    extraStore: ExtraStore,
+                ) = newMaxX ?: super.getMaxX(minX, maxX, extraStore)
 
-                override fun getMinY(model: T): Float? = minY
+                override fun getMinY(
+                    minY: Float,
+                    maxY: Float,
+                    extraStore: ExtraStore,
+                ) = newMinY ?: super.getMinY(minY, maxY, extraStore)
 
-                override fun getMaxY(model: T): Float? = maxY
+                override fun getMaxY(
+                    minY: Float,
+                    maxY: Float,
+                    extraStore: ExtraStore,
+                ) = newMaxY ?: super.getMaxY(getMinY(minY, maxY, extraStore), maxY, extraStore)
             }
+        }
 
         /**
-         * Creates an [AxisValueOverrider] with adaptive minimum and maximum y-axis values. The overridden maximum
-         * y-axis value is equal to [CartesianLayerModel.maxY] × [yFraction]. The overridden minimum y-axis value is
-         * smaller than [CartesianLayerModel.minY] by [CartesianLayerModel.maxY] × [yFraction] −
-         * [CartesianLayerModel.maxY].
+         * Sets the maximum _y_ value to [yFraction] times the default. Sets the minimum _y_ value to the default minus
+         * the difference between the new maximum _y_ value and the default maximum _y_ value.
          */
         public fun <T : CartesianLayerModel> adaptiveYValues(
             yFraction: Float,
@@ -89,12 +136,20 @@ public interface AxisValueOverrider<T> {
                     require(yFraction > 0f)
                 }
 
-                override fun getMinY(model: T): Float {
-                    val difference = abs(getMaxY(model) - model.maxY)
-                    return (model.minY - difference).maybeRound().coerceAtLeast(0f)
+                override fun getMinY(
+                    minY: Float,
+                    maxY: Float,
+                    extraStore: ExtraStore,
+                ): Float {
+                    val difference = abs(getMaxY(minY, maxY, extraStore) - maxY)
+                    return (minY - difference).maybeRound().coerceAtLeast(0f)
                 }
 
-                override fun getMaxY(model: T): Float = (model.maxY * yFraction).maybeRound()
+                override fun getMaxY(
+                    minY: Float,
+                    maxY: Float,
+                    extraStore: ExtraStore,
+                ): Float = if (minY == 0f && maxY == 0f) 1f else (yFraction * maxY).maybeRound()
 
                 private fun Float.maybeRound() = if (round) this.round else this
             }

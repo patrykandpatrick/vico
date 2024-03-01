@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
@@ -110,7 +111,8 @@ private fun ComposeChart8(
                     verticalAxisPosition = AxisPosition.Vertical.End,
                 ),
                 startAxis = rememberStartAxis(guideline = null),
-                endAxis = rememberEndAxis(),
+                endAxis = rememberEndAxis(guideline = null),
+                bottomAxis = rememberBottomAxis(),
             ),
         modelProducer = modelProducer,
         modifier = modifier,

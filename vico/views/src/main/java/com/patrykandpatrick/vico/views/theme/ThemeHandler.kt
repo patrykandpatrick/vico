@@ -25,7 +25,6 @@ import android.view.animation.AccelerateInterpolator
 import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
-import com.patrykandpatrick.vico.core.Defaults.MAX_LABEL_COUNT
 import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -263,11 +262,20 @@ internal class ThemeHandler(
     }
 
     private fun TypedArray.getVerticalAxisItemPlacer(): AxisItemPlacer.Vertical {
-        val maxItemCount = getInteger(R.styleable.Axis_maxVerticalAxisItemCount, MAX_LABEL_COUNT)
-        return AxisItemPlacer.Vertical.default(
-            maxItemCount = { maxItemCount },
-            shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true),
-        )
+        val shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true)
+        return if (
+            hasValue(R.styleable.Axis_verticalAxisItemCount) ||
+            hasValue(R.styleable.Axis_maxVerticalAxisItemCount)
+        ) {
+            val itemCount =
+                getInteger(
+                    R.styleable.Axis_verticalAxisItemCount,
+                    getInteger(R.styleable.Axis_maxVerticalAxisItemCount, -1),
+                )
+            AxisItemPlacer.Vertical.count({ itemCount }, shiftTopLines)
+        } else {
+            AxisItemPlacer.Vertical.step(shiftTopLines = shiftTopLines)
+        }
     }
 
     private fun TypedArray.getStartAxis(): Axis<AxisPosition.Vertical.Start>? =

@@ -345,14 +345,14 @@ public open class ColumnCartesianLayer(
         model: ColumnCartesianLayerModel,
     ) {
         val mergeMode = mergeMode(model)
+        val minY = mergeMode.getMinY(model)
+        val maxY = mergeMode.getMaxY(model)
         chartValues.tryUpdate(
-            axisPosition = verticalAxisPosition,
-            minX = axisValueOverrider?.getMinX(model) ?: model.minX,
-            maxX = axisValueOverrider?.getMaxX(model) ?: model.maxX,
-            minY = axisValueOverrider?.getMinY(model) ?: mergeMode.getMinY(model).coerceAtMost(0f),
-            maxY =
-                axisValueOverrider?.getMaxY(model)
-                    ?: if (model.minY == 0f && model.maxY == 0f) 1f else mergeMode.getMaxY(model).coerceAtLeast(0f),
+            axisValueOverrider.getMinX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMaxX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMinY(minY, maxY, model.extraStore),
+            axisValueOverrider.getMaxY(minY, maxY, model.extraStore),
+            verticalAxisPosition,
         )
     }
 

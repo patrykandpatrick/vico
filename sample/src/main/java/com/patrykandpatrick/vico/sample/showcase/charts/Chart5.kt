@@ -150,4 +150,4 @@ private const val AXIS_LABEL_ROTATION_DEGREES = 45f
 private val color1 = Color(0xff6438a7)
 private val color2 = Color(0xff3490de)
 private val color3 = Color(0xff73e8dc)
-private val startAxisItemPlacer = AxisItemPlacer.Vertical.default({ 3 })
+private val startAxisItemPlacer = AxisItemPlacer.Vertical.count({ 3 })

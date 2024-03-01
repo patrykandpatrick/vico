@@ -178,7 +178,7 @@ private fun ComposeChart9(
                                         )
                                     },
                             ),
-                        itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                        itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
                     ),
                 bottomAxis =
                     rememberBottomAxis(

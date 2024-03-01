@@ -61,7 +61,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     /**
      * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
      */
-    public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default()
+    public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
 
     /**
      * Defines the horizontal position of each axis label relative to the axis line.
@@ -344,7 +344,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         /**
          * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
          */
-        public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default()
+        public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
 
         /**
          * Defines the horizontal position of each axis label relative to the axis line.
