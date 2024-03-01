@@ -150,7 +150,7 @@ private fun rememberStartAxisLabel() =
                 shape = Shapes.roundedCornerShape(4.dp),
                 color = Color(0xfffab94d),
             ),
-        padding = dimensionsOf(horizontal = 2.dp, vertical = 8.dp),
+        padding = dimensionsOf(horizontal = 8.dp, vertical = 2.dp),
         margins = dimensionsOf(all = 4.dp),
     )
 

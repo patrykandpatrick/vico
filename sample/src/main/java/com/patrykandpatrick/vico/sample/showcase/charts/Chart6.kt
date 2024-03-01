@@ -37,7 +37,6 @@ import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
 import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
-import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.columnSeries
@@ -93,15 +92,7 @@ private fun ComposeChart6(
     CartesianChartHost(
         chart =
             rememberCartesianChart(
-                rememberColumnCartesianLayer(
-                    columns =
-                        listOf(
-                            rememberLineComponent(color = color1, thickness = 8.dp, shape = shape),
-                            rememberLineComponent(color = color2, thickness = 12.dp, shape = shape),
-                            rememberLineComponent(color = color3, thickness = 10.dp, shape = shape),
-                        ),
-                    mergeMode = { ColumnCartesianLayer.MergeMode.Grouped },
-                ),
+                rememberColumnCartesianLayer(columnColors.map { rememberLineComponent(color = it, shape = shape) }),
                 startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
                 decorations = remember(thresholdLine) { listOf(thresholdLine) },
@@ -138,21 +129,19 @@ private fun rememberThresholdLine(): ThresholdLine {
     val label =
         rememberTextComponent(
             color = Color.Black,
-            background = rememberShapeComponent(Shapes.rectShape, color4),
+            background = rememberShapeComponent(Shapes.rectShape, thresholdLineColor),
             padding = dimensionsOf(8.dp, 2.dp),
             margins = dimensionsOf(4.dp),
             typeface = Typeface.MONOSPACE,
         )
-    val line = rememberShapeComponent(color = color4.copy(.36f))
+    val line = rememberShapeComponent(color = thresholdLineColor.copy(.36f))
     return remember(label, line) {
         ThresholdLine(thresholdRange = 7f..14f, labelComponent = label, lineComponent = line)
     }
 }
 
-private val color1 = Color(0xff3e6558)
-private val color2 = Color(0xff5e836a)
-private val color3 = Color(0xffa5ba8e)
-private val color4 = Color(0xffe9e5af)
+private val columnColors = listOf(Color(0xff3e6558), Color(0xff5e836a), Color(0xffa5ba8e))
+private val thresholdLineColor = Color(0xffe9e5af)
 private val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 private val bottomAxisValueFormatter =
     AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _, _ -> daysOfWeek[x.toInt() % daysOfWeek.size] }

@@ -34,12 +34,10 @@
 
     <style name="Chart6Column2Style" parent="@style/Chart6ColumnStyle">
         <item name="color">@color/chart_6_color_2</item>
-        <item name="thickness">12dp</item>
     </style>
 
     <style name="Chart6Column3Style" parent="@style/Chart6ColumnStyle">
         <item name="color">@color/chart_6_color_3</item>
-        <item name="thickness">10dp</item>
     </style>
 
     <style name="Chart6ColumnLayerStyle">

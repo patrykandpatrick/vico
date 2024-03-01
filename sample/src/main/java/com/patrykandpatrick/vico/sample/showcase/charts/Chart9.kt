@@ -27,7 +27,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.lerp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
@@ -78,7 +77,7 @@ internal fun Chart9(
                     lineSeries {
                         series(
                             x = x,
-                            y = x.map { lerp(-10f, 20f, Random.nextFloat()) },
+                            y = x.map { Random.nextFloat() * 30 - 10 },
                         )
                     }
                 }
