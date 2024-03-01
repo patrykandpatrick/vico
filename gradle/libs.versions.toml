@@ -16,7 +16,7 @@ kotlin = "1.9.22"
 lifecycle = "2.7.0"
 material = "1.11.0"
 mockK = "1.13.10"
-paparazziGradlePlugin = "1.3.1"
+paparazziGradlePlugin = "1.3.3"
 testCore = "1.5.0"
 
 [libraries]
