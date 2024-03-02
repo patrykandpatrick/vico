@@ -25,8 +25,8 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.layer.lineSpec
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
@@ -71,7 +71,7 @@ private fun ComposeChart1(
         chart =
             rememberCartesianChart(
                 rememberLineCartesianLayer(
-                    lines = remember { listOf(lineSpec(DynamicShaders.color(Color(0xffa485e0)))) },
+                    lines = listOf(rememberLineSpec(DynamicShaders.color(Color(0xffa485e0)))),
                     axisValueOverrider = axisValueOverrider,
                 ),
                 startAxis = rememberStartAxis(),
