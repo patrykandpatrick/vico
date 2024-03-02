@@ -64,7 +64,7 @@ public fun rememberColumnCartesianLayer(
     dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnLayer.dataLabelVerticalPosition,
     dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnLayer.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = currentChartStyle.columnLayer.dataLabelRotationDegrees,
-    axisValueOverrider: AxisValueOverrider<ColumnCartesianLayerModel> = remember { AxisValueOverrider.auto() },
+    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
     drawingModelInterpolator:
         DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
         remember { DefaultDrawingModelInterpolator() },

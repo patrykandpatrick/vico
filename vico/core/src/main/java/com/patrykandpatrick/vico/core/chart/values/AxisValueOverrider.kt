@@ -20,7 +20,6 @@ import com.patrykandpatrick.vico.core.chart.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.floor
 import com.patrykandpatrick.vico.core.extension.round
-import com.patrykandpatrick.vico.core.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.model.ExtraStore
 import kotlin.math.abs
 import kotlin.math.log10
@@ -29,7 +28,7 @@ import kotlin.math.pow
 import kotlin.math.sign
 
 /** Overrides a [CartesianLayer]’s _x_ and _y_ ranges. */
-public interface AxisValueOverrider<T> {
+public interface AxisValueOverrider {
     /** Returns the minimum _x_ value. */
     public fun getMinX(
         minX: Float,
@@ -60,8 +59,8 @@ public interface AxisValueOverrider<T> {
 
     public companion object {
         /** Uses dynamic rounding. */
-        public fun <T : CartesianLayerModel> auto(): AxisValueOverrider<T> =
-            object : AxisValueOverrider<T> {
+        public fun auto(): AxisValueOverrider =
+            object : AxisValueOverrider {
                 override fun getMinY(
                     minY: Float,
                     maxY: Float,
@@ -86,17 +85,17 @@ public interface AxisValueOverrider<T> {
             }
 
         /** Overrides the defaults with the provided values. */
-        public fun <T : CartesianLayerModel> fixed(
+        public fun fixed(
             minX: Float? = null,
             maxX: Float? = null,
             minY: Float? = null,
             maxY: Float? = null,
-        ): AxisValueOverrider<T> {
+        ): AxisValueOverrider {
             val newMinX = minX
             val newMaxX = maxX
             val newMinY = minY
             val newMaxY = maxY
-            return object : AxisValueOverrider<T> {
+            return object : AxisValueOverrider {
                 override fun getMinX(
                     minX: Float,
                     maxX: Float,
@@ -127,11 +126,11 @@ public interface AxisValueOverrider<T> {
          * Sets the maximum _y_ value to [yFraction] times the default. Sets the minimum _y_ value to the default minus
          * the difference between the new maximum _y_ value and the default maximum _y_ value.
          */
-        public fun <T : CartesianLayerModel> adaptiveYValues(
+        public fun adaptiveYValues(
             yFraction: Float,
             round: Boolean = false,
-        ): AxisValueOverrider<T> =
-            object : AxisValueOverrider<T> {
+        ): AxisValueOverrider =
+            object : AxisValueOverrider {
                 init {
                     require(yFraction > 0f)
                 }

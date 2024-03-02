@@ -36,7 +36,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
     override val bounds: RectF = RectF()
 
     /** Overrides the _x_ and _y_ ranges. */
-    public var axisValueOverrider: AxisValueOverrider<T> = AxisValueOverrider.auto()
+    public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto()
 
     protected abstract fun drawInternal(
         context: ChartDrawContext,

@@ -45,7 +45,6 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
-import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.drawing.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.model.drawing.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.model.drawing.LineCartesianLayerDrawingModel
@@ -65,7 +64,7 @@ import com.patrykandpatrick.vico.core.model.drawing.LineCartesianLayerDrawingMod
 public fun rememberLineCartesianLayer(
     lines: List<LineSpec> = currentChartStyle.lineLayer.lines,
     spacing: Dp = currentChartStyle.lineLayer.spacing,
-    axisValueOverrider: AxisValueOverrider<LineCartesianLayerModel> = remember { AxisValueOverrider.auto() },
+    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
     verticalAxisPosition: AxisPosition.Vertical? = null,
     drawingModelInterpolator:
         DrawingModelInterpolator<LineCartesianLayerDrawingModel.PointInfo, LineCartesianLayerDrawingModel> =

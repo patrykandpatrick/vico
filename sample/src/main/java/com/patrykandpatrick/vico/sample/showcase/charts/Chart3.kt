@@ -47,7 +47,6 @@ import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.lineSeries
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -149,5 +148,4 @@ private fun ViewChart3(
 
 private val lineColor = Color(0xffffbb00)
 private val bottomAxisLabelBackgroundColor = Color(0xff9db591)
-private val axisValueOverrider =
-    AxisValueOverrider.adaptiveYValues<LineCartesianLayerModel>(yFraction = 1.2f, round = true)
+private val axisValueOverrider = AxisValueOverrider.adaptiveYValues(yFraction = 1.2f, round = true)

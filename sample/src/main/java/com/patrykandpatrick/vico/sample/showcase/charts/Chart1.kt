@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.lineSeries
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -113,4 +112,4 @@ private const val PERSISTENT_MARKER_X = 7f
 private const val MAX_Y = 15f
 
 private val x = (1..50).toList()
-private val axisValueOverrider = AxisValueOverrider.fixed<LineCartesianLayerModel>(maxY = MAX_Y)
+private val axisValueOverrider = AxisValueOverrider.fixed(maxY = MAX_Y)
