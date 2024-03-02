@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
@@ -124,6 +125,7 @@ private fun ComposeChart5(
         modifier = modifier,
         marker = rememberMarker(),
         runInitialAnimation = false,
+        zoomState = rememberVicoZoomState(zoomEnabled = false),
     )
 }
 

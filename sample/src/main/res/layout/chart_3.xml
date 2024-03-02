@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:bottomAxisStyle="@style/Chart3BottomAxisStyle"
+        app:chartZoomEnabled="false"
         app:fadingEdgeVisibilityInterpolator="androidx.interpolator.view.animation.FastOutSlowInInterpolator"
         app:fadingEdgeWidth="32dp"
         app:horizontalLayout="fullWidth"

@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -118,6 +119,7 @@ private fun ComposeChart8(
         modifier = modifier,
         marker = rememberMarker(),
         runInitialAnimation = false,
+        zoomState = rememberVicoZoomState(zoomEnabled = false),
     )
 }
 

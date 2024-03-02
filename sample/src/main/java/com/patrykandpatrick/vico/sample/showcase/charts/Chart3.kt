@@ -34,6 +34,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
@@ -125,6 +126,7 @@ private fun ComposeChart3(
         marker = rememberMarker(MarkerComponent.LabelPosition.AroundPoint),
         runInitialAnimation = false,
         horizontalLayout = HorizontalLayout.fullWidth(),
+        zoomState = rememberVicoZoomState(zoomEnabled = false),
     )
 }
 

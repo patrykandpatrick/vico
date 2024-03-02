@@ -30,6 +30,7 @@ import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLaye
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.shape.roundedCornerShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
@@ -111,6 +112,7 @@ private fun ComposeChart4(
         modifier = modifier,
         marker = rememberMarker(),
         runInitialAnimation = false,
+        zoomState = rememberVicoZoomState(zoomEnabled = false),
     )
 }
 
