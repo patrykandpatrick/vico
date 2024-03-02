@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,14 @@ import com.patrykandpatrick.vico.core.context.DrawContext
  * @param tileXMode the horizontal tiling mode for the [component].
  * @param tileYMode the vertical tiling mode for the [component].
  */
+@Deprecated(
+    "Use the `ComponentShader` constructor.",
+    ReplaceWith(
+        "ComponentShader(component = component, componentSizeDp = componentSizeDp, checkeredArrangement = " +
+            "checkeredArrangement, tileXMode = tileXMode, tileYMode = tileYMode)",
+        "com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader",
+    ),
+)
 public fun DynamicShaders.fromComponent(
     component: Component,
     componentSizeDp: Float,
