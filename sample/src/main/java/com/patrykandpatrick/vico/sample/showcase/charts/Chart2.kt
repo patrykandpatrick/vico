@@ -168,7 +168,7 @@ private fun getViewThresholdLine() =
             },
     )
 
-private const val THRESHOLD_LINE_Y = 12f
+private const val THRESHOLD_LINE_Y = 14f
 private const val THRESHOLD_LINE_COLOR = -2893786
 private const val THRESHOLD_LINE_LABEL_HORIZONTAL_PADDING_DP = 8f
 private const val THRESHOLD_LINE_LABEL_VERTICAL_PADDING_DP = 2f
