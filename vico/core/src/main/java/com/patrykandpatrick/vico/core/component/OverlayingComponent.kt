@@ -29,7 +29,7 @@ import com.patrykandpatrick.vico.core.debug.DebugHelper
  * @property innerPaddingBottomDp the bottom padding between the inner and outer components.
  */
 @Deprecated(
-    message = "Use LayeredComponent.",
+    message = "Use `LayeredComponent`.",
     replaceWith =
         ReplaceWith(
             expression =
