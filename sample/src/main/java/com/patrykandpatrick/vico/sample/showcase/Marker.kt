@@ -21,8 +21,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.component.rememberLayeredComponent
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.component.rememberOverlayingComponent
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.dashedShape
@@ -54,19 +54,19 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
             padding = dimensionsOf(8.dp, 4.dp),
             typeface = Typeface.MONOSPACE,
         )
-    val indicatorInnerComponent = rememberShapeComponent(Shapes.pillShape, MaterialTheme.colorScheme.surface)
+    val indicatorFrontComponent = rememberShapeComponent(Shapes.pillShape, MaterialTheme.colorScheme.surface)
     val indicatorCenterComponent = rememberShapeComponent(Shapes.pillShape)
-    val indicatorOuterComponent = rememberShapeComponent(Shapes.pillShape)
+    val indicatorRearComponent = rememberShapeComponent(Shapes.pillShape)
     val indicator =
-        rememberOverlayingComponent(
-            outer = indicatorOuterComponent,
-            inner =
-                rememberOverlayingComponent(
-                    outer = indicatorCenterComponent,
-                    inner = indicatorInnerComponent,
-                    innerPaddingAll = 5.dp,
+        rememberLayeredComponent(
+            rear = indicatorRearComponent,
+            front =
+                rememberLayeredComponent(
+                    rear = indicatorCenterComponent,
+                    front = indicatorFrontComponent,
+                    padding = dimensionsOf(5.dp),
                 ),
-            innerPaddingAll = 10.dp,
+            padding = dimensionsOf(10.dp),
         )
     val guideline =
         rememberLineComponent(
@@ -79,7 +79,7 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
             init {
                 indicatorSizeDp = 36f
                 onApplyEntryColor = { entryColor ->
-                    indicatorOuterComponent.color = entryColor.copyColor(alpha = .15f)
+                    indicatorRearComponent.color = entryColor.copyColor(alpha = .15f)
                     with(indicatorCenterComponent) {
                         color = entryColor
                         setShadow(radius = 12f, color = entryColor)

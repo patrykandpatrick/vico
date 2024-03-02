@@ -24,7 +24,7 @@ import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.chart.DefaultPointConnector
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.Component
-import com.patrykandpatrick.vico.core.component.OverlayingComponent
+import com.patrykandpatrick.vico.core.component.LayeredComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
@@ -36,6 +36,7 @@ import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.extension.copyColor
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.component.shape.shader.verticalGradient
+import com.patrykandpatrick.vico.views.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.views.extension.defaultColors
 
 internal fun TypedArray.getLineComponent(
@@ -90,15 +91,21 @@ internal fun TypedArray.getComponent(context: Context): Component? =
             return@use null
         }
 
-        val overlayingComponent =
-            if (hasValue(R.styleable.ComponentStyle_overlayingComponentStyle)) {
-                getNestedTypedArray(
-                    context = context,
-                    resourceId = R.styleable.ComponentStyle_overlayingComponentStyle,
-                    styleableResourceId = R.styleable.ComponentStyle,
-                ).getComponent(context)
-            } else {
-                null
+        val layeredComponent =
+            when {
+                hasValue(R.styleable.ComponentStyle_overlayingComponentStyle) ->
+                    getNestedTypedArray(
+                        context = context,
+                        resourceId = R.styleable.ComponentStyle_overlayingComponentStyle,
+                        styleableResourceId = R.styleable.ComponentStyle,
+                    ).getComponent(context)
+                hasValue(R.styleable.ComponentStyle_layeredComponentStyle) ->
+                    getNestedTypedArray(
+                        context = context,
+                        resourceId = R.styleable.ComponentStyle_layeredComponentStyle,
+                        styleableResourceId = R.styleable.ComponentStyle,
+                    ).getComponent(context)
+                else -> null
             }
 
         val baseComponent =
@@ -123,15 +130,23 @@ internal fun TypedArray.getComponent(context: Context): Component? =
                     ),
             )
 
-        if (overlayingComponent != null) {
-            OverlayingComponent(
-                outer = baseComponent,
-                inner = overlayingComponent,
-                innerPaddingAllDp =
-                    getRawDimension(
-                        context = context,
-                        index = R.styleable.ComponentStyle_overlayingComponentPadding,
-                        defaultValue = 0f,
+        if (layeredComponent != null) {
+            LayeredComponent(
+                rear = baseComponent,
+                front = layeredComponent,
+                padding =
+                    dimensionsOf(
+                        allDp =
+                            getRawDimension(
+                                context = context,
+                                index = R.styleable.ComponentStyle_layeredComponentPadding,
+                                defaultValue =
+                                    getRawDimension(
+                                        context = context,
+                                        index = R.styleable.ComponentStyle_overlayingComponentPadding,
+                                        defaultValue = 0f,
+                                    ),
+                            ),
                     ),
             )
         } else {

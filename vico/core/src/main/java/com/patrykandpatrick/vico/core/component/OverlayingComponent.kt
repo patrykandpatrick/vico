@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,20 @@ import com.patrykandpatrick.vico.core.debug.DebugHelper
  * @property innerPaddingEndDp the end padding between the inner and outer components.
  * @property innerPaddingBottomDp the bottom padding between the inner and outer components.
  */
+@Deprecated(
+    message = "Use LayeredComponent.",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "LayeredComponent(rear = outer, front = inner, padding = MutableDimensions(startDp = " +
+                    "innerPaddingStartDp, topDp = innerPaddingTopDp, endDp = innerPaddingEndDp, " +
+                    "bottomDp = innerPaddingBottomDp))",
+            imports = [
+                "com.patrykandpatrick.vico.core.component.LayeredComponent",
+                "com.patrykandpatrick.vico.core.dimensions.MutableDimensions",
+            ],
+        ),
+)
 public class OverlayingComponent(
     public val outer: Component,
     public val inner: Component,
@@ -36,6 +50,19 @@ public class OverlayingComponent(
     public val innerPaddingEndDp: Float = 0f,
     public val innerPaddingBottomDp: Float = 0f,
 ) : Component() {
+    @Deprecated(
+        message = "Use LayeredComponent.",
+        replaceWith =
+            ReplaceWith(
+                expression =
+                    "LayeredComponent(rear = outer, front = inner, padding = " +
+                        "MutableDimensions(horizontalDp = innerPaddingAllDp, verticalDp = innerPaddingAllDp))",
+                imports = [
+                    "com.patrykandpatrick.vico.core.component.LayeredComponent",
+                    "com.patrykandpatrick.vico.core.dimensions.MutableDimensions",
+                ],
+            ),
+    )
     public constructor(
         outer: Component,
         inner: Component,
