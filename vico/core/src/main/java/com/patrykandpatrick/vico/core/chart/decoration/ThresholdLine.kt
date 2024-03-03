@@ -184,6 +184,6 @@ public data class ThresholdLine(
 
     private companion object {
         const val RANGE_FORMAT = "%s–%s"
-        val decimalFormat = DecimalFormat("#.##")
+        val decimalFormat = DecimalFormat("#.##;−#.##")
     }
 }
