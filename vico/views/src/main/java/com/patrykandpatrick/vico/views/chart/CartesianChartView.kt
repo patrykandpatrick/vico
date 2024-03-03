@@ -164,7 +164,7 @@ public open class CartesianChartView
 
         /** Houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization. */
         public var zoomHandler: ZoomHandler by
-            invalidatingObservable(ZoomHandler.default(scrollHandler.scrollEnabled))
+            invalidatingObservable(ZoomHandler.default(themeHandler.isChartZoomEnabled, scrollHandler.scrollEnabled))
 
         private val motionEventHandler =
             MotionEventHandler(

@@ -128,7 +128,12 @@ public class ZoomHandler(
         private const val VALUE_KEY = "value"
         private const val OVERRIDDEN_KEY = "overridden"
 
-        fun default(scrollEnabled: Boolean) =
-            ZoomHandler(initialZoom = if (scrollEnabled) Zoom.max(Zoom.static(), Zoom.Content) else Zoom.Content)
+        fun default(
+            zoomEnabled: Boolean,
+            scrollEnabled: Boolean,
+        ) = ZoomHandler(
+            zoomEnabled = zoomEnabled,
+            initialZoom = if (scrollEnabled) Zoom.max(Zoom.static(), Zoom.Content) else Zoom.Content,
+        )
     }
 }
