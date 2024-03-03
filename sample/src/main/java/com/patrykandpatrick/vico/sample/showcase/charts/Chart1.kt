@@ -31,8 +31,6 @@ import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.core.axis.BaseAxis
-import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.lineSeries
@@ -51,7 +49,7 @@ internal fun Chart1(
     val modelProducer = remember { CartesianChartModelProducer.build() }
     LaunchedEffect(Unit) {
         withContext(Dispatchers.Default) {
-            modelProducer.tryRunTransaction { lineSeries { series(x, x.map { Random.nextFloat() * MAX_Y }) } }
+            modelProducer.tryRunTransaction { lineSeries { series(x, x.map { Random.nextFloat() * 15 }) } }
         }
     }
     when (uiSystem) {
@@ -69,10 +67,7 @@ private fun ComposeChart1(
     CartesianChartHost(
         chart =
             rememberCartesianChart(
-                rememberLineCartesianLayer(
-                    lines = listOf(rememberLineSpec(DynamicShaders.color(Color(0xffa485e0)))),
-                    axisValueOverrider = axisValueOverrider,
-                ),
+                rememberLineCartesianLayer(listOf(rememberLineSpec(DynamicShaders.color(Color(0xffa485e0))))),
                 startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(guideline = null),
                 persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker),
@@ -97,7 +92,6 @@ private fun ViewChart1(
                 .apply {
                     with(chartView) {
                         chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
-                        (chart?.layers?.get(0) as LineCartesianLayer).axisValueOverrider = axisValueOverrider
                         this.modelProducer = modelProducer
                         (chart?.bottomAxis as BaseAxis).guideline = null
                         this.marker = marker
@@ -109,7 +103,5 @@ private fun ViewChart1(
 }
 
 private const val PERSISTENT_MARKER_X = 7f
-private const val MAX_Y = 15f
 
 private val x = (1..50).toList()
-private val axisValueOverrider = AxisValueOverrider.fixed(maxY = MAX_Y)
