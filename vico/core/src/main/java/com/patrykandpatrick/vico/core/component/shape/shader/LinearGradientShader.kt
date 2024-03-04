@@ -63,14 +63,13 @@ public class LinearGradientShader(
         top: Float,
         right: Float,
         bottom: Float,
-    ): String = toString() + "$left,$top,$right,$bottom"
+    ): String = "$this$left,$top,$right,$bottom"
 
     override fun equals(other: Any?): Boolean =
         this === other ||
-            (
-                other is LinearGradientShader && colors.contentEquals(other.colors) &&
-                    positions.contentEquals(other.positions)
-            )
+            other is LinearGradientShader &&
+            colors.contentEquals(other.colors) &&
+            positions.contentEquals(other.positions)
 
     override fun hashCode(): Int = Objects.hash(colors, positions)
 
