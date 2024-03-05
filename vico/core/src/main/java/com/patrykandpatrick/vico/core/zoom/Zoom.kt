@@ -38,8 +38,11 @@ public fun interface Zoom {
         public val Content: Zoom =
             Zoom { context, horizontalDimensions, bounds ->
                 val scalableContentWidth = horizontalDimensions.getScalableContentWidth(context)
-                val reducedChartWidth = bounds.width() - horizontalDimensions.unscalablePadding
-                reducedChartWidth / scalableContentWidth
+                if (scalableContentWidth == 0f) {
+                    1f
+                } else {
+                    (bounds.width() - horizontalDimensions.unscalablePadding) / scalableContentWidth
+                }
             }
 
         /** Uses a zoom factor of [value]. */
