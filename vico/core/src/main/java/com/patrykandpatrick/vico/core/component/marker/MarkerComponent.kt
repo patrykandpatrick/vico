@@ -138,7 +138,7 @@ public open class MarkerComponent(
                 y = bounds.top - label.tickSizeDp.pixels
                 verticalPosition = VerticalPosition.Top
             } else {
-                val topEntryY = markedEntries.maxOf { it.location.y }
+                val topEntryY = markedEntries.minOf { it.location.y }
                 val flip =
                     labelPosition == LabelPosition.AroundPoint &&
                         topEntryY - labelBounds.height() - label.tickSizeDp.pixels < bounds.top
