@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
-import com.patrykandpatrick.vico.core.draw.withCanvas
 import com.patrykandpatrick.vico.core.extension.copy
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.lineHeight
@@ -159,9 +158,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
             val textTopPosition = verticalPosition.getTextTopPosition(context, textY, layout.height.toFloat())
 
-            context.withCanvas {
-                save()
-
+            context.withSavedCanvas {
                 val bounds = layout.getBounds(tempMeasureBounds)
                 val textAlignmentCorrection = getTextAlignmentCorrection(bounds.width())
 
@@ -217,7 +214,6 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 )
 
                 layout.draw(this)
-                restore()
             }
         }
 
@@ -394,6 +390,12 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 align = textAlignment,
             )
         }
+    }
+
+    private inline fun DrawContext.withSavedCanvas(block: Canvas.() -> Unit) {
+        canvas.save()
+        canvas.block()
+        canvas.restore()
     }
 
     /**
