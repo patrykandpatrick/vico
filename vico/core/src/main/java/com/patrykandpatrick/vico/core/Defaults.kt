@@ -145,17 +145,9 @@ public interface DefaultColors {
     }
 }
 
-/**
- * Default alpha values.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object DefaultAlpha {
-    /**
-     * The default value for alpha on the start of line’s background gradient.
-     */
     public const val LINE_BACKGROUND_SHADER_START: Float = 0.5f
-
-    /**
-     * The default value for alpha on the end of line’s background gradient.
-     */
     public const val LINE_BACKGROUND_SHADER_END: Float = 0f
 }
