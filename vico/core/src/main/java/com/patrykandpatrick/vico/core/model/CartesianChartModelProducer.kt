@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,15 +37,24 @@ import kotlinx.coroutines.sync.Mutex
  */
 public class CartesianChartModelProducer private constructor(dispatcher: CoroutineDispatcher) {
     private var partials = emptyList<CartesianLayerModel.Partial>()
+    private var extraStore = MutableExtraStore()
     private var cachedModel: CartesianChartModel? = null
     private val mutex = Mutex()
     private val coroutineScope = CoroutineScope(dispatcher)
     private val updateReceivers = mutableMapOf<Any, UpdateReceiver>()
-    private val extraStore = MutableExtraStore()
 
-    private fun trySetPartials(partials: List<CartesianLayerModel.Partial>): Boolean {
+    private fun tryUpdate(
+        partials: List<CartesianLayerModel.Partial>,
+        extraStore: MutableExtraStore,
+    ): Boolean {
         if (!mutex.tryLock()) return false
-        this.partials = partials.toList()
+        val immutablePartials = partials.toList()
+        if (immutablePartials == this.partials && extraStore == this.extraStore) {
+            mutex.unlock()
+            return true
+        }
+        this.partials = immutablePartials
+        this.extraStore = extraStore
         cachedModel = null
         val deferredUpdates = updateReceivers.values.map { coroutineScope.async { it.handleUpdate() } }
         coroutineScope.launch {
@@ -55,11 +64,21 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
         return true
     }
 
-    private suspend fun setPartials(partials: List<CartesianLayerModel.Partial>): Deferred<Unit> {
+    private suspend fun update(
+        partials: List<CartesianLayerModel.Partial>,
+        extraStore: MutableExtraStore,
+    ): Deferred<Unit> {
         mutex.lock()
-        this.partials = partials.toList()
-        cachedModel = null
         val completableDeferred = CompletableDeferred<Unit>()
+        val immutablePartials = partials.toList()
+        if (immutablePartials == this.partials && extraStore == this.extraStore) {
+            mutex.unlock()
+            completableDeferred.complete(Unit)
+            return completableDeferred
+        }
+        this.partials = partials.toList()
+        this.extraStore = extraStore
+        cachedModel = null
         val deferredUpdates = updateReceivers.values.map { coroutineScope.async { it.handleUpdate() } }
         coroutineScope.launch {
             deferredUpdates.awaitAll()
@@ -163,6 +182,7 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
      */
     public inner class Transaction internal constructor() {
         private val newPartials = mutableListOf<CartesianLayerModel.Partial>()
+        private val newExtraStore = MutableExtraStore()
 
         /**
          * Adds a [CartesianLayerModel.Partial].
@@ -175,7 +195,7 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
          * Allows for adding auxiliary values, which can later be retrieved via [CartesianChartModel.extraStore].
          */
         public fun updateExtras(block: (MutableExtraStore) -> Unit) {
-            block(extraStore)
+            block(newExtraStore)
         }
 
         /**
@@ -183,14 +203,14 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
          * occurs when there’s already an update in progress, `false` is returned. For suspending behavior, use
          * [commit].
          */
-        public fun tryCommit(): Boolean = trySetPartials(newPartials)
+        public fun tryCommit(): Boolean = tryUpdate(newPartials, newExtraStore)
 
         /**
          * Runs a data update. Unlike [tryCommit], this function suspends the current coroutine and waits until an
          * update can be run, meaning the update cannot be rejected. The returned [Deferred] implementation is marked as
          * completed once the update has been processed.
          */
-        public suspend fun commit(): Deferred<Unit> = setPartials(newPartials)
+        public suspend fun commit(): Deferred<Unit> = update(newPartials, newExtraStore)
     }
 
     private inner class UpdateReceiver(
@@ -218,8 +238,8 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
          */
         public fun build(
             dispatcher: CoroutineDispatcher = Dispatchers.Default,
-            transaction: Transaction.() -> Unit = {},
+            transaction: (Transaction.() -> Unit)? = null,
         ): CartesianChartModelProducer =
-            CartesianChartModelProducer(dispatcher).also { it.tryRunTransaction(transaction) }
+            CartesianChartModelProducer(dispatcher).apply { if (transaction != null) tryRunTransaction(transaction) }
     }
 }
