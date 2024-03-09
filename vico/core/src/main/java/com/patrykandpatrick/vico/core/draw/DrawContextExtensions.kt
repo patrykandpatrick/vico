@@ -24,7 +24,9 @@ import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.model.MutableExtraStore
 
-/** @suppress */
+/**
+ * Calls the specified function block with [DrawContext.canvas] as its receiver.
+ */
 @Suppress("DeprecatedCallableAddReplaceWith")
 @Deprecated(message = "`withCanvas` is meant only for internal use.", level = DeprecationLevel.ERROR)
 public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
