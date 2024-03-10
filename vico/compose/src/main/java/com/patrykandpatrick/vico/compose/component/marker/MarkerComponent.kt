@@ -22,6 +22,8 @@ import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
+import com.patrykandpatrick.vico.core.marker.DefaultMarkerLabelFormatter
+import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
 
 /**
  * Creates and remembers a [MarkerComponent].
@@ -32,8 +34,14 @@ public fun rememberMarkerComponent(
     labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top,
     indicator: Component? = null,
     guideline: LineComponent? = null,
+    minWidth: TextComponent.MinWidth = TextComponent.MinWidth.Zero,
+    labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter(),
 ): MarkerComponent =
-    remember(label, labelPosition, indicator, guideline) { MarkerComponent(label, labelPosition, indicator, guideline) }
+    remember(label, labelPosition, indicator, guideline, minWidth) {
+        MarkerComponent(label, labelPosition, indicator, guideline, minWidth)
+    }.apply {
+        this.labelFormatter = labelFormatter
+    }
 
 /**
  * Creates a [MarkerComponent].

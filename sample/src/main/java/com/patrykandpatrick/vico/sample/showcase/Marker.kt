@@ -33,12 +33,16 @@ import com.patrykandpatrick.vico.core.chart.insets.Insets
 import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.cornered.Corner
+import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.copyColor
 import com.patrykandpatrick.vico.core.marker.Marker
 
 @Composable
-internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top): Marker {
+internal fun rememberMarker(
+    labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top,
+    minWidth: TextComponent.MinWidth = TextComponent.MinWidth.Zero,
+): Marker {
     val labelBackgroundShape = Shapes.markerCorneredShape(Corner.FullyRounded)
     val labelBackground =
         rememberShapeComponent(labelBackgroundShape, MaterialTheme.colorScheme.surface)
@@ -74,8 +78,8 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
             thickness = 2.dp,
             shape = Shapes.dashedShape(shape = Shapes.pillShape, dashLength = 8.dp, gapLength = 4.dp),
         )
-    return remember(label, labelPosition, indicator, guideline) {
-        object : MarkerComponent(label, labelPosition, indicator, guideline) {
+    return remember(label, labelPosition, indicator, guideline, minWidth) {
+        object : MarkerComponent(label, labelPosition, indicator, guideline, minWidth) {
             init {
                 indicatorSizeDp = 36f
                 onApplyEntryColor = { entryColor ->
