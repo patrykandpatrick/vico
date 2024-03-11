@@ -84,21 +84,3 @@ public interface HorizontalDimensions {
      */
     public fun getContentWidth(context: MeasureContext): Float = getScalableContentWidth(context) + unscalablePadding
 }
-
-/**
- * Creates a [HorizontalDimensions] instance.
- */
-public fun HorizontalDimensions(
-    xSpacing: Float,
-    scalableStartPadding: Float,
-    scalableEndPadding: Float,
-    unscalableStartPadding: Float,
-    unscalableEndPadding: Float,
-): HorizontalDimensions =
-    object : HorizontalDimensions {
-        override val xSpacing: Float = xSpacing
-        override val scalableStartPadding: Float = scalableStartPadding
-        override val scalableEndPadding: Float = scalableEndPadding
-        override val unscalableStartPadding: Float = unscalableStartPadding
-        override val unscalableEndPadding: Float = unscalableEndPadding
-    }
