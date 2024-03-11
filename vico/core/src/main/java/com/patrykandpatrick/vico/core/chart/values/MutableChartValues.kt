@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.chart.values
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.extension.orZero
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
@@ -108,9 +109,8 @@ public class MutableChartValues : ChartValues {
     }
 }
 
-/**
- * Creates and returns an immutable copy of this [MutableChartValues] instance.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun MutableChartValues.toImmutable(): ChartValues =
     object : ChartValues {
         private val yRanges = this@toImmutable.yRanges.toMap()
