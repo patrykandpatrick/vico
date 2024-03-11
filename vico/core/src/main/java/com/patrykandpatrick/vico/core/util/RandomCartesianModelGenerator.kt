@@ -19,45 +19,29 @@ package com.patrykandpatrick.vico.core.util
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.extension.random
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
 
-/**
- * Generates randomized [CartesianLayerModel.Partial]s and [CartesianChartModel]s.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RandomCartesianModelGenerator {
-    /** @suppress */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val defaultX: IntProgression = 0..96
-
-    /** @suppress */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val defaultY: ClosedFloatingPointRange<Float> = 2f..20f
 
-    /**
-     * Generates a randomized [ColumnCartesianLayerModel.Partial] with the specified number of series and value ranges.
-     */
-    public fun getRandomColumnLayerModelPartial(
+    private fun getRandomColumnLayerModelPartial(
         seriesCount: Int = 1,
         x: IntProgression = defaultX,
         y: ClosedFloatingPointRange<Float> = defaultY,
     ): ColumnCartesianLayerModel.Partial =
         ColumnCartesianLayerModel.partial { repeat(seriesCount) { series(x.toList(), x.map { y.random() }) } }
 
-    /**
-     * Generates a randomized [LineCartesianLayerModel.Partial] with the specified number of series and value ranges.
-     */
-    public fun getRandomLineLayerModelPartial(
+    private fun getRandomLineLayerModelPartial(
         seriesCount: Int = 1,
         x: IntProgression = defaultX,
         y: ClosedFloatingPointRange<Float> = defaultY,
     ): LineCartesianLayerModel.Partial =
         LineCartesianLayerModel.partial { repeat(seriesCount) { series(x.toList(), x.map { y.random() }) } }
 
-    /**
-     * Generates a randomized [CartesianChartModel] with the specified numbers of series and value ranges.
-     */
     public fun getRandomModel(
         columnSeriesCount: Int = 1,
         lineSeriesCount: Int = 1,
