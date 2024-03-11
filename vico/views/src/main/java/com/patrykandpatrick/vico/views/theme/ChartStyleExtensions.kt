@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
+import com.patrykandpatrick.vico.core.extension.getRepeating
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.extension.defaultColors
 
@@ -46,7 +47,7 @@ internal fun TypedArray.getColumnCartesianLayer(
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
-                        defaultColor = context.defaultColors.entity1Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors[0].toInt(),
                         defaultThickness = Defaults.COLUMN_WIDTH,
                         defaultShape = defaultShape,
                     ),
@@ -56,7 +57,7 @@ internal fun TypedArray.getColumnCartesianLayer(
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
-                        defaultColor = context.defaultColors.entity2Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(1).toInt(),
                         defaultThickness = Defaults.COLUMN_WIDTH,
                         defaultShape = defaultShape,
                     ),
@@ -66,7 +67,7 @@ internal fun TypedArray.getColumnCartesianLayer(
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
-                        defaultColor = context.defaultColors.entity3Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(2).toInt(),
                         defaultThickness = Defaults.COLUMN_WIDTH,
                         defaultShape = defaultShape,
                     ),
@@ -123,7 +124,7 @@ internal fun TypedArray.getLineCartesianLayer(
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
-                        defaultColor = context.defaultColors.entity1Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors[0].toInt(),
                     ),
                     getNestedTypedArray(
                         context = context,
@@ -131,7 +132,7 @@ internal fun TypedArray.getLineCartesianLayer(
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
-                        defaultColor = context.defaultColors.entity2Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(1).toInt(),
                     ),
                     getNestedTypedArray(
                         context = context,
@@ -139,7 +140,7 @@ internal fun TypedArray.getLineCartesianLayer(
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
-                        defaultColor = context.defaultColors.entity3Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(2).toInt(),
                     ),
                 ),
             spacingDp =

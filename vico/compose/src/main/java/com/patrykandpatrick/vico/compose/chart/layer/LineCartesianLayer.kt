@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
-import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.compose.theme.vicoTheme
 import com.patrykandpatrick.vico.core.DefaultAlpha
 import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisPosition
@@ -62,8 +62,9 @@ import com.patrykandpatrick.vico.core.model.drawing.LineCartesianLayerDrawingMod
  */
 @Composable
 public fun rememberLineCartesianLayer(
-    lines: List<LineSpec> = currentChartStyle.lineLayer.lines,
-    spacing: Dp = currentChartStyle.lineLayer.spacing,
+    lines: List<LineSpec> =
+        vicoTheme.cartesianLayerColors.map { rememberLineSpec(remember { DynamicShaders.color(it) }) },
+    spacing: Dp = Defaults.POINT_SPACING.dp,
     axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
     verticalAxisPosition: AxisPosition.Vertical? = null,
     drawingModelInterpolator:

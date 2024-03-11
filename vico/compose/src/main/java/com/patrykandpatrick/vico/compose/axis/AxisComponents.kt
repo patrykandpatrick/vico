@@ -26,15 +26,19 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.component.shape.dashedShape
 import com.patrykandpatrick.vico.compose.component.shape.shader.BrushShader
 import com.patrykandpatrick.vico.compose.component.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.compose.theme.vicoTheme
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shape
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
+import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
@@ -56,23 +60,17 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
  */
 @Composable
 public fun rememberAxisLabelComponent(
-    color: Color = currentChartStyle.axis.axisLabelColor,
-    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
-    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    color: Color = vicoTheme.textColor,
+    textSize: TextUnit = Defaults.AXIS_LABEL_SIZE.sp,
+    background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
     padding: MutableDimensions =
-        dimensionsOf(
-            horizontal = currentChartStyle.axis.axisLabelHorizontalPadding,
-            vertical = currentChartStyle.axis.axisLabelVerticalPadding,
-        ),
+        dimensionsOf(Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp, Defaults.AXIS_LABEL_VERTICAL_PADDING.dp),
     margins: MutableDimensions =
-        dimensionsOf(
-            horizontal = currentChartStyle.axis.axisLabelHorizontalMargin,
-            vertical = currentChartStyle.axis.axisLabelVerticalMargin,
-        ),
-    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
-    textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
+        dimensionsOf(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
+    typeface: Typeface = Typeface.MONOSPACE,
+    textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
 ): TextComponent =
     rememberTextComponent(
         color,
@@ -120,17 +118,17 @@ public fun rememberAxisLabelComponent(
 )
 @Composable
 public fun axisLabelComponent(
-    color: Color = currentChartStyle.axis.axisLabelColor,
-    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
-    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    color: Color = vicoTheme.textColor,
+    textSize: TextUnit = Defaults.AXIS_LABEL_SIZE.sp,
+    background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
-    verticalPadding: Dp = currentChartStyle.axis.axisLabelVerticalPadding,
-    horizontalPadding: Dp = currentChartStyle.axis.axisLabelHorizontalPadding,
-    verticalMargin: Dp = currentChartStyle.axis.axisLabelVerticalMargin,
-    horizontalMargin: Dp = currentChartStyle.axis.axisLabelHorizontalMargin,
-    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
-    textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
+    lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
+    verticalPadding: Dp = Defaults.AXIS_LABEL_VERTICAL_PADDING.dp,
+    horizontalPadding: Dp = Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+    verticalMargin: Dp = Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp,
+    horizontalMargin: Dp = Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
+    typeface: Typeface = Typeface.MONOSPACE,
+    textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
 ): TextComponent =
     rememberTextComponent(
         color,
@@ -169,23 +167,17 @@ public fun axisLabelComponent(
 )
 @Composable
 public fun axisLabelComponent(
-    color: Color = currentChartStyle.axis.axisLabelColor,
-    textSize: TextUnit = currentChartStyle.axis.axisLabelTextSize,
-    background: ShapeComponent? = currentChartStyle.axis.axisLabelBackground,
+    color: Color = vicoTheme.textColor,
+    textSize: TextUnit = Defaults.AXIS_LABEL_SIZE.sp,
+    background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
-    lineCount: Int = currentChartStyle.axis.axisLabelLineCount,
+    lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
     padding: MutableDimensions =
-        dimensionsOf(
-            horizontal = currentChartStyle.axis.axisLabelHorizontalPadding,
-            vertical = currentChartStyle.axis.axisLabelVerticalPadding,
-        ),
+        dimensionsOf(Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp, Defaults.AXIS_LABEL_VERTICAL_PADDING.dp),
     margins: MutableDimensions =
-        dimensionsOf(
-            horizontal = currentChartStyle.axis.axisLabelHorizontalMargin,
-            vertical = currentChartStyle.axis.axisLabelVerticalMargin,
-        ),
-    typeface: Typeface = currentChartStyle.axis.axisLabelTypeface,
-    textAlignment: Layout.Alignment = currentChartStyle.axis.axisLabelTextAlignment,
+        dimensionsOf(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
+    typeface: Typeface = Typeface.MONOSPACE,
+    textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
 ): TextComponent =
     rememberTextComponent(
         color,
@@ -212,9 +204,9 @@ public fun axisLabelComponent(
  */
 @Composable
 public fun rememberAxisLineComponent(
-    color: Color = currentChartStyle.axis.axisLineColor,
-    thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    shape: Shape = currentChartStyle.axis.axisLineShape,
+    color: Color = vicoTheme.lineColor,
+    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
+    shape: Shape = Shapes.rectShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
@@ -253,9 +245,9 @@ public fun rememberAxisLineComponent(
 )
 @Composable
 public fun axisLineComponent(
-    color: Color = currentChartStyle.axis.axisLineColor,
-    thickness: Dp = currentChartStyle.axis.axisLineWidth,
-    shape: Shape = currentChartStyle.axis.axisLineShape,
+    color: Color = vicoTheme.lineColor,
+    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
+    shape: Shape = Shapes.rectShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -299,7 +291,7 @@ public fun axisLineComponent(
 @Composable
 public fun axisLineComponent(
     color: Color,
-    thickness: Dp = currentChartStyle.axis.axisLineWidth,
+    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
     shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
@@ -328,9 +320,9 @@ public fun axisLineComponent(
  */
 @Composable
 public fun rememberAxisTickComponent(
-    color: Color = currentChartStyle.axis.axisTickColor,
-    thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    shape: Shape = currentChartStyle.axis.axisTickShape,
+    color: Color = vicoTheme.lineColor,
+    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
+    shape: Shape = Shapes.rectShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -366,9 +358,9 @@ public fun rememberAxisTickComponent(
 )
 @Composable
 public fun axisTickComponent(
-    color: Color = currentChartStyle.axis.axisTickColor,
-    thickness: Dp = currentChartStyle.axis.axisTickWidth,
-    shape: Shape = currentChartStyle.axis.axisTickShape,
+    color: Color = vicoTheme.lineColor,
+    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
+    shape: Shape = Shapes.rectShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -395,7 +387,7 @@ public fun axisTickComponent(
 @Composable
 public fun rememberAxisTickComponent(
     color: Color,
-    thickness: Dp = currentChartStyle.axis.axisTickWidth,
+    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
     shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
@@ -433,7 +425,7 @@ public fun rememberAxisTickComponent(
 @Composable
 public fun axisTickComponent(
     color: Color,
-    thickness: Dp = currentChartStyle.axis.axisTickWidth,
+    thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
     shape: androidx.compose.ui.graphics.Shape = RectangleShape,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
@@ -461,9 +453,9 @@ public fun axisTickComponent(
  */
 @Composable
 public fun rememberAxisGuidelineComponent(
-    color: Color = currentChartStyle.axis.axisGuidelineColor,
-    thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
-    shape: Shape = currentChartStyle.axis.axisGuidelineShape,
+    color: Color = vicoTheme.lineColor,
+    thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
+    shape: Shape = Shapes.dashedShape(Shapes.rectShape, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -502,9 +494,9 @@ public fun rememberAxisGuidelineComponent(
 )
 @Composable
 public fun axisGuidelineComponent(
-    color: Color = currentChartStyle.axis.axisGuidelineColor,
-    thickness: Dp = currentChartStyle.axis.axisGuidelineWidth,
-    shape: Shape = currentChartStyle.axis.axisGuidelineShape,
+    color: Color = vicoTheme.lineColor,
+    thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
+    shape: Shape = Shapes.dashedShape(Shapes.rectShape, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,

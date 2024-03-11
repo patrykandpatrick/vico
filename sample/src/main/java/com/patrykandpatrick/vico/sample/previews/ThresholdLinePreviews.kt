@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -33,12 +32,12 @@ import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.compose.style.LocalChartStyle
+import com.patrykandpatrick.vico.compose.theme.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.theme.vicoTheme
 import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader
@@ -51,30 +50,7 @@ public val Color.Companion.DimmedGray: Color
     get() = Color(0xFFAAAAAA)
 
 @Composable
-private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
-    val chartStyle =
-        LocalChartStyle.current.copy(
-            axis =
-                LocalChartStyle.current.axis.copy(
-                    axisLabelColor = Color.DimmedGray,
-                    axisLineColor = Color.DimmedGray,
-                    axisTickColor = Color.DimmedGray,
-                    axisGuidelineColor = Color.DimmedGray,
-                ),
-            columnLayer =
-                LocalChartStyle.current.columnLayer.copy(
-                    columns =
-                        LocalChartStyle.current.columnLayer.columns.map {
-                            rememberLineComponent(
-                                color = Color.DimmedGray,
-                                thickness = it.thicknessDp.dp,
-                                shape = it.shape,
-                                dynamicShader = it.dynamicShader,
-                                margins = it.margins,
-                            )
-                        },
-                ),
-        )
+private fun ProvidePreviewVicoTheme(content: @Composable () -> Unit) {
     Surface(
         color = Color.Transparent,
         modifier =
@@ -82,14 +58,21 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
                 .background(color = Color.LightGray, shape = RoundedCornerShape(size = 4.dp))
                 .padding(8.dp),
     ) {
-        CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
+        ProvideVicoTheme(
+            vicoTheme.copy(
+                cartesianLayerColors = listOf(Color.DimmedGray),
+                lineColor = Color.DimmedGray,
+                textColor = Color.DimmedGray,
+            ),
+            content,
+        )
     }
 }
 
 @Preview(widthDp = 250)
 @Composable
 public fun ThresholdLine() {
-    ProvidePreviewChartStyle {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -116,7 +99,7 @@ public fun ThresholdLine() {
 @Preview(widthDp = 250)
 @Composable
 public fun ThresholdLineWithCustomText() {
-    ProvidePreviewChartStyle {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -192,7 +175,7 @@ public fun ThresholdLineWithCustomText() {
 @Preview(widthDp = 250)
 @Composable
 public fun RangedThresholdLine() {
-    ProvidePreviewChartStyle {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -222,7 +205,7 @@ public fun RangedThresholdLine() {
 @Preview(widthDp = 250)
 @Composable
 public fun RangedThresholdLineWithBrushShader() {
-    ProvidePreviewChartStyle {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -263,7 +246,7 @@ public fun RangedThresholdLineWithBrushShader() {
 @Preview(widthDp = 250)
 @Composable
 public fun RangedThresholdLineWithComponentShader() {
-    ProvidePreviewChartStyle {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =

@@ -63,85 +63,30 @@ public object Defaults {
     public const val CHART_HEIGHT: Float = 200f
 }
 
-/**
- * The default chart colors.
- */
-public interface DefaultColors {
-    /**
-     * The default color for elevation overlays. Its opacity is modified depending on the elevation.
-     */
-    public val elevationOverlayColor: Long
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class DefaultColors(
+    public val cartesianLayerColors: List<Long>,
+    public val elevationOverlayColor: Long,
+    public val lineColor: Long,
+    public val textColor: Long,
+) {
+    public companion object {
+        public val Light: DefaultColors =
+            DefaultColors(
+                cartesianLayerColors = listOf(0xff787878, 0xff5a5a5a, 0xff383838),
+                elevationOverlayColor = 0x00000000,
+                lineColor = 0x47000000,
+                textColor = 0xde000000,
+            )
 
-    /**
-     * The default color for axis labels.
-     */
-    public val axisLabelColor: Long
-
-    /**
-     * The default color for axis guidelines.
-     */
-    public val axisGuidelineColor: Long
-
-    /**
-     * The default color for axis lines.
-     */
-    public val axisLineColor: Long
-
-    /**
-     * The color for columns whose index in a column collection is 3k (k ∈ N)
-     * and for lines whose index in the list of lines in a line chart is 3k (k ∈ N).
-     */
-    public val entity1Color: Long
-
-    /**
-     * The color for columns whose index in a column collection is 1 + 3k (k ∈ N)
-     * and for lines whose index in the list of lines in a line chart is 1 + 3k (k ∈ N).
-     */
-    public val entity2Color: Long
-
-    /**
-     * The color for columns whose index in a column collection is 2 + 3k (k ∈ N)
-     * and for lines whose index in the list of lines in a line chart is 2 + 3k (k ∈ N).
-     */
-    public val entity3Color: Long
-
-    /**
-     * The default line color for line charts.
-     */
-    public val lineColor: Long
-
-    /**
-     * The default chart colors for light mode.
-     */
-    public object Light : DefaultColors {
-        override val elevationOverlayColor: Long = 0x00000000
-
-        override val axisLabelColor: Long = 0xDE000000
-        override val axisGuidelineColor: Long = 0x47000000
-        override val axisLineColor: Long = 0x47000000
-
-        override val entity1Color: Long = 0xFF787878
-        override val entity2Color: Long = 0xFF5A5A5A
-        override val entity3Color: Long = 0xFF383838
-
-        override val lineColor: Long = 0xFF1A1A1A
-    }
-
-    /**
-     * The default chart colors for dark mode.
-     */
-    public object Dark : DefaultColors {
-        override val elevationOverlayColor: Long = 0xFFFFFFFF
-
-        override val axisLabelColor: Long = 0xFFFFFFFF
-        override val axisGuidelineColor: Long = 0xFF424242
-        override val axisLineColor: Long = 0xFF555555
-
-        override val entity1Color: Long = 0xFFCACACA
-        override val entity2Color: Long = 0xFFA8A8A8
-        override val entity3Color: Long = 0xFF888888
-
-        override val lineColor: Long = 0xFFEFEFEF
+        public val Dark: DefaultColors =
+            DefaultColors(
+                cartesianLayerColors = listOf(0xffcacaca, 0xffa8a8a8, 0xff888888),
+                elevationOverlayColor = 0xffffffff,
+                lineColor = 0xff555555,
+                textColor = 0xffffffff,
+            )
     }
 }
 

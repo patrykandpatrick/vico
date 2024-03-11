@@ -40,7 +40,7 @@ private const val FONT_WEIGHT_NORMAL = 400
 
 internal fun TypedArray.getTextComponent(context: Context): TextComponent =
     use {
-        val color = getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.axisLabelColor.toInt())
+        val color = getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.textColor.toInt())
         val background =
             getNestedTypedArray(
                 context = context,
