@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.draw
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.DefaultColors
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
@@ -33,15 +34,8 @@ public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
     canvas.block()
 }
 
-/**
- * Creates an anonymous implementation of [DrawContext].
- *
- * @param canvas the canvas to draw the chart on.
- * @param density the pixel density of the screen (used in pixel size calculation).
- * @param isLtr whether the device layout is left-to-right.
- * @param elevationOverlayColor the elevation overlay color. This is applied to components that cast shadows.
- * @param spToPx converts dimensions from sp to px.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun drawContext(
     canvas: Canvas,
     density: Float = 1f,
