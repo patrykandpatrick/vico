@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -166,5 +166,21 @@ public open class CorneredShape(
             path,
         )
         path.close()
+    }
+
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+            other is CorneredShape &&
+            topLeft == other.topLeft &&
+            topRight == other.topRight &&
+            bottomRight == other.bottomRight &&
+            bottomLeft == other.bottomLeft
+
+    override fun hashCode(): Int {
+        var result = topLeft.hashCode()
+        result = 31 * result + topRight.hashCode()
+        result = 31 * result + bottomRight.hashCode()
+        result = 31 * result + bottomLeft.hashCode()
+        return result
     }
 }
