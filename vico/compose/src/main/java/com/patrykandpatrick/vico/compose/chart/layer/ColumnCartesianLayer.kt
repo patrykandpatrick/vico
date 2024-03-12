@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
-import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.model.ExtraStore
 import com.patrykandpatrick.vico.core.model.drawing.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.model.drawing.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.model.drawing.DrawingModelInterpolator
@@ -66,7 +66,7 @@ public fun rememberColumnCartesianLayer(
         },
     spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
     innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
-    mergeMode: (ColumnCartesianLayerModel) -> MergeMode = { MergeMode.Grouped },
+    mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
     verticalAxisPosition: AxisPosition.Vertical? = null,
     dataLabel: TextComponent? = null,
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,

@@ -67,7 +67,7 @@ public open class ColumnCartesianLayer(
     public var columns: List<LineComponent>,
     public var spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
     public var innerSpacingDp: Float = Defaults.COLUMN_INSIDE_SPACING,
-    public var mergeMode: (ColumnCartesianLayerModel) -> MergeMode = { MergeMode.Grouped },
+    public var mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var dataLabel: TextComponent? = null,
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
@@ -142,7 +142,7 @@ public open class ColumnCartesianLayer(
         var columnTop: Float
         var columnBottom: Float
         val zeroLinePosition = bounds.bottom + yRange.minY / yRange.length * bounds.height()
-        val mergeMode = mergeMode(model)
+        val mergeMode = mergeMode(model.extraStore)
 
         model.series.forEachIndexed { index, entryCollection ->
 
@@ -344,7 +344,7 @@ public open class ColumnCartesianLayer(
         chartValues: MutableChartValues,
         model: ColumnCartesianLayerModel,
     ) {
-        val mergeMode = mergeMode(model)
+        val mergeMode = mergeMode(model.extraStore)
         val minY = mergeMode.getMinY(model)
         val maxY = mergeMode.getMaxY(model)
         chartValues.tryUpdate(
@@ -363,7 +363,10 @@ public open class ColumnCartesianLayer(
     ) {
         with(context) {
             val columnCollectionWidth =
-                getColumnCollectionWidth(if (model.series.isNotEmpty()) model.series.size else 1, mergeMode(model))
+                getColumnCollectionWidth(
+                    if (model.series.isNotEmpty()) model.series.size else 1,
+                    mergeMode(model.extraStore),
+                )
             val xSpacing = columnCollectionWidth + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
