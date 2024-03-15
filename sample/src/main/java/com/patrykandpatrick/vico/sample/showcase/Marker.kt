@@ -17,10 +17,12 @@
 package com.patrykandpatrick.vico.sample.showcase
 
 import android.graphics.Typeface
+import android.text.Layout
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.component.fixed
 import com.patrykandpatrick.vico.compose.component.rememberLayeredComponent
 import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
@@ -39,10 +41,7 @@ import com.patrykandpatrick.vico.core.extension.copyColor
 import com.patrykandpatrick.vico.core.marker.Marker
 
 @Composable
-internal fun rememberMarker(
-    labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top,
-    minWidth: TextComponent.MinWidth = TextComponent.MinWidth.Zero,
-): Marker {
+internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top): Marker {
     val labelBackgroundShape = Shapes.markerCorneredShape(Corner.FullyRounded)
     val labelBackground =
         rememberShapeComponent(labelBackgroundShape, MaterialTheme.colorScheme.surface)
@@ -57,6 +56,8 @@ internal fun rememberMarker(
             background = labelBackground,
             padding = dimensionsOf(8.dp, 4.dp),
             typeface = Typeface.MONOSPACE,
+            textAlignment = Layout.Alignment.ALIGN_CENTER,
+            minWidth = TextComponent.MinWidth.fixed(40.dp),
         )
     val indicatorFrontComponent = rememberShapeComponent(Shapes.pillShape, MaterialTheme.colorScheme.surface)
     val indicatorCenterComponent = rememberShapeComponent(Shapes.pillShape)
@@ -78,8 +79,8 @@ internal fun rememberMarker(
             thickness = 2.dp,
             shape = Shapes.dashedShape(shape = Shapes.pillShape, dashLength = 8.dp, gapLength = 4.dp),
         )
-    return remember(label, labelPosition, indicator, guideline, minWidth) {
-        object : MarkerComponent(label, labelPosition, indicator, guideline, minWidth) {
+    return remember(label, labelPosition, indicator, guideline) {
+        object : MarkerComponent(label, labelPosition, indicator, guideline) {
             init {
                 indicatorSizeDp = 36f
                 onApplyEntryColor = { entryColor ->

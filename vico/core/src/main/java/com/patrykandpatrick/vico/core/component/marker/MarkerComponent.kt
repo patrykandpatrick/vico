@@ -25,7 +25,6 @@ import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.cornered.MarkerCorneredShape
-import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -46,14 +45,12 @@ import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
  * @param labelPosition specifies the position of the label.
  * @param indicator drawn at the marked points.
  * @param guideline drawn vertically through the marked points.
- * @param minWidth defines the minimum width of the marker.
  */
 public open class MarkerComponent(
     public val label: TextComponent,
     public val labelPosition: LabelPosition = LabelPosition.Top,
     public val indicator: Component? = null,
     public val guideline: LineComponent? = null,
-    public val minWidth: TextComponent.MinWidth = TextComponent.MinWidth.Zero,
 ) : Marker {
     protected val tempBounds: RectF = RectF()
 
@@ -130,7 +127,6 @@ public open class MarkerComponent(
                     text = text,
                     width = bounds.width().toInt(),
                     outRect = tempBounds,
-                    minWidth = minWidth,
                 )
             val halfOfTextWidth = labelBounds.width().half
             val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
@@ -160,9 +156,7 @@ public open class MarkerComponent(
                 textX = x,
                 textY = y,
                 verticalPosition = verticalPosition,
-                horizontalPosition = HorizontalPosition.Center,
                 maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
-                minWidth = minWidth,
             )
         }
 

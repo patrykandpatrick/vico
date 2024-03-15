@@ -22,6 +22,7 @@ import android.graphics.Typeface
 import android.text.Layout
 import android.text.TextUtils
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -303,6 +304,7 @@ public fun overlayingComponent(
  * @param margins the margins around the background.
  * @param typeface the [Typeface] for the text.
  * @param textAlignment the text alignment.
+ * @param minWidth defines the minimum width.
  */
 @Composable
 public fun rememberTextComponent(
@@ -315,8 +317,9 @@ public fun rememberTextComponent(
     margins: MutableDimensions = emptyDimensions(),
     typeface: Typeface? = null,
     textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
+    minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
 ): TextComponent =
-    remember(color, textSize, background, ellipsize, lineCount, padding, margins, typeface, textAlignment) {
+    remember(color, textSize, background, ellipsize, lineCount, padding, margins, typeface, textAlignment, minWidth) {
         textComponent {
             this.color = color.toArgb()
             textSizeSp = textSize.pixelSize()
@@ -327,5 +330,10 @@ public fun rememberTextComponent(
             this.margins = margins
             this.typeface = typeface
             this.textAlignment = textAlignment
+            this.minWidth = minWidth
         }
     }
+
+/** A [Dp] version of [TextComponent.MinWidth.fixed]. */
+@Stable
+public fun TextComponent.MinWidth.Companion.fixed(value: Dp = 0.dp): TextComponent.MinWidth = fixed(value.value)

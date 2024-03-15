@@ -34,11 +34,10 @@ public fun rememberMarkerComponent(
     labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top,
     indicator: Component? = null,
     guideline: LineComponent? = null,
-    minWidth: TextComponent.MinWidth = TextComponent.MinWidth.Zero,
     labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter(),
 ): MarkerComponent =
-    remember(label, labelPosition, indicator, guideline, minWidth) {
-        MarkerComponent(label, labelPosition, indicator, guideline, minWidth)
+    remember(label, labelPosition, indicator, guideline) {
+        MarkerComponent(label, labelPosition, indicator, guideline)
     }.apply {
         this.labelFormatter = labelFormatter
     }

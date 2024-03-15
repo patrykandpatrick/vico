@@ -48,7 +48,6 @@ import com.patrykandpatrick.vico.core.text.staticLayout
 import com.patrykandpatrick.vico.core.text.widestLineWidth
 import kotlin.math.absoluteValue
 import kotlin.math.cos
-import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
@@ -111,6 +110,9 @@ public open class TextComponent protected constructor() : Padding, Margins {
      */
     public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL
 
+    /** Defines the minimum width. */
+    public var minWidth: MinWidth = MinWidth.fixed()
+
     /**
      * The padding between the text and the background. This is applied even if [background] is null.
      *
@@ -150,11 +152,10 @@ public open class TextComponent protected constructor() : Padding, Margins {
         maxTextWidth: Int = DEF_LAYOUT_SIZE,
         maxTextHeight: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
-        minWidth: MinWidth = MinWidth.Zero,
     ): Unit =
         with(context) {
             if (text.isBlank()) return
-            layout = getLayout(text, maxTextWidth, maxTextHeight, rotationDegrees)
+            layout = getLayout(this, text, maxTextWidth, maxTextHeight, rotationDegrees)
 
             val shouldRotate = rotationDegrees % 2f.piRad != 0f
             val textStartPosition = horizontalPosition.getTextStartPosition(context, textX, layout.widestLineWidth)
@@ -164,18 +165,19 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 val bounds = layout.getBounds(tempMeasureBounds)
                 val paddingLeft = padding.getLeftDp(isLtr).pixels
                 val paddingRight = padding.getRightDp(isLtr).pixels
-                val minTextWidthWithoutPadding =
-                    with(minWidth) {
-                        getMinWidth(context, maxTextWidth, maxTextHeight, rotationDegrees)
-                    } - paddingLeft - paddingRight
-                val measuredTextWidth = bounds.width()
-                bounds.right = max(minTextWidthWithoutPadding, measuredTextWidth)
-                val textAlignmentCorrection = getTextAlignmentCorrection(bounds.width())
+                val textAlignmentCorrection: Float
 
                 with(receiver = bounds) {
+                    val minWidth =
+                        minWidth.getValue(context, this@TextComponent, maxTextWidth, maxTextHeight, rotationDegrees) -
+                            padding.horizontalDp.pixels
+                    val minWidthCorrection = (minWidth.coerceAtMost(layout.width.toFloat()) - width()).coerceAtLeast(0f)
+                    left -= minWidthCorrection.half
+                    right += minWidthCorrection.half
+                    textAlignmentCorrection = getTextAlignmentCorrection(width())
                     left -= paddingLeft
-                    right += paddingRight
                     top -= padding.topDp.pixels
+                    right += paddingRight
                     bottom += padding.bottomDp.pixels
                 }
 
@@ -200,9 +202,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
                             else -> 0f
                         }
                 }
-                val textXMinWidthCorrection = max(0f, (minTextWidthWithoutPadding - measuredTextWidth) / 2)
                 bounds.translate(
-                    x = textStartPosition + xCorrection - textXMinWidthCorrection,
+                    x = textStartPosition + xCorrection,
                     y = textTopPosition + yCorrection,
                 )
 
@@ -219,7 +220,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 )
 
                 translate(
-                    bounds.left + paddingLeft + textAlignmentCorrection + textXMinWidthCorrection,
+                    bounds.left + paddingLeft + textAlignmentCorrection,
                     bounds.top + padding.topDp.pixels,
                 )
 
@@ -341,27 +342,23 @@ public open class TextComponent protected constructor() : Padding, Margins {
         includePaddingAndMargins: Boolean = true,
         rotationDegrees: Float = 0f,
         pad: Boolean = text == null,
-        minWidth: MinWidth = MinWidth.Zero,
     ): RectF =
         with(context) {
             var measuredText = text?.toString().orEmpty()
             if (pad) repeat((lineCount - measuredText.lines().size).coerceAtLeast(0)) { measuredText += '\n' }
-            getLayout(measuredText, width, height, rotationDegrees)
+            val layout = getLayout(this, measuredText, width, height, rotationDegrees)
+            layout
                 .getBounds(outRect)
-
-            val minWidthValue =
-                with(minWidth) {
-                    getMinWidth(context, width, height, rotationDegrees)
+                .apply {
+                    val minWidth =
+                        minWidth.getValue(context, this@TextComponent, width, height, rotationDegrees) -
+                            padding.horizontalDp.pixels
+                    right = right.coerceAtLeast(minWidth).coerceAtMost(layout.width.toFloat())
+                    if (includePaddingAndMargins) {
+                        right += padding.horizontalDp.pixels
+                        bottom += padding.verticalDp.pixels
+                    }
                 }
-
-            outRect.right = max(outRect.right, minWidthValue - outRect.left)
-
-            outRect.apply {
-                if (includePaddingAndMargins) {
-                    right += padding.horizontalDp.pixels
-                    bottom += padding.verticalDp.pixels
-                }
-            }
                 .rotate(rotationDegrees)
                 .apply {
                     if (includePaddingAndMargins) {
@@ -371,12 +368,13 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 }
         }
 
-    private fun MeasureContext.getLayout(
+    private fun getLayout(
+        context: MeasureContext,
         text: CharSequence,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
         rotationDegrees: Float = 0f,
-    ): StaticLayout {
+    ) = context.run {
         val widthWithoutMargins = width - margins.horizontalDp.wholePixels
         val heightWithoutMargins = height - margins.verticalDp.wholePixels
 
@@ -397,7 +395,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 } - padding.horizontalDp.wholePixels
             ).coerceAtLeast(0)
 
-        return extraStore.getOrSetCached(
+        extraStore.getOrSetCached(
             cacheKey = layoutCacheKey,
             valueKey = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode(),
         ) {
@@ -459,6 +457,9 @@ public open class TextComponent protected constructor() : Padding, Margins {
          */
         public var textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL
 
+        /** Defines the minimum width. */
+        public var minWidth: MinWidth = MinWidth.fixed()
+
         /**
          * @see [TextComponent.padding]
          */
@@ -481,66 +482,65 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 lineCount = this@Builder.lineCount
                 background = this@Builder.background
                 textAlignment = this@Builder.textAlignment
+                minWidth = this@Builder.minWidth
                 padding.set(this@Builder.padding)
                 margins.set(this@Builder.margins)
             }
     }
 
-    /**
-     * Defines a minimum width of a [TextComponent].
-     */
+    /** Defines a [TextComponent]’s minimum width. */
     public fun interface MinWidth {
-        /**
-         * Returns the minimum width for the the available [width], [height] and given [rotationDegrees].
-         */
-        public fun TextComponent.getMinWidth(
+        /** Returns the minimum width. */
+        public fun getValue(
             context: MeasureContext,
-            width: Int,
-            height: Int,
+            textComponent: TextComponent,
+            maxWidth: Int,
+            maxHeight: Int,
             rotationDegrees: Float,
         ): Float
 
-        /**
-         * The minimum width is zero.
-         */
-        public data object Zero : MinWidth {
-            override fun TextComponent.getMinWidth(
-                context: MeasureContext,
-                width: Int,
-                height: Int,
-                rotationDegrees: Float,
-            ): Float = 0f
-        }
+        /** Houses [MinWidth] factory functions. */
+        public companion object {
+            internal class Fixed(private val valueDp: Float) : MinWidth {
+                override fun getValue(
+                    context: MeasureContext,
+                    textComponent: TextComponent,
+                    maxWidth: Int,
+                    maxHeight: Int,
+                    rotationDegrees: Float,
+                ) = context.run { valueDp.pixels }
 
-        /**
-         * The minimum width is equal to the physical size of the [text].
-         */
-        public data class TextLength(val text: CharSequence) : MinWidth {
-            private val outRect = RectF()
+                override fun equals(other: Any?) = this === other || other is Fixed && valueDp == other.valueDp
 
-            override fun TextComponent.getMinWidth(
-                context: MeasureContext,
-                width: Int,
-                height: Int,
-                rotationDegrees: Float,
-            ): Float {
-                with(context) {
-                    getLayout(text, width, height, rotationDegrees).getBounds(outRect)
-                }
-                return outRect.width()
+                override fun hashCode() = valueDp.hashCode()
             }
-        }
 
-        /**
-         * The minimum width is equal to the [valueDp].
-         */
-        public data class Fixed(val valueDp: Float) : MinWidth {
-            override fun TextComponent.getMinWidth(
-                context: MeasureContext,
-                width: Int,
-                height: Int,
-                rotationDegrees: Float,
-            ): Float = with(context) { valueDp.pixels }
+            internal class Text(private val text: CharSequence) : MinWidth {
+                private val bounds = RectF()
+
+                override fun getValue(
+                    context: MeasureContext,
+                    textComponent: TextComponent,
+                    maxWidth: Int,
+                    maxHeight: Int,
+                    rotationDegrees: Float,
+                ) = context.run {
+                    textComponent
+                        .getLayout(context, text, maxWidth, maxHeight, rotationDegrees)
+                        .getBounds(bounds)
+                        .width() + textComponent.padding.horizontalDp.pixels
+                }
+
+                override fun equals(other: Any?) = this === other || other is Text && text == other.text
+
+                override fun hashCode() = text.hashCode()
+            }
+
+            /** Sets the minimum width to [valueDp] dp. */
+            public fun fixed(valueDp: Float = 0f): MinWidth = Fixed(valueDp)
+
+            /** Sets the minimum width to the intrinsic width of the [TextComponent] for [text]. */
+            public fun text(text: CharSequence): MinWidth = Text(text)
         }
     }
 }
