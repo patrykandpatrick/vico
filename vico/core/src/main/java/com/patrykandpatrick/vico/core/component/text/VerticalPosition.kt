@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,15 +23,11 @@ public enum class VerticalPosition {
     Top,
     Center,
     Bottom,
-    ;
-
-    /**
-     * Returns the inverse of this [VerticalPosition].
-     */
-    public fun negative(): VerticalPosition =
-        when (this) {
-            Top -> Bottom
-            Center -> Center
-            Bottom -> Top
-        }
 }
+
+internal operator fun VerticalPosition.unaryMinus() =
+    when (this) {
+        VerticalPosition.Top -> VerticalPosition.Bottom
+        VerticalPosition.Center -> VerticalPosition.Center
+        VerticalPosition.Bottom -> VerticalPosition.Top
+    }

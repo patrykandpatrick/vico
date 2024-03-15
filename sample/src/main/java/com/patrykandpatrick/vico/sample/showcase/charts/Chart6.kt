@@ -27,6 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.decoration.rememberHorizontalBox
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
@@ -37,7 +38,6 @@ import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
-import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.columnSeries
@@ -88,7 +88,7 @@ private fun ComposeChart6(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier,
 ) {
-    val thresholdLine = rememberThresholdLine()
+    val horizontalBox = rememberHorizontalBox()
     val shape = remember { Shapes.cutCornerShape(topLeftPercent = 50) }
     CartesianChartHost(
         chart =
@@ -96,7 +96,7 @@ private fun ComposeChart6(
                 rememberColumnCartesianLayer(columnColors.map { rememberLineComponent(color = it, shape = shape) }),
                 startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
-                decorations = remember(thresholdLine) { listOf(thresholdLine) },
+                decorations = remember(horizontalBox) { listOf(horizontalBox) },
             ),
         modelProducer = modelProducer,
         modifier = modifier,
@@ -111,8 +111,8 @@ private fun ViewChart6(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier,
 ) {
-    val thresholdLine = rememberThresholdLine()
-    val decorations = remember(thresholdLine) { listOf(thresholdLine) }
+    val horizontalBox = rememberHorizontalBox()
+    val decorations = remember(horizontalBox) { listOf(horizontalBox) }
     val marker = rememberMarker()
     AndroidViewBinding(Chart6Binding::inflate, modifier) {
         with(chartView) {
@@ -127,23 +127,22 @@ private fun ViewChart6(
 }
 
 @Composable
-private fun rememberThresholdLine(): ThresholdLine {
-    val label =
-        rememberTextComponent(
-            color = Color.Black,
-            background = rememberShapeComponent(Shapes.rectShape, thresholdLineColor),
-            padding = dimensionsOf(8.dp, 2.dp),
-            margins = dimensionsOf(4.dp),
-            typeface = Typeface.MONOSPACE,
-        )
-    val line = rememberShapeComponent(color = thresholdLineColor.copy(.36f))
-    return remember(label, line) {
-        ThresholdLine(thresholdRange = 7f..14f, labelComponent = label, lineComponent = line)
-    }
-}
+private fun rememberHorizontalBox() =
+    rememberHorizontalBox(
+        y = { 7f..14f },
+        box = rememberShapeComponent(color = horizontalBoxColor.copy(.36f)),
+        labelComponent =
+            rememberTextComponent(
+                color = Color.Black,
+                background = rememberShapeComponent(Shapes.rectShape, horizontalBoxColor),
+                padding = dimensionsOf(8.dp, 2.dp),
+                margins = dimensionsOf(4.dp),
+                typeface = Typeface.MONOSPACE,
+            ),
+    )
 
 private val columnColors = listOf(Color(0xff3e6558), Color(0xff5e836a), Color(0xffa5ba8e))
-private val thresholdLineColor = Color(0xffe9e5af)
+private val horizontalBoxColor = Color(0xffe9e5af)
 private val daysOfWeek = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 private val bottomAxisValueFormatter =
     AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _, _ -> daysOfWeek[x.toInt() % daysOfWeek.size] }

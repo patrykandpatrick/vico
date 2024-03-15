@@ -19,7 +19,10 @@ package com.patrykandpatrick.vico.compose.chart.layer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
-import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.theme.vicoTheme
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.layer.CartesianLayer
@@ -27,10 +30,12 @@ import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
+import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
+import com.patrykandpatrick.vico.core.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.formatter.ValueFormatter
-import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.model.ExtraStore
 import com.patrykandpatrick.vico.core.model.drawing.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.model.drawing.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.model.drawing.DrawingModelInterpolator
@@ -55,15 +60,18 @@ import com.patrykandpatrick.vico.core.model.drawing.DrawingModelInterpolator
  */
 @Composable
 public fun rememberColumnCartesianLayer(
-    columns: List<LineComponent> = currentChartStyle.columnLayer.columns,
-    spacing: Dp = currentChartStyle.columnLayer.outsideSpacing,
-    innerSpacing: Dp = currentChartStyle.columnLayer.innerSpacing,
-    mergeMode: (ColumnCartesianLayerModel) -> MergeMode = with(currentChartStyle) { { columnLayer.mergeMode } },
+    columns: List<LineComponent> =
+        vicoTheme.cartesianLayerColors.map { color ->
+            rememberLineComponent(color = color, shape = Shapes.roundedCornerShape(Defaults.COLUMN_ROUNDNESS_PERCENT))
+        },
+    spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
+    innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
+    mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
     verticalAxisPosition: AxisPosition.Vertical? = null,
-    dataLabel: TextComponent? = currentChartStyle.columnLayer.dataLabel,
-    dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnLayer.dataLabelVerticalPosition,
-    dataLabelValueFormatter: ValueFormatter = currentChartStyle.columnLayer.dataLabelValueFormatter,
-    dataLabelRotationDegrees: Float = currentChartStyle.columnLayer.dataLabelRotationDegrees,
+    dataLabel: TextComponent? = null,
+    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelValueFormatter: ValueFormatter = remember { DecimalFormatValueFormatter() },
+    dataLabelRotationDegrees: Float = 0f,
     axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
     drawingModelInterpolator:
         DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =

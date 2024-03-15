@@ -41,7 +41,7 @@ import com.patrykandpatrick.vico.views.extension.defaultColors
 
 internal fun TypedArray.getLineComponent(
     context: Context,
-    defaultColor: Int = context.defaultColors.axisLineColor.toInt(),
+    defaultColor: Int = context.defaultColors.lineColor.toInt(),
     defaultThickness: Float = Defaults.AXIS_LINE_WIDTH,
     defaultShape: Shape = Shapes.rectShape,
 ): LineComponent =
@@ -156,7 +156,7 @@ internal fun TypedArray.getComponent(context: Context): Component? =
 
 internal fun TypedArray.getLineSpec(
     context: Context,
-    defaultColor: Int = context.defaultColors.entity1Color.toInt(),
+    defaultColor: Int,
 ): LineCartesianLayer.LineSpec {
     val positiveLineColor =
         getColor(R.styleable.LineSpec_positiveColor, getColor(R.styleable.LineSpec_color, defaultColor))

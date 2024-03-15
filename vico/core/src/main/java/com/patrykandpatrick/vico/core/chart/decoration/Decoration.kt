@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,8 @@ import com.patrykandpatrick.vico.core.chart.draw.ChartDrawContext
 /**
  * A [Decoration] presents additional information on a [CartesianChart].
  *
- * An example [Decoration] implementation is [ThresholdLine].
- *
- * @see [ThresholdLine]
+ * @see [HorizontalBox]
+ * @see [HorizontalLine]
  */
 public interface Decoration {
     /**

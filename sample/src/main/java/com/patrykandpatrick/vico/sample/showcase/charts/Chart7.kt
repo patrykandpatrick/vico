@@ -42,7 +42,7 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.color
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.legend.rememberLegendItem
 import com.patrykandpatrick.vico.compose.legend.rememberVerticalLegend
-import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.compose.theme.vicoTheme
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
@@ -165,7 +165,7 @@ private fun rememberLegend() =
                     icon = rememberShapeComponent(Shapes.pillShape, chartColor),
                     label =
                         rememberTextComponent(
-                            color = currentChartStyle.axis.axisLabelColor,
+                            color = vicoTheme.textColor,
                             textSize = 12.sp,
                             typeface = Typeface.MONOSPACE,
                         ),

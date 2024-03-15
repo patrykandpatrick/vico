@@ -49,7 +49,7 @@ import com.patrykandpatrick.vico.compose.model.defaultDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.state.component1
 import com.patrykandpatrick.vico.compose.state.component2
 import com.patrykandpatrick.vico.compose.state.component3
-import com.patrykandpatrick.vico.compose.style.currentChartStyle
+import com.patrykandpatrick.vico.compose.theme.vicoTheme
 import com.patrykandpatrick.vico.core.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.chart.CartesianChart
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
@@ -205,7 +205,7 @@ internal fun CartesianChartHostImpl(
         )
     val lastMarkerEntryModels = remember { mutableStateOf(emptyList<Marker.EntryModel>()) }
 
-    val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
+    val elevationOverlayColor = vicoTheme.elevationOverlayColor.toArgb()
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     var previousModelID by remember { ValueWrapper(model.id) }

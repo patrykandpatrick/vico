@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.axis
 
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
@@ -224,15 +225,13 @@ public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
  * Provides a quick way to create an axis. Creates a [BaseAxis.Builder] instance, calls the provided function block with
  * the [BaseAxis.Builder] instance as its receiver, and returns the [BaseAxis.Builder] instance.
  */
+@Deprecated(message = "Use `BaseAxis.Builder`, `createHorizontalAxis`, or `createVerticalAxis`.")
 public fun <Position : AxisPosition> axisBuilder(
     block: BaseAxis.Builder<Position>.() -> Unit = {},
 ): BaseAxis.Builder<Position> = BaseAxis.Builder<Position>().apply(block)
 
-/**
- * A convenience function that allows for applying the properties from a [BaseAxis.Builder] to a [BaseAxis] subclass.
- *
- * @param axis the [BaseAxis] whose properties will be updated to this [BaseAxis.Builder]’s properties.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun <Position : AxisPosition, A : BaseAxis<Position>> BaseAxis.Builder<Position>.setTo(axis: A): A {
     axis.axisLine = this.axis
     axis.tick = tick

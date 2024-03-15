@@ -134,11 +134,14 @@ internal class DefaultVerticalAxisItemPlacer(
                 val values = mutableListOf<Float>()
                 val requestedStep = context.getStepOrThrow() ?: 10f.pow(log10(maxY).floor - 1)
                 val minStep = (maxY - minY) / (freeHeight / maxLabelHeight).floor
-                var step = requestedStep * (minStep / requestedStep).ceil
-                if ((maxY / requestedStep).let { it == it.floor }) {
-                    val divisors = (maxY / requestedStep).toInt().getDivisors()
-                    if (divisors.size > 2) step = divisors.first { it >= step }.toFloat()
-                }
+                val step =
+                    (maxY / requestedStep)
+                        .takeIf { it == it.floor }
+                        ?.toInt()
+                        ?.getDivisors(includeDividend = false)
+                        ?.firstOrNull { it * requestedStep >= minStep }
+                        ?.let { it * requestedStep }
+                        ?: ((minStep / requestedStep).ceil * requestedStep)
                 repeat(((maxY - minY) / step).toInt()) { values += multiplier * (minY + (it + 1) * step) }
                 return values
             }

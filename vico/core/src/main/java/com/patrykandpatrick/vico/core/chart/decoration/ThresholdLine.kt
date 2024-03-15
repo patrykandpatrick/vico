@@ -52,6 +52,11 @@ import java.text.DecimalFormat
  *
  * @see Decoration
  */
+@Deprecated(
+    "Use `HorizontalBox` or `HorizontalLine` instead. For Jetpack Compose, there are `rememberHorizontalBox` and" +
+        "`rememberHorizontalLine` functions. More information: " +
+        "https://patrykandpatrick.com/vico/releases/2.0.0-alpha.12.",
+)
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
     val thresholdLabel: CharSequence =
@@ -82,6 +87,10 @@ public data class ThresholdLine(
      * @property verticalAxisPosition the position of the [VerticalAxis] whose scale the [ThresholdLine] should use when
      * interpreting [thresholdValue].
      */
+    @Deprecated(
+        "Use `HorizontalLine` instead. For Jetpack Compose, there’s a `rememberHorizontalLine` function. More " +
+            "information: https://patrykandpatrick.com/vico/releases/2.0.0-alpha.12.",
+    )
     public constructor(
         thresholdValue: Float,
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),

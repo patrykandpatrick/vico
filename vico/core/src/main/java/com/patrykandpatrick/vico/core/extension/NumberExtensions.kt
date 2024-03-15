@@ -55,7 +55,7 @@ internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>)
 
 internal fun ClosedFloatingPointRange<Float>.random(): Float = start + (endInclusive - start) * Random.nextFloat()
 
-internal fun Int.getDivisors() =
+internal fun Int.getDivisors(includeDividend: Boolean = true) =
     buildList {
         add(1)
         for (i in 2..sqrt(toFloat()).toInt()) {
@@ -65,6 +65,7 @@ internal fun Int.getDivisors() =
                 if (derived != i) add(derived)
             }
         }
+        if (includeDividend) add(this@getDivisors)
         sort()
     }
 

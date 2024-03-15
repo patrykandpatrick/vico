@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.sample.previews
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,10 +27,8 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.compose.style.LocalChartStyle
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.cornered.Corner
@@ -44,169 +41,133 @@ import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
 private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 4) })
 
 @Composable
-private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
-    val chartStyle =
-        LocalChartStyle.current.copy(
-            axis =
-                LocalChartStyle.current.axis.copy(
-                    axisLabelColor = Color.Black,
-                    axisLineColor = Color.Black.copy(alpha = 0.5f),
-                    axisGuidelineColor = Color.Black.copy(alpha = 0.2f),
-                ),
-            columnLayer =
-                LocalChartStyle.current.columnLayer.copy(
-                    columns =
-                        LocalChartStyle.current.columnLayer.columns.map {
-                            rememberLineComponent(
-                                color = Color.Gray,
-                                thickness = it.thicknessDp.dp,
-                                shape = it.shape,
-                                dynamicShader = it.dynamicShader,
-                                margins = it.margins,
-                            )
-                        },
-                ),
-        )
-    CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
-}
-
-@Composable
 @Preview(showBackground = true, widthDp = 250)
 fun HorizontalAxisTextInside() {
-    ProvidePreviewChartStyle {
-        val label =
-            rememberAxisLabelComponent(
-                background =
-                    rememberShapeComponent(
-                        shape =
-                            CorneredShape(
-                                topLeft =
-                                    Corner.Relative(
-                                        percentage = 50,
-                                        cornerTreatment = CutCornerTreatment,
-                                    ),
-                                bottomRight =
-                                    Corner.Relative(
-                                        percentage = 50,
-                                        cornerTreatment = RoundedCornerTreatment,
-                                    ),
-                            ),
-                        color = Color.LightGray,
-                        strokeColor = Color.Gray,
-                        strokeWidth = 1.dp,
-                    ),
-                padding =
-                    dimensionsOf(
-                        horizontal = 2.dp,
-                        vertical = 8.dp,
-                    ),
-                margins =
-                    dimensionsOf(
-                        horizontal = 4.dp,
-                        vertical = 4.dp,
-                    ),
-            )
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(),
-                    startAxis =
-                        rememberStartAxis(
-                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                            label = label,
+    val label =
+        rememberAxisLabelComponent(
+            background =
+                rememberShapeComponent(
+                    shape =
+                        CorneredShape(
+                            topLeft =
+                                Corner.Relative(
+                                    percentage = 50,
+                                    cornerTreatment = CutCornerTreatment,
+                                ),
+                            bottomRight =
+                                Corner.Relative(
+                                    percentage = 50,
+                                    cornerTreatment = RoundedCornerTreatment,
+                                ),
                         ),
-                    endAxis =
-                        rememberEndAxis(
-                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                            guideline = null,
-                            label = label,
-                        ),
+                    color = Color.LightGray,
+                    strokeColor = Color.Gray,
+                    strokeWidth = 1.dp,
                 ),
-            model = model,
+            padding =
+                dimensionsOf(
+                    horizontal = 2.dp,
+                    vertical = 8.dp,
+                ),
+            margins =
+                dimensionsOf(
+                    horizontal = 4.dp,
+                    vertical = 4.dp,
+                ),
         )
-    }
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(),
+                startAxis =
+                    rememberStartAxis(
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                        label = label,
+                    ),
+                endAxis =
+                    rememberEndAxis(
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                        guideline = null,
+                        label = label,
+                    ),
+            ),
+        model = model,
+    )
 }
 
 @Composable
 @Preview(showBackground = true, widthDp = 250)
 fun HorizontalAxisTextInsideAndBottomAxis() {
-    ProvidePreviewChartStyle {
-        val label =
-            rememberAxisLabelComponent(
-                background =
-                    rememberShapeComponent(
-                        shape = Shapes.pillShape,
-                        color = Color.LightGray,
-                    ),
-                padding =
-                    dimensionsOf(
-                        horizontal = 2.dp,
-                        vertical = 8.dp,
-                    ),
-                margins =
-                    dimensionsOf(
-                        horizontal = 4.dp,
-                        vertical = 4.dp,
-                    ),
-            )
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(),
-                    startAxis =
-                        rememberStartAxis(
-                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                            label = label,
-                        ),
-                    endAxis =
-                        rememberEndAxis(
-                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                            guideline = null,
-                            label = label,
-                        ),
-                    bottomAxis = rememberBottomAxis(),
+    val label =
+        rememberAxisLabelComponent(
+            background =
+                rememberShapeComponent(
+                    shape = Shapes.pillShape,
+                    color = Color.LightGray,
                 ),
-            model = model,
+            padding =
+                dimensionsOf(
+                    horizontal = 2.dp,
+                    vertical = 8.dp,
+                ),
+            margins =
+                dimensionsOf(
+                    horizontal = 4.dp,
+                    vertical = 4.dp,
+                ),
         )
-    }
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(),
+                startAxis =
+                    rememberStartAxis(
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                        label = label,
+                    ),
+                endAxis =
+                    rememberEndAxis(
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                        guideline = null,
+                        label = label,
+                    ),
+                bottomAxis = rememberBottomAxis(),
+            ),
+        model = model,
+    )
 }
 
 @Composable
 @Preview(showBackground = true, widthDp = 250)
 fun HorizontalAxisTextOutside() {
-    ProvidePreviewChartStyle {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(),
-                    startAxis =
-                        rememberStartAxis(
-                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-                        ),
-                    endAxis =
-                        rememberEndAxis(
-                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
-                            guideline = null,
-                        ),
-                ),
-            model = model,
-        )
-    }
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(),
+                startAxis =
+                    rememberStartAxis(
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+                    ),
+                endAxis =
+                    rememberEndAxis(
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
+                        guideline = null,
+                    ),
+            ),
+        model = model,
+    )
 }
 
 @Composable
 @Preview(showBackground = true, widthDp = 250)
 fun HorizontalAxisGuidelineDoesNotOverlayBottomAxisLine() {
-    ProvidePreviewChartStyle {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(),
-                    startAxis =
-                        rememberStartAxis(horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside),
-                    bottomAxis = rememberBottomAxis(),
-                ),
-            model = model,
-        )
-    }
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(),
+                startAxis = rememberStartAxis(horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside),
+                bottomAxis = rememberBottomAxis(),
+            ),
+        model = model,
+    )
 }

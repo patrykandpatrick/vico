@@ -16,13 +16,9 @@
 
 package com.patrykandpatrick.vico.core.extension
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.constants.ERR_REPEATING_COLLECTION_EMPTY
 import kotlin.math.abs
-
-internal fun <T> List<T>.getRepeating(index: Int): T {
-    if (isEmpty()) throw IllegalStateException(ERR_REPEATING_COLLECTION_EMPTY)
-    return get(index % size.coerceAtLeast(1))
-}
 
 @JvmName("copyDouble")
 internal fun <T> List<List<T>>.copy() = map { it.toList() }
@@ -71,3 +67,10 @@ internal inline fun <T> Iterable<T>.sumOf(selector: (T) -> Float): Float {
 
 internal fun <T> mutableListOf(sourceCollection: Collection<T>): MutableList<T> =
     ArrayList<T>(sourceCollection.size).apply { addAll(sourceCollection) }
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun <T> List<T>.getRepeating(index: Int): T {
+    if (isEmpty()) throw IllegalStateException(ERR_REPEATING_COLLECTION_EMPTY)
+    return get(index % size.coerceAtLeast(1))
+}

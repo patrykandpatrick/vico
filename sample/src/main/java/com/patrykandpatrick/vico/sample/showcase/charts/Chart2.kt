@@ -27,6 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.decoration.rememberHorizontalLine
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
@@ -38,8 +39,9 @@ import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
-import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
+import com.patrykandpatrick.vico.core.chart.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.textComponent
@@ -102,7 +104,7 @@ private fun ComposeChart2(
                         itemPlacer =
                             remember { AxisItemPlacer.Horizontal.default(spacing = 3, addExtremeLabelPadding = true) },
                     ),
-                decorations = listOf(rememberComposeThresholdLine()),
+                decorations = listOf(rememberComposeHorizontalLine()),
             ),
         modelProducer = modelProducer,
         modifier = modifier,
@@ -123,7 +125,7 @@ private fun ViewChart2(
                 .inflate(inflater, parent, attachToParent)
                 .apply {
                     with(chartView) {
-                        chart?.addDecoration(getViewThresholdLine())
+                        chart?.addDecoration(getViewHorizontalLine())
                         this.modelProducer = modelProducer
                         (chart?.bottomAxis as BaseAxis).valueFormatter = bottomAxisValueFormatter
                         this.marker = marker
@@ -135,44 +137,45 @@ private fun ViewChart2(
 }
 
 @Composable
-private fun rememberComposeThresholdLine(): ThresholdLine {
-    val color = Color(THRESHOLD_LINE_COLOR)
-    val line = rememberShapeComponent(color = color)
-    val label =
-        rememberTextComponent(
-            background = rememberShapeComponent(Shapes.pillShape, color),
-            padding =
-                dimensionsOf(
-                    THRESHOLD_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
-                    THRESHOLD_LINE_LABEL_VERTICAL_PADDING_DP.dp,
-                ),
-            margins = dimensionsOf(THRESHOLD_LINE_LABEL_MARGIN_DP.dp),
-            typeface = Typeface.MONOSPACE,
-        )
-    return remember(line, label) {
-        ThresholdLine(thresholdValue = THRESHOLD_LINE_Y, lineComponent = line, labelComponent = label)
-    }
+private fun rememberComposeHorizontalLine(): HorizontalLine {
+    val color = Color(HORIZONTAL_LINE_COLOR)
+    return rememberHorizontalLine(
+        y = { HORIZONTAL_LINE_Y },
+        line = rememberLineComponent(color, HORIZONTAL_LINE_THICKNESS_DP.dp),
+        labelComponent =
+            rememberTextComponent(
+                background = rememberShapeComponent(Shapes.pillShape, color),
+                padding =
+                    dimensionsOf(
+                        HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
+                        HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
+                    ),
+                margins = dimensionsOf(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
+                typeface = Typeface.MONOSPACE,
+            ),
+    )
 }
 
-private fun getViewThresholdLine() =
-    ThresholdLine(
-        thresholdValue = THRESHOLD_LINE_Y,
-        lineComponent = ShapeComponent(color = THRESHOLD_LINE_COLOR),
+private fun getViewHorizontalLine() =
+    HorizontalLine(
+        y = { HORIZONTAL_LINE_Y },
+        line = LineComponent(HORIZONTAL_LINE_COLOR, HORIZONTAL_LINE_THICKNESS_DP),
         labelComponent =
             textComponent {
-                background = ShapeComponent(Shapes.pillShape, THRESHOLD_LINE_COLOR)
+                background = ShapeComponent(Shapes.pillShape, HORIZONTAL_LINE_COLOR)
                 padding =
-                    dimensionsOf(THRESHOLD_LINE_LABEL_VERTICAL_PADDING_DP, THRESHOLD_LINE_LABEL_HORIZONTAL_PADDING_DP)
-                margins = dimensionsOf(THRESHOLD_LINE_LABEL_MARGIN_DP)
+                    dimensionsOf(HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP, HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP)
+                margins = dimensionsOf(HORIZONTAL_LINE_LABEL_MARGIN_DP)
                 typeface = Typeface.MONOSPACE
             },
     )
 
-private const val THRESHOLD_LINE_Y = 14f
-private const val THRESHOLD_LINE_COLOR = -2893786
-private const val THRESHOLD_LINE_LABEL_HORIZONTAL_PADDING_DP = 8f
-private const val THRESHOLD_LINE_LABEL_VERTICAL_PADDING_DP = 2f
-private const val THRESHOLD_LINE_LABEL_MARGIN_DP = 4f
+private const val HORIZONTAL_LINE_Y = 14f
+private const val HORIZONTAL_LINE_COLOR = -2893786
+private const val HORIZONTAL_LINE_THICKNESS_DP = 2f
+private const val HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP = 8f
+private const val HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP = 2f
+private const val HORIZONTAL_LINE_LABEL_MARGIN_DP = 4f
 
 private val monthNames = DateFormatSymbols.getInstance(Locale.US).shortMonths
 private val bottomAxisValueFormatter =

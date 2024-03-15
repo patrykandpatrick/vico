@@ -37,6 +37,11 @@ import com.patrykandpatrick.vico.core.chart.edges.FadingEdges
  * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
  * to which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
  */
+@Deprecated(
+    message =
+        "Use `rememberFadingEdges` or the `FadingEdges` constructor. For `visibilityEasing`, use " +
+            "`Easing#transform`.",
+)
 public fun FadingEdges(
     startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
     endEdgeWidth: Dp = startEdgeWidth,
