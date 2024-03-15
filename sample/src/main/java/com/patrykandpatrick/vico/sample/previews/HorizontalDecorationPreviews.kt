@@ -29,18 +29,21 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
+import com.patrykandpatrick.vico.compose.chart.decoration.rememberHorizontalBox
+import com.patrykandpatrick.vico.compose.chart.decoration.rememberHorizontalLine
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.compose.theme.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.theme.vicoTheme
-import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader
+import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
 
@@ -82,9 +85,9 @@ public fun ThresholdLine() {
                     bottomAxis = rememberBottomAxis(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdValue = 2f,
-                                lineComponent = rememberShapeComponent(color = Color.Black),
+                            rememberHorizontalLine(
+                                y = { 2f },
+                                line = rememberLineComponent(color = Color.Black, thickness = 2.dp),
                                 labelComponent =
                                     rememberTextComponent(Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
                             ),
@@ -107,10 +110,9 @@ public fun ThresholdLineWithCustomText() {
                     rememberColumnCartesianLayer(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdValue = 2f,
-                                thresholdLabel = "Threshold line 1 📐",
-                                lineComponent = rememberShapeComponent(color = Color.Black),
+                            rememberHorizontalLine(
+                                y = { 2f },
+                                line = rememberLineComponent(color = Color.Black, thickness = 2.dp),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.White,
@@ -133,12 +135,12 @@ public fun ThresholdLineWithCustomText() {
                                             ),
                                         margins = dimensionsOf(horizontal = 4.dp),
                                     ),
-                                labelVerticalPosition = ThresholdLine.LabelVerticalPosition.Bottom,
+                                label = { "Horizontal line 1 📐" },
+                                verticalLabelPosition = VerticalPosition.Bottom,
                             ),
-                            ThresholdLine(
-                                thresholdValue = 3f,
-                                thresholdLabel = "Threshold line 2 📐",
-                                lineComponent = rememberShapeComponent(color = Color.DarkGray),
+                            rememberHorizontalLine(
+                                y = { 3f },
+                                line = rememberLineComponent(color = Color.DarkGray, thickness = 2.dp),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.White,
@@ -161,6 +163,7 @@ public fun ThresholdLineWithCustomText() {
                                             ),
                                         margins = dimensionsOf(horizontal = 4.dp),
                                     ),
+                                label = { "Horizontal line 2 📐" },
                             ),
                         ),
                     startAxis = rememberStartAxis(),
@@ -183,9 +186,9 @@ public fun RangedThresholdLine() {
                     rememberColumnCartesianLayer(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdRange = 2f..3f,
-                                lineComponent = rememberShapeComponent(color = Color.Black.copy(alpha = 0.5f)),
+                            rememberHorizontalBox(
+                                y = { 2f..3f },
+                                box = rememberShapeComponent(color = Color.Black.copy(alpha = .5f)),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.Black,
@@ -213,9 +216,9 @@ public fun RangedThresholdLineWithBrushShader() {
                     rememberColumnCartesianLayer(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdRange = 2f..3f,
-                                lineComponent =
+                            rememberHorizontalBox(
+                                y = { 2f..3f },
+                                box =
                                     rememberShapeComponent(
                                         color = Color.Black,
                                         dynamicShader =
@@ -254,9 +257,9 @@ public fun RangedThresholdLineWithComponentShader() {
                     rememberColumnCartesianLayer(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdRange = 2f..3f,
-                                lineComponent =
+                            rememberHorizontalBox(
+                                y = { 2f..3f },
+                                box =
                                     rememberShapeComponent(
                                         color = Color.Black,
                                         dynamicShader =

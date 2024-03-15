@@ -28,6 +28,7 @@ import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.inBounds
+import com.patrykandpatrick.vico.core.component.text.unaryMinus
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.doubled
 import com.patrykandpatrick.vico.core.extension.getRepeating
@@ -296,7 +297,7 @@ public open class ColumnCartesianLayer(
             if (x - dataLabelWidth.half > bounds.right || x + dataLabelWidth.half < bounds.left) return
 
             val labelVerticalPosition =
-                if (dataLabelValue < 0f) dataLabelVerticalPosition.negative() else dataLabelVerticalPosition
+                if (dataLabelValue < 0f) -dataLabelVerticalPosition else dataLabelVerticalPosition
 
             val verticalPosition =
                 labelVerticalPosition.inBounds(
