@@ -25,22 +25,33 @@ import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.marker.DefaultMarkerLabelFormatter
 import com.patrykandpatrick.vico.core.marker.MarkerLabelFormatter
 
-/**
- * Creates and remembers a [MarkerComponent].
- */
+/** Creates and remembers a [MarkerComponent]. */
+@Composable
+public fun rememberMarkerComponent(
+    label: TextComponent,
+    labelFormatter: MarkerLabelFormatter = remember { DefaultMarkerLabelFormatter() },
+    labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top,
+    indicator: Component? = null,
+    guideline: LineComponent? = null,
+): MarkerComponent =
+    remember(label, labelPosition, indicator, guideline) { MarkerComponent(label, labelPosition, indicator, guideline) }
+        .apply { this.labelFormatter = labelFormatter }
+
+/** Creates and remembers a [MarkerComponent]. */
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated(
+    "Use the overload with a `labelFormatter` parameter instead. (If you’re using named arguments, ignore this " +
+        "warning. The deprecated overload is more specific, but the new one matches and will be used once the " +
+        "deprecated one has been removed.)",
+)
 @Composable
 public fun rememberMarkerComponent(
     label: TextComponent,
     labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top,
     indicator: Component? = null,
     guideline: LineComponent? = null,
-    labelFormatter: MarkerLabelFormatter = DefaultMarkerLabelFormatter(),
 ): MarkerComponent =
-    remember(label, labelPosition, indicator, guideline) {
-        MarkerComponent(label, labelPosition, indicator, guideline)
-    }.apply {
-        this.labelFormatter = labelFormatter
-    }
+    remember(label, labelPosition, indicator, guideline) { MarkerComponent(label, labelPosition, indicator, guideline) }
 
 /**
  * Creates a [MarkerComponent].
@@ -57,4 +68,6 @@ public fun markerComponent(
     label: TextComponent,
     indicator: Component,
     guideline: LineComponent,
-): MarkerComponent = rememberMarkerComponent(label = label, indicator = indicator, guideline = guideline)
+): MarkerComponent =
+    @Suppress("DEPRECATION")
+    rememberMarkerComponent(label = label, indicator = indicator, guideline = guideline)
