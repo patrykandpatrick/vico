@@ -44,7 +44,7 @@ import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.text.textComponent
+import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.columnSeries
 import com.patrykandpatrick.vico.databinding.Chart2Binding
@@ -161,7 +161,7 @@ private fun getViewHorizontalLine() =
         y = { HORIZONTAL_LINE_Y },
         line = LineComponent(HORIZONTAL_LINE_COLOR, HORIZONTAL_LINE_THICKNESS_DP),
         labelComponent =
-            textComponent {
+            TextComponent.build {
                 background = ShapeComponent(Shapes.pillShape, HORIZONTAL_LINE_COLOR)
                 padding =
                     dimensionsOf(HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP, HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP)

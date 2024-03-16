@@ -31,6 +31,7 @@ import com.patrykandpatrick.vico.core.Defaults.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.component.Component
 import com.patrykandpatrick.vico.core.component.dimension.Margins
 import com.patrykandpatrick.vico.core.component.dimension.Padding
+import com.patrykandpatrick.vico.core.component.text.TextComponent.Builder
 import com.patrykandpatrick.vico.core.context.DrawContext
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
@@ -64,7 +65,7 @@ private const val DEF_LAYOUT_SIZE = 100000
  * - text backgrounds (any [Component])
  * - margins and padding
  *
- * @see [textComponent]
+ * It’s recommended to create instances via [TextComponent.build].
  */
 public open class TextComponent protected constructor() : Padding, Margins {
     private val textPaint: TextPaint = TextPaint(Paint.ANTI_ALIAS_FLAG)
@@ -417,10 +418,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         canvas.restore()
     }
 
-    /**
-     * The builder for [TextComponent].
-     * @see textComponent
-     */
+    /** Creates [TextComponent]s. It’s recommended to use this via [TextComponent.build]. */
     public class Builder {
         /**
          * @see [TextComponent.color]
@@ -543,19 +541,35 @@ public open class TextComponent protected constructor() : Padding, Margins {
             public fun text(text: CharSequence): MinWidth = Text(text)
         }
     }
+
+    /** Houses a [TextComponent] factory function. */
+    public companion object {
+        /**
+         * Creates a [TextComponent] via [Builder]. Sample usage:
+         *
+         * ```
+         * TextComponent.build {
+         *     color = Color.BLACK
+         *     textSizeSp = 12f
+         *     typeface = Typeface.MONOSPACE
+         * }
+         * ```
+         */
+        public inline fun build(block: Builder.() -> Unit = {}): TextComponent = Builder().apply(block).build()
+    }
 }
 
 /**
- * The builder DSL for [TextComponent].
+ * Creates a [TextComponent] via [Builder]. Sample usage:
  *
- * Example usage:
  * ```
- * textComponent {
- *    this.color = 0xFF000000 // This corresponds to #000000, which is black.
- *    this.textSizeSp = 12f
- *    this.typeface = Typeface.MONOSPACE
+ * TextComponent.build {
+ *     color = Color.BLACK
+ *     textSizeSp = 12f
+ *     typeface = Typeface.MONOSPACE
  * }
- *```
+ * ```
  */
-public inline fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
-    TextComponent.Builder().apply(block).build()
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("Use `TextComponent.build` instead.")
+public inline fun textComponent(block: Builder.() -> Unit = {}): TextComponent = TextComponent.build(block)

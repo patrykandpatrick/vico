@@ -26,7 +26,6 @@ import com.patrykandpatrick.vico.core.component.text.HorizontalPosition
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 import com.patrykandpatrick.vico.core.component.text.VerticalPosition
 import com.patrykandpatrick.vico.core.component.text.inBounds
-import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.extension.ceil
 import com.patrykandpatrick.vico.core.extension.floor
 import com.patrykandpatrick.vico.core.extension.getEnd
@@ -66,7 +65,7 @@ public data class ThresholdLine(
         ),
     val lineComponent: ShapeComponent = ShapeComponent(),
     val minimumLineThicknessDp: Float = Defaults.THRESHOLD_LINE_THICKNESS,
-    val labelComponent: TextComponent = textComponent(),
+    val labelComponent: TextComponent = TextComponent.build(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
     val labelRotationDegrees: Float = 0f,
@@ -96,7 +95,7 @@ public data class ThresholdLine(
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = ShapeComponent(),
         minimumLineThicknessDp: Float = Defaults.THRESHOLD_LINE_THICKNESS,
-        labelComponent: TextComponent = textComponent(),
+        labelComponent: TextComponent = TextComponent.build(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
         labelRotationDegrees: Float = 0f,

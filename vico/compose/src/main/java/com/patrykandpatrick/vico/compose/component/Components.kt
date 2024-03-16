@@ -44,7 +44,6 @@ import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.dimensions.Dimensions
 import com.patrykandpatrick.vico.core.dimensions.MutableDimensions
 import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
@@ -320,7 +319,7 @@ public fun rememberTextComponent(
     minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
 ): TextComponent =
     remember(color, textSize, background, ellipsize, lineCount, padding, margins, typeface, textAlignment, minWidth) {
-        textComponent {
+        TextComponent.build {
             this.color = color.toArgb()
             textSizeSp = textSize.pixelSize()
             this.ellipsize = ellipsize
