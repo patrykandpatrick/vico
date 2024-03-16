@@ -37,8 +37,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -59,13 +61,15 @@ internal fun ChartScreen(
     val nestedNavController = rememberNavController()
     val chartID =
         nestedNavController.currentBackStackEntryAsState().value?.arguments?.getInt("chartID") ?: initialChartID
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val navigateBack = { if (lifecycle.currentState == Lifecycle.State.RESUMED) navController.popBackStack() }
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(R.string.chart_x, chartID + 1)) },
                 navigationIcon = {
-                    IconButton({ navController.popBackStack() }) {
+                    IconButton(navigateBack) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
                     }
                 },
@@ -104,7 +108,7 @@ internal fun ChartScreen(
                     },
                 ),
             ) { backStackEntry ->
-                BackHandler { navController.popBackStack() }
+                BackHandler(onBack = navigateBack)
                 val arguments = requireNotNull(backStackEntry.arguments)
                 charts[arguments.getInt("chartID")](
                     UISystem.entries[uiSystemID],
