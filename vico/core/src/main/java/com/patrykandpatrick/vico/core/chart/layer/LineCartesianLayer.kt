@@ -109,7 +109,7 @@ public open class LineCartesianLayer(
      */
     public open class LineSpec(
         public var shader: DynamicShader,
-        public var thicknessDp: Float = Defaults.LINE_THICKNESS,
+        public var thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
         public var backgroundShader: DynamicShader? = null,
         public var cap: Paint.Cap = Paint.Cap.ROUND,
         public var point: Component? = null,

@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.component.shape
 
 import android.graphics.Color
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.Defaults
 import com.patrykandpatrick.vico.core.component.shape.Shapes.rectShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShader
 import com.patrykandpatrick.vico.core.context.DrawContext
@@ -37,7 +38,7 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
  */
 public open class LineComponent(
     color: Int,
-    public var thicknessDp: Float = 1f,
+    public var thicknessDp: Float = Defaults.LINE_COMPONENT_THICKNESS_DP,
     shape: Shape = rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),

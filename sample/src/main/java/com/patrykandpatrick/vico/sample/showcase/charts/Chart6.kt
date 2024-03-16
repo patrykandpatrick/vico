@@ -93,7 +93,9 @@ private fun ComposeChart6(
     CartesianChartHost(
         chart =
             rememberCartesianChart(
-                rememberColumnCartesianLayer(columnColors.map { rememberLineComponent(color = it, shape = shape) }),
+                rememberColumnCartesianLayer(
+                    columnColors.map { rememberLineComponent(color = it, thickness = 8.dp, shape = shape) },
+                ),
                 startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),
                 decorations = remember(horizontalBox) { listOf(horizontalBox) },

@@ -54,7 +54,7 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
 @Composable
 public fun rememberLineComponent(
     color: Color = Color.Black,
-    thickness: Dp = Defaults.COLUMN_WIDTH.dp,
+    thickness: Dp = Defaults.LINE_COMPONENT_THICKNESS_DP.dp,
     shape: Shape = Shapes.rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),

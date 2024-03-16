@@ -62,7 +62,11 @@ import com.patrykandpatrick.vico.core.model.drawing.DrawingModelInterpolator
 public fun rememberColumnCartesianLayer(
     columns: List<LineComponent> =
         vicoTheme.cartesianLayerColors.map { color ->
-            rememberLineComponent(color = color, shape = Shapes.roundedCornerShape(Defaults.COLUMN_ROUNDNESS_PERCENT))
+            rememberLineComponent(
+                color,
+                Defaults.COLUMN_WIDTH.dp,
+                Shapes.roundedCornerShape(Defaults.COLUMN_ROUNDNESS_PERCENT),
+            )
         },
     spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
     innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,

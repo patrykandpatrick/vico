@@ -104,8 +104,7 @@ public fun ColumnChartCard(): Unit =
                                     ),
                                 axis = null,
                                 tick = null,
-                                guideline =
-                                    rememberLineComponent(color = colors.primary.copy(alpha = .1f), thickness = 1.dp),
+                                guideline = rememberLineComponent(colors.primary.copy(alpha = .1f)),
                             ),
                     ),
                 model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
@@ -154,7 +153,6 @@ public fun LineChartCard(): Unit =
                                 guideline =
                                     rememberLineComponent(
                                         color = Color.LightGray,
-                                        thickness = 1.dp,
                                         shape =
                                             DashedShape(
                                                 shape = pillShape,
@@ -167,7 +165,7 @@ public fun LineChartCard(): Unit =
                         bottomAxis =
                             rememberBottomAxis(
                                 label = null,
-                                axis = rememberLineComponent(color = Color.LightGray, thickness = 1.dp),
+                                axis = rememberLineComponent(Color.LightGray),
                                 tick = null,
                                 guideline = null,
                             ),

@@ -167,7 +167,6 @@ private fun ComposeChart9(
                         tick = null,
                         guideline =
                             rememberLineComponent(
-                                thickness = 1.dp,
                                 color = MaterialTheme.colorScheme.outlineVariant,
                                 shape =
                                     remember {

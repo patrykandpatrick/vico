@@ -49,7 +49,8 @@ public object Defaults {
     public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f
     public const val FADING_EDGE_WIDTH_DP: Float = 32f
     public const val LABEL_LINE_COUNT: Int = 1
-    public const val LINE_THICKNESS: Float = 2f
+    public const val LINE_COMPONENT_THICKNESS_DP: Float = 1f
+    public const val LINE_SPEC_THICKNESS_DP: Float = 2f
     public const val MARKER_INDICATOR_SIZE: Float = 36f
     public const val MARKER_HORIZONTAL_PADDING: Float = 8f
     public const val MARKER_VERTICAL_PADDING: Float = 4f

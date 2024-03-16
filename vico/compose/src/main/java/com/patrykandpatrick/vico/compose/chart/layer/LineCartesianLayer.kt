@@ -98,7 +98,7 @@ public fun rememberLineCartesianLayer(
 @Composable
 public fun rememberLineSpec(
     shader: DynamicShader = DynamicShaders.color(Color.Black),
-    thickness: Dp = Defaults.LINE_THICKNESS.dp,
+    thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
     backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
     cap: StrokeCap = StrokeCap.Round,
     point: Component? = null,
@@ -170,7 +170,7 @@ public fun rememberLineSpec(
 )
 public fun lineSpec(
     shader: DynamicShader,
-    thickness: Dp = Defaults.LINE_THICKNESS.dp,
+    thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
     backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
     cap: StrokeCap = StrokeCap.Round,
     point: Component? = null,

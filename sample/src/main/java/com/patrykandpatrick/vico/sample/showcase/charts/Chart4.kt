@@ -93,7 +93,7 @@ private fun ComposeChart4(
                 rememberColumnCartesianLayer(
                     columns =
                         columnColors.map {
-                            rememberLineComponent(color = it, shape = Shapes.roundedCornerShape(2.dp))
+                            rememberLineComponent(color = it, thickness = 8.dp, shape = Shapes.roundedCornerShape(2.dp))
                         },
                 ),
                 rememberLineCartesianLayer(

@@ -223,7 +223,7 @@ internal fun TypedArray.getLineSpec(
             getRawDimension(
                 context = context,
                 index = R.styleable.LineSpec_lineThickness,
-                defaultValue = Defaults.LINE_THICKNESS,
+                defaultValue = Defaults.LINE_SPEC_THICKNESS_DP,
             ),
         backgroundShader =
             TopBottomShader(
