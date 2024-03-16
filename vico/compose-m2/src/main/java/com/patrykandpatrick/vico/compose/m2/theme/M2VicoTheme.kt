@@ -23,9 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.vico.compose.theme.VicoTheme
 
-/** Uses [MaterialTheme.colors] to create a [VicoTheme]. */
+/** Creates and remembers a [VicoTheme] based on [MaterialTheme.colors]. */
 @Composable
-public fun m2VicoTheme(
+public fun rememberM2VicoTheme(
     cartesianLayerColors: List<Color> = listOf(MaterialTheme.colors.primary, MaterialTheme.colors.secondary),
     elevationOverlayColor: Color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
     lineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = .2f),
