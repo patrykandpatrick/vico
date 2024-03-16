@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import com.patrykandpatrick.vico.core.dimensions.emptyDimensions
  */
 public open class LineComponent(
     color: Int,
-    public var thicknessDp: Float = 2f,
+    public var thicknessDp: Float = 1f,
     shape: Shape = rectShape,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = emptyDimensions(),
