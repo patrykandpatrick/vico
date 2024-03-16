@@ -22,9 +22,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.vico.compose.theme.VicoTheme
 
-/** Uses [MaterialTheme.colorScheme] to create a [VicoTheme]. */
+/** Creates and remembers a [VicoTheme] based on [MaterialTheme.colorScheme]. */
 @Composable
-public fun m3VicoTheme(
+public fun rememberM3VicoTheme(
     cartesianLayerColors: List<Color> = MaterialTheme.colorScheme.run { listOf(primary, secondary, tertiary) },
     elevationOverlayColor: Color = MaterialTheme.colorScheme.primary,
     lineColor: Color = MaterialTheme.colorScheme.outline,
