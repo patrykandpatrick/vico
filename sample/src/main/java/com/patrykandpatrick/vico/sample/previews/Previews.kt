@@ -34,6 +34,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
 import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
@@ -47,9 +49,7 @@ import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
 import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.component.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.axis.vertical.createVerticalAxis
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
@@ -86,7 +86,7 @@ public fun ColumnChartCard(): Unit =
                             ),
                         ),
                         startAxis =
-                            createVerticalAxis {
+                            rememberStartAxis(
                                 label =
                                     rememberTextComponent(
                                         color = colors.primary,
@@ -103,15 +103,15 @@ public fun ColumnChartCard(): Unit =
                                                 color = colors.primary.copy(alpha = 0.1f),
                                             ),
                                         padding = dimensionsOf(end = 8.dp, start = 4.dp),
-                                    )
-                                axis = null
-                                tick = null
+                                    ),
+                                axis = null,
+                                tick = null,
                                 guideline =
                                     LineComponent(
                                         colors.primary.copy(alpha = 0.1f).toArgb(),
                                         1.dp.value,
-                                    )
-                            },
+                                    ),
+                            ),
                     ),
                 model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
             )
@@ -146,16 +146,16 @@ public fun LineChartCard(): Unit =
                             axisValueOverrider = AxisValueOverrider.fixed(minX = 0f, maxY = 3f),
                         ),
                         startAxis =
-                            createVerticalAxis {
+                            rememberStartAxis(
                                 label =
                                     rememberTextComponent(
                                         color = colors.onSurface,
                                         textSize = 10.sp,
                                         background = rememberShapeComponent(shape = rectShape, color = Color.LightGray),
                                         padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
-                                    )
-                                axis = null
-                                tick = null
+                                    ),
+                                axis = null,
+                                tick = null,
                                 guideline =
                                     LineComponent(
                                         color = Color.LightGray.toArgb(),
@@ -166,16 +166,16 @@ public fun LineChartCard(): Unit =
                                                 dashLengthDp = 2.dp.value,
                                                 gapLengthDp = 4.dp.value,
                                             ),
-                                    )
-                                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
-                            },
+                                    ),
+                                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                            ),
                         bottomAxis =
-                            createHorizontalAxis {
-                                label = null
-                                tick = null
-                                guideline = null
-                                axis = rememberLineComponent(color = Color.LightGray, thickness = 1.dp)
-                            },
+                            rememberBottomAxis(
+                                label = null,
+                                axis = rememberLineComponent(color = Color.LightGray, thickness = 1.dp),
+                                tick = null,
+                                guideline = null,
+                            ),
                     ),
                 model =
                     CartesianChartModel(

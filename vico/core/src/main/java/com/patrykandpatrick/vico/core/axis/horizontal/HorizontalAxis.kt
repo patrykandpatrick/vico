@@ -20,6 +20,7 @@ import com.patrykandpatrick.vico.core.axis.Axis
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.BaseAxis
+import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis.Builder
 import com.patrykandpatrick.vico.core.axis.setTo
 import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.chart.dimensions.MutableHorizontalDimensions
@@ -339,9 +340,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             }
     }
 
-    /**
-     * A subclass of [BaseAxis.Builder] used to build [HorizontalAxis] instances.
-     */
+    /** Creates [HorizontalAxis] instances. It’s recommended to use this via [HorizontalAxis.build]. */
     public class Builder<Position : AxisPosition.Horizontal>(
         builder: BaseAxis.Builder<Position>? = null,
     ) : BaseAxis.Builder<Position>(builder) {
@@ -365,16 +364,20 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    internal companion object {
-        const val MAX_HEIGHT_DIVISOR = 3f
+    /** Houses a [HorizontalAxis] factory function. */
+    public companion object {
+        private const val MAX_HEIGHT_DIVISOR = 3f
+
+        /** Creates a [HorizontalAxis] via [Builder]. */
+        public inline fun <reified P : AxisPosition.Horizontal> build(
+            block: Builder<P>.() -> Unit = {},
+        ): HorizontalAxis<P> = Builder<P>().apply(block).build()
     }
 }
 
-/**
- * A convenience function that creates a [HorizontalAxis] instance.
- *
- * @param block a lambda function yielding [HorizontalAxis.Builder] as its receiver.
- */
+/** Creates a [HorizontalAxis] via [Builder]. */
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("Use `HorizontalAxis.build` instead.")
 public inline fun <reified Position : AxisPosition.Horizontal> createHorizontalAxis(
-    block: HorizontalAxis.Builder<Position>.() -> Unit = {},
-): HorizontalAxis<Position> = HorizontalAxis.Builder<Position>().apply(block).build()
+    block: Builder<Position>.() -> Unit = {},
+): HorizontalAxis<Position> = HorizontalAxis.build(block)

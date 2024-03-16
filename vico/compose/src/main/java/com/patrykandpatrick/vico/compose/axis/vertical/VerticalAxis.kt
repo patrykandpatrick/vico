@@ -31,7 +31,6 @@ import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.axis.vertical.createVerticalAxis
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 
@@ -68,7 +67,7 @@ public fun rememberStartAxis(
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
 ): VerticalAxis<AxisPosition.Vertical.Start> =
-    remember { createVerticalAxis<AxisPosition.Vertical.Start>() }.apply {
+    remember { VerticalAxis.build<AxisPosition.Vertical.Start>() }.apply {
         this.label = label
         axisLine = axis
         this.tick = tick
@@ -117,7 +116,7 @@ public fun rememberEndAxis(
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
 ): VerticalAxis<AxisPosition.Vertical.End> =
-    remember { createVerticalAxis<AxisPosition.Vertical.End>() }.apply {
+    remember { VerticalAxis.build<AxisPosition.Vertical.End>() }.apply {
         this.label = label
         axisLine = axis
         this.tick = tick

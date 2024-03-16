@@ -21,6 +21,7 @@ import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.setTo
+import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.Builder
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis.VerticalLabelPosition.Center
@@ -335,9 +336,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         Bottom(VerticalPosition.Bottom),
     }
 
-    /**
-     * A subclass of [BaseAxis.Builder] used to build [VerticalAxis] instances.
-     */
+    /** Creates [VerticalAxis] instances. It’s recommended to use this via [VerticalAxis.build]. */
     public class Builder<Position : AxisPosition.Vertical>(
         builder: BaseAxis.Builder<Position>? = null,
     ) : BaseAxis.Builder<Position>(builder) {
@@ -374,13 +373,19 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             } as VerticalAxis<T>
         }
     }
+
+    /** Houses a [VerticalAxis] factory function. */
+    public companion object {
+        /** Creates a [VerticalAxis] via [Builder]. */
+        public inline fun <reified P : AxisPosition.Vertical> build(
+            block: Builder<P>.() -> Unit = {},
+        ): VerticalAxis<P> = Builder<P>().apply(block).build()
+    }
 }
 
-/**
- * A convenience function that creates a [VerticalAxis] instance.
- *
- * @param block a lambda function yielding [VerticalAxis.Builder] as its receiver.
- */
+/** Creates a [VerticalAxis] via [Builder]. */
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("Use `VerticalAxis.build` instead.")
 public inline fun <reified Position : AxisPosition.Vertical> createVerticalAxis(
-    block: VerticalAxis.Builder<Position>.() -> Unit = {},
-): VerticalAxis<Position> = VerticalAxis.Builder<Position>().apply(block).build()
+    block: Builder<Position>.() -> Unit = {},
+): VerticalAxis<Position> = VerticalAxis.build(block)

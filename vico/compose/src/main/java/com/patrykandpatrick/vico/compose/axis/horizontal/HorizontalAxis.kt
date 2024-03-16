@@ -31,7 +31,6 @@ import com.patrykandpatrick.vico.core.axis.BaseAxis
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.formatter.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
-import com.patrykandpatrick.vico.core.axis.horizontal.createHorizontalAxis
 import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.text.TextComponent
 
@@ -64,7 +63,7 @@ public fun rememberTopAxis(
     title: CharSequence? = null,
     itemPlacer: AxisItemPlacer.Horizontal = remember { AxisItemPlacer.Horizontal.default() },
 ): HorizontalAxis<AxisPosition.Horizontal.Top> =
-    remember { createHorizontalAxis<AxisPosition.Horizontal.Top>() }.apply {
+    remember { HorizontalAxis.build<AxisPosition.Horizontal.Top>() }.apply {
         this.label = label
         axisLine = axis
         this.tick = tick
@@ -107,7 +106,7 @@ public fun rememberBottomAxis(
     labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
     itemPlacer: AxisItemPlacer.Horizontal = remember { AxisItemPlacer.Horizontal.default() },
 ): HorizontalAxis<AxisPosition.Horizontal.Bottom> =
-    remember { createHorizontalAxis<AxisPosition.Horizontal.Bottom>() }.apply {
+    remember { HorizontalAxis.build<AxisPosition.Horizontal.Bottom>() }.apply {
         this.label = label
         axisLine = axis
         this.tick = tick
