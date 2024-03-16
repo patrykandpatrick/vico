@@ -30,7 +30,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -52,7 +51,6 @@ import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
 import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.component.shape.DashedShape
-import com.patrykandpatrick.vico.core.component.shape.LineComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes.pillShape
 import com.patrykandpatrick.vico.core.component.shape.Shapes.rectShape
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
@@ -107,10 +105,7 @@ public fun ColumnChartCard(): Unit =
                                 axis = null,
                                 tick = null,
                                 guideline =
-                                    LineComponent(
-                                        colors.primary.copy(alpha = 0.1f).toArgb(),
-                                        1.dp.value,
-                                    ),
+                                    rememberLineComponent(color = colors.primary.copy(alpha = .1f), thickness = 1.dp),
                             ),
                     ),
                 model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
@@ -157,9 +152,9 @@ public fun LineChartCard(): Unit =
                                 axis = null,
                                 tick = null,
                                 guideline =
-                                    LineComponent(
-                                        color = Color.LightGray.toArgb(),
-                                        thicknessDp = 1.dp.value,
+                                    rememberLineComponent(
+                                        color = Color.LightGray,
+                                        thickness = 1.dp,
                                         shape =
                                             DashedShape(
                                                 shape = pillShape,
