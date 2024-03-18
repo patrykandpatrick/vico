@@ -28,24 +28,14 @@ private val typeCompatTypedValue = TypedValue()
 private val rawValueTypedValue = TypedValue()
 private val lock = Any()
 
-/**
- * Calls the given function block with this [TypedArray] as its argument, then recycles this [TypedArray].
- */
-public inline fun <R> TypedArray.use(block: (TypedArray) -> R): R = block(this).also { recycle() }
+internal inline fun <R> TypedArray.use(block: (TypedArray) -> R): R = block(this).also { recycle() }
 
-/**
- * Retrieves the color at the given index.
- */
-public fun TypedArray.getColorExtended(
+internal fun TypedArray.getColorExtended(
     @StyleableRes index: Int,
     @ColorInt defaultColor: Int = Color.TRANSPARENT,
 ): Int = getColor(index, defaultColor)
 
-/**
- * Returns a dimension converted to pixels from a complex unit (such as dp or sp), and divides it by the pixel density
- * of the screen.
- */
-public fun TypedArray.getRawDimension(
+internal fun TypedArray.getRawDimension(
     context: Context,
     @StyleableRes index: Int,
     defaultValue: Float,
@@ -59,10 +49,7 @@ public fun TypedArray.getRawDimension(
         }
     }
 
-/**
- * Returns a [TypedArray] nested inside the receiver [TypedArray].
- */
-public fun TypedArray.getNestedTypedArray(
+internal fun TypedArray.getNestedTypedArray(
     context: Context,
     @StyleableRes resourceId: Int,
     @StyleableRes styleableResourceId: IntArray,
@@ -70,25 +57,16 @@ public fun TypedArray.getNestedTypedArray(
     getResourceId(resourceId, 0)
         .let { resId -> context.obtainStyledAttributes(resId, styleableResourceId) }
 
-/**
- * Retrieves the fraction at the given index as a [Float].
- */
-public fun TypedArray.getFraction(
+internal fun TypedArray.getFraction(
     @StyleableRes index: Int,
     defaultValue: Float = -1f,
 ): Float = getFraction(index, 1, 1, defaultValue)
 
-/**
- * Returns a boolean indicating whether the value at the given index is a fraction.
- */
-public fun TypedArray.isFraction(
+internal fun TypedArray.isFraction(
     @StyleableRes index: Int,
 ): Boolean = getTypeCompat(index) == TypedValue.TYPE_FRACTION
 
-/**
- * Returns the type of the value at the given index.
- */
-public fun TypedArray.getTypeCompat(
+private fun TypedArray.getTypeCompat(
     @StyleableRes index: Int,
 ): Int =
     synchronized(lock) {

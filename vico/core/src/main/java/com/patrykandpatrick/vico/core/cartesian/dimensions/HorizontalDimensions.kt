@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.dimensions
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 
 /**
  * Holds information on a [CartesianChart]’s horizontal dimensions.
@@ -73,46 +74,14 @@ public interface HorizontalDimensions {
     public val padding: Float get() = startPadding + endPadding
 
     /**
-     * Given the chart’s maximum number of major entries, calculates the width of the [CartesianChart]’s scalable
-     * content (in pixels).
+     * Calculates the width of the [CartesianChart]’s scalable content (in pixels).
      */
-    public fun getScalableContentWidth(maxMajorEntryCount: Int): Float =
-        xSpacing * (maxMajorEntryCount - 1) + scalablePadding
+    public fun getScalableContentWidth(context: CartesianMeasureContext): Float =
+        with(context) { xSpacing * chartValues.xLength / chartValues.xStep + scalablePadding }
 
     /**
-     * Given the chart’s maximum number of major entries, calculates the width of the [CartesianChart]’s content (in
-     * pixels).
+     * Calculates the width of the [CartesianChart]’s content (in pixels).
      */
-    public fun getContentWidth(maxMajorEntryCount: Int): Float =
-        getScalableContentWidth(maxMajorEntryCount) + unscalablePadding
-
-    /**
-     * Creates a new [HorizontalDimensions] instance by multiplying this one’s scalable values by the given factor.
-     */
-    public fun scaled(scale: Float): HorizontalDimensions =
-        HorizontalDimensions(
-            xSpacing * scale,
-            scalableStartPadding * scale,
-            scalableEndPadding * scale,
-            unscalableStartPadding,
-            unscalableEndPadding,
-        )
+    public fun getContentWidth(context: CartesianMeasureContext): Float =
+        getScalableContentWidth(context) + unscalablePadding
 }
-
-/**
- * Creates a [HorizontalDimensions] instance.
- */
-public fun HorizontalDimensions(
-    xSpacing: Float,
-    scalableStartPadding: Float,
-    scalableEndPadding: Float,
-    unscalableStartPadding: Float,
-    unscalableEndPadding: Float,
-): HorizontalDimensions =
-    object : HorizontalDimensions {
-        override val xSpacing: Float = xSpacing
-        override val scalableStartPadding: Float = scalableStartPadding
-        override val scalableEndPadding: Float = scalableEndPadding
-        override val unscalableStartPadding: Float = unscalableStartPadding
-        override val unscalableEndPadding: Float = unscalableEndPadding
-    }

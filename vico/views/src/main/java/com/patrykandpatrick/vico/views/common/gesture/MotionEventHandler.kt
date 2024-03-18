@@ -20,24 +20,17 @@ import android.annotation.SuppressLint
 import android.view.MotionEvent
 import android.view.VelocityTracker
 import android.widget.OverScroller
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.scroll.ScrollHandler
+import com.patrykandpatrick.vico.views.cartesian.ScrollHandler
 import com.patrykandpatrick.vico.views.common.extension.fling
 import com.patrykandpatrick.vico.views.common.extension.point
 import kotlin.math.abs
 
-/**
- * Handles [MotionEvent]s.
- *
- * @param density the pixel density.
- * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
- */
-public open class MotionEventHandler(
+internal class MotionEventHandler(
     private val scroller: OverScroller,
-    private val scrollHandler: ScrollHandler,
     density: Float,
-    public var isHorizontalScrollEnabled: Boolean = false,
+    var scrollEnabled: Boolean = false,
     private val onTouchPoint: (Point?) -> Unit,
     private val requestInvalidate: () -> Unit,
 ) {
@@ -50,10 +43,10 @@ public open class MotionEventHandler(
     private var lastEventPointerCount = 0
     private var totalDragAmount: Float = 0f
 
-    /**
-     * Called to handle a [MotionEvent], which may result in scroll, zoom, or the appearance of a [CartesianMarker].
-     */
-    public fun handleMotionEvent(motionEvent: MotionEvent): Boolean {
+    fun handleMotionEvent(
+        motionEvent: MotionEvent,
+        scrollHandler: ScrollHandler,
+    ): Boolean {
         val ignoreEvent =
             motionEvent.pointerCount > 1 || lastEventPointerCount > motionEvent.pointerCount
         lastEventPointerCount = motionEvent.pointerCount
@@ -72,18 +65,18 @@ public open class MotionEventHandler(
 
             MotionEvent.ACTION_MOVE -> {
                 var scrollHandled = false
-                if (isHorizontalScrollEnabled) {
+                if (scrollEnabled) {
                     currentX = motionEvent.x
                     totalDragAmount += abs(lastX - currentX)
                     val shouldPerformScroll = totalDragAmount > dragThreshold
                     if (shouldPerformScroll && !ignoreEvent) {
                         velocityTracker.get().addMovement(motionEvent)
-                        scrollHandler.handleScrollDelta(currentX - lastX)
+                        scrollHandler.scroll(Scroll.Relative.pixels(lastX - currentX))
                         onTouchPoint(motionEvent.point)
                         requestInvalidate()
                         initialX = -dragThreshold
                     }
-                    scrollHandled = shouldPerformScroll.not() || scrollHandler.canScrollBy(currentX - lastX)
+                    scrollHandled = shouldPerformScroll.not() || scrollHandler.canScroll(lastX - currentX)
                     lastX = motionEvent.x
                 } else {
                     onTouchPoint(motionEvent.point)

@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.draw
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
@@ -25,23 +26,10 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.extension.getClosestMarkerEntryModel
 
-/**
- * The anonymous implementation of [CartesianChartDrawContext].
- *
- * @param canvas the canvas on which the [CartesianChart] is to be drawn.
- * @param elevationOverlayColor the color of elevation overlays, applied to [ShapeComponent]s that cast shadows.
- * @param measureContext holds data used for component measurements.
- * @param markerTouchPoint the point inside the chart’s bounds where physical touch is occurring.
- * @param horizontalDimensions holds information on the [CartesianChart]’s horizontal dimensions.
- * @param chartBounds the bounds in which the [CartesianChart] will be drawn.
- * @param horizontalScroll the horizontal scroll.
- * @param zoom the zoom factor.
- *
- * @see [ShapeComponent.setShadow]
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun cartesianChartDrawContext(
     canvas: Canvas,
     elevationOverlayColor: Int,
@@ -63,7 +51,7 @@ public fun cartesianChartDrawContext(
 
         override val zoom: Float = zoom
 
-        override val horizontalDimensions: HorizontalDimensions = horizontalDimensions.scaled(zoom)
+        override val horizontalDimensions: HorizontalDimensions = horizontalDimensions
 
         override val horizontalScroll: Float = horizontalScroll
 
@@ -78,10 +66,8 @@ public fun cartesianChartDrawContext(
         }
     }
 
-/**
- * Draws the provided [marker] on top of the chart at the given [markerTouchPoint] and notifies the
- * [markerVisibilityChangeListener] about the [marker]’s visibility changes.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianChartDrawContext.drawMarker(
     marker: CartesianMarker,
     markerTouchPoint: Point?,

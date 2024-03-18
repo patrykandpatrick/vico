@@ -39,8 +39,8 @@ import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.forEachInIndexed
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
-import com.patrykandpatrick.vico.core.common.DefaultDimens
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.ExtraStore
@@ -71,12 +71,11 @@ import kotlin.math.min
  */
 public open class LineCartesianLayer(
     public var lines: List<LineSpec>,
-    public var spacingDp: Float = DefaultDimens.POINT_SPACING,
+    public var spacingDp: Float = Defaults.POINT_SPACING,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
-    public var drawingModelInterpolator: DrawingModelInterpolator<
-        LineCartesianLayerDrawingModel.PointInfo,
-        LineCartesianLayerDrawingModel,
-        > = DefaultDrawingModelInterpolator(),
+    public var drawingModelInterpolator:
+        DrawingModelInterpolator<LineCartesianLayerDrawingModel.PointInfo, LineCartesianLayerDrawingModel> =
+        DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<LineCartesianLayerModel>() {
     /**
      * Creates a [LineCartesianLayer] with a common style for all lines.
@@ -110,11 +109,11 @@ public open class LineCartesianLayer(
      */
     public open class LineSpec(
         public var shader: DynamicShader,
-        public var thicknessDp: Float = DefaultDimens.LINE_THICKNESS,
+        public var thicknessDp: Float = Defaults.LINE_SPEC_THICKNESS_DP,
         public var backgroundShader: DynamicShader? = null,
         public var cap: Paint.Cap = Paint.Cap.ROUND,
         public var point: Component? = null,
-        public var pointSizeDp: Float = DefaultDimens.POINT_SIZE,
+        public var pointSizeDp: Float = Defaults.POINT_SIZE,
         public var dataLabel: TextComponent? = null,
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
         public var dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),
@@ -523,14 +522,7 @@ public open class LineCartesianLayer(
             val maxPointSize = lines.maxOf { it.pointSizeDpOrZero }.pixels
             val xSpacing = maxPointSize + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
-                is HorizontalLayout.Segmented -> {
-                    horizontalDimensions.ensureValuesAtLeast(
-                        xSpacing = xSpacing,
-                        scalableStartPadding = xSpacing.half,
-                        scalableEndPadding = xSpacing.half,
-                    )
-                }
-
+                is HorizontalLayout.Segmented -> horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
                 is HorizontalLayout.FullWidth -> {
                     horizontalDimensions.ensureValuesAtLeast(
                         xSpacing = xSpacing,
@@ -549,13 +541,11 @@ public open class LineCartesianLayer(
         model: LineCartesianLayerModel,
     ) {
         chartValues.tryUpdate(
-            minX = axisValueOverrider?.getMinX(model) ?: model.minX,
-            maxX = axisValueOverrider?.getMaxX(model) ?: model.maxX,
-            minY = axisValueOverrider?.getMinY(model) ?: model.minY.coerceAtMost(0f),
-            maxY =
-                axisValueOverrider?.getMaxY(model)
-                    ?: if (model.minY == 0f && model.maxY == 0f) 1f else model.maxY.coerceAtLeast(0f),
-            axisPosition = verticalAxisPosition,
+            axisValueOverrider.getMinX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMaxX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMinY(model.minY, model.maxY, model.extraStore),
+            axisValueOverrider.getMaxY(model.minY, model.maxY, model.extraStore),
+            verticalAxisPosition,
         )
     }
 

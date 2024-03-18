@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.common.DEF_SHADOW_COLOR
+import com.patrykandpatrick.vico.core.common.Defaults.SHADOW_COLOR
 import com.patrykandpatrick.vico.core.common.component.CartesianMarkerComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 
@@ -49,7 +49,7 @@ public fun <T : ShapeComponent> T.setShadow(
     radius: Dp,
     dx: Dp = 0.dp,
     dy: Dp = 0.dp,
-    color: Color = Color(DEF_SHADOW_COLOR),
+    color: Color = Color(SHADOW_COLOR),
     applyElevationOverlay: Boolean = false,
 ): T =
     setShadow(

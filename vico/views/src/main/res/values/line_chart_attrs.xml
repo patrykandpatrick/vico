@@ -52,7 +52,9 @@
         <attr name="shapeStyle" />
         <attr name="strokeColor" />
         <attr name="strokeWidth" />
-        <attr name="overlayingComponentStyle" format="reference" />
-        <attr name="overlayingComponentPadding" format="dimension" />
+        <attr name="overlayingComponentStyle" format="reference"/>
+        <attr name="layeredComponentStyle" format="reference" />
+        <attr name="overlayingComponentPadding" format="dimension"/>
+        <attr name="layeredComponentPadding" format="dimension"/>
     </declare-styleable>
 </resources>

@@ -26,9 +26,9 @@ import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
-import com.patrykandpatrick.vico.compose.cartesian.layer.lineSpec
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
@@ -75,7 +75,7 @@ private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
     rememberLineCartesianLayer(
         lines =
             listOf(
-                lineSpec(
+                rememberLineSpec(
                     shader = DynamicShaders.color(Color.DarkGray),
                     backgroundShader =
                         DynamicShaders.verticalGradient(
@@ -90,14 +90,14 @@ private val startAxis: Axis<Start>
     @Composable get() =
         rememberStartAxis(
             label = rememberTextComponent(color = Color.Black),
-            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 5 }) },
+            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 5 }) },
         )
 
 private val endAxis: Axis<End>
     @Composable get() =
         rememberEndAxis(
             label = rememberTextComponent(color = Color.DarkGray),
-            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 7 }) },
+            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 7 }) },
         )
 
 @Composable

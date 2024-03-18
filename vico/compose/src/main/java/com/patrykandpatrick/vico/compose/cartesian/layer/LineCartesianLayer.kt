@@ -24,8 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.fromBrush
-import com.patrykandpatrick.vico.compose.common.style.currentChartStyle
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -35,11 +36,10 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerDrawingModel
-import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
-import com.patrykandpatrick.vico.core.common.DefaultDimens
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -62,14 +62,14 @@ import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
  */
 @Composable
 public fun rememberLineCartesianLayer(
-    lines: List<LineSpec> = currentChartStyle.lineLayer.lines,
-    spacing: Dp = currentChartStyle.lineLayer.spacing,
-    axisValueOverrider: AxisValueOverrider<LineCartesianLayerModel>? = null,
+    lines: List<LineSpec> =
+        vicoTheme.cartesianLayerColors.map { rememberLineSpec(remember { DynamicShaders.color(it) }) },
+    spacing: Dp = Defaults.POINT_SPACING.dp,
+    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
     verticalAxisPosition: AxisPosition.Vertical? = null,
-    drawingModelInterpolator: DrawingModelInterpolator<
-        LineCartesianLayerDrawingModel.PointInfo,
-        LineCartesianLayerDrawingModel,
-        > = remember { DefaultDrawingModelInterpolator() },
+    drawingModelInterpolator:
+        DrawingModelInterpolator<LineCartesianLayerDrawingModel.PointInfo, LineCartesianLayerDrawingModel> =
+        remember { DefaultDrawingModelInterpolator() },
 ): LineCartesianLayer =
     remember { LineCartesianLayer(lines) }.apply {
         this.lines = lines
@@ -77,6 +77,64 @@ public fun rememberLineCartesianLayer(
         this.axisValueOverrider = axisValueOverrider
         this.verticalAxisPosition = verticalAxisPosition
         this.drawingModelInterpolator = drawingModelInterpolator
+    }
+
+/**
+ * Creates and remembers a [LineCartesianLayer.LineSpec] for use in [LineCartesianLayer]s.
+ *
+ * @param shader the [DynamicShader] for the line.
+ * @param thickness the thickness of the line.
+ * @param backgroundShader an optional [DynamicShader] to use for the areas bounded by the [LineCartesianLayer] line and
+ * the zero line (_y_ = 0).
+ * @param cap the stroke cap for the line.
+ * @param point an optional [Component] that can be drawn at a given point on the line.
+ * @param pointSize the size of the [point].
+ * @param dataLabel an optional [TextComponent] to use for data labels.
+ * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
+ * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelRotationDegrees the rotation of data labels in degrees.
+ * @param pointConnector the [LineSpec.PointConnector] for the line.
+ */
+@Composable
+public fun rememberLineSpec(
+    shader: DynamicShader = DynamicShaders.color(Color.Black),
+    thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
+    backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
+    cap: StrokeCap = StrokeCap.Round,
+    point: Component? = null,
+    pointSize: Dp = Defaults.POINT_SIZE.dp,
+    dataLabel: TextComponent? = null,
+    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),
+    dataLabelRotationDegrees: Float = 0f,
+    pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
+): LineSpec =
+    remember(
+        shader,
+        thickness,
+        backgroundShader,
+        cap,
+        point,
+        pointSize,
+        dataLabel,
+        dataLabelVerticalPosition,
+        dataLabelRotationDegrees,
+        dataLabelRotationDegrees,
+        pointConnector,
+    ) {
+        LineSpec(
+            shader = shader,
+            thicknessDp = thickness.value,
+            backgroundShader = backgroundShader,
+            cap = cap.paintCap,
+            point = point,
+            pointSizeDp = pointSize.value,
+            dataLabel = dataLabel,
+            dataLabelVerticalPosition = dataLabelVerticalPosition,
+            dataLabelValueFormatter = dataLabelValueFormatter,
+            dataLabelRotationDegrees = dataLabelRotationDegrees,
+            pointConnector = pointConnector,
+        )
     }
 
 /**
@@ -95,13 +153,28 @@ public fun rememberLineCartesianLayer(
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
  * @param pointConnector the [LineSpec.PointConnector] for the line.
  */
+@Deprecated(
+    message =
+        "Use the `rememberLineSpec` composable function instead. If you are using this function in a " +
+            "non-composable scope, use the `LineSpec` constructor.",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "rememberLineSpec(shader = shader, thickness = thickness, backgroundShader = backgroundShader, " +
+                    "cap = cap, point = point, pointSize = pointSize, dataLabel = dataLabel, " +
+                    "dataLabelVerticalPosition = dataLabelVerticalPosition, " +
+                    "dataLabelValueFormatter = dataLabelValueFormatter, " +
+                    "dataLabelRotationDegrees = dataLabelRotationDegrees, " +
+                    "pointConnector = pointConnector)",
+        ),
+)
 public fun lineSpec(
     shader: DynamicShader,
-    thickness: Dp = DefaultDimens.LINE_THICKNESS.dp,
+    thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
     backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
     cap: StrokeCap = StrokeCap.Round,
     point: Component? = null,
-    pointSize: Dp = DefaultDimens.POINT_SIZE.dp,
+    pointSize: Dp = Defaults.POINT_SIZE.dp,
     dataLabel: TextComponent? = null,
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),

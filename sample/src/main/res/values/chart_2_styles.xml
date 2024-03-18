@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -16,6 +16,11 @@
 
 <resources>
     <color name="chart_2_color_1">#ff5500</color>
+
+    <style name="Chart2BottomAxisStyle">
+        <item name="addExtremeHorizontalAxisLabelPadding">true</item>
+        <item name="horizontalAxisLabelSpacing">3</item>
+    </style>
 
     <style name="Chart2Column1Style">
         <item name="color">@color/chart_2_color_1</item>

@@ -23,7 +23,9 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:chartZoomEnabled="false"
         app:columnLayerStyle="@style/Chart6ColumnLayerStyle"
+        app:previewColumnSeriesCount="3"
         app:layers="column"
         app:showBottomAxis="true"
         app:showStartAxis="true" />

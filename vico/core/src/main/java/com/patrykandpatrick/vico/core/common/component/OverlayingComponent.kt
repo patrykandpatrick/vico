@@ -17,6 +17,8 @@
 package com.patrykandpatrick.vico.core.common.component
 
 import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
+import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
 
 /**
  * A [Component] composed out of two [Component]s, with one drawn over the other.
@@ -27,6 +29,20 @@ import com.patrykandpatrick.vico.core.common.DrawContext
  * @property innerPaddingEndDp the end padding between the inner and outer components.
  * @property innerPaddingBottomDp the bottom padding between the inner and outer components.
  */
+@Deprecated(
+    message = "Use `LayeredComponent`.",
+    replaceWith =
+        ReplaceWith(
+            expression =
+                "LayeredComponent(rear = outer, front = inner, padding = MutableDimensions(startDp = " +
+                    "innerPaddingStartDp, topDp = innerPaddingTopDp, endDp = innerPaddingEndDp, " +
+                    "bottomDp = innerPaddingBottomDp))",
+            imports = [
+                "com.patrykandpatrick.vico.core.common.LayeredComponent",
+                "com.patrykandpatrick.vico.core.dimensions.MutableDimensions",
+            ],
+        ),
+)
 public class OverlayingComponent(
     public val outer: Component,
     public val inner: Component,
@@ -34,7 +50,20 @@ public class OverlayingComponent(
     public val innerPaddingTopDp: Float = 0f,
     public val innerPaddingEndDp: Float = 0f,
     public val innerPaddingBottomDp: Float = 0f,
-) : Component, Margins by DefaultMargins() {
+) : Component {
+    @Deprecated(
+        message = "Use LayeredComponent.",
+        replaceWith =
+            ReplaceWith(
+                expression =
+                    "LayeredComponent(rear = outer, front = inner, padding = " +
+                        "MutableDimensions(horizontalDp = innerPaddingAllDp, verticalDp = innerPaddingAllDp))",
+                imports = [
+                    "com.patrykandpatrick.vico.core.common.LayeredComponent",
+                    "com.patrykandpatrick.vico.core.dimensions.MutableDimensions",
+                ],
+            ),
+    )
     public constructor(
         outer: Component,
         inner: Component,
@@ -47,6 +76,8 @@ public class OverlayingComponent(
         innerPaddingEndDp = innerPaddingAllDp,
         innerPaddingBottomDp = innerPaddingAllDp,
     )
+
+    override val margins: MutableDimensions = emptyDimensions()
 
     init {
         inner.margins.set(

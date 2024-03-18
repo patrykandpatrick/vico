@@ -21,7 +21,7 @@ import android.graphics.Color
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.common.DefaultColors
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
 
@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.views.common.extension.defaultColors
  */
 public fun Candle.Companion.sharpFilledCandle(
     color: Int,
-    thicknessDp: Float = DefaultDimens.REAL_BODY_WIDTH_DP,
+    thicknessDp: Float = Defaults.REAL_BODY_WIDTH_DP,
 ): Candle {
     val filledBody = LineComponent(color, thicknessDp)
     return Candle(realBody = filledBody)
@@ -41,8 +41,8 @@ public fun Candle.Companion.sharpFilledCandle(
  */
 public fun Candle.Companion.sharpHollowCandle(
     color: Int,
-    thicknessDp: Float = DefaultDimens.REAL_BODY_WIDTH_DP,
-    strokeWidthDp: Float = DefaultDimens.HOLLOW_CANDLE_STROKE_WIDTH_DP,
+    thicknessDp: Float = Defaults.REAL_BODY_WIDTH_DP,
+    strokeWidthDp: Float = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP,
 ): Candle {
     val hollowBody =
         LineComponent(
@@ -83,11 +83,11 @@ public class CandlestickStandardConfigBuilder internal constructor(private val c
         internal fun build(): CandlestickCartesianLayer.Config {
             val defaultColors = context.defaultColors
             val absolutelyIncreasing =
-                absolutelyIncreasing ?: Candle.sharpFilledCandle(color = defaultColors.candlestickGreen)
+                absolutelyIncreasing ?: Candle.sharpFilledCandle(color = defaultColors.candlestickGreen.toInt())
             val absolutelyZero =
-                absolutelyZero ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickGray)
+                absolutelyZero ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
             val absolutelyDecreasing =
-                absolutelyDecreasing ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickRed)
+                absolutelyDecreasing ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
 
             return CandlestickCartesianLayer.Config(
                 absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasing,
@@ -127,10 +127,10 @@ public class CandlestickHollowConfigBuilder internal constructor(private val con
                 absolutelyIncreasingRelativelyIncreasing ?: getAbsolutelyIncreasingRelativelyIncreasing(defaultColors)
             val absolutelyIncreasingRelativelyZero: Candle =
                 absolutelyDecreasingRelativelyZero
-                    ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray)
+                    ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
             val absolutelyIncreasingRelativelyDecreasing: Candle =
                 absolutelyIncreasingRelativelyDecreasing
-                    ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed)
+                    ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
             val absolutelyZeroRelativelyIncreasing: Candle =
                 absolutelyZeroRelativelyIncreasing ?: absolutelyIncreasingRelativelyIncreasing
             val absolutelyZeroRelativelyZero: Candle =
@@ -141,10 +141,10 @@ public class CandlestickHollowConfigBuilder internal constructor(private val con
                 absolutelyDecreasingRelativelyIncreasing ?: getAbsolutelyDecreasingRelativelyIncreasing(defaultColors)
             val absolutelyDecreasingRelativelyZero: Candle =
                 absolutelyDecreasingRelativelyZero
-                    ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray)
+                    ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
             val absolutelyDecreasingRelativelyDecreasing: Candle =
                 absolutelyDecreasingRelativelyDecreasing
-                    ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed)
+                    ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
 
             return CandlestickCartesianLayer.Config(
                 absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasingRelativelyIncreasing,
@@ -183,7 +183,7 @@ public fun CandlestickCartesianLayer.Config.Companion.hollowBuilder(
 ): CandlestickCartesianLayer.Config = CandlestickHollowConfigBuilder(context).apply(block).build()
 
 private fun getAbsolutelyIncreasingRelativelyIncreasing(colors: DefaultColors): Candle =
-    Candle.sharpHollowCandle(color = colors.candlestickGreen)
+    Candle.sharpHollowCandle(color = colors.candlestickGreen.toInt())
 
 private fun getAbsolutelyDecreasingRelativelyIncreasing(colors: DefaultColors): Candle =
-    Candle.sharpFilledCandle(color = colors.candlestickGreen)
+    Candle.sharpFilledCandle(color = colors.candlestickGreen.toInt())

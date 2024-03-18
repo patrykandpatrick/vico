@@ -31,8 +31,8 @@ import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.forEachInIndexed
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
-import com.patrykandpatrick.vico.core.common.DefaultDimens
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
@@ -44,6 +44,7 @@ import com.patrykandpatrick.vico.core.common.extension.getStart
 import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.position.inBounds
+import com.patrykandpatrick.vico.core.common.position.unaryMinus
 import kotlin.math.abs
 
 /**
@@ -65,18 +66,17 @@ import kotlin.math.abs
  */
 public open class ColumnCartesianLayer(
     public var columns: List<LineComponent>,
-    public var spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
-    public var innerSpacingDp: Float = DefaultDimens.COLUMN_INSIDE_SPACING,
-    public var mergeMode: (ColumnCartesianLayerModel) -> MergeMode = { MergeMode.Grouped },
+    public var spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
+    public var innerSpacingDp: Float = Defaults.COLUMN_INSIDE_SPACING,
+    public var mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var dataLabel: TextComponent? = null,
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
     public var dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),
     public var dataLabelRotationDegrees: Float = 0f,
-    public var drawingModelInterpolator: DrawingModelInterpolator<
-        ColumnCartesianLayerDrawingModel.ColumnInfo,
-        ColumnCartesianLayerDrawingModel,
-        > = DefaultDrawingModelInterpolator(),
+    public var drawingModelInterpolator:
+        DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
+        DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
     /**
      * Creates a [ColumnCartesianLayer] with a common style for all columns.
@@ -88,7 +88,7 @@ public open class ColumnCartesianLayer(
      */
     public constructor(
         column: LineComponent,
-        spacingDp: Float = DefaultDimens.COLUMN_OUTSIDE_SPACING,
+        spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
         verticalAxisPosition: AxisPosition.Vertical? = null,
     ) : this(columns = listOf(column), spacingDp = spacingDp, verticalAxisPosition = verticalAxisPosition)
 
@@ -143,7 +143,7 @@ public open class ColumnCartesianLayer(
         var columnTop: Float
         var columnBottom: Float
         val zeroLinePosition = bounds.bottom + yRange.minY / yRange.length * bounds.height()
-        val mergeMode = mergeMode(model)
+        val mergeMode = mergeMode(model.extraStore)
 
         model.series.forEachIndexed { index, entryCollection ->
 
@@ -297,7 +297,7 @@ public open class ColumnCartesianLayer(
             if (x - dataLabelWidth.half > bounds.right || x + dataLabelWidth.half < bounds.left) return
 
             val labelVerticalPosition =
-                if (dataLabelValue < 0f) dataLabelVerticalPosition.negative() else dataLabelVerticalPosition
+                if (dataLabelValue < 0f) -dataLabelVerticalPosition else dataLabelVerticalPosition
 
             val verticalPosition =
                 labelVerticalPosition.inBounds(
@@ -345,15 +345,15 @@ public open class ColumnCartesianLayer(
         chartValues: MutableChartValues,
         model: ColumnCartesianLayerModel,
     ) {
-        val mergeMode = mergeMode(model)
+        val mergeMode = mergeMode(model.extraStore)
+        val minY = mergeMode.getMinY(model)
+        val maxY = mergeMode.getMaxY(model)
         chartValues.tryUpdate(
-            axisPosition = verticalAxisPosition,
-            minX = axisValueOverrider?.getMinX(model) ?: model.minX,
-            maxX = axisValueOverrider?.getMaxX(model) ?: model.maxX,
-            minY = axisValueOverrider?.getMinY(model) ?: mergeMode.getMinY(model).coerceAtMost(0f),
-            maxY =
-                axisValueOverrider?.getMaxY(model)
-                    ?: if (model.minY == 0f && model.maxY == 0f) 1f else mergeMode.getMaxY(model).coerceAtLeast(0f),
+            axisValueOverrider.getMinX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMaxX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMinY(minY, maxY, model.extraStore),
+            axisValueOverrider.getMaxY(minY, maxY, model.extraStore),
+            verticalAxisPosition,
         )
     }
 
@@ -364,17 +364,13 @@ public open class ColumnCartesianLayer(
     ) {
         with(context) {
             val columnCollectionWidth =
-                getColumnCollectionWidth(if (model.series.isNotEmpty()) model.series.size else 1, mergeMode(model))
+                getColumnCollectionWidth(
+                    if (model.series.isNotEmpty()) model.series.size else 1,
+                    mergeMode(model.extraStore),
+                )
             val xSpacing = columnCollectionWidth + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
-                is HorizontalLayout.Segmented -> {
-                    horizontalDimensions.ensureValuesAtLeast(
-                        xSpacing = xSpacing,
-                        scalableStartPadding = xSpacing.half,
-                        scalableEndPadding = xSpacing.half,
-                    )
-                }
-
+                is HorizontalLayout.Segmented -> horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
                 is HorizontalLayout.FullWidth -> {
                     horizontalDimensions.ensureValuesAtLeast(
                         xSpacing = xSpacing,

@@ -22,12 +22,10 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.math.sqrt
 import kotlin.random.Random
 
-/**
- * The number of degrees equivalent to π radians.
- */
-public const val PI_RAD: Float = 180f
+internal const val PI_RAD: Float = 180f
 
 internal const val FLOAT_GCD_DECIMALS = 2
 
@@ -56,6 +54,20 @@ internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>)
     this == range.start || this == range.endInclusive
 
 internal fun ClosedFloatingPointRange<Float>.random(): Float = start + (endInclusive - start) * Random.nextFloat()
+
+internal fun Int.getDivisors(includeDividend: Boolean = true) =
+    buildList {
+        add(1)
+        for (i in 2..sqrt(toFloat()).toInt()) {
+            if (this@getDivisors % i == 0) {
+                add(i)
+                val derived = this@getDivisors / i
+                if (derived != i) add(derived)
+            }
+        }
+        if (includeDividend) add(this@getDivisors)
+        sort()
+    }
 
 internal inline val Int.half: Int
     get() = this / 2

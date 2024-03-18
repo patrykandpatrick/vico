@@ -32,8 +32,8 @@ import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerM
 import com.patrykandpatrick.vico.core.cartesian.model.forEachInIndexed
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
-import com.patrykandpatrick.vico.core.common.DefaultDimens
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
@@ -55,13 +55,13 @@ import kotlin.math.abs
  */
 public open class CandlestickCartesianLayer(
     public var config: Config,
-    public var minRealBodyHeightDp: Float = DefaultDimens.REAL_BODY_MIN_HEIGHT_DP,
-    public var spacingDp: Float = DefaultDimens.CANDLESTICK_CHART_DEFAULT_SPACING_DP,
+    public var minRealBodyHeightDp: Float = Defaults.REAL_BODY_MIN_HEIGHT_DP,
+    public var spacingDp: Float = Defaults.CANDLESTICK_CHART_DEFAULT_SPACING_DP,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var drawingModelInterpolator: DrawingModelInterpolator<
         CandlestickCartesianLayerDrawingModel.CandleInfo,
         CandlestickCartesianLayerDrawingModel,
-        > = DefaultDrawingModelInterpolator(),
+    > = DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<CandlestickCartesianLayerModel>() {
     /**
      * TODO
@@ -220,11 +220,11 @@ public open class CandlestickCartesianLayer(
         model: CandlestickCartesianLayerModel,
     ) {
         chartValues.tryUpdate(
-            axisPosition = verticalAxisPosition,
-            minX = axisValueOverrider?.getMinX(model) ?: model.minX,
-            maxX = axisValueOverrider?.getMaxX(model) ?: model.maxX,
-            minY = axisValueOverrider?.getMinY(model) ?: model.minY,
-            maxY = axisValueOverrider?.getMaxY(model) ?: model.maxY,
+            axisValueOverrider.getMinX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMaxX(model.minX, model.maxX, model.extraStore),
+            axisValueOverrider.getMinY(model.minY, model.maxY, model.extraStore),
+            axisValueOverrider.getMaxY(model.minY, model.maxY, model.extraStore),
+            verticalAxisPosition,
         )
     }
 
@@ -378,6 +378,6 @@ public open class CandlestickCartesianLayer(
 private fun LineComponent.copyAsWick(): LineComponent =
     copy(
         color = if (color == Color.TRANSPARENT) strokeColor else color,
-        thicknessDp = DefaultDimens.WICK_DEFAULT_WIDTH_DP,
+        thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
         strokeWidthDp = 0f,
     )

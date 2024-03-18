@@ -23,11 +23,10 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:bottomAxisStyle="@style/Chart2BottomAxisStyle"
         app:columnLayerStyle="@style/Chart2ColumnLayerStyle"
         app:horizontalLayout="fullWidth"
         app:layers="column"
-        app:scalableEndContentPadding="16dp"
-        app:scalableStartContentPadding="16dp"
         app:showBottomAxis="true"
         app:showStartAxis="true" />
 </FrameLayout>

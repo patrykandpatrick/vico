@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.common.shape
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.extension.ceil
 
@@ -32,8 +32,8 @@ import com.patrykandpatrick.vico.core.common.extension.ceil
  */
 public class DashedShape(
     public val shape: Shape = Shapes.rectShape,
-    public val dashLengthDp: Float = DefaultDimens.DASH_LENGTH,
-    public val gapLengthDp: Float = DefaultDimens.DASH_GAP,
+    public val dashLengthDp: Float = Defaults.DASH_LENGTH,
+    public val gapLengthDp: Float = Defaults.DASH_GAP,
     public val fitStrategy: FitStrategy = FitStrategy.Resize,
 ) : Shape {
     private var drawDashLength = dashLengthDp

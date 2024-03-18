@@ -16,27 +16,22 @@
 
 package com.patrykandpatrick.vico.views.cartesian
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ScaleGestureDetector
 import android.view.View
-import android.view.animation.Interpolator
 import android.widget.OverScroller
 import androidx.core.view.ViewCompat
-import androidx.interpolator.view.animation.FastOutSlowInInterpolator
-import com.patrykandpatrick.vico.core.cartesian.AutoScaleUp
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.RandomCartesianModelGenerator
+import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.draw.drawMarker
-import com.patrykandpatrick.vico.core.cartesian.draw.getAutoZoom
-import com.patrykandpatrick.vico.core.cartesian.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
@@ -44,20 +39,12 @@ import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProduce
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.toImmutable
-import com.patrykandpatrick.vico.core.common.Animation
-import com.patrykandpatrick.vico.core.common.DEF_MAX_ZOOM
-import com.patrykandpatrick.vico.core.common.DEF_MIN_ZOOM
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.PreMeasureContext
 import com.patrykandpatrick.vico.core.common.extension.spToPx
-import com.patrykandpatrick.vico.core.common.scroll.ScrollHandler
-import com.patrykandpatrick.vico.core.common.scroll.ScrollListener
-import com.patrykandpatrick.vico.core.common.scroll.ScrollListenerHost
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.BaseChartView
-import com.patrykandpatrick.vico.views.common.ChartScrollSpec
-import com.patrykandpatrick.vico.views.common.copy
 import com.patrykandpatrick.vico.views.common.extension.density
 import com.patrykandpatrick.vico.views.common.extension.dpInt
 import com.patrykandpatrick.vico.views.common.extension.isAttachedToWindowCompat
@@ -82,28 +69,17 @@ public open class CartesianChartView
         context: Context,
         attrs: AttributeSet? = null,
         defStyleAttr: Int = 0,
-    ) : BaseChartView<CartesianChartModel>(context, attrs, defStyleAttr), ScrollListenerHost {
-        private val scrollHandler = ScrollHandler()
-
+    ) : BaseChartView<CartesianChartModel>(context, attrs, defStyleAttr) {
         private val scroller = OverScroller(context)
 
         private val mutableChartValues = MutableChartValues()
-
-        private val motionEventHandler =
-            MotionEventHandler(
-                scroller = scroller,
-                scrollHandler = scrollHandler,
-                density = resources.displayMetrics.density,
-                onTouchPoint = ::handleTouchEvent,
-                requestInvalidate = ::invalidate,
-            )
 
         override val measureContext: MutableCartesianMeasureContext =
             MutableCartesianMeasureContext(
                 canvasBounds = contentBounds,
                 density = context.density,
                 isLtr = context.isLtr,
-                isHorizontalScrollEnabled = false,
+                scrollEnabled = false,
                 spToPx = context::spToPx,
                 chartValues = ChartValues.Empty,
             )
@@ -116,12 +92,6 @@ public open class CartesianChartView
 
         private val scaleGestureDetector = ScaleGestureDetector(context, scaleGestureListener)
 
-        private val scrollValueAnimator: ValueAnimator =
-            ValueAnimator.ofFloat(Animation.range.start, Animation.range.endInclusive).apply {
-                duration = Animation.ANIMATED_SCROLL_DURATION.toLong()
-                interpolator = FastOutSlowInInterpolator()
-            }
-
         private var markerTouchPoint: Point? = null
 
         private var wasMarkerVisible: Boolean = false
@@ -130,45 +100,52 @@ public open class CartesianChartView
 
         private var lastMarkerEntryModels = emptyList<CartesianMarker.EntryModel>()
 
-        private var zoom = 0f
-
-        private var wasZoomOverridden = false
-
         private var horizontalDimensions = MutableHorizontalDimensions()
 
         private val themeHandler: ThemeHandler = ThemeHandler(context, attrs)
 
         /**
-         * Houses scrolling-related settings.
+         * Houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and programmatic
+         * scrolling.
          */
-        public var chartScrollSpec: ChartScrollSpec by invalidatingObservable(ChartScrollSpec()) { newValue ->
-            measureContext.isHorizontalScrollEnabled = newValue.isScrollEnabled
-        }
+        public var scrollHandler: ScrollHandler by
+            invalidatingObservable(ScrollHandler(themeHandler.scrollEnabled)) { oldValue, newValue ->
+                oldValue?.clearUpdated()
+                newValue.postInvalidate = ::postInvalidate
+                newValue.postInvalidateOnAnimation = ::postInvalidateOnAnimation
+                measureContext.scrollEnabled = newValue.scrollEnabled
+            }
+
+        /** Houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization. */
+        public var zoomHandler: ZoomHandler by
+            invalidatingObservable(ZoomHandler.default(themeHandler.isChartZoomEnabled, scrollHandler.scrollEnabled))
+
+        private val motionEventHandler =
+            MotionEventHandler(
+                scroller = scroller,
+                density = resources.displayMetrics.density,
+                onTouchPoint = ::handleTouchEvent,
+                requestInvalidate = ::invalidate,
+            )
 
         /**
          * Defines how the chart’s content is positioned horizontally.
          */
-        public var horizontalLayout: HorizontalLayout by invalidatingObservable(
-            themeHandler.horizontalLayout,
-        ) { newValue ->
-            measureContext.horizontalLayout = newValue
-        }
+        public var horizontalLayout: HorizontalLayout by
+            invalidatingObservable(themeHandler.horizontalLayout) { _, newValue ->
+                measureContext.horizontalLayout = newValue
+            }
 
         /**
          * Overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this is null,
-         * the default _x_ step ([CartesianChartModel.xDeltaGcd]) is used.
+         * the output of [CartesianChartModel.getXDeltaGcd] is used.
          */
         public var getXStep: ((CartesianChartModel) -> Float)? by invalidatingObservable(null)
 
         /**
-         * Whether the pinch-to-zoom gesture is enabled.
-         */
-        public var isZoomEnabled: Boolean = true
-
-        /**
          * The [CartesianChart] displayed by this [View].
          */
-        public var chart: CartesianChart? by observable(null) { _, _, _ ->
+        public var chart: CartesianChart? by observable(themeHandler.chart) { _, _, _ ->
             tryInvalidate(chart = chart, model = model, updateChartValues = true)
         }
 
@@ -229,6 +206,7 @@ public open class CartesianChartView
         override fun onDetachedFromWindow() {
             super.onDetachedFromWindow()
             modelProducer?.unregisterFromUpdates(key = this)
+            scrollHandler.clearUpdated()
         }
 
         /**
@@ -241,16 +219,7 @@ public open class CartesianChartView
          */
         public var markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener? = null
 
-        /**
-         * Defines whether the content of the chart should be scaled up when the dimensions are such that, at a scale
-         * factor of 1, an empty space would be visible near the end edge of the chart.
-         */
-        public var autoScaleUp: AutoScaleUp = AutoScaleUp.Full
-
         init {
-            chart = themeHandler.chart
-            chartScrollSpec = chartScrollSpec.copy(isScrollEnabled = themeHandler.isHorizontalScrollEnabled)
-            isZoomEnabled = themeHandler.isChartZoomEnabled
             if (isInEditMode && attrs != null) {
                 context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView, defStyleAttr, 0).use {
                         typedArray ->
@@ -304,13 +273,7 @@ public open class CartesianChartView
             updatePlaceholderVisibility()
             tryInvalidate(chart, model, updateChartValues)
             if (model != null && oldModel?.id != model.id && isInEditMode.not()) {
-                handler?.post {
-                    chartScrollSpec.performAutoScroll(
-                        model = model,
-                        oldModel = oldModel,
-                        scrollHandler = scrollHandler,
-                    )
-                }
+                handler?.post { scrollHandler.autoScroll(model, oldModel) }
             }
         }
 
@@ -330,12 +293,12 @@ public open class CartesianChartView
 
         protected inline fun <T> invalidatingObservable(
             initialValue: T,
-            crossinline onChange: (T) -> Unit = {},
+            crossinline onChange: (T?, T) -> Unit = { _, _ -> },
         ): ReadWriteProperty<Any?, T> {
-            onChange(initialValue)
-            return observable(initialValue) { _, _, newValue ->
+            onChange(null, initialValue)
+            return observable(initialValue) { _, oldValue, newValue ->
                 tryInvalidate(chart = chart, model = model, updateChartValues = false)
-                onChange(newValue)
+                onChange(oldValue, newValue)
             }
         }
 
@@ -346,12 +309,12 @@ public open class CartesianChartView
 
         override fun onTouchEvent(event: MotionEvent): Boolean {
             val scaleHandled =
-                if (isZoomEnabled && event.pointerCount > 1 && chartScrollSpec.isScrollEnabled) {
+                if (zoomHandler.zoomEnabled && event.pointerCount > 1 && scrollHandler.scrollEnabled) {
                     scaleGestureDetector.onTouchEvent(event)
                 } else {
                     false
                 }
-            val touchHandled = motionEventHandler.handleMotionEvent(event)
+            val touchHandled = motionEventHandler.handleMotionEvent(event, scrollHandler)
 
             if (scrollDirectionResolved.not() && event.historySize > 0) {
                 scrollDirectionResolved = true
@@ -370,14 +333,8 @@ public open class CartesianChartView
             zoomChange: Float,
         ) {
             val chart = chart ?: return
-            val newZoom = zoom * zoomChange
-            if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return
-            val transformationAxisX = scrollHandler.value + focusX - chart.bounds.left
-            val zoomedTransformationAxisX = transformationAxisX * zoomChange
-            zoom = newZoom
-            scrollHandler.handleScrollDelta(transformationAxisX - zoomedTransformationAxisX)
+            scrollHandler.scroll(zoomHandler.zoom(zoomChange, focusX, scrollHandler.value, chart.bounds))
             handleTouchEvent(null)
-            wasZoomOverridden = true
             invalidate()
         }
 
@@ -389,33 +346,20 @@ public open class CartesianChartView
             super.dispatchDraw(canvas)
 
             withChartAndModel { chart, model ->
-                measureContext.clearExtras()
+                measureContext.reset()
                 horizontalDimensions.clear()
                 chart.prepare(measureContext, model, horizontalDimensions, contentBounds, marker)
 
                 if (chart.bounds.isEmpty) return@withChartAndModel
 
-                motionEventHandler.isHorizontalScrollEnabled = chartScrollSpec.isScrollEnabled
+                motionEventHandler.scrollEnabled = scrollHandler.scrollEnabled
                 if (scroller.computeScrollOffset()) {
-                    scrollHandler.handleScroll(scroller.currX.toFloat())
+                    scrollHandler.scroll(Scroll.Absolute.pixels(scroller.currX.toFloat()))
                     ViewCompat.postInvalidateOnAnimation(this)
                 }
 
-                var finalZoom = zoom
-
-                if (!wasZoomOverridden || !chartScrollSpec.isScrollEnabled) {
-                    finalZoom = measureContext.getAutoZoom(horizontalDimensions, chart.bounds, autoScaleUp)
-                    if (chartScrollSpec.isScrollEnabled) zoom = finalZoom
-                }
-
-                scrollHandler.maxValue =
-                    measureContext.getMaxScrollDistance(
-                        chartWidth = chart.bounds.width(),
-                        horizontalDimensions = horizontalDimensions,
-                        zoom = finalZoom,
-                    )
-
-                scrollHandler.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
+                zoomHandler.update(measureContext, horizontalDimensions, chart.bounds)
+                scrollHandler.update(measureContext, chart.bounds, horizontalDimensions)
 
                 val chartDrawContext =
                     cartesianChartDrawContext(
@@ -426,7 +370,7 @@ public open class CartesianChartView
                         horizontalDimensions = horizontalDimensions,
                         chartBounds = chart.bounds,
                         horizontalScroll = scrollHandler.value,
-                        zoom = finalZoom,
+                        zoom = zoomHandler.value,
                     )
 
                 chart.draw(chartDrawContext, model)
@@ -450,57 +394,11 @@ public open class CartesianChartView
         override fun getChartDesiredHeight(
             widthMeasureSpec: Int,
             heightMeasureSpec: Int,
-        ): Int = DefaultDimens.CHART_HEIGHT.dpInt
+        ): Int = Defaults.CHART_HEIGHT.dpInt
 
         private inline fun withChartAndModel(block: (chart: CartesianChart, model: CartesianChartModel) -> Unit) {
             val chart = chart ?: return
             val model = model ?: return
             block(chart, model)
-        }
-
-        /**
-         * Sets the duration (in milliseconds) of animated scrolls ([animateScrollBy]).
-         */
-        public fun setAnimatedScrollDuration(durationMillis: Long) {
-            scrollValueAnimator.duration = durationMillis
-        }
-
-        /**
-         * Sets the [Interpolator] for animated scrolls ([animateScrollBy]).
-         */
-        public fun setAnimatedScrollInterpolator(interpolator: Interpolator) {
-            scrollValueAnimator.interpolator = interpolator
-        }
-
-        public override fun registerScrollListener(scrollListener: ScrollListener) {
-            scrollHandler.registerScrollListener(scrollListener)
-        }
-
-        public override fun removeScrollListener(scrollListener: ScrollListener) {
-            scrollHandler.removeScrollListener(scrollListener)
-        }
-
-        /**
-         * Invokes the provided function block, passing to it the current scroll amount and the maximum scroll amount,
-         * and scrolls the chart by the number of pixels returned by the function block.
-         */
-        public fun scrollBy(getDelta: (value: Float, maxValue: Float) -> Float) {
-            scrollHandler.handleScrollDelta(getDelta(scrollHandler.value, scrollHandler.maxValue))
-        }
-
-        /**
-         * Invokes the provided function block, passing to it the current scroll amount and the maximum scroll amount,
-         * and scrolls the chart by the number of pixels returned by the function block, using a [ValueAnimator].
-         * Customize the animation with [setAnimatedScrollDuration] and [setAnimatedScrollInterpolator].
-         */
-        public fun animateScrollBy(getDelta: (value: Float, maxValue: Float) -> Float) {
-            val initialValue = scrollHandler.value
-            val delta = getDelta(initialValue, scrollHandler.maxValue)
-            with(scrollValueAnimator) {
-                cancel()
-                removeAllUpdateListeners()
-                addUpdateListener { scrollHandler.handleScroll(initialValue + it.animatedFraction * delta) }
-                start()
-            }
         }
     }

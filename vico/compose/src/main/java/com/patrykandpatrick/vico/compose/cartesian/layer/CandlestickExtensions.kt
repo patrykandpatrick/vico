@@ -27,7 +27,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.style.getDefaultColors
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
 /**
@@ -36,7 +36,7 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 @Composable
 public fun Candle.Companion.sharpFilledCandle(
     color: Color,
-    thickness: Dp = DefaultDimens.REAL_BODY_WIDTH_DP.dp,
+    thickness: Dp = Defaults.REAL_BODY_WIDTH_DP.dp,
 ): Candle {
     val filledBody = rememberLineComponent(color, thickness)
 
@@ -51,8 +51,8 @@ public fun Candle.Companion.sharpFilledCandle(
 @Composable
 public fun Candle.Companion.sharpHollowCandle(
     color: Color,
-    thickness: Dp = DefaultDimens.REAL_BODY_WIDTH_DP.dp,
-    strokeWidth: Dp = DefaultDimens.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
+    thickness: Dp = Defaults.REAL_BODY_WIDTH_DP.dp,
+    strokeWidth: Dp = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
 ): Candle {
     val hollowBody =
         rememberLineComponent(

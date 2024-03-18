@@ -23,20 +23,20 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerDrawingModel
-import com.patrykandpatrick.vico.core.common.DefaultDimens
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 
 @Composable
 public fun rememberCandlestickCartesianLayer(
     config: CandlestickCartesianLayer.Config = CandlestickCartesianLayer.Config.rememberStandard(),
-    minRealBodyHeight: Dp = DefaultDimens.REAL_BODY_MIN_HEIGHT_DP.dp,
-    spacing: Dp = DefaultDimens.CANDLESTICK_CHART_DEFAULT_SPACING_DP.dp,
+    minRealBodyHeight: Dp = Defaults.REAL_BODY_MIN_HEIGHT_DP.dp,
+    spacing: Dp = Defaults.CANDLESTICK_CHART_DEFAULT_SPACING_DP.dp,
     verticalAxisPosition: AxisPosition.Vertical? = null,
     drawingModelInterpolator: DrawingModelInterpolator<
         CandlestickCartesianLayerDrawingModel.CandleInfo,
         CandlestickCartesianLayerDrawingModel,
-        > = DefaultDrawingModelInterpolator(),
+    > = DefaultDrawingModelInterpolator(),
 ): CandlestickCartesianLayer =
     remember { CandlestickCartesianLayer(config) }.apply {
         this.config = config

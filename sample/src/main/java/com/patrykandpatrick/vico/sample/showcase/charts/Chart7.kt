@@ -18,7 +18,9 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,70 +28,110 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.axisLabelComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
-import com.patrykandpatrick.vico.compose.common.legend.legendItem
-import com.patrykandpatrick.vico.compose.common.legend.verticalLegend
+import com.patrykandpatrick.vico.compose.common.legend.rememberLegendItem
+import com.patrykandpatrick.vico.compose.common.legend.rememberVerticalLegend
+import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shape.roundedCornerShape
-import com.patrykandpatrick.vico.compose.common.style.ProvideChartStyle
-import com.patrykandpatrick.vico.compose.common.style.currentChartStyle
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.copy
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
+import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.databinding.Chart7Binding
+import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
-import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 @Composable
 internal fun Chart7(
     uiSystem: UISystem,
-    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
 ) {
+    val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            while (isActive) {
+                modelProducer.tryRunTransaction {
+                    lineSeries {
+                        repeat(Defaults.MULTI_SERIES_COUNT) {
+                            series(
+                                List(Defaults.ENTRY_COUNT) {
+                                    Defaults.COLUMN_LAYER_MIN_Y +
+                                        Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
+                                },
+                            )
+                        }
+                    }
+                }
+                delay(Defaults.TRANSACTION_INTERVAL_MS)
+            }
+        }
+    }
+
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart7(modelProducer)
-        UISystem.Views -> ViewChart7(modelProducer)
+        UISystem.Compose -> ComposeChart7(modelProducer, modifier)
+        UISystem.Views -> ViewChart7(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart7(modelProducer: CartesianChartModelProducer) {
-    ProvideChartStyle(rememberChartStyle(chartColors)) {
-        val defaultLines = currentChartStyle.lineLayer.lines
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(
-                        remember(defaultLines) { defaultLines.map { it.copy(backgroundShader = null) } },
-                    ),
-                    startAxis =
-                        rememberStartAxis(
-                            label = rememberStartAxisLabel(),
-                            horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
-                        ),
-                    bottomAxis = rememberBottomAxis(),
-                    legend = rememberLegend(),
+private fun ComposeChart7(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberLineCartesianLayer(
+                    lines =
+                        chartColors.map { color ->
+                            rememberLineSpec(
+                                shader = DynamicShaders.color(color),
+                                backgroundShader = null,
+                            )
+                        },
                 ),
-            modelProducer = modelProducer,
-            marker = rememberMarker(),
-            runInitialAnimation = false,
-        )
-    }
+                startAxis =
+                    rememberStartAxis(
+                        label = rememberStartAxisLabel(),
+                        horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                    ),
+                bottomAxis = rememberBottomAxis(),
+                legend = rememberLegend(),
+            ),
+        modelProducer = modelProducer,
+        modifier = modifier,
+        marker = rememberMarker(),
+        runInitialAnimation = false,
+        zoomState = rememberVicoZoomState(zoomEnabled = false),
+    )
 }
 
 @Composable
-private fun ViewChart7(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart7(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val startAxisLabel = rememberStartAxisLabel()
     val marker = rememberMarker()
     val legend = rememberLegend()
-    AndroidViewBinding(Chart7Binding::inflate) {
+    AndroidViewBinding(Chart7Binding::inflate, modifier) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
@@ -103,54 +145,37 @@ private fun ViewChart7(modelProducer: CartesianChartModelProducer) {
 
 @Composable
 private fun rememberStartAxisLabel() =
-    axisLabelComponent(
+    rememberAxisLabelComponent(
         color = Color.Black,
-        verticalPadding = startAxisLabelVerticalPaddingValue,
-        horizontalPadding = startAxisLabelHorizontalPaddingValue,
-        verticalMargin = startAxisLabelMarginValue,
-        horizontalMargin = startAxisLabelMarginValue,
-        background = rememberShapeComponent(Shapes.roundedCornerShape(startAxisLabelBackgroundCornerRadius), color4),
+        background =
+            rememberShapeComponent(
+                shape = Shapes.roundedCornerShape(4.dp),
+                color = Color(0xfffab94d),
+            ),
+        padding = dimensionsOf(horizontal = 8.dp, vertical = 2.dp),
+        margins = dimensionsOf(all = 4.dp),
     )
 
 @Composable
 private fun rememberLegend() =
-    verticalLegend(
+    rememberVerticalLegend(
         items =
             chartColors.mapIndexed { index, chartColor ->
-                legendItem(
+                rememberLegendItem(
                     icon = rememberShapeComponent(Shapes.pillShape, chartColor),
                     label =
                         rememberTextComponent(
-                            color = currentChartStyle.axis.axisLabelColor,
-                            textSize = legendItemLabelTextSize,
+                            color = vicoTheme.textColor,
+                            textSize = 12.sp,
                             typeface = Typeface.MONOSPACE,
                         ),
                     labelText = stringResource(R.string.series_x, index + 1),
                 )
             },
-        iconSize = legendItemIconSize,
-        iconPadding = legendItemIconPaddingValue,
-        spacing = legendItemSpacing,
-        padding = legendPadding,
+        iconSize = 8.dp,
+        iconPadding = 8.dp,
+        spacing = 4.dp,
+        padding = dimensionsOf(top = 8.dp),
     )
 
-private const val COLOR_1_CODE = 0xffb983ff
-private const val COLOR_2_CODE = 0xff91b1fd
-private const val COLOR_3_CODE = 0xff8fdaff
-private const val COLOR_4_CODE = 0xfffab94d
-
-private val color1 = Color(COLOR_1_CODE)
-private val color2 = Color(COLOR_2_CODE)
-private val color3 = Color(COLOR_3_CODE)
-private val color4 = Color(COLOR_4_CODE)
-private val chartColors = listOf(color1, color2, color3)
-private val startAxisLabelVerticalPaddingValue = 2.dp
-private val startAxisLabelHorizontalPaddingValue = 8.dp
-private val startAxisLabelMarginValue = 4.dp
-private val startAxisLabelBackgroundCornerRadius = 4.dp
-private val legendItemLabelTextSize = 12.sp
-private val legendItemIconSize = 8.dp
-private val legendItemIconPaddingValue = 10.dp
-private val legendItemSpacing = 4.dp
-private val legendTopPaddingValue = 8.dp
-private val legendPadding = dimensionsOf(top = legendTopPaddingValue)
+private val chartColors = listOf(Color(0xffb983ff), Color(0xff91b1fd), Color(0xff8fdaff))

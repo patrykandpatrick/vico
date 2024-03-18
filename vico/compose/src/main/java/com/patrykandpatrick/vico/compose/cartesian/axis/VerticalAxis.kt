@@ -19,14 +19,14 @@ package com.patrykandpatrick.vico.compose.cartesian.axis
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
-import com.patrykandpatrick.vico.compose.common.style.currentChartStyle
-import com.patrykandpatrick.vico.core.cartesian.axis.Axis
+import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.createVerticalAxis
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 
@@ -49,21 +49,21 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
  */
 @Composable
 public fun rememberStartAxis(
-    label: TextComponent? = axisLabelComponent(),
-    axis: LineComponent? = axisLineComponent(),
-    tick: LineComponent? = axisTickComponent(),
-    tickLength: Dp = currentChartStyle.axis.axisTickLength,
-    guideline: LineComponent? = axisGuidelineComponent(),
+    label: TextComponent? = rememberAxisLabelComponent(),
+    axis: LineComponent? = rememberAxisLineComponent(),
+    tick: LineComponent? = rememberAxisTickComponent(),
+    tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
+    guideline: LineComponent? = rememberAxisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Vertical.Start> = DecimalFormatAxisValueFormatter(),
-    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
+    sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
     horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
-    itemPlacer: AxisItemPlacer.Vertical = remember { AxisItemPlacer.Vertical.default() },
-    labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    itemPlacer: AxisItemPlacer.Vertical = remember { AxisItemPlacer.Vertical.step() },
+    labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
 ): VerticalAxis<AxisPosition.Vertical.Start> =
-    remember { createVerticalAxis<AxisPosition.Vertical.Start>() }.apply {
+    remember { VerticalAxis.build<AxisPosition.Vertical.Start>() }.apply {
         this.label = label
         axisLine = axis
         this.tick = tick
@@ -98,21 +98,21 @@ public fun rememberStartAxis(
  */
 @Composable
 public fun rememberEndAxis(
-    label: TextComponent? = axisLabelComponent(),
-    axis: LineComponent? = axisLineComponent(),
-    tick: LineComponent? = axisTickComponent(),
-    tickLength: Dp = currentChartStyle.axis.axisTickLength,
-    guideline: LineComponent? = axisGuidelineComponent(),
+    label: TextComponent? = rememberAxisLabelComponent(),
+    axis: LineComponent? = rememberAxisLineComponent(),
+    tick: LineComponent? = rememberAxisTickComponent(),
+    tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
+    guideline: LineComponent? = rememberAxisGuidelineComponent(),
     valueFormatter: AxisValueFormatter<AxisPosition.Vertical.End> = DecimalFormatAxisValueFormatter(),
-    sizeConstraint: Axis.SizeConstraint = Axis.SizeConstraint.Auto(),
+    sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
     horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
-    itemPlacer: AxisItemPlacer.Vertical = remember { AxisItemPlacer.Vertical.default() },
-    labelRotationDegrees: Float = currentChartStyle.axis.axisLabelRotationDegrees,
+    itemPlacer: AxisItemPlacer.Vertical = remember { AxisItemPlacer.Vertical.step() },
+    labelRotationDegrees: Float = Defaults.AXIS_LABEL_ROTATION_DEGREES,
     titleComponent: TextComponent? = null,
     title: CharSequence? = null,
 ): VerticalAxis<AxisPosition.Vertical.End> =
-    remember { createVerticalAxis<AxisPosition.Vertical.End>() }.apply {
+    remember { VerticalAxis.build<AxisPosition.Vertical.End>() }.apply {
         this.label = label
         axisLine = axis
         this.tick = tick

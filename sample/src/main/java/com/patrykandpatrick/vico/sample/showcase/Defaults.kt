@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.common.scroll
+package com.patrykandpatrick.vico.sample.showcase
 
-/**
- * Declares functions for registering and removing [ScrollListener]s.
- */
-public interface ScrollListenerHost {
-    /**
-     * Registers a [ScrollListener].
-     */
-    public fun registerScrollListener(scrollListener: ScrollListener)
-
-    /**
-     * Removes a [ScrollListener].
-     */
-    public fun removeScrollListener(scrollListener: ScrollListener)
+object Defaults {
+    const val TRANSACTION_INTERVAL_MS = 2000L
+    const val MULTI_SERIES_COUNT = 3
+    const val ENTRY_COUNT = 50
+    const val MAX_Y = 20
+    const val COLUMN_LAYER_MIN_Y = 2
+    const val COLUMN_LAYER_RELATIVE_MAX_Y = MAX_Y - COLUMN_LAYER_MIN_Y
 }

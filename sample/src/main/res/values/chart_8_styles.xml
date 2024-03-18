@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -19,6 +19,10 @@
     <color name="chart_8_color_2">#d3756b</color>
     <color name="chart_8_color_3">#f09b7d</color>
     <color name="chart_8_color_4">#ffc3a1</color>
+
+    <style name="Chart8AxisStyle">
+        <item name="showGuideline">false</item>
+    </style>
 
     <style name="Chart8Column1Style">
         <item name="color">@color/chart_8_color_1</item>

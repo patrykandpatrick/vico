@@ -17,68 +17,91 @@
 package com.patrykandpatrick.vico.sample.showcase.charts
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.common.style.ProvideChartStyle
-import com.patrykandpatrick.vico.core.cartesian.axis.Axis
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
+import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
-import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 @Composable
 internal fun Chart1(
     uiSystem: UISystem,
-    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
 ) {
-    when (uiSystem) {
-        UISystem.Compose -> ComposeChart1(modelProducer)
-        UISystem.Views -> ViewChart1(modelProducer)
-    }
-}
-
-@Composable
-private fun ComposeChart1(modelProducer: CartesianChartModelProducer) {
-    val marker = rememberMarker()
-    ProvideChartStyle(rememberChartStyle(chartColors)) {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(),
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(guideline = null),
-                    persistentMarkers = remember(marker) { mapOf(PERSISTENT_MARKER_X to marker) },
-                ),
-            modelProducer = modelProducer,
-            marker = marker,
-            runInitialAnimation = false,
-        )
-    }
-}
-
-@Composable
-private fun ViewChart1(modelProducer: CartesianChartModelProducer) {
-    val marker = rememberMarker()
-    AndroidViewBinding(Chart1Binding::inflate) {
-        with(chartView) {
-            chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
-            runInitialAnimation = false
-            this.modelProducer = modelProducer
-            (chart?.bottomAxis as Axis).guideline = null
-            this.marker = marker
+    val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            modelProducer.tryRunTransaction { lineSeries { series(x, x.map { Random.nextFloat() * 15 }) } }
         }
     }
+    when (uiSystem) {
+        UISystem.Compose -> ComposeChart1(modelProducer, modifier)
+        UISystem.Views -> ViewChart1(modelProducer, modifier)
+    }
 }
 
-private const val COLOR_1_CODE = 0xffa485e0
-private const val PERSISTENT_MARKER_X = 5f
+@Composable
+private fun ComposeChart1(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
+    val marker = rememberMarker()
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberLineCartesianLayer(listOf(rememberLineSpec(DynamicShaders.color(Color(0xffa485e0))))),
+                startAxis = rememberStartAxis(),
+                bottomAxis = rememberBottomAxis(guideline = null),
+                persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker),
+            ),
+        modelProducer = modelProducer,
+        modifier = modifier,
+        marker = marker,
+        zoomState = rememberVicoZoomState(zoomEnabled = false),
+    )
+}
 
-private val color1 = Color(COLOR_1_CODE)
-private val chartColors = listOf(color1)
+@Composable
+private fun ViewChart1(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
+    val marker = rememberMarker()
+    AndroidViewBinding(
+        { inflater, parent, attachToParent ->
+            Chart1Binding
+                .inflate(inflater, parent, attachToParent)
+                .apply {
+                    with(chartView) {
+                        chart?.addPersistentMarker(PERSISTENT_MARKER_X, marker)
+                        this.modelProducer = modelProducer
+                        (chart?.bottomAxis as BaseAxis).guideline = null
+                        this.marker = marker
+                    }
+                }
+        },
+        modifier,
+    )
+}
+
+private const val PERSISTENT_MARKER_X = 7f
+
+private val x = (1..50).toList()

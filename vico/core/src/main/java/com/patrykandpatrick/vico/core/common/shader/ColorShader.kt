@@ -44,7 +44,14 @@ public class ColorShader(public val color: Int) : DynamicShader {
 
     override fun getColorAt(
         point: Point,
-        drawContext: DrawContext,
-        rectF: RectF,
+        context: DrawContext,
+        bounds: RectF,
     ): Int = color
+
+    override fun equals(other: Any?): Boolean = this === other || (other is ColorShader && color == other.color)
+
+    override fun hashCode(): Int = color.hashCode()
+
+    @OptIn(ExperimentalStdlibApi::class)
+    override fun toString(): String = "ColorShader(color=${color.toHexString(HexFormat.UpperCase)})"
 }

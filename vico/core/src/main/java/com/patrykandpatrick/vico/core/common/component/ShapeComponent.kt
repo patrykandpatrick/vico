@@ -22,6 +22,7 @@ import android.graphics.Path
 import android.graphics.Shader
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.dimension.Dimensions
+import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
 import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
 import com.patrykandpatrick.vico.core.common.extension.alpha
 import com.patrykandpatrick.vico.core.common.extension.half
@@ -51,7 +52,8 @@ public open class ShapeComponent(
     strokeColor: Int = Color.TRANSPARENT,
 ) : PaintComponent<ShapeComponent>(),
     Component,
-    Margins by DefaultMargins() {
+    Margins {
+    override val margins: MutableDimensions = emptyDimensions()
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 

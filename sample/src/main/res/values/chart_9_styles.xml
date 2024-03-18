@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-  ~ Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@
     </style>
 
     <style name="Chart9StartAxisStyle">
-        <item name="maxVerticalAxisItemCount">4</item>
+        <item name="verticalAxisItemCount">4</item>
         <item name="axisLabelStyle">@style/Chart9StartAxisLabelStyle</item>
         <item name="showTick">false</item>
         <item name="showAxisLine">false</item>
@@ -51,7 +51,7 @@
     </style>
 
     <style name="Chart9StartAxisLabelBackgroundStyle">
-        <item name="color">?android:backgroundTint</item>
+        <item name="color">@android:color/transparent</item>
         <item name="shapeStyle">@style/Chart9StartAxisLabelBackgroundShapeStyle</item>
         <item name="strokeWidth">1dp</item>
         <item name="strokeColor">?colorOutlineVariant</item>

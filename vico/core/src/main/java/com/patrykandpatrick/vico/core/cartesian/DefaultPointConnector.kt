@@ -20,7 +20,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.extension.horizontalCubicTo
 import kotlin.math.abs
@@ -31,7 +31,7 @@ import kotlin.math.abs
  * @property cubicStrength the strength of the cubic bezier curve between each point on the line.
  */
 public class DefaultPointConnector(
-    private val cubicStrength: Float = DefaultDimens.CUBIC_STRENGTH,
+    private val cubicStrength: Float = Defaults.CUBIC_STRENGTH,
 ) : LineCartesianLayer.LineSpec.PointConnector {
     public override fun connect(
         path: Path,

@@ -22,7 +22,8 @@ import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.extension.getRepeating
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.views.R
@@ -35,7 +36,7 @@ internal fun TypedArray.getColumnCartesianLayer(
     @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnCartesianLayerStyle,
 ): ColumnCartesianLayer =
     getNestedTypedArray(context, resourceId, styleableResourceId).run {
-        val defaultShape = Shapes.roundedCornerShape(allPercent = DefaultDimens.COLUMN_ROUNDNESS_PERCENT)
+        val defaultShape = Shapes.roundedCornerShape(allPercent = Defaults.COLUMN_ROUNDNESS_PERCENT)
         val mergeMode =
             getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)
                 .let(ColumnCartesianLayer.MergeMode.entries::get)
@@ -48,8 +49,8 @@ internal fun TypedArray.getColumnCartesianLayer(
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
-                        defaultColor = context.defaultColors.entity1Color.toInt(),
-                        defaultThickness = DefaultDimens.COLUMN_WIDTH,
+                        defaultColor = context.defaultColors.cartesianLayerColors[0].toInt(),
+                        defaultThickness = Defaults.COLUMN_WIDTH,
                         defaultShape = defaultShape,
                     ),
                     getNestedTypedArray(
@@ -58,8 +59,8 @@ internal fun TypedArray.getColumnCartesianLayer(
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
-                        defaultColor = context.defaultColors.entity2Color.toInt(),
-                        defaultThickness = DefaultDimens.COLUMN_WIDTH,
+                        defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(1).toInt(),
+                        defaultThickness = Defaults.COLUMN_WIDTH,
                         defaultShape = defaultShape,
                     ),
                     getNestedTypedArray(
@@ -68,8 +69,8 @@ internal fun TypedArray.getColumnCartesianLayer(
                         styleableResourceId = R.styleable.LineComponent,
                     ).getLineComponent(
                         context = context,
-                        defaultColor = context.defaultColors.entity3Color.toInt(),
-                        defaultThickness = DefaultDimens.COLUMN_WIDTH,
+                        defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(2).toInt(),
+                        defaultThickness = Defaults.COLUMN_WIDTH,
                         defaultShape = defaultShape,
                     ),
                 ),
@@ -77,13 +78,13 @@ internal fun TypedArray.getColumnCartesianLayer(
                 getRawDimension(
                     context = context,
                     index = R.styleable.ColumnCartesianLayerStyle_columnOuterSpacing,
-                    defaultValue = DefaultDimens.COLUMN_OUTSIDE_SPACING,
+                    defaultValue = Defaults.COLUMN_OUTSIDE_SPACING,
                 ),
             innerSpacingDp =
                 getRawDimension(
                     context = context,
                     index = R.styleable.ColumnCartesianLayerStyle_columnInnerSpacing,
-                    defaultValue = DefaultDimens.COLUMN_INSIDE_SPACING,
+                    defaultValue = Defaults.COLUMN_INSIDE_SPACING,
                 ),
             mergeMode = { mergeMode },
             dataLabel =
@@ -125,7 +126,7 @@ internal fun TypedArray.getLineCartesianLayer(
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
-                        defaultColor = context.defaultColors.entity1Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors[0].toInt(),
                     ),
                     getNestedTypedArray(
                         context = context,
@@ -133,7 +134,7 @@ internal fun TypedArray.getLineCartesianLayer(
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
-                        defaultColor = context.defaultColors.entity2Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(1).toInt(),
                     ),
                     getNestedTypedArray(
                         context = context,
@@ -141,14 +142,14 @@ internal fun TypedArray.getLineCartesianLayer(
                         styleableResourceId = R.styleable.LineSpec,
                     ).getLineSpec(
                         context = context,
-                        defaultColor = context.defaultColors.entity3Color.toInt(),
+                        defaultColor = context.defaultColors.cartesianLayerColors.getRepeating(2).toInt(),
                     ),
                 ),
             spacingDp =
                 getRawDimension(
                     context = context,
                     index = R.styleable.LineCartesianLayerStyle_spacing,
-                    defaultValue = DefaultDimens.POINT_SPACING,
+                    defaultValue = Defaults.POINT_SPACING,
                 ),
         )
     }

@@ -22,8 +22,8 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesian
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
@@ -39,10 +39,10 @@ import com.patrykandpatrick.vico.core.common.legend.Legend
 @Composable
 public fun rememberCartesianChart(
     vararg layers: CartesianLayer<*>,
-    startAxis: AxisRenderer<AxisPosition.Vertical.Start>? = null,
-    topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? = null,
-    endAxis: AxisRenderer<AxisPosition.Vertical.End>? = null,
-    bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? = null,
+    startAxis: Axis<AxisPosition.Vertical.Start>? = null,
+    topAxis: Axis<AxisPosition.Horizontal.Top>? = null,
+    endAxis: Axis<AxisPosition.Vertical.End>? = null,
+    bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null,
     legend: Legend? = null,
     fadingEdges: FadingEdges? = null,
     decorations: List<Decoration>? = null,

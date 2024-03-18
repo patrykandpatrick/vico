@@ -17,29 +17,61 @@
 package com.patrykandpatrick.vico.compose.common.component
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerLabelFormatter
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarkerLabelFormatter
 import com.patrykandpatrick.vico.core.common.component.CartesianMarkerComponent
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 
+/** Creates and remembers a [CartesianMarkerComponent]. */
+@Composable
+public fun rememberMarkerComponent(
+    label: TextComponent,
+    labelFormatter: CartesianMarkerLabelFormatter = remember { DefaultCartesianMarkerLabelFormatter() },
+    labelPosition: CartesianMarkerComponent.LabelPosition = CartesianMarkerComponent.LabelPosition.Top,
+    indicator: Component? = null,
+    guideline: LineComponent? = null,
+): CartesianMarkerComponent =
+    remember(label, labelPosition, indicator, guideline) {
+        CartesianMarkerComponent(label, labelPosition, indicator, guideline)
+    }
+        .apply { this.labelFormatter = labelFormatter }
+
+/** Creates and remembers a [CartesianMarkerComponent]. */
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated(
+    "Use the overload with a `labelFormatter` parameter instead. (If you’re using named arguments, ignore this " +
+        "warning. The deprecated overload is more specific, but the new one matches and will be used once the " +
+        "deprecated one has been removed.)",
+)
+@Composable
+public fun rememberMarkerComponent(
+    label: TextComponent,
+    labelPosition: CartesianMarkerComponent.LabelPosition = CartesianMarkerComponent.LabelPosition.Top,
+    indicator: Component? = null,
+    guideline: LineComponent? = null,
+): CartesianMarkerComponent =
+    remember(label, labelPosition, indicator, guideline) {
+        CartesianMarkerComponent(label, labelPosition, indicator, guideline)
+    }
+
 /**
- * Creates a [CartesianMarkerComponent].
- *
- * @param label the [TextComponent] to use for the label.
- * @param labelPosition the [CartesianMarkerComponent.LabelPosition] to set the label position inside the chart
- * @param indicator the [Component] to use for the indicator.
- * @param guideline the [LineComponent] to use for the guideline.
+ * Creates a [MarkerComponent].
  */
 @Composable
+@Deprecated(
+    "Use `rememberMarkerComponent` instead.",
+    ReplaceWith(
+        "rememberMarkerComponent(label = label, indicator = indicator, guideline = guideline)",
+        "com.patrykandpatrick.vico.compose.component.marker.rememberMarkerComponent",
+    ),
+)
 public fun markerComponent(
     label: TextComponent,
-    labelPosition: CartesianMarkerComponent.LabelPosition = CartesianMarkerComponent.LabelPosition.top(),
-    indicator: com.patrykandpatrick.vico.core.common.component.Component,
+    indicator: Component,
     guideline: LineComponent,
 ): CartesianMarkerComponent =
-    CartesianMarkerComponent(
-        label = label,
-        labelPosition = labelPosition,
-        indicator = indicator,
-        guideline = guideline,
-    )
+    @Suppress("DEPRECATION")
+    rememberMarkerComponent(label = label, indicator = indicator, guideline = guideline)

@@ -19,8 +19,6 @@ package com.patrykandpatrick.vico.core.cartesian.values
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import kotlin.math.abs
-import kotlin.math.ceil
 
 /**
  * Houses a [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
@@ -56,11 +54,6 @@ public interface ChartValues {
      * The difference between [maxX] and [minX].
      */
     public val xLength: Float get() = maxX - minX
-
-    /**
-     * Returns the maximum number of major entries that can be present, based on [minX], [maxX], and [xStep].
-     */
-    public fun getMaxMajorEntryCount(): Int = ceil(abs(maxX - minX) / xStep + 1).toInt()
 
     /**
      * Holds information on a _y_ range.

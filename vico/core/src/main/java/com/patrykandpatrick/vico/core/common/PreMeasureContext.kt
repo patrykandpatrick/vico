@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.common
 
-public interface PreMeasureContext : Extras {
+public interface PreMeasureContext {
     /**
      * The pixel density.
      */
@@ -50,6 +50,11 @@ public interface PreMeasureContext : Extras {
     public val isLtr: Boolean
 
     /**
+     * Stores auxiliary data.
+     */
+    public val extraStore: MutableExtraStore
+
+    /**
      * A multiplier used to ensure support for both left-to-right and right-to-left layouts. Values such as translation
      * deltas are multiplied by this value. [layoutDirectionMultiplier] is equal to `1f` if [isLtr] is `true`, and `-1f`
      * otherwise.
@@ -60,7 +65,9 @@ public interface PreMeasureContext : Extras {
     /**
      * Removes all stored extras.
      *
-     * @see Extras.clearExtras
+     * @see MutableExtraStore.clear
      */
-    public fun reset()
+    public fun reset() {
+        extraStore.clear()
+    }
 }

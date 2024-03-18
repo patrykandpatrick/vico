@@ -18,14 +18,12 @@
 
 package com.patrykandpatrick.vico.views.common.shader
 
-import android.graphics.LinearGradient
 import android.graphics.Shader
-import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.component.Component
-import com.patrykandpatrick.vico.core.common.shader.CacheableDynamicShader
 import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.shader.LinearGradientShader
 
 /**
  * Creates a [ComponentShader] out of the provided [component].
@@ -36,6 +34,14 @@ import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
  * @param tileXMode the horizontal tiling mode for the [component].
  * @param tileYMode the vertical tiling mode for the [component].
  */
+@Deprecated(
+    "Use the `ComponentShader` constructor.",
+    ReplaceWith(
+        "ComponentShader(component = component, componentSizeDp = componentSizeDp, checkeredArrangement = " +
+            "checkeredArrangement, tileXMode = tileXMode, tileYMode = tileYMode)",
+        "com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader",
+    ),
+)
 public fun DynamicShaders.fromComponent(
     component: Component,
     componentSizeDp: Float,
@@ -70,32 +76,7 @@ public fun DynamicShaders.horizontalGradient(vararg colors: Int): DynamicShader 
 public fun DynamicShaders.horizontalGradient(
     colors: IntArray,
     positions: FloatArray? = null,
-): DynamicShader =
-    object : CacheableDynamicShader() {
-        override fun createShader(
-            context: DrawContext,
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float,
-        ): Shader =
-            LinearGradient(
-                left,
-                top,
-                right,
-                top,
-                colors,
-                positions,
-                Shader.TileMode.CLAMP,
-            )
-
-        override fun createKey(
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float,
-        ): String = "%s,%s".format(left, right)
-    }
+): DynamicShader = LinearGradientShader(colors, positions, true)
 
 /**
  * Creates a [DynamicShader] in the form of a vertical gradient.
@@ -116,29 +97,4 @@ public fun DynamicShaders.verticalGradient(vararg colors: Int): DynamicShader = 
 public fun DynamicShaders.verticalGradient(
     colors: IntArray,
     positions: FloatArray? = null,
-): DynamicShader =
-    object : CacheableDynamicShader() {
-        override fun createShader(
-            context: DrawContext,
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float,
-        ): Shader =
-            LinearGradient(
-                left,
-                top,
-                left,
-                bottom,
-                colors,
-                positions,
-                Shader.TileMode.CLAMP,
-            )
-
-        override fun createKey(
-            left: Float,
-            top: Float,
-            right: Float,
-            bottom: Float,
-        ): String = "%s,%s".format(top, bottom)
-    }
+): DynamicShader = LinearGradientShader(colors, positions, false)

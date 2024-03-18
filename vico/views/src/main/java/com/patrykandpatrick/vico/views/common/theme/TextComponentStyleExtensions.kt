@@ -24,12 +24,11 @@ import android.text.Layout
 import android.text.TextUtils
 import androidx.annotation.StyleableRes
 import androidx.core.content.res.ResourcesCompat
-import com.patrykandpatrick.vico.core.common.DEF_LABEL_LINE_COUNT
-import com.patrykandpatrick.vico.core.common.DefaultDimens.AXIS_LABEL_HORIZONTAL_PADDING
-import com.patrykandpatrick.vico.core.common.DefaultDimens.AXIS_LABEL_VERTICAL_PADDING
-import com.patrykandpatrick.vico.core.common.DefaultDimens.TEXT_COMPONENT_TEXT_SIZE
+import com.patrykandpatrick.vico.core.common.Defaults.AXIS_LABEL_HORIZONTAL_PADDING
+import com.patrykandpatrick.vico.core.common.Defaults.AXIS_LABEL_VERTICAL_PADDING
+import com.patrykandpatrick.vico.core.common.Defaults.LABEL_LINE_COUNT
+import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.component.textComponent
 import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
 import com.patrykandpatrick.vico.core.common.extension.firstNonNegativeOf
 import com.patrykandpatrick.vico.core.common.extension.orZero
@@ -40,7 +39,7 @@ private const val FONT_WEIGHT_NORMAL = 400
 
 internal fun TypedArray.getTextComponent(context: Context): TextComponent =
     use {
-        val color = getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.axisLabelColor.toInt())
+        val color = getColor(R.styleable.TextComponentStyle_labelColor, context.defaultColors.textColor.toInt())
         val background =
             getNestedTypedArray(
                 context = context,
@@ -48,7 +47,7 @@ internal fun TypedArray.getTextComponent(context: Context): TextComponent =
                 styleableResourceId = R.styleable.ComponentStyle,
             ).getComponent(context)
 
-        textComponent {
+        TextComponent.build {
             this.color = color
             this.background = background
             this.padding = getPadding(context)
@@ -59,7 +58,7 @@ internal fun TypedArray.getTextComponent(context: Context): TextComponent =
                     index = R.styleable.TextComponentStyle_android_textSize,
                     defaultValue = TEXT_COMPONENT_TEXT_SIZE,
                 )
-            this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, DEF_LABEL_LINE_COUNT)
+            this.lineCount = getInteger(R.styleable.TextComponentStyle_android_maxLines, LABEL_LINE_COUNT)
             this.ellipsize = getTruncateAt()
             getTypeface(context)?.let { this.typeface = it }
             this.textAlignment = getTextAlignment()

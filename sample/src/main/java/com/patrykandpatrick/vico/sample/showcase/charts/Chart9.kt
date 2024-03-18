@@ -19,8 +19,10 @@ package com.patrykandpatrick.vico.sample.showcase.charts
 import android.graphics.PorterDuff
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
@@ -28,12 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.axisLabelComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.fullWidth
-import com.patrykandpatrick.vico.compose.cartesian.layer.lineSpec
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
@@ -42,146 +44,173 @@ import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.fromComponent
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.dashedShape
-import com.patrykandpatrick.vico.compose.common.style.ProvideChartStyle
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.databinding.Chart9Binding
+import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
-import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 @Composable
 internal fun Chart9(
     uiSystem: UISystem,
-    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
 ) {
+    val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            while (isActive) {
+                modelProducer.tryRunTransaction {
+                    lineSeries {
+                        series(
+                            x = x,
+                            y = x.map { Random.nextFloat() * 30 - 10 },
+                        )
+                    }
+                }
+                delay(Defaults.TRANSACTION_INTERVAL_MS)
+            }
+        }
+    }
+
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart9(modelProducer)
-        UISystem.Views -> ViewChart9(modelProducer)
+        UISystem.Compose -> ComposeChart9(modelProducer, modifier)
+        UISystem.Views -> ViewChart9(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart9(modelProducer: CartesianChartModelProducer) {
+private fun ComposeChart9(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
+    val colors = chartColors
     val marker = rememberMarker()
-    ProvideChartStyle(rememberChartStyle(chartColors)) {
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(
-                        lines =
-                            listOf(
-                                lineSpec(
-                                    shader =
-                                        TopBottomShader(
-                                            DynamicShaders.color(chartColors[0]),
-                                            DynamicShaders.color(chartColors[1]),
-                                        ),
-                                    backgroundShader =
-                                        TopBottomShader(
-                                            DynamicShaders.composeShader(
-                                                DynamicShaders.fromComponent(
-                                                    componentSize = 6.dp,
-                                                    component =
-                                                        rememberShapeComponent(
-                                                            shape = Shapes.pillShape,
-                                                            color = chartColors[0],
-                                                            margins = remember { dimensionsOf(1.dp) },
-                                                        ),
-                                                ),
-                                                DynamicShaders.verticalGradient(
-                                                    arrayOf(Color.Black, Color.Transparent),
-                                                ),
-                                                PorterDuff.Mode.DST_IN,
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberLineCartesianLayer(
+                    lines =
+                        listOf(
+                            rememberLineSpec(
+                                shader =
+                                    TopBottomShader(
+                                        DynamicShaders.color(colors[0]),
+                                        DynamicShaders.color(colors[1]),
+                                    ),
+                                backgroundShader =
+                                    TopBottomShader(
+                                        DynamicShaders.composeShader(
+                                            DynamicShaders.fromComponent(
+                                                componentSize = 6.dp,
+                                                component =
+                                                    rememberShapeComponent(
+                                                        shape = Shapes.pillShape,
+                                                        color = colors[0],
+                                                        margins = remember { dimensionsOf(1.dp) },
+                                                    ),
                                             ),
-                                            DynamicShaders.composeShader(
-                                                DynamicShaders.fromComponent(
-                                                    componentSize = 5.dp,
-                                                    component =
-                                                        rememberShapeComponent(
-                                                            shape = Shapes.rectShape,
-                                                            color = chartColors[1],
-                                                            margins = remember { dimensionsOf(horizontal = 2.dp) },
-                                                        ),
-                                                    checkeredArrangement = false,
-                                                ),
-                                                DynamicShaders.verticalGradient(
-                                                    arrayOf(Color.Transparent, Color.Black),
-                                                ),
-                                                PorterDuff.Mode.DST_IN,
+                                            DynamicShaders.verticalGradient(
+                                                arrayOf(Color.Black, Color.Transparent),
                                             ),
+                                            PorterDuff.Mode.DST_IN,
                                         ),
-                                ),
+                                        DynamicShaders.composeShader(
+                                            DynamicShaders.fromComponent(
+                                                componentSize = 5.dp,
+                                                component =
+                                                    rememberShapeComponent(
+                                                        shape = Shapes.rectShape,
+                                                        color = colors[1],
+                                                        margins = remember { dimensionsOf(horizontal = 2.dp) },
+                                                    ),
+                                                checkeredArrangement = false,
+                                            ),
+                                            DynamicShaders.verticalGradient(
+                                                arrayOf(Color.Transparent, Color.Black),
+                                            ),
+                                            PorterDuff.Mode.DST_IN,
+                                        ),
+                                    ),
                             ),
-                    ),
-                    startAxis =
-                        rememberStartAxis(
-                            label =
-                                axisLabelComponent(
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    background =
-                                        rememberShapeComponent(
-                                            shape = Shapes.pillShape,
-                                            color = MaterialTheme.colorScheme.background,
-                                            strokeColor = MaterialTheme.colorScheme.outlineVariant,
-                                            strokeWidth = 1.dp,
-                                        ),
-                                    padding = remember { dimensionsOf(horizontal = 6.dp, vertical = 2.dp) },
-                                    margins = remember { dimensionsOf(end = 8.dp) },
-                                ),
-                            axis = null,
-                            tick = null,
-                            guideline =
-                                rememberLineComponent(
-                                    thickness = 1.dp,
-                                    color = MaterialTheme.colorScheme.outlineVariant,
-                                    shape =
-                                        remember {
-                                            Shapes.dashedShape(
-                                                shape = Shapes.pillShape,
-                                                dashLength = 4.dp,
-                                                gapLength = 8.dp,
-                                            )
-                                        },
-                                ),
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
-                        ),
-                    bottomAxis =
-                        rememberBottomAxis(
-                            guideline = null,
-                            itemPlacer =
-                                remember {
-                                    AxisItemPlacer.Horizontal.default(
-                                        spacing = 3,
-                                        addExtremeLabelPadding = true,
-                                    )
-                                },
                         ),
                 ),
-            modelProducer = modelProducer,
-            marker = marker,
-            runInitialAnimation = false,
-            horizontalLayout = HorizontalLayout.fullWidth(),
-        )
-    }
+                startAxis =
+                    rememberStartAxis(
+                        label =
+                            rememberAxisLabelComponent(
+                                color = MaterialTheme.colorScheme.onBackground,
+                                background =
+                                    rememberShapeComponent(
+                                        shape = Shapes.pillShape,
+                                        color = Color.Transparent,
+                                        strokeColor = MaterialTheme.colorScheme.outlineVariant,
+                                        strokeWidth = 1.dp,
+                                    ),
+                                padding = remember { dimensionsOf(horizontal = 6.dp, vertical = 2.dp) },
+                                margins = remember { dimensionsOf(end = 8.dp) },
+                            ),
+                        axis = null,
+                        tick = null,
+                        guideline =
+                            rememberLineComponent(
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                shape =
+                                    remember {
+                                        Shapes.dashedShape(
+                                            shape = Shapes.pillShape,
+                                            dashLength = 4.dp,
+                                            gapLength = 8.dp,
+                                        )
+                                    },
+                            ),
+                        itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
+                    ),
+                bottomAxis =
+                    rememberBottomAxis(
+                        guideline = null,
+                        itemPlacer =
+                            remember {
+                                AxisItemPlacer.Horizontal.default(
+                                    spacing = 3,
+                                    addExtremeLabelPadding = true,
+                                )
+                            },
+                    ),
+            ),
+        modelProducer = modelProducer,
+        modifier = modifier,
+        marker = marker,
+        runInitialAnimation = false,
+        horizontalLayout = HorizontalLayout.fullWidth(),
+    )
 }
 
 @Composable
-private fun ViewChart9(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart9(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
     val colors = chartColors
-    AndroidViewBinding(Chart9Binding::inflate) {
+    AndroidViewBinding(Chart9Binding::inflate, modifier) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
-            (chart?.bottomAxis as Axis).guideline = null
+            (chart?.bottomAxis as BaseAxis).guideline = null
             this.marker = marker
             with(chart?.layers?.get(0) as LineCartesianLayer) {
                 lines =
@@ -237,3 +266,5 @@ private val chartColors
             colorResource(id = R.color.chart_9_color_positive),
             colorResource(id = R.color.chart_9_color_negative),
         )
+
+private val x = (1..100).toList()

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,12 +67,14 @@ dependencies {
     implementation libs.appcompat
     implementation libs.composeMaterial
     implementation libs.composeMaterial3
+    implementation libs.composeNavigation
     implementation libs.composePreview
     implementation libs.composeUI
     implementation libs.composeViewBinding
     implementation libs.coroutinesCore
     implementation libs.kotlinStdLib
     implementation libs.lifecycleRuntime
+    implementation libs.lifecycleRuntimeCompose
     implementation libs.material
     implementation libs.systemUIController
     implementation libs.viewModelCompose

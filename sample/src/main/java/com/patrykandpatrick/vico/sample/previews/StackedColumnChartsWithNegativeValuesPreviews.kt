@@ -30,13 +30,13 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.common.component.LineComponent
-import com.patrykandpatrick.vico.core.common.component.textComponent
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 private val model =
@@ -72,7 +72,7 @@ public fun StackedColumnChartWithNegativeValues() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 8 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 8 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
@@ -91,12 +91,12 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(
                         columns = columns,
-                        dataLabel = textComponent(),
+                        dataLabel = rememberTextComponent(),
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 8 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 8 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),
@@ -119,7 +119,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),
@@ -142,7 +142,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 3 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 3 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),

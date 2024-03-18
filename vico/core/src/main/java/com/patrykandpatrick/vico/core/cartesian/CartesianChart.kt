@@ -17,9 +17,9 @@
 package com.patrykandpatrick.vico.core.cartesian
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisRenderer
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
@@ -132,22 +132,22 @@ public open class CartesianChart(
     /**
      * The start axis.
      */
-    public var startAxis: AxisRenderer<AxisPosition.Vertical.Start>? by axisManager::startAxis
+    public var startAxis: Axis<AxisPosition.Vertical.Start>? by axisManager::startAxis
 
     /**
      * The top axis.
      */
-    public var topAxis: AxisRenderer<AxisPosition.Horizontal.Top>? by axisManager::topAxis
+    public var topAxis: Axis<AxisPosition.Horizontal.Top>? by axisManager::topAxis
 
     /**
      * The end axis.
      */
-    public var endAxis: AxisRenderer<AxisPosition.Vertical.End>? by axisManager::endAxis
+    public var endAxis: Axis<AxisPosition.Vertical.End>? by axisManager::endAxis
 
     /**
      * The bottom axis.
      */
-    public var bottomAxis: AxisRenderer<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
+    public var bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? by axisManager::bottomAxis
 
     override val bounds: RectF = RectF()
 

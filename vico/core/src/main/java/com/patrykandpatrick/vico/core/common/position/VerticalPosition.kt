@@ -23,15 +23,11 @@ public enum class VerticalPosition {
     Top,
     Center,
     Bottom,
-    ;
-
-    /**
-     * Returns the inverse of this [VerticalPosition].
-     */
-    public fun negative(): VerticalPosition =
-        when (this) {
-            Top -> Bottom
-            Center -> Center
-            Bottom -> Top
-        }
 }
+
+internal operator fun VerticalPosition.unaryMinus() =
+    when (this) {
+        VerticalPosition.Top -> VerticalPosition.Bottom
+        VerticalPosition.Center -> VerticalPosition.Center
+        VerticalPosition.Bottom -> VerticalPosition.Top
+    }

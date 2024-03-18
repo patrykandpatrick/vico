@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -30,51 +29,31 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalBox
+import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
-import com.patrykandpatrick.vico.compose.common.scroll.rememberChartScrollSpec
+import com.patrykandpatrick.vico.compose.common.scroll.rememberVicoScrollState
 import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
-import com.patrykandpatrick.vico.compose.common.style.LocalChartStyle
-import com.patrykandpatrick.vico.core.cartesian.decoration.ThresholdLine
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 4) })
 
-public val Color.Companion.DimmedGray: Color
+val Color.Companion.DimmedGray: Color
     get() = Color(0xFFAAAAAA)
 
 @Composable
-private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
-    val chartStyle =
-        LocalChartStyle.current.copy(
-            axis =
-                LocalChartStyle.current.axis.copy(
-                    axisLabelColor = Color.DimmedGray,
-                    axisLineColor = Color.DimmedGray,
-                    axisTickColor = Color.DimmedGray,
-                    axisGuidelineColor = Color.DimmedGray,
-                ),
-            columnLayer =
-                LocalChartStyle.current.columnLayer.copy(
-                    columns =
-                        LocalChartStyle.current.columnLayer.columns.map {
-                            rememberLineComponent(
-                                color = Color.DimmedGray,
-                                thickness = it.thicknessDp.dp,
-                                shape = it.shape,
-                                dynamicShader = it.dynamicShader,
-                                margins = it.margins,
-                            )
-                        },
-                ),
-        )
+private fun ProvidePreviewVicoTheme(content: @Composable () -> Unit) {
     Surface(
         color = Color.Transparent,
         modifier =
@@ -82,14 +61,21 @@ private fun ProvidePreviewChartStyle(content: @Composable () -> Unit) {
                 .background(color = Color.LightGray, shape = RoundedCornerShape(size = 4.dp))
                 .padding(8.dp),
     ) {
-        CompositionLocalProvider(LocalChartStyle provides chartStyle, content = content)
+        ProvideVicoTheme(
+            vicoTheme.copy(
+                cartesianLayerColors = listOf(Color.DimmedGray),
+                lineColor = Color.DimmedGray,
+                textColor = Color.DimmedGray,
+            ),
+            content,
+        )
     }
 }
 
 @Preview(widthDp = 250)
 @Composable
-public fun ThresholdLine() {
-    ProvidePreviewChartStyle {
+fun ThresholdLine() {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -99,24 +85,24 @@ public fun ThresholdLine() {
                     bottomAxis = rememberBottomAxis(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdValue = 2f,
-                                lineComponent = rememberShapeComponent(color = Color.Black),
+                            rememberHorizontalLine(
+                                y = { 2f },
+                                line = rememberLineComponent(color = Color.Black, thickness = 2.dp),
                                 labelComponent =
                                     rememberTextComponent(Color.Black, padding = dimensionsOf(horizontal = 8.dp)),
                             ),
                         ),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }
 
 @Preview(widthDp = 250)
 @Composable
-public fun ThresholdLineWithCustomText() {
-    ProvidePreviewChartStyle {
+fun ThresholdLineWithCustomText() {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -124,10 +110,9 @@ public fun ThresholdLineWithCustomText() {
                     rememberColumnCartesianLayer(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdValue = 2f,
-                                thresholdLabel = "Threshold line 1 📐",
-                                lineComponent = rememberShapeComponent(color = Color.Black),
+                            rememberHorizontalLine(
+                                y = { 2f },
+                                line = rememberLineComponent(color = Color.Black, thickness = 2.dp),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.White,
@@ -150,12 +135,12 @@ public fun ThresholdLineWithCustomText() {
                                             ),
                                         margins = dimensionsOf(horizontal = 4.dp),
                                     ),
-                                labelVerticalPosition = ThresholdLine.LabelVerticalPosition.Bottom,
+                                label = { "Horizontal line 1 📐" },
+                                verticalLabelPosition = VerticalPosition.Bottom,
                             ),
-                            ThresholdLine(
-                                thresholdValue = 3f,
-                                thresholdLabel = "Threshold line 2 📐",
-                                lineComponent = rememberShapeComponent(color = Color.DarkGray),
+                            rememberHorizontalLine(
+                                y = { 3f },
+                                line = rememberLineComponent(color = Color.DarkGray, thickness = 2.dp),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.White,
@@ -178,21 +163,22 @@ public fun ThresholdLineWithCustomText() {
                                             ),
                                         margins = dimensionsOf(horizontal = 4.dp),
                                     ),
+                                label = { "Horizontal line 2 📐" },
                             ),
                         ),
                     startAxis = rememberStartAxis(),
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }
 
 @Preview(widthDp = 250)
 @Composable
-public fun RangedThresholdLine() {
-    ProvidePreviewChartStyle {
+fun RangedThresholdLine() {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -200,9 +186,9 @@ public fun RangedThresholdLine() {
                     rememberColumnCartesianLayer(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdRange = 2f..3f,
-                                lineComponent = rememberShapeComponent(color = Color.Black.copy(alpha = 0.5f)),
+                            rememberHorizontalBox(
+                                y = { 2f..3f },
+                                box = rememberShapeComponent(color = Color.Black.copy(alpha = .5f)),
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.Black,
@@ -214,15 +200,15 @@ public fun RangedThresholdLine() {
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }
 
 @Preview(widthDp = 250)
 @Composable
-public fun RangedThresholdLineWithBrushShader() {
-    ProvidePreviewChartStyle {
+fun RangedThresholdLineWithBrushShader() {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -230,9 +216,9 @@ public fun RangedThresholdLineWithBrushShader() {
                     rememberColumnCartesianLayer(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdRange = 2f..3f,
-                                lineComponent =
+                            rememberHorizontalBox(
+                                y = { 2f..3f },
+                                box =
                                     rememberShapeComponent(
                                         color = Color.Black,
                                         dynamicShader =
@@ -255,15 +241,15 @@ public fun RangedThresholdLineWithBrushShader() {
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }
 
 @Preview(widthDp = 250)
 @Composable
-public fun RangedThresholdLineWithComponentShader() {
-    ProvidePreviewChartStyle {
+fun RangedThresholdLineWithComponentShader() {
+    ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
             chart =
@@ -271,9 +257,9 @@ public fun RangedThresholdLineWithComponentShader() {
                     rememberColumnCartesianLayer(),
                     decorations =
                         listOf(
-                            ThresholdLine(
-                                thresholdRange = 2f..3f,
-                                lineComponent =
+                            rememberHorizontalBox(
+                                y = { 2f..3f },
+                                box =
                                     rememberShapeComponent(
                                         color = Color.Black,
                                         dynamicShader =
@@ -295,7 +281,7 @@ public fun RangedThresholdLineWithComponentShader() {
                     bottomAxis = rememberBottomAxis(),
                 ),
             model = model,
-            chartScrollSpec = rememberChartScrollSpec(isScrollEnabled = false),
+            scrollState = rememberVicoScrollState(scrollEnabled = false),
         )
     }
 }

@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.common.component
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
@@ -25,7 +26,6 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerLabelFormatter
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarkerLabelFormatter
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
-import com.patrykandpatrick.vico.core.common.component.CartesianMarkerComponent.LabelPosition
 import com.patrykandpatrick.vico.core.common.extension.averageOf
 import com.patrykandpatrick.vico.core.common.extension.ceil
 import com.patrykandpatrick.vico.core.common.extension.doubled
@@ -34,22 +34,22 @@ import com.patrykandpatrick.vico.core.common.extension.orZero
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 
 /**
- * The default implementation of the [CartesianMarker] interface.
+ * The default [CartesianMarker] implementation.
  *
- * @param label the [TextComponent] used to draw the label.
- * @param labelPosition the [LabelPosition] to set the position of the marker label
- * @param indicator an optional indicator drawn at a given point belonging to the data entry.
- * @param guideline an optional line drawn from the bottom of the chart to the bottom edge of the [label].
+ * @param label the [TextComponent] for the label.
+ * @param labelPosition specifies the position of the label.
+ * @param indicator drawn at the marked points.
+ * @param guideline drawn vertically through the marked points.
  */
 public open class CartesianMarkerComponent(
     public val label: TextComponent,
-    private val labelPosition: LabelPosition = LabelPosition.Top,
-    public val indicator: Component?,
-    public val guideline: LineComponent?,
+    public val labelPosition: LabelPosition = LabelPosition.Top,
+    public val indicator: Component? = null,
+    public val guideline: LineComponent? = null,
 ) : CartesianMarker {
-    private val tempBounds = RectF()
+    protected val tempBounds: RectF = RectF()
 
-    private val TextComponent.tickSizeDp: Float
+    protected val TextComponent.tickSizeDp: Float
         get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
     /**
@@ -69,52 +69,20 @@ public open class CartesianMarkerComponent(
     public var labelFormatter: CartesianMarkerLabelFormatter = DefaultCartesianMarkerLabelFormatter()
 
     /**
-     * This sealed class represents the position where the label should be rendered
+     * Creates a [CartesianMarkerComponent] with [LabelPosition.Top].
+     *
+     * @param label the [TextComponent] for the label.
+     * @param indicator drawn at the marked points.
+     * @param guideline drawn vertically through the marked points.
      */
-    public sealed interface LabelPosition {
-        public fun getY(
-            labelTickSizeInPixels: Float,
-            chartBounds: RectF,
-            labelBounds: RectF,
-            markerModel: CartesianMarker.EntryModel,
-            indicatorSize: Float,
-        ): Float
-
-        /**
-         * This is the default position.
-         *
-         * The label will be rendered on the top of the chart
-         */
-        public data object Top : LabelPosition {
-            override fun getY(
-                labelTickSizeInPixels: Float,
-                chartBounds: RectF,
-                labelBounds: RectF,
-                markerModel: CartesianMarker.EntryModel,
-                indicatorSize: Float,
-            ): Float = chartBounds.top - labelBounds.height() - labelTickSizeInPixels
-        }
-
-        /**
-         * The label will be rendered on the top of the indicator.
-         *
-         * For the case of the chart holds dynamic values, the label will update its position  one the indicator updates too.
-         *
-         * @param spacingDp it's an additional space between the indicator and the label. That makes the appearance
-         * a bit more customizable for the case of custom indicators or custom label layouts.
-         */
-        public data class AboveIndicator(val spacingDp: Float = 2f) : LabelPosition {
-            override fun getY(
-                labelTickSizeInPixels: Float,
-                chartBounds: RectF,
-                labelBounds: RectF,
-                markerModel: CartesianMarker.EntryModel,
-                indicatorSize: Float,
-            ): Float = markerModel.location.y - labelBounds.height() - labelTickSizeInPixels - indicatorSize - spacingDp
-        }
-
-        public companion object
-    }
+    @Deprecated(
+        "Use the primary constructor, which has `labelPosition` and `minimumWidth` parameters and default " +
+            "values for `indicator` and `guideline`. (If you’re using named arguments, ignore this warning. " +
+            "The deprecated constructor is more specific, but the primary one matches and will be used once " +
+            "the deprecated one has been removed.)",
+    )
+    public constructor(label: TextComponent, indicator: Component?, guideline: LineComponent?) :
+        this(label, LabelPosition.Top, indicator, guideline)
 
     override fun draw(
         context: CartesianDrawContext,
@@ -139,7 +107,7 @@ public open class CartesianMarkerComponent(
             drawLabel(context, bounds, markedEntries, chartValues)
         }
 
-    private fun drawLabel(
+    protected fun drawLabel(
         context: CartesianDrawContext,
         bounds: RectF,
         markedEntries: List<CartesianMarker.EntryModel>,
@@ -157,26 +125,37 @@ public open class CartesianMarkerComponent(
                 )
             val halfOfTextWidth = labelBounds.width().half
             val x = overrideXPositionToFit(entryX, bounds, halfOfTextWidth)
-            this[MarkerCorneredShape.TICK_X_KEY] = entryX
+            extraStore[MarkerCorneredShape.tickXKey] = entryX
+            val tickPosition: MarkerCorneredShape.TickPosition
+            val y: Float
+            val verticalPosition: VerticalPosition
+            if (labelPosition == LabelPosition.Top) {
+                tickPosition = MarkerCorneredShape.TickPosition.Bottom
+                y = bounds.top - label.tickSizeDp.pixels
+                verticalPosition = VerticalPosition.Top
+            } else {
+                val topEntryY = markedEntries.minOf { it.location.y }
+                val flip =
+                    labelPosition == LabelPosition.AroundPoint &&
+                        topEntryY - labelBounds.height() - label.tickSizeDp.pixels < bounds.top
+                tickPosition =
+                    if (flip) MarkerCorneredShape.TickPosition.Top else MarkerCorneredShape.TickPosition.Bottom
+                y = topEntryY + (if (flip) 1 else -1) * label.tickSizeDp.pixels
+                verticalPosition = if (flip) VerticalPosition.Bottom else VerticalPosition.Top
+            }
+            extraStore[MarkerCorneredShape.tickPositionKey] = tickPosition
 
             label.drawText(
                 context = context,
                 text = text,
                 textX = x,
-                textY =
-                    labelPosition.getY(
-                        labelTickSizeInPixels = label.tickSizeDp.pixels,
-                        chartBounds = bounds,
-                        labelBounds = labelBounds,
-                        markerModel = markedEntries.last(),
-                        indicatorSize = indicatorSizeDp,
-                    ),
-                verticalPosition = VerticalPosition.Bottom,
+                textY = y,
+                verticalPosition = verticalPosition,
                 maxTextWidth = minOf(bounds.right - x, x - bounds.left).doubled.ceil.toInt(),
             )
         }
 
-    private fun overrideXPositionToFit(
+    protected fun overrideXPositionToFit(
         xPosition: Float,
         bounds: RectF,
         halfOfTextWidth: Float,
@@ -187,7 +166,7 @@ public open class CartesianMarkerComponent(
             else -> xPosition
         }
 
-    private fun drawGuideline(
+    protected fun drawGuideline(
         context: CartesianDrawContext,
         bounds: RectF,
         markedEntries: List<CartesianMarker.EntryModel>,
@@ -209,8 +188,29 @@ public open class CartesianMarkerComponent(
         context: CartesianMeasureContext,
         outInsets: Insets,
         horizontalDimensions: HorizontalDimensions,
-    ): Unit =
-        with(context) {
-            outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels
-        }
+    ) {
+        if (labelPosition == LabelPosition.AroundPoint) return
+        with(context) { outInsets.top = label.getHeight(context) + label.tickSizeDp.pixels }
+    }
+
+    /**
+     * Specifies the position of a [CartesianMarkerComponent]’s label.
+     */
+    public enum class LabelPosition {
+        /**
+         * Positions the label at the top of the [CartesianChart]. Sufficient room is made.
+         */
+        Top,
+
+        /**
+         * Positions the label above the topmost marked point or, if there isn’t enough room, below it.
+         */
+        AroundPoint,
+
+        /**
+         * Positions the label above the topmost marked point. Sufficient room is made at the top of the
+         * [CartesianChart].
+         */
+        AbovePoint,
+    }
 }

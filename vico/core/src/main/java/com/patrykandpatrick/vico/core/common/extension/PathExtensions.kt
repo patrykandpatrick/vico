@@ -19,10 +19,7 @@ package com.patrykandpatrick.vico.core.common.extension
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Point
 
-/**
- * A convenience function for [Path.cubicTo] that helps with adding a cubic curve with a certain [curvature].
- */
-public fun Path.horizontalCubicTo(
+internal fun Path.horizontalCubicTo(
     prevX: Float,
     prevY: Float,
     x: Float,

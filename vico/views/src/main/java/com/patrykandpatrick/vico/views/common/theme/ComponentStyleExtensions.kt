@@ -22,10 +22,10 @@ import android.graphics.Color
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.LayeredComponent
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
-import com.patrykandpatrick.vico.core.common.component.OverlayingComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.extension.copyColor
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
@@ -36,12 +36,13 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
+import com.patrykandpatrick.vico.views.common.extension.dimensionsOf
 import com.patrykandpatrick.vico.views.common.shader.verticalGradient
 
 internal fun TypedArray.getLineComponent(
     context: Context,
-    defaultColor: Int = context.defaultColors.axisLineColor.toInt(),
-    defaultThickness: Float = DefaultDimens.AXIS_LINE_WIDTH,
+    defaultColor: Int = context.defaultColors.lineColor.toInt(),
+    defaultThickness: Float = Defaults.AXIS_LINE_WIDTH,
     defaultShape: Shape = Shapes.rectShape,
 ): LineComponent =
     use { array ->
@@ -85,20 +86,25 @@ internal fun TypedArray.getLineComponent(
 
 internal fun TypedArray.getComponent(context: Context): Component? =
     use { array ->
-
         if (!hasValue(R.styleable.ComponentStyle_color)) {
             return@use null
         }
 
-        val overlayingComponent =
-            if (hasValue(R.styleable.ComponentStyle_overlayingComponentStyle)) {
-                getNestedTypedArray(
-                    context = context,
-                    resourceId = R.styleable.ComponentStyle_overlayingComponentStyle,
-                    styleableResourceId = R.styleable.ComponentStyle,
-                ).getComponent(context)
-            } else {
-                null
+        val layeredComponent =
+            when {
+                hasValue(R.styleable.ComponentStyle_overlayingComponentStyle) ->
+                    getNestedTypedArray(
+                        context = context,
+                        resourceId = R.styleable.ComponentStyle_overlayingComponentStyle,
+                        styleableResourceId = R.styleable.ComponentStyle,
+                    ).getComponent(context)
+                hasValue(R.styleable.ComponentStyle_layeredComponentStyle) ->
+                    getNestedTypedArray(
+                        context = context,
+                        resourceId = R.styleable.ComponentStyle_layeredComponentStyle,
+                        styleableResourceId = R.styleable.ComponentStyle,
+                    ).getComponent(context)
+                else -> null
             }
 
         val baseComponent =
@@ -123,15 +129,23 @@ internal fun TypedArray.getComponent(context: Context): Component? =
                     ),
             )
 
-        if (overlayingComponent != null) {
-            OverlayingComponent(
-                outer = baseComponent,
-                inner = overlayingComponent,
-                innerPaddingAllDp =
-                    getRawDimension(
-                        context = context,
-                        index = R.styleable.ComponentStyle_overlayingComponentPadding,
-                        defaultValue = 0f,
+        if (layeredComponent != null) {
+            LayeredComponent(
+                rear = baseComponent,
+                front = layeredComponent,
+                padding =
+                    dimensionsOf(
+                        allDp =
+                            getRawDimension(
+                                context = context,
+                                index = R.styleable.ComponentStyle_layeredComponentPadding,
+                                defaultValue =
+                                    getRawDimension(
+                                        context = context,
+                                        index = R.styleable.ComponentStyle_overlayingComponentPadding,
+                                        defaultValue = 0f,
+                                    ),
+                            ),
                     ),
             )
         } else {
@@ -141,7 +155,7 @@ internal fun TypedArray.getComponent(context: Context): Component? =
 
 internal fun TypedArray.getLineSpec(
     context: Context,
-    defaultColor: Int = context.defaultColors.entity1Color.toInt(),
+    defaultColor: Int,
 ): LineCartesianLayer.LineSpec {
     val positiveLineColor =
         getColor(R.styleable.LineSpec_positiveColor, getColor(R.styleable.LineSpec_color, defaultColor))
@@ -202,13 +216,13 @@ internal fun TypedArray.getLineSpec(
             getRawDimension(
                 context = context,
                 index = R.styleable.LineSpec_pointSize,
-                defaultValue = DefaultDimens.POINT_SIZE,
+                defaultValue = Defaults.POINT_SIZE,
             ),
         thicknessDp =
             getRawDimension(
                 context = context,
                 index = R.styleable.LineSpec_lineThickness,
-                defaultValue = DefaultDimens.LINE_THICKNESS,
+                defaultValue = Defaults.LINE_SPEC_THICKNESS_DP,
             ),
         backgroundShader =
             TopBottomShader(
@@ -240,7 +254,7 @@ internal fun TypedArray.getLineSpec(
                 cubicStrength =
                     getFraction(
                         index = R.styleable.LineSpec_cubicStrength,
-                        defaultValue = DefaultDimens.CUBIC_STRENGTH,
+                        defaultValue = Defaults.CUBIC_STRENGTH,
                     ),
             ),
     )

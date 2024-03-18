@@ -24,3 +24,10 @@ public enum class HorizontalPosition {
     Center,
     End,
 }
+
+internal operator fun HorizontalPosition.unaryMinus() =
+    when (this) {
+        HorizontalPosition.Start -> HorizontalPosition.End
+        HorizontalPosition.Center -> HorizontalPosition.Center
+        HorizontalPosition.End -> HorizontalPosition.Start
+    }

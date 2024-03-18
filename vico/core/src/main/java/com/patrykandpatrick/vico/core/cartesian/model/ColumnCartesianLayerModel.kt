@@ -160,6 +160,10 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
     public class Partial(private val series: List<List<Entry>>) : CartesianLayerModel.Partial {
         override fun complete(extraStore: ExtraStore): CartesianLayerModel =
             ColumnCartesianLayerModel(series, extraStore)
+
+        override fun equals(other: Any?): Boolean = this === other || other is Partial && series == other.series
+
+        override fun hashCode(): Int = series.hashCode()
     }
 
     /**

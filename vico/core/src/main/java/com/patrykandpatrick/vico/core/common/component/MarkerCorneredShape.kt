@@ -18,9 +18,9 @@ package com.patrykandpatrick.vico.core.common.component
 
 import android.graphics.Paint
 import android.graphics.Path
-import com.patrykandpatrick.vico.core.common.DEF_MARKER_TICK_SIZE
+import com.patrykandpatrick.vico.core.common.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.Extras
+import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.extension.doubled
 import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.shape.Corner
@@ -41,16 +41,16 @@ public open class MarkerCorneredShape(
     topRight: Corner,
     bottomRight: Corner,
     bottomLeft: Corner,
-    public val tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
+    public val tickSizeDp: Float = MARKER_TICK_SIZE,
 ) : CorneredShape(topLeft, topRight, bottomRight, bottomLeft) {
     public constructor(
         all: Corner,
-        tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
+        tickSizeDp: Float = MARKER_TICK_SIZE,
     ) : this(all, all, all, all, tickSizeDp)
 
     public constructor(
         corneredShape: CorneredShape,
-        tickSizeDp: Float = DEF_MARKER_TICK_SIZE,
+        tickSizeDp: Float = MARKER_TICK_SIZE,
     ) : this(
         topLeft = corneredShape.topLeft,
         topRight = corneredShape.topRight,
@@ -69,8 +69,9 @@ public open class MarkerCorneredShape(
         bottom: Float,
     ): Unit =
         with(context) {
-            val tickX: Float? = context[TICK_X_KEY]
+            val tickX: Float? = context.extraStore.getOrNull(tickXKey)
             if (tickX != null) {
+                val tickPosition: TickPosition = context.extraStore.getOrNull(tickPositionKey) ?: TickPosition.Bottom
                 createPath(
                     context = context,
                     path = path,
@@ -91,10 +92,20 @@ public open class MarkerCorneredShape(
                 (tickX - coercedTickSize)
                     .takeIf { minLeft < maxLeft }
                     ?.coerceIn(minLeft, maxLeft - coercedTickSize.doubled)
-                    ?.also { tickTopLeft ->
-                        path.moveTo(tickTopLeft, bottom)
-                        path.lineTo(tickX, bottom + tickSize)
-                        path.lineTo(tickTopLeft + coercedTickSize.doubled, bottom)
+                    ?.also { tickBaseLeft ->
+                        val tickBaseY =
+                            when (tickPosition) {
+                                TickPosition.Top -> top
+                                TickPosition.Bottom -> bottom
+                            }
+                        val tickDirection =
+                            when (tickPosition) {
+                                TickPosition.Top -> -1
+                                TickPosition.Bottom -> 1
+                            }
+                        path.moveTo(tickBaseLeft, tickBaseY)
+                        path.lineTo(tickX, tickBaseY + tickDirection * tickSize)
+                        path.lineTo(tickBaseLeft + coercedTickSize.doubled, tickBaseY)
                     }
 
                 path.close()
@@ -104,12 +115,30 @@ public open class MarkerCorneredShape(
             }
         }
 
+    /**
+     * Specifies the position of a [MarkerCorneredShape]’s tick.
+     */
+    public enum class TickPosition {
+        /**
+         * Positions the tick at the top of the [MarkerCorneredShape].
+         */
+        Top,
+
+        /**
+         * Positions the tick at the bottom of the [MarkerCorneredShape].
+         */
+        Bottom,
+    }
+
     public companion object {
         /**
-         * Used to store and retrieve the _x_ coordinate of the tick.
-         *
-         * @see Extras
+         * Used to store and retrieve the _x_ coordinate of a [MarkerCorneredShape]’s tick.
          */
-        public const val TICK_X_KEY: String = "tickX"
+        public val tickXKey: ExtraStore.Key<Float> = ExtraStore.Key()
+
+        /**
+         * Used to store and retrieve a [MarkerCorneredShape]’s [TickPosition].
+         */
+        public val tickPositionKey: ExtraStore.Key<TickPosition> = ExtraStore.Key()
     }
 }

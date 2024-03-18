@@ -26,8 +26,8 @@ import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.draw.getMaxScrollDistance
-import com.patrykandpatrick.vico.core.common.FADING_EDGE_VISIBILITY_THRESHOLD_DP
-import com.patrykandpatrick.vico.core.common.FADING_EDGE_WIDTH_DP
+import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
 import com.patrykandpatrick.vico.core.common.extension.copyColor
 
 private const val FULL_ALPHA = 0xFF
@@ -94,7 +94,7 @@ public open class FadingEdges(
             val maxScroll = getMaxScrollDistance()
             var fadeAlphaFraction: Float
 
-            if (isHorizontalScrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
+            if (scrollEnabled && startEdgeWidthDp > 0f && horizontalScroll > 0f) {
                 fadeAlphaFraction = (horizontalScroll / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
                 drawFadingEdge(
@@ -107,7 +107,7 @@ public open class FadingEdges(
                 )
             }
 
-            if (isHorizontalScrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
+            if (scrollEnabled && endEdgeWidthDp > 0f && horizontalScroll < maxScroll) {
                 fadeAlphaFraction = ((maxScroll - horizontalScroll) / visibilityThresholdDp.pixels).coerceAtMost(1f)
 
                 drawFadingEdge(

@@ -17,13 +17,13 @@
 package com.patrykandpatrick.vico.core.cartesian.draw
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.cartesian.AutoScaleUp
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.common.DEF_MAX_ZOOM
 import com.patrykandpatrick.vico.core.common.Point
+import com.patrykandpatrick.vico.core.common.extension.ceil
 
 /**
  * An extension of [CartesianDrawContext] that holds additional data required to render a [CartesianChart].
@@ -55,50 +55,15 @@ public interface CartesianChartDrawContext : CartesianDrawContext {
     public val zoom: Float
 }
 
-/**
- * Returns the maximum scroll distance.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun CartesianMeasureContext.getMaxScrollDistance(
     chartWidth: Float,
     horizontalDimensions: HorizontalDimensions,
-    zoom: Float? = null,
-): Float {
-    val contentWidth =
-        horizontalDimensions
-            .run { if (zoom != null) scaled(zoom) else this }
-            .getContentWidth(chartValues.getMaxMajorEntryCount())
+): Float =
+    (layoutDirectionMultiplier * (horizontalDimensions.getContentWidth(this) - chartWidth))
+        .run { if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f) }
+        .ceil
 
-    return (layoutDirectionMultiplier * (contentWidth - chartWidth)).run {
-        if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f)
-    }
-}
-
-/**
- * Returns the maximum scroll distance.
- */
-public fun CartesianChartDrawContext.getMaxScrollDistance(): Float =
-    getMaxScrollDistance(
-        chartWidth = chartBounds.width(),
-        horizontalDimensions = horizontalDimensions,
-    )
-
-/**
- * Returns the automatic zoom factor for a chart.
- */
-public fun CartesianMeasureContext.getAutoZoom(
-    horizontalDimensions: HorizontalDimensions,
-    chartBounds: RectF,
-    autoScaleUp: AutoScaleUp,
-): Float {
-    val scalableContentWidth =
-        horizontalDimensions.getScalableContentWidth(chartValues.getMaxMajorEntryCount())
-    val reducedChartWidth = chartBounds.width() - horizontalDimensions.unscalablePadding
-    val fillingZoom = reducedChartWidth / scalableContentWidth
-    return when {
-        scalableContentWidth < reducedChartWidth ->
-            if (autoScaleUp == AutoScaleUp.Full) fillingZoom.coerceAtMost(DEF_MAX_ZOOM) else 1f
-
-        !isHorizontalScrollEnabled -> fillingZoom
-        else -> 1f
-    }
-}
+internal fun CartesianChartDrawContext.getMaxScrollDistance() =
+    getMaxScrollDistance(chartBounds.width(), horizontalDimensions)

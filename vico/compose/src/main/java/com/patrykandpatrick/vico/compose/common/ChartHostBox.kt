@@ -23,7 +23,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.legend.Legend
 
 @Composable
@@ -35,7 +35,7 @@ internal fun ChartHostBox(
     content: @Composable () -> Unit,
 ) {
     val preMeasureContext = rememberPreMeasureContext()
-    Layout(content, modifier.heightIn(min = DefaultDimens.CHART_HEIGHT.dp)) { measurable, constraints ->
+    Layout(content, modifier.heightIn(min = Defaults.CHART_HEIGHT.dp)) { measurable, constraints ->
         val chartMeasurable = measurable.firstOrNull()
         val additionalHeight =
             if (hasModel && legend != null) {

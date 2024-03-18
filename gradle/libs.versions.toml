@@ -1,20 +1,21 @@
 [versions]
 accompanist = "0.34.0"
 activity = "1.8.2"
-agp = "8.2.2"
+agp = "8.3.0"
 androidXAnnotation = "1.7.1"
 androidXCore = "1.12.0"
 appcompat = "1.6.1"
-composeBom = "2024.01.00"
+composeBom = "2024.02.02"
 composeCompiler = "1.5.8"
-coroutines = "1.7.3"
-dokka = "1.9.10"
+composeNavigation = "2.7.7"
+coroutines = "1.8.0"
+dokka = "1.9.20"
 jUnit = "4.13.2"
 jUnitExt = "1.1.5"
 kotlin = "1.9.22"
 lifecycle = "2.7.0"
 material = "1.11.0"
-mockK = "1.13.9"
+mockK = "1.13.10"
 paparazziGradlePlugin = "1.3.1"
 testCore = "1.5.0"
 
@@ -28,6 +29,7 @@ composeBom = { group = "androidx.compose", name = "compose-bom", version.ref = "
 composeFoundation = { group = "androidx.compose.foundation", name = "foundation" }
 composeMaterial = { group = "androidx.compose.material", name = "material" }
 composeMaterial3 = { group = "androidx.compose.material3", name = "material3" }
+composeNavigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "composeNavigation" }
 composePreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 composeUI = { group = "androidx.compose.ui", name = "ui" }
 composeUITooling = { group = "androidx.compose.ui", name = "ui-tooling" }
@@ -39,6 +41,7 @@ kotlinGradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plu
 kotlinStdLib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlinTest = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlin" }
 lifecycleRuntime = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle" }
+lifecycleRuntimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycle" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 mockK = { group = "io.mockk", name = "mockk", version.ref = "mockK" }
 paparazziGradlePlugin = { module = "app.cash.paparazzi:paparazzi-gradle-plugin", version.ref = "paparazziGradlePlugin" }

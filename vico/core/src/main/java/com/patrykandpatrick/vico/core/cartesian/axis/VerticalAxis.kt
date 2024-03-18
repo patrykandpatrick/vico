@@ -37,14 +37,14 @@ import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 
 /**
- * An implementation of [AxisRenderer] used for vertical axes. This class extends [Axis].
+ * An implementation of [Axis] used for vertical axes. This class extends [BaseAxis].
  *
- * @see AxisRenderer
  * @see Axis
+ * @see BaseAxis
  */
 public class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
-) : Axis<Position>() {
+) : BaseAxis<Position>() {
     private val areLabelsOutsideAtStartOrInsideAtEnd
         get() =
             horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
@@ -56,7 +56,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     /**
      * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
      */
-    public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default()
+    public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
 
     /**
      * Defines the horizontal position of each axis label relative to the axis line.
@@ -331,16 +331,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         Bottom(VerticalPosition.Bottom),
     }
 
-    /**
-     * A subclass of [Axis.Builder] used to build [VerticalAxis] instances.
-     */
+    /** Creates [VerticalAxis] instances. It’s recommended to use this via [VerticalAxis.build]. */
     public class Builder<Position : AxisPosition.Vertical>(
-        builder: Axis.Builder<Position>? = null,
-    ) : Axis.Builder<Position>(builder) {
+        builder: BaseAxis.Builder<Position>? = null,
+    ) : BaseAxis.Builder<Position>(builder) {
         /**
          * Determines for what _y_ values this [VerticalAxis] is to display labels, ticks, and guidelines.
          */
-        public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.default()
+        public var itemPlacer: AxisItemPlacer.Vertical = AxisItemPlacer.Vertical.step()
 
         /**
          * Defines the horizontal position of each axis label relative to the axis line.
@@ -370,13 +368,19 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             } as VerticalAxis<T>
         }
     }
+
+    /** Houses a [VerticalAxis] factory function. */
+    public companion object {
+        /** Creates a [VerticalAxis] via [Builder]. */
+        public inline fun <reified P : AxisPosition.Vertical> build(
+            block: Builder<P>.() -> Unit = {},
+        ): VerticalAxis<P> = Builder<P>().apply(block).build()
+    }
 }
 
-/**
- * A convenience function that creates a [VerticalAxis] instance.
- *
- * @param block a lambda function yielding [VerticalAxis.Builder] as its receiver.
- */
+/** Creates a [VerticalAxis] via [VerticalAxis.Builder]. */
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("Use `VerticalAxis.build` instead.")
 public inline fun <reified Position : AxisPosition.Vertical> createVerticalAxis(
     block: VerticalAxis.Builder<Position>.() -> Unit = {},
-): VerticalAxis<Position> = VerticalAxis.Builder<Position>().apply(block).build()
+): VerticalAxis<Position> = VerticalAxis.build(block)

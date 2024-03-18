@@ -23,9 +23,8 @@ import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 /**
  * A [Decoration] presents additional information on a [CartesianChart].
  *
- * An example [Decoration] implementation is [ThresholdLine].
- *
- * @see [ThresholdLine]
+ * @see [HorizontalBox]
+ * @see [HorizontalLine]
  */
 public interface Decoration {
     /**

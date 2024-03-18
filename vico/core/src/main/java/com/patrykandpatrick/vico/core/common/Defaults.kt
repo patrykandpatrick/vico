@@ -16,351 +16,98 @@
 
 package com.patrykandpatrick.vico.core.common
 
-import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shape.DashedShape
+import androidx.annotation.RestrictTo
 
-/**
- * The default line count for [TextComponent].
- */
-public const val DEF_LABEL_LINE_COUNT: Int = 1
-
-/**
- * The default maximum label count for vertical axes.
- */
-public const val DEF_LABEL_COUNT: Int = 100
-
-/**
- * The default tick size for markers (in dp).
- */
-public const val DEF_MARKER_TICK_SIZE: Float = 6f
-
-/**
- * The default maximum zoom factor.
- */
-public const val DEF_MAX_ZOOM: Float = 10f
-
-/**
- * The default minimum zoom factor.
- */
-public const val DEF_MIN_ZOOM: Float = 0.1f
-
-/**
- * The default color for shadows.
- */
-public const val DEF_SHADOW_COLOR: Int = 0x8A000000.toInt()
-
-/**
- * The default size of the thread pools used for difference animations.
- */
-public const val DEF_THREAD_POOL_SIZE: Int = 4
-
-/**
- * The default scroll distance over which fading edges fade in and out (in dp).
- */
-public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f
-
-/**
- * The default width of fading edges.
- */
-public const val FADING_EDGE_WIDTH_DP: Float = 32f
-
-/**
- * Defaults for animations.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object Animation {
-    /**
-     * The [Float] range of values used in difference animations.
-     */
     public val range: ClosedFloatingPointRange<Float> = 0f..1f
-
-    /**
-     * The default duration for difference animations in cartesian charts.
-     */
-    public const val CARTESIAN_CHART_DIFF_DURATION: Int = 500
-
-    /**
-     * The default duration for animated scrolls (in milliseconds;
-     * [com.patrykandpatrick.vico.views.cartesian.CartesianChartView.animateScrollBy]).
-     */
+    public const val DIFF_DURATION: Int = 500
     public const val ANIMATED_SCROLL_DURATION: Int = 300
 }
 
-/**
- * The default chart dimensions.
- */
-public object DefaultDimens {
-    /**
-     * The default horizontal padding for axis labels (in dp).
-     */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public object Defaults {
     public const val AXIS_LABEL_HORIZONTAL_PADDING: Int = 4
-
-    /**
-     * The default maximum line count for axis labels.
-     */
     public const val AXIS_LABEL_MAX_LINES: Int = 1
-
-    /**
-     * The default vertical padding for axis labels (in dp).
-     */
     public const val AXIS_LABEL_VERTICAL_PADDING: Int = 2
-
-    /**
-     * The default text size for axis labels (in sp).
-     */
     public const val AXIS_LABEL_SIZE: Int = 12
-
-    /**
-     * The default horizontal margin for axis labels (in dp).
-     */
     public const val AXIS_LABEL_HORIZONTAL_MARGIN: Int = 0
-
-    /**
-     * The default vertical margin for axis labels (in dp).
-     */
     public const val AXIS_LABEL_VERTICAL_MARGIN: Int = 0
-
-    /**
-     * The default rotation for axis labels (in degrees).
-     */
     public const val AXIS_LABEL_ROTATION_DEGREES: Float = 0f
-
-    /**
-     * The default width for axis guidelines (in dp).
-     */
     public const val AXIS_GUIDELINE_WIDTH: Float = 1f
-
-    /**
-     * The default width for axis lines (in dp).
-     */
     public const val AXIS_LINE_WIDTH: Float = 1f
-
-    /**
-     * The default length for axis ticks (in dp).
-     */
     public const val AXIS_TICK_LENGTH: Float = 4f
-
-    /**
-     * The default width for columns (in dp).
-     */
     public const val COLUMN_WIDTH: Float = 8f
-
-    /**
-     * The default spacing (in dp) between neighboring grouped columns.
-     */
     public const val COLUMN_INSIDE_SPACING: Float = 8f
-
-    /**
-     * The default spacing (in dp) between neighboring column collections.
-     */
     public const val COLUMN_OUTSIDE_SPACING: Float = 32f
-
-    /**
-     * The default corner radius for columns (in percent).
-     */
     public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
-
-    /**
-     * The default width of candle’s real body.
-     */
     public const val REAL_BODY_WIDTH_DP: Float = 8f
-
-    /**
-     * The default minimum height of candle’s real body.
-     */
     public const val REAL_BODY_MIN_HEIGHT_DP: Float = 4f
-
-    /**
-     * The default width of candle’s wick.
-     */
     public const val WICK_DEFAULT_WIDTH_DP: Float = 2f
-
-    /**
-     * The default width of hollow’s candle stroke.
-     */
     public const val HOLLOW_CANDLE_STROKE_WIDTH_DP: Float = 2f
-
-    /**
-     * The default spacing between candles in the candlestick chart.
-     */
     public const val CANDLESTICK_CHART_DEFAULT_SPACING_DP: Float = 16f
-
-    /**
-     * The default cubic bezier strength for line charts.
-     */
     public const val CUBIC_STRENGTH: Float = 1f
-
-    /**
-     * The default dash length for [DashedShape] (in dp).
-     */
     public const val DASH_LENGTH: Float = 4f
-
-    /**
-     * The default dash gap for [DashedShape] (in dp).
-     */
     public const val DASH_GAP: Float = 2f
-
-    /**
-     * The default line thickness for line charts (in dp).
-     */
-    public const val LINE_THICKNESS: Float = 2f
-
-    /**
-     * The default size for marker indicators (in dp).
-     */
+    public const val FADING_EDGE_VISIBILITY_THRESHOLD_DP: Float = 16f
+    public const val FADING_EDGE_WIDTH_DP: Float = 32f
+    public const val LABEL_LINE_COUNT: Int = 1
+    public const val LINE_COMPONENT_THICKNESS_DP: Float = 1f
+    public const val LINE_SPEC_THICKNESS_DP: Float = 2f
     public const val MARKER_INDICATOR_SIZE: Float = 36f
-
-    /**
-     * The default horizontal padding for markers (in dp).
-     */
     public const val MARKER_HORIZONTAL_PADDING: Float = 8f
-
-    /**
-     * The default vertical padding for markers (in dp).
-     */
     public const val MARKER_VERTICAL_PADDING: Float = 4f
-
-    /**
-     * The default size for line chart points (in dp).
-     */
+    public const val MARKER_TICK_SIZE: Float = 6f
+    public const val MAX_ZOOM: Float = 10f
     public const val POINT_SIZE: Float = 16f
-
-    /**
-     * The default spacing for line chart points (in dp).
-     */
     public const val POINT_SPACING: Float = 32f
-
-    /**
-     * The default text size for [TextComponent] (in sp).
-     */
     public const val TEXT_COMPONENT_TEXT_SIZE: Float = 12f
-
-    /**
-     * The default thickness for threshold lines (in dp).
-     */
     public const val THRESHOLD_LINE_THICKNESS: Float = 2f
-
-    /**
-     * The default height for charts (in dp).
-     */
+    public const val SHADOW_COLOR: Int = 0x8A000000.toInt()
     public const val CHART_HEIGHT: Float = 200f
 }
 
-/**
- * The default chart colors.
- */
-public interface DefaultColors {
-    /**
-     * The default color for elevation overlays. Its opacity is modified depending on the elevation.
-     */
-    public val elevationOverlayColor: Long
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public class DefaultColors(
+    public val cartesianLayerColors: List<Long>,
+    public val elevationOverlayColor: Long,
+    public val lineColor: Long,
+    public val textColor: Long,
+    public val candlestickGreen: Long,
+    public val candlestickGray: Long,
+    public val candlestickRed: Long,
+) {
+    public companion object {
+        public val Light: DefaultColors =
+            DefaultColors(
+                cartesianLayerColors = listOf(0xff787878, 0xff5a5a5a, 0xff383838),
+                elevationOverlayColor = 0x00000000,
+                lineColor = 0x47000000,
+                textColor = 0xde000000,
+                candlestickGreen = 0xFF02C898,
+                candlestickGray = 0xFF212121,
+                candlestickRed = 0xFFEA284B,
+            )
 
-    /**
-     * The default color for axis labels.
-     */
-    public val axisLabelColor: Long
-
-    /**
-     * The default color for axis guidelines.
-     */
-    public val axisGuidelineColor: Long
-
-    /**
-     * The default color for axis lines.
-     */
-    public val axisLineColor: Long
-
-    /**
-     * The color for columns whose index in a column collection is 3k (k ∈ N)
-     * and for lines whose index in the list of lines in a line chart is 3k (k ∈ N).
-     */
-    public val entity1Color: Long
-
-    /**
-     * The color for columns whose index in a column collection is 1 + 3k (k ∈ N)
-     * and for lines whose index in the list of lines in a line chart is 1 + 3k (k ∈ N).
-     */
-    public val entity2Color: Long
-
-    /**
-     * The color for columns whose index in a column collection is 2 + 3k (k ∈ N)
-     * and for lines whose index in the list of lines in a line chart is 2 + 3k (k ∈ N).
-     */
-    public val entity3Color: Long
-
-    /**
-     * The default line color for line charts.
-     */
-    public val lineColor: Long
-
-    /**
-     * The default color of green candles.
-     */
-    public val candlestickGreen: Int
-
-    /**
-     * The default color of gray candles.
-     */
-    public val candlestickGray: Int
-
-    /**
-     * The default color of red candles.
-     */
-    public val candlestickRed: Int
-
-    /**
-     * The default chart colors for light mode.
-     */
-    public object Light : DefaultColors {
-        override val elevationOverlayColor: Long = 0x00000000
-
-        override val axisLabelColor: Long = 0xDE000000
-        override val axisGuidelineColor: Long = 0x47000000
-        override val axisLineColor: Long = 0x47000000
-
-        override val entity1Color: Long = 0xFF787878
-        override val entity2Color: Long = 0xFF5A5A5A
-        override val entity3Color: Long = 0xFF383838
-
-        override val lineColor: Long = 0xFF1A1A1A
-
-        override val candlestickGreen: Int = 0xFF02C898.toInt()
-        override val candlestickGray: Int = 0xFF212121.toInt()
-        override val candlestickRed: Int = 0xFFEA284B.toInt()
-    }
-
-    /**
-     * The default chart colors for dark mode.
-     */
-    public object Dark : DefaultColors {
-        override val elevationOverlayColor: Long = 0xFFFFFFFF
-
-        override val axisLabelColor: Long = 0xFFFFFFFF
-        override val axisGuidelineColor: Long = 0xFF424242
-        override val axisLineColor: Long = 0xFF555555
-
-        override val entity1Color: Long = 0xFFCACACA
-        override val entity2Color: Long = 0xFFA8A8A8
-        override val entity3Color: Long = 0xFF888888
-
-        override val lineColor: Long = 0xFFEFEFEF
-
-        override val candlestickGreen: Int = 0xFF02C898.toInt()
-        override val candlestickGray: Int = 0xFF8A8A8A.toInt()
-        override val candlestickRed: Int = 0xFFEA284B.toInt()
+        public val Dark: DefaultColors =
+            DefaultColors(
+                cartesianLayerColors = listOf(0xffcacaca, 0xffa8a8a8, 0xff888888),
+                elevationOverlayColor = 0xffffffff,
+                lineColor = 0xff555555,
+                textColor = 0xffffffff,
+                candlestickGreen = 0xFF02C898,
+                candlestickGray = 0xFF8A8A8A,
+                candlestickRed = 0xFFEA284B,
+            )
     }
 }
 
-/**
- * Default alpha values.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object DefaultAlpha {
-    /**
-     * The default value for alpha on the start of line’s background gradient.
-     */
     public const val LINE_BACKGROUND_SHADER_START: Float = 0.5f
-
-    /**
-     * The default value for alpha on the end of line’s background gradient.
-     */
     public const val LINE_BACKGROUND_SHADER_END: Float = 0f
 }

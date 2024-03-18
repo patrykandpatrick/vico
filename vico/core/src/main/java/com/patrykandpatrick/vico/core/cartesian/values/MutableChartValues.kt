@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.values
 
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.common.extension.orZero
@@ -108,9 +109,8 @@ public class MutableChartValues : ChartValues {
     }
 }
 
-/**
- * Creates and returns an immutable copy of this [MutableChartValues] instance.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun MutableChartValues.toImmutable(): ChartValues =
     object : ChartValues {
         private val yRanges = this@toImmutable.yRanges.toMap()

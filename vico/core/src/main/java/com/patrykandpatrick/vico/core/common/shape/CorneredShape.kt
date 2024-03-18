@@ -166,4 +166,20 @@ public open class CorneredShape(
         )
         path.close()
     }
+
+    override fun equals(other: Any?): Boolean =
+        this === other ||
+            other is CorneredShape &&
+            topLeft == other.topLeft &&
+            topRight == other.topRight &&
+            bottomRight == other.bottomRight &&
+            bottomLeft == other.bottomLeft
+
+    override fun hashCode(): Int {
+        var result = topLeft.hashCode()
+        result = 31 * result + topRight.hashCode()
+        result = 31 * result + bottomRight.hashCode()
+        result = 31 * result + bottomLeft.hashCode()
+        return result
+    }
 }

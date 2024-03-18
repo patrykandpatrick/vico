@@ -19,21 +19,26 @@ package com.patrykandpatrick.vico.compose.cartesian.layer
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
-import com.patrykandpatrick.vico.compose.common.style.currentChartStyle
+import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerDrawingModel
-import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 /**
  * Creates a [ColumnCartesianLayer].
@@ -55,20 +60,26 @@ import com.patrykandpatrick.vico.core.common.position.VerticalPosition
  */
 @Composable
 public fun rememberColumnCartesianLayer(
-    columns: List<LineComponent> = currentChartStyle.columnLayer.columns,
-    spacing: Dp = currentChartStyle.columnLayer.outsideSpacing,
-    innerSpacing: Dp = currentChartStyle.columnLayer.innerSpacing,
-    mergeMode: (ColumnCartesianLayerModel) -> MergeMode = with(currentChartStyle) { { columnLayer.mergeMode } },
+    columns: List<LineComponent> =
+        vicoTheme.cartesianLayerColors.map { color ->
+            rememberLineComponent(
+                color,
+                Defaults.COLUMN_WIDTH.dp,
+                Shapes.roundedCornerShape(Defaults.COLUMN_ROUNDNESS_PERCENT),
+            )
+        },
+    spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
+    innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
+    mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
     verticalAxisPosition: AxisPosition.Vertical? = null,
-    dataLabel: TextComponent? = currentChartStyle.columnLayer.dataLabel,
-    dataLabelVerticalPosition: VerticalPosition = currentChartStyle.columnLayer.dataLabelVerticalPosition,
-    dataLabelValueFormatter: CartesianValueFormatter = currentChartStyle.columnLayer.dataLabelValueFormatter,
-    dataLabelRotationDegrees: Float = currentChartStyle.columnLayer.dataLabelRotationDegrees,
-    axisValueOverrider: AxisValueOverrider<ColumnCartesianLayerModel>? = null,
-    drawingModelInterpolator: DrawingModelInterpolator<
-        ColumnCartesianLayerDrawingModel.ColumnInfo,
-        ColumnCartesianLayerDrawingModel,
-        > = remember { DefaultDrawingModelInterpolator() },
+    dataLabel: TextComponent? = null,
+    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelValueFormatter: CartesianValueFormatter = remember { DecimalFormatValueFormatter() },
+    dataLabelRotationDegrees: Float = 0f,
+    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+    drawingModelInterpolator:
+        DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
+        remember { DefaultDrawingModelInterpolator() },
 ): ColumnCartesianLayer =
     remember { ColumnCartesianLayer() }.apply {
         this.columns = columns

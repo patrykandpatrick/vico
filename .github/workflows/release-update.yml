@@ -28,7 +28,7 @@ jobs:
           echo $VERSION_NAME | grep -q "alpha\|beta" && IS_PRERELEASE=true
           echo "IS_PRERELEASE=$IS_PRERELEASE" >> $GITHUB_ENV
           ./gradlew assembleDebug
-      - uses: softprops/action-gh-release@v1
+      - uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.TAG_NAME }}
           token: ${{ secrets.BOT_PAT }}

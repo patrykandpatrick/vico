@@ -20,14 +20,14 @@ import android.annotation.SuppressLint
 import android.graphics.RectF
 import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableFloatState
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,7 +37,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.ChartHostBox
-import com.patrykandpatrick.vico.compose.common.OnZoom
 import com.patrykandpatrick.vico.compose.common.chartTouchEvent
 import com.patrykandpatrick.vico.compose.common.collectAsState
 import com.patrykandpatrick.vico.compose.common.component1
@@ -45,19 +44,14 @@ import com.patrykandpatrick.vico.compose.common.component2
 import com.patrykandpatrick.vico.compose.common.component3
 import com.patrykandpatrick.vico.compose.common.defaultCartesianDiffAnimationSpec
 import com.patrykandpatrick.vico.compose.common.rememberCartesianMeasureContext
-import com.patrykandpatrick.vico.compose.common.scroll.ChartScrollSpec
-import com.patrykandpatrick.vico.compose.common.scroll.ChartScrollState
-import com.patrykandpatrick.vico.compose.common.scroll.rememberChartScrollSpec
-import com.patrykandpatrick.vico.compose.common.scroll.rememberChartScrollState
-import com.patrykandpatrick.vico.compose.common.style.currentChartStyle
-import com.patrykandpatrick.vico.core.cartesian.AutoScaleUp
+import com.patrykandpatrick.vico.compose.common.scroll.VicoScrollState
+import com.patrykandpatrick.vico.compose.common.scroll.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.draw.drawMarker
-import com.patrykandpatrick.vico.core.cartesian.draw.getAutoZoom
-import com.patrykandpatrick.vico.core.cartesian.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityChangeListener
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
@@ -65,15 +59,12 @@ import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProduce
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.toImmutable
-import com.patrykandpatrick.vico.core.common.DEF_MAX_ZOOM
-import com.patrykandpatrick.vico.core.common.DEF_MIN_ZOOM
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
 import com.patrykandpatrick.vico.core.common.extension.set
 import com.patrykandpatrick.vico.core.common.extension.spToPx
 import com.patrykandpatrick.vico.core.common.getValue
-import com.patrykandpatrick.vico.core.common.scroll.ScrollListener
 import com.patrykandpatrick.vico.core.common.setValue
 import kotlinx.coroutines.launch
 
@@ -85,17 +76,15 @@ import kotlinx.coroutines.launch
  * @param modifier the modifier to be applied to the chart.
  * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
  * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
- * @param chartScrollSpec houses scrolling-related settings.
- * @param isZoomEnabled whether zooming in and out is enabled.
+ * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
+ * programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization.
  * @param diffAnimationSpec the animation spec used for difference animations.
  * @param runInitialAnimation whether to display an animation when the chart is created. In this animation, the value
  * of each chart entry is animated from zero to the actual value. This animation isn’t run in previews.
- * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
- * a scale factor of 1, an empty space would be visible near the end edge of the chart.
- * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
- * is null, the default _x_ step ([CartesianChartModel.xDeltaGcd]) is used.
+ * is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -105,12 +94,10 @@ public fun CartesianChartHost(
     modifier: Modifier = Modifier,
     marker: CartesianMarker? = null,
     markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener? = null,
-    chartScrollSpec: ChartScrollSpec = rememberChartScrollSpec(),
-    isZoomEnabled: Boolean = true,
+    scrollState: VicoScrollState = rememberVicoScrollState(),
+    zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
     diffAnimationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
-    autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
-    chartScrollState: ChartScrollState = rememberChartScrollState(),
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
     getXStep: ((CartesianChartModel) -> Float)? = null,
     placeholder: @Composable BoxScope.() -> Unit = {},
@@ -124,7 +111,7 @@ public fun CartesianChartHost(
         modifier = modifier,
         legend = chart.legend,
         hasModel = model != null,
-        desiredHeight = { DefaultDimens.CHART_HEIGHT.dp.roundToPx() },
+        desiredHeight = { CHART_HEIGHT.dp.roundToPx() },
     ) {
         if (model != null) {
             CartesianChartHostImpl(
@@ -133,10 +120,8 @@ public fun CartesianChartHost(
                 oldModel = previousModel,
                 marker = marker,
                 markerVisibilityChangeListener = markerVisibilityChangeListener,
-                chartScrollSpec = chartScrollSpec,
-                isZoomEnabled = isZoomEnabled,
-                autoScaleUp = autoScaleUp,
-                chartScrollState = chartScrollState,
+                scrollState = scrollState,
+                zoomState = zoomState,
                 horizontalLayout = horizontalLayout,
                 chartValues = chartValues,
             )
@@ -155,16 +140,14 @@ public fun CartesianChartHost(
  * @param modifier the modifier to be applied to the chart.
  * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
  * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
- * @param chartScrollSpec houses scrolling-related settings.
- * @param isZoomEnabled whether zooming in and out is enabled.
+ * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
+ * programmatic scrolling.
+ * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization.
  * @param oldModel the chart’s previous [CartesianChartModel]. This is used to determine whether to perform an automatic
  * scroll.
- * @param autoScaleUp defines whether the content of the chart should be scaled up when the dimensions are such that, at
- * a scale factor of 1, an empty space would be visible near the end edge of the chart.
- * @param chartScrollState houses information on the chart’s scroll state. Allows for programmatic scrolling.
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
- * is null, the default _x_ step ([CartesianChartModel.xDeltaGcd]) is used.
+ * is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
  */
 @Composable
 @SuppressLint("RememberReturnType")
@@ -174,11 +157,9 @@ public fun CartesianChartHost(
     modifier: Modifier = Modifier,
     marker: CartesianMarker? = null,
     markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener? = null,
-    chartScrollSpec: ChartScrollSpec = rememberChartScrollSpec(),
-    isZoomEnabled: Boolean = true,
+    scrollState: VicoScrollState = rememberVicoScrollState(),
+    zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
     oldModel: CartesianChartModel? = null,
-    autoScaleUp: AutoScaleUp = AutoScaleUp.Full,
-    chartScrollState: ChartScrollState = rememberChartScrollState(),
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
     getXStep: ((CartesianChartModel) -> Float)? = null,
 ) {
@@ -191,18 +172,16 @@ public fun CartesianChartHost(
         modifier = modifier,
         legend = chart.legend,
         hasModel = true,
-        desiredHeight = { DefaultDimens.CHART_HEIGHT.dp.roundToPx() },
+        desiredHeight = { CHART_HEIGHT.dp.roundToPx() },
     ) {
         CartesianChartHostImpl(
             chart = chart,
             model = model,
             marker = marker,
             markerVisibilityChangeListener = markerVisibilityChangeListener,
-            chartScrollSpec = chartScrollSpec,
-            isZoomEnabled = isZoomEnabled,
+            scrollState = scrollState,
+            zoomState = zoomState,
             oldModel = oldModel,
-            autoScaleUp = autoScaleUp,
-            chartScrollState = chartScrollState,
             horizontalLayout = horizontalLayout,
             chartValues = chartValues.toImmutable(),
         )
@@ -215,59 +194,60 @@ internal fun CartesianChartHostImpl(
     model: CartesianChartModel,
     marker: CartesianMarker?,
     markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener?,
-    chartScrollSpec: ChartScrollSpec,
-    isZoomEnabled: Boolean,
-    oldModel: CartesianChartModel? = null,
-    autoScaleUp: AutoScaleUp,
-    chartScrollState: ChartScrollState = rememberChartScrollState(),
+    scrollState: VicoScrollState,
+    zoomState: VicoZoomState,
+    oldModel: CartesianChartModel?,
     horizontalLayout: HorizontalLayout,
     chartValues: ChartValues,
 ) {
     val bounds = remember { RectF() }
     val markerTouchPoint = remember { mutableStateOf<Point?>(null) }
-    val zoom = remember { mutableFloatStateOf(0f) }
-    val wasZoomOverridden = remember { mutableStateOf(false) }
     val measureContext =
         rememberCartesianMeasureContext(
-            chartScrollSpec.isScrollEnabled,
+            scrollState.scrollEnabled,
             bounds,
             horizontalLayout,
             with(LocalContext.current) { ::spToPx },
             chartValues,
         )
-    val scrollListener = rememberScrollListener(markerTouchPoint)
     val lastMarkerEntryModels = remember { mutableStateOf(emptyList<CartesianMarker.EntryModel>()) }
 
-    chartScrollState.registerScrollListener(scrollListener)
-
-    val elevationOverlayColor = currentChartStyle.elevationOverlayColor.toArgb()
+    val elevationOverlayColor = vicoTheme.elevationOverlayColor.toArgb()
     val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     var previousModelID by remember { ValueWrapper(model.id) }
     val horizontalDimensions = remember { MutableHorizontalDimensions() }
 
-    val onZoom =
-        rememberZoomState(
-            zoom = zoom,
-            wasZoomOverridden = wasZoomOverridden,
-            getScroll = { chartScrollState.value },
-            scrollBy = { value -> coroutineScope.launch { chartScrollState.scrollBy(value) } },
-            chartBounds = chart.bounds,
-        )
+    LaunchedEffect(scrollState.pointerXDeltas) {
+        scrollState
+            .pointerXDeltas
+            .collect { delta ->
+                markerTouchPoint.value?.let { point -> markerTouchPoint.value = point.copy(point.x + delta) }
+            }
+    }
+
+    DisposableEffect(scrollState) { onDispose { scrollState.clearUpdated() } }
 
     Canvas(
         modifier =
             Modifier
                 .chartTouchEvent(
                     setTouchPoint =
-                        remember(marker == null) {
-                            markerTouchPoint
-                                .component2()
-                                .takeIf { marker != null }
+                        remember(marker == null) { if (marker != null) markerTouchPoint.component2() else null },
+                    isScrollEnabled = scrollState.scrollEnabled,
+                    scrollState = scrollState,
+                    onZoom =
+                        remember(zoomState, scrollState, chart, coroutineScope) {
+                            if (zoomState.zoomEnabled) {
+                                { factor, centroid ->
+                                    zoomState
+                                        .zoom(factor, centroid.x, scrollState.value, chart.bounds)
+                                        .let { scroll -> coroutineScope.launch { scrollState.scroll(scroll) } }
+                                }
+                            } else {
+                                null
+                            }
                         },
-                    isScrollEnabled = chartScrollSpec.isScrollEnabled,
-                    scrollableState = chartScrollState,
-                    onZoom = onZoom.takeIf { isZoomEnabled },
                 ),
     ) {
         bounds.set(left = 0, top = 0, right = size.width, bottom = size.height)
@@ -277,26 +257,13 @@ internal fun CartesianChartHostImpl(
 
         if (chart.bounds.isEmpty) return@Canvas
 
-        var finalZoom = zoom.floatValue
-
-        if (!wasZoomOverridden.value || !chartScrollSpec.isScrollEnabled) {
-            finalZoom = measureContext.getAutoZoom(horizontalDimensions, chart.bounds, autoScaleUp)
-            if (chartScrollSpec.isScrollEnabled) zoom.floatValue = finalZoom
-        }
-
-        chartScrollState.maxValue =
-            measureContext.getMaxScrollDistance(
-                chartWidth = chart.bounds.width(),
-                horizontalDimensions = horizontalDimensions,
-                zoom = finalZoom,
-            )
+        zoomState.update(measureContext, horizontalDimensions, chart.bounds)
+        scrollState.update(measureContext, chart.bounds, horizontalDimensions)
 
         if (model.id != previousModelID) {
-            coroutineScope.launch { chartScrollSpec.performAutoScroll(model, oldModel, chartScrollState) }
+            coroutineScope.launch { scrollState.autoScroll(model, oldModel) }
             previousModelID = model.id
         }
-
-        chartScrollState.handleInitialScroll(initialScroll = chartScrollSpec.initialScroll)
 
         val chartDrawContext =
             cartesianChartDrawContext(
@@ -306,8 +273,8 @@ internal fun CartesianChartHostImpl(
                 markerTouchPoint = markerTouchPoint.value,
                 horizontalDimensions = horizontalDimensions,
                 chartBounds = chart.bounds,
-                horizontalScroll = chartScrollState.value,
-                zoom = finalZoom,
+                horizontalScroll = scrollState.value,
+                zoom = zoomState.value,
             )
 
         chart.draw(chartDrawContext, model)
@@ -330,42 +297,12 @@ internal fun CartesianChartHostImpl(
 }
 
 @Composable
-internal fun rememberScrollListener(touchPoint: MutableState<Point?>): ScrollListener =
-    remember {
-        object : ScrollListener {
-            override fun onValueChanged(
-                oldValue: Float,
-                newValue: Float,
-            ) {
-                touchPoint.value?.let { point ->
-                    touchPoint.value = point.copy(x = point.x + oldValue - newValue)
-                }
-            }
-
-            override fun onScrollNotConsumed(delta: Float) {
-                touchPoint.value?.let { point ->
-                    touchPoint.value = point.copy(x = point.x - delta)
-                }
-            }
-        }
-    }
-
-@Composable
-internal fun rememberZoomState(
-    zoom: MutableFloatState,
-    wasZoomOverridden: MutableState<Boolean>,
-    getScroll: () -> Float,
-    scrollBy: (value: Float) -> Unit,
-    chartBounds: RectF,
-): OnZoom =
-    remember {
-        onZoom@{ centroid, zoomChange ->
-            val newZoom = zoom.floatValue * zoomChange
-            if (newZoom !in DEF_MIN_ZOOM..DEF_MAX_ZOOM) return@onZoom
-            val transformationAxisX = getScroll() + centroid.x - chartBounds.left
-            val zoomedTransformationAxisX = transformationAxisX * zoomChange
-            zoom.floatValue = newZoom
-            scrollBy(zoomedTransformationAxisX - transformationAxisX)
-            wasZoomOverridden.value = true
-        }
-    }
+internal fun CartesianChartHostBox(
+    modifier: Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(),
+        content = content,
+    )
+}

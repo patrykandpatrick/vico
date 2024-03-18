@@ -22,10 +22,10 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.common.scroll.rememberChartScrollSpec
+import com.patrykandpatrick.vico.compose.common.scroll.rememberVicoScrollState
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
+import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.common.scroll.InitialScroll
 import com.patrykandpatrick.vico.sample.previews.annotation.ChartPreview
 import com.patrykandpatrick.vico.sample.previews.resource.PreviewSurface
 import com.patrykandpatrick.vico.sample.previews.resource.mediumColumnModel
@@ -37,7 +37,7 @@ public fun DefaultColumnChart(
     model: CartesianChartModel = shortColumnModel,
     oldModel: CartesianChartModel? = null,
     scrollable: Boolean = true,
-    initialScroll: InitialScroll = InitialScroll.Start,
+    initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
     autoScrollCondition: AutoScrollCondition = AutoScrollCondition.Never,
 ) {
     PreviewSurface {
@@ -50,9 +50,9 @@ public fun DefaultColumnChart(
                 ),
             model = model,
             oldModel = oldModel,
-            chartScrollSpec =
-                rememberChartScrollSpec(
-                    isScrollEnabled = scrollable,
+            scrollState =
+                rememberVicoScrollState(
+                    scrollEnabled = scrollable,
                     initialScroll = initialScroll,
                     autoScrollCondition = autoScrollCondition,
                 ),
@@ -62,18 +62,18 @@ public fun DefaultColumnChart(
 
 @ChartPreview
 @Composable
-public fun DefaultColumnChartLongScrollable() {
+fun DefaultColumnChartLongScrollable() {
     DefaultColumnChart(model = mediumColumnModel)
 }
 
 @ChartPreview
 @Composable
-public fun DefaultColumnChartLongScrollableEnd() {
-    DefaultColumnChart(model = mediumColumnModel, initialScroll = InitialScroll.End)
+fun DefaultColumnChartLongScrollableEnd() {
+    DefaultColumnChart(model = mediumColumnModel, initialScroll = Scroll.Absolute.End)
 }
 
 @ChartPreview
 @Composable
-public fun DefaultColumnChartLongNonScrollable() {
+fun DefaultColumnChartLongNonScrollable() {
     DefaultColumnChart(model = mediumColumnModel, scrollable = false)
 }

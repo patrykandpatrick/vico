@@ -29,8 +29,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.common.component.ChartShape
-import com.patrykandpatrick.vico.core.common.DEF_MARKER_TICK_SIZE
+import com.patrykandpatrick.vico.core.common.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.component.MarkerCorneredShape
 import com.patrykandpatrick.vico.core.common.shape.Corner
@@ -40,17 +39,35 @@ import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.RoundedCornerTreatment
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.core.common.shape.Shapes
-import androidx.compose.ui.graphics.Shape as ComposeShape
 
 private typealias ComposePath = androidx.compose.ui.graphics.AndroidPath
 
 private const val RADII_ARRAY_SIZE = 8
 
+private fun Path.addRoundRect(
+    left: Float,
+    top: Float,
+    right: Float,
+    bottom: Float,
+    rect: RoundRect,
+    radii: FloatArray,
+) {
+    radii[0] = rect.topLeftCornerRadius.x
+    radii[1] = rect.topLeftCornerRadius.y
+    radii[2] = rect.topRightCornerRadius.x
+    radii[3] = rect.topRightCornerRadius.y
+    radii[4] = rect.bottomRightCornerRadius.x
+    radii[5] = rect.bottomRightCornerRadius.y
+    radii[6] = rect.bottomLeftCornerRadius.x
+    radii[7] = rect.bottomLeftCornerRadius.y
+    addRoundRect(left, top, right, bottom, radii, Path.Direction.CCW)
+}
+
 /**
  * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
  * [com.patrykandpatrick.vico.core.common.component.shape.Shape].
  */
-public fun ComposeShape.chartShape(): Shape =
+public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
     object : Shape {
         private val radii by lazy { FloatArray(RADII_ARRAY_SIZE) }
         private val matrix: Matrix by lazy { Matrix() }
@@ -104,10 +121,24 @@ public fun ComposeShape.chartShape(): Shape =
     }
 
 /**
+ * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
+ * [com.patrykandpatrick.vico.core.component.shape.Shape].
+ */
+@Deprecated(
+    message = "Use `toVicoShape`.",
+    replaceWith =
+        ReplaceWith(
+            expression = "toVicoShape()",
+            imports = arrayOf("com.patrykandpatrick.vico.compose.component.shape.toVicoShape"),
+        ),
+)
+public fun androidx.compose.ui.graphics.Shape.chartShape(): Shape = toVicoShape()
+
+/**
  * Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape].
  */
-public fun CorneredShape.composeShape(): ComposeShape =
-    object : ComposeShape {
+public fun CorneredShape.composeShape(): androidx.compose.ui.graphics.Shape =
+    object : androidx.compose.ui.graphics.Shape {
         override fun createOutline(
             size: Size,
             layoutDirection: LayoutDirection,
@@ -126,35 +157,6 @@ public fun CorneredShape.composeShape(): ComposeShape =
             return Outline.Generic(path)
         }
     }
-
-/**
- * Adds a rounded rectangle to the receiver [Path].
- *
- * @param left the _x_ coordinate of the left edge of the rectangle.
- * @param top the _y_ coordinate of the top edge of the rectangle.
- * @param right the _x_ coordinate of the right edge of the rectangle.
- * @param bottom the _y_ coordinate of the bottom edge of the rectangle.
- * @param rect the rounded rectangle to be drawn.
- * @param radii used to store the corner radii. This array must be mutable.
- */
-public fun Path.addRoundRect(
-    left: Float,
-    top: Float,
-    right: Float,
-    bottom: Float,
-    rect: RoundRect,
-    radii: FloatArray,
-) {
-    radii[0] = rect.topLeftCornerRadius.x
-    radii[1] = rect.topLeftCornerRadius.y
-    radii[2] = rect.topRightCornerRadius.x
-    radii[3] = rect.topRightCornerRadius.y
-    radii[4] = rect.bottomRightCornerRadius.x
-    radii[5] = rect.bottomRightCornerRadius.y
-    radii[6] = rect.bottomLeftCornerRadius.x
-    radii[7] = rect.bottomLeftCornerRadius.y
-    addRoundRect(left, top, right, bottom, radii, Path.Direction.CCW)
-}
 
 /**
  * Creates a [CorneredShape] with rounded corners of the provided size.
@@ -224,7 +226,7 @@ public fun Shapes.markerCorneredShape(
     topRight: Corner,
     bottomRight: Corner,
     bottomLeft: Corner,
-    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+    tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape =
     MarkerCorneredShape(
         topLeft = topLeft,
@@ -242,7 +244,7 @@ public fun Shapes.markerCorneredShape(
  */
 public fun Shapes.markerCorneredShape(
     all: Corner,
-    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+    tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape =
     MarkerCorneredShape(
         topLeft = all,
@@ -260,7 +262,7 @@ public fun Shapes.markerCorneredShape(
  */
 public fun Shapes.markerCorneredShape(
     corneredShape: CorneredShape,
-    tickSizeDp: Dp = DEF_MARKER_TICK_SIZE.dp,
+    tickSizeDp: Dp = MARKER_TICK_SIZE.dp,
 ): MarkerCorneredShape =
     MarkerCorneredShape(
         topLeft = corneredShape.topLeft,
@@ -273,7 +275,7 @@ public fun Shapes.markerCorneredShape(
 /**
  * Creates a [DashedShape].
  *
- * @param shape the [Shape] from which to create the [DashedShape].
+ * @param shape the [androidx.compose.ui.graphics.Shape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
@@ -285,7 +287,7 @@ public fun Shapes.dashedShape(
     fitStrategy: DashedShape.FitStrategy = com.patrykandpatrick.vico.core.common.shape.DashedShape.FitStrategy.Resize,
 ): DashedShape =
     DashedShape(
-        shape = shape.chartShape(),
+        shape = shape.toVicoShape(),
         dashLengthDp = dashLength.value,
         gapLengthDp = gapLength.value,
         fitStrategy = fitStrategy,
@@ -294,13 +296,13 @@ public fun Shapes.dashedShape(
 /**
  * Creates a [DashedShape].
  *
- * @param shape the [ChartShape] from which to create the [DashedShape].
+ * @param shape the [Shape] from which to create the [DashedShape].
  * @param dashLength the dash length.
  * @param gapLength the gap length.
  * @param fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public fun Shapes.dashedShape(
-    shape: ChartShape,
+    shape: Shape,
     dashLength: Dp,
     gapLength: Dp,
     fitStrategy: DashedShape.FitStrategy = com.patrykandpatrick.vico.core.common.shape.DashedShape.FitStrategy.Resize,

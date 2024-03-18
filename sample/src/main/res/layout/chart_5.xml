@@ -24,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:axisStyle="@style/Chart5AxisStyle"
+        app:chartZoomEnabled="false"
         app:columnLayerStyle="@style/Chart5ColumnLayerStyle"
         app:layers="column"
         app:showBottomAxis="true"

@@ -24,8 +24,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
-import com.patrykandpatrick.vico.core.common.FADING_EDGE_VISIBILITY_THRESHOLD_DP
-import com.patrykandpatrick.vico.core.common.FADING_EDGE_WIDTH_DP
+import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
 
 /**
  * [FadingEdges] applies a horizontal fade to the edges of the chart area for scrollable charts.
@@ -37,6 +37,11 @@ import com.patrykandpatrick.vico.core.common.FADING_EDGE_WIDTH_DP
  * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
  * to which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
  */
+@Deprecated(
+    message =
+        "Use `rememberFadingEdges` or the `FadingEdges` constructor. For `visibilityEasing`, use " +
+            "`Easing#transform`.",
+)
 public fun FadingEdges(
     startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
     endEdgeWidth: Dp = startEdgeWidth,
@@ -98,23 +103,8 @@ public fun rememberFadingEdges(
         visibilityEasing = visibilityEasing,
     )
 
-/**
- * The default values for [FadingEdges].
- */
-public object FadingEdgesDefaults {
-    /**
-     * The width of the fade overlays (in dp).
-     */
-    public val edgeWidth: Dp = FADING_EDGE_WIDTH_DP.dp
-
-    /**
-     * The scroll distance over which the overlays fade in and out (in dp).
-     */
-    public val visibilityThreshold: Dp = FADING_EDGE_VISIBILITY_THRESHOLD_DP.dp
-
-    /**
-     * Used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree to which the fading
-     * edges’ visibility threshold has been satisfied to the opacity of the fading edges.
-     */
-    public val visibilityEasing: Easing = FastOutSlowInEasing
+private object FadingEdgesDefaults {
+    val edgeWidth = FADING_EDGE_WIDTH_DP.dp
+    val visibilityThreshold = FADING_EDGE_VISIBILITY_THRESHOLD_DP.dp
+    val visibilityEasing = FastOutSlowInEasing
 }

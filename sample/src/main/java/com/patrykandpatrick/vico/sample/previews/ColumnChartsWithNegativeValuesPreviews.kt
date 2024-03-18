@@ -28,11 +28,11 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.common.component.textComponent
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 private val model = CartesianChartModel(LineCartesianLayerModel.build { series(2, -1, 4, -2, 1, 5, -3) })
@@ -49,7 +49,7 @@ public fun SingleColumnChartWithNegativeValues() {
                     rememberColumnCartesianLayer(),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 9 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 9 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
@@ -66,7 +66,7 @@ public fun SingleColumnChartWithNegativeValuesAndDataLabels() {
         CartesianChartHost(
             chart =
                 rememberCartesianChart(
-                    rememberColumnCartesianLayer(dataLabel = textComponent()),
+                    rememberColumnCartesianLayer(dataLabel = rememberTextComponent()),
                     startAxis = rememberStartAxis(),
                     bottomAxis = rememberBottomAxis(),
                 ),
@@ -85,7 +85,7 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden() {
                     rememberColumnCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),
@@ -104,7 +104,7 @@ public fun SingleColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
                     rememberColumnCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 3 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 3 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),

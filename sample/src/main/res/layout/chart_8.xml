@@ -23,9 +23,12 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:axisStyle="@style/Chart8AxisStyle"
+        app:chartZoomEnabled="false"
         app:columnLayerStyle="@style/Chart8ColumnLayerStyle"
         app:layers="line|column"
         app:lineLayerStyle="@style/Chart8LineLayerStyle"
+        app:showBottomAxis="true"
         app:showEndAxis="true"
         app:showStartAxis="true" />
 </FrameLayout>

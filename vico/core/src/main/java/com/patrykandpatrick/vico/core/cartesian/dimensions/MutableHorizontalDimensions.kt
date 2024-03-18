@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.core.cartesian.dimensions
 
+import androidx.annotation.RestrictTo
+
 /**
  * An implementation of [HorizontalDimensions] whose every property is mutable.
  */
@@ -73,3 +75,14 @@ public data class MutableHorizontalDimensions(
         unscalableEndPadding = 0f
     }
 }
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun MutableHorizontalDimensions.scale(factor: Float): MutableHorizontalDimensions =
+    set(
+        factor * xSpacing,
+        factor * scalableStartPadding,
+        factor * scalableEndPadding,
+        unscalableStartPadding,
+        unscalableEndPadding,
+    )

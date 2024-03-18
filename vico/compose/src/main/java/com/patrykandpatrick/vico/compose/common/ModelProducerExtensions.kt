@@ -40,19 +40,10 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-/**
- * The default [AnimationSpec] for difference animations in cartesian charts.
- *
- * @see collectAsState
- */
-public val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> =
-    tween(durationMillis = Animation.CARTESIAN_CHART_DIFF_DURATION)
+internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis = Animation.DIFF_DURATION)
 
-/**
- * Observes the data provided by this [CartesianChartModelProducer] and launches an animation for each update.
- */
 @Composable
-public fun CartesianChartModelProducer.collectAsState(
+internal fun CartesianChartModelProducer.collectAsState(
     chart: CartesianChart,
     producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,

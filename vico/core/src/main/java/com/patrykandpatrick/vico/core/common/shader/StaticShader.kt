@@ -24,7 +24,7 @@ import com.patrykandpatrick.vico.core.common.DrawContext
  *
  * @property shader the [Shader] that will always be provided, regardless of the [provideShader] function’s arguments.
  */
-public class StaticShader(private val shader: Shader) : DynamicShader {
+public class StaticShader(private val shader: Shader) : BaseDynamicShader() {
     override fun provideShader(
         context: DrawContext,
         left: Float,

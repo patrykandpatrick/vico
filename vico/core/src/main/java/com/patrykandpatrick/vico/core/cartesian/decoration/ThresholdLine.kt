@@ -20,10 +20,9 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
-import com.patrykandpatrick.vico.core.common.DefaultDimens
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.component.textComponent
 import com.patrykandpatrick.vico.core.common.extension.ceil
 import com.patrykandpatrick.vico.core.common.extension.floor
 import com.patrykandpatrick.vico.core.common.extension.getEnd
@@ -52,6 +51,11 @@ import java.text.DecimalFormat
  *
  * @see Decoration
  */
+@Deprecated(
+    "Use `HorizontalBox` or `HorizontalLine` instead. For Jetpack Compose, there are `rememberHorizontalBox` and" +
+        "`rememberHorizontalLine` functions. More information: " +
+        "https://patrykandpatrick.com/vico/releases/2.0.0-alpha.12.",
+)
 public data class ThresholdLine(
     val thresholdRange: ClosedFloatingPointRange<Float>,
     val thresholdLabel: CharSequence =
@@ -60,8 +64,8 @@ public data class ThresholdLine(
             decimalFormat.format(thresholdRange.endInclusive),
         ),
     val lineComponent: ShapeComponent = ShapeComponent(),
-    val minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
-    val labelComponent: TextComponent = textComponent(),
+    val minimumLineThicknessDp: Float = Defaults.THRESHOLD_LINE_THICKNESS,
+    val labelComponent: TextComponent = TextComponent.build(),
     val labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
     val labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
     val labelRotationDegrees: Float = 0f,
@@ -82,12 +86,16 @@ public data class ThresholdLine(
      * @property verticalAxisPosition the position of the [VerticalAxis] whose scale the [ThresholdLine] should use when
      * interpreting [thresholdValue].
      */
+    @Deprecated(
+        "Use `HorizontalLine` instead. For Jetpack Compose, there’s a `rememberHorizontalLine` function. More " +
+            "information: https://patrykandpatrick.com/vico/releases/2.0.0-alpha.12.",
+    )
     public constructor(
         thresholdValue: Float,
         thresholdLabel: CharSequence = decimalFormat.format(thresholdValue),
         lineComponent: ShapeComponent = ShapeComponent(),
-        minimumLineThicknessDp: Float = DefaultDimens.THRESHOLD_LINE_THICKNESS,
-        labelComponent: TextComponent = textComponent(),
+        minimumLineThicknessDp: Float = Defaults.THRESHOLD_LINE_THICKNESS,
+        labelComponent: TextComponent = TextComponent.build(),
         labelHorizontalPosition: LabelHorizontalPosition = LabelHorizontalPosition.Start,
         labelVerticalPosition: LabelVerticalPosition = LabelVerticalPosition.Top,
         labelRotationDegrees: Float = 0f,
@@ -184,6 +192,6 @@ public data class ThresholdLine(
 
     private companion object {
         const val RANGE_FORMAT = "%s–%s"
-        val decimalFormat = DecimalFormat("#.##")
+        val decimalFormat = DecimalFormat("#.##;−#.##")
     }
 }

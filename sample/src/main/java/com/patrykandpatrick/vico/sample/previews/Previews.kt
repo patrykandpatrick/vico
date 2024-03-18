@@ -30,14 +30,15 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.layer.lineSpec
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
@@ -46,25 +47,23 @@ import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.fromComponent
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
+import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.createHorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.createVerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.Shapes.pillShape
 import com.patrykandpatrick.vico.core.common.shape.Shapes.rectShape
-import com.patrykandpatrick.vico.sample.utils.VicoTheme
+import com.patrykandpatrick.vico.sample.VicoTheme
 
 private val chartModifier = Modifier.height(100.dp)
 
 @Preview("Sample Card With Column Chart", widthDp = 200)
 @Composable
-public fun ColumnChartCard(): Unit =
+fun ColumnChartCard(): Unit =
     VicoTheme {
         val colors = MaterialTheme.colors
 
@@ -78,14 +77,14 @@ public fun ColumnChartCard(): Unit =
                                 rememberLineComponent(
                                     color = colors.primary,
                                     thickness = 8.dp,
-                                    shape = RoundedCornerShape(4.dp),
+                                    shape = RoundedCornerShape(4.dp).toVicoShape(),
                                     dynamicShader =
                                         DynamicShaders.verticalGradient(arrayOf(colors.primary, colors.secondary)),
                                 ),
                             ),
                         ),
                         startAxis =
-                            createVerticalAxis {
+                            rememberStartAxis(
                                 label =
                                     rememberTextComponent(
                                         color = colors.primary,
@@ -98,19 +97,15 @@ public fun ColumnChartCard(): Unit =
                                                         CornerSize(percent = 50),
                                                         CornerSize(percent = 50),
                                                         CornerSize(percent = 25),
-                                                    ),
+                                                    ).toVicoShape(),
                                                 color = colors.primary.copy(alpha = 0.1f),
                                             ),
                                         padding = dimensionsOf(end = 8.dp, start = 4.dp),
-                                    )
-                                axis = null
-                                tick = null
-                                guideline =
-                                    LineComponent(
-                                        colors.primary.copy(alpha = 0.1f).toArgb(),
-                                        1.dp.value,
-                                    )
-                            },
+                                    ),
+                                axis = null,
+                                tick = null,
+                                guideline = rememberLineComponent(colors.primary.copy(alpha = .1f)),
+                            ),
                     ),
                 model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 2) }),
             )
@@ -119,7 +114,7 @@ public fun ColumnChartCard(): Unit =
 
 @Preview("Sample Card With Line Chart", widthDp = 200)
 @Composable
-public fun LineChartCard(): Unit =
+fun LineChartCard(): Unit =
     VicoTheme {
         val colors = MaterialTheme.colors
 
@@ -130,7 +125,7 @@ public fun LineChartCard(): Unit =
                     rememberCartesianChart(
                         rememberLineCartesianLayer(
                             listOf(
-                                lineSpec(
+                                rememberLineSpec(
                                     point = null,
                                     shader = DynamicShaders.color(colors.primary),
                                     backgroundShader =
@@ -145,36 +140,35 @@ public fun LineChartCard(): Unit =
                             axisValueOverrider = AxisValueOverrider.fixed(minX = 0f, maxY = 3f),
                         ),
                         startAxis =
-                            createVerticalAxis {
+                            rememberStartAxis(
                                 label =
                                     rememberTextComponent(
                                         color = colors.onSurface,
                                         textSize = 10.sp,
                                         background = rememberShapeComponent(shape = rectShape, color = Color.LightGray),
                                         padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
-                                    )
-                                axis = null
-                                tick = null
+                                    ),
+                                axis = null,
+                                tick = null,
                                 guideline =
-                                    LineComponent(
-                                        color = Color.LightGray.toArgb(),
-                                        thicknessDp = 1.dp.value,
+                                    rememberLineComponent(
+                                        color = Color.LightGray,
                                         shape =
                                             DashedShape(
                                                 shape = pillShape,
                                                 dashLengthDp = 2.dp.value,
                                                 gapLengthDp = 4.dp.value,
                                             ),
-                                    )
-                                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside
-                            },
+                                    ),
+                                horizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Inside,
+                            ),
                         bottomAxis =
-                            createHorizontalAxis {
-                                label = null
-                                tick = null
-                                guideline = null
-                                axis = rememberLineComponent(color = Color.LightGray, thickness = 1.dp)
-                            },
+                            rememberBottomAxis(
+                                label = null,
+                                axis = rememberLineComponent(Color.LightGray),
+                                tick = null,
+                                guideline = null,
+                            ),
                     ),
                 model =
                     CartesianChartModel(

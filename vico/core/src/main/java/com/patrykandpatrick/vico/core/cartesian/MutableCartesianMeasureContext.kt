@@ -27,7 +27,7 @@ public class MutableCartesianMeasureContext(
     override val canvasBounds: RectF,
     override var density: Float,
     override var isLtr: Boolean,
-    override var isHorizontalScrollEnabled: Boolean = false,
+    override var scrollEnabled: Boolean = false,
     override var horizontalLayout: HorizontalLayout = HorizontalLayout.Segmented,
     override var chartValues: ChartValues,
     spToPx: (Float) -> Float,
@@ -38,9 +38,5 @@ public class MutableCartesianMeasureContext(
         spToPx = spToPx,
     ),
     CartesianMeasureContext {
-    override fun reset() {
-        clearExtras()
-    }
-
     override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

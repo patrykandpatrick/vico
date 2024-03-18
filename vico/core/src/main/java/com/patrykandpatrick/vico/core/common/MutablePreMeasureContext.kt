@@ -23,10 +23,8 @@ public data class MutablePreMeasureContext(
     override val density: Float,
     override val isLtr: Boolean,
     public val spToPx: (Float) -> Float,
-) : PreMeasureContext, Extras by DefaultExtras() {
-    override fun reset() {
-        clearExtras()
-    }
+) : PreMeasureContext {
+    override val extraStore: MutableExtraStore = MutableExtraStore()
 
     override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

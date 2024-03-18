@@ -57,8 +57,14 @@ public object DynamicShaders {
         second: DynamicShader,
         mode: BlendMode,
     ): DynamicShader =
-        DynamicShader { context, left, top, right, bottom ->
-            ComposeShader(
+        object : BaseDynamicShader() {
+            override fun provideShader(
+                context: DrawContext,
+                left: Float,
+                top: Float,
+                right: Float,
+                bottom: Float,
+            ) = ComposeShader(
                 first.provideShader(context, left, top, right, bottom),
                 second.provideShader(context, left, top, right, bottom),
                 mode,
@@ -73,8 +79,14 @@ public object DynamicShaders {
         second: DynamicShader,
         mode: PorterDuff.Mode,
     ): DynamicShader =
-        DynamicShader { context, left, top, right, bottom ->
-            ComposeShader(
+        object : BaseDynamicShader() {
+            override fun provideShader(
+                context: DrawContext,
+                left: Float,
+                top: Float,
+                right: Float,
+                bottom: Float,
+            ) = ComposeShader(
                 first.provideShader(context, left, top, right, bottom),
                 second.provideShader(context, left, top, right, bottom),
                 mode,

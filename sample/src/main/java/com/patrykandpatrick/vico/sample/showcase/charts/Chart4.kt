@@ -17,7 +17,9 @@
 package com.patrykandpatrick.vico.sample.showcase.charts
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -26,63 +28,101 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberTopAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shape.roundedCornerShape
-import com.patrykandpatrick.vico.compose.common.style.ProvideChartStyle
-import com.patrykandpatrick.vico.compose.common.style.currentChartStyle
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
-import com.patrykandpatrick.vico.core.cartesian.copy
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.common.component.LineComponent
+import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
+import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
+import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.databinding.Chart4Binding
+import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
-import com.patrykandpatrick.vico.sample.showcase.rememberChartStyle
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
 
 @Composable
 internal fun Chart4(
     uiSystem: UISystem,
-    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
 ) {
+    val modelProducer = remember { CartesianChartModelProducer.build() }
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            while (isActive) {
+                modelProducer.tryRunTransaction {
+                    columnSeries {
+                        repeat(3) {
+                            series(
+                                List(Defaults.ENTRY_COUNT) {
+                                    Defaults.COLUMN_LAYER_MIN_Y +
+                                        Random.nextFloat() * Defaults.COLUMN_LAYER_RELATIVE_MAX_Y
+                                },
+                            )
+                        }
+                    }
+                    lineSeries { series(List(Defaults.ENTRY_COUNT) { Random.nextFloat() * Defaults.MAX_Y }) }
+                }
+                delay(Defaults.TRANSACTION_INTERVAL_MS)
+            }
+        }
+    }
     when (uiSystem) {
-        UISystem.Compose -> ComposeChart4(modelProducer)
-        UISystem.Views -> ViewChart4(modelProducer)
+        UISystem.Compose -> ComposeChart4(modelProducer, modifier)
+        UISystem.Views -> ViewChart4(modelProducer, modifier)
     }
 }
 
 @Composable
-private fun ComposeChart4(modelProducer: CartesianChartModelProducer) {
-    ProvideChartStyle(rememberChartStyle(columnChartColors, lineChartColors)) {
-        val defaultColumns = currentChartStyle.columnLayer.columns
-        val defaultLines = currentChartStyle.lineLayer.lines
-        CartesianChartHost(
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(
-                        remember(defaultColumns) {
-                            defaultColumns.map {
-                                LineComponent(it.color, it.thicknessDp, Shapes.roundedCornerShape(columnCornerRadius))
-                            }
+private fun ComposeChart4(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
+    CartesianChartHost(
+        chart =
+            rememberCartesianChart(
+                rememberColumnCartesianLayer(
+                    columns =
+                        columnColors.map {
+                            rememberLineComponent(color = it, thickness = 8.dp, shape = Shapes.roundedCornerShape(2.dp))
                         },
-                    ),
-                    rememberLineCartesianLayer(
-                        remember(defaultLines) { defaultLines.map { it.copy(pointConnector = pointConnector) } },
-                    ),
-                    topAxis = rememberTopAxis(),
-                    endAxis = rememberEndAxis(),
                 ),
-            modelProducer = modelProducer,
-            marker = rememberMarker(),
-            runInitialAnimation = false,
-        )
-    }
+                rememberLineCartesianLayer(
+                    lines =
+                        listOf(
+                            rememberLineSpec(
+                                shader = DynamicShaders.color(lineColor),
+                                pointConnector = DefaultPointConnector(cubicStrength = 0f),
+                            ),
+                        ),
+                ),
+                topAxis = rememberTopAxis(),
+                endAxis = rememberEndAxis(),
+            ),
+        modelProducer = modelProducer,
+        modifier = modifier,
+        marker = rememberMarker(),
+        runInitialAnimation = false,
+        zoomState = rememberVicoZoomState(zoomEnabled = false),
+    )
 }
 
 @Composable
-private fun ViewChart4(modelProducer: CartesianChartModelProducer) {
+private fun ViewChart4(
+    modelProducer: CartesianChartModelProducer,
+    modifier: Modifier,
+) {
     val marker = rememberMarker()
-    AndroidViewBinding(Chart4Binding::inflate) {
+    AndroidViewBinding(Chart4Binding::inflate, modifier) {
         with(chartView) {
             runInitialAnimation = false
             this.modelProducer = modelProducer
@@ -91,16 +131,5 @@ private fun ViewChart4(modelProducer: CartesianChartModelProducer) {
     }
 }
 
-private const val COLOR_1_CODE = 0xff916cda
-private const val COLOR_2_CODE = 0xffd877d8
-private const val COLOR_3_CODE = 0xfff094bb
-private const val COLOR_4_CODE = 0xfffdc8c4
-
-private val color1 = Color(COLOR_1_CODE)
-private val color2 = Color(COLOR_2_CODE)
-private val color3 = Color(COLOR_3_CODE)
-private val color4 = Color(COLOR_4_CODE)
-private val columnChartColors = listOf(color1, color2, color3)
-private val lineChartColors = listOf(color4)
-private val columnCornerRadius = 2.dp
-private val pointConnector = DefaultPointConnector(cubicStrength = 0f)
+private val columnColors = listOf(Color(0xff916cda), Color(0xffd877d8), Color(0xfff094bb))
+private val lineColor = Color(0xfffdc8c4)

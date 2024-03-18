@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.core.cartesian
+package com.patrykandpatrick.vico.compose.common
 
-/**
- * Defines whether the content of a chart should be scaled up when the dimensions are such that, at a scale factor of 1,
- * an empty space would be visible near the end edge of the chart.
- */
-public enum class AutoScaleUp {
-    /**
-     * Scales up the chart to prevent any empty space from being visible.
-     */
-    Full,
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
+import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
 
-    /**
-     * Leaves the chart’s scale unaffected. Empty space may be visible.
-     */
-    None,
-}
+internal fun TextUnit.pixelSize() =
+    when (type) {
+        TextUnitType.Sp -> value
+        TextUnitType.Em -> value
+        else -> TEXT_COMPONENT_TEXT_SIZE
+    }

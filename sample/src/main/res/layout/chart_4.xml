@@ -23,6 +23,7 @@
         android:id="@+id/chart_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:chartZoomEnabled="false"
         app:columnLayerStyle="@style/Chart4ColumnLayerStyle"
         app:layers="line|column"
         app:lineLayerStyle="@style/Chart4LineLayerStyle"

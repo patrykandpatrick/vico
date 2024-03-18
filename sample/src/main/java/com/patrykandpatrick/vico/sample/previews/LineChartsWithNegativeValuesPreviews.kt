@@ -25,12 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
-import com.patrykandpatrick.vico.compose.cartesian.axis.axisLineComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.fullWidth
-import com.patrykandpatrick.vico.compose.cartesian.layer.lineSpec
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.shader.color
@@ -47,7 +47,7 @@ private val model = CartesianChartModel(LineCartesianLayerModel.build { series(-
 
 @Preview
 @Composable
-public fun SingleLineChartWithNegativeValues() {
+fun SingleLineChartWithNegativeValues() {
     val marker = rememberMarker()
     Surface {
         CartesianChartHost(
@@ -57,7 +57,7 @@ public fun SingleLineChartWithNegativeValues() {
                     rememberLineCartesianLayer(
                         lines =
                             listOf(
-                                lineSpec(
+                                rememberLineSpec(
                                     shader =
                                         TopBottomShader(
                                             DynamicShaders.color(Color(0xFF25BE53)),
@@ -68,12 +68,12 @@ public fun SingleLineChartWithNegativeValues() {
                     ),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
-                            guideline = axisLineComponent(),
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
+                            guideline = rememberAxisLineComponent(),
                         ),
                     bottomAxis =
                         rememberBottomAxis(
-                            guideline = axisLineComponent(),
+                            guideline = rememberAxisLineComponent(),
                             itemPlacer = AxisItemPlacer.Horizontal.default(spacing = 2),
                         ),
                     persistentMarkers = mapOf(2f to marker, 3f to marker),
@@ -86,7 +86,7 @@ public fun SingleLineChartWithNegativeValues() {
 
 @Preview
 @Composable
-public fun SingleLineChartWithNegativeValuesAndDataLabels() {
+fun SingleLineChartWithNegativeValuesAndDataLabels() {
     Surface {
         CartesianChartHost(
             chart =
@@ -94,7 +94,7 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
                     rememberLineCartesianLayer(
                         lines =
                             listOf(
-                                lineSpec(
+                                rememberLineSpec(
                                     shader = DynamicShaders.color(Color.DarkGray),
                                     dataLabel = rememberTextComponent(),
                                 ),
@@ -110,7 +110,7 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
 
 @Preview
 @Composable
-public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
+fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
         CartesianChartHost(
             chart =
@@ -118,7 +118,7 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
                     rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f)),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 4 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 4 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),
@@ -129,7 +129,7 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
 
 @Preview
 @Composable
-public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
+fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
         CartesianChartHost(
             chart =
@@ -137,7 +137,7 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
                     rememberLineCartesianLayer(axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f)),
                     startAxis =
                         rememberStartAxis(
-                            itemPlacer = remember { AxisItemPlacer.Vertical.default(maxItemCount = { 3 }) },
+                            itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 3 }) },
                         ),
                     bottomAxis = rememberBottomAxis(),
                 ),

@@ -23,21 +23,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
-import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
-import com.patrykandpatrick.vico.core.common.MutableMeasureContext
 import com.patrykandpatrick.vico.core.common.MutablePreMeasureContext
 import com.patrykandpatrick.vico.core.common.PreMeasureContext
 import com.patrykandpatrick.vico.core.common.extension.spToPx
 
-/**
- * Creates the [PreMeasureContext].
- */
 @Composable
-public fun rememberPreMeasureContext(): PreMeasureContext {
+internal fun rememberPreMeasureContext(): PreMeasureContext {
     val density = LocalDensity.current.density
     val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
     val context = LocalContext.current
@@ -51,18 +45,9 @@ public fun rememberPreMeasureContext(): PreMeasureContext {
     }
 }
 
-/**
- * Creates and remembers a [MutableMeasureContext] instance.
- *
- * @param isHorizontalScrollEnabled whether horizontal scrolling is enabled.
- * @param canvasBounds the bounds of the canvas that will be used to draw the chart and its components.
- * @param horizontalLayout defines how the chart’s content is positioned horizontally.
- * @param spToPx converts dimensions from sp to px.
- * @param chartValues houses the [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
- */
 @Composable
-public fun rememberCartesianMeasureContext(
-    isHorizontalScrollEnabled: Boolean,
+internal fun rememberCartesianMeasureContext(
+    scrollEnabled: Boolean,
     canvasBounds: RectF,
     horizontalLayout: HorizontalLayout,
     spToPx: (Float) -> Float,
@@ -79,7 +64,7 @@ public fun rememberCartesianMeasureContext(
     }.apply {
         this.density = LocalDensity.current.density
         this.isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-        this.isHorizontalScrollEnabled = isHorizontalScrollEnabled
+        this.scrollEnabled = scrollEnabled
         this.horizontalLayout = horizontalLayout
         this.spToPx = spToPx
         this.chartValues = chartValues

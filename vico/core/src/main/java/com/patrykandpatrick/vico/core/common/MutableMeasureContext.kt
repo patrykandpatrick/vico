@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.common
 
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 
 /**
  * A [MeasureContext] implementation that facilitates the mutation of some of its properties.
@@ -25,11 +26,10 @@ public open class MutableMeasureContext(
     override val canvasBounds: RectF,
     override var density: Float,
     override var isLtr: Boolean,
+    @get:RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public var spToPx: (Float) -> Float,
-) : MeasureContext, Extras by DefaultExtras() {
-    override fun reset() {
-        clearExtras()
-    }
+) : MeasureContext {
+    override val extraStore: MutableExtraStore = MutableExtraStore()
 
     override fun spToPx(sp: Float): Float = spToPx.invoke(sp)
 }

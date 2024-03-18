@@ -29,12 +29,11 @@ import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisRenderer
+import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.common.DEF_LABEL_COUNT
-import com.patrykandpatrick.vico.core.common.DefaultDimens
-import com.patrykandpatrick.vico.core.common.FADING_EDGE_VISIBILITY_THRESHOLD_DP
+import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.extension.hasFlag
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
@@ -46,7 +45,7 @@ internal class ThemeHandler(
     private val context: Context,
     attrs: AttributeSet?,
 ) {
-    var isHorizontalScrollEnabled: Boolean = false
+    var scrollEnabled: Boolean = false
         private set
 
     var isChartZoomEnabled: Boolean = false
@@ -60,7 +59,7 @@ internal class ThemeHandler(
 
     init {
         context.obtainStyledAttributes(attrs, R.styleable.CartesianChartView).use { typedArray ->
-            isHorizontalScrollEnabled =
+            scrollEnabled =
                 typedArray
                     .getBoolean(R.styleable.CartesianChartView_chartHorizontalScrollingEnabled, true)
             isChartZoomEnabled =
@@ -74,7 +73,7 @@ internal class ThemeHandler(
         }
     }
 
-    private fun <Position : AxisPosition, Builder : Axis.Builder<Position>> TypedArray.getAxisBuilder(
+    private fun <Position : AxisPosition, Builder : BaseAxis.Builder<Position>> TypedArray.getAxisBuilder(
         styleAttrId: Int,
         builder: Builder,
     ): Builder {
@@ -115,7 +114,7 @@ internal class ThemeHandler(
                 axisStyle.getRawDimension(
                     context = context,
                     R.styleable.Axis_axisTickLength,
-                    defaultValue = DefaultDimens.AXIS_TICK_LENGTH,
+                    defaultValue = Defaults.AXIS_TICK_LENGTH,
                 )
             guideline =
                 axisStyle
@@ -266,14 +265,23 @@ internal class ThemeHandler(
     }
 
     private fun TypedArray.getVerticalAxisItemPlacer(): AxisItemPlacer.Vertical {
-        val maxItemCount = getInteger(R.styleable.Axis_maxVerticalAxisItemCount, DEF_LABEL_COUNT)
-        return AxisItemPlacer.Vertical.default(
-            maxItemCount = { maxItemCount },
-            shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true),
-        )
+        val shiftTopLines = getBoolean(R.styleable.Axis_shiftTopVerticalAxisLines, true)
+        return if (
+            hasValue(R.styleable.Axis_verticalAxisItemCount) ||
+            hasValue(R.styleable.Axis_maxVerticalAxisItemCount)
+        ) {
+            val itemCount =
+                getInteger(
+                    R.styleable.Axis_verticalAxisItemCount,
+                    getInteger(R.styleable.Axis_maxVerticalAxisItemCount, -1),
+                )
+            AxisItemPlacer.Vertical.count({ itemCount }, shiftTopLines)
+        } else {
+            AxisItemPlacer.Vertical.step(shiftTopLines = shiftTopLines)
+        }
     }
 
-    private fun TypedArray.getStartAxis(): AxisRenderer<AxisPosition.Vertical.Start>? =
+    private fun TypedArray.getStartAxis(): Axis<AxisPosition.Vertical.Start>? =
         if (getBoolean(R.styleable.CartesianChartView_showStartAxis, false)) {
             getAxisBuilder(R.styleable.CartesianChartView_startAxisStyle, VerticalAxis.Builder())
                 .build<AxisPosition.Vertical.Start>()
@@ -281,7 +289,7 @@ internal class ThemeHandler(
             null
         }
 
-    private fun TypedArray.getTopAxis(): AxisRenderer<AxisPosition.Horizontal.Top>? =
+    private fun TypedArray.getTopAxis(): Axis<AxisPosition.Horizontal.Top>? =
         if (getBoolean(R.styleable.CartesianChartView_showTopAxis, false)) {
             getAxisBuilder(R.styleable.CartesianChartView_topAxisStyle, HorizontalAxis.Builder())
                 .build<AxisPosition.Horizontal.Top>()
@@ -289,7 +297,7 @@ internal class ThemeHandler(
             null
         }
 
-    private fun TypedArray.getEndAxis(): AxisRenderer<AxisPosition.Vertical.End>? =
+    private fun TypedArray.getEndAxis(): Axis<AxisPosition.Vertical.End>? =
         if (getBoolean(R.styleable.CartesianChartView_showEndAxis, false)) {
             getAxisBuilder(R.styleable.CartesianChartView_endAxisStyle, VerticalAxis.Builder())
                 .build<AxisPosition.Vertical.End>()
@@ -297,7 +305,7 @@ internal class ThemeHandler(
             null
         }
 
-    private fun TypedArray.getBottomAxis(): AxisRenderer<AxisPosition.Horizontal.Bottom>? =
+    private fun TypedArray.getBottomAxis(): Axis<AxisPosition.Horizontal.Bottom>? =
         if (getBoolean(R.styleable.CartesianChartView_showBottomAxis, false)) {
             getAxisBuilder(R.styleable.CartesianChartView_bottomAxisStyle, HorizontalAxis.Builder())
                 .build<AxisPosition.Horizontal.Bottom>()

@@ -18,23 +18,19 @@ package com.patrykandpatrick.vico.core.common
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 
 /**
  * Calls the specified function block with [DrawContext.canvas] as its receiver.
  */
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated(message = "`withCanvas` is meant only for internal use.", level = DeprecationLevel.ERROR)
 public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
     canvas.block()
 }
 
-/**
- * Creates an anonymous implementation of [DrawContext].
- *
- * @param canvas the canvas to draw the chart on.
- * @param density the pixel density of the screen (used in pixel size calculation).
- * @param isLtr whether the device layout is left-to-right.
- * @param elevationOverlayColor the elevation overlay color. This is applied to components that cast shadows.
- * @param spToPx converts dimensions from sp to px.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun drawContext(
     canvas: Canvas,
     density: Float = 1f,
@@ -43,12 +39,13 @@ public fun drawContext(
     canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
     spToPx: (Float) -> Float = { it },
 ): DrawContext =
-    object : DrawContext, Extras by DefaultExtras() {
+    object : DrawContext {
         override val canvasBounds: RectF = canvasBounds
         override val elevationOverlayColor: Long = elevationOverlayColor
         override var canvas: Canvas = canvas
         override val density: Float = density
         override val isLtr: Boolean = isLtr
+        override val extraStore: MutableExtraStore = MutableExtraStore()
 
         override fun withOtherCanvas(
             canvas: Canvas,
@@ -58,10 +55,6 @@ public fun drawContext(
             this.canvas = canvas
             block(this)
             this.canvas = originalCanvas
-        }
-
-        override fun reset() {
-            clearExtras()
         }
 
         override fun spToPx(sp: Float): Float = spToPx(sp)

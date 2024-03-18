@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.common.component
 
 import android.graphics.Paint
-import com.patrykandpatrick.vico.core.common.DEF_SHADOW_COLOR
+import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawContext
 
 /**
@@ -56,7 +56,7 @@ public open class PaintComponent<C> protected constructor() {
         radius: Float,
         dx: Float = 0f,
         dy: Float = 0f,
-        color: Int = DEF_SHADOW_COLOR,
+        color: Int = Defaults.SHADOW_COLOR,
         applyElevationOverlay: Boolean = false,
     ): C =
         apply {

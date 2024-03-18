@@ -17,11 +17,14 @@
 package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
+import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.extension.inClip
 
 /**
@@ -32,12 +35,24 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
 
     override val bounds: RectF = RectF()
 
-    override var axisValueOverrider: AxisValueOverrider<T>? = null
+    /** Overrides the _x_ and _y_ ranges. */
+    public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto()
 
     protected abstract fun drawInternal(
         context: CartesianChartDrawContext,
         model: T,
     )
+
+    protected fun MutableHorizontalDimensions.ensureSegmentedValues(
+        xSpacing: Float,
+        chartValues: ChartValues,
+    ) {
+        ensureValuesAtLeast(
+            xSpacing = xSpacing,
+            scalableStartPadding = xSpacing.half,
+            scalableEndPadding = ((-chartValues.xLength / chartValues.xStep - 0.5f) % 1f + 1f) % 1f * xSpacing,
+        )
+    }
 
     override fun draw(
         context: CartesianChartDrawContext,
