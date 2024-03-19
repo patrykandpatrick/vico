@@ -123,13 +123,3 @@ internal fun Float.lerp(
     to: Float,
     fraction: Float,
 ): Float = this + (to - this) * fraction
-
-/**
- * Performs a linear progression between [start] and [end] values.
- * [progress] is a fraction ranged between 0 and 1.
- */
-public fun progressValues(
-    start: Float,
-    end: Float,
-    progress: Float,
-): Float = start + (end - start) * progress
