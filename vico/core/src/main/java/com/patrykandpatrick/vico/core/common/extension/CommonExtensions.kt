@@ -16,11 +16,7 @@
 
 package com.patrykandpatrick.vico.core.common.extension
 
-/**
- * Calls the specified function block with [t1] and [t2] as its arguments if [t1] and [t2] are not null.
- * Returns the function block’s result if it was called, and `null` if it wasn’t.
- */
-public inline fun <T1, T2, R> ifNotNull(
+internal inline fun <T1, T2, R> ifNotNull(
     t1: T1?,
     t2: T2?,
     onNotNull: (T1, T2) -> R,
