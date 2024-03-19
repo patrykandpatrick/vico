@@ -51,6 +51,7 @@ import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
+import com.patrykandpatrick.vico.views.common.extension.dimensionsOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -163,11 +164,8 @@ private fun getViewHorizontalLine() =
             TextComponent.build {
                 background = ShapeComponent(Shapes.pillShape, HORIZONTAL_LINE_COLOR)
                 padding =
-                    dimensionsOf(
-                        HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
-                        HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
-                    )
-                margins = dimensionsOf(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp)
+                    dimensionsOf(HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP, HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP)
+                margins = dimensionsOf(HORIZONTAL_LINE_LABEL_MARGIN_DP)
                 typeface = Typeface.MONOSPACE
             },
     )
