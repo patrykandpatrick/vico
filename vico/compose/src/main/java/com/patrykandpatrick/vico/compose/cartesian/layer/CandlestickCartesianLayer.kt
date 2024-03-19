@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 
+/** Creates and remembers a [CandlestickCartesianLayer]. */
 @Composable
 public fun rememberCandlestickCartesianLayer(
     config: CandlestickCartesianLayer.Config = CandlestickCartesianLayer.Config.rememberStandard(),
