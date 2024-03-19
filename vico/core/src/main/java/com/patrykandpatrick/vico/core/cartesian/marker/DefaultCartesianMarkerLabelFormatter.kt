@@ -36,7 +36,7 @@ public open class DefaultCartesianMarkerLabelFormatter(
     private val decimalFormat: DecimalFormat = defaultDecimalFormat,
     private val colorCode: Boolean = true,
 ) : CartesianMarkerLabelFormatter {
-    /** The default [DefaultCartesianMarkerLabelFormatter]. [colorCode] specifies whether to color-code the _y_ values. */
+    /** The default [CartesianMarkerLabelFormatter]. [colorCode] specifies whether to color-code the _y_ values. */
     @Deprecated(
         "Use the primary constructor, which has a `decimalFormat` parameter. (If you’re using named arguments, " +
             "ignore this warning. The deprecated constructor is more specific, but the primary one matches and will " +
