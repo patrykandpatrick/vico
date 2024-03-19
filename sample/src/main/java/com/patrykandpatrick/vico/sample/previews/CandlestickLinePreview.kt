@@ -23,6 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberHollow
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.core.cartesian.SampleCandlestickEntryProvider
@@ -33,15 +34,10 @@ import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 @Composable
 fun CandlestickLinePreview() {
     Surface {
-        val candlestickCartesianLayer =
-            CandlestickCartesianLayer(
-                config = CandlestickCartesianLayer.Config.rememberHollow(),
-            )
-
         CartesianChartHost(
             chart =
                 rememberCartesianChart(
-                    candlestickCartesianLayer,
+                    rememberCandlestickCartesianLayer(CandlestickCartesianLayer.Config.rememberHollow()),
                     startAxis = rememberStartAxis(),
                     bottomAxis = rememberBottomAxis(),
                 ),
