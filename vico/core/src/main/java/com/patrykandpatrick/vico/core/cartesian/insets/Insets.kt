@@ -50,7 +50,7 @@ public class Insets(
     /**
      * The largest of the four insets.
      */
-    public val largestEdge: Float
+    public val max: Float
         get() = maxOf(start, top, end, bottom)
 
     /**
