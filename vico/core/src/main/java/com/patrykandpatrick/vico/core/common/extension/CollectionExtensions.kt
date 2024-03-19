@@ -75,24 +75,6 @@ public fun <T> List<T>.getRepeating(index: Int): T {
     return get(index % size.coerceAtLeast(1))
 }
 
-/**
- * Returns the largest value among all values produced by [selector] function
- * applied to each element in the collection or `null` if there are no elements.
- */
-public inline fun <T, R : Comparable<R>> Iterable<T>.maxOfOrNullIndexed(selector: (Int, T) -> R): R? {
-    val iterator = iterator()
-    var index = 0
-    if (!iterator.hasNext()) return null
-    var maxValue = selector(index++, iterator.next())
-    while (iterator.hasNext()) {
-        val v = selector(index++, iterator.next())
-        if (maxValue < v) {
-            maxValue = v
-        }
-    }
-    return maxValue
-}
-
 internal inline fun <T, R> Iterable<T>.mapWithPrevious(action: (previous: T?, current: T) -> R): List<R> {
     val result = mutableListOf<R>()
     var previous: T? = null
