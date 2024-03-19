@@ -19,33 +19,19 @@ package com.patrykandpatrick.vico.core.cartesian
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.common.extension.random
 import kotlin.random.Random
 
-/**
- * Generates randomized [CartesianLayerModel.Partial]s and [CartesianChartModel]s.
- */
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public object RandomCartesianModelGenerator {
-    /** @suppress */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val defaultX: IntProgression = 0..96
-
-    /** @suppress */
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val defaultY: ClosedFloatingPointRange<Float> = 2f..20f
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val defaultOpenCloseRange: ClosedFloatingPointRange<Float> = 5f..15f
-
-    @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
     public val defaultLowHighRange: ClosedFloatingPointRange<Float> = .5f..5f
 
-    /**
-     * Generates a randomized [ColumnCartesianLayerModel.Partial] with the specified number of series and value ranges.
-     */
     public fun getRandomColumnLayerModelPartial(
         seriesCount: Int = 1,
         x: IntProgression = defaultX,
@@ -53,9 +39,6 @@ public object RandomCartesianModelGenerator {
     ): ColumnCartesianLayerModel.Partial =
         ColumnCartesianLayerModel.partial { repeat(seriesCount) { series(x.toList(), x.map { y.random() }) } }
 
-    /**
-     * Generates a randomized [LineCartesianLayerModel.Partial] with the specified number of series and value ranges.
-     */
     public fun getRandomLineLayerModelPartial(
         seriesCount: Int = 1,
         x: IntProgression = defaultX,
@@ -104,9 +87,6 @@ public object RandomCartesianModelGenerator {
         return CandlestickCartesianLayerModel.partial(entries)
     }
 
-    /**
-     * Generates a randomized [CartesianChartModel] with the specified numbers of series and value ranges.
-     */
     public fun getRandomModel(
         columnSeriesCount: Int = 1,
         lineSeriesCount: Int = 1,
