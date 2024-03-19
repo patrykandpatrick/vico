@@ -36,7 +36,7 @@ internal fun ChartHostBox(
 ) {
     val preMeasureContext = rememberPreMeasureContext()
     Layout(content, modifier.heightIn(min = Defaults.CHART_HEIGHT.dp)) { measurable, constraints ->
-        val chartMeasurable = measurable.firstOrNull()
+        val chartMeasurable = measurable.first()
         val additionalHeight =
             if (hasModel && legend != null) {
                 legend.getHeight(preMeasureContext, constraints.maxWidth.toFloat()).toInt()
@@ -53,13 +53,7 @@ internal fun ChartHostBox(
                 minHeight = height,
                 maxHeight = height,
             )
-        val placeable = chartMeasurable?.measure(chartConstraints)
-        if (placeable != null) {
-            layout(placeable.width, placeable.height) {
-                placeable.place(0, 0)
-            }
-        } else {
-            layout(0, 0) {}
-        }
+        val placeable = chartMeasurable.measure(chartConstraints)
+        layout(placeable.width, placeable.height) { placeable.place(0, 0) }
     }
 }
