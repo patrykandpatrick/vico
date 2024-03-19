@@ -30,10 +30,7 @@ internal fun Path.horizontalCubicTo(
     cubicTo(prevX + directionMultiplier * curvature, prevY, x - directionMultiplier * curvature, y, x, y)
 }
 
-/**
- * A convenience function for [Path.moveTo] that accepts a [Point].
- */
-public fun Path.moveTo(point: Point) {
+internal fun Path.moveTo(point: Point) {
     moveTo(point.x, point.y)
 }
 
