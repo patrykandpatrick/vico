@@ -33,10 +33,3 @@ internal fun Path.horizontalCubicTo(
 internal fun Path.moveTo(point: Point) {
     moveTo(point.x, point.y)
 }
-
-/**
- * A convenience function for [Path.lineTo] that accepts a [Point].
- */
-public fun Path.lineTo(point: Point) {
-    lineTo(point.x, point.y)
-}
