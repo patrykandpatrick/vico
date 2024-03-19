@@ -57,22 +57,13 @@ public fun Int.copyColor(
 internal val Int.alpha: Int
     get() = extractColorChannel(ALPHA_BIT_SHIFT)
 
-/**
- * The value of the alpha channel of this color.
- */
-public val Int.alphaFloat: Float
+internal val Int.alphaFloat: Float
     get() = alpha / MAX_HEX_VALUE
 
-/**
- * Checks whether this color int is not transparent.
- */
-public val Int.isNotTransparent: Boolean
+internal val Int.isNotTransparent: Boolean
     get() = this != Color.TRANSPARENT
 
-/**
- * Checks whether this color int is transparent.
- */
-public val Int.isTransparent: Boolean
+internal val Int.isTransparent: Boolean
     get() = this == Color.TRANSPARENT
 
 private fun Int.extractColorChannel(bitShift: Int): Int = this shr bitShift and COLOR_MASK
