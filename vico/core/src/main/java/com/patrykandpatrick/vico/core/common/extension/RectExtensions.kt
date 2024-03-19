@@ -89,7 +89,7 @@ internal fun RectF.getStart(isLtr: Boolean): Float = if (isLtr) left else right
 
 internal fun RectF.getEnd(isLtr: Boolean): Float = if (isLtr) right else left
 
-public fun RectF.updateBounds(
+internal fun RectF.updateBounds(
     left: Float = this.left,
     top: Float = this.top,
     right: Float = this.right,
@@ -98,7 +98,7 @@ public fun RectF.updateBounds(
     set(left, top, right, bottom)
 }
 
-public fun RectF.updateBy(
+internal fun RectF.updateBy(
     left: Float = 0f,
     top: Float = 0f,
     right: Float = 0f,
@@ -112,10 +112,7 @@ public fun RectF.updateBy(
     )
 }
 
-/**
- * Updates the coordinates of this [RectF] if the provided coordinates exceed the current ones.
- */
-public fun RectF.updateIfExceeds(
+internal fun RectF.updateIfExceeds(
     x: Float,
     y: Float,
 ) {
@@ -127,38 +124,19 @@ public fun RectF.updateIfExceeds(
     )
 }
 
-/**
- * Returns the radius of this [RectF], as if it were a circle.
- * Throws an [IllegalArgumentException] if this [RectF] is not a square.
- */
-public val RectF.radius: Float
+internal val RectF.radius: Float
     get() {
         require(width() == height()) { "RectF must be a square." }
         return width().half
     }
 
-/**
- * Returns the center point of this [RectF].
- */
-public val RectF.centerPoint: Point
+internal val RectF.centerPoint: Point
     get() = Point(centerX(), centerY())
 
-/**
- * @see RectF.left
- */
-public operator fun RectF.component1(): Float = left
+internal operator fun RectF.component1(): Float = left
 
-/**
- * @see RectF.top
- */
-public operator fun RectF.component2(): Float = top
+internal operator fun RectF.component2(): Float = top
 
-/**
- * @see RectF.right
- */
-public operator fun RectF.component3(): Float = right
+internal operator fun RectF.component3(): Float = right
 
-/**
- * @see RectF.bottom
- */
-public operator fun RectF.component4(): Float = bottom
+internal operator fun RectF.component4(): Float = bottom
