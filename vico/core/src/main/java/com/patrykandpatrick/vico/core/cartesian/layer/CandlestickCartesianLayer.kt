@@ -324,10 +324,7 @@ public open class CandlestickCartesianLayer(
         public val absolutelyDecreasingRelativelyZero: Candle,
         public val absolutelyDecreasingRelativelyDecreasing: Candle,
     ) {
-        /**
-         * TODO
-         */
-        public val maxThicknessDp: Float
+        internal val maxThicknessDp
             get() =
                 maxOf(
                     absolutelyIncreasingRelativelyIncreasing.realBody.thicknessDp,
@@ -341,10 +338,7 @@ public open class CandlestickCartesianLayer(
                     absolutelyDecreasingRelativelyDecreasing.realBody.thicknessDp,
                 )
 
-        /**
-         * TODO
-         */
-        public fun getCandle(type: Type): Candle =
+        internal fun getCandle(type: Type) =
             when (type.absoluteChange) {
                 Change.Increase ->
                     when (type.relativeChange) {
