@@ -96,15 +96,19 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
             minX == other.minX &&
             maxX == other.maxX &&
             minY == other.minY &&
-            maxY == other.maxY
+            maxY == other.maxY &&
+            extraStore == other.extraStore
 
-    override fun hashCode(): Int =
-        series.hashCode() +
-            31 * id.hashCode() +
-            31 * minX.hashCode() +
-            31 * maxX.hashCode() +
-            31 * minY.hashCode() +
-            31 * maxY.hashCode()
+    override fun hashCode(): Int {
+        var result = series.hashCode()
+        result = 31 * result + id
+        result = 31 * result + minX.hashCode()
+        result = 31 * result + maxX.hashCode()
+        result = 31 * result + minY.hashCode()
+        result = 31 * result + maxY.hashCode()
+        result = 31 * result + extraStore.hashCode()
+        return result
+    }
 
     /**
      * TODO
