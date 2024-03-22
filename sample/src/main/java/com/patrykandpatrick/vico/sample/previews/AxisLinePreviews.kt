@@ -20,23 +20,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.rememberAxisLabelComponent
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.cornered.Corner
-import com.patrykandpatrick.vico.core.component.shape.cornered.CorneredShape
-import com.patrykandpatrick.vico.core.component.shape.cornered.CutCornerTreatment
-import com.patrykandpatrick.vico.core.component.shape.cornered.RoundedCornerTreatment
-import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLabelComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.common.shape.Corner
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import com.patrykandpatrick.vico.core.common.shape.CutCornerTreatment
+import com.patrykandpatrick.vico.core.common.shape.RoundedCornerTreatment
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 4) })
 

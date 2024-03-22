@@ -1,0 +1,41 @@
+/*
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.patrykandpatrick.vico.core.cartesian
+
+import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
+import com.patrykandpatrick.vico.core.common.MeasureContext
+
+/**
+ * [CartesianMeasureContext] holds data used by various cartesian chart components during the measuring and drawing
+ * phases.
+ */
+public interface CartesianMeasureContext : MeasureContext {
+    /**
+     * The chart’s [ChartValues].
+     */
+    public val chartValues: ChartValues
+
+    /**
+     * Whether horizontal scrolling is enabled.
+     */
+    public val scrollEnabled: Boolean
+
+    /**
+     * Defines how the chart’s content is positioned horizontally.
+     */
+    public val horizontalLayout: HorizontalLayout
+}

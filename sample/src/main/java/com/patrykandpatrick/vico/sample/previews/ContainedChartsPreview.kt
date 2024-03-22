@@ -22,29 +22,29 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberEndAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatrick.vico.core.axis.Axis
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
-import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.End
-import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.Start
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.marker.Marker
-import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
+import com.patrykandpatrick.vico.core.cartesian.axis.Axis
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition.Vertical
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition.Vertical.End
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition.Vertical.Start
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 private val model =
@@ -53,7 +53,7 @@ private val model =
         LineCartesianLayerModel.build { series(4, 1, 8, 12, 5) },
     )
 
-private val markerMap: Map<Float, Marker>
+private val markerMap: Map<Float, CartesianMarker>
     @Composable get() = mapOf(4f to rememberMarker())
 
 @Composable

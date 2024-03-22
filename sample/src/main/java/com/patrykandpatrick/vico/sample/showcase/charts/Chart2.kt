@@ -24,34 +24,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.decoration.rememberHorizontalLine
-import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.axis.AxisPosition
-import com.patrykandpatrick.vico.core.axis.BaseAxis
-import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
-import com.patrykandpatrick.vico.core.chart.decoration.HorizontalLine
-import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.component.shape.LineComponent
-import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.model.columnSeries
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalLine
+import com.patrykandpatrick.vico.compose.cartesian.fullWidth
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
+import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
+import com.patrykandpatrick.vico.core.common.component.LineComponent
+import com.patrykandpatrick.vico.core.common.component.ShapeComponent
+import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
-import com.patrykandpatrick.vico.views.dimensions.dimensionsOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -164,8 +163,11 @@ private fun getViewHorizontalLine() =
             TextComponent.build {
                 background = ShapeComponent(Shapes.pillShape, HORIZONTAL_LINE_COLOR)
                 padding =
-                    dimensionsOf(HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP, HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP)
-                margins = dimensionsOf(HORIZONTAL_LINE_LABEL_MARGIN_DP)
+                    dimensionsOf(
+                        HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
+                        HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
+                    )
+                margins = dimensionsOf(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp)
                 typeface = Typeface.MONOSPACE
             },
     )

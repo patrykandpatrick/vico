@@ -22,26 +22,28 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.component.fixed
-import com.patrykandpatrick.vico.compose.component.rememberLayeredComponent
-import com.patrykandpatrick.vico.compose.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.component.shape.dashedShape
-import com.patrykandpatrick.vico.compose.component.shape.markerCorneredShape
-import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.core.chart.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.chart.insets.Insets
-import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.cornered.Corner
-import com.patrykandpatrick.vico.core.component.text.TextComponent
-import com.patrykandpatrick.vico.core.context.MeasureContext
-import com.patrykandpatrick.vico.core.extension.copyColor
-import com.patrykandpatrick.vico.core.marker.Marker
+import com.patrykandpatrick.vico.compose.common.component.fixed
+import com.patrykandpatrick.vico.compose.common.component.rememberLayeredComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.shape.dashedShape
+import com.patrykandpatrick.vico.compose.common.shape.markerCorneredShape
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.cartesian.insets.Insets
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
+import com.patrykandpatrick.vico.core.common.component.CartesianMarkerComponent
+import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.extension.copyColor
+import com.patrykandpatrick.vico.core.common.shape.Corner
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 @Composable
-internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = MarkerComponent.LabelPosition.Top): Marker {
+internal fun rememberMarker(
+    labelPosition: CartesianMarkerComponent.LabelPosition = CartesianMarkerComponent.LabelPosition.Top,
+): CartesianMarker {
     val labelBackgroundShape = Shapes.markerCorneredShape(Corner.FullyRounded)
     val labelBackground =
         rememberShapeComponent(labelBackgroundShape, MaterialTheme.colorScheme.surface)
@@ -80,7 +82,7 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
             shape = Shapes.dashedShape(shape = Shapes.pillShape, dashLength = 8.dp, gapLength = 4.dp),
         )
     return remember(label, labelPosition, indicator, guideline) {
-        object : MarkerComponent(label, labelPosition, indicator, guideline) {
+        object : CartesianMarkerComponent(label, labelPosition, indicator, guideline) {
             init {
                 indicatorSizeDp = 36f
                 onApplyEntryColor = { entryColor ->
@@ -93,7 +95,7 @@ internal fun rememberMarker(labelPosition: MarkerComponent.LabelPosition = Marke
             }
 
             override fun getInsets(
-                context: MeasureContext,
+                context: CartesianMeasureContext,
                 outInsets: Insets,
                 horizontalDimensions: HorizontalDimensions,
             ) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,12 +42,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import com.patrykandpatrick.vico.R
-import com.patrykandpatrick.vico.compose.component.shape.composeShape
-import com.patrykandpatrick.vico.compose.component.shape.dashedShape
-import com.patrykandpatrick.vico.core.component.shape.Shape
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.cornered.CorneredShape
-import com.patrykandpatrick.vico.core.draw.drawContext
+import com.patrykandpatrick.vico.compose.common.shape.composeShape
+import com.patrykandpatrick.vico.compose.common.shape.dashedShape
+import com.patrykandpatrick.vico.core.common.drawContext
+import com.patrykandpatrick.vico.core.common.shape.CorneredShape
+import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 @Composable
 private fun PreviewShape(shape: Shape) {

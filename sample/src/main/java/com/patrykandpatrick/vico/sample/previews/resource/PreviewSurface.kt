@@ -21,7 +21,7 @@ import androidx.compose.runtime.Composable
 import com.patrykandpatrick.vico.sample.VicoTheme
 
 @Composable
-public fun PreviewSurface(content: @Composable () -> Unit) {
+fun PreviewSurface(content: @Composable () -> Unit) {
     VicoTheme(useDynamicColor = false) {
         Surface {
             content()

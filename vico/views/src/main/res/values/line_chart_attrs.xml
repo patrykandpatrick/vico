@@ -48,7 +48,7 @@
     </declare-styleable>
 
     <declare-styleable name="ComponentStyle">
-        <attr name="color"/>
+        <attr name="color" />
         <attr name="shapeStyle" />
         <attr name="strokeColor" />
         <attr name="strokeWidth" />

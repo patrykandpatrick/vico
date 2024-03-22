@@ -24,30 +24,30 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.rememberAxisLineComponent
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
-import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.component.shape.shader.TopBottomShader
-import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisLineComponent
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.fullWidth
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 private val model = CartesianChartModel(LineCartesianLayerModel.build { series(-2, -1, 4, -2, 1, 5, -3) })
 
 @Preview
 @Composable
-public fun SingleLineChartWithNegativeValues() {
+fun SingleLineChartWithNegativeValues() {
     val marker = rememberMarker()
     Surface {
         CartesianChartHost(
@@ -86,7 +86,7 @@ public fun SingleLineChartWithNegativeValues() {
 
 @Preview
 @Composable
-public fun SingleLineChartWithNegativeValuesAndDataLabels() {
+fun SingleLineChartWithNegativeValuesAndDataLabels() {
     Surface {
         CartesianChartHost(
             chart =
@@ -110,7 +110,7 @@ public fun SingleLineChartWithNegativeValuesAndDataLabels() {
 
 @Preview
 @Composable
-public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
+fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
     Surface {
         CartesianChartHost(
             chart =
@@ -129,7 +129,7 @@ public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden() {
 
 @Preview
 @Composable
-public fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
+fun SingleLineChartWithNegativeValuesAndAxisValuesOverridden2() {
     Surface {
         CartesianChartHost(
             chart =

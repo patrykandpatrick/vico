@@ -20,7 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
-import com.patrykandpatrick.vico.compose.theme.VicoTheme
+import com.patrykandpatrick.vico.compose.common.VicoTheme
 
 /** Creates and remembers a [VicoTheme] based on [MaterialTheme.colorScheme]. */
 @Composable

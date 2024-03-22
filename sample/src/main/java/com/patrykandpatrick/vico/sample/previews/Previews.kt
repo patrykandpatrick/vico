@@ -33,37 +33,37 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.compose.component.shape.shader.fromComponent
-import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatrick.vico.compose.component.shape.toVicoShape
-import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.component.shape.DashedShape
-import com.patrykandpatrick.vico.core.component.shape.Shapes.pillShape
-import com.patrykandpatrick.vico.core.component.shape.Shapes.rectShape
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.compose.common.shader.fromComponent
+import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
+import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.shape.DashedShape
+import com.patrykandpatrick.vico.core.common.shape.Shapes.pillShape
+import com.patrykandpatrick.vico.core.common.shape.Shapes.rectShape
 import com.patrykandpatrick.vico.sample.VicoTheme
 
 private val chartModifier = Modifier.height(100.dp)
 
 @Preview("Sample Card With Column Chart", widthDp = 200)
 @Composable
-public fun ColumnChartCard(): Unit =
+fun ColumnChartCard(): Unit =
     VicoTheme {
         val colors = MaterialTheme.colors
 
@@ -114,7 +114,7 @@ public fun ColumnChartCard(): Unit =
 
 @Preview("Sample Card With Line Chart", widthDp = 200)
 @Composable
-public fun LineChartCard(): Unit =
+fun LineChartCard(): Unit =
     VicoTheme {
         val colors = MaterialTheme.colors
 

@@ -24,17 +24,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.compose.component.shape.shader.verticalGradient
-import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 
 private val model1 = CartesianChartModel(LineCartesianLayerModel.build { series(0, 2, 4, 0, 2) })
 
@@ -54,7 +54,7 @@ private val model3 =
 
 @Preview("Line Chart Dark", widthDp = 200)
 @Composable
-public fun LineChartDark() {
+fun LineChartDark() {
     Surface(
         shape = RoundedCornerShape(8.dp),
         color = Color.Black,
@@ -93,7 +93,7 @@ public fun LineChartDark() {
 
 @Preview("Line Chart", widthDp = 200)
 @Composable
-public fun RegularLineChart() {
+fun RegularLineChart() {
     CartesianChartHost(
         chart = rememberCartesianChart(rememberLineCartesianLayer(), startAxis = rememberStartAxis()),
         model = model1,
@@ -102,7 +102,7 @@ public fun RegularLineChart() {
 
 @Preview("Line Chart Expanded", widthDp = 200)
 @Composable
-public fun RegularLineChartExpanded() {
+fun RegularLineChartExpanded() {
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -115,7 +115,7 @@ public fun RegularLineChartExpanded() {
 
 @Preview("Line Chart Collapsed", widthDp = 200)
 @Composable
-public fun RegularLineChartCollapsed() {
+fun RegularLineChartCollapsed() {
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -128,7 +128,7 @@ public fun RegularLineChartCollapsed() {
 
 @Preview("Composed Chart", widthDp = 200)
 @Composable
-public fun ComposedLineChart() {
+fun ComposedLineChart() {
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -152,7 +152,7 @@ public fun ComposedLineChart() {
 
 @Preview("Composed Chart Collapsed", widthDp = 200)
 @Composable
-public fun ComposedLineChartCollapsed() {
+fun ComposedLineChartCollapsed() {
     CartesianChartHost(
         chart =
             rememberCartesianChart(

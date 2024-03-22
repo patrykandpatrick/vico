@@ -19,6 +19,7 @@ package com.patrykandpatrick.vico.sample.showcase
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart1
+import com.patrykandpatrick.vico.sample.showcase.charts.Chart10
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart2
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart3
 import com.patrykandpatrick.vico.sample.showcase.charts.Chart4
@@ -39,4 +40,5 @@ internal val charts =
         { uiSystem, modifier -> Chart7(uiSystem, modifier) },
         { uiSystem, modifier -> Chart8(uiSystem, modifier) },
         { uiSystem, modifier -> Chart9(uiSystem, modifier) },
+        { uiSystem, modifier -> Chart10(uiSystem, modifier) },
     )

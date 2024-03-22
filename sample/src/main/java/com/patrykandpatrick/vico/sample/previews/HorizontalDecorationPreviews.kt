@@ -26,30 +26,30 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.decoration.rememberHorizontalBox
-import com.patrykandpatrick.vico.compose.chart.decoration.rememberHorizontalLine
-import com.patrykandpatrick.vico.compose.chart.layer.rememberColumnCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.component.shape.shader.toDynamicShader
-import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.compose.theme.ProvideVicoTheme
-import com.patrykandpatrick.vico.compose.theme.vicoTheme
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader
-import com.patrykandpatrick.vico.core.component.text.VerticalPosition
-import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalBox
+import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontalLine
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
+import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.scroll.rememberVicoScrollState
+import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
+import com.patrykandpatrick.vico.compose.common.vicoTheme
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.common.position.VerticalPosition
+import com.patrykandpatrick.vico.core.common.shader.ComponentShader
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 4) })
 
-public val Color.Companion.DimmedGray: Color
+val Color.Companion.DimmedGray: Color
     get() = Color(0xFFAAAAAA)
 
 @Composable
@@ -74,7 +74,7 @@ private fun ProvidePreviewVicoTheme(content: @Composable () -> Unit) {
 
 @Preview(widthDp = 250)
 @Composable
-public fun ThresholdLine() {
+fun ThresholdLine() {
     ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
@@ -101,7 +101,7 @@ public fun ThresholdLine() {
 
 @Preview(widthDp = 250)
 @Composable
-public fun ThresholdLineWithCustomText() {
+fun ThresholdLineWithCustomText() {
     ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
@@ -177,7 +177,7 @@ public fun ThresholdLineWithCustomText() {
 
 @Preview(widthDp = 250)
 @Composable
-public fun RangedThresholdLine() {
+fun RangedThresholdLine() {
     ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
@@ -207,7 +207,7 @@ public fun RangedThresholdLine() {
 
 @Preview(widthDp = 250)
 @Composable
-public fun RangedThresholdLineWithBrushShader() {
+fun RangedThresholdLineWithBrushShader() {
     ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,
@@ -248,7 +248,7 @@ public fun RangedThresholdLineWithBrushShader() {
 
 @Preview(widthDp = 250)
 @Composable
-public fun RangedThresholdLineWithComponentShader() {
+fun RangedThresholdLineWithComponentShader() {
     ProvidePreviewVicoTheme {
         CartesianChartHost(
             modifier = Modifier,

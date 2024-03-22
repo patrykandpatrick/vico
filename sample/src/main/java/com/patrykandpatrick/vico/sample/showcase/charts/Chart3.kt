@@ -26,28 +26,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.edges.rememberFadingEdges
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineSpec
-import com.patrykandpatrick.vico.compose.chart.layout.fullWidth
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.chart.zoom.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.component.shape.shader.color
-import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
-import com.patrykandpatrick.vico.core.axis.vertical.VerticalAxis
-import com.patrykandpatrick.vico.core.chart.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
-import com.patrykandpatrick.vico.core.chart.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.component.marker.MarkerComponent
-import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.model.lineSeries
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.fullWidth
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
+import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
+import com.patrykandpatrick.vico.core.common.component.CartesianMarkerComponent
+import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -122,7 +122,7 @@ private fun ComposeChart3(
             ),
         modelProducer = modelProducer,
         modifier = modifier,
-        marker = rememberMarker(MarkerComponent.LabelPosition.AroundPoint),
+        marker = rememberMarker(CartesianMarkerComponent.LabelPosition.AroundPoint),
         runInitialAnimation = false,
         horizontalLayout = HorizontalLayout.fullWidth(),
         zoomState = rememberVicoZoomState(zoomEnabled = false),
@@ -134,7 +134,7 @@ private fun ViewChart3(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier,
 ) {
-    val marker = rememberMarker(MarkerComponent.LabelPosition.AroundPoint)
+    val marker = rememberMarker(CartesianMarkerComponent.LabelPosition.AroundPoint)
 
     AndroidViewBinding(Chart3Binding::inflate, modifier) {
         with(chartView) {

@@ -17,14 +17,14 @@
 package com.patrykandpatrick.vico.sample.previews.composables.line
 
 import androidx.compose.runtime.Composable
-import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
-import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
-import com.patrykandpatrick.vico.compose.chart.CartesianChartHost
-import com.patrykandpatrick.vico.compose.chart.layer.rememberLineCartesianLayer
-import com.patrykandpatrick.vico.compose.chart.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.chart.scroll.rememberVicoScrollState
-import com.patrykandpatrick.vico.core.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.scroll.Scroll
+import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
+import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.scroll.rememberVicoScrollState
+import com.patrykandpatrick.vico.core.cartesian.Scroll
+import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.sample.previews.annotation.ChartPreview
 import com.patrykandpatrick.vico.sample.previews.resource.PreviewSurface
 import com.patrykandpatrick.vico.sample.previews.resource.mediumLineModel
@@ -32,7 +32,7 @@ import com.patrykandpatrick.vico.sample.previews.resource.shortLineModel
 
 @ChartPreview
 @Composable
-public fun DefaultLineChart(
+fun DefaultLineChart(
     model: CartesianChartModel = shortLineModel,
     scrollable: Boolean = true,
     initialScroll: Scroll.Absolute = Scroll.Absolute.Start,
@@ -53,18 +53,18 @@ public fun DefaultLineChart(
 
 @ChartPreview
 @Composable
-public fun DefaultLineChartLongScrollable() {
+fun DefaultLineChartLongScrollable() {
     DefaultLineChart(model = mediumLineModel)
 }
 
 @ChartPreview
 @Composable
-public fun DefaultLineChartLongScrollableEnd() {
+fun DefaultLineChartLongScrollableEnd() {
     DefaultLineChart(model = mediumLineModel, initialScroll = Scroll.Absolute.End)
 }
 
 @ChartPreview
 @Composable
-public fun DefaultLineChartLongNonScrollable() {
+fun DefaultLineChartLongNonScrollable() {
     DefaultLineChart(model = mediumLineModel, scrollable = false)
 }

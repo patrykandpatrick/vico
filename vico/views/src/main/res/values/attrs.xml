@@ -35,6 +35,7 @@
         <attr name="layers" format="integer">
             <flag name="column" value="1" />
             <flag name="line" value="2" />
+            <flag name="candlestick" value="4" />
         </attr>
         <attr name="axisStyle" format="reference" />
         <attr name="startAxisStyle" format="reference" />
