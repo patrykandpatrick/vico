@@ -16,16 +16,14 @@
 
 package com.patrykandpatrick.vico.core.cartesian.model
 
-import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.extension.mapWithPrevious
 import com.patrykandpatrick.vico.core.common.extension.orZero
 import com.patrykandpatrick.vico.core.common.extension.rangeOf
 import com.patrykandpatrick.vico.core.common.extension.rangeOfRanged
 
-/**
- * Stores a [ColumnCartesianLayer]’s data.
- */
+/** Stores a [CandlestickCartesianLayer]’s data. */
 public class CandlestickCartesianLayerModel : CartesianLayerModel {
     /**
      * The series (lists of [TypedEntry] instances).
