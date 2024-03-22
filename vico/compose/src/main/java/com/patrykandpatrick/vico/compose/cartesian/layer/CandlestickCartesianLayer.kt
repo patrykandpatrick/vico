@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 @Composable
 public fun rememberCandlestickCartesianLayer(
     config: CandlestickCartesianLayer.Config = CandlestickCartesianLayer.Config.rememberStandard(),
-    minRealBodyHeight: Dp = Defaults.REAL_BODY_MIN_HEIGHT_DP.dp,
+    minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
     spacing: Dp = Defaults.CANDLESTICK_CHART_DEFAULT_SPACING_DP.dp,
     verticalAxisPosition: AxisPosition.Vertical? = null,
     drawingModelInterpolator: DrawingModelInterpolator<
@@ -41,7 +41,7 @@ public fun rememberCandlestickCartesianLayer(
 ): CandlestickCartesianLayer =
     remember { CandlestickCartesianLayer(config) }.apply {
         this.config = config
-        this.minRealBodyHeightDp = minRealBodyHeight.value
+        minCandleBodyHeightDp = minCandleBodyHeight.value
         this.spacingDp = spacing.value
         this.verticalAxisPosition = verticalAxisPosition
         this.drawingModelInterpolator = drawingModelInterpolator

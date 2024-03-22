@@ -33,19 +33,19 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 @Composable
 private fun Candle.Companion.sharpFilledCandle(
     color: Color,
-    thickness: Dp = Defaults.REAL_BODY_WIDTH_DP.dp,
+    thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
 ): Candle {
     val filledBody = rememberLineComponent(color, thickness)
 
     return remember(filledBody) {
-        Candle(realBody = filledBody)
+        Candle(body = filledBody)
     }
 }
 
 @Composable
 private fun Candle.Companion.sharpHollowCandle(
     color: Color,
-    thickness: Dp = Defaults.REAL_BODY_WIDTH_DP.dp,
+    thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
     strokeWidth: Dp = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
 ): Candle {
     val hollowBody =
@@ -57,7 +57,7 @@ private fun Candle.Companion.sharpHollowCandle(
         )
 
     return remember(hollowBody) {
-        Candle(realBody = hollowBody)
+        Candle(body = hollowBody)
     }
 }
 
@@ -65,9 +65,9 @@ private fun Candle.Companion.sharpHollowCandle(
 private fun Candle.copyWithColor(color: Color) =
     remember(color) {
         Candle(
-            realBody = realBody.copyWithColor(color),
-            upperWick = upperWick.copyWithColor(color),
-            lowerWick = lowerWick.copyWithColor(color),
+            body = body.copyWithColor(color),
+            topWick = topWick.copyWithColor(color),
+            bottomWick = bottomWick.copyWithColor(color),
         )
     }
 

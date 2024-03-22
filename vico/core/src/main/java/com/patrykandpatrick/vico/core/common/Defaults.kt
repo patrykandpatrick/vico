@@ -43,8 +43,8 @@ public object Defaults {
     public const val COLUMN_INSIDE_SPACING: Float = 8f
     public const val COLUMN_OUTSIDE_SPACING: Float = 32f
     public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
-    public const val REAL_BODY_WIDTH_DP: Float = 8f
-    public const val REAL_BODY_MIN_HEIGHT_DP: Float = 4f
+    public const val CANDLE_BODY_WIDTH_DP: Float = 8f
+    public const val MIN_CANDLE_BODY_HEIGHT_DP: Float = 4f
     public const val WICK_DEFAULT_WIDTH_DP: Float = 2f
     public const val HOLLOW_CANDLE_STROKE_WIDTH_DP: Float = 2f
     public const val CANDLESTICK_CHART_DEFAULT_SPACING_DP: Float = 16f

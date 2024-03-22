@@ -27,15 +27,15 @@ import com.patrykandpatrick.vico.views.common.extension.defaultColors
 
 private fun Candle.Companion.sharpFilledCandle(
     color: Int,
-    thicknessDp: Float = Defaults.REAL_BODY_WIDTH_DP,
+    thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
 ): Candle {
     val filledBody = LineComponent(color, thicknessDp)
-    return Candle(realBody = filledBody)
+    return Candle(body = filledBody)
 }
 
 private fun Candle.Companion.sharpHollowCandle(
     color: Int,
-    thicknessDp: Float = Defaults.REAL_BODY_WIDTH_DP,
+    thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
     strokeWidthDp: Float = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP,
 ): Candle {
     val hollowBody =
@@ -46,14 +46,14 @@ private fun Candle.Companion.sharpHollowCandle(
             strokeColor = color,
         )
 
-    return Candle(realBody = hollowBody)
+    return Candle(body = hollowBody)
 }
 
 private fun Candle.copyWithColor(color: Int) =
     Candle(
-        realBody = realBody.copyWithColor(color),
-        upperWick = upperWick.copyWithColor(color),
-        lowerWick = lowerWick.copyWithColor(color),
+        body = body.copyWithColor(color),
+        topWick = topWick.copyWithColor(color),
+        bottomWick = bottomWick.copyWithColor(color),
     )
 
 private fun LineComponent.copyWithColor(color: Int) =

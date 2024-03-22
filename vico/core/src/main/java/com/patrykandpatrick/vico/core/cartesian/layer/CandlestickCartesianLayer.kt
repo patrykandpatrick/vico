@@ -47,7 +47,7 @@ import kotlin.math.abs
  * [CandlestickCartesianLayer] displays data as vertical bars. It can draw multiple columns per segment.
  *
  * @param config TODO
- * @param minRealBodyHeightDp TODO
+ * @param minCandleBodyHeightDp TODO
  * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
  * segments that contain a single column only.
  * @param verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
@@ -55,7 +55,7 @@ import kotlin.math.abs
  */
 public open class CandlestickCartesianLayer(
     public var config: Config,
-    public var minRealBodyHeightDp: Float = Defaults.REAL_BODY_MIN_HEIGHT_DP,
+    public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
     public var spacingDp: Float = Defaults.CANDLESTICK_CHART_DEFAULT_SPACING_DP,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var drawingModelInterpolator: DrawingModelInterpolator<
@@ -66,21 +66,21 @@ public open class CandlestickCartesianLayer(
     /**
      * TODO
      *
-     * @param realBody TODO
-     * @param upperWick TODO
-     * @param lowerWick TODO
+     * @param body TODO
+     * @param topWick TODO
+     * @param bottomWick TODO
      */
     public data class Candle(
-        public val realBody: LineComponent,
-        public val upperWick: LineComponent = realBody.copyAsWick(),
-        public val lowerWick: LineComponent = upperWick,
+        public val body: LineComponent,
+        public val topWick: LineComponent = body.copyAsWick(),
+        public val bottomWick: LineComponent = topWick,
     ) {
         internal val thicknessDp
             get() =
                 maxOf(
-                    realBody.thicknessDp,
-                    upperWick.thicknessDp,
-                    lowerWick.thicknessDp,
+                    body.thicknessDp,
+                    topWick.thicknessDp,
+                    bottomWick.thicknessDp,
                 )
 
         // Empty companion object is needed for extension functions.
@@ -133,7 +133,7 @@ public open class CandlestickCartesianLayer(
         var closeY: Float
         val zeroLineYFraction = drawingModel?.zeroY ?: abs(yRange.minY / yRange.length)
         val zeroLinePosition = (bounds.bottom + zeroLineYFraction * bounds.height()).round
-        val minRealBodyHeight = minRealBodyHeightDp.pixels
+        val minBodyHeight = minCandleBodyHeightDp.pixels
 
         model.series.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { index, entry, _ ->
             candle = config.getCandle(entry.type)
@@ -151,12 +151,12 @@ public open class CandlestickCartesianLayer(
             openY = (zeroLinePosition - open * bounds.height()).round
             closeY = (zeroLinePosition - close * bounds.height()).round
 
-            if (openY - closeY < minRealBodyHeight) {
-                openY = (openY + closeY).half + minRealBodyHeight.half
-                closeY = openY - minRealBodyHeight
+            if (openY - closeY < minBodyHeight) {
+                openY = (openY + closeY).half + minBodyHeight.half
+                closeY = openY - minBodyHeight
             }
 
-            if (candle.realBody.intersectsVertical(
+            if (candle.body.intersectsVertical(
                     context = this,
                     top = closeY,
                     bottom = openY,
@@ -169,13 +169,13 @@ public open class CandlestickCartesianLayer(
                     entry = entry,
                     entryX = bodyCenterX,
                     entryY = zeroLinePosition - (entry.high + (entry.low - entry.high) / 2) * heightMultiplier,
-                    realBody = candle.realBody,
+                    body = candle.body,
                     entryIndex = index,
                 )
 
-                candle.realBody.drawVertical(this, closeY, openY, bodyCenterX, zoom)
+                candle.body.drawVertical(this, closeY, openY, bodyCenterX, zoom)
 
-                candle.upperWick.drawVertical(
+                candle.topWick.drawVertical(
                     context = this,
                     top = (zeroLinePosition - high * bounds.height()).round,
                     bottom = closeY,
@@ -183,7 +183,7 @@ public open class CandlestickCartesianLayer(
                     thicknessScale = zoom,
                 )
 
-                candle.lowerWick.drawVertical(
+                candle.bottomWick.drawVertical(
                     context = this,
                     top = openY,
                     bottom = (zeroLinePosition - low * bounds.height()).round,
@@ -199,14 +199,14 @@ public open class CandlestickCartesianLayer(
         entryX: Float,
         entryY: Float,
         entryIndex: Int,
-        realBody: LineComponent,
+        body: LineComponent,
     ) {
         if (entryX in bounds.left..bounds.right) {
             entryLocationMap.put(
                 x = entryX,
                 y = entryY.coerceIn(bounds.top, bounds.bottom),
                 entry = entry,
-                color = realBody.solidOrStrokeColor,
+                color = body.solidOrStrokeColor,
                 index = entryIndex,
             )
         }
@@ -327,15 +327,15 @@ public open class CandlestickCartesianLayer(
         internal val maxThicknessDp
             get() =
                 maxOf(
-                    absolutelyIncreasingRelativelyIncreasing.realBody.thicknessDp,
-                    absolutelyIncreasingRelativelyZero.realBody.thicknessDp,
-                    absolutelyIncreasingRelativelyDecreasing.realBody.thicknessDp,
-                    absolutelyZeroRelativelyIncreasing.realBody.thicknessDp,
-                    absolutelyZeroRelativelyZero.realBody.thicknessDp,
-                    absolutelyZeroRelativelyDecreasing.realBody.thicknessDp,
-                    absolutelyDecreasingRelativelyIncreasing.realBody.thicknessDp,
-                    absolutelyDecreasingRelativelyZero.realBody.thicknessDp,
-                    absolutelyDecreasingRelativelyDecreasing.realBody.thicknessDp,
+                    absolutelyIncreasingRelativelyIncreasing.body.thicknessDp,
+                    absolutelyIncreasingRelativelyZero.body.thicknessDp,
+                    absolutelyIncreasingRelativelyDecreasing.body.thicknessDp,
+                    absolutelyZeroRelativelyIncreasing.body.thicknessDp,
+                    absolutelyZeroRelativelyZero.body.thicknessDp,
+                    absolutelyZeroRelativelyDecreasing.body.thicknessDp,
+                    absolutelyDecreasingRelativelyIncreasing.body.thicknessDp,
+                    absolutelyDecreasingRelativelyZero.body.thicknessDp,
+                    absolutelyDecreasingRelativelyDecreasing.body.thicknessDp,
                 )
 
         internal fun getCandle(type: Type) =
