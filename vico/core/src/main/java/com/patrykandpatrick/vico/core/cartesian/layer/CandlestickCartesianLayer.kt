@@ -347,6 +347,7 @@ public open class CandlestickCartesianLayer(
     }
 }
 
+/** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun LineComponent.copyAsWick(): LineComponent =
     copy(
