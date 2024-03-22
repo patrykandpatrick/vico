@@ -27,6 +27,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.style.getDefaultColors
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
+import com.patrykandpatrick.vico.core.cartesian.layer.copyAsWick
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
@@ -34,42 +35,25 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 private fun Candle.Companion.sharpFilledCandle(
     color: Color,
     thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
-): Candle {
-    val filledBody = rememberLineComponent(color, thickness)
-
-    return remember(filledBody) {
-        Candle(body = filledBody)
-    }
-}
+) = rememberCandle(rememberLineComponent(color, thickness))
 
 @Composable
 private fun Candle.Companion.sharpHollowCandle(
     color: Color,
     thickness: Dp = Defaults.CANDLE_BODY_WIDTH_DP.dp,
     strokeWidth: Dp = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
-): Candle {
-    val hollowBody =
-        rememberLineComponent(
-            color = Color.Transparent,
-            thickness = thickness,
-            strokeWidth = strokeWidth,
-            strokeColor = color,
-        )
-
-    return remember(hollowBody) {
-        Candle(body = hollowBody)
-    }
-}
+) = rememberCandle(
+    rememberLineComponent(
+        color = Color.Transparent,
+        thickness = thickness,
+        strokeWidth = strokeWidth,
+        strokeColor = color,
+    ),
+)
 
 @Composable
 private fun Candle.copyWithColor(color: Color) =
-    remember(color) {
-        Candle(
-            body = body.copyWithColor(color),
-            topWick = topWick.copyWithColor(color),
-            bottomWick = bottomWick.copyWithColor(color),
-        )
-    }
+    rememberCandle(body.copyWithColor(color), topWick.copyWithColor(color), bottomWick.copyWithColor(color))
 
 private fun LineComponent.copyWithColor(color: Color) =
     copy(
@@ -84,6 +68,14 @@ private fun getAbsolutelyIncreasingRelativelyIncreasing() =
 @Composable
 private fun getAbsolutelyDecreasingRelativelyIncreasing() =
     Candle.sharpFilledCandle(Color(getDefaultColors().candlestickGreen))
+
+/** Creates and remembers a [CandlestickCartesianLayer.Candle]. */
+@Composable
+public fun rememberCandle(
+    body: LineComponent,
+    topWick: LineComponent = remember(body) { body.copyAsWick() },
+    bottomWick: LineComponent = topWick,
+): Candle = remember(body, topWick, bottomWick) { Candle(body, topWick, bottomWick) }
 
 /**
  * TODO
