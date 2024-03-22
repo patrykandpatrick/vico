@@ -41,8 +41,6 @@ import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.extension.getStart
 import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.extension.round
-import kotlin.math.abs
 
 /**
  * [CandlestickCartesianLayer] displays data as vertical bars. It can draw multiple columns per segment.
@@ -116,7 +114,6 @@ public open class CandlestickCartesianLayer(
         drawingModel: CandlestickCartesianLayerDrawingModel?,
     ) {
         val yRange = chartValues.getYRange(verticalAxisPosition)
-        val heightMultiplier = bounds.height() / yRange.length
 
         val drawingStart: Float =
             bounds.getStart(isLtr = isLtr) + (
@@ -126,41 +123,30 @@ public open class CandlestickCartesianLayer(
 
         var bodyCenterX: Float
         var candle: Candle
-        var open: Float
-        var close: Float
-        var low: Float
-        var high: Float
-        var openY: Float
-        var closeY: Float
-        val zeroLineYFraction = drawingModel?.zeroY ?: abs(yRange.minY / yRange.length)
-        val zeroLinePosition = (bounds.bottom + zeroLineYFraction * bounds.height()).round
         val minBodyHeight = minCandleBodyHeightDp.pixels
 
         model.series.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { index, entry, _ ->
             candle = config.getCandle(entry.type)
-            val candleInfo = drawingModel?.entries?.get(entry.x)
+            val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
 
             val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
             bodyCenterX = drawingStart + layoutDirectionMultiplier * horizontalDimensions.xSpacing *
                 xSpacingMultiplier + candle.thicknessDp.half.pixels * zoom
 
-            open = candleInfo?.open ?: (entry.open / yRange.length)
-            close = candleInfo?.close ?: (entry.close / yRange.length)
-            low = candleInfo?.low ?: (entry.low / yRange.length)
-            high = candleInfo?.high ?: (entry.high / yRange.length)
+            var bodyBottomY = bounds.bottom - candleInfo.bodyBottomY * bounds.height()
+            var bodyTopY = bounds.bottom - candleInfo.bodyTopY * bounds.height()
+            val bottomWickY = bounds.bottom - candleInfo.bottomWickY * bounds.height()
+            val topWickY = bounds.bottom - candleInfo.topWickY * bounds.height()
 
-            openY = (zeroLinePosition - open * bounds.height()).round
-            closeY = (zeroLinePosition - close * bounds.height()).round
-
-            if (openY - closeY < minBodyHeight) {
-                openY = (openY + closeY).half + minBodyHeight.half
-                closeY = openY - minBodyHeight
+            if (bodyBottomY - bodyTopY < minBodyHeight) {
+                bodyBottomY = (bodyBottomY + bodyTopY).half + minBodyHeight.half
+                bodyTopY = bodyBottomY - minBodyHeight
             }
 
             if (candle.body.intersectsVertical(
                     context = this,
-                    top = closeY,
-                    bottom = openY,
+                    top = bodyTopY,
+                    bottom = bodyBottomY,
                     centerX = bodyCenterX,
                     boundingBox = bounds,
                     thicknessScale = zoom,
@@ -169,25 +155,25 @@ public open class CandlestickCartesianLayer(
                 updateMarkerLocationMap(
                     entry = entry,
                     entryX = bodyCenterX,
-                    entryY = zeroLinePosition - (entry.high + (entry.low - entry.high) / 2) * heightMultiplier,
+                    entryY = (bodyBottomY + bodyTopY).half,
                     body = candle.body,
                     entryIndex = index,
                 )
 
-                candle.body.drawVertical(this, closeY, openY, bodyCenterX, zoom)
+                candle.body.drawVertical(this, bodyTopY, bodyBottomY, bodyCenterX, zoom)
 
                 candle.topWick.drawVertical(
                     context = this,
-                    top = (zeroLinePosition - high * bounds.height()).round,
-                    bottom = closeY,
+                    top = topWickY,
+                    bottom = bodyTopY,
                     centerX = bodyCenterX,
                     thicknessScale = zoom,
                 )
 
                 candle.bottomWick.drawVertical(
                     context = this,
-                    top = openY,
-                    bottom = (zeroLinePosition - low * bounds.height()).round,
+                    top = bodyBottomY,
+                    bottom = bottomWickY,
                     centerX = bodyCenterX,
                     thicknessScale = zoom,
                 )
@@ -279,25 +265,19 @@ public open class CandlestickCartesianLayer(
             ?: extraStore.remove(drawingModelKey)
     }
 
+    private fun CandlestickCartesianLayerModel.Entry.toCandleInfo(yRange: ChartValues.YRange) =
+        CandlestickCartesianLayerDrawingModel.CandleInfo(
+            bodyBottomY = (minOf(open, close) - yRange.minY) / yRange.length,
+            bodyTopY = (maxOf(open, close) - yRange.minY) / yRange.length,
+            bottomWickY = (low - yRange.minY) / yRange.length,
+            topWickY = (high - yRange.minY) / yRange.length,
+        )
+
     private fun CandlestickCartesianLayerModel.toDrawingModel(
         chartValues: ChartValues,
     ): CandlestickCartesianLayerDrawingModel {
         val yRange = chartValues.getYRange(verticalAxisPosition)
-        return series
-            .associate { entry ->
-                entry.x to
-                    CandlestickCartesianLayerDrawingModel.CandleInfo(
-                        low = entry.low / yRange.length,
-                        high = entry.high / yRange.length,
-                        open = entry.open / yRange.length,
-                        close = entry.close / yRange.length,
-                    )
-            }.let { candleInfo ->
-                CandlestickCartesianLayerDrawingModel(
-                    entries = candleInfo,
-                    zeroY = abs(yRange.minY / yRange.length),
-                )
-            }
+        return CandlestickCartesianLayerDrawingModel(series.associate { it.x to it.toCandleInfo(yRange) })
     }
 
     /**

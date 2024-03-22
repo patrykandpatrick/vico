@@ -26,7 +26,6 @@ import com.patrykandpatrick.vico.core.common.extension.orZero
  */
 public class CandlestickCartesianLayerDrawingModel(
     public val entries: Map<Float, CandleInfo>,
-    public val zeroY: Float,
     public val opacity: Float = 1f,
 ) : DrawingModel<CandlestickCartesianLayerDrawingModel.CandleInfo>(listOf(entries)) {
     override fun transform(
@@ -35,58 +34,58 @@ public class CandlestickCartesianLayerDrawingModel(
         fraction: Float,
     ): DrawingModel<CandleInfo> {
         val oldOpacity = (from as CandlestickCartesianLayerDrawingModel?)?.opacity.orZero
-        val oldZeroY = from?.zeroY ?: zeroY
         return CandlestickCartesianLayerDrawingModel(
             entries = drawingInfo.first(),
-            zeroY = oldZeroY.lerp(zeroY, fraction),
             opacity = oldOpacity.lerp(opacity, fraction),
         )
     }
 
     override fun equals(other: Any?): Boolean =
         this === other ||
-            other is CandlestickCartesianLayerDrawingModel &&
-            entries == other.entries &&
-            zeroY == other.zeroY &&
-            opacity == other.opacity
+            other is CandlestickCartesianLayerDrawingModel && entries == other.entries && opacity == other.opacity
 
-    override fun hashCode(): Int = entries.hashCode() * 31 + zeroY.hashCode() * 31 + opacity.hashCode() * 31
+    override fun hashCode(): Int = 31 * entries.hashCode() + opacity.hashCode()
 
     /**
      * Houses positional information for a [CandlestickCartesianLayer]’s column. TODO
      */
     public class CandleInfo(
-        public val low: Float,
-        public val high: Float,
-        public val open: Float,
-        public val close: Float,
+        public val bodyBottomY: Float,
+        public val bodyTopY: Float,
+        public val bottomWickY: Float,
+        public val topWickY: Float,
     ) : DrawingInfo {
         override fun transform(
             from: DrawingInfo?,
             fraction: Float,
         ): DrawingInfo {
             val old = from as? CandleInfo
-            val oldLow = old?.low.orZero
-            val oldHigh = old?.high.orZero
-            val oldOpen = old?.open.orZero
-            val oldClose = old?.close.orZero
+            val oldBodyBottomY = old?.bodyBottomY.orZero
+            val oldBodyTopY = old?.bodyTopY.orZero
+            val oldBottomWickY = old?.bottomWickY.orZero
+            val oldTopWickY = old?.topWickY.orZero
             return CandleInfo(
-                oldLow.lerp(low, fraction),
-                oldHigh.lerp(high, fraction),
-                oldOpen.lerp(open, fraction),
-                oldClose.lerp(close, fraction),
+                oldBodyBottomY.lerp(bodyBottomY, fraction),
+                oldBodyTopY.lerp(bodyTopY, fraction),
+                oldBottomWickY.lerp(bottomWickY, fraction),
+                oldTopWickY.lerp(topWickY, fraction),
             )
         }
 
         override fun equals(other: Any?): Boolean =
             this === other ||
                 other is CandleInfo &&
-                low == other.low &&
-                high == other.high &&
-                open == other.open &&
-                close == other.close
+                bodyBottomY == other.bodyBottomY &&
+                bodyTopY == other.bodyTopY &&
+                bottomWickY == other.bottomWickY &&
+                topWickY == other.topWickY
 
-        override fun hashCode(): Int =
-            low.hashCode() * 31 + high.hashCode() * 31 + open.hashCode() * 31 + close.hashCode() * 31
+        override fun hashCode(): Int {
+            var result = bodyBottomY.hashCode()
+            result = 31 * result + bodyTopY.hashCode()
+            result = 31 * result + bottomWickY.hashCode()
+            result = 31 * result + topWickY.hashCode()
+            return result
+        }
     }
 }
