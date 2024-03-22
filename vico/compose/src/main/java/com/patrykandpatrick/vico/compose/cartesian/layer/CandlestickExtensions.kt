@@ -30,11 +30,8 @@ import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
-/**
- * TODO
- */
 @Composable
-public fun Candle.Companion.sharpFilledCandle(
+private fun Candle.Companion.sharpFilledCandle(
     color: Color,
     thickness: Dp = Defaults.REAL_BODY_WIDTH_DP.dp,
 ): Candle {
@@ -45,11 +42,8 @@ public fun Candle.Companion.sharpFilledCandle(
     }
 }
 
-/**
- * TODO
- */
 @Composable
-public fun Candle.Companion.sharpHollowCandle(
+private fun Candle.Companion.sharpHollowCandle(
     color: Color,
     thickness: Dp = Defaults.REAL_BODY_WIDTH_DP.dp,
     strokeWidth: Dp = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP.dp,
@@ -67,11 +61,8 @@ public fun Candle.Companion.sharpHollowCandle(
     }
 }
 
-/**
- * TODO
- */
 @Composable
-public fun Candle.copyWithColor(color: Color): Candle =
+private fun Candle.copyWithColor(color: Color) =
     remember(color) {
         Candle(
             realBody = realBody.copyWithColor(color),
@@ -80,14 +71,19 @@ public fun Candle.copyWithColor(color: Color): Candle =
         )
     }
 
-/**
- * TODO
- */
-public fun LineComponent.copyWithColor(color: Color): LineComponent =
+private fun LineComponent.copyWithColor(color: Color) =
     copy(
         color = if (this.color == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
         strokeColor = if (this.strokeColor == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
     )
+
+@Composable
+private fun getAbsolutelyIncreasingRelativelyIncreasing() =
+    Candle.sharpHollowCandle(Color(getDefaultColors().candlestickGreen))
+
+@Composable
+private fun getAbsolutelyDecreasingRelativelyIncreasing() =
+    Candle.sharpFilledCandle(Color(getDefaultColors().candlestickGreen))
 
 /**
  * TODO
@@ -167,11 +163,3 @@ public fun CandlestickCartesianLayer.Config.Companion.rememberHollow(
             absolutelyDecreasingRelativelyDecreasing = absolutelyIncreasingRelativelyDecreasing,
         )
     }
-
-@Composable
-private fun getAbsolutelyIncreasingRelativelyIncreasing(): Candle =
-    Candle.sharpHollowCandle(color = Color(getDefaultColors().candlestickGreen))
-
-@Composable
-private fun getAbsolutelyDecreasingRelativelyIncreasing(): Candle =
-    Candle.sharpFilledCandle(color = Color(getDefaultColors().candlestickGreen))

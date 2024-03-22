@@ -25,10 +25,7 @@ import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
 
-/**
- * TODO
- */
-public fun Candle.Companion.sharpFilledCandle(
+private fun Candle.Companion.sharpFilledCandle(
     color: Int,
     thicknessDp: Float = Defaults.REAL_BODY_WIDTH_DP,
 ): Candle {
@@ -36,10 +33,7 @@ public fun Candle.Companion.sharpFilledCandle(
     return Candle(realBody = filledBody)
 }
 
-/**
- * TODO
- */
-public fun Candle.Companion.sharpHollowCandle(
+private fun Candle.Companion.sharpHollowCandle(
     color: Int,
     thicknessDp: Float = Defaults.REAL_BODY_WIDTH_DP,
     strokeWidthDp: Float = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP,
@@ -55,135 +49,125 @@ public fun Candle.Companion.sharpHollowCandle(
     return Candle(realBody = hollowBody)
 }
 
-/**
- * TODO
- */
-public fun Candle.copyWithColor(color: Int): Candle =
+private fun Candle.copyWithColor(color: Int) =
     Candle(
         realBody = realBody.copyWithColor(color),
         upperWick = upperWick.copyWithColor(color),
         lowerWick = lowerWick.copyWithColor(color),
     )
 
-/**
- * TODO
- */
-public fun LineComponent.copyWithColor(color: Int): LineComponent =
+private fun LineComponent.copyWithColor(color: Int) =
     copy(
         color = if (this.color == Color.TRANSPARENT) this.color else color,
         strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
     )
 
-public class CandlestickStandardConfigBuilder internal constructor(private val context: Context) :
-    CandlestickStandardConfigBuilderScope {
-        override var absolutelyIncreasing: Candle? = null
-        override var absolutelyZero: Candle? = null
-        override var absolutelyDecreasing: Candle? = null
+private fun getAbsolutelyIncreasingRelativelyIncreasing(colors: DefaultColors) =
+    Candle.sharpHollowCandle(colors.candlestickGreen.toInt())
 
-        internal fun build(): CandlestickCartesianLayer.Config {
-            val defaultColors = context.defaultColors
-            val absolutelyIncreasing =
-                absolutelyIncreasing ?: Candle.sharpFilledCandle(color = defaultColors.candlestickGreen.toInt())
-            val absolutelyZero =
-                absolutelyZero ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
-            val absolutelyDecreasing =
-                absolutelyDecreasing ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
+private fun getAbsolutelyDecreasingRelativelyIncreasing(colors: DefaultColors) =
+    Candle.sharpFilledCandle(colors.candlestickGreen.toInt())
 
-            return CandlestickCartesianLayer.Config(
-                absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasing,
-                absolutelyIncreasingRelativelyZero = absolutelyIncreasing,
-                absolutelyIncreasingRelativelyDecreasing = absolutelyIncreasing,
-                absolutelyZeroRelativelyIncreasing = absolutelyZero,
-                absolutelyZeroRelativelyZero = absolutelyZero,
-                absolutelyZeroRelativelyDecreasing = absolutelyZero,
-                absolutelyDecreasingRelativelyIncreasing = absolutelyDecreasing,
-                absolutelyDecreasingRelativelyZero = absolutelyDecreasing,
-                absolutelyDecreasingRelativelyDecreasing = absolutelyDecreasing,
-            )
-        }
+internal class CandlestickStandardConfigBuilder(private val context: Context) : CandlestickStandardConfigBuilderScope {
+    override var absolutelyIncreasing: Candle? = null
+    override var absolutelyZero: Candle? = null
+    override var absolutelyDecreasing: Candle? = null
+
+    internal fun build(): CandlestickCartesianLayer.Config {
+        val defaultColors = context.defaultColors
+        val absolutelyIncreasing =
+            absolutelyIncreasing ?: Candle.sharpFilledCandle(color = defaultColors.candlestickGreen.toInt())
+        val absolutelyZero = absolutelyZero ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
+        val absolutelyDecreasing =
+            absolutelyDecreasing ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
+
+        return CandlestickCartesianLayer.Config(
+            absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasing,
+            absolutelyIncreasingRelativelyZero = absolutelyIncreasing,
+            absolutelyIncreasingRelativelyDecreasing = absolutelyIncreasing,
+            absolutelyZeroRelativelyIncreasing = absolutelyZero,
+            absolutelyZeroRelativelyZero = absolutelyZero,
+            absolutelyZeroRelativelyDecreasing = absolutelyZero,
+            absolutelyDecreasingRelativelyIncreasing = absolutelyDecreasing,
+            absolutelyDecreasingRelativelyZero = absolutelyDecreasing,
+            absolutelyDecreasingRelativelyDecreasing = absolutelyDecreasing,
+        )
     }
-
-public interface CandlestickStandardConfigBuilderScope {
-    public var absolutelyIncreasing: Candle?
-    public var absolutelyZero: Candle?
-    public var absolutelyDecreasing: Candle?
 }
 
-public class CandlestickHollowConfigBuilder internal constructor(private val context: Context) :
-    CandlestickHollowConfigBuilderScope {
-        public override var absolutelyIncreasingRelativelyIncreasing: Candle? = null
-        public override var absolutelyIncreasingRelativelyZero: Candle? = null
-        public override var absolutelyIncreasingRelativelyDecreasing: Candle? = null
-        public override var absolutelyZeroRelativelyIncreasing: Candle? = null
-        public override var absolutelyZeroRelativelyZero: Candle? = null
-        public override var absolutelyZeroRelativelyDecreasing: Candle? = null
-        public override var absolutelyDecreasingRelativelyIncreasing: Candle? = null
-        public override var absolutelyDecreasingRelativelyZero: Candle? = null
-        public override var absolutelyDecreasingRelativelyDecreasing: Candle? = null
-
-        public fun build(): CandlestickCartesianLayer.Config {
-            val defaultColors = context.defaultColors
-            val absolutelyIncreasingRelativelyIncreasing: Candle =
-                absolutelyIncreasingRelativelyIncreasing ?: getAbsolutelyIncreasingRelativelyIncreasing(defaultColors)
-            val absolutelyIncreasingRelativelyZero: Candle =
-                absolutelyDecreasingRelativelyZero
-                    ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
-            val absolutelyIncreasingRelativelyDecreasing: Candle =
-                absolutelyIncreasingRelativelyDecreasing
-                    ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
-            val absolutelyZeroRelativelyIncreasing: Candle =
-                absolutelyZeroRelativelyIncreasing ?: absolutelyIncreasingRelativelyIncreasing
-            val absolutelyZeroRelativelyZero: Candle =
-                absolutelyZeroRelativelyZero ?: absolutelyIncreasingRelativelyZero
-            val absolutelyZeroRelativelyDecreasing: Candle =
-                absolutelyZeroRelativelyDecreasing ?: absolutelyIncreasingRelativelyDecreasing
-            val absolutelyDecreasingRelativelyIncreasing: Candle =
-                absolutelyDecreasingRelativelyIncreasing ?: getAbsolutelyDecreasingRelativelyIncreasing(defaultColors)
-            val absolutelyDecreasingRelativelyZero: Candle =
-                absolutelyDecreasingRelativelyZero
-                    ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
-            val absolutelyDecreasingRelativelyDecreasing: Candle =
-                absolutelyDecreasingRelativelyDecreasing
-                    ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
-
-            return CandlestickCartesianLayer.Config(
-                absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasingRelativelyIncreasing,
-                absolutelyIncreasingRelativelyZero = absolutelyIncreasingRelativelyZero,
-                absolutelyIncreasingRelativelyDecreasing = absolutelyIncreasingRelativelyDecreasing,
-                absolutelyZeroRelativelyIncreasing = absolutelyZeroRelativelyIncreasing,
-                absolutelyZeroRelativelyZero = absolutelyZeroRelativelyZero,
-                absolutelyZeroRelativelyDecreasing = absolutelyZeroRelativelyDecreasing,
-                absolutelyDecreasingRelativelyIncreasing = absolutelyDecreasingRelativelyIncreasing,
-                absolutelyDecreasingRelativelyZero = absolutelyDecreasingRelativelyZero,
-                absolutelyDecreasingRelativelyDecreasing = absolutelyDecreasingRelativelyDecreasing,
-            )
-        }
-    }
-
-public interface CandlestickHollowConfigBuilderScope {
-    public var absolutelyIncreasingRelativelyIncreasing: Candle?
-    public var absolutelyIncreasingRelativelyZero: Candle?
-    public var absolutelyIncreasingRelativelyDecreasing: Candle?
-    public var absolutelyZeroRelativelyIncreasing: Candle?
-    public var absolutelyZeroRelativelyZero: Candle?
-    public var absolutelyZeroRelativelyDecreasing: Candle?
-    public var absolutelyDecreasingRelativelyIncreasing: Candle?
-    public var absolutelyDecreasingRelativelyZero: Candle?
-    public var absolutelyDecreasingRelativelyDecreasing: Candle?
+internal interface CandlestickStandardConfigBuilderScope {
+    var absolutelyIncreasing: Candle?
+    var absolutelyZero: Candle?
+    var absolutelyDecreasing: Candle?
 }
 
-public fun CandlestickCartesianLayer.Config.Companion.standardBuilder(
+internal class CandlestickHollowConfigBuilder(private val context: Context) : CandlestickHollowConfigBuilderScope {
+    override var absolutelyIncreasingRelativelyIncreasing: Candle? = null
+    override var absolutelyIncreasingRelativelyZero: Candle? = null
+    override var absolutelyIncreasingRelativelyDecreasing: Candle? = null
+    override var absolutelyZeroRelativelyIncreasing: Candle? = null
+    override var absolutelyZeroRelativelyZero: Candle? = null
+    override var absolutelyZeroRelativelyDecreasing: Candle? = null
+    override var absolutelyDecreasingRelativelyIncreasing: Candle? = null
+    override var absolutelyDecreasingRelativelyZero: Candle? = null
+    override var absolutelyDecreasingRelativelyDecreasing: Candle? = null
+
+    fun build(): CandlestickCartesianLayer.Config {
+        val defaultColors = context.defaultColors
+        val absolutelyIncreasingRelativelyIncreasing: Candle =
+            absolutelyIncreasingRelativelyIncreasing ?: getAbsolutelyIncreasingRelativelyIncreasing(defaultColors)
+        val absolutelyIncreasingRelativelyZero: Candle =
+            absolutelyDecreasingRelativelyZero
+                ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
+        val absolutelyIncreasingRelativelyDecreasing: Candle =
+            absolutelyIncreasingRelativelyDecreasing
+                ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
+        val absolutelyZeroRelativelyIncreasing: Candle =
+            absolutelyZeroRelativelyIncreasing ?: absolutelyIncreasingRelativelyIncreasing
+        val absolutelyZeroRelativelyZero: Candle = absolutelyZeroRelativelyZero ?: absolutelyIncreasingRelativelyZero
+        val absolutelyZeroRelativelyDecreasing: Candle =
+            absolutelyZeroRelativelyDecreasing ?: absolutelyIncreasingRelativelyDecreasing
+        val absolutelyDecreasingRelativelyIncreasing: Candle =
+            absolutelyDecreasingRelativelyIncreasing ?: getAbsolutelyDecreasingRelativelyIncreasing(defaultColors)
+        val absolutelyDecreasingRelativelyZero: Candle =
+            absolutelyDecreasingRelativelyZero
+                ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
+        val absolutelyDecreasingRelativelyDecreasing: Candle =
+            absolutelyDecreasingRelativelyDecreasing
+                ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
+
+        return CandlestickCartesianLayer.Config(
+            absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasingRelativelyIncreasing,
+            absolutelyIncreasingRelativelyZero = absolutelyIncreasingRelativelyZero,
+            absolutelyIncreasingRelativelyDecreasing = absolutelyIncreasingRelativelyDecreasing,
+            absolutelyZeroRelativelyIncreasing = absolutelyZeroRelativelyIncreasing,
+            absolutelyZeroRelativelyZero = absolutelyZeroRelativelyZero,
+            absolutelyZeroRelativelyDecreasing = absolutelyZeroRelativelyDecreasing,
+            absolutelyDecreasingRelativelyIncreasing = absolutelyDecreasingRelativelyIncreasing,
+            absolutelyDecreasingRelativelyZero = absolutelyDecreasingRelativelyZero,
+            absolutelyDecreasingRelativelyDecreasing = absolutelyDecreasingRelativelyDecreasing,
+        )
+    }
+}
+
+internal interface CandlestickHollowConfigBuilderScope {
+    var absolutelyIncreasingRelativelyIncreasing: Candle?
+    var absolutelyIncreasingRelativelyZero: Candle?
+    var absolutelyIncreasingRelativelyDecreasing: Candle?
+    var absolutelyZeroRelativelyIncreasing: Candle?
+    var absolutelyZeroRelativelyZero: Candle?
+    var absolutelyZeroRelativelyDecreasing: Candle?
+    var absolutelyDecreasingRelativelyIncreasing: Candle?
+    var absolutelyDecreasingRelativelyZero: Candle?
+    var absolutelyDecreasingRelativelyDecreasing: Candle?
+}
+
+internal fun CandlestickCartesianLayer.Config.Companion.standardBuilder(
     context: Context,
     block: CandlestickStandardConfigBuilderScope.() -> Unit = {},
-): CandlestickCartesianLayer.Config = CandlestickStandardConfigBuilder(context).apply(block).build()
+) = CandlestickStandardConfigBuilder(context).apply(block).build()
 
-public fun CandlestickCartesianLayer.Config.Companion.hollowBuilder(
+internal fun CandlestickCartesianLayer.Config.Companion.hollowBuilder(
     context: Context,
     block: CandlestickHollowConfigBuilderScope.() -> Unit = {},
-): CandlestickCartesianLayer.Config = CandlestickHollowConfigBuilder(context).apply(block).build()
-
-private fun getAbsolutelyIncreasingRelativelyIncreasing(colors: DefaultColors): Candle =
-    Candle.sharpHollowCandle(color = colors.candlestickGreen.toInt())
-
-private fun getAbsolutelyDecreasingRelativelyIncreasing(colors: DefaultColors): Candle =
-    Candle.sharpFilledCandle(color = colors.candlestickGreen.toInt())
+) = CandlestickHollowConfigBuilder(context).apply(block).build()
