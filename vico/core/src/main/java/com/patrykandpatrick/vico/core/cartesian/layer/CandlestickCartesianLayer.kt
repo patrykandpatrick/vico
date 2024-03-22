@@ -75,10 +75,7 @@ public open class CandlestickCartesianLayer(
         public val upperWick: LineComponent = realBody.copyAsWick(),
         public val lowerWick: LineComponent = upperWick,
     ) {
-        /**
-         * Returns the maximum thickness among all of the candle components.
-         */
-        val thicknessDp: Float
+        internal val thicknessDp
             get() =
                 maxOf(
                     realBody.thicknessDp,
