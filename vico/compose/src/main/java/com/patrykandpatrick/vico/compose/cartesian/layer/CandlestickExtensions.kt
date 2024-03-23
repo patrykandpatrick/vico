@@ -144,14 +144,14 @@ public fun CandlestickCartesianLayer.Config.Companion.rememberHollow(
         absolutelyDecreasingRelativelyDecreasing,
     ) {
         CandlestickCartesianLayer.Config(
-            absolutelyIncreasingRelativelyIncreasing = absolutelyDecreasingRelativelyIncreasing,
-            absolutelyIncreasingRelativelyZero = absolutelyDecreasingRelativelyZero,
-            absolutelyIncreasingRelativelyDecreasing = absolutelyDecreasingRelativelyDecreasing,
-            absolutelyZeroRelativelyIncreasing = absolutelyZeroRelativelyIncreasing,
-            absolutelyZeroRelativelyZero = absolutelyZeroRelativelyZero,
-            absolutelyZeroRelativelyDecreasing = absolutelyZeroRelativelyDecreasing,
-            absolutelyDecreasingRelativelyIncreasing = absolutelyIncreasingRelativelyIncreasing,
-            absolutelyDecreasingRelativelyZero = absolutelyIncreasingRelativelyZero,
-            absolutelyDecreasingRelativelyDecreasing = absolutelyIncreasingRelativelyDecreasing,
+            absolutelyIncreasingRelativelyIncreasing,
+            absolutelyIncreasingRelativelyZero,
+            absolutelyIncreasingRelativelyDecreasing,
+            absolutelyZeroRelativelyIncreasing,
+            absolutelyZeroRelativelyZero,
+            absolutelyZeroRelativelyDecreasing,
+            absolutelyDecreasingRelativelyIncreasing,
+            absolutelyDecreasingRelativelyZero,
+            absolutelyDecreasingRelativelyDecreasing,
         )
     }

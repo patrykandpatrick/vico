@@ -324,7 +324,7 @@ public open class CandlestickCartesianLayer(
                 Change.Increase ->
                     when (type.relativeChange) {
                         Change.Increase -> absolutelyIncreasingRelativelyIncreasing
-                        Change.Decrease -> absolutelyDecreasingRelativelyDecreasing
+                        Change.Decrease -> absolutelyIncreasingRelativelyDecreasing
                         Change.Zero -> absolutelyIncreasingRelativelyZero
                     }
 
@@ -338,7 +338,7 @@ public open class CandlestickCartesianLayer(
                 Change.Zero ->
                     when (type.relativeChange) {
                         Change.Increase -> absolutelyZeroRelativelyIncreasing
-                        Change.Decrease -> absolutelyDecreasingRelativelyZero
+                        Change.Decrease -> absolutelyZeroRelativelyDecreasing
                         Change.Zero -> absolutelyZeroRelativelyZero
                     }
             }
