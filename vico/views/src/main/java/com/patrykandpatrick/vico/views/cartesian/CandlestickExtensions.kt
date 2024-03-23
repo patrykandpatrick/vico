@@ -62,104 +62,106 @@ private fun LineComponent.copyWithColor(color: Int) =
         strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
     )
 
-private fun getAbsolutelyIncreasingRelativelyIncreasing(colors: DefaultColors) =
+private fun getAbsolutelyBullishRelativelyBullish(colors: DefaultColors) =
     Candle.sharpHollowCandle(colors.candlestickGreen.toInt())
 
-private fun getAbsolutelyDecreasingRelativelyIncreasing(colors: DefaultColors) =
+private fun getAbsolutelyBearishRelativelyBullish(colors: DefaultColors) =
     Candle.sharpFilledCandle(colors.candlestickGreen.toInt())
 
 internal class CandlestickStandardConfigBuilder(private val context: Context) : CandlestickStandardConfigBuilderScope {
-    override var absolutelyIncreasing: Candle? = null
-    override var absolutelyZero: Candle? = null
-    override var absolutelyDecreasing: Candle? = null
+    override var absolutelyBullish: Candle? = null
+    override var absolutelyNeutral: Candle? = null
+    override var absolutelyBearish: Candle? = null
 
     internal fun build(): CandlestickCartesianLayer.Config {
         val defaultColors = context.defaultColors
-        val absolutelyIncreasing =
-            absolutelyIncreasing ?: Candle.sharpFilledCandle(color = defaultColors.candlestickGreen.toInt())
-        val absolutelyZero = absolutelyZero ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
-        val absolutelyDecreasing =
-            absolutelyDecreasing ?: absolutelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
+        val absolutelyBullish =
+            absolutelyBullish ?: Candle.sharpFilledCandle(color = defaultColors.candlestickGreen.toInt())
+        val absolutelyNeutral =
+            absolutelyNeutral ?: absolutelyBullish.copyWithColor(defaultColors.candlestickGray.toInt())
+        val absolutelyBearish =
+            absolutelyBearish ?: absolutelyBullish.copyWithColor(defaultColors.candlestickRed.toInt())
 
         return CandlestickCartesianLayer.Config(
-            absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasing,
-            absolutelyIncreasingRelativelyZero = absolutelyIncreasing,
-            absolutelyIncreasingRelativelyDecreasing = absolutelyIncreasing,
-            absolutelyZeroRelativelyIncreasing = absolutelyZero,
-            absolutelyZeroRelativelyZero = absolutelyZero,
-            absolutelyZeroRelativelyDecreasing = absolutelyZero,
-            absolutelyDecreasingRelativelyIncreasing = absolutelyDecreasing,
-            absolutelyDecreasingRelativelyZero = absolutelyDecreasing,
-            absolutelyDecreasingRelativelyDecreasing = absolutelyDecreasing,
+            absolutelyBullishRelativelyBullish = absolutelyBullish,
+            absolutelyBullishRelativelyNeutral = absolutelyBullish,
+            absolutelyBullishRelativelyBearish = absolutelyBullish,
+            absolutelyNeutralRelativelyBullish = absolutelyNeutral,
+            absolutelyNeutralRelativelyNeutral = absolutelyNeutral,
+            absolutelyNeutralRelativelyBearish = absolutelyNeutral,
+            absolutelyBearishRelativelyBullish = absolutelyBearish,
+            absolutelyBearishRelativelyNeutral = absolutelyBearish,
+            absolutelyBearishRelativelyBearish = absolutelyBearish,
         )
     }
 }
 
 internal interface CandlestickStandardConfigBuilderScope {
-    var absolutelyIncreasing: Candle?
-    var absolutelyZero: Candle?
-    var absolutelyDecreasing: Candle?
+    var absolutelyBullish: Candle?
+    var absolutelyNeutral: Candle?
+    var absolutelyBearish: Candle?
 }
 
 internal class CandlestickHollowConfigBuilder(private val context: Context) : CandlestickHollowConfigBuilderScope {
-    override var absolutelyIncreasingRelativelyIncreasing: Candle? = null
-    override var absolutelyIncreasingRelativelyZero: Candle? = null
-    override var absolutelyIncreasingRelativelyDecreasing: Candle? = null
-    override var absolutelyZeroRelativelyIncreasing: Candle? = null
-    override var absolutelyZeroRelativelyZero: Candle? = null
-    override var absolutelyZeroRelativelyDecreasing: Candle? = null
-    override var absolutelyDecreasingRelativelyIncreasing: Candle? = null
-    override var absolutelyDecreasingRelativelyZero: Candle? = null
-    override var absolutelyDecreasingRelativelyDecreasing: Candle? = null
+    override var absolutelyBullishRelativelyBullish: Candle? = null
+    override var absolutelyBullishRelativelyNeutral: Candle? = null
+    override var absolutelyBullishRelativelyBearish: Candle? = null
+    override var absolutelyNeutralRelativelyBullish: Candle? = null
+    override var absolutelyNeutralRelativelyNeutral: Candle? = null
+    override var absolutelyNeutralRelativelyBearish: Candle? = null
+    override var absolutelyBearishRelativelyBullish: Candle? = null
+    override var absolutelyBearishRelativelyNeutral: Candle? = null
+    override var absolutelyBearishRelativelyBearish: Candle? = null
 
     fun build(): CandlestickCartesianLayer.Config {
         val defaultColors = context.defaultColors
-        val absolutelyIncreasingRelativelyIncreasing: Candle =
-            absolutelyIncreasingRelativelyIncreasing ?: getAbsolutelyIncreasingRelativelyIncreasing(defaultColors)
-        val absolutelyIncreasingRelativelyZero: Candle =
-            absolutelyDecreasingRelativelyZero
-                ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
-        val absolutelyIncreasingRelativelyDecreasing: Candle =
-            absolutelyIncreasingRelativelyDecreasing
-                ?: absolutelyIncreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
-        val absolutelyZeroRelativelyIncreasing: Candle =
-            absolutelyZeroRelativelyIncreasing ?: absolutelyIncreasingRelativelyIncreasing
-        val absolutelyZeroRelativelyZero: Candle = absolutelyZeroRelativelyZero ?: absolutelyIncreasingRelativelyZero
-        val absolutelyZeroRelativelyDecreasing: Candle =
-            absolutelyZeroRelativelyDecreasing ?: absolutelyIncreasingRelativelyDecreasing
-        val absolutelyDecreasingRelativelyIncreasing: Candle =
-            absolutelyDecreasingRelativelyIncreasing ?: getAbsolutelyDecreasingRelativelyIncreasing(defaultColors)
-        val absolutelyDecreasingRelativelyZero: Candle =
-            absolutelyDecreasingRelativelyZero
-                ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickGray.toInt())
-        val absolutelyDecreasingRelativelyDecreasing: Candle =
-            absolutelyDecreasingRelativelyDecreasing
-                ?: absolutelyDecreasingRelativelyIncreasing.copyWithColor(defaultColors.candlestickRed.toInt())
+        val absolutelyBullishRelativelyBullish: Candle =
+            absolutelyBullishRelativelyBullish ?: getAbsolutelyBullishRelativelyBullish(defaultColors)
+        val absolutelyBullishRelativelyNeutral: Candle =
+            absolutelyBearishRelativelyNeutral
+                ?: absolutelyBullishRelativelyBullish.copyWithColor(defaultColors.candlestickGray.toInt())
+        val absolutelyBullishRelativelyBearish: Candle =
+            absolutelyBullishRelativelyBearish
+                ?: absolutelyBullishRelativelyBullish.copyWithColor(defaultColors.candlestickRed.toInt())
+        val absolutelyNeutralRelativelyBullish: Candle =
+            absolutelyNeutralRelativelyBullish ?: absolutelyBullishRelativelyBullish
+        val absolutelyNeutralRelativelyNeutral: Candle =
+            absolutelyNeutralRelativelyNeutral ?: absolutelyBullishRelativelyNeutral
+        val absolutelyNeutralRelativelyBearish: Candle =
+            absolutelyNeutralRelativelyBearish ?: absolutelyBullishRelativelyBearish
+        val absolutelyBearishRelativelyBullish: Candle =
+            absolutelyBearishRelativelyBullish ?: getAbsolutelyBearishRelativelyBullish(defaultColors)
+        val absolutelyBearishRelativelyNeutral: Candle =
+            absolutelyBearishRelativelyNeutral
+                ?: absolutelyBearishRelativelyBullish.copyWithColor(defaultColors.candlestickGray.toInt())
+        val absolutelyBearishRelativelyBearish: Candle =
+            absolutelyBearishRelativelyBearish
+                ?: absolutelyBearishRelativelyBullish.copyWithColor(defaultColors.candlestickRed.toInt())
 
         return CandlestickCartesianLayer.Config(
-            absolutelyIncreasingRelativelyIncreasing = absolutelyIncreasingRelativelyIncreasing,
-            absolutelyIncreasingRelativelyZero = absolutelyIncreasingRelativelyZero,
-            absolutelyIncreasingRelativelyDecreasing = absolutelyIncreasingRelativelyDecreasing,
-            absolutelyZeroRelativelyIncreasing = absolutelyZeroRelativelyIncreasing,
-            absolutelyZeroRelativelyZero = absolutelyZeroRelativelyZero,
-            absolutelyZeroRelativelyDecreasing = absolutelyZeroRelativelyDecreasing,
-            absolutelyDecreasingRelativelyIncreasing = absolutelyDecreasingRelativelyIncreasing,
-            absolutelyDecreasingRelativelyZero = absolutelyDecreasingRelativelyZero,
-            absolutelyDecreasingRelativelyDecreasing = absolutelyDecreasingRelativelyDecreasing,
+            absolutelyBullishRelativelyBullish = absolutelyBullishRelativelyBullish,
+            absolutelyBullishRelativelyNeutral = absolutelyBullishRelativelyNeutral,
+            absolutelyBullishRelativelyBearish = absolutelyBullishRelativelyBearish,
+            absolutelyNeutralRelativelyBullish = absolutelyNeutralRelativelyBullish,
+            absolutelyNeutralRelativelyNeutral = absolutelyNeutralRelativelyNeutral,
+            absolutelyNeutralRelativelyBearish = absolutelyNeutralRelativelyBearish,
+            absolutelyBearishRelativelyBullish = absolutelyBearishRelativelyBullish,
+            absolutelyBearishRelativelyNeutral = absolutelyBearishRelativelyNeutral,
+            absolutelyBearishRelativelyBearish = absolutelyBearishRelativelyBearish,
         )
     }
 }
 
 internal interface CandlestickHollowConfigBuilderScope {
-    var absolutelyIncreasingRelativelyIncreasing: Candle?
-    var absolutelyIncreasingRelativelyZero: Candle?
-    var absolutelyIncreasingRelativelyDecreasing: Candle?
-    var absolutelyZeroRelativelyIncreasing: Candle?
-    var absolutelyZeroRelativelyZero: Candle?
-    var absolutelyZeroRelativelyDecreasing: Candle?
-    var absolutelyDecreasingRelativelyIncreasing: Candle?
-    var absolutelyDecreasingRelativelyZero: Candle?
-    var absolutelyDecreasingRelativelyDecreasing: Candle?
+    var absolutelyBullishRelativelyBullish: Candle?
+    var absolutelyBullishRelativelyNeutral: Candle?
+    var absolutelyBullishRelativelyBearish: Candle?
+    var absolutelyNeutralRelativelyBullish: Candle?
+    var absolutelyNeutralRelativelyNeutral: Candle?
+    var absolutelyNeutralRelativelyBearish: Candle?
+    var absolutelyBearishRelativelyBullish: Candle?
+    var absolutelyBearishRelativelyNeutral: Candle?
+    var absolutelyBearishRelativelyBearish: Candle?
 }
 
 internal fun CandlestickCartesianLayer.Config.Companion.standardBuilder(

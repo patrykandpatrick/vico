@@ -282,63 +282,63 @@ public open class CandlestickCartesianLayer(
     /**
      * TODO
      *
-     * @param absolutelyIncreasingRelativelyIncreasing TODO
-     * @param absolutelyIncreasingRelativelyZero TODO
-     * @param absolutelyIncreasingRelativelyDecreasing TODO
-     * @param absolutelyZeroRelativelyIncreasing TODO
-     * @param absolutelyZeroRelativelyZero TODO
-     * @param absolutelyZeroRelativelyDecreasing TODO
-     * @param absolutelyDecreasingRelativelyIncreasing TODO
-     * @param absolutelyDecreasingRelativelyZero TODO
-     * @param absolutelyDecreasingRelativelyDecreasing TODO
+     * @param absolutelyBullishRelativelyBullish TODO
+     * @param absolutelyBullishRelativelyNeutral TODO
+     * @param absolutelyBullishRelativelyBearish TODO
+     * @param absolutelyNeutralRelativelyBullish TODO
+     * @param absolutelyNeutralRelativelyNeutral TODO
+     * @param absolutelyNeutralRelativelyBearish TODO
+     * @param absolutelyBearishRelativelyBullish TODO
+     * @param absolutelyBearishRelativelyNeutral TODO
+     * @param absolutelyBearishRelativelyBearish TODO
      */
     @Suppress("LongParameterList")
     public class Config(
-        public val absolutelyIncreasingRelativelyIncreasing: Candle,
-        public val absolutelyIncreasingRelativelyZero: Candle,
-        public val absolutelyIncreasingRelativelyDecreasing: Candle,
-        public val absolutelyZeroRelativelyIncreasing: Candle,
-        public val absolutelyZeroRelativelyZero: Candle,
-        public val absolutelyZeroRelativelyDecreasing: Candle,
-        public val absolutelyDecreasingRelativelyIncreasing: Candle,
-        public val absolutelyDecreasingRelativelyZero: Candle,
-        public val absolutelyDecreasingRelativelyDecreasing: Candle,
+        public val absolutelyBullishRelativelyBullish: Candle,
+        public val absolutelyBullishRelativelyNeutral: Candle,
+        public val absolutelyBullishRelativelyBearish: Candle,
+        public val absolutelyNeutralRelativelyBullish: Candle,
+        public val absolutelyNeutralRelativelyNeutral: Candle,
+        public val absolutelyNeutralRelativelyBearish: Candle,
+        public val absolutelyBearishRelativelyBullish: Candle,
+        public val absolutelyBearishRelativelyNeutral: Candle,
+        public val absolutelyBearishRelativelyBearish: Candle,
     ) {
         internal val maxThicknessDp
             get() =
                 maxOf(
-                    absolutelyIncreasingRelativelyIncreasing.body.thicknessDp,
-                    absolutelyIncreasingRelativelyZero.body.thicknessDp,
-                    absolutelyIncreasingRelativelyDecreasing.body.thicknessDp,
-                    absolutelyZeroRelativelyIncreasing.body.thicknessDp,
-                    absolutelyZeroRelativelyZero.body.thicknessDp,
-                    absolutelyZeroRelativelyDecreasing.body.thicknessDp,
-                    absolutelyDecreasingRelativelyIncreasing.body.thicknessDp,
-                    absolutelyDecreasingRelativelyZero.body.thicknessDp,
-                    absolutelyDecreasingRelativelyDecreasing.body.thicknessDp,
+                    absolutelyBullishRelativelyBullish.body.thicknessDp,
+                    absolutelyBullishRelativelyNeutral.body.thicknessDp,
+                    absolutelyBullishRelativelyBearish.body.thicknessDp,
+                    absolutelyNeutralRelativelyBullish.body.thicknessDp,
+                    absolutelyNeutralRelativelyNeutral.body.thicknessDp,
+                    absolutelyNeutralRelativelyBearish.body.thicknessDp,
+                    absolutelyBearishRelativelyBullish.body.thicknessDp,
+                    absolutelyBearishRelativelyNeutral.body.thicknessDp,
+                    absolutelyBearishRelativelyBearish.body.thicknessDp,
                 )
 
         internal fun getCandle(entry: CandlestickCartesianLayerModel.Entry) =
             when (entry.absoluteChange) {
-                Change.Increase ->
+                Change.Bullish ->
                     when (entry.relativeChange) {
-                        Change.Increase -> absolutelyIncreasingRelativelyIncreasing
-                        Change.Decrease -> absolutelyIncreasingRelativelyDecreasing
-                        Change.Zero -> absolutelyIncreasingRelativelyZero
+                        Change.Bullish -> absolutelyBullishRelativelyBullish
+                        Change.Bearish -> absolutelyBullishRelativelyBearish
+                        Change.Neutral -> absolutelyBullishRelativelyNeutral
                     }
 
-                Change.Decrease ->
+                Change.Bearish ->
                     when (entry.relativeChange) {
-                        Change.Increase -> absolutelyDecreasingRelativelyIncreasing
-                        Change.Decrease -> absolutelyDecreasingRelativelyDecreasing
-                        Change.Zero -> absolutelyDecreasingRelativelyZero
+                        Change.Bullish -> absolutelyBearishRelativelyBullish
+                        Change.Bearish -> absolutelyBearishRelativelyBearish
+                        Change.Neutral -> absolutelyBearishRelativelyNeutral
                     }
 
-                Change.Zero ->
+                Change.Neutral ->
                     when (entry.relativeChange) {
-                        Change.Increase -> absolutelyZeroRelativelyIncreasing
-                        Change.Decrease -> absolutelyZeroRelativelyDecreasing
-                        Change.Zero -> absolutelyZeroRelativelyZero
+                        Change.Bullish -> absolutelyNeutralRelativelyBullish
+                        Change.Bearish -> absolutelyNeutralRelativelyBearish
+                        Change.Neutral -> absolutelyNeutralRelativelyNeutral
                     }
             }
 

@@ -59,10 +59,10 @@ public object RandomCartesianModelGenerator {
         val low = mutableListOf<Float>()
         val high = mutableListOf<Float>()
         for (i in x) {
-            val isIncreasing = Random.nextBoolean()
+            val isBullish = Random.nextBoolean()
             val openingPrice: Float
             val closingPrice: Float
-            if (isIncreasing) {
+            if (isBullish) {
                 openingPrice =
                     if (previousOpeningPrice != null && previousClosingPrice != null) {
                         floatArrayOf(previousOpeningPrice, previousClosingPrice).random().coerceIn(openingClosingRange)

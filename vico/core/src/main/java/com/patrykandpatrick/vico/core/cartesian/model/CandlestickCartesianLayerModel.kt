@@ -157,13 +157,13 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
         /** Represents an [Entry]’s absolute or relative price change. */
         public enum class Change {
             /** Represents a price increase. */
-            Increase,
+            Bullish,
 
             /** Represents a price decrease. */
-            Decrease,
+            Bearish,
 
             /** Represents no change in price. */
-            Zero,
+            Neutral,
             ;
 
             internal companion object {
@@ -171,9 +171,9 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
                     old: Float,
                     new: Float,
                 ) = when {
-                    new > old -> Increase
-                    new < old -> Decrease
-                    else -> Zero
+                    new > old -> Bullish
+                    new < old -> Bearish
+                    else -> Neutral
                 }
 
                 fun forPrices(
