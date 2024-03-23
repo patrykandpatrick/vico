@@ -29,7 +29,7 @@ import kotlin.random.Random
 public object RandomCartesianModelGenerator {
     public val defaultX: IntProgression = 0..96
     public val defaultY: ClosedFloatingPointRange<Float> = 2f..20f
-    public val defaultOpenCloseRange: ClosedFloatingPointRange<Float> = 5f..15f
+    public val defaultOpeningClosingRange: ClosedFloatingPointRange<Float> = 5f..15f
     public val defaultLowHighRange: ClosedFloatingPointRange<Float> = .5f..5f
 
     public fun getRandomColumnLayerModelPartial(
@@ -49,42 +49,45 @@ public object RandomCartesianModelGenerator {
     public fun getRandomCandlestickLayerModelPartial(
         x: IntProgression = defaultX,
         y: ClosedFloatingPointRange<Float> = defaultY,
-        openCloseRange: ClosedFloatingPointRange<Float> = defaultOpenCloseRange,
+        openingClosingRange: ClosedFloatingPointRange<Float> = defaultOpeningClosingRange,
         lowHighRange: ClosedFloatingPointRange<Float> = defaultLowHighRange,
     ): CandlestickCartesianLayerModel.Partial {
-        var previousClose: Float? = null
-        var previousOpen: Float? = null
-        val entries = mutableListOf<CandlestickCartesianLayerModel.Entry>()
+        var previousOpeningPrice: Float? = null
+        var previousClosingPrice: Float? = null
+        val opening = mutableListOf<Float>()
+        val closing = mutableListOf<Float>()
+        val low = mutableListOf<Float>()
+        val high = mutableListOf<Float>()
         for (i in x) {
             val isIncreasing = Random.nextBoolean()
-            val open: Float
-            val close: Float
+            val openingPrice: Float
+            val closingPrice: Float
             if (isIncreasing) {
-                open =
-                    if (previousOpen != null && previousClose != null) {
-                        floatArrayOf(previousOpen, previousClose).random().coerceIn(openCloseRange)
+                openingPrice =
+                    if (previousOpeningPrice != null && previousClosingPrice != null) {
+                        floatArrayOf(previousOpeningPrice, previousClosingPrice).random().coerceIn(openingClosingRange)
                     } else {
-                        y.random().coerceIn(openCloseRange)
+                        y.random().coerceIn(openingClosingRange)
                     }
-                close = (open + lowHighRange.random())
+                closingPrice = (openingPrice + lowHighRange.random())
             } else {
-                close =
-                    if (previousOpen != null && previousClose != null) {
-                        floatArrayOf(previousOpen, previousClose).random().coerceIn(openCloseRange)
+                closingPrice =
+                    if (previousOpeningPrice != null && previousClosingPrice != null) {
+                        floatArrayOf(previousOpeningPrice, previousClosingPrice).random().coerceIn(openingClosingRange)
                     } else {
-                        y.random().coerceIn(openCloseRange)
+                        y.random().coerceIn(openingClosingRange)
                     }
-                open = (close + lowHighRange.random())
+                openingPrice = (closingPrice + lowHighRange.random())
             }
-            val low = minOf(open, close) - lowHighRange.random()
-            val high = maxOf(open, close) + lowHighRange.random()
+            opening += openingPrice
+            closing += closingPrice
+            low += minOf(openingPrice, closingPrice) - lowHighRange.random()
+            high += maxOf(openingPrice, closingPrice) + lowHighRange.random()
 
-            entries.add(CandlestickCartesianLayerModel.Entry(i.toFloat(), low, high, open, close))
-
-            previousOpen = open
-            previousClose = close
+            previousOpeningPrice = openingPrice
+            previousClosingPrice = closingPrice
         }
-        return CandlestickCartesianLayerModel.partial(entries)
+        return CandlestickCartesianLayerModel.partial(x.toList(), opening, closing, low, high)
     }
 
     public fun getRandomModel(

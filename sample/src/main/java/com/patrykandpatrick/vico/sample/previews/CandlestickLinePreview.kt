@@ -26,8 +26,8 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberHollow
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.core.cartesian.SampleCandlestickEntryProvider
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 
 @Preview(widthDp = 350)
@@ -41,7 +41,17 @@ fun CandlestickLinePreview() {
                     startAxis = rememberStartAxis(),
                     bottomAxis = rememberBottomAxis(),
                 ),
-            model = remember { CartesianChartModel(SampleCandlestickEntryProvider.sampleModel) },
+            model =
+                remember {
+                    CartesianChartModel(
+                        CandlestickCartesianLayerModel.build(
+                            opening = listOf(4, 8, 12, 14, 10, 18),
+                            closing = listOf(8, 12, 14, 10, 18, 14),
+                            low = listOf(2, 6, 10, 4, 6, 10),
+                            high = listOf(12, 14, 16, 16, 20, 18),
+                        ),
+                    )
+                },
         )
     }
 }

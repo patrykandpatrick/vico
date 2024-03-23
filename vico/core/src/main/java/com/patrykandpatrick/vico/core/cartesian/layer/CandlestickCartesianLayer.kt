@@ -28,8 +28,7 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.put
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel.TypedEntry.Type
-import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel.TypedEntry.Type.Change
+import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel.Entry.Change
 import com.patrykandpatrick.vico.core.cartesian.model.forEachInIndexed
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
@@ -126,7 +125,7 @@ public open class CandlestickCartesianLayer(
         val minBodyHeight = minCandleBodyHeightDp.pixels
 
         model.series.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { index, entry, _ ->
-            candle = config.getCandle(entry.type)
+            candle = config.getCandle(entry)
             val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
 
             val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
@@ -182,7 +181,7 @@ public open class CandlestickCartesianLayer(
     }
 
     private fun updateMarkerLocationMap(
-        entry: CandlestickCartesianLayerModel.TypedEntry,
+        entry: CandlestickCartesianLayerModel.Entry,
         entryX: Float,
         entryY: Float,
         entryIndex: Int,
@@ -267,8 +266,8 @@ public open class CandlestickCartesianLayer(
 
     private fun CandlestickCartesianLayerModel.Entry.toCandleInfo(yRange: ChartValues.YRange) =
         CandlestickCartesianLayerDrawingModel.CandleInfo(
-            bodyBottomY = (minOf(open, close) - yRange.minY) / yRange.length,
-            bodyTopY = (maxOf(open, close) - yRange.minY) / yRange.length,
+            bodyBottomY = (minOf(opening, closing) - yRange.minY) / yRange.length,
+            bodyTopY = (maxOf(opening, closing) - yRange.minY) / yRange.length,
             bottomWickY = (low - yRange.minY) / yRange.length,
             topWickY = (high - yRange.minY) / yRange.length,
         )
@@ -319,24 +318,24 @@ public open class CandlestickCartesianLayer(
                     absolutelyDecreasingRelativelyDecreasing.body.thicknessDp,
                 )
 
-        internal fun getCandle(type: Type) =
-            when (type.absoluteChange) {
+        internal fun getCandle(entry: CandlestickCartesianLayerModel.Entry) =
+            when (entry.absoluteChange) {
                 Change.Increase ->
-                    when (type.relativeChange) {
+                    when (entry.relativeChange) {
                         Change.Increase -> absolutelyIncreasingRelativelyIncreasing
                         Change.Decrease -> absolutelyIncreasingRelativelyDecreasing
                         Change.Zero -> absolutelyIncreasingRelativelyZero
                     }
 
                 Change.Decrease ->
-                    when (type.relativeChange) {
+                    when (entry.relativeChange) {
                         Change.Increase -> absolutelyDecreasingRelativelyIncreasing
                         Change.Decrease -> absolutelyDecreasingRelativelyDecreasing
                         Change.Zero -> absolutelyDecreasingRelativelyZero
                     }
 
                 Change.Zero ->
-                    when (type.relativeChange) {
+                    when (entry.relativeChange) {
                         Change.Increase -> absolutelyZeroRelativelyIncreasing
                         Change.Decrease -> absolutelyZeroRelativelyDecreasing
                         Change.Zero -> absolutelyZeroRelativelyZero

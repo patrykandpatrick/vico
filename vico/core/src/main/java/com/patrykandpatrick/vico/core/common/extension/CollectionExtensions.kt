@@ -74,13 +74,3 @@ public fun <T> List<T>.getRepeating(index: Int): T {
     if (isEmpty()) throw IllegalStateException(ERR_REPEATING_COLLECTION_EMPTY)
     return get(index % size.coerceAtLeast(1))
 }
-
-internal inline fun <T, R> Iterable<T>.mapWithPrevious(action: (previous: T?, current: T) -> R): List<R> {
-    val result = mutableListOf<R>()
-    var previous: T? = null
-    for (element in this) {
-        result.add(action(previous, element))
-        previous = element
-    }
-    return result
-}

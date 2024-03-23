@@ -28,24 +28,6 @@ internal inline fun <T> Iterable<T>.rangeOf(selector: (T) -> Float): ClosedFloat
     return minValue..maxValue
 }
 
-/**
- * Calls the [selector] function for each value in the collection and returns the range of the produced values.
- */
-public inline fun <T> Iterable<T>.rangeOfRanged(
-    selector: (T) -> ClosedFloatingPointRange<Float>,
-): ClosedFloatingPointRange<Float> {
-    val iterator = iterator()
-    val first = selector(iterator.next())
-    var minValue = first.start
-    var maxValue = first.endInclusive
-    while (iterator.hasNext()) {
-        val v = selector(iterator.next())
-        minValue = minOf(minValue, v.start)
-        maxValue = maxOf(maxValue, v.endInclusive)
-    }
-    return minValue..maxValue
-}
-
 internal inline fun <T> Iterable<T>.rangeOfPair(selector: (T) -> Pair<Float, Float>): ClosedFloatingPointRange<Float> {
     val iterator = iterator()
     var (minValue, maxValue) = selector(iterator.next())
