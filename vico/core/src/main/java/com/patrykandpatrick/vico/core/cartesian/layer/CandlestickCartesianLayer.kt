@@ -292,7 +292,6 @@ public open class CandlestickCartesianLayer(
      * @param absolutelyBearishRelativelyNeutral TODO
      * @param absolutelyBearishRelativelyBearish TODO
      */
-    @Suppress("LongParameterList")
     public class Candles(
         public val absolutelyBullishRelativelyBullish: Candle,
         public val absolutelyBullishRelativelyNeutral: Candle,
