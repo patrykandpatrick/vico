@@ -20,7 +20,6 @@ import android.content.Context
 import android.graphics.Color
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
-import com.patrykandpatrick.vico.core.common.DefaultColors
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
@@ -62,114 +61,48 @@ private fun LineComponent.copyWithColor(color: Int) =
         strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
     )
 
-private fun getAbsolutelyBullishRelativelyBullish(colors: DefaultColors) =
-    Candle.sharpHollowCandle(colors.candlestickGreen.toInt())
-
-private fun getAbsolutelyBearishRelativelyBullish(colors: DefaultColors) =
-    Candle.sharpFilledCandle(colors.candlestickGreen.toInt())
-
-internal class CandlestickStandardConfigBuilder(private val context: Context) : CandlestickStandardConfigBuilderScope {
-    override var absolutelyBullish: Candle? = null
-    override var absolutelyNeutral: Candle? = null
-    override var absolutelyBearish: Candle? = null
-
-    internal fun build(): CandlestickCartesianLayer.Config {
-        val defaultColors = context.defaultColors
-        val absolutelyBullish =
-            absolutelyBullish ?: Candle.sharpFilledCandle(color = defaultColors.candlestickGreen.toInt())
-        val absolutelyNeutral =
-            absolutelyNeutral ?: absolutelyBullish.copyWithColor(defaultColors.candlestickGray.toInt())
-        val absolutelyBearish =
-            absolutelyBearish ?: absolutelyBullish.copyWithColor(defaultColors.candlestickRed.toInt())
-
-        return CandlestickCartesianLayer.Config(
-            absolutelyBullishRelativelyBullish = absolutelyBullish,
-            absolutelyBullishRelativelyNeutral = absolutelyBullish,
-            absolutelyBullishRelativelyBearish = absolutelyBullish,
-            absolutelyNeutralRelativelyBullish = absolutelyNeutral,
-            absolutelyNeutralRelativelyNeutral = absolutelyNeutral,
-            absolutelyNeutralRelativelyBearish = absolutelyNeutral,
-            absolutelyBearishRelativelyBullish = absolutelyBearish,
-            absolutelyBearishRelativelyNeutral = absolutelyBearish,
-            absolutelyBearishRelativelyBearish = absolutelyBearish,
-        )
-    }
-}
-
-internal interface CandlestickStandardConfigBuilderScope {
-    var absolutelyBullish: Candle?
-    var absolutelyNeutral: Candle?
-    var absolutelyBearish: Candle?
-}
-
-internal class CandlestickHollowConfigBuilder(private val context: Context) : CandlestickHollowConfigBuilderScope {
-    override var absolutelyBullishRelativelyBullish: Candle? = null
-    override var absolutelyBullishRelativelyNeutral: Candle? = null
-    override var absolutelyBullishRelativelyBearish: Candle? = null
-    override var absolutelyNeutralRelativelyBullish: Candle? = null
-    override var absolutelyNeutralRelativelyNeutral: Candle? = null
-    override var absolutelyNeutralRelativelyBearish: Candle? = null
-    override var absolutelyBearishRelativelyBullish: Candle? = null
-    override var absolutelyBearishRelativelyNeutral: Candle? = null
-    override var absolutelyBearishRelativelyBearish: Candle? = null
-
-    fun build(): CandlestickCartesianLayer.Config {
-        val defaultColors = context.defaultColors
-        val absolutelyBullishRelativelyBullish: Candle =
-            absolutelyBullishRelativelyBullish ?: getAbsolutelyBullishRelativelyBullish(defaultColors)
-        val absolutelyBullishRelativelyNeutral: Candle =
-            absolutelyBearishRelativelyNeutral
-                ?: absolutelyBullishRelativelyBullish.copyWithColor(defaultColors.candlestickGray.toInt())
-        val absolutelyBullishRelativelyBearish: Candle =
-            absolutelyBullishRelativelyBearish
-                ?: absolutelyBullishRelativelyBullish.copyWithColor(defaultColors.candlestickRed.toInt())
-        val absolutelyNeutralRelativelyBullish: Candle =
-            absolutelyNeutralRelativelyBullish ?: absolutelyBullishRelativelyBullish
-        val absolutelyNeutralRelativelyNeutral: Candle =
-            absolutelyNeutralRelativelyNeutral ?: absolutelyBullishRelativelyNeutral
-        val absolutelyNeutralRelativelyBearish: Candle =
-            absolutelyNeutralRelativelyBearish ?: absolutelyBullishRelativelyBearish
-        val absolutelyBearishRelativelyBullish: Candle =
-            absolutelyBearishRelativelyBullish ?: getAbsolutelyBearishRelativelyBullish(defaultColors)
-        val absolutelyBearishRelativelyNeutral: Candle =
-            absolutelyBearishRelativelyNeutral
-                ?: absolutelyBearishRelativelyBullish.copyWithColor(defaultColors.candlestickGray.toInt())
-        val absolutelyBearishRelativelyBearish: Candle =
-            absolutelyBearishRelativelyBearish
-                ?: absolutelyBearishRelativelyBullish.copyWithColor(defaultColors.candlestickRed.toInt())
-
-        return CandlestickCartesianLayer.Config(
-            absolutelyBullishRelativelyBullish = absolutelyBullishRelativelyBullish,
-            absolutelyBullishRelativelyNeutral = absolutelyBullishRelativelyNeutral,
-            absolutelyBullishRelativelyBearish = absolutelyBullishRelativelyBearish,
-            absolutelyNeutralRelativelyBullish = absolutelyNeutralRelativelyBullish,
-            absolutelyNeutralRelativelyNeutral = absolutelyNeutralRelativelyNeutral,
-            absolutelyNeutralRelativelyBearish = absolutelyNeutralRelativelyBearish,
-            absolutelyBearishRelativelyBullish = absolutelyBearishRelativelyBullish,
-            absolutelyBearishRelativelyNeutral = absolutelyBearishRelativelyNeutral,
-            absolutelyBearishRelativelyBearish = absolutelyBearishRelativelyBearish,
-        )
-    }
-}
-
-internal interface CandlestickHollowConfigBuilderScope {
-    var absolutelyBullishRelativelyBullish: Candle?
-    var absolutelyBullishRelativelyNeutral: Candle?
-    var absolutelyBullishRelativelyBearish: Candle?
-    var absolutelyNeutralRelativelyBullish: Candle?
-    var absolutelyNeutralRelativelyNeutral: Candle?
-    var absolutelyNeutralRelativelyBearish: Candle?
-    var absolutelyBearishRelativelyBullish: Candle?
-    var absolutelyBearishRelativelyNeutral: Candle?
-    var absolutelyBearishRelativelyBearish: Candle?
-}
-
-internal fun CandlestickCartesianLayer.Config.Companion.standardBuilder(
+internal fun CandlestickCartesianLayer.Candles.Companion.filled(
     context: Context,
-    block: CandlestickStandardConfigBuilderScope.() -> Unit = {},
-) = CandlestickStandardConfigBuilder(context).apply(block).build()
+    bullish: Candle = Candle.sharpFilledCandle(context.defaultColors.candlestickGreen.toInt()),
+    neutral: Candle = bullish.copyWithColor(context.defaultColors.candlestickGray.toInt()),
+    bearish: Candle = bullish.copyWithColor(context.defaultColors.candlestickRed.toInt()),
+) = CandlestickCartesianLayer.Candles(
+    absolutelyBullishRelativelyBullish = bullish,
+    absolutelyBullishRelativelyNeutral = bullish,
+    absolutelyBullishRelativelyBearish = bullish,
+    absolutelyNeutralRelativelyBullish = neutral,
+    absolutelyNeutralRelativelyNeutral = neutral,
+    absolutelyNeutralRelativelyBearish = neutral,
+    absolutelyBearishRelativelyBullish = bearish,
+    absolutelyBearishRelativelyNeutral = bearish,
+    absolutelyBearishRelativelyBearish = bearish,
+)
 
-internal fun CandlestickCartesianLayer.Config.Companion.hollowBuilder(
+internal fun CandlestickCartesianLayer.Candles.Companion.hollow(
     context: Context,
-    block: CandlestickHollowConfigBuilderScope.() -> Unit = {},
-) = CandlestickHollowConfigBuilder(context).apply(block).build()
+    absolutelyBullishRelativelyBullish: Candle =
+        Candle.sharpHollowCandle(context.defaultColors.candlestickGreen.toInt()),
+    absolutelyBullishRelativelyNeutral: Candle =
+        absolutelyBullishRelativelyBullish.copyWithColor(context.defaultColors.candlestickGray.toInt()),
+    absolutelyBullishRelativelyBearish: Candle =
+        absolutelyBullishRelativelyBullish.copyWithColor(context.defaultColors.candlestickRed.toInt()),
+    absolutelyNeutralRelativelyBullish: Candle = absolutelyBullishRelativelyBullish,
+    absolutelyNeutralRelativelyNeutral: Candle = absolutelyBullishRelativelyNeutral,
+    absolutelyNeutralRelativelyBearish: Candle = absolutelyBullishRelativelyBearish,
+    absolutelyBearishRelativelyBullish: Candle =
+        Candle.sharpFilledCandle(context.defaultColors.candlestickGreen.toInt()),
+    absolutelyBearishRelativelyNeutral: Candle =
+        absolutelyBearishRelativelyBullish.copyWithColor(context.defaultColors.candlestickGray.toInt()),
+    absolutelyBearishRelativelyBearish: Candle =
+        absolutelyBearishRelativelyBullish.copyWithColor(context.defaultColors.candlestickRed.toInt()),
+) = CandlestickCartesianLayer.Candles(
+    absolutelyBullishRelativelyBullish,
+    absolutelyBullishRelativelyNeutral,
+    absolutelyBullishRelativelyBearish,
+    absolutelyNeutralRelativelyBullish,
+    absolutelyNeutralRelativelyNeutral,
+    absolutelyNeutralRelativelyBearish,
+    absolutelyBearishRelativelyBullish,
+    absolutelyBearishRelativelyNeutral,
+    absolutelyBearishRelativelyBearish,
+)

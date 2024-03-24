@@ -44,7 +44,7 @@ import com.patrykandpatrick.vico.core.common.extension.half
 /**
  * [CandlestickCartesianLayer] displays data as vertical bars. It can draw multiple columns per segment.
  *
- * @param config TODO
+ * @param candles TODO
  * @param minCandleBodyHeightDp TODO
  * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
  * segments that contain a single column only.
@@ -52,7 +52,7 @@ import com.patrykandpatrick.vico.core.common.extension.half
  * associated. Use this for independent [CartesianLayer] scaling.
  */
 public open class CandlestickCartesianLayer(
-    public var config: Config,
+    public var candles: Candles,
     public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
     public var spacingDp: Float = Defaults.CANDLESTICK_CHART_DEFAULT_SPACING_DP,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
@@ -117,7 +117,7 @@ public open class CandlestickCartesianLayer(
         val drawingStart: Float =
             bounds.getStart(isLtr = isLtr) + (
                 horizontalDimensions.startPadding -
-                    config.maxThicknessDp.half.pixels * zoom
+                    candles.maxThicknessDp.half.pixels * zoom
             ) * layoutDirectionMultiplier - horizontalScroll
 
         var bodyCenterX: Float
@@ -125,7 +125,7 @@ public open class CandlestickCartesianLayer(
         val minBodyHeight = minCandleBodyHeightDp.pixels
 
         model.series.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { index, entry, _ ->
-            candle = config.getCandle(entry)
+            candle = candles.getCandle(entry)
             val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
 
             val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
@@ -217,7 +217,7 @@ public open class CandlestickCartesianLayer(
         model: CandlestickCartesianLayerModel,
     ) {
         with(context) {
-            val columnCollectionWidth = config.maxThicknessDp.pixels
+            val columnCollectionWidth = candles.maxThicknessDp.pixels
             val xSpacing = columnCollectionWidth + spacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> {
@@ -293,7 +293,7 @@ public open class CandlestickCartesianLayer(
      * @param absolutelyBearishRelativelyBearish TODO
      */
     @Suppress("LongParameterList")
-    public class Config(
+    public class Candles(
         public val absolutelyBullishRelativelyBullish: Candle,
         public val absolutelyBullishRelativelyNeutral: Candle,
         public val absolutelyBullishRelativelyBearish: Candle,

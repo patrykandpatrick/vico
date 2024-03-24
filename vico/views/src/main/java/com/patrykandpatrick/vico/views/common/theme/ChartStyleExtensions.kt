@@ -27,7 +27,7 @@ import com.patrykandpatrick.vico.core.common.extension.getRepeating
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.views.R
-import com.patrykandpatrick.vico.views.cartesian.standardBuilder
+import com.patrykandpatrick.vico.views.cartesian.filled
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
 
 internal fun TypedArray.getColumnCartesianLayer(
@@ -156,6 +156,4 @@ internal fun TypedArray.getLineCartesianLayer(
 
 // TODO
 internal fun TypedArray.getCandlestickCartesianLayer(context: Context): CandlestickCartesianLayer =
-    CandlestickCartesianLayer(
-        config = CandlestickCartesianLayer.Config.standardBuilder(context),
-    )
+    CandlestickCartesianLayer(CandlestickCartesianLayer.Candles.filled(context))

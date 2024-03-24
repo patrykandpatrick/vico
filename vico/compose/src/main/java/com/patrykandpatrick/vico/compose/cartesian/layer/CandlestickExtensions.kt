@@ -61,14 +61,6 @@ private fun LineComponent.copyWithColor(color: Color) =
         strokeColor = if (this.strokeColor == android.graphics.Color.TRANSPARENT) this.color else color.toArgb(),
     )
 
-@Composable
-private fun getAbsolutelyBullishRelativelyBullish() =
-    Candle.sharpHollowCandle(Color(getDefaultColors().candlestickGreen))
-
-@Composable
-private fun getAbsolutelyBearishRelativelyBullish() =
-    Candle.sharpFilledCandle(Color(getDefaultColors().candlestickGreen))
-
 /** Creates and remembers a [CandlestickCartesianLayer.Candle]. */
 @Composable
 public fun rememberCandle(
@@ -81,26 +73,26 @@ public fun rememberCandle(
  * TODO
  */
 @Composable
-public fun CandlestickCartesianLayer.Config.Companion.rememberStandard(
-    absolutelyBullish: Candle = Candle.sharpFilledCandle(color = Color(getDefaultColors().candlestickGreen)),
-    absolutelyNeutral: Candle = absolutelyBullish.copyWithColor(color = Color(getDefaultColors().candlestickGray)),
-    absolutelyBearish: Candle = absolutelyBullish.copyWithColor(color = Color(getDefaultColors().candlestickRed)),
-): CandlestickCartesianLayer.Config =
+public fun rememberFilledCandles(
+    bullish: Candle = Candle.sharpFilledCandle(Color(getDefaultColors().candlestickGreen)),
+    neutral: Candle = bullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
+    bearish: Candle = bullish.copyWithColor(Color(getDefaultColors().candlestickRed)),
+): CandlestickCartesianLayer.Candles =
     remember(
-        absolutelyBullish,
-        absolutelyNeutral,
-        absolutelyBearish,
+        bullish,
+        neutral,
+        bearish,
     ) {
-        CandlestickCartesianLayer.Config(
-            absolutelyBullishRelativelyBullish = absolutelyBullish,
-            absolutelyBullishRelativelyNeutral = absolutelyBullish,
-            absolutelyBullishRelativelyBearish = absolutelyBullish,
-            absolutelyNeutralRelativelyBullish = absolutelyNeutral,
-            absolutelyNeutralRelativelyNeutral = absolutelyNeutral,
-            absolutelyNeutralRelativelyBearish = absolutelyNeutral,
-            absolutelyBearishRelativelyBullish = absolutelyBearish,
-            absolutelyBearishRelativelyNeutral = absolutelyBearish,
-            absolutelyBearishRelativelyBearish = absolutelyBearish,
+        CandlestickCartesianLayer.Candles(
+            absolutelyBullishRelativelyBullish = bullish,
+            absolutelyBullishRelativelyNeutral = bullish,
+            absolutelyBullishRelativelyBearish = bullish,
+            absolutelyNeutralRelativelyBullish = neutral,
+            absolutelyNeutralRelativelyNeutral = neutral,
+            absolutelyNeutralRelativelyBearish = neutral,
+            absolutelyBearishRelativelyBullish = bearish,
+            absolutelyBearishRelativelyNeutral = bearish,
+            absolutelyBearishRelativelyBearish = bearish,
         )
     }
 
@@ -109,29 +101,21 @@ public fun CandlestickCartesianLayer.Config.Companion.rememberStandard(
  */
 @Composable
 @Stable
-public fun CandlestickCartesianLayer.Config.Companion.rememberHollow(
-    absolutelyBullishRelativelyBullish: Candle = getAbsolutelyBullishRelativelyBullish(),
+public fun rememberHollowCandles(
+    absolutelyBullishRelativelyBullish: Candle = Candle.sharpHollowCandle(Color(getDefaultColors().candlestickGreen)),
     absolutelyBullishRelativelyNeutral: Candle =
-        absolutelyBullishRelativelyBullish.copyWithColor(
-            color = Color(getDefaultColors().candlestickGray),
-        ),
+        absolutelyBullishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
     absolutelyBullishRelativelyBearish: Candle =
-        absolutelyBullishRelativelyBullish.copyWithColor(
-            color = Color(getDefaultColors().candlestickRed),
-        ),
+        absolutelyBullishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickRed)),
     absolutelyNeutralRelativelyBullish: Candle = absolutelyBullishRelativelyBullish,
     absolutelyNeutralRelativelyNeutral: Candle = absolutelyBullishRelativelyNeutral,
     absolutelyNeutralRelativelyBearish: Candle = absolutelyBullishRelativelyBearish,
-    absolutelyBearishRelativelyBullish: Candle = getAbsolutelyBearishRelativelyBullish(),
+    absolutelyBearishRelativelyBullish: Candle = Candle.sharpFilledCandle(Color(getDefaultColors().candlestickGreen)),
     absolutelyBearishRelativelyNeutral: Candle =
-        absolutelyBearishRelativelyBullish.copyWithColor(
-            color = Color(getDefaultColors().candlestickGray),
-        ),
+        absolutelyBearishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
     absolutelyBearishRelativelyBearish: Candle =
-        absolutelyBearishRelativelyBullish.copyWithColor(
-            color = Color(getDefaultColors().candlestickRed),
-        ),
-): CandlestickCartesianLayer.Config =
+        absolutelyBearishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickRed)),
+): CandlestickCartesianLayer.Candles =
     remember(
         absolutelyBullishRelativelyBullish,
         absolutelyBullishRelativelyNeutral,
@@ -143,7 +127,7 @@ public fun CandlestickCartesianLayer.Config.Companion.rememberHollow(
         absolutelyBearishRelativelyNeutral,
         absolutelyBearishRelativelyBearish,
     ) {
-        CandlestickCartesianLayer.Config(
+        CandlestickCartesianLayer.Candles(
             absolutelyBullishRelativelyBullish,
             absolutelyBullishRelativelyNeutral,
             absolutelyBullishRelativelyBearish,
