@@ -27,7 +27,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.style.getDefaultColors
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
-import com.patrykandpatrick.vico.core.cartesian.layer.copyAsWick
+import com.patrykandpatrick.vico.core.cartesian.layer.asWick
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 
@@ -65,7 +65,7 @@ private fun LineComponent.copyWithColor(color: Color) =
 @Composable
 public fun rememberCandle(
     body: LineComponent,
-    topWick: LineComponent = remember(body) { body.copyAsWick() },
+    topWick: LineComponent = remember(body) { body.asWick() },
     bottomWick: LineComponent = topWick,
 ): Candle = remember(body, topWick, bottomWick) { Candle(body, topWick, bottomWick) }
 

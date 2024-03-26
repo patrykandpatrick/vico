@@ -70,7 +70,7 @@ public open class CandlestickCartesianLayer(
      */
     public data class Candle(
         public val body: LineComponent,
-        public val topWick: LineComponent = body.copyAsWick(),
+        public val topWick: LineComponent = body.asWick(),
         public val bottomWick: LineComponent = topWick,
     ) {
         internal val thicknessDp
@@ -347,7 +347,7 @@ public open class CandlestickCartesianLayer(
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun LineComponent.copyAsWick(): LineComponent =
+public fun LineComponent.asWick(): LineComponent =
     copy(
         color = if (color == Color.TRANSPARENT) strokeColor else color,
         thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
