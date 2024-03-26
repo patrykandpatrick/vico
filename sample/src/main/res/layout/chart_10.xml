@@ -24,7 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layers="candlestick"
-        app:lineLayerStyle="@style/Chart1LineLayerStyle"
         app:showBottomAxis="true"
         app:showStartAxis="true" />
 </FrameLayout>

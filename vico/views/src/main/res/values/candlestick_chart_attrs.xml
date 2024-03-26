@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright 2024 by Patryk Goworowski and Patrick Michalik.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<resources>
+    <attr name="candlestickLayerStyle" format="reference" />
+
+    <declare-styleable name="CandlestickLayerStyle">
+        <attr name="bullishStyle" format="reference" />
+        <attr name="neutralStyle" format="reference" />
+        <attr name="bearishStyle" format="reference" />
+        <attr name="absolutelyBullishRelativelyBullishStyle" format="reference" />
+        <attr name="absolutelyBullishRelativelyNeutralStyle" format="reference" />
+        <attr name="absolutelyBullishRelativelyBearishStyle" format="reference" />
+        <attr name="absolutelyNeutralRelativelyBullishStyle" format="reference" />
+        <attr name="absolutelyNeutralRelativelyNeutralStyle" format="reference" />
+        <attr name="absolutelyNeutralRelativelyBearishStyle" format="reference" />
+        <attr name="absolutelyBearishRelativelyBullishStyle" format="reference" />
+        <attr name="absolutelyBearishRelativelyNeutralStyle" format="reference" />
+        <attr name="absolutelyBearishRelativelyBearishStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="Candle">
+        <attr name="bodyStyle" format="reference" />
+        <attr name="topWickStyle" format="reference" />
+        <attr name="bottomWickStyle" format="reference" />
+    </declare-styleable>
+</resources>

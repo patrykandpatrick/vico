@@ -100,6 +100,7 @@ public object RandomCartesianModelGenerator {
             buildList {
                 add(getRandomColumnLayerModelPartial(columnSeriesCount, x, y).complete())
                 add(getRandomLineLayerModelPartial(lineSeriesCount, x, y).complete())
+                add(getRandomCandlestickLayerModelPartial(x, y).complete())
             },
         )
 }

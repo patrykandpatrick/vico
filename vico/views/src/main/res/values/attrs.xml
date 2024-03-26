@@ -44,6 +44,7 @@
         <attr name="bottomAxisStyle" format="reference" />
         <attr name="columnLayerStyle" />
         <attr name="lineLayerStyle" />
+        <attr name="candlestickLayerStyle" />
         <attr name="showStartAxis" format="boolean" />
         <attr name="showTopAxis" format="boolean" />
         <attr name="showEndAxis" format="boolean" />
