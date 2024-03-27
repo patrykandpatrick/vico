@@ -168,56 +168,59 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
 
             if (hasHollowCandleStyle) {
                 CandlestickCartesianLayer.Candles(
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishCandleStyle,
                         green,
                     ),
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralCandleStyle,
                         gray,
                     ),
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishCandleStyle,
                         red,
                     ),
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBullishStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBullishCandleStyle,
                         green,
                     ),
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyNeutralStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyNeutralCandleStyle,
                         gray,
                     ),
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBearishStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBearishCandleStyle,
                         red,
                     ),
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishCandleStyle,
                         green,
                     ),
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle,
                         gray,
                     ),
-                    typedArray.getCandleStyle(
+                    typedArray.getCandle(
                         context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishStyle,
+                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishCandleStyle,
                         red,
                     ),
                 )
             } else {
-                val bullish = typedArray.getCandleStyle(context, R.styleable.CandlestickLayerStyle_bullishStyle, green)
-                val neutral = typedArray.getCandleStyle(context, R.styleable.CandlestickLayerStyle_neutralStyle, gray)
-                val bearish = typedArray.getCandleStyle(context, R.styleable.CandlestickLayerStyle_bearishStyle, red)
+                val bullish =
+                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bullishCandleStyle, green)
+                val neutral =
+                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_neutralCandleStyle, gray)
+                val bearish =
+                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bearishCandleStyle, red)
                 CandlestickCartesianLayer.Candles(
                     bullish,
                     bullish,
@@ -231,31 +234,41 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
                 )
             }
         }
-    return CandlestickCartesianLayer(candles)
+    return CandlestickCartesianLayer(
+        candles = candles,
+        minCandleBodyHeightDp =
+            getRawDimension(
+                context,
+                R.styleable.CandlestickLayerStyle_minCandleBodyHeight,
+                Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
+            ),
+        candleSpacingDp =
+            getRawDimension(context, R.styleable.CandlestickLayerStyle_candleSpacing, Defaults.CANDLE_SPACING_DP),
+    )
 }
 
 private fun TypedArray.hasHollowCandleStyle(): Boolean =
-    hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBullishStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyNeutralStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBearishStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishStyle)
+    hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishCandleStyle) ||
+        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle) ||
+        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishCandleStyle) ||
+        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBullishCandleStyle) ||
+        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyNeutralCandleStyle) ||
+        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBearishCandleStyle) ||
+        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishCandleStyle) ||
+        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralCandleStyle) ||
+        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishCandleStyle)
 
-private fun TypedArray.getCandleStyle(
+private fun TypedArray.getCandle(
     context: Context,
     resourceId: Int,
     defaultColor: Int,
 ): CandlestickCartesianLayer.Candle =
-    getNestedTypedArray(context, resourceId, R.styleable.Candle).use { typedArray ->
+    getNestedTypedArray(context, resourceId, R.styleable.CandleStyle).use { typedArray ->
         val topWick =
-            if (typedArray.hasValue(R.styleable.Candle_topWickStyle)) {
+            if (typedArray.hasValue(R.styleable.CandleStyle_topWickStyle)) {
                 typedArray.getNestedTypedArray(
                     context = context,
-                    resourceId = R.styleable.Candle_topWickStyle,
+                    resourceId = R.styleable.CandleStyle_topWickStyle,
                     styleableResourceId = R.styleable.LineComponent,
                 ).getLineComponent(
                     context = context,
@@ -267,10 +280,10 @@ private fun TypedArray.getCandleStyle(
             }
 
         val bottomWick =
-            if (typedArray.hasValue(R.styleable.Candle_bottomWickStyle)) {
+            if (typedArray.hasValue(R.styleable.CandleStyle_bottomWickStyle)) {
                 typedArray.getNestedTypedArray(
                     context = context,
-                    resourceId = R.styleable.Candle_bottomWickStyle,
+                    resourceId = R.styleable.CandleStyle_bottomWickStyle,
                     styleableResourceId = R.styleable.LineComponent,
                 ).getLineComponent(
                     context = context,
@@ -284,7 +297,7 @@ private fun TypedArray.getCandleStyle(
         val body =
             typedArray.getNestedTypedArray(
                 context = context,
-                resourceId = R.styleable.Candle_bodyStyle,
+                resourceId = R.styleable.CandleStyle_bodyStyle,
                 styleableResourceId = R.styleable.LineComponent,
             ).getLineComponent(
                 context = context,

@@ -18,21 +18,23 @@
     <attr name="candlestickLayerStyle" format="reference" />
 
     <declare-styleable name="CandlestickLayerStyle">
-        <attr name="bullishStyle" format="reference" />
-        <attr name="neutralStyle" format="reference" />
-        <attr name="bearishStyle" format="reference" />
-        <attr name="absolutelyBullishRelativelyBullishStyle" format="reference" />
-        <attr name="absolutelyBullishRelativelyNeutralStyle" format="reference" />
-        <attr name="absolutelyBullishRelativelyBearishStyle" format="reference" />
-        <attr name="absolutelyNeutralRelativelyBullishStyle" format="reference" />
-        <attr name="absolutelyNeutralRelativelyNeutralStyle" format="reference" />
-        <attr name="absolutelyNeutralRelativelyBearishStyle" format="reference" />
-        <attr name="absolutelyBearishRelativelyBullishStyle" format="reference" />
-        <attr name="absolutelyBearishRelativelyNeutralStyle" format="reference" />
-        <attr name="absolutelyBearishRelativelyBearishStyle" format="reference" />
+        <attr name="bullishCandleStyle" format="reference" />
+        <attr name="neutralCandleStyle" format="reference" />
+        <attr name="bearishCandleStyle" format="reference" />
+        <attr name="absolutelyBullishRelativelyBullishCandleStyle" format="reference" />
+        <attr name="absolutelyBullishRelativelyNeutralCandleStyle" format="reference" />
+        <attr name="absolutelyBullishRelativelyBearishCandleStyle" format="reference" />
+        <attr name="absolutelyNeutralRelativelyBullishCandleStyle" format="reference" />
+        <attr name="absolutelyNeutralRelativelyNeutralCandleStyle" format="reference" />
+        <attr name="absolutelyNeutralRelativelyBearishCandleStyle" format="reference" />
+        <attr name="absolutelyBearishRelativelyBullishCandleStyle" format="reference" />
+        <attr name="absolutelyBearishRelativelyNeutralCandleStyle" format="reference" />
+        <attr name="absolutelyBearishRelativelyBearishCandleStyle" format="reference" />
+        <attr name="minCandleBodyHeight" format="dimension" />
+        <attr name="candleSpacing" format="dimension" />
     </declare-styleable>
 
-    <declare-styleable name="Candle">
+    <declare-styleable name="CandleStyle">
         <attr name="bodyStyle" format="reference" />
         <attr name="topWickStyle" format="reference" />
         <attr name="bottomWickStyle" format="reference" />
