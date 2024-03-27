@@ -46,7 +46,7 @@ import com.patrykandpatrick.vico.core.common.extension.half
  *
  * @param candles TODO
  * @param minCandleBodyHeightDp TODO
- * @param spacingDp the horizontal padding between the edges of chart segments and the columns they contain.
+ * @param candleSpacingDp the horizontal padding between the edges of chart segments and the columns they contain.
  * segments that contain a single column only.
  * @param verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
  * associated. Use this for independent [CartesianLayer] scaling.
@@ -54,7 +54,7 @@ import com.patrykandpatrick.vico.core.common.extension.half
 public open class CandlestickCartesianLayer(
     public var candles: Candles,
     public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
-    public var spacingDp: Float = Defaults.CANDLESTICK_CHART_DEFAULT_SPACING_DP,
+    public var candleSpacingDp: Float = Defaults.CANDLE_SPACING_DP,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var drawingModelInterpolator: DrawingModelInterpolator<
         CandlestickCartesianLayerDrawingModel.CandleInfo,
@@ -218,7 +218,7 @@ public open class CandlestickCartesianLayer(
     ) {
         with(context) {
             val columnCollectionWidth = candles.maxThicknessDp.pixels
-            val xSpacing = columnCollectionWidth + spacingDp.pixels
+            val xSpacing = columnCollectionWidth + candleSpacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> {
                     horizontalDimensions.ensureValuesAtLeast(

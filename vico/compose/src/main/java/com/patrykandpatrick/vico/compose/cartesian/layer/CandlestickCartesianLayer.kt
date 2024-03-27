@@ -32,7 +32,7 @@ import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 public fun rememberCandlestickCartesianLayer(
     candles: CandlestickCartesianLayer.Candles = rememberFilledCandles(),
     minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
-    spacing: Dp = Defaults.CANDLESTICK_CHART_DEFAULT_SPACING_DP.dp,
+    candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
     verticalAxisPosition: AxisPosition.Vertical? = null,
     drawingModelInterpolator: DrawingModelInterpolator<
         CandlestickCartesianLayerDrawingModel.CandleInfo,
@@ -42,7 +42,7 @@ public fun rememberCandlestickCartesianLayer(
     remember { CandlestickCartesianLayer(candles) }.apply {
         this.candles = candles
         minCandleBodyHeightDp = minCandleBodyHeight.value
-        this.spacingDp = spacing.value
+        this.candleSpacingDp = candleSpacing.value
         this.verticalAxisPosition = verticalAxisPosition
         this.drawingModelInterpolator = drawingModelInterpolator
     }
