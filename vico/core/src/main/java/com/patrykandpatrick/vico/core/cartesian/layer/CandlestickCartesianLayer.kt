@@ -217,24 +217,15 @@ public open class CandlestickCartesianLayer(
         model: CandlestickCartesianLayerModel,
     ) {
         with(context) {
-            val columnCollectionWidth = candles.maxThicknessDp.pixels
-            val xSpacing = columnCollectionWidth + candleSpacingDp.pixels
+            val candleWidth = candles.maxThicknessDp.pixels
+            val xSpacing = candleWidth + candleSpacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
-                is HorizontalLayout.Segmented -> {
-                    horizontalDimensions.ensureValuesAtLeast(
-                        xSpacing = xSpacing,
-                        scalableStartPadding = xSpacing.half,
-                        scalableEndPadding = xSpacing.half,
-                    )
-                }
-
+                is HorizontalLayout.Segmented -> horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
                 is HorizontalLayout.FullWidth -> {
                     horizontalDimensions.ensureValuesAtLeast(
                         xSpacing = xSpacing,
-                        scalableStartPadding =
-                            columnCollectionWidth.half +
-                                horizontalLayout.scalableStartPaddingDp.pixels,
-                        scalableEndPadding = columnCollectionWidth.half + horizontalLayout.scalableEndPaddingDp.pixels,
+                        scalableStartPadding = candleWidth.half + horizontalLayout.scalableStartPaddingDp.pixels,
+                        scalableEndPadding = candleWidth.half + horizontalLayout.scalableEndPaddingDp.pixels,
                         unscalableStartPadding = horizontalLayout.unscalableStartPaddingDp.pixels,
                         unscalableEndPadding = horizontalLayout.unscalableEndPaddingDp.pixels,
                     )
