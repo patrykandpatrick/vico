@@ -23,6 +23,7 @@ import com.patrykandpatrick.vico.core.chart.layout.HorizontalLayout
 import com.patrykandpatrick.vico.core.chart.values.ChartValues
 import com.patrykandpatrick.vico.core.context.MeasureContext
 import com.patrykandpatrick.vico.core.extension.ceil
+import com.patrykandpatrick.vico.core.extension.floor
 import com.patrykandpatrick.vico.core.extension.half
 import com.patrykandpatrick.vico.core.extension.round
 
@@ -37,7 +38,13 @@ internal class DefaultHorizontalAxisItemPlacer(
             this@DefaultHorizontalAxisItemPlacer.addExtremeLabelPadding &&
                 horizontalLayout is HorizontalLayout.FullWidth
 
-    private val ChartValues.measuredLabelValues get() = listOf(minX, (minX + maxX).half, maxX)
+    internal val ChartValues.measuredLabelValues
+        get() =
+            buildList {
+                add(minX)
+                if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).round)
+                if (xLength >= xStep) add(minX + xStep * (xLength / xStep).floor)
+            }
 
     override fun getShiftExtremeTicks(context: ChartDrawContext): Boolean = shiftExtremeTicks
 
