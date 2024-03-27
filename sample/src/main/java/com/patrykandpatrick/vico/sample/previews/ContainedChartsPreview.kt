@@ -39,6 +39,7 @@ import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.End
 import com.patrykandpatrick.vico.core.axis.AxisPosition.Vertical.Start
+import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.marker.Marker
@@ -59,8 +60,8 @@ private val markerMap: Map<Float, Marker>
 @Composable
 private fun getColumnLayer(verticalAxisPosition: Vertical? = null) =
     rememberColumnCartesianLayer(
-        columns =
-            listOf(
+        columnProvider =
+            ColumnCartesianLayer.ColumnProvider.series(
                 rememberLineComponent(
                     color = Color.Black,
                     thickness = 8.dp,

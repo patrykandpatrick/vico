@@ -151,6 +151,10 @@ public class ColumnCartesianLayerModel : CartesianLayerModel {
         override fun equals(other: Any?): Boolean = this === other || other is Entry && x == other.x && y == other.y
 
         override fun hashCode(): Int = 31 * x.hashCode() + y.hashCode()
+
+        internal companion object {
+            val Zero = Entry(0, 0)
+        }
     }
 
     /**
