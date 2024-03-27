@@ -145,11 +145,8 @@ public open class LineComponent(
         thicknessScale: Float = 1f,
     ): Boolean =
         with(context) {
-            boundingBox.intersects(
-                centerX - thickness * thicknessScale / 2,
-                top,
-                centerX + thickness * thicknessScale / 2,
-                bottom,
-            )
+            val left = centerX - thickness * thicknessScale / 2
+            val right = centerX + thickness * thicknessScale / 2
+            boundingBox.left < right && left < boundingBox.right
         }
 }
