@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -139,12 +139,10 @@ public open class LineComponent(
         centerX: Float,
         boundingBox: RectF,
         thicknessScale: Float = 1f,
-    ): Boolean = with(context) {
-        boundingBox.intersects(
-            centerX - thickness * thicknessScale / 2,
-            top,
-            centerX + thickness * thicknessScale / 2,
-            bottom,
-        )
-    }
+    ): Boolean =
+        with(context) {
+            val left = centerX - thickness * thicknessScale / 2
+            val right = centerX + thickness * thicknessScale / 2
+            boundingBox.left < right && left < boundingBox.right
+        }
 }
