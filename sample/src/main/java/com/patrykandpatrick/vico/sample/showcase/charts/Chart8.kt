@@ -95,14 +95,16 @@ private fun ComposeChart8(
         chart =
             rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    columns =
-                        columnChartColors.map { color ->
-                            rememberLineComponent(
-                                color = color,
-                                thickness = 8.dp,
-                                shape = Shapes.roundedCornerShape(40),
-                            )
-                        },
+                    columnProvider =
+                        ColumnCartesianLayer.ColumnProvider.series(
+                            columnChartColors.map { color ->
+                                rememberLineComponent(
+                                    color = color,
+                                    thickness = 8.dp,
+                                    shape = Shapes.roundedCornerShape(40),
+                                )
+                            },
+                        ),
                     mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     verticalAxisPosition = AxisPosition.Vertical.Start,
                 ),
