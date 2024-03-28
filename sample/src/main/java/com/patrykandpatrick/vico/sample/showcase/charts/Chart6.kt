@@ -38,6 +38,7 @@ import com.patrykandpatrick.vico.compose.dimensions.dimensionsOf
 import com.patrykandpatrick.vico.core.axis.AxisPosition
 import com.patrykandpatrick.vico.core.axis.formatter.AxisValueFormatter
 import com.patrykandpatrick.vico.core.axis.horizontal.HorizontalAxis
+import com.patrykandpatrick.vico.core.chart.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.model.columnSeries
@@ -94,7 +95,9 @@ private fun ComposeChart6(
         chart =
             rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    columnColors.map { rememberLineComponent(color = it, thickness = 8.dp, shape = shape) },
+                    ColumnCartesianLayer.ColumnProvider.series(
+                        columnColors.map { rememberLineComponent(color = it, thickness = 8.dp, shape = shape) },
+                    ),
                 ),
                 startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(valueFormatter = bottomAxisValueFormatter),

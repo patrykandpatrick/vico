@@ -48,24 +48,22 @@ import com.patrykandpatrick.vico.core.model.forEachInIndexed
 import kotlin.math.abs
 
 /**
- * [ColumnCartesianLayer] displays data as vertical bars. It can group and stack columns.
+ * Displays data as vertical bars.
  *
- * @param columns the [LineComponent] instances to use for columns. This list is iterated through as many times
- * as necessary for each column collection. If the list contains a single element, all columns have the same appearance.
- * @param spacingDp the distance between neighboring column collections.
- * @param innerSpacingDp the distance between neighboring grouped columns.
- * @param mergeMode defines how columns should be drawn in column collections.
- * @param verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
+ * @property columnProvider provides the column [LineComponent]s.
+ * @property spacingDp the spacing between neighboring column collections.
+ * @property innerSpacingDp the spacing between neighboring grouped columns.
+ * @property mergeMode defines how columns should be drawn in column collections.
+ * @property verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
  * associated. Use this for independent [CartesianLayer] scaling.
- * @param dataLabel an optional [TextComponent] to use for data labels.
- * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
- * respective columns.
- * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
- * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
- * @param drawingModelInterpolator interpolates the [ColumnCartesianLayer]’s [ColumnCartesianLayerDrawingModel]s.
+ * @property dataLabel the [TextComponent] for the data labels. Use `null` for no data labels.
+ * @property dataLabelVerticalPosition the vertical position of each data label relative to its column’s top edge.
+ * @property dataLabelValueFormatter the [ValueFormatter] for the data labels.
+ * @property dataLabelRotationDegrees the rotation of the data labels (in degrees).
+ * @property drawingModelInterpolator interpolates the [ColumnCartesianLayer]’s [ColumnCartesianLayerDrawingModel]s.
  */
 public open class ColumnCartesianLayer(
-    public var columns: List<LineComponent>,
+    public var columnProvider: ColumnProvider,
     public var spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
     public var innerSpacingDp: Float = Defaults.COLUMN_INSIDE_SPACING,
     public var mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
@@ -78,25 +76,62 @@ public open class ColumnCartesianLayer(
         DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
         DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
-    /**
-     * Creates a [ColumnCartesianLayer] with a common style for all columns.
-     *
-     * @param column a [LineComponent] defining the appearance of the columns.
-     * @param spacingDp the distance between neighboring column collections.
-     * @param verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should
-     * be associated. Use this for independent [CartesianLayer] scaling.
-     */
+    /** Creates a [ColumnCartesianLayer] with a common [LineComponent] ([column]) for all columns. */
+    @Deprecated(
+        "Use the primary constructor. Replace `column = ...` with `columnProvider = " +
+            "ColumnCartesianLayer.ColumnProvider.series(...)`.",
+    )
     public constructor(
         column: LineComponent,
         spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
         verticalAxisPosition: AxisPosition.Vertical? = null,
-    ) : this(columns = listOf(column), spacingDp = spacingDp, verticalAxisPosition = verticalAxisPosition)
+    ) : this(
+        columnProvider = ColumnProvider.series(column),
+        spacingDp = spacingDp,
+        verticalAxisPosition = verticalAxisPosition,
+    )
 
     /**
-     * Creates a [ColumnCartesianLayer] instance with [columns] set to an empty list. The list must be populated before
-     * the chart is drawn.
+     * Creates a [ColumnCartesianLayer] with the provided column [LineComponent]s ([columns]). One [LineComponent] is
+     * used per series. The [LineComponent]s and series are associated by index. If there are more series than
+     * [LineComponent]s, [columns] is iterated multiple times.
      */
-    public constructor() : this(emptyList())
+    @Deprecated("Replace `columns = ...` with `columnProvider = ColumnCartesianLayer.ColumnProvider.series(...)`.")
+    public constructor(
+        columns: List<LineComponent>,
+        spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
+        innerSpacingDp: Float = Defaults.COLUMN_INSIDE_SPACING,
+        mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
+        verticalAxisPosition: AxisPosition.Vertical? = null,
+        dataLabel: TextComponent? = null,
+        dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+        dataLabelValueFormatter: ValueFormatter = DecimalFormatValueFormatter(),
+        dataLabelRotationDegrees: Float = 0f,
+        drawingModelInterpolator:
+            DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
+            DefaultDrawingModelInterpolator(),
+    ) : this(
+        ColumnProvider.series(columns),
+        spacingDp,
+        innerSpacingDp,
+        mergeMode,
+        verticalAxisPosition,
+        dataLabel,
+        dataLabelVerticalPosition,
+        dataLabelValueFormatter,
+        dataLabelRotationDegrees,
+        drawingModelInterpolator,
+    )
+
+    /**
+     * Creates a [ColumnCartesianLayer] with no column [LineComponent]s. `columnProvider` must be updated before the
+     * [ColumnCartesianLayer] is used.
+     */
+    @Deprecated(
+        "Use the primary constructor.",
+        ReplaceWith("ColumnCartesianLayer(ColumnCartesianLayer.ColumnProvider.series())"),
+    )
+    public constructor() : this(ColumnProvider.series())
 
     protected val stackInfo: MutableMap<Float, StackInfo> = mutableMapOf()
 
@@ -106,6 +141,22 @@ public open class ColumnCartesianLayer(
     protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
     protected val drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel> = ExtraStore.Key()
+
+    /**
+     * The column [LineComponent]s. One [LineComponent] is used per series. The [LineComponent]s and series are
+     * associated by index. If there are more series than [LineComponent]s, this list is iterated multiple times.
+     */
+    @Deprecated(
+        "Use `columnProvider` instead. More information: https://patrykandpatrick.com/vico/releases/2.0.0-alpha.13.",
+    )
+    public var columns: List<LineComponent>
+        get() =
+            checkNotNull(columnProvider as? ColumnProvider.Companion.Series) {
+                "`columns` is deprecated and can’t be used with custom `ColumnProvider`s."
+            }.columns
+        set(value) {
+            columnProvider = ColumnProvider.series(value)
+        }
 
     override val entryLocationMap: HashMap<Float, MutableList<Marker.EntryModel>> = HashMap()
 
@@ -134,7 +185,6 @@ public open class ColumnCartesianLayer(
         var drawingStart: Float
         var height: Float
         var columnCenterX: Float
-        var column: LineComponent
         var columnTop: Float
         var columnBottom: Float
         val zeroLinePosition = bounds.bottom + yRange.minY / yRange.length * bounds.height()
@@ -142,7 +192,6 @@ public open class ColumnCartesianLayer(
 
         model.series.forEachIndexed { index, entryCollection ->
 
-            column = columns.getRepeating(index)
             drawingStart = getDrawingStart(index, model.series.size, mergeMode) - horizontalScroll
 
             entryCollection.forEachInIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry, _ ->
@@ -151,9 +200,11 @@ public open class ColumnCartesianLayer(
                 height = (columnInfo?.height ?: (abs(entry.y) / yRange.length)) * bounds.height()
                 val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
                 check(xSpacingMultiplier % 1f == 0f) { "Each entry’s x value must be a multiple of the x step." }
-                columnCenterX = drawingStart +
-                    (horizontalDimensions.xSpacing * xSpacingMultiplier + column.thicknessDp.half.pixels * zoom) *
-                    layoutDirectionMultiplier
+                val column = columnProvider.getColumn(entry, index, model.extraStore)
+                columnCenterX = drawingStart + (
+                    horizontalDimensions.xSpacing * xSpacingMultiplier +
+                        columnProvider.getWidestSeriesColumn(index, model.extraStore).thicknessDp.half.pixels * zoom
+                ) * layoutDirectionMultiplier
 
                 when (mergeMode) {
                     MergeMode.Stacked -> {
@@ -394,7 +445,11 @@ public open class ColumnCartesianLayer(
     ): Float =
         when (mergeMode) {
             MergeMode.Stacked ->
-                columns.take(entryCollectionSize).maxOf { it.thicknessDp.pixels }
+                (0..<entryCollectionSize)
+                    .maxOf { seriesIndex ->
+                        columnProvider.getWidestSeriesColumn(seriesIndex, chartValues.model.extraStore).thicknessDp
+                    }
+                    .pixels
 
             MergeMode.Grouped ->
                 getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
@@ -420,10 +475,10 @@ public open class ColumnCartesianLayer(
 
     protected open fun MeasureContext.getCumulatedThickness(count: Int): Float {
         var thickness = 0f
-        for (i in 0..<count) {
-            thickness += columns.getRepeating(i).thicknessDp * density
+        for (seriesIndex in 0..<count) {
+            thickness += columnProvider.getWidestSeriesColumn(seriesIndex, chartValues.model.extraStore).thicknessDp
         }
-        return thickness
+        return thickness.pixels
     }
 
     /**
@@ -511,6 +566,50 @@ public open class ColumnCartesianLayer(
                 bottomY += y
                 bottomHeight += height
             }
+        }
+    }
+
+    /** Provides column [LineComponent]s to [ColumnCartesianLayer]s. */
+    public interface ColumnProvider {
+        /** Returns the [LineComponent] for the column with the given properties. */
+        public fun getColumn(
+            entry: ColumnCartesianLayerModel.Entry,
+            seriesIndex: Int,
+            extraStore: ExtraStore,
+        ): LineComponent
+
+        /** Returns the widest column [LineComponent] for the specified series. */
+        public fun getWidestSeriesColumn(
+            seriesIndex: Int,
+            extraStore: ExtraStore,
+        ): LineComponent
+
+        /** Houses [ColumnProvider] factory functions. */
+        public companion object {
+            internal data class Series(val columns: List<LineComponent>) : ColumnProvider {
+                override fun getColumn(
+                    entry: ColumnCartesianLayerModel.Entry,
+                    seriesIndex: Int,
+                    extraStore: ExtraStore,
+                ): LineComponent = columns.getRepeating(seriesIndex)
+
+                override fun getWidestSeriesColumn(
+                    seriesIndex: Int,
+                    extraStore: ExtraStore,
+                ): LineComponent = columns.getRepeating(seriesIndex)
+            }
+
+            /**
+             * Uses one [LineComponent] per series. The [LineComponent]s ([columns]) and series are associated by index.
+             * If there are more series than [LineComponent]s, [columns] is iterated multiple times.
+             */
+            public fun series(columns: List<LineComponent>): ColumnProvider = Series(columns)
+
+            /**
+             * Uses one [LineComponent] per series. The [LineComponent]s ([columns]) and series are associated by index.
+             * If there are more series than [LineComponent]s, the [LineComponent] list is iterated multiple times.
+             */
+            public fun series(vararg columns: LineComponent): ColumnProvider = series(columns.toList())
         }
     }
 }
