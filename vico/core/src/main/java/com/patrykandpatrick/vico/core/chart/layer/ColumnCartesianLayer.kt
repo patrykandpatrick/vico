@@ -98,12 +98,7 @@ public open class ColumnCartesianLayer(
      */
     public constructor() : this(emptyList())
 
-    /**
-     * When [mergeMode] is set to [MergeMode.Stacked], this maps the x-axis value of every column collection to a pair
-     * containing the bottom coordinate of the collection’s bottommost column and the top coordinate of the collection’s
-     * topmost column. This hash map is used by [drawInternal] and [drawChartInternal].
-     */
-    protected val heightMap: HashMap<Float, Pair<Float, Float>> = HashMap()
+    protected val stackInfo: MutableMap<Float, StackInfo> = mutableMapOf()
 
     /**
      * Holds information on the [ColumnCartesianLayer]’s horizontal dimensions.
@@ -125,7 +120,7 @@ public open class ColumnCartesianLayer(
                 model = model,
                 drawingModel = model.extraStore.getOrNull(drawingModelKey),
             )
-            heightMap.clear()
+            stackInfo.clear()
         }
 
     protected open fun ChartDrawContext.drawChartInternal(
@@ -162,21 +157,15 @@ public open class ColumnCartesianLayer(
 
                 when (mergeMode) {
                     MergeMode.Stacked -> {
-                        val (stackedNegHeight, stackedPosHeight) = heightMap.getOrElse(entry.x) { 0f to 0f }
-                        columnBottom = zeroLinePosition +
-                            if (entry.y < 0f) {
-                                height + stackedNegHeight
+                        val stackInfo = stackInfo.getOrPut(entry.x) { StackInfo() }
+                        columnBottom =
+                            if (entry.y >= 0f) {
+                                zeroLinePosition - stackInfo.topHeight
                             } else {
-                                -stackedPosHeight
+                                zeroLinePosition + stackInfo.bottomHeight + height
                             }
-
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
-                        heightMap[entry.x] =
-                            if (entry.y < 0f) {
-                                stackedNegHeight + height to stackedPosHeight
-                            } else {
-                                stackedNegHeight to stackedPosHeight + height
-                            }
+                        stackInfo.update(entry.y, height)
                     }
 
                     MergeMode.Grouped -> {
@@ -212,12 +201,10 @@ public open class ColumnCartesianLayer(
                         mergeMode = mergeMode,
                     )
                 } else if (index == model.series.lastIndex) {
-                    val yValues = heightMap[entry.x]
                     drawStackedDataLabel(
                         modelEntriesSize = model.series.size,
                         columnThicknessDp = column.thicknessDp,
-                        negativeY = yValues?.first,
-                        positiveY = yValues?.second,
+                        stackInfo = stackInfo.getValue(entry.x),
                         x = columnCenterX,
                         zeroLinePosition = zeroLinePosition,
                         heightMultiplier = heightMultiplier,
@@ -233,8 +220,7 @@ public open class ColumnCartesianLayer(
     protected open fun ChartDrawContext.drawStackedDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
-        negativeY: Float?,
-        positiveY: Float?,
+        stackInfo: StackInfo,
         x: Float,
         zeroLinePosition: Float,
         heightMultiplier: Float,
@@ -242,13 +228,29 @@ public open class ColumnCartesianLayer(
         isLast: Boolean,
         mergeMode: MergeMode,
     ) {
-        if (positiveY != null && positiveY > 0f) {
-            val y = zeroLinePosition - positiveY * heightMultiplier
-            drawDataLabel(modelEntriesSize, columnThicknessDp, positiveY, x, y, isFirst, isLast, mergeMode)
+        if (stackInfo.topY > 0f) {
+            drawDataLabel(
+                modelEntriesSize = modelEntriesSize,
+                columnThicknessDp = columnThicknessDp,
+                dataLabelValue = stackInfo.topY,
+                x = x,
+                y = zeroLinePosition - stackInfo.topHeight,
+                isFirst = isFirst,
+                isLast = isLast,
+                mergeMode = mergeMode,
+            )
         }
-        if (negativeY != null && negativeY < 0f) {
-            val y = zeroLinePosition + abs(negativeY) * heightMultiplier
-            drawDataLabel(modelEntriesSize, columnThicknessDp, negativeY, x, y, isFirst, isLast, mergeMode)
+        if (stackInfo.bottomY < 0f) {
+            drawDataLabel(
+                modelEntriesSize = modelEntriesSize,
+                columnThicknessDp = columnThicknessDp,
+                dataLabelValue = stackInfo.bottomY,
+                x = x,
+                y = zeroLinePosition + stackInfo.bottomHeight,
+                isFirst = isFirst,
+                isLast = isLast,
+                mergeMode = mergeMode,
+            )
         }
     }
 
@@ -491,4 +493,24 @@ public open class ColumnCartesianLayer(
                 }
             }
             .let(::ColumnCartesianLayerDrawingModel)
+
+    protected data class StackInfo(
+        var topY: Float = 0f,
+        var bottomY: Float = 0f,
+        var topHeight: Float = 0f,
+        var bottomHeight: Float = 0f,
+    ) {
+        public fun update(
+            y: Float,
+            height: Float,
+        ) {
+            if (y >= 0f) {
+                topY += y
+                topHeight += height
+            } else {
+                bottomY += y
+                bottomHeight += height
+            }
+        }
+    }
 }
