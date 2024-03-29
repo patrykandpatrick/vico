@@ -22,6 +22,7 @@ import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.common.extension.ceil
+import com.patrykandpatrick.vico.core.common.extension.floor
 import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.extension.round
 
@@ -36,7 +37,14 @@ internal class DefaultHorizontalAxisItemPlacer(
             this@DefaultHorizontalAxisItemPlacer.addExtremeLabelPadding &&
                 horizontalLayout is HorizontalLayout.FullWidth
 
-    private val ChartValues.measuredLabelValues get() = listOf(minX, (minX + maxX).half, maxX)
+    private val ChartValues.measuredLabelValues
+        get() =
+            buildList {
+                add(minX)
+                if (xLength < xStep) return@buildList
+                add(minX + xStep * (xLength / xStep).floor)
+                if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).round)
+            }
 
     override fun getShiftExtremeTicks(context: CartesianChartDrawContext): Boolean = shiftExtremeTicks
 

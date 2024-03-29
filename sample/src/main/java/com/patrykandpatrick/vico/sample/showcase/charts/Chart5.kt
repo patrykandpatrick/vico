@@ -87,8 +87,8 @@ private fun ComposeChart5(
         chart =
             rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    columns =
-                        listOf(
+                    columnProvider =
+                        ColumnCartesianLayer.ColumnProvider.series(
                             rememberLineComponent(
                                 color = color1,
                                 thickness = COLUMN_THICKNESS_DP.dp,

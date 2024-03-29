@@ -49,6 +49,7 @@ import com.patrykandpatrick.vico.compose.common.shader.fromComponent
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
@@ -73,7 +74,7 @@ fun ColumnChartCard(): Unit =
                 chart =
                     rememberCartesianChart(
                         rememberColumnCartesianLayer(
-                            listOf(
+                            ColumnCartesianLayer.ColumnProvider.series(
                                 rememberLineComponent(
                                     color = colors.primary,
                                     thickness = 8.dp,

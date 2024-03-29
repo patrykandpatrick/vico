@@ -35,6 +35,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shape.roundedCornerShape
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
+import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
@@ -91,10 +92,16 @@ private fun ComposeChart4(
         chart =
             rememberCartesianChart(
                 rememberColumnCartesianLayer(
-                    columns =
-                        columnColors.map {
-                            rememberLineComponent(color = it, thickness = 8.dp, shape = Shapes.roundedCornerShape(2.dp))
-                        },
+                    columnProvider =
+                        ColumnCartesianLayer.ColumnProvider.series(
+                            columnColors.map { color ->
+                                rememberLineComponent(
+                                    color = color,
+                                    thickness = 8.dp,
+                                    shape = Shapes.roundedCornerShape(2.dp),
+                                )
+                            },
+                        ),
                 ),
                 rememberLineCartesianLayer(
                     lines =

@@ -41,8 +41,8 @@ internal fun TypedArray.getColumnCartesianLayer(
             getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)
                 .let(ColumnCartesianLayer.MergeMode.entries::get)
         ColumnCartesianLayer(
-            columns =
-                listOf(
+            columnProvider =
+                ColumnCartesianLayer.ColumnProvider.series(
                     getNestedTypedArray(
                         context = context,
                         resourceId = R.styleable.ColumnCartesianLayerStyle_column1,

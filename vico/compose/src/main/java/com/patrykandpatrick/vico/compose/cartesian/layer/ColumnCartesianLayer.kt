@@ -23,10 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
-import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.formatter.DecimalFormatValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerDrawingModel
@@ -40,34 +38,19 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 
-/**
- * Creates a [ColumnCartesianLayer].
- *
- * @param columns the [LineComponent] instances to use for columns. This list is iterated through as many times
- * as necessary for each column collection. If the list contains a single element, all columns have the same appearance.
- * @param spacing the distance between neighboring column collections.
- * @param innerSpacing the distance between neighboring grouped columns.
- * @param mergeMode defines how columns should be drawn in column collections.
- * @param dataLabel an optional [TextComponent] to use for data labels.
- * @param dataLabelVerticalPosition the vertical position of data labels relative to the top of their
- * respective columns.
- * @param dataLabelValueFormatter the [CartesianValueFormatter] to use for data labels.
- * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
- * @param axisValueOverrider overrides the _x_ and _y_ ranges.
- * @param verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
- * associated. Use this for independent [CartesianLayer] scaling.
- * @param drawingModelInterpolator interpolates the [ColumnCartesianLayer]’s [ColumnCartesianLayerDrawingModel]s.
- */
+/** Creates and remembers a [ColumnCartesianLayer]. */
 @Composable
 public fun rememberColumnCartesianLayer(
-    columns: List<LineComponent> =
-        vicoTheme.cartesianLayerColors.map { color ->
-            rememberLineComponent(
-                color,
-                Defaults.COLUMN_WIDTH.dp,
-                Shapes.roundedCornerShape(Defaults.COLUMN_ROUNDNESS_PERCENT),
-            )
-        },
+    columnProvider: ColumnCartesianLayer.ColumnProvider =
+        ColumnCartesianLayer.ColumnProvider.series(
+            vicoTheme.cartesianLayerColors.map { color ->
+                rememberLineComponent(
+                    color,
+                    Defaults.COLUMN_WIDTH.dp,
+                    Shapes.roundedCornerShape(Defaults.COLUMN_ROUNDNESS_PERCENT),
+                )
+            },
+        ),
     spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
     innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
     mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
@@ -81,8 +64,8 @@ public fun rememberColumnCartesianLayer(
         DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
         remember { DefaultDrawingModelInterpolator() },
 ): ColumnCartesianLayer =
-    remember { ColumnCartesianLayer() }.apply {
-        this.columns = columns
+    remember { ColumnCartesianLayer(columnProvider) }.apply {
+        this.columnProvider = columnProvider
         this.spacingDp = spacing.value
         this.innerSpacingDp = innerSpacing.value
         this.mergeMode = mergeMode
@@ -94,3 +77,40 @@ public fun rememberColumnCartesianLayer(
         this.verticalAxisPosition = verticalAxisPosition
         this.drawingModelInterpolator = drawingModelInterpolator
     }
+
+/**
+ * Creates and remembers a [ColumnCartesianLayer] with the provided column [LineComponent]s ([columns]). One
+ * [LineComponent] is used per series. The [LineComponent]s and series are associated by index. If there are more series
+ * than [LineComponent]s, [columns] is iterated multiple times.
+ */
+@Composable
+@Suppress("DeprecatedCallableAddReplaceWith")
+@Deprecated("Replace `columns = ...` with `columnProvider = ColumnCartesianLayer.ColumnProvider.series(...)`.")
+public fun rememberColumnCartesianLayer(
+    columns: List<LineComponent>,
+    spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
+    innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
+    mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
+    verticalAxisPosition: AxisPosition.Vertical? = null,
+    dataLabel: TextComponent? = null,
+    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
+    dataLabelValueFormatter: CartesianValueFormatter = remember { DecimalFormatValueFormatter() },
+    dataLabelRotationDegrees: Float = 0f,
+    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
+    drawingModelInterpolator:
+        DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
+        remember { DefaultDrawingModelInterpolator() },
+): ColumnCartesianLayer =
+    rememberColumnCartesianLayer(
+        ColumnCartesianLayer.ColumnProvider.series(columns),
+        spacing,
+        innerSpacing,
+        mergeMode,
+        verticalAxisPosition,
+        dataLabel,
+        dataLabelVerticalPosition,
+        dataLabelValueFormatter,
+        dataLabelRotationDegrees,
+        axisValueOverrider,
+        drawingModelInterpolator,
+    )

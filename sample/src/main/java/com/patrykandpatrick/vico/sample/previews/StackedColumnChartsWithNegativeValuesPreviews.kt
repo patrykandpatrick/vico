@@ -36,7 +36,6 @@ import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 private val model =
@@ -48,10 +47,10 @@ private val model =
         },
     )
 
-private val columns: List<LineComponent>
+private val columnProvider
     @Composable
     get() =
-        listOf(
+        ColumnCartesianLayer.ColumnProvider.series(
             rememberLineComponent(color = Color(0xFF494949), thickness = 8.dp),
             rememberLineComponent(color = Color(0xFF7C7A7A), thickness = 8.dp),
             rememberLineComponent(color = Color(0xFFFF5D73), thickness = 8.dp),
@@ -67,7 +66,7 @@ public fun StackedColumnChartWithNegativeValues() {
             chart =
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(
-                        columns = columns,
+                        columnProvider = columnProvider,
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
                     startAxis =
@@ -90,7 +89,7 @@ public fun StackedColumnChartWithNegativeValuesAndDataLabels() {
             chart =
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(
-                        columns = columns,
+                        columnProvider = columnProvider,
                         dataLabel = rememberTextComponent(),
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
@@ -113,7 +112,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden() {
             chart =
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(
-                        columns = columns,
+                        columnProvider = columnProvider,
                         axisValueOverrider = AxisValueOverrider.fixed(minY = 1f, maxY = 4f),
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
@@ -136,7 +135,7 @@ public fun StackedColumnChartWithNegativeValuesAndAxisValuesOverridden2() {
             chart =
                 rememberCartesianChart(
                     rememberColumnCartesianLayer(
-                        columns = columns,
+                        columnProvider = columnProvider,
                         axisValueOverrider = AxisValueOverrider.fixed(minY = -2f, maxY = 0f),
                         mergeMode = { ColumnCartesianLayer.MergeMode.Stacked },
                     ),
