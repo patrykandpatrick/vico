@@ -22,6 +22,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.Layout
+import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -344,8 +345,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
         pad: Boolean = text == null,
     ): RectF =
         with(context) {
-            var measuredText = text?.toString().orEmpty()
-            if (pad) repeat((lineCount - measuredText.lines().size).coerceAtLeast(0)) { measuredText += '\n' }
+            val measuredText = SpannableStringBuilder(text ?: "")
+            if (pad) repeat((lineCount - measuredText.lines().size).coerceAtLeast(0)) { measuredText.append('\n') }
             val layout = getLayout(this, measuredText, width, height, rotationDegrees)
             layout
                 .getBounds(outRect)
@@ -397,7 +398,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
 
         extraStore.getOrSetCached(
             cacheKey = layoutCacheKey,
-            valueKey = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode(),
+            valueKey = LAYOUT_KEY_PREFIX + text.hashCode() + correctedWidth + rotationDegrees + textPaint.hashCode(),
         ) {
             textPaint.textSize = spToPx(textSizeSp)
             staticLayout(
