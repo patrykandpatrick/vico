@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.Layout
+import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.StaticLayout
 import android.text.TextPaint
@@ -333,8 +334,8 @@ public open class TextComponent protected constructor() : Padding, Margins {
         rotationDegrees: Float = 0f,
         pad: Boolean = text == null,
     ): RectF = with(context) {
-        var measuredText = text?.toString().orEmpty()
-        if (pad) repeat((lineCount - measuredText.lines().size).coerceAtLeast(0)) { measuredText += '\n' }
+        val measuredText = SpannableStringBuilder(text ?: "")
+        if (pad) repeat((lineCount - measuredText.lines().size).coerceAtLeast(0)) { measuredText.append('\n') }
         getLayout(measuredText, width, height, rotationDegrees)
             .getBounds(outRect)
             .apply {
@@ -377,7 +378,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
             } - padding.horizontalDp.wholePixels
             ).coerceAtLeast(0)
 
-        val key = LAYOUT_KEY_PREFIX + text + correctedWidth + rotationDegrees + textPaint.hashCode()
+        val key = LAYOUT_KEY_PREFIX + text.hashCode() + correctedWidth + rotationDegrees + textPaint.hashCode()
         return getOrPutExtra(key = key) {
             textPaint.textSize = spToPx(textSizeSp)
             staticLayout(
