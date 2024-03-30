@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 /** Creates and remembers a [CandlestickCartesianLayer]. */
 @Composable
 public fun rememberCandlestickCartesianLayer(
-    candles: CandlestickCartesianLayer.Candles = rememberFilledCandles(),
+    candles: CandlestickCartesianLayer.CandleProvider = CandlestickCartesianLayer.CandleProvider.absolute(),
     minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
     candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
     verticalAxisPosition: AxisPosition.Vertical? = null,

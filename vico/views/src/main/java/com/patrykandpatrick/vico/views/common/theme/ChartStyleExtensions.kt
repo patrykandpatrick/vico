@@ -22,6 +22,8 @@ import androidx.annotation.StyleableRes
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.layer.absolute
+import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.core.cartesian.layer.asWick
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.extension.getRepeating
@@ -161,13 +163,13 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
             R.styleable.CartesianChartView_candlestickLayerStyle,
             R.styleable.CandlestickLayerStyle,
         ).use { typedArray ->
-            val hasHollowCandleStyle = typedArray.hasHollowCandleStyle()
+            val hasAbsoluteRelativeCandleStyle = typedArray.hasAbsoluteRelativeCandleStyle()
             val green = context.defaultColors.candlestickGreen.toInt()
             val gray = context.defaultColors.candlestickGray.toInt()
             val red = context.defaultColors.candlestickRed.toInt()
 
-            if (hasHollowCandleStyle) {
-                CandlestickCartesianLayer.Candles(
+            if (hasAbsoluteRelativeCandleStyle) {
+                CandlestickCartesianLayer.CandleProvider.absoluteRelative(
                     typedArray.getCandle(
                         context,
                         R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishCandleStyle,
@@ -215,22 +217,10 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
                     ),
                 )
             } else {
-                val bullish =
-                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bullishCandleStyle, green)
-                val neutral =
-                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_neutralCandleStyle, gray)
-                val bearish =
-                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bearishCandleStyle, red)
-                CandlestickCartesianLayer.Candles(
-                    bullish,
-                    bullish,
-                    bullish,
-                    neutral,
-                    neutral,
-                    neutral,
-                    bearish,
-                    bearish,
-                    bearish,
+                CandlestickCartesianLayer.CandleProvider.absolute(
+                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bullishCandleStyle, green),
+                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_neutralCandleStyle, gray),
+                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bearishCandleStyle, red),
                 )
             }
         }
@@ -247,7 +237,7 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
     )
 }
 
-private fun TypedArray.hasHollowCandleStyle(): Boolean =
+private fun TypedArray.hasAbsoluteRelativeCandleStyle(): Boolean =
     hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishCandleStyle) ||
         hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle) ||
         hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishCandleStyle) ||

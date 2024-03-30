@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.put
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerDrawingModel
@@ -44,7 +45,7 @@ import com.patrykandpatrick.vico.core.common.extension.half
 /**
  * [CandlestickCartesianLayer] displays data as vertical bars. It can draw multiple columns per segment.
  *
- * @param candles TODO
+ * @param candles provides the [Candle]s.
  * @param minCandleBodyHeightDp TODO
  * @param candleSpacingDp the horizontal padding between the edges of chart segments and the columns they contain.
  * segments that contain a single column only.
@@ -52,7 +53,7 @@ import com.patrykandpatrick.vico.core.common.extension.half
  * associated. Use this for independent [CartesianLayer] scaling.
  */
 public open class CandlestickCartesianLayer(
-    public var candles: Candles,
+    public var candles: CandleProvider,
     public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
     public var candleSpacingDp: Float = Defaults.CANDLE_SPACING_DP,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
@@ -73,7 +74,8 @@ public open class CandlestickCartesianLayer(
         public val topWick: LineComponent = body.asWick(),
         public val bottomWick: LineComponent = topWick,
     ) {
-        internal val thicknessDp
+        /** The width of the [Candle] (in dp). */
+        public val widthDp: Float
             get() =
                 maxOf(
                     body.thicknessDp,
@@ -117,7 +119,7 @@ public open class CandlestickCartesianLayer(
         val drawingStart: Float =
             bounds.getStart(isLtr = isLtr) + (
                 horizontalDimensions.startPadding -
-                    candles.maxThicknessDp.half.pixels * zoom
+                    candles.getWidestCandle(model.extraStore).widthDp.half.pixels * zoom
             ) * layoutDirectionMultiplier - horizontalScroll
 
         var bodyCenterX: Float
@@ -125,12 +127,12 @@ public open class CandlestickCartesianLayer(
         val minBodyHeight = minCandleBodyHeightDp.pixels
 
         model.series.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { index, entry, _ ->
-            candle = candles.getCandle(entry)
+            candle = candles.getCandle(entry, model.extraStore)
             val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
 
             val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
             bodyCenterX = drawingStart + layoutDirectionMultiplier * horizontalDimensions.xSpacing *
-                xSpacingMultiplier + candle.thicknessDp.half.pixels * zoom
+                xSpacingMultiplier + candle.widthDp.half.pixels * zoom
 
             var bodyBottomY = bounds.bottom - candleInfo.bodyBottomY * bounds.height()
             var bodyTopY = bounds.bottom - candleInfo.bodyTopY * bounds.height()
@@ -217,7 +219,7 @@ public open class CandlestickCartesianLayer(
         model: CandlestickCartesianLayerModel,
     ) {
         with(context) {
-            val candleWidth = candles.maxThicknessDp.pixels
+            val candleWidth = candles.getWidestCandle(model.extraStore).widthDp.pixels
             val xSpacing = candleWidth + candleSpacingDp.pixels
             when (val horizontalLayout = horizontalLayout) {
                 is HorizontalLayout.Segmented -> horizontalDimensions.ensureSegmentedValues(xSpacing, chartValues)
@@ -270,69 +272,89 @@ public open class CandlestickCartesianLayer(
         return CandlestickCartesianLayerDrawingModel(series.associate { it.x to it.toCandleInfo(yRange) })
     }
 
-    /**
-     * TODO
-     *
-     * @param absolutelyBullishRelativelyBullish TODO
-     * @param absolutelyBullishRelativelyNeutral TODO
-     * @param absolutelyBullishRelativelyBearish TODO
-     * @param absolutelyNeutralRelativelyBullish TODO
-     * @param absolutelyNeutralRelativelyNeutral TODO
-     * @param absolutelyNeutralRelativelyBearish TODO
-     * @param absolutelyBearishRelativelyBullish TODO
-     * @param absolutelyBearishRelativelyNeutral TODO
-     * @param absolutelyBearishRelativelyBearish TODO
-     */
-    public class Candles(
-        public val absolutelyBullishRelativelyBullish: Candle,
-        public val absolutelyBullishRelativelyNeutral: Candle,
-        public val absolutelyBullishRelativelyBearish: Candle,
-        public val absolutelyNeutralRelativelyBullish: Candle,
-        public val absolutelyNeutralRelativelyNeutral: Candle,
-        public val absolutelyNeutralRelativelyBearish: Candle,
-        public val absolutelyBearishRelativelyBullish: Candle,
-        public val absolutelyBearishRelativelyNeutral: Candle,
-        public val absolutelyBearishRelativelyBearish: Candle,
-    ) {
-        internal val maxThicknessDp
-            get() =
-                maxOf(
-                    absolutelyBullishRelativelyBullish.body.thicknessDp,
-                    absolutelyBullishRelativelyNeutral.body.thicknessDp,
-                    absolutelyBullishRelativelyBearish.body.thicknessDp,
-                    absolutelyNeutralRelativelyBullish.body.thicknessDp,
-                    absolutelyNeutralRelativelyNeutral.body.thicknessDp,
-                    absolutelyNeutralRelativelyBearish.body.thicknessDp,
-                    absolutelyBearishRelativelyBullish.body.thicknessDp,
-                    absolutelyBearishRelativelyNeutral.body.thicknessDp,
-                    absolutelyBearishRelativelyBearish.body.thicknessDp,
-                )
+    /** Provides [Candle]s to [CandlestickCartesianLayer]s. */
+    public interface CandleProvider {
+        /** Returns the [Candle] for the given [CandlestickCartesianLayerModel.Entry]. */
+        public fun getCandle(
+            entry: CandlestickCartesianLayerModel.Entry,
+            extraStore: ExtraStore,
+        ): Candle
 
-        internal fun getCandle(entry: CandlestickCartesianLayerModel.Entry) =
-            when (entry.absoluteChange) {
-                Change.Bullish ->
-                    when (entry.relativeChange) {
-                        Change.Bullish -> absolutelyBullishRelativelyBullish
-                        Change.Bearish -> absolutelyBullishRelativelyBearish
-                        Change.Neutral -> absolutelyBullishRelativelyNeutral
-                    }
+        /** Returns the widest [Candle]. */
+        public fun getWidestCandle(extraStore: ExtraStore): Candle
 
-                Change.Bearish ->
-                    when (entry.relativeChange) {
-                        Change.Bullish -> absolutelyBearishRelativelyBullish
-                        Change.Bearish -> absolutelyBearishRelativelyBearish
-                        Change.Neutral -> absolutelyBearishRelativelyNeutral
-                    }
+        /** Provides access to [CandleProvider] factory functions. */
+        public companion object {
+            internal data class Absolute(
+                val bullish: Candle,
+                val neutral: Candle,
+                val bearish: Candle,
+            ) : CandleProvider {
+                private val candles = listOf(bullish, neutral, bearish)
 
-                Change.Neutral ->
-                    when (entry.relativeChange) {
-                        Change.Bullish -> absolutelyNeutralRelativelyBullish
-                        Change.Bearish -> absolutelyNeutralRelativelyBearish
-                        Change.Neutral -> absolutelyNeutralRelativelyNeutral
-                    }
+                override fun getCandle(
+                    entry: CandlestickCartesianLayerModel.Entry,
+                    extraStore: ExtraStore,
+                ) = when (entry.absoluteChange) {
+                    Change.Bullish -> bullish
+                    Change.Neutral -> neutral
+                    Change.Bearish -> bearish
+                }
+
+                override fun getWidestCandle(extraStore: ExtraStore) = candles.maxBy { it.widthDp }
             }
 
-        public companion object
+            internal data class AbsoluteRelative(
+                val absolutelyBullishRelativelyBullish: Candle,
+                val absolutelyBullishRelativelyNeutral: Candle,
+                val absolutelyBullishRelativelyBearish: Candle,
+                val absolutelyNeutralRelativelyBullish: Candle,
+                val absolutelyNeutralRelativelyNeutral: Candle,
+                val absolutelyNeutralRelativelyBearish: Candle,
+                val absolutelyBearishRelativelyBullish: Candle,
+                val absolutelyBearishRelativelyNeutral: Candle,
+                val absolutelyBearishRelativelyBearish: Candle,
+            ) : CandleProvider {
+                private val candles =
+                    listOf(
+                        absolutelyBullishRelativelyBullish,
+                        absolutelyBullishRelativelyNeutral,
+                        absolutelyBullishRelativelyBearish,
+                        absolutelyNeutralRelativelyBullish,
+                        absolutelyNeutralRelativelyNeutral,
+                        absolutelyNeutralRelativelyBearish,
+                        absolutelyBearishRelativelyBullish,
+                        absolutelyBearishRelativelyNeutral,
+                        absolutelyBearishRelativelyBearish,
+                    )
+
+                override fun getCandle(
+                    entry: CandlestickCartesianLayerModel.Entry,
+                    extraStore: ExtraStore,
+                ) = when (entry.absoluteChange) {
+                    Change.Bullish ->
+                        when (entry.relativeChange) {
+                            Change.Bullish -> absolutelyBullishRelativelyBullish
+                            Change.Neutral -> absolutelyBullishRelativelyNeutral
+                            Change.Bearish -> absolutelyBullishRelativelyBearish
+                        }
+                    Change.Neutral ->
+                        when (entry.relativeChange) {
+                            Change.Bullish -> absolutelyNeutralRelativelyBullish
+                            Change.Neutral -> absolutelyNeutralRelativelyNeutral
+                            Change.Bearish -> absolutelyNeutralRelativelyBearish
+                        }
+                    Change.Bearish ->
+                        when (entry.relativeChange) {
+                            Change.Bullish -> absolutelyBearishRelativelyBullish
+                            Change.Neutral -> absolutelyBearishRelativelyNeutral
+                            Change.Bearish -> absolutelyBearishRelativelyBearish
+                        }
+                }
+
+                override fun getWidestCandle(extraStore: ExtraStore) = candles.maxBy { it.widthDp }
+            }
+        }
     }
 }
 
@@ -343,4 +365,39 @@ public fun LineComponent.asWick(): LineComponent =
         color = if (color == Color.TRANSPARENT) strokeColor else color,
         thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
         strokeWidthDp = 0f,
+    )
+
+/** Switches between three [Candle]s based on [CandlestickCartesianLayerModel.Entry.absoluteChange]. */
+public fun CandlestickCartesianLayer.CandleProvider.Companion.absolute(
+    bullish: Candle,
+    neutral: Candle,
+    bearish: Candle,
+): CandlestickCartesianLayer.CandleProvider =
+    CandlestickCartesianLayer.CandleProvider.Companion.Absolute(bullish, neutral, bearish)
+
+/**
+ * Switches between nine [Candle]s based on [CandlestickCartesianLayerModel.Entry.absoluteChange] and
+ * [CandlestickCartesianLayerModel.Entry.relativeChange].
+ */
+public fun CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative(
+    absolutelyBullishRelativelyBullish: Candle,
+    absolutelyBullishRelativelyNeutral: Candle,
+    absolutelyBullishRelativelyBearish: Candle,
+    absolutelyNeutralRelativelyBullish: Candle,
+    absolutelyNeutralRelativelyNeutral: Candle,
+    absolutelyNeutralRelativelyBearish: Candle,
+    absolutelyBearishRelativelyBullish: Candle,
+    absolutelyBearishRelativelyNeutral: Candle,
+    absolutelyBearishRelativelyBearish: Candle,
+): CandlestickCartesianLayer.CandleProvider =
+    CandlestickCartesianLayer.CandleProvider.Companion.AbsoluteRelative(
+        absolutelyBullishRelativelyBullish,
+        absolutelyBullishRelativelyNeutral,
+        absolutelyBullishRelativelyBearish,
+        absolutelyNeutralRelativelyBullish,
+        absolutelyNeutralRelativelyNeutral,
+        absolutelyNeutralRelativelyBearish,
+        absolutelyBearishRelativelyBullish,
+        absolutelyBearishRelativelyNeutral,
+        absolutelyBearishRelativelyBearish,
     )

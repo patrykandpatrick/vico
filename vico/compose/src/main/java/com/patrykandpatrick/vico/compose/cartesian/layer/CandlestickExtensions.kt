@@ -27,6 +27,8 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.style.getDefaultColors
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
+import com.patrykandpatrick.vico.core.cartesian.layer.absolute
+import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.core.cartesian.layer.asWick
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
@@ -69,39 +71,20 @@ public fun rememberCandle(
     bottomWick: LineComponent = topWick,
 ): Candle = remember(body, topWick, bottomWick) { Candle(body, topWick, bottomWick) }
 
-/**
- * TODO
- */
+/** An alias for [CandlestickCartesianLayer.CandleProvider.Companion.absolute] with default arguments. */
 @Composable
-public fun rememberFilledCandles(
+@Stable
+public fun CandlestickCartesianLayer.CandleProvider.Companion.absolute(
     bullish: Candle = Candle.sharpFilledCandle(Color(getDefaultColors().candlestickGreen)),
     neutral: Candle = bullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
     bearish: Candle = bullish.copyWithColor(Color(getDefaultColors().candlestickRed)),
-): CandlestickCartesianLayer.Candles =
-    remember(
-        bullish,
-        neutral,
-        bearish,
-    ) {
-        CandlestickCartesianLayer.Candles(
-            absolutelyBullishRelativelyBullish = bullish,
-            absolutelyBullishRelativelyNeutral = bullish,
-            absolutelyBullishRelativelyBearish = bullish,
-            absolutelyNeutralRelativelyBullish = neutral,
-            absolutelyNeutralRelativelyNeutral = neutral,
-            absolutelyNeutralRelativelyBearish = neutral,
-            absolutelyBearishRelativelyBullish = bearish,
-            absolutelyBearishRelativelyNeutral = bearish,
-            absolutelyBearishRelativelyBearish = bearish,
-        )
-    }
+): CandlestickCartesianLayer.CandleProvider =
+    CandlestickCartesianLayer.CandleProvider.absolute(bullish, neutral, bearish)
 
-/**
- * TODO
- */
+/** An alias for [CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative] with default arguments. */
 @Composable
 @Stable
-public fun rememberHollowCandles(
+public fun CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative(
     absolutelyBullishRelativelyBullish: Candle = Candle.sharpHollowCandle(Color(getDefaultColors().candlestickGreen)),
     absolutelyBullishRelativelyNeutral: Candle =
         absolutelyBullishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
@@ -115,8 +98,8 @@ public fun rememberHollowCandles(
         absolutelyBearishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
     absolutelyBearishRelativelyBearish: Candle =
         absolutelyBearishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickRed)),
-): CandlestickCartesianLayer.Candles =
-    remember(
+): CandlestickCartesianLayer.CandleProvider =
+    CandlestickCartesianLayer.CandleProvider.absoluteRelative(
         absolutelyBullishRelativelyBullish,
         absolutelyBullishRelativelyNeutral,
         absolutelyBullishRelativelyBearish,
@@ -126,16 +109,4 @@ public fun rememberHollowCandles(
         absolutelyBearishRelativelyBullish,
         absolutelyBearishRelativelyNeutral,
         absolutelyBearishRelativelyBearish,
-    ) {
-        CandlestickCartesianLayer.Candles(
-            absolutelyBullishRelativelyBullish,
-            absolutelyBullishRelativelyNeutral,
-            absolutelyBullishRelativelyBearish,
-            absolutelyNeutralRelativelyBullish,
-            absolutelyNeutralRelativelyNeutral,
-            absolutelyNeutralRelativelyBearish,
-            absolutelyBearishRelativelyBullish,
-            absolutelyBearishRelativelyNeutral,
-            absolutelyBearishRelativelyBearish,
-        )
-    }
+    )

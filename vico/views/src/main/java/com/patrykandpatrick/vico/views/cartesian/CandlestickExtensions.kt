@@ -20,6 +20,8 @@ import android.content.Context
 import android.graphics.Color
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
+import com.patrykandpatrick.vico.core.cartesian.layer.absolute
+import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
@@ -61,24 +63,14 @@ private fun LineComponent.copyWithColor(color: Int) =
         strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
     )
 
-internal fun CandlestickCartesianLayer.Candles.Companion.filled(
+internal fun CandlestickCartesianLayer.CandleProvider.Companion.absolute(
     context: Context,
     bullish: Candle = Candle.sharpFilledCandle(context.defaultColors.candlestickGreen.toInt()),
     neutral: Candle = bullish.copyWithColor(context.defaultColors.candlestickGray.toInt()),
     bearish: Candle = bullish.copyWithColor(context.defaultColors.candlestickRed.toInt()),
-) = CandlestickCartesianLayer.Candles(
-    absolutelyBullishRelativelyBullish = bullish,
-    absolutelyBullishRelativelyNeutral = bullish,
-    absolutelyBullishRelativelyBearish = bullish,
-    absolutelyNeutralRelativelyBullish = neutral,
-    absolutelyNeutralRelativelyNeutral = neutral,
-    absolutelyNeutralRelativelyBearish = neutral,
-    absolutelyBearishRelativelyBullish = bearish,
-    absolutelyBearishRelativelyNeutral = bearish,
-    absolutelyBearishRelativelyBearish = bearish,
-)
+) = CandlestickCartesianLayer.CandleProvider.absolute(bullish, neutral, bearish)
 
-internal fun CandlestickCartesianLayer.Candles.Companion.hollow(
+internal fun CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative(
     context: Context,
     absolutelyBullishRelativelyBullish: Candle =
         Candle.sharpHollowCandle(context.defaultColors.candlestickGreen.toInt()),
@@ -95,7 +87,7 @@ internal fun CandlestickCartesianLayer.Candles.Companion.hollow(
         absolutelyBearishRelativelyBullish.copyWithColor(context.defaultColors.candlestickGray.toInt()),
     absolutelyBearishRelativelyBearish: Candle =
         absolutelyBearishRelativelyBullish.copyWithColor(context.defaultColors.candlestickRed.toInt()),
-) = CandlestickCartesianLayer.Candles(
+) = CandlestickCartesianLayer.CandleProvider.absoluteRelative(
     absolutelyBullishRelativelyBullish,
     absolutelyBullishRelativelyNeutral,
     absolutelyBullishRelativelyBearish,
