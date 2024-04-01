@@ -115,12 +115,12 @@ public open class CandlestickCartesianLayer(
         drawingModel: CandlestickCartesianLayerDrawingModel?,
     ) {
         val yRange = chartValues.getYRange(verticalAxisPosition)
+        val halfMaxCandleWidth = candles.getWidestCandle(model.extraStore).widthDp.half.pixels
 
-        val drawingStart: Float =
-            bounds.getStart(isLtr = isLtr) + (
-                horizontalDimensions.startPadding -
-                    candles.getWidestCandle(model.extraStore).widthDp.half.pixels * zoom
-            ) * layoutDirectionMultiplier - horizontalScroll
+        val drawingStart =
+            bounds.getStart(isLtr) +
+                (horizontalDimensions.startPadding - halfMaxCandleWidth * zoom) * layoutDirectionMultiplier -
+                horizontalScroll
 
         var bodyCenterX: Float
         var candle: Candle
@@ -132,7 +132,7 @@ public open class CandlestickCartesianLayer(
 
             val xSpacingMultiplier = (entry.x - chartValues.minX) / chartValues.xStep
             bodyCenterX = drawingStart + layoutDirectionMultiplier * horizontalDimensions.xSpacing *
-                xSpacingMultiplier + candle.widthDp.half.pixels * zoom
+                xSpacingMultiplier + halfMaxCandleWidth * zoom
 
             var bodyBottomY = bounds.bottom - candleInfo.bodyBottomY * bounds.height()
             var bodyTopY = bounds.bottom - candleInfo.bodyTopY * bounds.height()
