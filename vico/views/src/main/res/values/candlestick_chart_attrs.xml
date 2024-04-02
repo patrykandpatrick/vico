@@ -18,6 +18,10 @@
     <attr name="candlestickLayerStyle" format="reference" />
 
     <declare-styleable name="CandlestickLayerStyle">
+        <attr name="candleStyle" format="enum">
+            <enum name="absolute" value="0" />
+            <enum name="absoluteRelative" value="1" />
+        </attr>
         <attr name="bullishCandleStyle" format="reference" />
         <attr name="neutralCandleStyle" format="reference" />
         <attr name="bearishCandleStyle" format="reference" />

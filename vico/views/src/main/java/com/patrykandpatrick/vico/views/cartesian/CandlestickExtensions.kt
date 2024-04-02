@@ -16,17 +16,18 @@
 
 package com.patrykandpatrick.vico.views.cartesian
 
-import android.content.Context
 import android.graphics.Color
-import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
-import com.patrykandpatrick.vico.core.cartesian.layer.absolute
-import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
-import com.patrykandpatrick.vico.views.common.extension.defaultColors
 
-private fun Candle.Companion.sharpFilledCandle(
+private fun LineComponent.copyWithColor(color: Int) =
+    copy(
+        color = if (this.color == Color.TRANSPARENT) this.color else color,
+        strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
+    )
+
+internal fun Candle.Companion.sharpFilledCandle(
     color: Int,
     thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
 ): Candle {
@@ -34,7 +35,7 @@ private fun Candle.Companion.sharpFilledCandle(
     return Candle(body = filledBody)
 }
 
-private fun Candle.Companion.sharpHollowCandle(
+internal fun Candle.Companion.sharpHollowCandle(
     color: Int,
     thicknessDp: Float = Defaults.CANDLE_BODY_WIDTH_DP,
     strokeWidthDp: Float = Defaults.HOLLOW_CANDLE_STROKE_WIDTH_DP,
@@ -50,51 +51,9 @@ private fun Candle.Companion.sharpHollowCandle(
     return Candle(body = hollowBody)
 }
 
-private fun Candle.copyWithColor(color: Int) =
+internal fun Candle.copyWithColor(color: Int) =
     Candle(
         body = body.copyWithColor(color),
         topWick = topWick.copyWithColor(color),
         bottomWick = bottomWick.copyWithColor(color),
     )
-
-private fun LineComponent.copyWithColor(color: Int) =
-    copy(
-        color = if (this.color == Color.TRANSPARENT) this.color else color,
-        strokeColor = if (this.strokeColor == Color.TRANSPARENT) this.color else color,
-    )
-
-internal fun CandlestickCartesianLayer.CandleProvider.Companion.absolute(
-    context: Context,
-    bullish: Candle = Candle.sharpFilledCandle(context.defaultColors.candlestickGreen.toInt()),
-    neutral: Candle = bullish.copyWithColor(context.defaultColors.candlestickGray.toInt()),
-    bearish: Candle = bullish.copyWithColor(context.defaultColors.candlestickRed.toInt()),
-) = CandlestickCartesianLayer.CandleProvider.absolute(bullish, neutral, bearish)
-
-internal fun CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative(
-    context: Context,
-    absolutelyBullishRelativelyBullish: Candle =
-        Candle.sharpHollowCandle(context.defaultColors.candlestickGreen.toInt()),
-    absolutelyBullishRelativelyNeutral: Candle =
-        absolutelyBullishRelativelyBullish.copyWithColor(context.defaultColors.candlestickGray.toInt()),
-    absolutelyBullishRelativelyBearish: Candle =
-        absolutelyBullishRelativelyBullish.copyWithColor(context.defaultColors.candlestickRed.toInt()),
-    absolutelyNeutralRelativelyBullish: Candle = absolutelyBullishRelativelyBullish,
-    absolutelyNeutralRelativelyNeutral: Candle = absolutelyBullishRelativelyNeutral,
-    absolutelyNeutralRelativelyBearish: Candle = absolutelyBullishRelativelyBearish,
-    absolutelyBearishRelativelyBullish: Candle =
-        Candle.sharpFilledCandle(context.defaultColors.candlestickGreen.toInt()),
-    absolutelyBearishRelativelyNeutral: Candle =
-        absolutelyBearishRelativelyBullish.copyWithColor(context.defaultColors.candlestickGray.toInt()),
-    absolutelyBearishRelativelyBearish: Candle =
-        absolutelyBearishRelativelyBullish.copyWithColor(context.defaultColors.candlestickRed.toInt()),
-) = CandlestickCartesianLayer.CandleProvider.absoluteRelative(
-    absolutelyBullishRelativelyBullish,
-    absolutelyBullishRelativelyNeutral,
-    absolutelyBullishRelativelyBearish,
-    absolutelyNeutralRelativelyBullish,
-    absolutelyNeutralRelativelyNeutral,
-    absolutelyNeutralRelativelyBearish,
-    absolutelyBearishRelativelyBullish,
-    absolutelyBearishRelativelyNeutral,
-    absolutelyBearishRelativelyBearish,
-)

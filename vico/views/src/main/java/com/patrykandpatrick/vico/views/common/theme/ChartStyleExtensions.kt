@@ -30,6 +30,9 @@ import com.patrykandpatrick.vico.core.common.extension.getRepeating
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.views.R
+import com.patrykandpatrick.vico.views.cartesian.copyWithColor
+import com.patrykandpatrick.vico.views.cartesian.sharpFilledCandle
+import com.patrykandpatrick.vico.views.cartesian.sharpHollowCandle
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
 
 internal fun TypedArray.getColumnCartesianLayer(
@@ -157,75 +160,88 @@ internal fun TypedArray.getLineCartesianLayer(
     }
 
 internal fun TypedArray.getCandlestickCartesianLayer(context: Context): CandlestickCartesianLayer {
-    val candles =
+    val green = context.defaultColors.candlestickGreen.toInt()
+    val gray = context.defaultColors.candlestickGray.toInt()
+    val red = context.defaultColors.candlestickRed.toInt()
+    val candleProvider =
         getNestedTypedArray(
             context,
             R.styleable.CartesianChartView_candlestickLayerStyle,
             R.styleable.CandlestickLayerStyle,
         ).use { typedArray ->
-            val hasAbsoluteRelativeCandleStyle = typedArray.hasAbsoluteRelativeCandleStyle()
-            val green = context.defaultColors.candlestickGreen.toInt()
-            val gray = context.defaultColors.candlestickGray.toInt()
-            val red = context.defaultColors.candlestickRed.toInt()
-
-            if (hasAbsoluteRelativeCandleStyle) {
-                CandlestickCartesianLayer.CandleProvider.absoluteRelative(
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishCandleStyle,
-                        green,
-                    ),
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralCandleStyle,
-                        gray,
-                    ),
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishCandleStyle,
-                        red,
-                    ),
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBullishCandleStyle,
-                        green,
-                    ),
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyNeutralCandleStyle,
-                        gray,
-                    ),
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBearishCandleStyle,
-                        red,
-                    ),
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishCandleStyle,
-                        green,
-                    ),
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle,
-                        gray,
-                    ),
-                    typedArray.getCandle(
-                        context,
-                        R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishCandleStyle,
-                        red,
-                    ),
-                )
-            } else {
-                CandlestickCartesianLayer.CandleProvider.absolute(
-                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bullishCandleStyle, green),
-                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_neutralCandleStyle, gray),
-                    typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bearishCandleStyle, red),
-                )
+            when (typedArray.getInteger(R.styleable.CandlestickLayerStyle_candleStyle, 0)) {
+                0 -> {
+                    val bullish =
+                        typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bullishCandleStyle)
+                            ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(green)
+                    CandlestickCartesianLayer.CandleProvider.absolute(
+                        bullish = bullish,
+                        neutral =
+                            typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_neutralCandleStyle)
+                                ?: bullish.copyWithColor(gray),
+                        bearish =
+                            typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bearishCandleStyle)
+                                ?: bullish.copyWithColor(red),
+                    )
+                }
+                1 -> {
+                    val absolutelyBullishRelativelyBullish =
+                        typedArray.getCandle(
+                            context,
+                            R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishCandleStyle,
+                        ) ?: CandlestickCartesianLayer.Candle.sharpHollowCandle(green)
+                    val absolutelyBullishRelativelyNeutral =
+                        typedArray.getCandle(
+                            context,
+                            R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle,
+                        ) ?: absolutelyBullishRelativelyBullish.copyWithColor(gray)
+                    val absolutelyBullishRelativelyBearish =
+                        typedArray.getCandle(
+                            context,
+                            R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishCandleStyle,
+                        ) ?: absolutelyBullishRelativelyBullish.copyWithColor(red)
+                    val absolutelyBearishRelativelyBullish =
+                        typedArray.getCandle(
+                            context,
+                            R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishCandleStyle,
+                        ) ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(green)
+                    CandlestickCartesianLayer.CandleProvider.absoluteRelative(
+                        absolutelyBullishRelativelyBullish = absolutelyBullishRelativelyBullish,
+                        absolutelyBullishRelativelyNeutral = absolutelyBullishRelativelyNeutral,
+                        absolutelyBullishRelativelyBearish = absolutelyBullishRelativelyBearish,
+                        absolutelyNeutralRelativelyBullish =
+                            typedArray.getCandle(
+                                context,
+                                R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBullishCandleStyle,
+                            ) ?: absolutelyBullishRelativelyBullish,
+                        absolutelyNeutralRelativelyNeutral =
+                            typedArray.getCandle(
+                                context,
+                                R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyNeutralCandleStyle,
+                            ) ?: absolutelyBullishRelativelyNeutral,
+                        absolutelyNeutralRelativelyBearish =
+                            typedArray.getCandle(
+                                context,
+                                R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBearishCandleStyle,
+                            ) ?: absolutelyBullishRelativelyBearish,
+                        absolutelyBearishRelativelyBullish = absolutelyBearishRelativelyBullish,
+                        absolutelyBearishRelativelyNeutral =
+                            typedArray.getCandle(
+                                context,
+                                R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralCandleStyle,
+                            ) ?: absolutelyBearishRelativelyBullish.copyWithColor(gray),
+                        absolutelyBearishRelativelyBearish =
+                            typedArray.getCandle(
+                                context,
+                                R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishCandleStyle,
+                            ) ?: absolutelyBearishRelativelyBullish.copyWithColor(red),
+                    )
+                }
+                else -> error("Unexpected `candleStyle` value.")
             }
         }
     return CandlestickCartesianLayer(
-        candles = candles,
+        candles = candleProvider,
         minCandleBodyHeightDp =
             getRawDimension(
                 context,
@@ -237,67 +253,38 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
     )
 }
 
-private fun TypedArray.hasAbsoluteRelativeCandleStyle(): Boolean =
-    hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishCandleStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishCandleStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBullishCandleStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyNeutralCandleStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyNeutralRelativelyBearishCandleStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishCandleStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralCandleStyle) ||
-        hasValue(R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishCandleStyle)
-
 private fun TypedArray.getCandle(
     context: Context,
     resourceId: Int,
-    defaultColor: Int,
-): CandlestickCartesianLayer.Candle =
-    getNestedTypedArray(context, resourceId, R.styleable.CandleStyle).use { typedArray ->
-        val topWick =
-            if (typedArray.hasValue(R.styleable.CandleStyle_topWickStyle)) {
-                typedArray.getNestedTypedArray(
-                    context = context,
-                    resourceId = R.styleable.CandleStyle_topWickStyle,
-                    styleableResourceId = R.styleable.LineComponent,
-                ).getLineComponent(
-                    context = context,
-                    defaultColor = defaultColor,
-                    defaultThickness = Defaults.WICK_DEFAULT_WIDTH_DP,
-                )
-            } else {
-                null
-            }
-
-        val bottomWick =
-            if (typedArray.hasValue(R.styleable.CandleStyle_bottomWickStyle)) {
-                typedArray.getNestedTypedArray(
-                    context = context,
-                    resourceId = R.styleable.CandleStyle_bottomWickStyle,
-                    styleableResourceId = R.styleable.LineComponent,
-                ).getLineComponent(
-                    context = context,
-                    defaultColor = defaultColor,
-                    defaultThickness = Defaults.WICK_DEFAULT_WIDTH_DP,
-                )
-            } else {
-                null
-            }
-
-        val body =
-            typedArray.getNestedTypedArray(
-                context = context,
-                resourceId = R.styleable.CandleStyle_bodyStyle,
-                styleableResourceId = R.styleable.LineComponent,
-            ).getLineComponent(
-                context = context,
-                defaultColor = defaultColor,
-                defaultThickness = Defaults.CANDLE_BODY_WIDTH_DP,
-            )
-
-        CandlestickCartesianLayer.Candle(
-            body = body,
-            topWick = topWick ?: body.asWick(),
-            bottomWick = bottomWick ?: topWick ?: body.asWick(),
-        )
+): CandlestickCartesianLayer.Candle? =
+    if (hasValue(resourceId)) {
+        getNestedTypedArray(context, resourceId, R.styleable.CandleStyle).use { typedArray ->
+            val body =
+                typedArray
+                    .getNestedTypedArray(context, R.styleable.CandleStyle_bodyStyle, R.styleable.LineComponent)
+                    .getLineComponent(context = context, defaultThickness = Defaults.CANDLE_BODY_WIDTH_DP)
+            val topWick =
+                if (typedArray.hasValue(R.styleable.CandleStyle_topWickStyle)) {
+                    typedArray
+                        .getNestedTypedArray(context, R.styleable.CandleStyle_topWickStyle, R.styleable.LineComponent)
+                        .getLineComponent(context)
+                } else {
+                    body.asWick()
+                }
+            val bottomWick =
+                if (typedArray.hasValue(R.styleable.CandleStyle_bottomWickStyle)) {
+                    typedArray
+                        .getNestedTypedArray(
+                            context,
+                            R.styleable.CandleStyle_bottomWickStyle,
+                            R.styleable.LineComponent,
+                        )
+                        .getLineComponent(context)
+                } else {
+                    topWick
+                }
+            CandlestickCartesianLayer.Candle(body, topWick, bottomWick)
+        }
+    } else {
+        null
     }

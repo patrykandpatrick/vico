@@ -41,6 +41,7 @@ import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.extension.getStart
 import com.patrykandpatrick.vico.core.common.extension.half
+import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 /**
  * [CandlestickCartesianLayer] displays data as vertical bars. It can draw multiple columns per segment.
@@ -365,6 +366,7 @@ public fun LineComponent.asWick(): LineComponent =
         color = if (color == Color.TRANSPARENT) strokeColor else color,
         thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
         strokeWidthDp = 0f,
+        shape = Shapes.rectShape,
     )
 
 /** Switches between three [Candle]s based on [CandlestickCartesianLayerModel.Entry.absoluteChange]. */
