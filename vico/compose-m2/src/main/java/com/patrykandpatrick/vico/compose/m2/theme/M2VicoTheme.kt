@@ -22,15 +22,33 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.patrykandpatrick.vico.compose.common.VicoTheme
+import com.patrykandpatrick.vico.compose.common.style.getDefaultColors
 
 /** Creates and remembers a [VicoTheme] based on [MaterialTheme.colors]. */
 @Composable
 public fun rememberM2VicoTheme(
-    cartesianLayerColors: List<Color> = listOf(MaterialTheme.colors.primary, MaterialTheme.colors.secondary),
+    candlestickCartesianLayerColors: VicoTheme.CandlestickCartesianLayerColors =
+        VicoTheme.CandlestickCartesianLayerColors.fromDefaultColors(getDefaultColors()),
+    columnCartesianLayerColors: List<Color> = listOf(MaterialTheme.colors.primary, MaterialTheme.colors.secondary),
+    lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
     elevationOverlayColor: Color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
     lineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = .2f),
     textColor: Color = MaterialTheme.colors.onBackground,
 ): VicoTheme =
-    remember(cartesianLayerColors, elevationOverlayColor, lineColor, textColor) {
-        VicoTheme(cartesianLayerColors, elevationOverlayColor, lineColor, textColor)
+    remember(
+        candlestickCartesianLayerColors,
+        columnCartesianLayerColors,
+        lineCartesianLayerColors,
+        elevationOverlayColor,
+        lineColor,
+        textColor,
+    ) {
+        VicoTheme(
+            candlestickCartesianLayerColors,
+            columnCartesianLayerColors,
+            lineCartesianLayerColors,
+            elevationOverlayColor,
+            lineColor,
+            textColor,
+        )
     }

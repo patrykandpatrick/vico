@@ -43,7 +43,7 @@ import com.patrykandpatrick.vico.core.common.shape.Shapes
 public fun rememberColumnCartesianLayer(
     columnProvider: ColumnCartesianLayer.ColumnProvider =
         ColumnCartesianLayer.ColumnProvider.series(
-            vicoTheme.cartesianLayerColors.map { color ->
+            vicoTheme.columnCartesianLayerColors.map { color ->
                 rememberLineComponent(
                     color,
                     Defaults.COLUMN_WIDTH.dp,

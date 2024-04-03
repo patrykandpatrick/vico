@@ -24,7 +24,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
-import com.patrykandpatrick.vico.compose.common.style.getDefaultColors
+import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.layer.absolute
@@ -75,9 +75,9 @@ public fun rememberCandle(
 @Composable
 @Stable
 public fun CandlestickCartesianLayer.CandleProvider.Companion.absolute(
-    bullish: Candle = Candle.sharpFilledCandle(Color(getDefaultColors().candlestickGreen)),
-    neutral: Candle = bullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
-    bearish: Candle = bullish.copyWithColor(Color(getDefaultColors().candlestickRed)),
+    bullish: Candle = Candle.sharpFilledCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
+    neutral: Candle = bullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.neutral),
+    bearish: Candle = bullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.bearish),
 ): CandlestickCartesianLayer.CandleProvider =
     CandlestickCartesianLayer.CandleProvider.absolute(bullish, neutral, bearish)
 
@@ -85,19 +85,21 @@ public fun CandlestickCartesianLayer.CandleProvider.Companion.absolute(
 @Composable
 @Stable
 public fun CandlestickCartesianLayer.CandleProvider.Companion.absoluteRelative(
-    absolutelyBullishRelativelyBullish: Candle = Candle.sharpHollowCandle(Color(getDefaultColors().candlestickGreen)),
+    absolutelyBullishRelativelyBullish: Candle =
+        Candle.sharpHollowCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
     absolutelyBullishRelativelyNeutral: Candle =
-        absolutelyBullishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
+        absolutelyBullishRelativelyBullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.neutral),
     absolutelyBullishRelativelyBearish: Candle =
-        absolutelyBullishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickRed)),
+        absolutelyBullishRelativelyBullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.bearish),
     absolutelyNeutralRelativelyBullish: Candle = absolutelyBullishRelativelyBullish,
     absolutelyNeutralRelativelyNeutral: Candle = absolutelyBullishRelativelyNeutral,
     absolutelyNeutralRelativelyBearish: Candle = absolutelyBullishRelativelyBearish,
-    absolutelyBearishRelativelyBullish: Candle = Candle.sharpFilledCandle(Color(getDefaultColors().candlestickGreen)),
+    absolutelyBearishRelativelyBullish: Candle =
+        Candle.sharpFilledCandle(vicoTheme.candlestickCartesianLayerColors.bullish),
     absolutelyBearishRelativelyNeutral: Candle =
-        absolutelyBearishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickGray)),
+        absolutelyBearishRelativelyBullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.neutral),
     absolutelyBearishRelativelyBearish: Candle =
-        absolutelyBearishRelativelyBullish.copyWithColor(Color(getDefaultColors().candlestickRed)),
+        absolutelyBearishRelativelyBullish.copyWithColor(vicoTheme.candlestickCartesianLayerColors.bearish),
 ): CandlestickCartesianLayer.CandleProvider =
     CandlestickCartesianLayer.CandleProvider.absoluteRelative(
         absolutelyBullishRelativelyBullish,

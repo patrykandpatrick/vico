@@ -72,35 +72,35 @@ public object Defaults {
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public class DefaultColors(
+    public val bullishCandleColor: Long,
+    public val neutralCandleColor: Long,
+    public val bearishCandleColor: Long,
     public val cartesianLayerColors: List<Long>,
     public val elevationOverlayColor: Long,
     public val lineColor: Long,
     public val textColor: Long,
-    public val candlestickGreen: Long,
-    public val candlestickGray: Long,
-    public val candlestickRed: Long,
 ) {
     public companion object {
         public val Light: DefaultColors =
             DefaultColors(
+                bullishCandleColor = 0xff02c898,
+                neutralCandleColor = 0xff212121,
+                bearishCandleColor = 0xffea284b,
                 cartesianLayerColors = listOf(0xff787878, 0xff5a5a5a, 0xff383838),
                 elevationOverlayColor = 0x00000000,
                 lineColor = 0x47000000,
                 textColor = 0xde000000,
-                candlestickGreen = 0xFF02C898,
-                candlestickGray = 0xFF212121,
-                candlestickRed = 0xFFEA284B,
             )
 
         public val Dark: DefaultColors =
             DefaultColors(
+                bullishCandleColor = 0xff02c898,
+                neutralCandleColor = 0xff8a8a8a,
+                bearishCandleColor = 0xffea284b,
                 cartesianLayerColors = listOf(0xffcacaca, 0xffa8a8a8, 0xff888888),
                 elevationOverlayColor = 0xffffffff,
                 lineColor = 0xff555555,
                 textColor = 0xffffffff,
-                candlestickGreen = 0xFF02C898,
-                candlestickGray = 0xFF8A8A8A,
-                candlestickRed = 0xFFEA284B,
             )
     }
 }

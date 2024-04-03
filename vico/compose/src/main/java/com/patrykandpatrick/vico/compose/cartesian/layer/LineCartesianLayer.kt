@@ -63,7 +63,7 @@ import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 @Composable
 public fun rememberLineCartesianLayer(
     lines: List<LineSpec> =
-        vicoTheme.cartesianLayerColors.map { rememberLineSpec(remember { DynamicShaders.color(it) }) },
+        vicoTheme.lineCartesianLayerColors.map { rememberLineSpec(remember { DynamicShaders.color(it) }) },
     spacing: Dp = Defaults.POINT_SPACING.dp,
     axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
     verticalAxisPosition: AxisPosition.Vertical? = null,

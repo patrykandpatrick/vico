@@ -16,40 +16,67 @@
 
 package com.patrykandpatrick.vico.compose.common
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.annotation.RestrictTo
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import com.patrykandpatrick.vico.compose.common.style.getDefaultColors
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.DefaultColors
+import com.patrykandpatrick.vico.core.common.component.LineComponent
 
 /**
  * Houses default chart colors.
  *
- * @param cartesianLayerColors used for [ColumnCartesianLayer]&#0020;[LineComponent]s and
- * [LineCartesianLayer.LineSpec]s.
+ * @param candlestickCartesianLayerColors houses default [CandlestickCartesianLayer.Candle] colors.
+ * @param columnCartesianLayerColors used for [ColumnCartesianLayer]&#0020;[LineComponent]s.
+ * @param lineCartesianLayerColors used for [LineCartesianLayer.LineSpec]s.
  * @param elevationOverlayColor used for elevation overlays.
  * @param lineColor used for [HorizontalAxis] and [VerticalAxis] lines.
  * @param textColor used for [HorizontalAxis] and [VerticalAxis] labels.
  */
 public data class VicoTheme(
-    val cartesianLayerColors: List<Color>,
+    val candlestickCartesianLayerColors: CandlestickCartesianLayerColors,
+    val columnCartesianLayerColors: List<Color>,
+    val lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
     val elevationOverlayColor: Color,
     val lineColor: Color,
     val textColor: Color,
 ) {
+    /**
+     * Houses default [CandlestickCartesianLayer.Candle] colors.
+     *
+     * @property bullish used for bullish [CandlestickCartesianLayer.Candle]s.
+     * @property neutral used for neutral [CandlestickCartesianLayer.Candle]s.
+     * @property bearish used for bearish [CandlestickCartesianLayer.Candle]s.
+     */
+    public data class CandlestickCartesianLayerColors(val bullish: Color, val neutral: Color, val bearish: Color) {
+        /** @suppress */
+        @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+        public companion object {
+            public fun fromDefaultColors(defaultColors: DefaultColors): CandlestickCartesianLayerColors =
+                CandlestickCartesianLayerColors(
+                    Color(defaultColors.bullishCandleColor),
+                    Color(defaultColors.neutralCandleColor),
+                    Color(defaultColors.bearishCandleColor),
+                )
+        }
+    }
+
     internal companion object {
         fun fromDefaultColors(defaultColors: DefaultColors) =
             VicoTheme(
-                defaultColors.cartesianLayerColors.map(::Color),
-                Color(defaultColors.elevationOverlayColor),
-                Color(defaultColors.lineColor),
-                Color(defaultColors.textColor),
+                candlestickCartesianLayerColors = CandlestickCartesianLayerColors.fromDefaultColors(defaultColors),
+                columnCartesianLayerColors = defaultColors.cartesianLayerColors.map(::Color),
+                elevationOverlayColor = Color(defaultColors.elevationOverlayColor),
+                lineColor = Color(defaultColors.lineColor),
+                textColor = Color(defaultColors.textColor),
             )
     }
 }
@@ -59,14 +86,7 @@ private val LocalVicoTheme = staticCompositionLocalOf<VicoTheme?> { null }
 /** The current [VicoTheme]. */
 public val vicoTheme: VicoTheme
     @Composable
-    get() =
-        LocalVicoTheme.current
-            ?: run {
-                val isSystemInDarkTheme = isSystemInDarkTheme()
-                remember(isSystemInDarkTheme) {
-                    VicoTheme.fromDefaultColors(if (isSystemInDarkTheme) DefaultColors.Dark else DefaultColors.Light)
-                }
-            }
+    get() = LocalVicoTheme.current ?: getDefaultColors().let { remember(it) { VicoTheme.fromDefaultColors(it) } }
 
 /** Provides a [VicoTheme]. */
 @Composable

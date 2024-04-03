@@ -63,7 +63,7 @@ private fun ProvidePreviewVicoTheme(content: @Composable () -> Unit) {
     ) {
         ProvideVicoTheme(
             vicoTheme.copy(
-                cartesianLayerColors = listOf(Color.DimmedGray),
+                columnCartesianLayerColors = listOf(Color.DimmedGray),
                 lineColor = Color.DimmedGray,
                 textColor = Color.DimmedGray,
             ),

@@ -160,9 +160,9 @@ internal fun TypedArray.getLineCartesianLayer(
     }
 
 internal fun TypedArray.getCandlestickCartesianLayer(context: Context): CandlestickCartesianLayer {
-    val green = context.defaultColors.candlestickGreen.toInt()
-    val gray = context.defaultColors.candlestickGray.toInt()
-    val red = context.defaultColors.candlestickRed.toInt()
+    val bullishColor = context.defaultColors.bullishCandleColor.toInt()
+    val neutralColor = context.defaultColors.neutralCandleColor.toInt()
+    val bearishColor = context.defaultColors.bearishCandleColor.toInt()
     val candleProvider =
         getNestedTypedArray(
             context,
@@ -173,15 +173,15 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
                 0 -> {
                     val bullish =
                         typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bullishCandleStyle)
-                            ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(green)
+                            ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(bullishColor)
                     CandlestickCartesianLayer.CandleProvider.absolute(
                         bullish = bullish,
                         neutral =
                             typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_neutralCandleStyle)
-                                ?: bullish.copyWithColor(gray),
+                                ?: bullish.copyWithColor(neutralColor),
                         bearish =
                             typedArray.getCandle(context, R.styleable.CandlestickLayerStyle_bearishCandleStyle)
-                                ?: bullish.copyWithColor(red),
+                                ?: bullish.copyWithColor(bearishColor),
                     )
                 }
                 1 -> {
@@ -189,22 +189,22 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
                         typedArray.getCandle(
                             context,
                             R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBullishCandleStyle,
-                        ) ?: CandlestickCartesianLayer.Candle.sharpHollowCandle(green)
+                        ) ?: CandlestickCartesianLayer.Candle.sharpHollowCandle(bullishColor)
                     val absolutelyBullishRelativelyNeutral =
                         typedArray.getCandle(
                             context,
                             R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyNeutralCandleStyle,
-                        ) ?: absolutelyBullishRelativelyBullish.copyWithColor(gray)
+                        ) ?: absolutelyBullishRelativelyBullish.copyWithColor(neutralColor)
                     val absolutelyBullishRelativelyBearish =
                         typedArray.getCandle(
                             context,
                             R.styleable.CandlestickLayerStyle_absolutelyBullishRelativelyBearishCandleStyle,
-                        ) ?: absolutelyBullishRelativelyBullish.copyWithColor(red)
+                        ) ?: absolutelyBullishRelativelyBullish.copyWithColor(bearishColor)
                     val absolutelyBearishRelativelyBullish =
                         typedArray.getCandle(
                             context,
                             R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBullishCandleStyle,
-                        ) ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(green)
+                        ) ?: CandlestickCartesianLayer.Candle.sharpFilledCandle(bullishColor)
                     CandlestickCartesianLayer.CandleProvider.absoluteRelative(
                         absolutelyBullishRelativelyBullish = absolutelyBullishRelativelyBullish,
                         absolutelyBullishRelativelyNeutral = absolutelyBullishRelativelyNeutral,
@@ -229,12 +229,12 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
                             typedArray.getCandle(
                                 context,
                                 R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyNeutralCandleStyle,
-                            ) ?: absolutelyBearishRelativelyBullish.copyWithColor(gray),
+                            ) ?: absolutelyBearishRelativelyBullish.copyWithColor(neutralColor),
                         absolutelyBearishRelativelyBearish =
                             typedArray.getCandle(
                                 context,
                                 R.styleable.CandlestickLayerStyle_absolutelyBearishRelativelyBearishCandleStyle,
-                            ) ?: absolutelyBearishRelativelyBullish.copyWithColor(red),
+                            ) ?: absolutelyBearishRelativelyBullish.copyWithColor(bearishColor),
                     )
                 }
                 else -> error("Unexpected `candleStyle` value.")
