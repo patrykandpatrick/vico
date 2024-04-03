@@ -22,7 +22,6 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -294,15 +293,4 @@ internal fun CartesianChartHostImpl(
 
         measureContext.reset()
     }
-}
-
-@Composable
-internal fun CartesianChartHostBox(
-    modifier: Modifier,
-    content: @Composable BoxScope.() -> Unit,
-) {
-    Box(
-        modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(),
-        content = content,
-    )
 }
