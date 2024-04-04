@@ -28,7 +28,6 @@ import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec.PointConnector
@@ -117,7 +116,7 @@ public open class LineCartesianLayer(
         public var pointSizeDp: Float = Defaults.POINT_SIZE,
         public var dataLabel: TextComponent? = null,
         public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-        public var dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),
+        public var dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
         public var dataLabelRotationDegrees: Float = 0f,
         public var pointConnector: PointConnector = DefaultPointConnector(),
     ) {
@@ -392,7 +391,7 @@ public open class LineCartesianLayer(
                     ).half.pixels
 
                 val text =
-                    lineSpec.dataLabelValueFormatter.formatValue(
+                    lineSpec.dataLabelValueFormatter.format(
                         value = chartEntry.y,
                         chartValues = chartValues,
                         verticalAxisPosition = verticalAxisPosition,

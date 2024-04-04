@@ -133,7 +133,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 label ?: return@forEach
                 drawLabel(
                     label = label,
-                    labelText = valueFormatter.formatValue(labelValue, chartValues, position),
+                    labelText = valueFormatter.format(labelValue, chartValues, position),
                     labelX = labelX,
                     tickCenterY = tickCenterY,
                 )
@@ -289,16 +289,14 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         label?.let { label ->
             itemPlacer
                 .getHeightMeasurementLabelValues(this, position)
-                .maxOfOrNull { value ->
-                    label.getHeight(this, valueFormatter.formatValue(value, chartValues, position))
-                }
+                .maxOfOrNull { value -> label.getHeight(this, valueFormatter.format(value, chartValues, position)) }
         }.orZero
 
     private fun CartesianMeasureContext.getMaxLabelWidth(axisHeight: Float) =
         label?.let { label ->
             itemPlacer
                 .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
-                .maxOfOrNull { value -> label.getWidth(this, valueFormatter.formatValue(value, chartValues, position)) }
+                .maxOfOrNull { value -> label.getWidth(this, valueFormatter.format(value, chartValues, position)) }
         }.orZero
 
     private fun CartesianChartDrawContext.getLineCanvasYCorrection(

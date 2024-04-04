@@ -20,6 +20,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
+import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.component.LineComponent
@@ -81,10 +82,8 @@ public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
      */
     public var sizeConstraint: SizeConstraint = SizeConstraint.Auto()
 
-    /**
-     * The [AxisValueFormatter] for the axis.
-     */
-    public var valueFormatter: AxisValueFormatter<Position> = DecimalFormatAxisValueFormatter()
+    /** The [CartesianValueFormatter] for the axis. */
+    public var valueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal()
 
     /**
      * The rotation of axis labels (in degrees).
@@ -144,11 +143,9 @@ public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
          */
         public var guideline: LineComponent? = builder?.guideline
 
-        /**
-         * The [AxisValueFormatter] for the axis.
-         */
-        public var valueFormatter: AxisValueFormatter<Position> =
-            builder?.valueFormatter ?: DecimalFormatAxisValueFormatter()
+        /** The [CartesianValueFormatter] for the axis. */
+        public var valueFormatter: CartesianValueFormatter =
+            builder?.valueFormatter ?: CartesianValueFormatter.decimal()
 
         /**
          * Used by [BaseAxis] subclasses for sizing and layout.

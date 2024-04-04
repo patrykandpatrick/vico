@@ -87,8 +87,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
                 label?.drawText(
                     context = context,
-                    text =
-                        valueFormatter.formatValue(value = x, chartValues = chartValues, verticalAxisPosition = null),
+                    text = valueFormatter.format(value = x, chartValues = chartValues, verticalAxisPosition = null),
                     textX = canvasX,
                     textY = textY,
                     verticalPosition = position.textVerticalPosition,
@@ -208,11 +207,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         val lastLabelValue = itemPlacer.getLastLabelValue(context, maxLabelWidth)
         if (firstLabelValue != null) {
             val text =
-                valueFormatter.formatValue(
-                    value = firstLabelValue,
-                    chartValues = chartValues,
-                    verticalAxisPosition = null,
-                )
+                valueFormatter.format(value = firstLabelValue, chartValues = chartValues, verticalAxisPosition = null)
             label
                 .getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true)
                 .half
@@ -220,11 +215,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
         if (lastLabelValue != null) {
             val text =
-                valueFormatter.formatValue(
-                    value = lastLabelValue,
-                    chartValues = chartValues,
-                    verticalAxisPosition = null,
-                )
+                valueFormatter.format(value = lastLabelValue, chartValues = chartValues, verticalAxisPosition = null)
             label
                 .getWidth(context = context, text = text, rotationDegrees = labelRotationDegrees, pad = true)
                 .half
@@ -313,8 +304,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         return itemPlacer
             .getWidthMeasurementLabelValues(this, horizontalDimensions, fullXRange)
             .maxOfOrNull { value ->
-                val text =
-                    valueFormatter.formatValue(value = value, chartValues = chartValues, verticalAxisPosition = null)
+                val text = valueFormatter.format(value = value, chartValues = chartValues, verticalAxisPosition = null)
                 label.getWidth(context = this, text = text, rotationDegrees = labelRotationDegrees, pad = true)
             }
             .orZero
@@ -329,8 +319,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         return itemPlacer
             .getHeightMeasurementLabelValues(this, horizontalDimensions, fullXRange, maxLabelWidth)
             .maxOf { value ->
-                val text =
-                    valueFormatter.formatValue(value = value, chartValues = chartValues, verticalAxisPosition = null)
+                val text = valueFormatter.format(value = value, chartValues = chartValues, verticalAxisPosition = null)
                 label.getHeight(context = this, text = text, rotationDegrees = labelRotationDegrees, pad = true)
             }
     }

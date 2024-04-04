@@ -37,10 +37,9 @@ import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
+import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
@@ -180,6 +179,4 @@ private const val HORIZONTAL_LINE_LABEL_MARGIN_DP = 4f
 
 private val monthNames = DateFormatSymbols.getInstance(Locale.US).shortMonths
 private val bottomAxisValueFormatter =
-    AxisValueFormatter<AxisPosition.Horizontal.Bottom> { x, _, _ ->
-        "${monthNames[x.toInt() % 12]} ’${20 + x.toInt() / 12}"
-    }
+    CartesianValueFormatter { x, _, _ -> "${monthNames[x.toInt() % 12]} ’${20 + x.toInt() / 12}" }

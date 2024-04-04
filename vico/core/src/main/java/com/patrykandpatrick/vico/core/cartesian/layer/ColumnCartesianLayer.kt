@@ -23,7 +23,6 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
@@ -71,7 +70,7 @@ public open class ColumnCartesianLayer(
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var dataLabel: TextComponent? = null,
     public var dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-    public var dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),
+    public var dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
     public var dataLabelRotationDegrees: Float = 0f,
     public var drawingModelInterpolator:
         DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
@@ -265,7 +264,7 @@ public open class ColumnCartesianLayer(
                 maxWidth = maxWidth.coerceAtMost(horizontalDimensions.endPadding.doubled)
             }
             val text =
-                dataLabelValueFormatter.formatValue(
+                dataLabelValueFormatter.format(
                     value = dataLabelValue,
                     chartValues = chartValues,
                     verticalAxisPosition = verticalAxisPosition,

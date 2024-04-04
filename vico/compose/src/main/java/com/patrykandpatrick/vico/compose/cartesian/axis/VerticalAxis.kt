@@ -22,10 +22,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
-import com.patrykandpatrick.vico.core.cartesian.axis.AxisValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
-import com.patrykandpatrick.vico.core.cartesian.axis.DecimalFormatAxisValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -54,7 +53,7 @@ public fun rememberStartAxis(
     tick: LineComponent? = rememberAxisTickComponent(),
     tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
     guideline: LineComponent? = rememberAxisGuidelineComponent(),
-    valueFormatter: AxisValueFormatter<AxisPosition.Vertical.Start> = DecimalFormatAxisValueFormatter(),
+    valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
     sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
     horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,
@@ -103,7 +102,7 @@ public fun rememberEndAxis(
     tick: LineComponent? = rememberAxisTickComponent(),
     tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
     guideline: LineComponent? = rememberAxisGuidelineComponent(),
-    valueFormatter: AxisValueFormatter<AxisPosition.Vertical.End> = DecimalFormatAxisValueFormatter(),
+    valueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
     sizeConstraint: BaseAxis.SizeConstraint = BaseAxis.SizeConstraint.Auto(),
     horizontalLabelPosition: VerticalAxis.HorizontalLabelPosition = VerticalAxis.HorizontalLabelPosition.Outside,
     verticalLabelPosition: VerticalAxis.VerticalLabelPosition = VerticalAxis.VerticalLabelPosition.Center,

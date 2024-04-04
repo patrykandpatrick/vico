@@ -24,7 +24,6 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.MergeMode
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerDrawingModel
@@ -56,7 +55,7 @@ public fun rememberColumnCartesianLayer(
     verticalAxisPosition: AxisPosition.Vertical? = null,
     dataLabel: TextComponent? = null,
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-    dataLabelValueFormatter: CartesianValueFormatter = remember { DecimalFormatValueFormatter() },
+    dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
     dataLabelRotationDegrees: Float = 0f,
     axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
     drawingModelInterpolator:

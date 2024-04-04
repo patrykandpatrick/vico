@@ -31,7 +31,6 @@ import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec
@@ -105,7 +104,7 @@ public fun rememberLineSpec(
     pointSize: Dp = Defaults.POINT_SIZE.dp,
     dataLabel: TextComponent? = null,
     dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-    dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),
+    dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
     dataLabelRotationDegrees: Float = 0f,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
 ): LineSpec =

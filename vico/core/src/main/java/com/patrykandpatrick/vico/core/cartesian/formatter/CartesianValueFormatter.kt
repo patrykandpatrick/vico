@@ -21,26 +21,55 @@ import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
+import java.text.DecimalFormat
 
-/**
- * Formats values for display.
- */
-public interface CartesianValueFormatter {
+/** Formats values for display. */
+public fun interface CartesianValueFormatter {
     /**
-     * Called to format axis labels and data labels.
-     *
-     * @param value the value to be formatted.
-     * @param chartValues houses the [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
-     * @param verticalAxisPosition the position of the [VerticalAxis] with which the caller is associated. This
-     * [VerticalAxis]’s scale should be used during the interpretation of [value].
-     *
-     * @see ChartValues
-     *
-     * @return a formatted value.
+     * Formats [value]. [chartValues] houses the [CartesianChart]’s [CartesianChartModel] and _x_ and _y_ ranges.
+     * [verticalAxisPosition] is the position of the [VerticalAxis] with which the caller is associated. Pass this to
+     * [ChartValues.getYRange].
      */
-    public fun formatValue(
+    public fun format(
         value: Float,
         chartValues: ChartValues,
         verticalAxisPosition: AxisPosition.Vertical?,
     ): CharSequence
+
+    /** Houses [CartesianValueFormatter] factory functions. */
+    public companion object {
+        private class Decimal(private val decimalFormat: DecimalFormat) : CartesianValueFormatter {
+            override fun format(
+                value: Float,
+                chartValues: ChartValues,
+                verticalAxisPosition: AxisPosition.Vertical?,
+            ): CharSequence = decimalFormat.format(value)
+
+            override fun equals(other: Any?) =
+                this === other || other is Decimal && decimalFormat == other.decimalFormat
+
+            override fun hashCode() = decimalFormat.hashCode()
+        }
+
+        private class YPercent(private val decimalFormat: DecimalFormat) : CartesianValueFormatter {
+            override fun format(
+                value: Float,
+                chartValues: ChartValues,
+                verticalAxisPosition: AxisPosition.Vertical?,
+            ): CharSequence = decimalFormat.format(value / chartValues.getYRange(verticalAxisPosition).maxY)
+
+            override fun equals(other: Any?) =
+                this === other || other is YPercent && decimalFormat == other.decimalFormat
+
+            override fun hashCode() = decimalFormat.hashCode()
+        }
+
+        /** Formats values via [decimalFormat]. */
+        public fun decimal(decimalFormat: DecimalFormat = DecimalFormat("#.##;−#.##")): CartesianValueFormatter =
+            Decimal(decimalFormat)
+
+        /** Divides values by [ChartValues.YRange.maxY] and formats the resulting quotients via [decimalFormat]. */
+        public fun yPercent(decimalFormat: DecimalFormat = DecimalFormat("#.##%;−#.##%")): CartesianValueFormatter =
+            YPercent(decimalFormat)
+    }
 }
