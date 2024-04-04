@@ -22,19 +22,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
 import com.patrykandpatrick.vico.compose.common.component.fixed
 import com.patrykandpatrick.vico.compose.common.component.rememberLayeredComponent
-import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
-import com.patrykandpatrick.vico.compose.common.shape.dashedShape
 import com.patrykandpatrick.vico.compose.common.shape.markerCorneredShape
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.common.component.CartesianMarkerComponent
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.extension.copyColor
 import com.patrykandpatrick.vico.core.common.shape.Corner
@@ -42,7 +41,8 @@ import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 @Composable
 internal fun rememberMarker(
-    labelPosition: CartesianMarkerComponent.LabelPosition = CartesianMarkerComponent.LabelPosition.Top,
+    labelPosition: DefaultCartesianMarker.LabelPosition = DefaultCartesianMarker.LabelPosition.Top,
+    showIndicator: Boolean = true,
 ): CartesianMarker {
     val labelBackgroundShape = Shapes.markerCorneredShape(Corner.FullyRounded)
     val labelBackground =
@@ -75,25 +75,25 @@ internal fun rememberMarker(
                 ),
             padding = dimensionsOf(10.dp),
         )
-    val guideline =
-        rememberLineComponent(
-            color = MaterialTheme.colorScheme.onSurface.copy(.2f),
-            thickness = 2.dp,
-            shape = Shapes.dashedShape(shape = Shapes.pillShape, dashLength = 8.dp, gapLength = 4.dp),
-        )
-    return remember(label, labelPosition, indicator, guideline) {
-        object : CartesianMarkerComponent(label, labelPosition, indicator, guideline) {
-            init {
-                indicatorSizeDp = 36f
-                onApplyEntryColor = { entryColor ->
-                    indicatorRearComponent.color = entryColor.copyColor(alpha = .15f)
-                    with(indicatorCenterComponent) {
-                        color = entryColor
-                        setShadow(radius = 12f, color = entryColor)
+    val guideline = rememberAxisGuidelineComponent()
+    return remember(label, labelPosition, indicator, showIndicator, guideline) {
+        object : DefaultCartesianMarker(
+            label = label,
+            labelPosition = labelPosition,
+            indicator = if (showIndicator) indicator else null,
+            indicatorSizeDp = 36f,
+            setIndicatorColor =
+                if (showIndicator) {
+                    { color ->
+                        indicatorRearComponent.color = color.copyColor(alpha = .15f)
+                        indicatorCenterComponent.color = color
+                        indicatorCenterComponent.setShadow(radius = 12f, color = color)
                     }
-                }
-            }
-
+                } else {
+                    null
+                },
+            guideline = guideline,
+        ) {
             override fun getInsets(
                 context: CartesianMeasureContext,
                 outInsets: Insets,

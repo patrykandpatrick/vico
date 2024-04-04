@@ -25,10 +25,11 @@ import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.formatter.DecimalFormatValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.put
+import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.forEachInIndexed
+import com.patrykandpatrick.vico.core.cartesian.model.forEachIn
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
@@ -133,6 +134,8 @@ public open class ColumnCartesianLayer(
     )
     public constructor() : this(ColumnProvider.series())
 
+    private val _markerTargets = mutableMapOf<Float, MutableColumnCartesianLayerMarkerTarget>()
+
     protected val stackInfo: MutableMap<Float, StackInfo> = mutableMapOf()
 
     /**
@@ -158,14 +161,14 @@ public open class ColumnCartesianLayer(
             columnProvider = ColumnProvider.series(value)
         }
 
-    override val entryLocationMap: HashMap<Float, MutableList<CartesianMarker.EntryModel>> = HashMap()
+    override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
 
     override fun drawInternal(
         context: CartesianChartDrawContext,
         model: ColumnCartesianLayerModel,
     ): Unit =
         with(context) {
-            entryLocationMap.clear()
+            _markerTargets.clear()
             drawChartInternal(
                 chartValues = chartValues,
                 model = model,
@@ -194,7 +197,7 @@ public open class ColumnCartesianLayer(
 
             drawingStart = getDrawingStart(index, model.series.size, mergeMode) - horizontalScroll
 
-            entryCollection.forEachInIndexed(chartValues.minX..chartValues.maxX) { entryIndex, entry, _ ->
+            entryCollection.forEachIn(chartValues.minX..chartValues.maxX) { entry, _ ->
 
                 val columnInfo = drawingModel?.getOrNull(index)?.get(entry.x)
                 height = (columnInfo?.height ?: (abs(entry.y) / yRange.length)) * bounds.height()
@@ -236,7 +239,7 @@ public open class ColumnCartesianLayer(
                         thicknessScale = zoom,
                     )
                 ) {
-                    updateMarkerLocationMap(entry, columnSignificantY, columnCenterX, column, entryIndex)
+                    updateMarkerTargets(entry, columnCenterX, columnSignificantY, column)
                     column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom, drawingModel?.opacity ?: 1f)
                 }
 
@@ -376,22 +379,21 @@ public open class ColumnCartesianLayer(
         }
     }
 
-    protected open fun updateMarkerLocationMap(
+    protected open fun updateMarkerTargets(
         entry: ColumnCartesianLayerModel.Entry,
-        columnTop: Float,
-        columnCenterX: Float,
+        canvasX: Float,
+        canvasY: Float,
         column: LineComponent,
-        index: Int,
     ) {
-        if (columnCenterX > bounds.left - 1 && columnCenterX < bounds.right + 1) {
-            entryLocationMap.put(
-                x = columnCenterX,
-                y = columnTop.coerceIn(bounds.top, bounds.bottom),
-                entry = entry,
-                color = column.solidOrStrokeColor,
-                index = index,
+        if (canvasX <= bounds.left - 1 || canvasX >= bounds.right + 1) return
+        _markerTargets
+            .getOrPut(entry.x) { MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX) }
+            .columns +=
+            ColumnCartesianLayerMarkerTarget.Column(
+                entry,
+                canvasY.coerceIn(bounds.top, bounds.bottom),
+                column.solidOrStrokeColor,
             )
-        }
     }
 
     override fun updateChartValues(

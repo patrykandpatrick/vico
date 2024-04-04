@@ -23,17 +23,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.Defaults.SHADOW_COLOR
-import com.patrykandpatrick.vico.core.common.component.CartesianMarkerComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-
-/**
- * The indicator size.
- */
-public var CartesianMarkerComponent.indicatorSize: Dp
-    get() = indicatorSizeDp.dp
-    set(value) {
-        indicatorSizeDp = value.value
-    }
 
 /**
  * Applies a drop shadow to this [ShapeComponent].

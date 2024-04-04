@@ -66,7 +66,7 @@ private fun ComposeChart10(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier,
 ) {
-    val marker = rememberMarker()
+    val marker = rememberMarker(showIndicator = false)
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -85,7 +85,7 @@ private fun ViewChart10(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier,
 ) {
-    val marker = rememberMarker()
+    val marker = rememberMarker(showIndicator = false)
     AndroidViewBinding(Chart10Binding::inflate, modifier = modifier) {
         with(chartView) {
             runInitialAnimation = false

@@ -38,13 +38,10 @@ import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
-import com.patrykandpatrick.vico.core.common.extension.getEntryModel
 import com.patrykandpatrick.vico.core.common.extension.inClip
 import com.patrykandpatrick.vico.core.common.extension.set
 import com.patrykandpatrick.vico.core.common.extension.setAll
-import com.patrykandpatrick.vico.core.common.extension.updateAll
 import com.patrykandpatrick.vico.core.common.legend.Legend
-import java.util.TreeMap
 
 /**
  * A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s.
@@ -62,6 +59,7 @@ public open class CartesianChart(
     private val tempInsets = Insets()
     private val axisManager = AxisManager()
     private val virtualLayout = VirtualLayout(axisManager)
+    private val _markerTargets = mutableMapOf<Float, MutableList<CartesianMarker.Target>>()
 
     private val drawingModelAndLayerConsumer =
         object : ModelAndLayerConsumer {
@@ -72,7 +70,7 @@ public open class CartesianChart(
                 layer: CartesianLayer<T>,
             ) {
                 layer.draw(context, model ?: return)
-                entryLocationMap.updateAll(layer.entryLocationMap)
+                layer.markerTargets.forEach { _markerTargets.getOrPut(it.key) { mutableListOf() } += it.value }
             }
         }
 
@@ -124,10 +122,8 @@ public open class CartesianChart(
      */
     public val chartInsetters: Collection<ChartInsetter> = persistentMarkers.values
 
-    /**
-     * Links _x_ values to [CartesianMarker.EntryModel]s.
-     */
-    public val entryLocationMap: TreeMap<Float, MutableList<CartesianMarker.EntryModel>> = TreeMap()
+    /** Links _x_ values to [CartesianMarker.Target]s. */
+    public val markerTargets: Map<Float, List<CartesianMarker.Target>> = _markerTargets
 
     /**
      * The start axis.
@@ -174,7 +170,7 @@ public open class CartesianChart(
         bounds: RectF,
         marker: CartesianMarker?,
     ) {
-        entryLocationMap.clear()
+        _markerTargets.clear()
         model.forEachWithLayer(
             horizontalDimensionUpdateModelAndLayerConsumer.apply {
                 this.context = context
@@ -207,11 +203,7 @@ public open class CartesianChart(
         context.canvas.inClip(bounds.left, 0f, bounds.right, context.canvas.height.toFloat()) {
             decorations.forEach { it.onDrawAboveChart(context, bounds) }
         }
-        persistentMarkers.forEach { (x, marker) ->
-            entryLocationMap.getEntryModel(x)?.let { model ->
-                marker.draw(context, bounds, model, context.chartValues)
-            }
-        }
+        persistentMarkers.forEach { (x, marker) -> markerTargets[x]?.let { targets -> marker.draw(context, targets) } }
         legend?.draw(context, bounds)
     }
 

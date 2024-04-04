@@ -23,10 +23,10 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityChangeListener
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.extension.getClosestMarkerEntryModel
+import kotlin.math.abs
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
@@ -72,47 +72,28 @@ public fun CartesianChartDrawContext.drawMarker(
     marker: CartesianMarker,
     markerTouchPoint: Point?,
     chart: CartesianChart,
-    markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener?,
-    wasMarkerVisible: Boolean,
-    setWasMarkerVisible: (Boolean) -> Unit,
-    lastMarkerEntryModels: List<CartesianMarker.EntryModel>,
-    onMarkerEntryModelsChange: (List<CartesianMarker.EntryModel>) -> Unit,
-) {
-    markerTouchPoint
-        ?.let(chart.entryLocationMap::getClosestMarkerEntryModel)
-        ?.let { markerEntryModels ->
-            marker.draw(
-                context = this,
-                bounds = chart.bounds,
-                markedEntries = markerEntryModels,
-                chartValues = chartValues,
-            )
-            if (wasMarkerVisible.not()) {
-                markerVisibilityChangeListener?.onMarkerShown(
-                    marker = marker,
-                    markerEntryModels = markerEntryModels,
-                )
-                setWasMarkerVisible(true)
-            }
-            val didMarkerMove = lastMarkerEntryModels.hasMoved(markerEntryModels)
-            if (wasMarkerVisible && didMarkerMove) {
-                onMarkerEntryModelsChange(markerEntryModels)
-                if (lastMarkerEntryModels.isNotEmpty()) {
-                    markerVisibilityChangeListener?.onMarkerMoved(
-                        marker = marker,
-                        markerEntryModels = markerEntryModels,
-                    )
-                }
-            }
-        } ?: marker
-        .takeIf { wasMarkerVisible }
-        ?.also {
-            markerVisibilityChangeListener?.onMarkerHidden(marker = marker)
-            setWasMarkerVisible(false)
-        }
+    visibilityListener: CartesianMarkerVisibilityListener?,
+    previousX: Float?,
+): Float? {
+    if (markerTouchPoint == null || chart.markerTargets.isEmpty()) {
+        if (previousX != null) visibilityListener?.onHidden(marker)
+        return null
+    }
+    var targets = chart.markerTargets.values.first()
+    var previousDistance = abs(markerTouchPoint.x - targets.first().canvasX)
+    for (i in 1..<chart.markerTargets.size) {
+        val potentialTargets = chart.markerTargets.values.elementAt(i)
+        val distance = abs(markerTouchPoint.x - potentialTargets.first().canvasX)
+        if (distance > previousDistance) break
+        targets = potentialTargets
+        previousDistance = distance
+    }
+    marker.draw(this, targets)
+    val x = targets.first().x
+    if (previousX == null) {
+        visibilityListener?.onShown(marker, targets)
+    } else if (x != previousX) {
+        visibilityListener?.onMoved(marker, targets)
+    }
+    return x
 }
-
-private fun List<CartesianMarker.EntryModel>.xPosition(): Float? = firstOrNull()?.entry?.x
-
-private fun List<CartesianMarker.EntryModel>.hasMoved(other: List<CartesianMarker.EntryModel>): Boolean =
-    xPosition() != other.xPosition()

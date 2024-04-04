@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.common.extension
 
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.ERR_REPEATING_COLLECTION_EMPTY
-import kotlin.math.abs
 
 @JvmName("copyDouble")
 internal fun <T> List<List<T>>.copy() = map { it.toList() }
@@ -36,20 +35,6 @@ internal fun <T> ArrayList<ArrayList<T>>.copy(): List<List<T>> = List(size) { in
 internal fun <K, V> MutableMap<K, V>.setAll(other: Map<K, V>) {
     clear()
     other.forEach { (key, value) -> set(key, value) }
-}
-
-internal fun Collection<Float>.findClosestPositiveValue(value: Float): Float? {
-    if (isEmpty()) return null
-    var closestValue: Float? = null
-    forEach { checkedValue ->
-        closestValue =
-            when {
-                closestValue == null -> checkedValue
-                abs(closestValue!! - value) > abs(checkedValue - value) -> checkedValue
-                else -> closestValue
-            }
-    }
-    return closestValue
 }
 
 internal fun <T> Collection<T>.averageOf(selector: (T) -> Float): Float =

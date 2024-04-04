@@ -42,10 +42,10 @@ import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
+import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.common.component.CartesianMarkerComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.databinding.Chart3Binding
@@ -122,7 +122,7 @@ private fun ComposeChart3(
             ),
         modelProducer = modelProducer,
         modifier = modifier,
-        marker = rememberMarker(CartesianMarkerComponent.LabelPosition.AroundPoint),
+        marker = rememberMarker(DefaultCartesianMarker.LabelPosition.AroundPoint),
         runInitialAnimation = false,
         horizontalLayout = HorizontalLayout.fullWidth(),
         zoomState = rememberVicoZoomState(zoomEnabled = false),
@@ -134,7 +134,7 @@ private fun ViewChart3(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier,
 ) {
-    val marker = rememberMarker(CartesianMarkerComponent.LabelPosition.AroundPoint)
+    val marker = rememberMarker(DefaultCartesianMarker.LabelPosition.AroundPoint)
 
     AndroidViewBinding(Chart3Binding::inflate, modifier) {
         with(chartView) {

@@ -111,10 +111,10 @@ internal fun List<CartesianLayerModel.Entry>.getXDeltaGcd(): Float {
         ?: 1f
 }
 
-internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachInIndexed(
+internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachIn(
     range: ClosedFloatingPointRange<Float>,
     padding: Int = 0,
-    action: (Int, T, T?) -> Unit,
+    action: (T, T?) -> Unit,
 ) {
     var start = 0
     var end = 0
@@ -127,5 +127,5 @@ internal inline fun <T : CartesianLayerModel.Entry> List<T>.forEachInIndexed(
     }
     start = (start - padding).coerceAtLeast(0)
     end = (end + padding).coerceAtMost(lastIndex)
-    (start..end).forEach { action(it, this[it], getOrNull(it + 1)) }
+    (start..end).forEach { action(this[it], getOrNull(it + 1)) }
 }

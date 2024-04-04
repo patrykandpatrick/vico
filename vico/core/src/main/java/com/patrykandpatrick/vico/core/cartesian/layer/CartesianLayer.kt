@@ -32,10 +32,8 @@ import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
  * Visualizes data on a Cartesian plane. [CartesianLayer]s are combined and drawn by [CartesianChart]s.
  */
 public interface CartesianLayer<T : CartesianLayerModel> : BoundsAware, ChartInsetter {
-    /**
-     * Links _x_ values to [CartesianMarker.EntryModel]s.
-     */
-    public val entryLocationMap: Map<Float, MutableList<CartesianMarker.EntryModel>>
+    /** Links _x_ values to [CartesianMarker.Target]s. */
+    public val markerTargets: Map<Float, CartesianMarker.Target>
 
     /**
      * Draws the [CartesianLayer].

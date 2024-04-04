@@ -16,24 +16,20 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
-import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
-import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
-
-/** Marks [CartesianChart] objects. */
-public interface CartesianMarker : ChartInsetter {
-    /** Draws the [CartesianMarker] for the specified [Target]s. */
-    public fun draw(
-        context: CartesianChartDrawContext,
-        targets: List<Target>,
+/** Allows for listening to [CartesianMarker] visibility changes. */
+public interface CartesianMarkerVisibilityListener {
+    /** Called when the specified [CartesianMarker] is shown. */
+    public fun onShown(
+        marker: CartesianMarker,
+        targets: List<CartesianMarker.Target>,
     )
 
-    /** Houses information on an object to be marked. */
-    public interface Target {
-        /** The _x_ value. */
-        public val x: Float
+    /** Called when the specified [CartesianMarker]’s _x_ value changes. */
+    public fun onMoved(
+        marker: CartesianMarker,
+        targets: List<CartesianMarker.Target>,
+    ): Unit = Unit
 
-        /** The pixel _x_ coordinate. */
-        public val canvasX: Float
-    }
+    /** Called when the specified [CartesianMarker] is hidden. */
+    public fun onHidden(marker: CartesianMarker)
 }

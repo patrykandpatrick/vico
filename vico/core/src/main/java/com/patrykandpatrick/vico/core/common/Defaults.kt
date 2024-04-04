@@ -56,7 +56,7 @@ public object Defaults {
     public const val LABEL_LINE_COUNT: Int = 1
     public const val LINE_COMPONENT_THICKNESS_DP: Float = 1f
     public const val LINE_SPEC_THICKNESS_DP: Float = 2f
-    public const val MARKER_INDICATOR_SIZE: Float = 36f
+    public const val MARKER_INDICATOR_SIZE: Float = 16f
     public const val MARKER_HORIZONTAL_PADDING: Float = 8f
     public const val MARKER_VERTICAL_PADDING: Float = 4f
     public const val MARKER_TICK_SIZE: Float = 6f

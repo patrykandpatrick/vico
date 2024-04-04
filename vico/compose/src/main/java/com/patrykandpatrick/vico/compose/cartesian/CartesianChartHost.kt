@@ -52,7 +52,7 @@ import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDime
 import com.patrykandpatrick.vico.core.cartesian.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.draw.drawMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityChangeListener
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
@@ -74,7 +74,7 @@ import kotlinx.coroutines.launch
  * @param modelProducer creates and updates the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
  * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
- * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
+ * @param markerVisibilityListener allows for listening to [marker] visibility changes.
  * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
  * programmatic scrolling.
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization.
@@ -92,7 +92,7 @@ public fun CartesianChartHost(
     modelProducer: CartesianChartModelProducer,
     modifier: Modifier = Modifier,
     marker: CartesianMarker? = null,
-    markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener? = null,
+    markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
     scrollState: VicoScrollState = rememberVicoScrollState(),
     zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
     diffAnimationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
@@ -118,7 +118,7 @@ public fun CartesianChartHost(
                 model = model,
                 oldModel = previousModel,
                 marker = marker,
-                markerVisibilityChangeListener = markerVisibilityChangeListener,
+                markerVisibilityListener = markerVisibilityListener,
                 scrollState = scrollState,
                 zoomState = zoomState,
                 horizontalLayout = horizontalLayout,
@@ -138,7 +138,7 @@ public fun CartesianChartHost(
  * @param model the [CartesianChartModel].
  * @param modifier the modifier to be applied to the chart.
  * @param marker appears when the chart is touched, highlighting the entry or entries nearest to the touch point.
- * @param markerVisibilityChangeListener allows for listening to [marker] visibility changes.
+ * @param markerVisibilityListener allows for listening to [marker] visibility changes.
  * @param scrollState houses information on the [CartesianChart]’s scroll value. Allows for scroll customization and
  * programmatic scrolling.
  * @param zoomState houses information on the [CartesianChart]’s zoom factor. Allows for zoom customization.
@@ -155,7 +155,7 @@ public fun CartesianChartHost(
     model: CartesianChartModel,
     modifier: Modifier = Modifier,
     marker: CartesianMarker? = null,
-    markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener? = null,
+    markerVisibilityListener: CartesianMarkerVisibilityListener? = null,
     scrollState: VicoScrollState = rememberVicoScrollState(),
     zoomState: VicoZoomState = rememberDefaultVicoZoomState(scrollState.scrollEnabled),
     oldModel: CartesianChartModel? = null,
@@ -177,7 +177,7 @@ public fun CartesianChartHost(
             chart = chart,
             model = model,
             marker = marker,
-            markerVisibilityChangeListener = markerVisibilityChangeListener,
+            markerVisibilityListener = markerVisibilityListener,
             scrollState = scrollState,
             zoomState = zoomState,
             oldModel = oldModel,
@@ -192,7 +192,7 @@ internal fun CartesianChartHostImpl(
     chart: CartesianChart,
     model: CartesianChartModel,
     marker: CartesianMarker?,
-    markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener?,
+    markerVisibilityListener: CartesianMarkerVisibilityListener?,
     scrollState: VicoScrollState,
     zoomState: VicoZoomState,
     oldModel: CartesianChartModel?,
@@ -209,10 +209,9 @@ internal fun CartesianChartHostImpl(
             with(LocalContext.current) { ::spToPx },
             chartValues,
         )
-    val lastMarkerEntryModels = remember { mutableStateOf(emptyList<CartesianMarker.EntryModel>()) }
+    val previousMarkerX = remember { ValueWrapper<Float?>(null) }
 
     val elevationOverlayColor = vicoTheme.elevationOverlayColor.toArgb()
-    val (wasMarkerVisible, setWasMarkerVisible) = remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     var previousModelID by remember { ValueWrapper(model.id) }
     val horizontalDimensions = remember { MutableHorizontalDimensions() }
@@ -279,16 +278,14 @@ internal fun CartesianChartHostImpl(
         chart.draw(chartDrawContext, model)
 
         if (marker != null) {
-            chartDrawContext.drawMarker(
-                marker = marker,
-                markerTouchPoint = markerTouchPoint.value,
-                chart = chart,
-                markerVisibilityChangeListener = markerVisibilityChangeListener,
-                wasMarkerVisible = wasMarkerVisible,
-                setWasMarkerVisible = setWasMarkerVisible,
-                lastMarkerEntryModels = lastMarkerEntryModels.value,
-                onMarkerEntryModelsChange = lastMarkerEntryModels.component2(),
-            )
+            previousMarkerX.value =
+                chartDrawContext.drawMarker(
+                    marker,
+                    markerTouchPoint.value,
+                    chart,
+                    markerVisibilityListener,
+                    previousMarkerX.value,
+                )
         }
 
         measureContext.reset()

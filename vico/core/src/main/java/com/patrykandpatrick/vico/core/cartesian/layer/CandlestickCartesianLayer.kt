@@ -25,12 +25,12 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
+import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.put
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel.Entry.Change
-import com.patrykandpatrick.vico.core.cartesian.model.forEachInIndexed
+import com.patrykandpatrick.vico.core.cartesian.model.forEachIn
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
@@ -88,6 +88,8 @@ public open class CandlestickCartesianLayer(
         public companion object
     }
 
+    private val _markerTargets = mutableMapOf<Float, CandlestickCartesianLayerMarkerTarget>()
+
     /**
      * Holds information on the [CandlestickCartesianLayer]’s horizontal dimensions.
      */
@@ -95,14 +97,14 @@ public open class CandlestickCartesianLayer(
 
     protected val drawingModelKey: ExtraStore.Key<CandlestickCartesianLayerDrawingModel> = ExtraStore.Key()
 
-    override val entryLocationMap: HashMap<Float, MutableList<CartesianMarker.EntryModel>> = HashMap()
+    override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
 
     override fun drawInternal(
         context: CartesianChartDrawContext,
         model: CandlestickCartesianLayerModel,
     ): Unit =
         with(context) {
-            entryLocationMap.clear()
+            _markerTargets.clear()
             drawChartInternal(
                 chartValues = chartValues,
                 model = model,
@@ -127,7 +129,7 @@ public open class CandlestickCartesianLayer(
         var candle: Candle
         val minBodyHeight = minCandleBodyHeightDp.pixels
 
-        model.series.forEachInIndexed(range = chartValues.minX..chartValues.maxX) { index, entry, _ ->
+        model.series.forEachIn(chartValues.minX..chartValues.maxX) { entry, _ ->
             candle = candles.getCandle(entry, model.extraStore)
             val candleInfo = drawingModel?.entries?.get(entry.x) ?: entry.toCandleInfo(yRange)
 
@@ -154,13 +156,7 @@ public open class CandlestickCartesianLayer(
                     thicknessScale = zoom,
                 )
             ) {
-                updateMarkerLocationMap(
-                    entry = entry,
-                    entryX = bodyCenterX,
-                    entryY = (bodyBottomY + bodyTopY).half,
-                    body = candle.body,
-                    entryIndex = index,
-                )
+                updateMarkerTargets(entry, bodyCenterX, bodyBottomY, bodyTopY, bottomWickY, topWickY, candle)
 
                 candle.body.drawVertical(this, bodyTopY, bodyBottomY, bodyCenterX, zoom)
 
@@ -183,22 +179,34 @@ public open class CandlestickCartesianLayer(
         }
     }
 
-    private fun updateMarkerLocationMap(
+    protected open fun updateMarkerTargets(
         entry: CandlestickCartesianLayerModel.Entry,
-        entryX: Float,
-        entryY: Float,
-        entryIndex: Int,
-        body: LineComponent,
+        canvasX: Float,
+        bodyBottomCanvasY: Float,
+        bodyTopCanvasY: Float,
+        lowCanvasY: Float,
+        highCanvasY: Float,
+        candle: Candle,
     ) {
-        if (entryX in bounds.left..bounds.right) {
-            entryLocationMap.put(
-                x = entryX,
-                y = entryY.coerceIn(bounds.top, bounds.bottom),
+        if (canvasX <= bounds.left - 1 || canvasX >= bounds.right + 1) return
+        val limitedBodyBottomCanvasY = bodyBottomCanvasY.coerceIn(bounds.top, bounds.bottom)
+        val limitedBodyTopCanvasY = bodyTopCanvasY.coerceIn(bounds.top, bounds.bottom)
+        _markerTargets[entry.x] =
+            CandlestickCartesianLayerMarkerTarget(
+                x = entry.x,
+                canvasX = canvasX,
                 entry = entry,
-                color = body.solidOrStrokeColor,
-                index = entryIndex,
+                openingCanvasY =
+                    if (entry.absoluteChange == Change.Bullish) limitedBodyBottomCanvasY else limitedBodyTopCanvasY,
+                closingCanvasY =
+                    if (entry.absoluteChange == Change.Bullish) limitedBodyTopCanvasY else limitedBodyBottomCanvasY,
+                lowCanvasY = lowCanvasY.coerceIn(bounds.top, bounds.bottom),
+                highCanvasY = highCanvasY.coerceIn(bounds.top, bounds.bottom),
+                openingColor = candle.body.solidOrStrokeColor,
+                closingColor = candle.body.solidOrStrokeColor,
+                lowColor = candle.bottomWick.solidOrStrokeColor,
+                highColor = candle.topWick.solidOrStrokeColor,
             )
-        }
     }
 
     override fun updateChartValues(

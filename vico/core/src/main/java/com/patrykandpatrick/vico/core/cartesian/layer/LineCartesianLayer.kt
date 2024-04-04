@@ -33,10 +33,11 @@ import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec.PointConnector
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.put
+import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
+import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.forEachInIndexed
+import com.patrykandpatrick.vico.core.cartesian.model.forEachIn
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
@@ -251,6 +252,8 @@ public open class LineCartesianLayer(
         }
     }
 
+    private val _markerTargets = mutableMapOf<Float, MutableLineCartesianLayerMarkerTarget>()
+
     /**
      * The [Path] used to draw the lines, each of which corresponds to a [LineSpec].
      */
@@ -263,7 +266,7 @@ public open class LineCartesianLayer(
 
     protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel> = ExtraStore.Key()
 
-    override val entryLocationMap: HashMap<Float, MutableList<CartesianMarker.EntryModel>> = HashMap()
+    override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
 
     override fun drawInternal(
         context: CartesianChartDrawContext,
@@ -282,7 +285,7 @@ public open class LineCartesianLayer(
 
                 linePath.rewind()
                 lineBackgroundPath.rewind()
-                val component = lines.getRepeating(entryListIndex)
+                val component = lines.getRepeating(entryListIndex).apply { setSplitY(zeroLineYFraction) }
 
                 var prevX = bounds.getStart(isLtr = isLtr)
                 var prevY = bounds.bottom
@@ -291,11 +294,11 @@ public open class LineCartesianLayer(
 
                 val drawingStart = bounds.getStart(isLtr = isLtr) + drawingStartAlignmentCorrection - horizontalScroll
 
-                forEachPointWithinBoundsIndexed(
+                forEachPointInBounds(
                     series = entries,
                     drawingStart = drawingStart,
                     pointInfoMap = pointInfoMap,
-                ) { entryIndex, entry, x, y, _, _ ->
+                ) { entry, x, y, _, _ ->
                     if (linePath.isEmpty) {
                         linePath.moveTo(x, y)
                     } else {
@@ -312,17 +315,7 @@ public open class LineCartesianLayer(
                     prevX = x
                     prevY = y
 
-                    if (x > bounds.left - 1 && x < bounds.right + 1) {
-                        val coercedY = y.coerceIn(bounds.top, bounds.bottom)
-                        component.setSplitY(zeroLineYFraction)
-                        entryLocationMap.put(
-                            x = x,
-                            y = coercedY,
-                            entry = entry,
-                            color = component.shader.getColorAt(Point(x, coercedY), context, bounds),
-                            index = entryIndex,
-                        )
-                    }
+                    updateMarkerTargets(entry, x, y, component)
                 }
 
                 if (component.hasLineBackgroundShader) {
@@ -348,6 +341,24 @@ public open class LineCartesianLayer(
             }
         }
 
+    protected open fun CartesianChartDrawContext.updateMarkerTargets(
+        entry: LineCartesianLayerModel.Entry,
+        canvasX: Float,
+        canvasY: Float,
+        lineSpec: LineSpec,
+    ) {
+        if (canvasX <= bounds.left - 1 || canvasX >= bounds.right + 1) return
+        val limitedCanvasY = canvasY.coerceIn(bounds.top, bounds.bottom)
+        _markerTargets
+            .getOrPut(entry.x) { MutableLineCartesianLayerMarkerTarget(entry.x, canvasX) }
+            .points +=
+            LineCartesianLayerMarkerTarget.Point(
+                entry,
+                limitedCanvasY,
+                lineSpec.shader.getColorAt(Point(canvasX, limitedCanvasY), this, bounds),
+            )
+    }
+
     /**
      * Draws a line’s points ([LineSpec.point]) and their corresponding data labels ([LineSpec.dataLabel]).
      */
@@ -359,11 +370,11 @@ public open class LineCartesianLayer(
     ) {
         if (lineSpec.point == null && lineSpec.dataLabel == null) return
 
-        forEachPointWithinBoundsIndexed(
+        forEachPointInBounds(
             series = series,
             drawingStart = drawingStart,
             pointInfoMap = pointInfoMap,
-        ) { _, chartEntry, x, y, previousX, nextX ->
+        ) { chartEntry, x, y, previousX, nextX ->
 
             if (lineSpec.point != null) lineSpec.drawPoint(context = this, x = x, y = y)
 
@@ -459,17 +470,16 @@ public open class LineCartesianLayer(
      * Clears the temporary data saved during a single [drawInternal] run.
      */
     protected fun resetTempData() {
-        entryLocationMap.clear()
+        _markerTargets.clear()
         linePath.rewind()
         lineBackgroundPath.rewind()
     }
 
-    protected open fun CartesianChartDrawContext.forEachPointWithinBoundsIndexed(
+    protected open fun CartesianChartDrawContext.forEachPointInBounds(
         series: List<LineCartesianLayerModel.Entry>,
         drawingStart: Float,
         pointInfoMap: Map<Float, LineCartesianLayerDrawingModel.PointInfo>?,
         action: (
-            index: Int,
             entry: LineCartesianLayerModel.Entry,
             x: Float,
             y: Float,
@@ -497,7 +507,7 @@ public open class LineCartesianLayer(
                 bounds.height()
         }
 
-        series.forEachInIndexed(range = minX..maxX, padding = 1) { index, entry, next ->
+        series.forEachIn(range = minX..maxX, padding = 1) { entry, next ->
             val previousX = x
             val immutableX = nextX ?: getDrawX(entry)
             val immutableNextX = next?.let(::getDrawX)
@@ -506,9 +516,9 @@ public open class LineCartesianLayer(
             if (immutableNextX != null && (isLtr && immutableX < boundsStart || !isLtr && immutableX > boundsStart) &&
                 (isLtr && immutableNextX < boundsStart || !isLtr && immutableNextX > boundsStart)
             ) {
-                return@forEachInIndexed
+                return@forEachIn
             }
-            action(index, entry, immutableX, getDrawY(entry), previousX, nextX)
+            action(entry, immutableX, getDrawY(entry), previousX, nextX)
             if (isLtr && immutableX > boundsEnd || isLtr.not() && immutableX < boundsEnd) return
         }
     }

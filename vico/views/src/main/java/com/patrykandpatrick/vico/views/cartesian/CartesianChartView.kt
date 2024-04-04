@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDime
 import com.patrykandpatrick.vico.core.cartesian.draw.cartesianChartDrawContext
 import com.patrykandpatrick.vico.core.cartesian.draw.drawMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityChangeListener
+import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
@@ -94,11 +94,9 @@ public open class CartesianChartView
 
         private var markerTouchPoint: Point? = null
 
-        private var wasMarkerVisible: Boolean = false
+        private var previousMarkerX: Float? = null
 
         private var scrollDirectionResolved = false
-
-        private var lastMarkerEntryModels = emptyList<CartesianMarker.EntryModel>()
 
         private var horizontalDimensions = MutableHorizontalDimensions()
 
@@ -217,7 +215,7 @@ public open class CartesianChartView
         /**
          * Allows for listening to [marker] visibility changes.
          */
-        public var markerVisibilityChangeListener: CartesianMarkerVisibilityChangeListener? = null
+        public var markerVisibilityListener: CartesianMarkerVisibilityListener? = null
 
         init {
             if (isInEditMode && attrs != null) {
@@ -376,16 +374,14 @@ public open class CartesianChartView
                 chart.draw(chartDrawContext, model)
 
                 marker?.also { marker ->
-                    chartDrawContext.drawMarker(
-                        marker = marker,
-                        markerTouchPoint = markerTouchPoint,
-                        chart = chart,
-                        markerVisibilityChangeListener = markerVisibilityChangeListener,
-                        wasMarkerVisible = wasMarkerVisible,
-                        setWasMarkerVisible = { wasMarkerVisible = it },
-                        lastMarkerEntryModels = lastMarkerEntryModels,
-                        onMarkerEntryModelsChange = { lastMarkerEntryModels = it },
-                    )
+                    previousMarkerX =
+                        chartDrawContext.drawMarker(
+                            marker,
+                            markerTouchPoint,
+                            chart,
+                            markerVisibilityListener,
+                            previousMarkerX,
+                        )
                 }
                 measureContext.reset()
             }

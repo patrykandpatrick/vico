@@ -16,17 +16,13 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
-import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
 
-/**
- * Formats marker labels.
- */
-public fun interface CartesianMarkerLabelFormatter {
-    /**
-     * Creates a formatted label for the given list of marked entries.
-     */
-    public fun getLabel(
-        markedEntries: List<CartesianMarker.EntryModel>,
-        chartValues: ChartValues,
+/** Formats [CartesianMarker] values for display. */
+public fun interface CartesianMarkerValueFormatter {
+    /** Returns a label for the given [CartesianMarker.Target]s. */
+    public fun format(
+        context: CartesianChartDrawContext,
+        targets: List<CartesianMarker.Target>,
     ): CharSequence
 }
