@@ -214,11 +214,6 @@ public interface AxisItemPlacer {
 
         /** Houses [AxisItemPlacer.Vertical] factory functions. */
         public companion object {
-            private const val DEFAULT_DEPRECATION_MESSAGE =
-                "Use `AxisItemPlacer.Vertical.count` for the same behavior, or switch to the new " +
-                    "`AxisItemPlacer.Vertical.step` if it better matches your use case. More information: " +
-                    "https://patrykandpatrick.com/vico/releases/2.0.0-alpha.9."
-
             /**
              * Creates a step-based [AxisItemPlacer.Vertical] implementation. [step] returns the difference between the
              * _y_ values of neighboring labels (and their corresponding line pairs). A multiple of this may be used for
@@ -244,21 +239,6 @@ public interface AxisItemPlacer {
                 count: (ExtraStore) -> Int? = { null },
                 shiftTopLines: Boolean = true,
             ): Vertical = DefaultVerticalAxisItemPlacer(DefaultVerticalAxisItemPlacer.Mode.Count(count), shiftTopLines)
-
-            /**
-             * Creates a count-based [AxisItemPlacer.Vertical] implementation. [maxItemCount] returns the number of
-             * labels (and their corresponding line pairs) to be displayed. This may be reduced for overlap prevention.
-             * [shiftTopLines] defines whether to shift the lines whose _y_ values are equal to
-             * [ChartValues.YRange.maxY], if such lines are present, such that they’re immediately above the
-             * [CartesianChart]’s bounds. If the chart has a top axis, the shifted tick will then be aligned with this
-             * axis, and the shifted guideline will be hidden.
-             */
-            @Deprecated(message = DEFAULT_DEPRECATION_MESSAGE, level = DeprecationLevel.ERROR)
-            @Suppress("UNUSED_PARAMETER")
-            public fun default(
-                maxItemCount: (ChartValues) -> Int = { -1 },
-                shiftTopLines: Boolean = true,
-            ): Vertical = error("`AxisItemPlacer.Vertical.default` has been removed. $DEFAULT_DEPRECATION_MESSAGE")
         }
     }
 }

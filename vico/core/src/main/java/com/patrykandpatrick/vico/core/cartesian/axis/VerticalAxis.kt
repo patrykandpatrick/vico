@@ -377,10 +377,3 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         ): VerticalAxis<P> = Builder<P>().apply(block).build()
     }
 }
-
-/** Creates a [VerticalAxis] via [VerticalAxis.Builder]. */
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("Use `VerticalAxis.build` instead.")
-public inline fun <reified Position : AxisPosition.Vertical> createVerticalAxis(
-    block: VerticalAxis.Builder<Position>.() -> Unit = {},
-): VerticalAxis<Position> = VerticalAxis.build(block)

@@ -219,15 +219,6 @@ public abstract class BaseAxis<Position : AxisPosition> : Axis<Position> {
     }
 }
 
-/**
- * Provides a quick way to create an axis. Creates a [BaseAxis.Builder] instance, calls the provided function block with
- * the [BaseAxis.Builder] instance as its receiver, and returns the [BaseAxis.Builder] instance.
- */
-@Deprecated(message = "Use `BaseAxis.Builder`, `createHorizontalAxis`, or `createVerticalAxis`.")
-public fun <Position : AxisPosition> axisBuilder(
-    block: BaseAxis.Builder<Position>.() -> Unit = {},
-): BaseAxis.Builder<Position> = BaseAxis.Builder<Position>().apply(block)
-
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun <Position : AxisPosition, A : BaseAxis<Position>> BaseAxis.Builder<Position>.setTo(axis: A): A {

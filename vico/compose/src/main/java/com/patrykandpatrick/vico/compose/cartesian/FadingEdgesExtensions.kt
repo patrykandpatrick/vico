@@ -28,33 +28,6 @@ import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THR
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
 
 /**
- * [FadingEdges] applies a horizontal fade to the edges of the chart area for scrollable charts.
- * This effect indicates that there’s more content beyond a given edge, and the user can scroll to reveal it.
- *
- * @param startEdgeWidth the width of the fade overlay for the start edge (in dp).
- * @param endEdgeWidth the width of the fade overlay for the end edge (in dp).
- * @param visibilityThreshold the scroll distance over which the overlays fade in and out (in dp).
- * @param visibilityEasing used for the fading edges’ fade-in and fade-out animations. This is a mapping of the degree
- * to which [visibilityThreshold] has been satisfied to the opacity of the fading edges.
- */
-@Deprecated(
-    message =
-        "Use `rememberFadingEdges` or the `FadingEdges` constructor. For `visibilityEasing`, use " +
-            "`Easing#transform`.",
-)
-public fun FadingEdges(
-    startEdgeWidth: Dp = FadingEdgesDefaults.edgeWidth,
-    endEdgeWidth: Dp = startEdgeWidth,
-    visibilityThreshold: Dp = FadingEdgesDefaults.visibilityThreshold,
-    visibilityEasing: Easing = FadingEdgesDefaults.visibilityEasing,
-): FadingEdges =
-    FadingEdges(
-        startEdgeWidthDp = startEdgeWidth.value,
-        endEdgeWidthDp = endEdgeWidth.value,
-        visibilityThresholdDp = visibilityThreshold.value,
-    ) { input -> visibilityEasing.transform(input) }
-
-/**
  * Creates and remembers a [FadingEdges] instance.
  *
  * @param startEdgeWidth the width of the fade overlay for the start edge (in dp).

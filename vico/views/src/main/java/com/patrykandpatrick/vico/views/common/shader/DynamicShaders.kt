@@ -18,44 +18,9 @@
 
 package com.patrykandpatrick.vico.views.common.shader
 
-import android.graphics.Shader
-import com.patrykandpatrick.vico.core.common.component.Component
-import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shader.LinearGradientShader
-
-/**
- * Creates a [ComponentShader] out of the provided [component].
- *
- * @param component used as a pattern in the [Shader].
- * @param componentSizeDp the size of the [component] (in dp).
- * @param checkeredArrangement whether the [component] should be arranged in a checkered pattern.
- * @param tileXMode the horizontal tiling mode for the [component].
- * @param tileYMode the vertical tiling mode for the [component].
- */
-@Deprecated(
-    "Use the `ComponentShader` constructor.",
-    ReplaceWith(
-        "ComponentShader(component = component, componentSizeDp = componentSizeDp, checkeredArrangement = " +
-            "checkeredArrangement, tileXMode = tileXMode, tileYMode = tileYMode)",
-        "com.patrykandpatrick.vico.core.component.shape.shader.ComponentShader",
-    ),
-)
-public fun DynamicShaders.fromComponent(
-    component: Component,
-    componentSizeDp: Float,
-    checkeredArrangement: Boolean = true,
-    tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
-    tileYMode: Shader.TileMode = tileXMode,
-): ComponentShader =
-    ComponentShader(
-        component = component,
-        componentSizeDp = componentSizeDp,
-        checkeredArrangement = checkeredArrangement,
-        tileXMode = tileXMode,
-        tileYMode = tileYMode,
-    )
 
 /**
  * Creates a [DynamicShader] in the form of a horizontal gradient.

@@ -20,15 +20,6 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 
-/**
- * Calls the specified function block with [DrawContext.canvas] as its receiver.
- */
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated(message = "`withCanvas` is meant only for internal use.", level = DeprecationLevel.ERROR)
-public inline fun DrawContext.withCanvas(block: Canvas.() -> Unit) {
-    canvas.block()
-}
-
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun drawContext(

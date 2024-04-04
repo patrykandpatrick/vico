@@ -369,10 +369,3 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         ): HorizontalAxis<P> = Builder<P>().apply(block).build()
     }
 }
-
-/** Creates a [HorizontalAxis] via [HorizontalAxis.Builder]. */
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("Use `HorizontalAxis.build` instead.")
-public inline fun <reified Position : AxisPosition.Horizontal> createHorizontalAxis(
-    block: HorizontalAxis.Builder<Position>.() -> Unit = {},
-): HorizontalAxis<Position> = HorizontalAxis.build(block)

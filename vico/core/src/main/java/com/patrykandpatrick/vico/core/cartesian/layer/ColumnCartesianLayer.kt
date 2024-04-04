@@ -77,63 +77,6 @@ public open class ColumnCartesianLayer(
         DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
         DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
-    /** Creates a [ColumnCartesianLayer] with a common [LineComponent] ([column]) for all columns. */
-    @Deprecated(
-        "Use the primary constructor. Replace `column = ...` with `columnProvider = " +
-            "ColumnCartesianLayer.ColumnProvider.series(...)`.",
-    )
-    public constructor(
-        column: LineComponent,
-        spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
-        verticalAxisPosition: AxisPosition.Vertical? = null,
-    ) : this(
-        columnProvider = ColumnProvider.series(column),
-        spacingDp = spacingDp,
-        verticalAxisPosition = verticalAxisPosition,
-    )
-
-    /**
-     * Creates a [ColumnCartesianLayer] with the provided column [LineComponent]s ([columns]). One [LineComponent] is
-     * used per series. The [LineComponent]s and series are associated by index. If there are more series than
-     * [LineComponent]s, [columns] is iterated multiple times.
-     */
-    @Deprecated("Replace `columns = ...` with `columnProvider = ColumnCartesianLayer.ColumnProvider.series(...)`.")
-    public constructor(
-        columns: List<LineComponent>,
-        spacingDp: Float = Defaults.COLUMN_OUTSIDE_SPACING,
-        innerSpacingDp: Float = Defaults.COLUMN_INSIDE_SPACING,
-        mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
-        verticalAxisPosition: AxisPosition.Vertical? = null,
-        dataLabel: TextComponent? = null,
-        dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-        dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),
-        dataLabelRotationDegrees: Float = 0f,
-        drawingModelInterpolator:
-            DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
-            DefaultDrawingModelInterpolator(),
-    ) : this(
-        ColumnProvider.series(columns),
-        spacingDp,
-        innerSpacingDp,
-        mergeMode,
-        verticalAxisPosition,
-        dataLabel,
-        dataLabelVerticalPosition,
-        dataLabelValueFormatter,
-        dataLabelRotationDegrees,
-        drawingModelInterpolator,
-    )
-
-    /**
-     * Creates a [ColumnCartesianLayer] with no column [LineComponent]s. `columnProvider` must be updated before the
-     * [ColumnCartesianLayer] is used.
-     */
-    @Deprecated(
-        "Use the primary constructor.",
-        ReplaceWith("ColumnCartesianLayer(ColumnCartesianLayer.ColumnProvider.series())"),
-    )
-    public constructor() : this(ColumnProvider.series())
-
     private val _markerTargets = mutableMapOf<Float, MutableColumnCartesianLayerMarkerTarget>()
 
     protected val stackInfo: MutableMap<Float, StackInfo> = mutableMapOf()
@@ -144,22 +87,6 @@ public open class ColumnCartesianLayer(
     protected val horizontalDimensions: MutableHorizontalDimensions = MutableHorizontalDimensions()
 
     protected val drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel> = ExtraStore.Key()
-
-    /**
-     * The column [LineComponent]s. One [LineComponent] is used per series. The [LineComponent]s and series are
-     * associated by index. If there are more series than [LineComponent]s, this list is iterated multiple times.
-     */
-    @Deprecated(
-        "Use `columnProvider` instead. More information: https://patrykandpatrick.com/vico/releases/2.0.0-alpha.13.",
-    )
-    public var columns: List<LineComponent>
-        get() =
-            checkNotNull(columnProvider as? ColumnProvider.Companion.Series) {
-                "`columns` is deprecated and can’t be used with custom `ColumnProvider`s."
-            }.columns
-        set(value) {
-            columnProvider = ColumnProvider.series(value)
-        }
 
     override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
 

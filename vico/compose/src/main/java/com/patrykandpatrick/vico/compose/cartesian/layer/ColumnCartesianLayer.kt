@@ -33,7 +33,6 @@ import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.ExtraStore
-import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shape.Shapes
@@ -77,40 +76,3 @@ public fun rememberColumnCartesianLayer(
         this.verticalAxisPosition = verticalAxisPosition
         this.drawingModelInterpolator = drawingModelInterpolator
     }
-
-/**
- * Creates and remembers a [ColumnCartesianLayer] with the provided column [LineComponent]s ([columns]). One
- * [LineComponent] is used per series. The [LineComponent]s and series are associated by index. If there are more series
- * than [LineComponent]s, [columns] is iterated multiple times.
- */
-@Composable
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("Replace `columns = ...` with `columnProvider = ColumnCartesianLayer.ColumnProvider.series(...)`.")
-public fun rememberColumnCartesianLayer(
-    columns: List<LineComponent>,
-    spacing: Dp = Defaults.COLUMN_OUTSIDE_SPACING.dp,
-    innerSpacing: Dp = Defaults.COLUMN_INSIDE_SPACING.dp,
-    mergeMode: (ExtraStore) -> MergeMode = { MergeMode.Grouped },
-    verticalAxisPosition: AxisPosition.Vertical? = null,
-    dataLabel: TextComponent? = null,
-    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-    dataLabelValueFormatter: CartesianValueFormatter = remember { DecimalFormatValueFormatter() },
-    dataLabelRotationDegrees: Float = 0f,
-    axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
-    drawingModelInterpolator:
-        DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
-        remember { DefaultDrawingModelInterpolator() },
-): ColumnCartesianLayer =
-    rememberColumnCartesianLayer(
-        ColumnCartesianLayer.ColumnProvider.series(columns),
-        spacing,
-        innerSpacing,
-        mergeMode,
-        verticalAxisPosition,
-        dataLabel,
-        dataLabelVerticalPosition,
-        dataLabelValueFormatter,
-        dataLabelRotationDegrees,
-        axisValueOverrider,
-        drawingModelInterpolator,
-    )

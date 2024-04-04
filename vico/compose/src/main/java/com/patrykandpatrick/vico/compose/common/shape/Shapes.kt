@@ -121,20 +121,6 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
     }
 
 /**
- * Converts this [androidx.compose.ui.graphics.Shape] to an instance of
- * [com.patrykandpatrick.vico.core.component.shape.Shape].
- */
-@Deprecated(
-    message = "Use `toVicoShape`.",
-    replaceWith =
-        ReplaceWith(
-            expression = "toVicoShape()",
-            imports = arrayOf("com.patrykandpatrick.vico.compose.component.shape.toVicoShape"),
-        ),
-)
-public fun androidx.compose.ui.graphics.Shape.chartShape(): Shape = toVicoShape()
-
-/**
  * Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape].
  */
 public fun CorneredShape.composeShape(): androidx.compose.ui.graphics.Shape =

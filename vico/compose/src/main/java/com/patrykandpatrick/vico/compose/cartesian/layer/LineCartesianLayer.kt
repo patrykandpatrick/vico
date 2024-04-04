@@ -137,64 +137,6 @@ public fun rememberLineSpec(
         )
     }
 
-/**
- * Creates a [LineCartesianLayer.LineSpec] for use in [LineCartesianLayer]s.
- *
- * @param shader the [DynamicShader] for the line.
- * @param thickness the thickness of the line.
- * @param backgroundShader an optional [DynamicShader] to use for the areas bounded by the [LineCartesianLayer] line and
- * the zero line (_y_ = 0).
- * @param cap the stroke cap for the line.
- * @param point an optional [Component] that can be drawn at a given point on the line.
- * @param pointSize the size of the [point].
- * @param dataLabel an optional [TextComponent] to use for data labels.
- * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
- * @param dataLabelValueFormatter the [CartesianValueFormatter] to use for data labels.
- * @param dataLabelRotationDegrees the rotation of data labels in degrees.
- * @param pointConnector the [LineSpec.PointConnector] for the line.
- */
-@Deprecated(
-    message =
-        "Use the `rememberLineSpec` composable function instead. If you are using this function in a " +
-            "non-composable scope, use the `LineSpec` constructor.",
-    replaceWith =
-        ReplaceWith(
-            expression =
-                "rememberLineSpec(shader = shader, thickness = thickness, backgroundShader = backgroundShader, " +
-                    "cap = cap, point = point, pointSize = pointSize, dataLabel = dataLabel, " +
-                    "dataLabelVerticalPosition = dataLabelVerticalPosition, " +
-                    "dataLabelValueFormatter = dataLabelValueFormatter, " +
-                    "dataLabelRotationDegrees = dataLabelRotationDegrees, " +
-                    "pointConnector = pointConnector)",
-        ),
-)
-public fun lineSpec(
-    shader: DynamicShader,
-    thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
-    backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
-    cap: StrokeCap = StrokeCap.Round,
-    point: Component? = null,
-    pointSize: Dp = Defaults.POINT_SIZE.dp,
-    dataLabel: TextComponent? = null,
-    dataLabelVerticalPosition: VerticalPosition = VerticalPosition.Top,
-    dataLabelValueFormatter: CartesianValueFormatter = DecimalFormatValueFormatter(),
-    dataLabelRotationDegrees: Float = 0f,
-    pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
-): LineSpec =
-    LineSpec(
-        shader = shader,
-        thicknessDp = thickness.value,
-        backgroundShader = backgroundShader,
-        cap = cap.paintCap,
-        point = point,
-        pointSizeDp = pointSize.value,
-        dataLabel = dataLabel,
-        dataLabelVerticalPosition = dataLabelVerticalPosition,
-        dataLabelValueFormatter = dataLabelValueFormatter,
-        dataLabelRotationDegrees = dataLabelRotationDegrees,
-        pointConnector = pointConnector,
-    )
-
 private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
     when (this) {
         is ColorShader ->

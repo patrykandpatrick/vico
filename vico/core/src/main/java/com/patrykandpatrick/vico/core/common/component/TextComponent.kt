@@ -558,19 +558,3 @@ public open class TextComponent protected constructor() : Padding, Margins {
         public inline fun build(block: Builder.() -> Unit = {}): TextComponent = Builder().apply(block).build()
     }
 }
-
-/**
- * Creates a [TextComponent] via [TextComponent.Builder]. Sample usage:
- *
- * ```
- * TextComponent.build {
- *     color = Color.BLACK
- *     textSizeSp = 12f
- *     typeface = Typeface.MONOSPACE
- * }
- * ```
- */
-@Suppress("DeprecatedCallableAddReplaceWith")
-@Deprecated("Use `TextComponent.build` instead.")
-public inline fun textComponent(block: TextComponent.Builder.() -> Unit = {}): TextComponent =
-    TextComponent.build(block)
