@@ -23,9 +23,9 @@ import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerM
  * Houses information on a [CandlestickCartesianLayer] candle to be marked.
  *
  * @property entry the [CandlestickCartesianLayerModel.Entry].
- * @property openingCanvasY the pixel _y_ coordinate of the candle edge corresponding to
+ * @property openingCanvasY the pixel _y_ coordinate of the body edge corresponding to
  * [CandlestickCartesianLayerModel.Entry.opening].
- * @property closingCanvasY the pixel _y_ coordinate of the candle edge corresponding to
+ * @property closingCanvasY the pixel _y_ coordinate of the body edge corresponding to
  * [CandlestickCartesianLayerModel.Entry.closing].
  * @property lowCanvasY the pixel _y_ coordinate of the bottom wick’s bottom edge, which corresponds to
  * [CandlestickCartesianLayerModel.Entry.low].
