@@ -17,14 +17,14 @@
 package com.patrykandpatrick.vico.core.cartesian.marker
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
 
 /** Marks [CartesianChart] objects. */
 public interface CartesianMarker : ChartInsetter {
     /** Draws the [CartesianMarker] for the specified [Target]s. */
     public fun draw(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         targets: List<Target>,
     )
 

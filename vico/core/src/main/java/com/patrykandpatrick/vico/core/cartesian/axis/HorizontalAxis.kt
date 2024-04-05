@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.common.extension.ceil
 import com.patrykandpatrick.vico.core.common.extension.doubled
@@ -47,7 +47,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
      */
     public var itemPlacer: AxisItemPlacer.Horizontal = AxisItemPlacer.Horizontal.default()
 
-    override fun drawBehindChart(context: CartesianChartDrawContext): Unit =
+    override fun drawBehindChart(context: CartesianDrawContext): Unit =
         with(context) {
             val clipRestoreCount = canvas.save()
             val tickMarkTop = if (position.isBottom) bounds.top else bounds.bottom - axisThickness - tickLength
@@ -148,7 +148,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             drawGuidelines(baseCanvasX, fullXRange, labelValues, lineValues)
         }
 
-    private fun CartesianChartDrawContext.drawGuidelines(
+    private fun CartesianDrawContext.drawGuidelines(
         baseCanvasX: Float,
         fullXRange: ClosedFloatingPointRange<Float>,
         labelValues: List<Float>,
@@ -183,7 +183,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
     }
 
-    private fun CartesianChartDrawContext.getLinesCorrectionX(
+    private fun CartesianDrawContext.getLinesCorrectionX(
         entryX: Float,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): Float =
@@ -194,7 +194,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             else -> 0f
         } * layoutDirectionMultiplier
 
-    override fun drawAboveChart(context: CartesianChartDrawContext): Unit = Unit
+    override fun drawAboveChart(context: CartesianDrawContext): Unit = Unit
 
     override fun updateHorizontalDimensions(
         context: CartesianMeasureContext,

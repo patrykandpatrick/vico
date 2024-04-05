@@ -20,7 +20,7 @@ import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -57,7 +57,7 @@ public class HorizontalBox(
     private val verticalAxisPosition: AxisPosition.Vertical? = null,
 ) : Decoration {
     override fun onDrawAboveChart(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
     ) {
         with(context) {

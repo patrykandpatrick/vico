@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.marker
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.common.extension.appendCompat
 import com.patrykandpatrick.vico.core.common.extension.sumOf
@@ -86,7 +86,7 @@ public open class DefaultCartesianMarkerValueFormatter(
     }
 
     override fun format(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         targets: List<CartesianMarker.Target>,
     ): CharSequence =
         SpannableStringBuilder().apply {

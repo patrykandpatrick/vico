@@ -26,7 +26,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec
@@ -151,7 +151,7 @@ public open class LineCartesianLayer(
          * @see Component
          */
         public fun drawPoint(
-            context: CartesianChartDrawContext,
+            context: CartesianDrawContext,
             x: Float,
             y: Float,
         ): Unit =
@@ -268,7 +268,7 @@ public open class LineCartesianLayer(
     override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
 
     override fun drawInternal(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         model: LineCartesianLayerModel,
     ): Unit =
         with(context) {
@@ -340,7 +340,7 @@ public open class LineCartesianLayer(
             }
         }
 
-    protected open fun CartesianChartDrawContext.updateMarkerTargets(
+    protected open fun CartesianDrawContext.updateMarkerTargets(
         entry: LineCartesianLayerModel.Entry,
         canvasX: Float,
         canvasY: Float,
@@ -361,7 +361,7 @@ public open class LineCartesianLayer(
     /**
      * Draws a line’s points ([LineSpec.point]) and their corresponding data labels ([LineSpec.dataLabel]).
      */
-    protected open fun CartesianChartDrawContext.drawPointsAndDataLabels(
+    protected open fun CartesianDrawContext.drawPointsAndDataLabels(
         lineSpec: LineSpec,
         series: List<LineCartesianLayerModel.Entry>,
         drawingStart: Float,
@@ -430,7 +430,7 @@ public open class LineCartesianLayer(
         }
     }
 
-    protected fun CartesianChartDrawContext.getMaxDataLabelWidth(
+    protected fun CartesianDrawContext.getMaxDataLabelWidth(
         entry: LineCartesianLayerModel.Entry,
         x: Float,
         previousX: Float?,
@@ -474,7 +474,7 @@ public open class LineCartesianLayer(
         lineBackgroundPath.rewind()
     }
 
-    protected open fun CartesianChartDrawContext.forEachPointInBounds(
+    protected open fun CartesianDrawContext.forEachPointInBounds(
         series: List<LineCartesianLayerModel.Entry>,
         drawingStart: Float,
         pointInfoMap: Map<Float, LineCartesianLayerDrawingModel.PointInfo>?,

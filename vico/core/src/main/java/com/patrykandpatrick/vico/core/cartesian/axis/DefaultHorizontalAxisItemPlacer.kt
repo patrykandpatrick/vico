@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.common.extension.ceil
 import com.patrykandpatrick.vico.core.common.extension.floor
@@ -46,7 +46,7 @@ internal class DefaultHorizontalAxisItemPlacer(
                 if (xLength >= 2 * xStep) add(minX + xStep * (xLength.half / xStep).round)
             }
 
-    override fun getShiftExtremeTicks(context: CartesianChartDrawContext): Boolean = shiftExtremeTicks
+    override fun getShiftExtremeTicks(context: CartesianDrawContext): Boolean = shiftExtremeTicks
 
     override fun getFirstLabelValue(
         context: CartesianMeasureContext,
@@ -63,7 +63,7 @@ internal class DefaultHorizontalAxisItemPlacer(
     }
 
     override fun getLabelValues(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         visibleXRange: ClosedFloatingPointRange<Float>,
         fullXRange: ClosedFloatingPointRange<Float>,
         maxLabelWidth: Float,
@@ -109,7 +109,7 @@ internal class DefaultHorizontalAxisItemPlacer(
     ) = context.chartValues.measuredLabelValues
 
     override fun getLineValues(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         visibleXRange: ClosedFloatingPointRange<Float>,
         fullXRange: ClosedFloatingPointRange<Float>,
         maxLabelWidth: Float,

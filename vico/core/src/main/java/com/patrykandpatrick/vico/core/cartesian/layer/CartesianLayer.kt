@@ -19,7 +19,7 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
@@ -39,7 +39,7 @@ public interface CartesianLayer<T : CartesianLayerModel> : BoundsAware, ChartIns
      * Draws the [CartesianLayer].
      */
     public fun draw(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         model: T,
     )
 

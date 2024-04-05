@@ -20,7 +20,7 @@ import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.common.ExtraStore
 
@@ -36,7 +36,7 @@ public interface AxisItemPlacer {
          * Whether ticks whose _x_ values are bounds of the _x_-axis value range should be shifted to the edges of the
          * axis bounds, to be aligned with the vertical axes.
          */
-        public fun getShiftExtremeTicks(context: CartesianChartDrawContext): Boolean = true
+        public fun getShiftExtremeTicks(context: CartesianDrawContext): Boolean = true
 
         /**
          * If the [HorizontalAxis] is to reserve room for the first label, returns the first label’s _x_ value.
@@ -61,7 +61,7 @@ public interface AxisItemPlacer {
          * with two extra values on either side (if applicable).
          */
         public fun getLabelValues(
-            context: CartesianChartDrawContext,
+            context: CartesianDrawContext,
             visibleXRange: ClosedFloatingPointRange<Float>,
             fullXRange: ClosedFloatingPointRange<Float>,
             maxLabelWidth: Float,
@@ -94,7 +94,7 @@ public interface AxisItemPlacer {
          * returned by [getLabelValues] are used.
          */
         public fun getLineValues(
-            context: CartesianChartDrawContext,
+            context: CartesianDrawContext,
             visibleXRange: ClosedFloatingPointRange<Float>,
             fullXRange: ClosedFloatingPointRange<Float>,
             maxLabelWidth: Float,
@@ -150,13 +150,13 @@ public interface AxisItemPlacer {
          * [CartesianChart]’s bounds. If the chart has a top axis, the shifted tick will then be aligned with this axis,
          * and the shifted guideline will be hidden.
          */
-        public fun getShiftTopLines(context: CartesianChartDrawContext): Boolean = true
+        public fun getShiftTopLines(context: CartesianDrawContext): Boolean = true
 
         /**
          * Returns, as a list, the _y_ values for which labels are to be displayed.
          */
         public fun getLabelValues(
-            context: CartesianChartDrawContext,
+            context: CartesianDrawContext,
             axisHeight: Float,
             maxLabelHeight: Float,
             position: AxisPosition.Vertical,
@@ -186,7 +186,7 @@ public interface AxisItemPlacer {
          * Returns, as a list, the _y_ values for which ticks and guidelines are to be displayed.
          */
         public fun getLineValues(
-            context: CartesianChartDrawContext,
+            context: CartesianDrawContext,
             axisHeight: Float,
             maxLabelHeight: Float,
             position: AxisPosition.Vertical,

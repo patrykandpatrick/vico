@@ -30,7 +30,7 @@ import kotlin.math.abs
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun cartesianChartDrawContext(
+public fun CartesianDrawContext(
     canvas: Canvas,
     elevationOverlayColor: Int,
     measureContext: CartesianMeasureContext,
@@ -39,8 +39,8 @@ public fun cartesianChartDrawContext(
     chartBounds: RectF,
     horizontalScroll: Float,
     zoom: Float,
-): CartesianChartDrawContext =
-    object : CartesianChartDrawContext, CartesianMeasureContext by measureContext {
+): CartesianDrawContext =
+    object : CartesianDrawContext, CartesianMeasureContext by measureContext {
         override val chartBounds: RectF = chartBounds
 
         override var canvas: Canvas = canvas
@@ -68,7 +68,7 @@ public fun cartesianChartDrawContext(
 
 /** @suppress */
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
-public fun CartesianChartDrawContext.drawMarker(
+public fun CartesianDrawContext.drawMarker(
     marker: CartesianMarker,
     markerTouchPoint: Point?,
     chart: CartesianChart,

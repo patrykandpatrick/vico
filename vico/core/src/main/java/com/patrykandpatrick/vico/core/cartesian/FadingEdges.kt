@@ -24,7 +24,7 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
@@ -87,7 +87,7 @@ public open class FadingEdges(
      * @param bounds the bounds within which the fading edges will be drawn.
      */
     public fun applyFadingEdges(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
     ): Unit =
         with(context) {
@@ -121,7 +121,7 @@ public open class FadingEdges(
             }
         }
 
-    private fun CartesianChartDrawContext.drawFadingEdge(
+    private fun CartesianDrawContext.drawFadingEdge(
         left: Float,
         top: Float,
         right: Float,

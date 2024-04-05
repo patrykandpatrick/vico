@@ -50,7 +50,7 @@ import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.cartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.draw.drawMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
@@ -255,8 +255,8 @@ internal fun CartesianChartHostImpl(
             previousModelID = model.id
         }
 
-        val chartDrawContext =
-            cartesianChartDrawContext(
+        val cartesianDrawContext =
+            CartesianDrawContext(
                 canvas = drawContext.canvas.nativeCanvas,
                 elevationOverlayColor = elevationOverlayColor,
                 measureContext = measureContext,
@@ -267,11 +267,11 @@ internal fun CartesianChartHostImpl(
                 zoom = zoomState.value,
             )
 
-        chart.draw(chartDrawContext, model)
+        chart.draw(cartesianDrawContext, model)
 
         if (marker != null) {
             previousMarkerX.value =
-                chartDrawContext.drawMarker(
+                cartesianDrawContext.drawMarker(
                     marker,
                     markerTouchPoint.value,
                     chart,

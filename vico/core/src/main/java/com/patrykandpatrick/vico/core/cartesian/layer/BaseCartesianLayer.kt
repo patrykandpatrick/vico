@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
@@ -39,7 +39,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
     public var axisValueOverrider: AxisValueOverrider = AxisValueOverrider.auto()
 
     protected abstract fun drawInternal(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         model: T,
     )
 
@@ -55,7 +55,7 @@ public abstract class BaseCartesianLayer<T : CartesianLayerModel> : CartesianLay
     }
 
     override fun draw(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         model: T,
     ) {
         with(context) {

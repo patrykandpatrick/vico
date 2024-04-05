@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.decoration
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 
 /**
  * A [Decoration] presents additional information on a [CartesianChart].
@@ -34,7 +34,7 @@ public interface Decoration {
      * @param [bounds] the bounding box of the [CartesianChart].
      */
     public fun onDrawBehindChart(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
     ): Unit = Unit
 
@@ -45,7 +45,7 @@ public interface Decoration {
      * @param [bounds] the bounding box of the [CartesianChart].
      */
     public fun onDrawAboveChart(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         bounds: RectF,
     ): Unit = Unit
 }

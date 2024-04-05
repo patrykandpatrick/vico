@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import kotlin.properties.ReadWriteProperty
@@ -145,13 +145,13 @@ internal class AxisManager {
         bottomAxis?.setRestrictedBounds(topAxis?.bounds, endAxis?.bounds, startAxis?.bounds)
     }
 
-    fun drawBehindChart(context: CartesianChartDrawContext) {
+    fun drawBehindChart(context: CartesianDrawContext) {
         axisCache.forEach { axis ->
             axis.drawBehindChart(context)
         }
     }
 
-    fun drawAboveChart(context: CartesianChartDrawContext) {
+    fun drawAboveChart(context: CartesianDrawContext) {
         axisCache.forEach { axis ->
             axis.drawAboveChart(context)
         }

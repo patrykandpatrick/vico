@@ -21,7 +21,7 @@ import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
@@ -90,7 +90,7 @@ public open class ColumnCartesianLayer(
     override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
 
     override fun drawInternal(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         model: ColumnCartesianLayerModel,
     ): Unit =
         with(context) {
@@ -103,7 +103,7 @@ public open class ColumnCartesianLayer(
             stackInfo.clear()
         }
 
-    protected open fun CartesianChartDrawContext.drawChartInternal(
+    protected open fun CartesianDrawContext.drawChartInternal(
         chartValues: ChartValues,
         model: ColumnCartesianLayerModel,
         drawingModel: ColumnCartesianLayerDrawingModel?,
@@ -197,7 +197,7 @@ public open class ColumnCartesianLayer(
         }
     }
 
-    protected open fun CartesianChartDrawContext.drawStackedDataLabel(
+    protected open fun CartesianDrawContext.drawStackedDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         stackInfo: StackInfo,
@@ -234,7 +234,7 @@ public open class ColumnCartesianLayer(
         }
     }
 
-    protected open fun CartesianChartDrawContext.drawDataLabel(
+    protected open fun CartesianDrawContext.drawDataLabel(
         modelEntriesSize: Int,
         columnThicknessDp: Float,
         dataLabelValue: Float,
@@ -383,7 +383,7 @@ public open class ColumnCartesianLayer(
                 getCumulatedThickness(entryCollectionSize) + innerSpacingDp.pixels * (entryCollectionSize - 1)
         }
 
-    protected open fun CartesianChartDrawContext.getDrawingStart(
+    protected open fun CartesianDrawContext.getDrawingStart(
         entryCollectionIndex: Int,
         entryCollectionCount: Int,
         mergeMode: MergeMode,

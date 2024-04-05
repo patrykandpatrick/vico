@@ -30,7 +30,7 @@ import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.cartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.draw.drawMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
@@ -353,8 +353,8 @@ public open class CartesianChartView
                 zoomHandler.update(measureContext, horizontalDimensions, chart.bounds)
                 scrollHandler.update(measureContext, chart.bounds, horizontalDimensions)
 
-                val chartDrawContext =
-                    cartesianChartDrawContext(
+                val cartesianDrawContext =
+                    CartesianDrawContext(
                         canvas = canvas,
                         elevationOverlayColor = elevationOverlayColor,
                         measureContext = measureContext,
@@ -365,11 +365,11 @@ public open class CartesianChartView
                         zoom = zoomHandler.value,
                     )
 
-                chart.draw(chartDrawContext, model)
+                chart.draw(cartesianDrawContext, model)
 
                 marker?.also { marker ->
                     previousMarkerX =
-                        chartDrawContext.drawMarker(
+                        cartesianDrawContext.drawMarker(
                             marker,
                             markerTouchPoint,
                             chart,

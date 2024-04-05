@@ -22,7 +22,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabe
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Center
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -68,7 +68,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
      */
     public var verticalLabelPosition: VerticalLabelPosition = Center
 
-    override fun drawBehindChart(context: CartesianChartDrawContext): Unit =
+    override fun drawBehindChart(context: CartesianDrawContext): Unit =
         with(context) {
             var centerY: Float
             val yRange = chartValues.getYRange(position)
@@ -109,7 +109,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
             )
         }
 
-    override fun drawAboveChart(context: CartesianChartDrawContext): Unit =
+    override fun drawAboveChart(context: CartesianDrawContext): Unit =
         with(context) {
             val label = label
             val labelValues = itemPlacer.getLabelValues(this, bounds.height(), getMaxLabelHeight(), position)
@@ -158,7 +158,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         horizontalDimensions: MutableHorizontalDimensions,
     ): Unit = Unit
 
-    private fun CartesianChartDrawContext.drawLabel(
+    private fun CartesianDrawContext.drawLabel(
         label: TextComponent,
         labelText: CharSequence,
         labelX: Float,
@@ -299,7 +299,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 .maxOfOrNull { value -> label.getWidth(this, valueFormatter.format(value, chartValues, position)) }
         }.orZero
 
-    private fun CartesianChartDrawContext.getLineCanvasYCorrection(
+    private fun CartesianDrawContext.getLineCanvasYCorrection(
         thickness: Float,
         y: Float,
     ) = if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {

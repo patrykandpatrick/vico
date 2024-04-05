@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.axis
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.extension.ceil
 import com.patrykandpatrick.vico.core.common.extension.floor
@@ -32,10 +32,10 @@ internal class DefaultVerticalAxisItemPlacer(
     private val mode: Mode,
     private val shiftTopLines: Boolean,
 ) : AxisItemPlacer.Vertical {
-    override fun getShiftTopLines(context: CartesianChartDrawContext): Boolean = shiftTopLines
+    override fun getShiftTopLines(context: CartesianDrawContext): Boolean = shiftTopLines
 
     override fun getLabelValues(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         axisHeight: Float,
         maxLabelHeight: Float,
         position: AxisPosition.Vertical,

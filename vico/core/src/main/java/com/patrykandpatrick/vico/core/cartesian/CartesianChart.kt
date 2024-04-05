@@ -23,7 +23,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
@@ -63,7 +63,7 @@ public open class CartesianChart(
 
     private val drawingModelAndLayerConsumer =
         object : ModelAndLayerConsumer {
-            lateinit var context: CartesianChartDrawContext
+            lateinit var context: CartesianDrawContext
 
             override fun <T : CartesianLayerModel> invoke(
                 model: T?,
@@ -188,7 +188,7 @@ public open class CartesianChart(
      * Draws the [CartesianChart].
      */
     public fun draw(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         model: CartesianChartModel,
     ) {
         val canvasSaveCount = if (fadingEdges != null) context.saveLayer() else -1

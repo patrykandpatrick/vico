@@ -16,11 +16,11 @@
 
 package com.patrykandpatrick.vico.core.cartesian.layer
 
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.common.component.Component
 
 internal fun Component.drawPoint(
-    context: CartesianChartDrawContext,
+    context: CartesianDrawContext,
     x: Float,
     y: Float,
     halfPointSize: Float,

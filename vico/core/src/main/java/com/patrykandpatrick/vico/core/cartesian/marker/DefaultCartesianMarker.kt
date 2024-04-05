@@ -20,7 +20,7 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.component.Component
@@ -61,7 +61,7 @@ public open class DefaultCartesianMarker(
         get() = ((background as? ShapeComponent)?.shape as? MarkerCorneredShape)?.tickSizeDp.orZero
 
     override fun draw(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         targets: List<CartesianMarker.Target>,
     ): Unit =
         with(context) {
@@ -91,7 +91,7 @@ public open class DefaultCartesianMarker(
             drawLabel(context, targets)
         }
 
-    protected open fun CartesianChartDrawContext.drawIndicator(
+    protected open fun CartesianDrawContext.drawIndicator(
         x: Float,
         y: Float,
         color: Int,
@@ -103,7 +103,7 @@ public open class DefaultCartesianMarker(
     }
 
     protected fun drawLabel(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         targets: List<CartesianMarker.Target>,
     ): Unit =
         with(context) {
@@ -169,7 +169,7 @@ public open class DefaultCartesianMarker(
             else -> xPosition
         }
 
-    protected fun CartesianChartDrawContext.drawGuideline(targets: List<CartesianMarker.Target>) {
+    protected fun CartesianDrawContext.drawGuideline(targets: List<CartesianMarker.Target>) {
         targets
             .map { it.canvasX }
             .toSet()

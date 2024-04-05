@@ -20,7 +20,7 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
 
@@ -41,7 +41,7 @@ public interface Axis<Position : AxisPosition> : BoundsAware, ChartInsetter {
      *
      * @see drawAboveChart
      */
-    public fun drawBehindChart(context: CartesianChartDrawContext)
+    public fun drawBehindChart(context: CartesianDrawContext)
 
     /**
      * Called after the [CartesianChart] is drawn. Implementations can use this function to draw content above the
@@ -49,7 +49,7 @@ public interface Axis<Position : AxisPosition> : BoundsAware, ChartInsetter {
      *
      * @param context holds the information needed to draw the axis.
      */
-    public fun drawAboveChart(context: CartesianChartDrawContext)
+    public fun drawAboveChart(context: CartesianDrawContext)
 
     /**
      * The bounds ([RectF]) passed here define the area where the [Axis] shouldn’t draw anything.

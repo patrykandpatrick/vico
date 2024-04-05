@@ -26,7 +26,7 @@ import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.extension.ceil
 
 /** A [DrawContext] extension with [CartesianChart]-specific data. */
-public interface CartesianChartDrawContext : DrawContext, CartesianMeasureContext {
+public interface CartesianDrawContext : DrawContext, CartesianMeasureContext {
     /**
      * The bounds in which the [CartesianChart] will be drawn.
      */
@@ -63,5 +63,5 @@ public fun CartesianMeasureContext.getMaxScrollDistance(
         .run { if (isLtr) coerceAtLeast(minimumValue = 0f) else coerceAtMost(maximumValue = 0f) }
         .ceil
 
-internal fun CartesianChartDrawContext.getMaxScrollDistance() =
+internal fun CartesianDrawContext.getMaxScrollDistance() =
     getMaxScrollDistance(chartBounds.width(), horizontalDimensions)

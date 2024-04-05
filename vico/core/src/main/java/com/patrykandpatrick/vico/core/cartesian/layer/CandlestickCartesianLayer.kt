@@ -23,7 +23,7 @@ import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianChartDrawContext
+import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
@@ -100,7 +100,7 @@ public open class CandlestickCartesianLayer(
     override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
 
     override fun drawInternal(
-        context: CartesianChartDrawContext,
+        context: CartesianDrawContext,
         model: CandlestickCartesianLayerModel,
     ): Unit =
         with(context) {
@@ -112,7 +112,7 @@ public open class CandlestickCartesianLayer(
             )
         }
 
-    private fun CartesianChartDrawContext.drawChartInternal(
+    private fun CartesianDrawContext.drawChartInternal(
         chartValues: ChartValues,
         model: CandlestickCartesianLayerModel,
         drawingModel: CandlestickCartesianLayerDrawingModel?,
