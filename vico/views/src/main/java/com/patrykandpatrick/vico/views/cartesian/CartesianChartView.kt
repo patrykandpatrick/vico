@@ -41,7 +41,6 @@ import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.values.toImmutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.PreMeasureContext
 import com.patrykandpatrick.vico.core.common.extension.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.BaseChartView
@@ -299,11 +298,6 @@ public open class CartesianChartView
                 onChange(oldValue, newValue)
             }
         }
-
-        override fun getLegendHeight(
-            context: PreMeasureContext,
-            availableWidth: Float,
-        ): Int = chart?.legend?.getHeight(context, availableWidth)?.toInt() ?: 0
 
         override fun onTouchEvent(event: MotionEvent): Boolean {
             val scaleHandled =

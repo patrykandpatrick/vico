@@ -19,31 +19,12 @@ package com.patrykandpatrick.vico.compose.common
 import android.graphics.RectF
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
-import com.patrykandpatrick.vico.core.common.MutablePreMeasureContext
-import com.patrykandpatrick.vico.core.common.PreMeasureContext
-import com.patrykandpatrick.vico.core.common.extension.spToPx
-
-@Composable
-internal fun rememberPreMeasureContext(): PreMeasureContext {
-    val density = LocalDensity.current.density
-    val isLtr = LocalLayoutDirection.current == LayoutDirection.Ltr
-    val context = LocalContext.current
-    val spToPx = context::spToPx
-    return remember(density, isLtr, spToPx(1f)) {
-        MutablePreMeasureContext(
-            density = density,
-            isLtr = isLtr,
-            spToPx = spToPx,
-        )
-    }
-}
 
 @Composable
 internal fun rememberCartesianMeasureContext(

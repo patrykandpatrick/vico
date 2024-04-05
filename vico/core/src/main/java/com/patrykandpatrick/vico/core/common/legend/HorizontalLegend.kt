@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.common.legend
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.PreMeasureContext
+import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.component.Padding
 import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
 import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
@@ -51,7 +51,7 @@ public open class HorizontalLegend(
     override val bounds: RectF = RectF()
 
     override fun getHeight(
-        context: PreMeasureContext,
+        context: MeasureContext,
         availableWidth: Float,
     ): Float =
         with(context) {
@@ -142,7 +142,7 @@ public open class HorizontalLegend(
         }
 
     protected fun buildLines(
-        context: PreMeasureContext,
+        context: MeasureContext,
         availableWidth: Float,
         callback: (it: LegendItem) -> Unit = {},
     ): Unit =

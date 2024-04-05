@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.common.legend
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.PreMeasureContext
+import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
 
 /**
@@ -29,7 +29,7 @@ public interface Legend : BoundsAware {
      * Returns the height of the legend.
      */
     public fun getHeight(
-        context: PreMeasureContext,
+        context: MeasureContext,
         availableWidth: Float,
     ): Float
 

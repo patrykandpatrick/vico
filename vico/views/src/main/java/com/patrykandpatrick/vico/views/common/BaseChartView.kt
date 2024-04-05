@@ -32,14 +32,11 @@ import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.MutableMeasureContext
-import com.patrykandpatrick.vico.core.common.PreMeasureContext
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.extension.set
 import com.patrykandpatrick.vico.core.common.extension.spToPx
-import com.patrykandpatrick.vico.core.common.legend.Legend
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
 import com.patrykandpatrick.vico.views.common.extension.density
-import com.patrykandpatrick.vico.views.common.extension.horizontalPadding
 import com.patrykandpatrick.vico.views.common.extension.isLtr
 import com.patrykandpatrick.vico.views.common.extension.specSize
 import com.patrykandpatrick.vico.views.common.extension.start
@@ -110,11 +107,6 @@ public abstract class BaseChartView<Model>
          */
         public var dispatcher: CoroutineDispatcher = Dispatchers.Default
 
-        /**
-         * The last measured height of q [Legend].
-         */
-        public var measuredLegendHeight: Int = 0
-
         override fun onAttachedToWindow() {
             super.onAttachedToWindow()
             coroutineScope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob())
@@ -174,10 +166,7 @@ public abstract class BaseChartView<Model>
             heightMeasureSpec: Int,
         ) {
             val width = widthMeasureSpec.specSize.coerceAtLeast(suggestedMinimumWidth)
-            measuredLegendHeight = getLegendHeight(measureContext, width.toFloat() - horizontalPadding)
-            val defaultHeight =
-                getChartDesiredHeight(widthMeasureSpec, heightMeasureSpec) + measuredLegendHeight +
-                    verticalPadding
+            val defaultHeight = getChartDesiredHeight(widthMeasureSpec, heightMeasureSpec) + verticalPadding
 
             val height =
                 when (MeasureSpec.getMode(heightMeasureSpec)) {
@@ -197,11 +186,6 @@ public abstract class BaseChartView<Model>
                 bottom = height - paddingBottom,
             )
         }
-
-        protected abstract fun getLegendHeight(
-            context: PreMeasureContext,
-            availableWidth: Float,
-        ): Int
 
         protected fun startAnimation(transformModel: suspend (key: Any, fraction: Float) -> Unit) {
             if (model != null || runInitialAnimation) {

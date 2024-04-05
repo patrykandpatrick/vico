@@ -32,7 +32,6 @@ import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.MeasureContext
-import com.patrykandpatrick.vico.core.common.PreMeasureContext
 import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
 import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
 import com.patrykandpatrick.vico.core.common.extension.copy
@@ -293,7 +292,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getWidth(
-        context: PreMeasureContext,
+        context: MeasureContext,
         text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
@@ -314,7 +313,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getHeight(
-        context: PreMeasureContext,
+        context: MeasureContext,
         text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
@@ -335,7 +334,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
      * [pad] defines whether to extend [text] by such a number of blank lines that it has [lineCount] lines.
      */
     public fun getTextBounds(
-        context: PreMeasureContext,
+        context: MeasureContext,
         text: CharSequence? = null,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
@@ -370,7 +369,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         }
 
     private fun getLayout(
-        context: PreMeasureContext,
+        context: MeasureContext,
         text: CharSequence,
         width: Int = DEF_LAYOUT_SIZE,
         height: Int = DEF_LAYOUT_SIZE,
@@ -490,7 +489,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
     public fun interface MinWidth {
         /** Returns the minimum width. */
         public fun getValue(
-            context: PreMeasureContext,
+            context: MeasureContext,
             textComponent: TextComponent,
             maxWidth: Int,
             maxHeight: Int,
@@ -501,7 +500,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
         public companion object {
             internal class Fixed(private val valueDp: Float) : MinWidth {
                 override fun getValue(
-                    context: PreMeasureContext,
+                    context: MeasureContext,
                     textComponent: TextComponent,
                     maxWidth: Int,
                     maxHeight: Int,
@@ -517,7 +516,7 @@ public open class TextComponent protected constructor() : Padding, Margins {
                 private val bounds = RectF()
 
                 override fun getValue(
-                    context: PreMeasureContext,
+                    context: MeasureContext,
                     textComponent: TextComponent,
                     maxWidth: Int,
                     maxHeight: Int,

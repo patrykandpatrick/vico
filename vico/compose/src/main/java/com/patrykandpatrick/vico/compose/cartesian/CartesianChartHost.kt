@@ -22,6 +22,8 @@ import androidx.compose.animation.core.AnimationSpec
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -35,7 +37,6 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.common.ChartHostBox
 import com.patrykandpatrick.vico.compose.common.chartTouchEvent
 import com.patrykandpatrick.vico.compose.common.collectAsState
 import com.patrykandpatrick.vico.compose.common.component1
@@ -106,12 +107,7 @@ public fun CartesianChartHost(
         .collectAsState(chart, modelProducer, diffAnimationSpec, runInitialAnimation, mutableChartValues, getXStep)
     val (model, previousModel, chartValues) = modelWrapper
 
-    ChartHostBox(
-        modifier = modifier,
-        legend = chart.legend,
-        hasModel = model != null,
-        desiredHeight = { CHART_HEIGHT.dp.roundToPx() },
-    ) {
+    CartesianChartHostBox(modifier) {
         if (model != null) {
             CartesianChartHostImpl(
                 chart = chart,
@@ -125,7 +121,7 @@ public fun CartesianChartHost(
                 chartValues = chartValues,
             )
         } else {
-            Box { placeholder() }
+            placeholder()
         }
     }
 }
@@ -167,12 +163,7 @@ public fun CartesianChartHost(
         chartValues.reset()
         chart.updateChartValues(chartValues, model, getXStep?.invoke(model))
     }
-    ChartHostBox(
-        modifier = modifier,
-        legend = chart.legend,
-        hasModel = true,
-        desiredHeight = { CHART_HEIGHT.dp.roundToPx() },
-    ) {
+    CartesianChartHostBox(modifier) {
         CartesianChartHostImpl(
             chart = chart,
             model = model,
@@ -229,6 +220,7 @@ internal fun CartesianChartHostImpl(
     Canvas(
         modifier =
             Modifier
+                .fillMaxSize()
                 .chartTouchEvent(
                     setTouchPoint =
                         remember(marker == null) { if (marker != null) markerTouchPoint.component2() else null },
@@ -290,4 +282,15 @@ internal fun CartesianChartHostImpl(
 
         measureContext.reset()
     }
+}
+
+@Composable
+private fun CartesianChartHostBox(
+    modifier: Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) {
+    Box(
+        modifier = modifier.height(CHART_HEIGHT.dp).fillMaxWidth(),
+        content = content,
+    )
 }

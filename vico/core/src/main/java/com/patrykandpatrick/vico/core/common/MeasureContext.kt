@@ -16,14 +16,40 @@
 
 package com.patrykandpatrick.vico.core.common
 
+import android.graphics.Canvas
 import android.graphics.RectF
 
-/**
- * [MeasureContext] holds data used by various chart components during the measuring and drawing phases.
- */
-public interface MeasureContext : PreMeasureContext {
-    /**
-     * The bounds of the canvas that will be used to draw the chart and its components.
-     */
+/** Holds data used for measuring and drawing. */
+public interface MeasureContext {
+    /** The bounds of the [Canvas]. */
     public val canvasBounds: RectF
+
+    /** The number of pixels corresponding to one density-independent pixel. */
+    public val density: Float
+
+    /** The number of pixels corresponding to this number of density-independent pixels. */
+    public val Float.pixels: Float get() = this * density
+
+    /** The number of pixels corresponding to this number of density-independent pixels, rounded down to an integer. */
+    public val Float.wholePixels: Int get() = pixels.toInt()
+
+    /** Returns the number of pixels corresponding to [dp] density-independent pixels. */
+    public fun dpToPx(dp: Float): Float = dp * density
+
+    /** Returns the number of pixels corresponding to [sp] scalable pixels. */
+    public fun spToPx(sp: Float): Float
+
+    /** Whether the layout direction is left to right. */
+    public val isLtr: Boolean
+
+    /** Stores temporary auxiliary data. */
+    public val extraStore: MutableExtraStore
+
+    /** `1f` if [isLtr] is `true`, and `-1f` otherwise. */
+    public val layoutDirectionMultiplier: Float get() = if (isLtr) 1f else -1f
+
+    /** Removes all temporary data. */
+    public fun reset() {
+        extraStore.clear()
+    }
 }
