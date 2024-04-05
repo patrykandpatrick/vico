@@ -19,16 +19,14 @@ package com.patrykandpatrick.vico.core.cartesian.draw
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
+import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.extension.ceil
 
-/**
- * An extension of [CartesianDrawContext] that holds additional data required to render a [CartesianChart].
- */
-public interface CartesianChartDrawContext : CartesianDrawContext {
+/** A [DrawContext] extension with [CartesianChart]-specific data. */
+public interface CartesianChartDrawContext : DrawContext, CartesianMeasureContext {
     /**
      * The bounds in which the [CartesianChart] will be drawn.
      */
