@@ -42,15 +42,15 @@ private const val TITLE_ABS_ROTATION_DEGREES = 90f
  * @see Axis
  * @see BaseAxis
  */
-public class VerticalAxis<Position : AxisPosition.Vertical>(
+public open class VerticalAxis<Position : AxisPosition.Vertical>(
     override val position: Position,
 ) : BaseAxis<Position>() {
-    private val areLabelsOutsideAtStartOrInsideAtEnd
+    protected val areLabelsOutsideAtStartOrInsideAtEnd: Boolean
         get() =
             horizontalLabelPosition == Outside && position is AxisPosition.Vertical.Start ||
                 horizontalLabelPosition == Inside && position is AxisPosition.Vertical.End
 
-    private val textHorizontalPosition: HorizontalPosition
+    protected val textHorizontalPosition: HorizontalPosition
         get() = if (areLabelsOutsideAtStartOrInsideAtEnd) HorizontalPosition.Start else HorizontalPosition.End
 
     /**
@@ -132,6 +132,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
 
                 label ?: return@forEach
                 drawLabel(
+                    context = this,
                     label = label,
                     labelText = valueFormatter.format(labelValue, chartValues, position),
                     labelX = labelX,
@@ -158,48 +159,50 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         horizontalDimensions: MutableHorizontalDimensions,
     ): Unit = Unit
 
-    private fun CartesianDrawContext.drawLabel(
+    protected open fun drawLabel(
+        context: CartesianDrawContext,
         label: TextComponent,
         labelText: CharSequence,
         labelX: Float,
         tickCenterY: Float,
-    ) {
-        val textBounds =
-            label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).apply {
-                translate(
-                    x = labelX,
-                    y = tickCenterY - centerY(),
+    ): Unit =
+        with(context) {
+            val textBounds =
+                label.getTextBounds(this, labelText, rotationDegrees = labelRotationDegrees).apply {
+                    translate(
+                        x = labelX,
+                        y = tickCenterY - centerY(),
+                    )
+                }
+
+            if (
+                horizontalLabelPosition == Outside ||
+                isNotInRestrictedBounds(
+                    left = textBounds.left,
+                    top = textBounds.top,
+                    right = textBounds.right,
+                    bottom = textBounds.bottom,
+                )
+            ) {
+                label.drawText(
+                    context = this,
+                    text = labelText,
+                    textX = labelX,
+                    textY = tickCenterY,
+                    horizontalPosition = textHorizontalPosition,
+                    verticalPosition = verticalLabelPosition.textPosition,
+                    rotationDegrees = labelRotationDegrees,
+                    maxTextWidth =
+                        when (sizeConstraint) {
+                            // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
+                            is SizeConstraint.Auto -> Int.MAX_VALUE
+                            else -> (bounds.width() - tickLength - axisThickness).toInt()
+                        },
                 )
             }
-
-        if (
-            horizontalLabelPosition == Outside ||
-            isNotInRestrictedBounds(
-                left = textBounds.left,
-                top = textBounds.top,
-                right = textBounds.right,
-                bottom = textBounds.bottom,
-            )
-        ) {
-            label.drawText(
-                context = this,
-                text = labelText,
-                textX = labelX,
-                textY = tickCenterY,
-                horizontalPosition = textHorizontalPosition,
-                verticalPosition = verticalLabelPosition.textPosition,
-                rotationDegrees = labelRotationDegrees,
-                maxTextWidth =
-                    when (sizeConstraint) {
-                        // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
-                        is SizeConstraint.Auto -> Int.MAX_VALUE
-                        else -> (bounds.width() - tickLength - axisThickness).toInt()
-                    },
-            )
         }
-    }
 
-    private fun CartesianMeasureContext.getTickLeftX(): Float {
+    protected fun CartesianMeasureContext.getTickLeftX(): Float {
         val onLeft = position.isLeft(isLtr = isLtr)
         val base = if (onLeft) bounds.right else bounds.left
         return when {
@@ -217,7 +220,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
         outInsets: HorizontalInsets,
     ): Unit =
         with(context) {
-            val desiredWidth = getDesiredWidth(availableHeight)
+            val desiredWidth = getDesiredWidth(this, availableHeight)
 
             outInsets.set(
                 start = if (position.isStart) desiredWidth else 0f,
@@ -254,59 +257,68 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
     /**
      * Calculates the optimal width for this [VerticalAxis], accounting for the value of [sizeConstraint].
      */
-    private fun CartesianMeasureContext.getDesiredWidth(height: Float) =
-        when (val constraint = sizeConstraint) {
-            is SizeConstraint.Auto -> {
-                val titleComponentWidth =
-                    title?.let { title ->
-                        titleComponent?.getWidth(
-                            context = this,
-                            text = title,
-                            rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
-                            height = bounds.height().toInt(),
+    protected open fun getDesiredWidth(
+        context: CartesianMeasureContext,
+        height: Float,
+    ): Float =
+        with(context) {
+            when (val constraint = sizeConstraint) {
+                is SizeConstraint.Auto -> {
+                    val titleComponentWidth =
+                        title?.let { title ->
+                            titleComponent?.getWidth(
+                                context = this,
+                                text = title,
+                                rotationDegrees = TITLE_ABS_ROTATION_DEGREES,
+                                height = bounds.height().toInt(),
+                            )
+                        }.orZero
+                    val labelSpace =
+                        when (horizontalLabelPosition) {
+                            Outside -> getMaxLabelWidth(height)
+                            Inside -> 0f
+                        }
+                    (labelSpace + titleComponentWidth + axisThickness + tickLength)
+                        .coerceIn(
+                            minimumValue = constraint.minSizeDp.pixels,
+                            maximumValue = constraint.maxSizeDp.pixels,
                         )
-                    }.orZero
-                val labelSpace =
-                    when (horizontalLabelPosition) {
-                        Outside -> getMaxLabelWidth(height)
-                        Inside -> 0f
-                    }
-                (labelSpace + titleComponentWidth + axisThickness + tickLength)
-                    .coerceIn(minimumValue = constraint.minSizeDp.pixels, maximumValue = constraint.maxSizeDp.pixels)
-            }
+                }
 
-            is SizeConstraint.Exact -> constraint.sizeDp.pixels
-            is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
-            is SizeConstraint.TextWidth ->
-                label?.getWidth(
-                    context = this,
-                    text = constraint.text,
-                    rotationDegrees = labelRotationDegrees,
-                ).orZero + tickLength + axisThickness.half
+                is SizeConstraint.Exact -> constraint.sizeDp.pixels
+                is SizeConstraint.Fraction -> canvasBounds.width() * constraint.fraction
+                is SizeConstraint.TextWidth ->
+                    label?.getWidth(
+                        context = this,
+                        text = constraint.text,
+                        rotationDegrees = labelRotationDegrees,
+                    ).orZero + tickLength + axisThickness.half
+            }
         }
 
-    private fun CartesianMeasureContext.getMaxLabelHeight() =
+    protected fun CartesianMeasureContext.getMaxLabelHeight(): Float =
         label?.let { label ->
             itemPlacer
                 .getHeightMeasurementLabelValues(this, position)
                 .maxOfOrNull { value -> label.getHeight(this, valueFormatter.format(value, chartValues, position)) }
         }.orZero
 
-    private fun CartesianMeasureContext.getMaxLabelWidth(axisHeight: Float) =
+    protected fun CartesianMeasureContext.getMaxLabelWidth(axisHeight: Float): Float =
         label?.let { label ->
             itemPlacer
                 .getWidthMeasurementLabelValues(this, axisHeight, getMaxLabelHeight(), position)
                 .maxOfOrNull { value -> label.getWidth(this, valueFormatter.format(value, chartValues, position)) }
         }.orZero
 
-    private fun CartesianDrawContext.getLineCanvasYCorrection(
+    protected fun CartesianDrawContext.getLineCanvasYCorrection(
         thickness: Float,
         y: Float,
-    ) = if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {
-        -thickness.half
-    } else {
-        thickness.half
-    }
+    ): Float =
+        if (y == chartValues.getYRange(position).maxY && itemPlacer.getShiftTopLines(this)) {
+            -thickness.half
+        } else {
+            thickness.half
+        }
 
     /**
      * Defines the horizontal position of each of a vertical axis’s labels relative to the axis line.

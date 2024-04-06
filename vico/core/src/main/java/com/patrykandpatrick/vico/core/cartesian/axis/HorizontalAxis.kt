@@ -36,10 +36,10 @@ import kotlin.math.min
  * @see Axis
  * @see BaseAxis
  */
-public class HorizontalAxis<Position : AxisPosition.Horizontal>(
+public open class HorizontalAxis<Position : AxisPosition.Horizontal>(
     override val position: Position,
 ) : BaseAxis<Position>() {
-    private val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
+    protected val AxisPosition.Horizontal.textVerticalPosition: VerticalPosition
         get() = if (isBottom) VerticalPosition.Bottom else VerticalPosition.Top
 
     /**
@@ -145,45 +145,47 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
 
             if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
 
-            drawGuidelines(baseCanvasX, fullXRange, labelValues, lineValues)
+            drawGuidelines(context, baseCanvasX, fullXRange, labelValues, lineValues)
         }
 
-    private fun CartesianDrawContext.drawGuidelines(
+    protected open fun drawGuidelines(
+        context: CartesianDrawContext,
         baseCanvasX: Float,
         fullXRange: ClosedFloatingPointRange<Float>,
         labelValues: List<Float>,
         lineValues: List<Float>?,
-    ) {
-        val guideline = guideline ?: return
-        val clipRestoreCount = canvas.save()
-        canvas.clipRect(chartBounds)
+    ): Unit =
+        with(context) {
+            val guideline = guideline ?: return
+            val clipRestoreCount = canvas.save()
+            canvas.clipRect(chartBounds)
 
-        if (lineValues == null) {
-            labelValues.forEach { x ->
-                val canvasX =
-                    baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
-                        layoutDirectionMultiplier
+            if (lineValues == null) {
+                labelValues.forEach { x ->
+                    val canvasX =
+                        baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                            layoutDirectionMultiplier
 
-                guideline
-                    .takeUnless { x.isBoundOf(fullXRange) }
-                    ?.drawVertical(this, chartBounds.top, chartBounds.bottom, canvasX)
+                    guideline
+                        .takeUnless { x.isBoundOf(fullXRange) }
+                        ?.drawVertical(this, chartBounds.top, chartBounds.bottom, canvasX)
+                }
+            } else {
+                lineValues.forEach { x ->
+                    val canvasX =
+                        baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
+                            layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange)
+
+                    guideline
+                        .takeUnless { x.isBoundOf(fullXRange) }
+                        ?.drawVertical(this, chartBounds.top, chartBounds.bottom, canvasX)
+                }
             }
-        } else {
-            lineValues.forEach { x ->
-                val canvasX =
-                    baseCanvasX + (x - chartValues.minX) / chartValues.xStep * horizontalDimensions.xSpacing *
-                        layoutDirectionMultiplier + getLinesCorrectionX(x, fullXRange)
 
-                guideline
-                    .takeUnless { x.isBoundOf(fullXRange) }
-                    ?.drawVertical(this, chartBounds.top, chartBounds.bottom, canvasX)
-            }
+            if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
         }
 
-        if (clipRestoreCount >= 0) canvas.restoreToCount(clipRestoreCount)
-    }
-
-    private fun CartesianDrawContext.getLinesCorrectionX(
+    protected fun CartesianDrawContext.getLinesCorrectionX(
         entryX: Float,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): Float =
@@ -249,7 +251,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
         }
     }
 
-    private fun CartesianMeasureContext.getFullXRange(
+    protected fun CartesianMeasureContext.getFullXRange(
         horizontalDimensions: HorizontalDimensions,
     ): ClosedFloatingPointRange<Float> =
         with(horizontalDimensions) {
@@ -258,7 +260,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             start..end
         }
 
-    private fun getDesiredHeight(
+    protected open fun getDesiredHeight(
         context: CartesianMeasureContext,
         horizontalDimensions: HorizontalDimensions,
         maxLabelWidth: Float,
@@ -296,7 +298,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             }
         }
 
-    private fun CartesianMeasureContext.getMaxLabelWidth(
+    protected fun CartesianMeasureContext.getMaxLabelWidth(
         horizontalDimensions: HorizontalDimensions,
         fullXRange: ClosedFloatingPointRange<Float>,
     ): Float {
@@ -310,7 +312,7 @@ public class HorizontalAxis<Position : AxisPosition.Horizontal>(
             .orZero
     }
 
-    private fun CartesianMeasureContext.getMaxLabelHeight(
+    protected fun CartesianMeasureContext.getMaxLabelHeight(
         horizontalDimensions: HorizontalDimensions,
         fullXRange: ClosedFloatingPointRange<Float>,
         maxLabelWidth: Float,
