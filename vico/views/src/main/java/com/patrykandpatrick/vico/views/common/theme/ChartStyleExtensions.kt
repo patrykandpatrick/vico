@@ -253,6 +253,7 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
                     R.styleable.CandlestickLayerStyle_candleSpacing,
                     Defaults.CANDLE_SPACING_DP,
                 ),
+            scaleCandleWicks = typedArray.getBoolean(R.styleable.CandlestickLayerStyle_scaleCandleWicks, false),
         )
     }
 }

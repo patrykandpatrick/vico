@@ -33,6 +33,7 @@ public fun rememberCandlestickCartesianLayer(
     candles: CandlestickCartesianLayer.CandleProvider = CandlestickCartesianLayer.CandleProvider.absolute(),
     minCandleBodyHeight: Dp = Defaults.MIN_CANDLE_BODY_HEIGHT_DP.dp,
     candleSpacing: Dp = Defaults.CANDLE_SPACING_DP.dp,
+    scaleCandleWicks: Boolean = false,
     verticalAxisPosition: AxisPosition.Vertical? = null,
     drawingModelInterpolator: DrawingModelInterpolator<
         CandlestickCartesianLayerDrawingModel.CandleInfo,
@@ -42,7 +43,8 @@ public fun rememberCandlestickCartesianLayer(
     remember { CandlestickCartesianLayer(candles) }.apply {
         this.candles = candles
         minCandleBodyHeightDp = minCandleBodyHeight.value
-        this.candleSpacingDp = candleSpacing.value
+        candleSpacingDp = candleSpacing.value
+        this.scaleCandleWicks = scaleCandleWicks
         this.verticalAxisPosition = verticalAxisPosition
         this.drawingModelInterpolator = drawingModelInterpolator
     }

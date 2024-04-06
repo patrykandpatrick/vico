@@ -36,6 +36,7 @@
         <attr name="absolutelyBearishRelativelyBearishCandleStyle" format="reference" />
         <attr name="minCandleBodyHeight" format="dimension" />
         <attr name="candleSpacing" format="dimension" />
+        <attr name="scaleCandleWicks" format="boolean" />
     </declare-styleable>
 
     <declare-styleable name="CandleStyle">

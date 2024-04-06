@@ -46,17 +46,19 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
 /**
  * [CandlestickCartesianLayer] displays data as vertical bars. It can draw multiple columns per segment.
  *
- * @param candles provides the [Candle]s.
- * @param minCandleBodyHeightDp TODO
- * @param candleSpacingDp the horizontal padding between the edges of chart segments and the columns they contain.
+ * @property candles provides the [Candle]s.
+ * @property minCandleBodyHeightDp TODO
+ * @property candleSpacingDp the horizontal padding between the edges of chart segments and the columns they contain.
  * segments that contain a single column only.
- * @param verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
+ * @property scaleCandleWicks whether the candle wicks should be scaled based on the zoom factor.
+ * @property verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
  * associated. Use this for independent [CartesianLayer] scaling.
  */
 public open class CandlestickCartesianLayer(
     public var candles: CandleProvider,
     public var minCandleBodyHeightDp: Float = Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
     public var candleSpacingDp: Float = Defaults.CANDLE_SPACING_DP,
+    public var scaleCandleWicks: Boolean = false,
     public var verticalAxisPosition: AxisPosition.Vertical? = null,
     public var drawingModelInterpolator: DrawingModelInterpolator<
         CandlestickCartesianLayerDrawingModel.CandleInfo,
@@ -165,7 +167,7 @@ public open class CandlestickCartesianLayer(
                     top = topWickY,
                     bottom = bodyTopY,
                     centerX = bodyCenterX,
-                    thicknessScale = zoom,
+                    thicknessScale = if (scaleCandleWicks) zoom else 1f,
                 )
 
                 candle.bottomWick.drawVertical(
@@ -173,7 +175,7 @@ public open class CandlestickCartesianLayer(
                     top = bodyBottomY,
                     bottom = bottomWickY,
                     centerX = bodyCenterX,
-                    thicknessScale = zoom,
+                    thicknessScale = if (scaleCandleWicks) zoom else 1f,
                 )
             }
         }
