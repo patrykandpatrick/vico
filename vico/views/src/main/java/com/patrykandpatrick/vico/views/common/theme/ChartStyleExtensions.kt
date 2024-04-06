@@ -163,12 +163,12 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
     val bullishColor = context.defaultColors.bullishCandleColor.toInt()
     val neutralColor = context.defaultColors.neutralCandleColor.toInt()
     val bearishColor = context.defaultColors.bearishCandleColor.toInt()
-    val candleProvider =
-        getNestedTypedArray(
-            context,
-            R.styleable.CartesianChartView_candlestickLayerStyle,
-            R.styleable.CandlestickLayerStyle,
-        ).use { typedArray ->
+    return getNestedTypedArray(
+        context,
+        R.styleable.CartesianChartView_candlestickLayerStyle,
+        R.styleable.CandlestickLayerStyle,
+    ).use { typedArray ->
+        val candleProvider =
             when (typedArray.getInteger(R.styleable.CandlestickLayerStyle_candleStyle, 0)) {
                 0 -> {
                     val bullish =
@@ -239,18 +239,22 @@ internal fun TypedArray.getCandlestickCartesianLayer(context: Context): Candlest
                 }
                 else -> error("Unexpected `candleStyle` value.")
             }
-        }
-    return CandlestickCartesianLayer(
-        candles = candleProvider,
-        minCandleBodyHeightDp =
-            getRawDimension(
-                context,
-                R.styleable.CandlestickLayerStyle_minCandleBodyHeight,
-                Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
-            ),
-        candleSpacingDp =
-            getRawDimension(context, R.styleable.CandlestickLayerStyle_candleSpacing, Defaults.CANDLE_SPACING_DP),
-    )
+        CandlestickCartesianLayer(
+            candles = candleProvider,
+            minCandleBodyHeightDp =
+                typedArray.getRawDimension(
+                    context,
+                    R.styleable.CandlestickLayerStyle_minCandleBodyHeight,
+                    Defaults.MIN_CANDLE_BODY_HEIGHT_DP,
+                ),
+            candleSpacingDp =
+                typedArray.getRawDimension(
+                    context,
+                    R.styleable.CandlestickLayerStyle_candleSpacing,
+                    Defaults.CANDLE_SPACING_DP,
+                ),
+        )
+    }
 }
 
 private fun TypedArray.getCandle(
