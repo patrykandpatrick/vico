@@ -20,15 +20,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
+import com.patrykandpatrick.vico.compose.cartesian.fullWidth
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.RandomCartesianModelGenerator
-import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
+import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.databinding.Chart10Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -72,11 +73,17 @@ private fun ComposeChart10(
             rememberCartesianChart(
                 rememberCandlestickCartesianLayer(),
                 startAxis = rememberStartAxis(),
-                bottomAxis = rememberBottomAxis(guideline = null),
+                bottomAxis =
+                    rememberBottomAxis(
+                        guideline = null,
+                        itemPlacer =
+                            remember { AxisItemPlacer.Horizontal.default(spacing = 3, addExtremeLabelPadding = true) },
+                    ),
             ),
         modelProducer = modelProducer,
         marker = marker,
         modifier = modifier,
+        horizontalLayout = HorizontalLayout.fullWidth(),
     )
 }
 
@@ -87,16 +94,7 @@ private fun ViewChart10(
 ) {
     val marker = rememberMarker(showIndicator = false)
     AndroidViewBinding(Chart10Binding::inflate, modifier = modifier) {
-        with(chartView) {
-            runInitialAnimation = false
-            this.modelProducer = modelProducer
-            (chart?.bottomAxis as BaseAxis).guideline = null
-            this.marker = marker
-        }
+        chartView.modelProducer = modelProducer
+        chartView.marker = marker
     }
 }
-
-private const val COLOR_1_CODE = 0xffa485e0
-
-private val color1 = Color(COLOR_1_CODE)
-private val chartColors = listOf(color1)

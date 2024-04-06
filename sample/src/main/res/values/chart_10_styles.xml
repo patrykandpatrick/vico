@@ -14,18 +14,10 @@
   ~ limitations under the License.
   -->
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
-
-    <com.patrykandpatrick.vico.views.cartesian.CartesianChartView
-        android:id="@+id/chart_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:bottomAxisStyle="@style/Chart10BottomAxisStyle"
-        app:horizontalLayout="fullWidth"
-        app:layers="candlestick"
-        app:showBottomAxis="true"
-        app:showStartAxis="true" />
-</FrameLayout>
+<resources>
+    <style name="Chart10BottomAxisStyle">
+        <item name="addExtremeHorizontalAxisLabelPadding">true</item>
+        <item name="horizontalAxisLabelSpacing">3</item>
+        <item name="showGuideline">false</item>
+    </style>
+</resources>

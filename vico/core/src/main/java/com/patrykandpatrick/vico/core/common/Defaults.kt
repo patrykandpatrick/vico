@@ -45,9 +45,9 @@ public object Defaults {
     public const val COLUMN_ROUNDNESS_PERCENT: Int = 40
     public const val CANDLE_BODY_WIDTH_DP: Float = 8f
     public const val MIN_CANDLE_BODY_HEIGHT_DP: Float = 4f
-    public const val WICK_DEFAULT_WIDTH_DP: Float = 2f
-    public const val HOLLOW_CANDLE_STROKE_WIDTH_DP: Float = 2f
-    public const val CANDLE_SPACING_DP: Float = 16f
+    public const val WICK_DEFAULT_WIDTH_DP: Float = 1f
+    public const val HOLLOW_CANDLE_STROKE_WIDTH_DP: Float = 1f
+    public const val CANDLE_SPACING_DP: Float = 4f
     public const val CUBIC_STRENGTH: Float = 1f
     public const val DASH_LENGTH: Float = 4f
     public const val DASH_GAP: Float = 2f
