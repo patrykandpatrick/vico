@@ -31,9 +31,12 @@ import com.patrykandpatrick.vico.core.common.Defaults.LABEL_LINE_COUNT
 import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.ExtraStore
+import com.patrykandpatrick.vico.core.common.HorizontalPosition
+import com.patrykandpatrick.vico.core.common.Margins
 import com.patrykandpatrick.vico.core.common.MeasureContext
-import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
-import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
+import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.Padding
+import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.extension.copy
 import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.extension.lineHeight
@@ -42,8 +45,6 @@ import com.patrykandpatrick.vico.core.common.extension.rotate
 import com.patrykandpatrick.vico.core.common.extension.translate
 import com.patrykandpatrick.vico.core.common.getBounds
 import com.patrykandpatrick.vico.core.common.getOrSetCached
-import com.patrykandpatrick.vico.core.common.position.HorizontalPosition
-import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.staticLayout
 import com.patrykandpatrick.vico.core.common.widestLineWidth
 import kotlin.math.absoluteValue
@@ -118,14 +119,14 @@ public open class TextComponent protected constructor() : Padding, Margins {
      *
      * @see [background]
      */
-    override var padding: MutableDimensions = emptyDimensions()
+    override var padding: MutableDimensions = MutableDimensions.empty()
 
     /**
      * The margins around the background. This is applied even if [background] is null.
      *
      * @see [background]
      */
-    override var margins: MutableDimensions = emptyDimensions()
+    override var margins: MutableDimensions = MutableDimensions.empty()
 
     private var layout: Layout = staticLayout("", textPaint, 0)
 
@@ -460,12 +461,12 @@ public open class TextComponent protected constructor() : Padding, Margins {
         /**
          * @see [TextComponent.padding]
          */
-        public var padding: MutableDimensions = emptyDimensions()
+        public var padding: MutableDimensions = MutableDimensions.empty()
 
         /**
          * @see [TextComponent.margins]
          */
-        public var margins: MutableDimensions = emptyDimensions()
+        public var margins: MutableDimensions = MutableDimensions.empty()
 
         /**
          * Creates a new instance of [TextComponent] with the supplied properties.

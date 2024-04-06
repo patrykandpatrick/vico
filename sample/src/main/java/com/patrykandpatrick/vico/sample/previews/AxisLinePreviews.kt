@@ -28,15 +28,16 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.shape.Corner
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.CutCornerTreatment
 import com.patrykandpatrick.vico.core.common.shape.RoundedCornerTreatment
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.shape.Shape
 
 private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 3, 4) })
 
@@ -65,12 +66,12 @@ fun HorizontalAxisTextInside() {
                     strokeWidth = 1.dp,
                 ),
             padding =
-                dimensionsOf(
+                MutableDimensions.of(
                     horizontal = 2.dp,
                     vertical = 8.dp,
                 ),
             margins =
-                dimensionsOf(
+                MutableDimensions.of(
                     horizontal = 4.dp,
                     vertical = 4.dp,
                 ),
@@ -102,16 +103,16 @@ fun HorizontalAxisTextInsideAndBottomAxis() {
         rememberAxisLabelComponent(
             background =
                 rememberShapeComponent(
-                    shape = Shapes.pillShape,
+                    shape = Shape.Pill,
                     color = Color.LightGray,
                 ),
             padding =
-                dimensionsOf(
+                MutableDimensions.of(
                     horizontal = 2.dp,
                     vertical = 8.dp,
                 ),
             margins =
-                dimensionsOf(
+                MutableDimensions.of(
                     horizontal = 4.dp,
                     vertical = 4.dp,
                 ),

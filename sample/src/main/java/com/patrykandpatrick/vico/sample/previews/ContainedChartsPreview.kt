@@ -44,8 +44,8 @@ import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
 
 private val model =
@@ -65,7 +65,7 @@ private fun getColumnLayer(verticalAxisPosition: Vertical? = null) =
                 rememberLineComponent(
                     color = Color.Black,
                     thickness = 8.dp,
-                    shape = Shapes.pillShape,
+                    shape = Shape.Pill,
                 ),
             ),
         verticalAxisPosition = verticalAxisPosition,
@@ -77,9 +77,9 @@ private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
         lines =
             listOf(
                 rememberLineSpec(
-                    shader = DynamicShaders.color(Color.DarkGray),
+                    shader = DynamicShader.color(Color.DarkGray),
                     backgroundShader =
-                        DynamicShaders.verticalGradient(
+                        DynamicShader.verticalGradient(
                             arrayOf(Color.DarkGray, Color.DarkGray.copy(alpha = 0f)),
                         ),
                 ),

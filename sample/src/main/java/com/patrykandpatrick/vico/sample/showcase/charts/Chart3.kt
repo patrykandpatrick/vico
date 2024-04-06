@@ -37,17 +37,18 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
+import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
-import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart3Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -89,7 +90,7 @@ private fun ComposeChart3(
         chart =
             rememberCartesianChart(
                 rememberLineCartesianLayer(
-                    lines = listOf(rememberLineSpec(shader = DynamicShaders.color(lineColor))),
+                    lines = listOf(rememberLineSpec(shader = DynamicShader.color(lineColor))),
                     axisValueOverrider = axisValueOverrider,
                 ),
                 startAxis =
@@ -99,9 +100,9 @@ private fun ComposeChart3(
                         titleComponent =
                             rememberTextComponent(
                                 color = Color.Black,
-                                background = rememberShapeComponent(Shapes.pillShape, lineColor),
-                                padding = dimensionsOf(horizontal = 8.dp, vertical = 2.dp),
-                                margins = dimensionsOf(end = 4.dp),
+                                background = rememberShapeComponent(Shape.Pill, lineColor),
+                                padding = MutableDimensions.of(horizontal = 8.dp, vertical = 2.dp),
+                                margins = MutableDimensions.of(end = 4.dp),
                                 typeface = Typeface.MONOSPACE,
                             ),
                         title = stringResource(R.string.y_axis),
@@ -110,10 +111,10 @@ private fun ComposeChart3(
                     rememberBottomAxis(
                         titleComponent =
                             rememberTextComponent(
-                                background = rememberShapeComponent(Shapes.pillShape, bottomAxisLabelBackgroundColor),
+                                background = rememberShapeComponent(Shape.Pill, bottomAxisLabelBackgroundColor),
                                 color = Color.White,
-                                padding = dimensionsOf(horizontal = 8.dp, vertical = 2.dp),
-                                margins = dimensionsOf(top = 4.dp),
+                                padding = MutableDimensions.of(horizontal = 8.dp, vertical = 2.dp),
+                                margins = MutableDimensions.of(top = 4.dp),
                                 typeface = Typeface.MONOSPACE,
                             ),
                         title = stringResource(R.string.x_axis),

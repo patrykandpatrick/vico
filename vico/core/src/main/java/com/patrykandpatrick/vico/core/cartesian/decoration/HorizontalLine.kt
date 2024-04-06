@@ -18,19 +18,19 @@ package com.patrykandpatrick.vico.core.cartesian.decoration
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.common.ExtraStore
+import com.patrykandpatrick.vico.core.common.HorizontalPosition
+import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.extension.getEnd
 import com.patrykandpatrick.vico.core.common.extension.getStart
 import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.position.HorizontalPosition
-import com.patrykandpatrick.vico.core.common.position.VerticalPosition
-import com.patrykandpatrick.vico.core.common.position.inBounds
-import com.patrykandpatrick.vico.core.common.position.unaryMinus
+import com.patrykandpatrick.vico.core.common.inBounds
+import com.patrykandpatrick.vico.core.common.unaryMinus
 import java.text.DecimalFormat
 
 /**

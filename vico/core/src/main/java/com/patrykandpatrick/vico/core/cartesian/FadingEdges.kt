@@ -24,8 +24,6 @@ import android.graphics.PorterDuffXfermode
 import android.graphics.RectF
 import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
 import com.patrykandpatrick.vico.core.common.extension.copyColor

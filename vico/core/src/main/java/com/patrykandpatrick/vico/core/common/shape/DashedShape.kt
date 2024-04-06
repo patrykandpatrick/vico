@@ -31,7 +31,7 @@ import com.patrykandpatrick.vico.core.common.extension.ceil
  * @property fitStrategy the [DashedShape.FitStrategy] to use for the dashes.
  */
 public class DashedShape(
-    public val shape: Shape = Shapes.rectShape,
+    public val shape: Shape = Shape.Rect,
     public val dashLengthDp: Float = Defaults.DASH_LENGTH,
     public val gapLengthDp: Float = Defaults.DASH_GAP,
     public val fitStrategy: FitStrategy = FitStrategy.Resize,

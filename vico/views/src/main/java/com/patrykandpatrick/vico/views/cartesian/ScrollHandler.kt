@@ -24,10 +24,10 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.cartesian.AutoScrollCondition
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
-import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.cartesian.getDelta
+import com.patrykandpatrick.vico.core.cartesian.getMaxScrollDistance
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.extension.rangeWith

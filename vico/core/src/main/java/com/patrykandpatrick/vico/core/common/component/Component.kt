@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.common.component
 
 import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.Margins
 
 /**
  * [Component] is a generic concept of an object that can be drawn on a canvas at a given pair of coordinates.

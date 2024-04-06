@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.cartesian
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.common.MutableMeasureContext
 
 /**

@@ -38,7 +38,6 @@ import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.extension.hasFlag
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.views.R
 
 internal class ThemeHandler(
@@ -80,7 +79,7 @@ internal class ThemeHandler(
         fun TypedArray.getLineComponent(
             @StyleableRes resourceId: Int,
             @StyleableRes styleableResourceId: IntArray,
-            defaultShape: Shape = Shapes.rectShape,
+            defaultShape: Shape = Shape.Rect,
         ): LineComponent =
             getNestedTypedArray(
                 context = context,

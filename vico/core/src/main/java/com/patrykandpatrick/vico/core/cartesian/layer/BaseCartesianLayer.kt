@@ -17,13 +17,13 @@
 package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
-import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
+import com.patrykandpatrick.vico.core.common.BoundsAware
 import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.extension.inClip
 

@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.common
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.extension.saveLayer
 
@@ -104,3 +105,34 @@ public interface DrawContext : MeasureContext {
         bottom: Float = canvas.height.toFloat(),
     ): Int = canvas.saveLayer(left, top, right, bottom)
 }
+
+/** @suppress */
+@RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
+public fun drawContext(
+    canvas: Canvas,
+    density: Float = 1f,
+    isLtr: Boolean = true,
+    elevationOverlayColor: Long = DefaultColors.Light.elevationOverlayColor,
+    canvasBounds: RectF = RectF(0f, 0f, canvas.width.toFloat(), canvas.height.toFloat()),
+    spToPx: (Float) -> Float = { it },
+): DrawContext =
+    object : DrawContext {
+        override val canvasBounds: RectF = canvasBounds
+        override val elevationOverlayColor: Long = elevationOverlayColor
+        override var canvas: Canvas = canvas
+        override val density: Float = density
+        override val isLtr: Boolean = isLtr
+        override val extraStore: MutableExtraStore = MutableExtraStore()
+
+        override fun withOtherCanvas(
+            canvas: Canvas,
+            block: (DrawContext) -> Unit,
+        ) {
+            val originalCanvas = this.canvas
+            this.canvas = canvas
+            block(this)
+            this.canvas = originalCanvas
+        }
+
+        override fun spToPx(sp: Float): Float = spToPx(sp)
+    }

@@ -26,9 +26,9 @@ import com.patrykandpatrick.vico.core.cartesian.layer.absolute
 import com.patrykandpatrick.vico.core.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.core.cartesian.layer.asWick
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.extension.getRepeating
-import com.patrykandpatrick.vico.core.common.position.VerticalPosition
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.cartesian.copyWithColor
 import com.patrykandpatrick.vico.views.cartesian.sharpFilledCandle
@@ -41,7 +41,7 @@ internal fun TypedArray.getColumnCartesianLayer(
     @StyleableRes styleableResourceId: IntArray = R.styleable.ColumnCartesianLayerStyle,
 ): ColumnCartesianLayer =
     getNestedTypedArray(context, resourceId, styleableResourceId).run {
-        val defaultShape = Shapes.roundedCornerShape(allPercent = Defaults.COLUMN_ROUNDNESS_PERCENT)
+        val defaultShape = Shape.rounded(allPercent = Defaults.COLUMN_ROUNDNESS_PERCENT)
         val mergeMode =
             getInteger(R.styleable.ColumnCartesianLayerStyle_mergeMode, 0)
                 .let(ColumnCartesianLayer.MergeMode.entries::get)

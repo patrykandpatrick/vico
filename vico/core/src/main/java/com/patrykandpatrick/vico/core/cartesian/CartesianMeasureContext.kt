@@ -16,7 +16,6 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
-import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
 import com.patrykandpatrick.vico.core.common.MeasureContext
 
 /**

@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.cartesian
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import kotlin.math.max
 import kotlin.math.min
 

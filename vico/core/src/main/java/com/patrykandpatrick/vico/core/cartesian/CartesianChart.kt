@@ -21,9 +21,6 @@ import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
-import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.insets.HorizontalInsets
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
@@ -34,10 +31,8 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
+import com.patrykandpatrick.vico.core.common.BoundsAware
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
-import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
 import com.patrykandpatrick.vico.core.common.extension.inClip
 import com.patrykandpatrick.vico.core.common.extension.set
 import com.patrykandpatrick.vico.core.common.extension.setAll

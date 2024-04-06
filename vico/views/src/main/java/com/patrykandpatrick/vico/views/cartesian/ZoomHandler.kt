@@ -20,10 +20,10 @@ import android.graphics.RectF
 import android.os.Bundle
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.cartesian.Zoom
-import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.dimensions.scale
+import com.patrykandpatrick.vico.core.cartesian.scale
 import com.patrykandpatrick.vico.core.common.Defaults
 
 /**

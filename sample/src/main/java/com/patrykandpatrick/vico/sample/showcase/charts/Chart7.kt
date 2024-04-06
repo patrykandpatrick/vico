@@ -37,17 +37,18 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
 import com.patrykandpatrick.vico.compose.common.legend.rememberLegendItem
 import com.patrykandpatrick.vico.compose.common.legend.rememberVerticalLegend
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.compose.common.shape.roundedCornerShape
+import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart7Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -102,7 +103,7 @@ private fun ComposeChart7(
                     lines =
                         chartColors.map { color ->
                             rememberLineSpec(
-                                shader = DynamicShaders.color(color),
+                                shader = DynamicShader.color(color),
                                 backgroundShader = null,
                             )
                         },
@@ -149,11 +150,11 @@ private fun rememberStartAxisLabel() =
         color = Color.Black,
         background =
             rememberShapeComponent(
-                shape = Shapes.roundedCornerShape(4.dp),
+                shape = Shape.rounded(4.dp),
                 color = Color(0xfffab94d),
             ),
-        padding = dimensionsOf(horizontal = 8.dp, vertical = 2.dp),
-        margins = dimensionsOf(all = 4.dp),
+        padding = MutableDimensions.of(horizontal = 8.dp, vertical = 2.dp),
+        margins = MutableDimensions.of(all = 4.dp),
     )
 
 @Composable
@@ -162,7 +163,7 @@ private fun rememberLegend() =
         items =
             chartColors.mapIndexed { index, chartColor ->
                 rememberLegendItem(
-                    icon = rememberShapeComponent(Shapes.pillShape, chartColor),
+                    icon = rememberShapeComponent(Shape.Pill, chartColor),
                     label =
                         rememberTextComponent(
                             color = vicoTheme.textColor,
@@ -175,7 +176,7 @@ private fun rememberLegend() =
         iconSize = 8.dp,
         iconPadding = 8.dp,
         spacing = 4.dp,
-        padding = dimensionsOf(top = 8.dp),
+        padding = MutableDimensions.of(top = 8.dp),
     )
 
 private val chartColors = listOf(Color(0xffb983ff), Color(0xff91b1fd), Color(0xff8fdaff))

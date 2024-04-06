@@ -34,24 +34,24 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.of
+import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
-import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
+import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart2Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
-import com.patrykandpatrick.vico.views.common.extension.dimensionsOf
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -93,7 +93,7 @@ private fun ComposeChart2(
                         rememberLineComponent(
                             color = Color(0xffff5500),
                             thickness = 16.dp,
-                            shape = Shapes.roundedCornerShape(allPercent = 40),
+                            shape = remember { Shape.rounded(allPercent = 40) },
                         ),
                     ),
                 ),
@@ -144,13 +144,13 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
         line = rememberLineComponent(color, HORIZONTAL_LINE_THICKNESS_DP.dp),
         labelComponent =
             rememberTextComponent(
-                background = rememberShapeComponent(Shapes.pillShape, color),
+                background = rememberShapeComponent(Shape.Pill, color),
                 padding =
-                    dimensionsOf(
+                    MutableDimensions.of(
                         HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
                         HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
                     ),
-                margins = dimensionsOf(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
+                margins = MutableDimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
                 typeface = Typeface.MONOSPACE,
             ),
     )
@@ -162,10 +162,13 @@ private fun getViewHorizontalLine() =
         line = LineComponent(HORIZONTAL_LINE_COLOR, HORIZONTAL_LINE_THICKNESS_DP),
         labelComponent =
             TextComponent.build {
-                background = ShapeComponent(Shapes.pillShape, HORIZONTAL_LINE_COLOR)
+                background = ShapeComponent(Shape.Pill, HORIZONTAL_LINE_COLOR)
                 padding =
-                    dimensionsOf(HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP, HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP)
-                margins = dimensionsOf(HORIZONTAL_LINE_LABEL_MARGIN_DP)
+                    MutableDimensions.of(
+                        HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
+                        HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP,
+                    )
+                margins = MutableDimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP)
                 typeface = Typeface.MONOSPACE
             },
     )

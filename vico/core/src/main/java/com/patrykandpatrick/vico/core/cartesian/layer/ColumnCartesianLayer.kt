@@ -16,35 +16,35 @@
 
 package com.patrykandpatrick.vico.core.cartesian.layer
 
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.ColumnCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableColumnCartesianLayerMarkerTarget
-import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.forEachIn
-import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.extension.doubled
 import com.patrykandpatrick.vico.core.common.extension.getRepeating
 import com.patrykandpatrick.vico.core.common.extension.getStart
 import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.position.VerticalPosition
-import com.patrykandpatrick.vico.core.common.position.inBounds
-import com.patrykandpatrick.vico.core.common.position.unaryMinus
+import com.patrykandpatrick.vico.core.common.inBounds
+import com.patrykandpatrick.vico.core.common.unaryMinus
 import kotlin.math.abs
 
 /**

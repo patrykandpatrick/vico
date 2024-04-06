@@ -24,26 +24,24 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.LayeredComponent
+import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.extension.copyColor
-import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shader.ColorShader
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.Shapes
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.extension.defaultColors
-import com.patrykandpatrick.vico.views.common.extension.dimensionsOf
-import com.patrykandpatrick.vico.views.common.shader.verticalGradient
 
 internal fun TypedArray.getLineComponent(
     context: Context,
     defaultColor: Int = context.defaultColors.lineColor.toInt(),
     defaultThickness: Float = Defaults.AXIS_LINE_WIDTH,
-    defaultShape: Shape = Shapes.rectShape,
+    defaultShape: Shape = Shape.Rect,
 ): LineComponent =
     use { array ->
         LineComponent(
@@ -134,7 +132,7 @@ internal fun TypedArray.getComponent(context: Context): Component? =
                 rear = baseComponent,
                 front = layeredComponent,
                 padding =
-                    dimensionsOf(
+                    MutableDimensions.of(
                         allDp =
                             getRawDimension(
                                 context = context,
@@ -226,8 +224,8 @@ internal fun TypedArray.getLineSpec(
             ),
         backgroundShader =
             TopBottomShader(
-                DynamicShaders.verticalGradient(positiveGradientTopColor, positiveGradientBottomColor),
-                DynamicShaders.verticalGradient(negativeGradientTopColor, negativeGradientBottomColor),
+                DynamicShader.verticalGradient(positiveGradientTopColor, positiveGradientBottomColor),
+                DynamicShader.verticalGradient(negativeGradientTopColor, negativeGradientBottomColor),
             ),
         dataLabel =
             if (getBoolean(R.styleable.LineSpec_showDataLabels, false)) {

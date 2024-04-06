@@ -18,11 +18,11 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
-import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
+import com.patrykandpatrick.vico.core.common.BoundsAware
 
 /**
  * Defines the minimal set of properties and functions required by other parts of the library to draw an axis.

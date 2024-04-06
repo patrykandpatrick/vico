@@ -17,7 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.marker
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
 
 /** Marks [CartesianChart] objects. */

@@ -21,10 +21,10 @@ import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalBox
 import com.patrykandpatrick.vico.core.common.ExtraStore
+import com.patrykandpatrick.vico.core.common.HorizontalPosition
+import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.position.HorizontalPosition
-import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 
 /** Creates and remembers a [HorizontalBox] */
 @Composable

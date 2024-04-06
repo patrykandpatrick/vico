@@ -18,21 +18,21 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Color
 import androidx.annotation.RestrictTo
+import com.patrykandpatrick.vico.core.cartesian.CandlestickCartesianLayerDrawingModel
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
+import com.patrykandpatrick.vico.core.cartesian.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
+import com.patrykandpatrick.vico.core.cartesian.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.dimensions.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel.Entry.Change
 import com.patrykandpatrick.vico.core.cartesian.model.forEachIn
-import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
@@ -41,7 +41,7 @@ import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.extension.getStart
 import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /**
  * [CandlestickCartesianLayer] displays data as vertical bars. It can draw multiple columns per segment.
@@ -374,7 +374,7 @@ public fun LineComponent.asWick(): LineComponent =
         color = if (color == Color.TRANSPARENT) strokeColor else color,
         thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
         strokeWidthDp = 0f,
-        shape = Shapes.rectShape,
+        shape = Shape.Rect,
     )
 
 /** Switches between three [Candle]s based on [CandlestickCartesianLayerModel.Entry.absoluteChange]. */

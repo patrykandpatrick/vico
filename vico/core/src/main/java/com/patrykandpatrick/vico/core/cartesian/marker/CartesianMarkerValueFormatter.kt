@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 
 /** Formats [CartesianMarker] values for display. */
 public fun interface CartesianMarkerValueFormatter {

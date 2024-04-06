@@ -34,14 +34,15 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.of
+import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
-import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart6Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -90,7 +91,7 @@ private fun ComposeChart6(
     modifier: Modifier,
 ) {
     val horizontalBox = rememberHorizontalBox()
-    val shape = remember { Shapes.cutCornerShape(topLeftPercent = 50) }
+    val shape = remember { Shape.cut(topLeftPercent = 50) }
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -139,9 +140,9 @@ private fun rememberHorizontalBox() =
         labelComponent =
             rememberTextComponent(
                 color = Color.Black,
-                background = rememberShapeComponent(Shapes.rectShape, horizontalBoxColor),
-                padding = dimensionsOf(8.dp, 2.dp),
-                margins = dimensionsOf(4.dp),
+                background = rememberShapeComponent(Shape.Rect, horizontalBoxColor),
+                padding = MutableDimensions.of(8.dp, 2.dp),
+                margins = MutableDimensions.of(4.dp),
                 typeface = Typeface.MONOSPACE,
             ),
     )

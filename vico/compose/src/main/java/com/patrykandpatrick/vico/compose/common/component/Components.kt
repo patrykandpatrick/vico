@@ -33,17 +33,15 @@ import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.pixelSize
 import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.LayeredComponent
+import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.dimension.Dimensions
-import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
-import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 /**
  * Creates and remembers a [LineComponent] with the specified properties.
@@ -52,9 +50,9 @@ import com.patrykandpatrick.vico.core.common.shape.Shapes
 public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp = Defaults.LINE_COMPONENT_THICKNESS_DP.dp,
-    shape: Shape = Shapes.rectShape,
+    shape: Shape = Shape.Rect,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: Dimensions = Dimensions.Empty,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): LineComponent =
@@ -83,10 +81,10 @@ public fun rememberLineComponent(
  */
 @Composable
 public fun rememberShapeComponent(
-    shape: Shape = Shapes.rectShape,
+    shape: Shape = Shape.Rect,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: Dimensions = Dimensions.Empty,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent =
@@ -113,10 +111,10 @@ public fun rememberShapeComponent(
  */
 @Composable
 public fun rememberShapeComponent(
-    shape: Shape = Shapes.rectShape,
+    shape: Shape = Shape.Rect,
     color: Color = Color.Black,
     brush: Brush,
-    margins: Dimensions = emptyDimensions(),
+    margins: Dimensions = Dimensions.Empty,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
 ): ShapeComponent =
@@ -136,7 +134,7 @@ public fun rememberShapeComponent(
 public fun rememberLayeredComponent(
     rear: Component,
     front: Component,
-    padding: Dimensions = emptyDimensions(),
+    padding: Dimensions = Dimensions.Empty,
 ): LayeredComponent =
     remember(rear, front, padding) {
         LayeredComponent(rear, front, padding)
@@ -163,8 +161,8 @@ public fun rememberTextComponent(
     background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = Defaults.LABEL_LINE_COUNT,
-    padding: MutableDimensions = emptyDimensions(),
-    margins: MutableDimensions = emptyDimensions(),
+    padding: MutableDimensions = MutableDimensions.empty(),
+    margins: MutableDimensions = MutableDimensions.empty(),
     typeface: Typeface? = null,
     textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
     minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),

@@ -41,8 +41,8 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart8Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -101,7 +101,7 @@ private fun ComposeChart8(
                                 rememberLineComponent(
                                     color = color,
                                     thickness = 8.dp,
-                                    shape = Shapes.roundedCornerShape(40),
+                                    shape = Shape.rounded(40),
                                 )
                             },
                         ),
@@ -111,7 +111,7 @@ private fun ComposeChart8(
                 rememberLineCartesianLayer(
                     lines =
                         listOf(
-                            rememberLineSpec(shader = DynamicShaders.color(color4)),
+                            rememberLineSpec(shader = DynamicShader.color(color4)),
                         ),
                     verticalAxisPosition = AxisPosition.Vertical.End,
                 ),

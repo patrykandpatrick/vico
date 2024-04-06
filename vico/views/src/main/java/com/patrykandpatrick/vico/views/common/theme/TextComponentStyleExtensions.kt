@@ -28,8 +28,8 @@ import com.patrykandpatrick.vico.core.common.Defaults.AXIS_LABEL_HORIZONTAL_PADD
 import com.patrykandpatrick.vico.core.common.Defaults.AXIS_LABEL_VERTICAL_PADDING
 import com.patrykandpatrick.vico.core.common.Defaults.LABEL_LINE_COUNT
 import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
+import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
 import com.patrykandpatrick.vico.core.common.extension.firstNonNegativeOf
 import com.patrykandpatrick.vico.core.common.extension.orZero
 import com.patrykandpatrick.vico.views.R

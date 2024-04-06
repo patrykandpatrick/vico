@@ -27,25 +27,24 @@ import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.fromBrush
 import com.patrykandpatrick.vico.compose.common.vicoTheme
+import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
+import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
+import com.patrykandpatrick.vico.core.cartesian.LineCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.formatter.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec
-import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerDrawingModel
-import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
 import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.position.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shader.ColorShader
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 
 /**
@@ -62,7 +61,7 @@ import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 @Composable
 public fun rememberLineCartesianLayer(
     lines: List<LineSpec> =
-        vicoTheme.lineCartesianLayerColors.map { rememberLineSpec(remember { DynamicShaders.color(it) }) },
+        vicoTheme.lineCartesianLayerColors.map { rememberLineSpec(remember { DynamicShader.color(it) }) },
     spacing: Dp = Defaults.POINT_SPACING.dp,
     axisValueOverrider: AxisValueOverrider = remember { AxisValueOverrider.auto() },
     verticalAxisPosition: AxisPosition.Vertical? = null,
@@ -96,7 +95,7 @@ public fun rememberLineCartesianLayer(
  */
 @Composable
 public fun rememberLineSpec(
-    shader: DynamicShader = DynamicShaders.color(Color.Black),
+    shader: DynamicShader = DynamicShader.color(Color.Black),
     thickness: Dp = Defaults.LINE_SPEC_THICKNESS_DP.dp,
     backgroundShader: DynamicShader? = shader.getDefaultBackgroundShader(),
     cap: StrokeCap = StrokeCap.Round,
@@ -141,7 +140,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
         is ColorShader ->
             TopBottomShader(
                 topShader =
-                    DynamicShaders.fromBrush(
+                    DynamicShader.fromBrush(
                         brush =
                             Brush.verticalGradient(
                                 listOf(
@@ -151,7 +150,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
                             ),
                     ),
                 bottomShader =
-                    DynamicShaders.fromBrush(
+                    DynamicShader.fromBrush(
                         brush =
                             Brush.verticalGradient(
                                 listOf(
@@ -168,7 +167,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
             if (topShader is ColorShader && bottomShader is ColorShader) {
                 TopBottomShader(
                     topShader =
-                        DynamicShaders.fromBrush(
+                        DynamicShader.fromBrush(
                             brush =
                                 Brush.verticalGradient(
                                     listOf(
@@ -178,7 +177,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
                                 ),
                         ),
                     bottomShader =
-                        DynamicShaders.fromBrush(
+                        DynamicShader.fromBrush(
                             brush =
                                 Brush.verticalGradient(
                                     listOf(

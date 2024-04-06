@@ -18,12 +18,11 @@ package com.patrykandpatrick.vico.core.common.legend
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.DrawContext
+import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.MeasureContext
-import com.patrykandpatrick.vico.core.common.component.Padding
-import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
-import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
+import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.Padding
 import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.position.HorizontalPosition
 
 /**
  * [VerticalLegend] displays legend items in a vertical list.
@@ -39,7 +38,7 @@ public open class VerticalLegend(
     public var iconSizeDp: Float,
     public var iconPaddingDp: Float,
     public var spacingDp: Float = 0f,
-    override val padding: MutableDimensions = emptyDimensions(),
+    override val padding: MutableDimensions = MutableDimensions.empty(),
 ) : Legend, Padding {
     private val heights: HashMap<LegendItem, Float> = HashMap()
 

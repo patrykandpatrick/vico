@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.cartesian
 
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.extension.half

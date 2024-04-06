@@ -20,17 +20,17 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.Shader
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.dimension.Dimensions
-import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
-import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
+import com.patrykandpatrick.vico.core.common.Margins
+import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.extension.alpha
 import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.extension.round
 import com.patrykandpatrick.vico.core.common.extension.withOpacity
+import com.patrykandpatrick.vico.core.common.setMargins
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.Shapes
 import kotlin.properties.Delegates
 
 /**
@@ -44,16 +44,16 @@ import kotlin.properties.Delegates
  * @param strokeColor the color of the stroke.
  */
 public open class ShapeComponent(
-    public val shape: Shape = Shapes.rectShape,
+    public val shape: Shape = Shape.Rect,
     color: Int = Color.BLACK,
     public val dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: Dimensions = Dimensions.Empty,
     public val strokeWidthDp: Float = 0f,
     strokeColor: Int = Color.TRANSPARENT,
 ) : PaintComponent<ShapeComponent>(),
     Component,
     Margins {
-    override val margins: MutableDimensions = emptyDimensions()
+    override val margins: MutableDimensions = MutableDimensions.empty()
     private val paint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val strokePaint: Paint = Paint(Paint.ANTI_ALIAS_FLAG)
 

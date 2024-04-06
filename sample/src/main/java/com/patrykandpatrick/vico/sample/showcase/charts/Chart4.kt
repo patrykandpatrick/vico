@@ -33,14 +33,14 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.compose.common.shape.roundedCornerShape
+import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart4Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -98,7 +98,7 @@ private fun ComposeChart4(
                                 rememberLineComponent(
                                     color = color,
                                     thickness = 8.dp,
-                                    shape = Shapes.roundedCornerShape(2.dp),
+                                    shape = Shape.rounded(2.dp),
                                 )
                             },
                         ),
@@ -107,7 +107,7 @@ private fun ComposeChart4(
                     lines =
                         listOf(
                             rememberLineSpec(
-                                shader = DynamicShaders.color(lineColor),
+                                shader = DynamicShader.color(lineColor),
                                 pointConnector = DefaultPointConnector(cubicStrength = 0f),
                             ),
                         ),

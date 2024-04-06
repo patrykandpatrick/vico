@@ -43,21 +43,22 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.fromComponent
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
+import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
-import com.patrykandpatrick.vico.core.common.shape.Shapes.pillShape
-import com.patrykandpatrick.vico.core.common.shape.Shapes.rectShape
+import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Pill
+import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rect
 import com.patrykandpatrick.vico.sample.VicoTheme
 
 private val chartModifier = Modifier.height(100.dp)
@@ -80,7 +81,7 @@ fun ColumnChartCard(): Unit =
                                     thickness = 8.dp,
                                     shape = RoundedCornerShape(4.dp).toVicoShape(),
                                     dynamicShader =
-                                        DynamicShaders.verticalGradient(arrayOf(colors.primary, colors.secondary)),
+                                        DynamicShader.verticalGradient(arrayOf(colors.primary, colors.secondary)),
                                 ),
                             ),
                         ),
@@ -101,7 +102,7 @@ fun ColumnChartCard(): Unit =
                                                     ).toVicoShape(),
                                                 color = colors.primary.copy(alpha = 0.1f),
                                             ),
-                                        padding = dimensionsOf(end = 8.dp, start = 4.dp),
+                                        padding = MutableDimensions.of(end = 8.dp, start = 4.dp),
                                     ),
                                 axis = null,
                                 tick = null,
@@ -128,12 +129,12 @@ fun LineChartCard(): Unit =
                             listOf(
                                 rememberLineSpec(
                                     point = null,
-                                    shader = DynamicShaders.color(colors.primary),
+                                    shader = DynamicShader.color(colors.primary),
                                     backgroundShader =
-                                        DynamicShaders.fromComponent(
+                                        DynamicShader.fromComponent(
                                             componentSize = 4.dp,
                                             component =
-                                                rememberShapeComponent(shape = pillShape, color = colors.primary)
+                                                rememberShapeComponent(shape = Pill, color = colors.primary)
                                                     .apply { setMargins(0.5.dp.value) },
                                         ),
                                 ),
@@ -146,8 +147,8 @@ fun LineChartCard(): Unit =
                                     rememberTextComponent(
                                         color = colors.onSurface,
                                         textSize = 10.sp,
-                                        background = rememberShapeComponent(shape = rectShape, color = Color.LightGray),
-                                        padding = dimensionsOf(horizontal = 4.dp, vertical = 2.dp),
+                                        background = rememberShapeComponent(shape = Rect, color = Color.LightGray),
+                                        padding = MutableDimensions.of(horizontal = 4.dp, vertical = 2.dp),
                                     ),
                                 axis = null,
                                 tick = null,
@@ -156,7 +157,7 @@ fun LineChartCard(): Unit =
                                         color = Color.LightGray,
                                         shape =
                                             DashedShape(
-                                                shape = pillShape,
+                                                shape = Pill,
                                                 dashLengthDp = 2.dp.value,
                                                 gapLengthDp = 4.dp.value,
                                             ),

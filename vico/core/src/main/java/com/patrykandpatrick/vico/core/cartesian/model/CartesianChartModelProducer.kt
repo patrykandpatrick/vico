@@ -17,9 +17,9 @@
 package com.patrykandpatrick.vico.core.cartesian.model
 
 import androidx.annotation.WorkerThread
+import com.patrykandpatrick.vico.core.cartesian.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.values.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.values.MutableChartValues
 import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import kotlinx.coroutines.CompletableDeferred

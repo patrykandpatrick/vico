@@ -31,10 +31,10 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
+import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.values.AxisValueOverrider
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 
 private val model1 = CartesianChartModel(LineCartesianLayerModel.build { series(0, 2, 4, 0, 2) })
 
@@ -69,16 +69,16 @@ fun LineChartDark() {
                     rememberLineCartesianLayer(
                         listOf(
                             rememberLineSpec(
-                                shader = DynamicShaders.color(yellow),
+                                shader = DynamicShader.color(yellow),
                                 backgroundShader =
-                                    DynamicShaders.verticalGradient(
+                                    DynamicShader.verticalGradient(
                                         arrayOf(yellow.copy(alpha = 0.5f), yellow.copy(alpha = 0f)),
                                     ),
                             ),
                             rememberLineSpec(
-                                shader = DynamicShaders.color(pink),
+                                shader = DynamicShader.color(pink),
                                 backgroundShader =
-                                    DynamicShaders.verticalGradient(
+                                    DynamicShader.verticalGradient(
                                         arrayOf(pink.copy(alpha = 0.5f), pink.copy(alpha = 0f)),
                                     ),
                             ),
@@ -136,9 +136,9 @@ fun ComposedLineChart() {
                 rememberLineCartesianLayer(
                     listOf(
                         rememberLineSpec(
-                            shader = DynamicShaders.color(Color.Blue),
+                            shader = DynamicShader.color(Color.Blue),
                             backgroundShader =
-                                DynamicShaders.verticalGradient(
+                                DynamicShader.verticalGradient(
                                     arrayOf(Color.Blue.copy(alpha = 0.4f), Color.Blue.copy(alpha = 0f)),
                                 ),
                         ),

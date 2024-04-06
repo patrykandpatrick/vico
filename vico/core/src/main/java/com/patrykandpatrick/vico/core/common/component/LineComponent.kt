@@ -19,13 +19,12 @@ package com.patrykandpatrick.vico.core.common.component
 import android.graphics.Color
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.MeasureContext
-import com.patrykandpatrick.vico.core.common.dimension.Dimensions
-import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.Shapes.rectShape
+import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rect
 
 /**
  * Draws a line.
@@ -40,9 +39,9 @@ import com.patrykandpatrick.vico.core.common.shape.Shapes.rectShape
 public open class LineComponent(
     color: Int,
     public var thicknessDp: Float = Defaults.LINE_COMPONENT_THICKNESS_DP,
-    shape: Shape = rectShape,
+    shape: Shape = Rect,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: Dimensions = Dimensions.Empty,
     strokeWidthDp: Float = 0f,
     strokeColor: Int = Color.TRANSPARENT,
 ) : ShapeComponent(shape, color, dynamicShader, margins, strokeWidthDp, strokeColor) {

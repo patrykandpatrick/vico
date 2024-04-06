@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
-import com.patrykandpatrick.vico.core.common.shape.Shapes
+import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart5Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem
@@ -93,7 +93,7 @@ private fun ComposeChart5(
                                 color = color1,
                                 thickness = COLUMN_THICKNESS_DP.dp,
                                 shape =
-                                    Shapes.roundedCornerShape(
+                                    Shape.rounded(
                                         bottomLeftPercent = COLUMN_ROUNDNESS_PERCENT,
                                         bottomRightPercent = COLUMN_ROUNDNESS_PERCENT,
                                     ),
@@ -106,7 +106,7 @@ private fun ComposeChart5(
                                 color = color3,
                                 thickness = COLUMN_THICKNESS_DP.dp,
                                 shape =
-                                    Shapes.roundedCornerShape(
+                                    Shape.rounded(
                                         topLeftPercent = COLUMN_ROUNDNESS_PERCENT,
                                         topRightPercent = COLUMN_ROUNDNESS_PERCENT,
                                     ),

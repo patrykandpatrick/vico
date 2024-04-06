@@ -18,7 +18,6 @@ package com.patrykandpatrick.vico.core.cartesian
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
-import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.common.extension.orZero

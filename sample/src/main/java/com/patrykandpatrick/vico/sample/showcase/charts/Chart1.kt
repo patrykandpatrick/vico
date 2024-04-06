@@ -33,7 +33,7 @@ import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
-import com.patrykandpatrick.vico.core.common.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker
@@ -67,7 +67,7 @@ private fun ComposeChart1(
     CartesianChartHost(
         chart =
             rememberCartesianChart(
-                rememberLineCartesianLayer(listOf(rememberLineSpec(DynamicShaders.color(Color(0xffa485e0))))),
+                rememberLineCartesianLayer(listOf(rememberLineSpec(DynamicShader.color(Color(0xffa485e0))))),
                 startAxis = rememberStartAxis(),
                 bottomAxis = rememberBottomAxis(guideline = null),
                 persistentMarkers = mapOf(PERSISTENT_MARKER_X to marker),

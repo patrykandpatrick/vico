@@ -20,7 +20,6 @@ import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.cartesian.Scroll.Absolute
 import com.patrykandpatrick.vico.core.cartesian.Scroll.Relative
-import com.patrykandpatrick.vico.core.cartesian.dimensions.HorizontalDimensions
 
 /** Represents a [CartesianChart] scroll value or delta. */
 public sealed interface Scroll {

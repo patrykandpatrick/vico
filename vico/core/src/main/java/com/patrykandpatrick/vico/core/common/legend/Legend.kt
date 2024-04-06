@@ -17,9 +17,9 @@
 package com.patrykandpatrick.vico.core.common.legend
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.common.BoundsAware
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.MeasureContext
-import com.patrykandpatrick.vico.core.common.dimension.BoundsAware
 
 /**
  * Defines the functions required by the library to draw a chart legend.

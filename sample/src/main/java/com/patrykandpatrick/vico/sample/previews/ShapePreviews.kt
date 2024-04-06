@@ -43,11 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import com.patrykandpatrick.vico.R
 import com.patrykandpatrick.vico.compose.common.shape.composeShape
-import com.patrykandpatrick.vico.compose.common.shape.dashedShape
+import com.patrykandpatrick.vico.compose.common.shape.dashed
 import com.patrykandpatrick.vico.core.common.drawContext
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 @Composable
 private fun PreviewShape(shape: Shape) {
@@ -104,37 +103,37 @@ private fun PreviewShape(shape: Shape) {
 @Composable
 @Preview
 public fun PreviewRectShape() {
-    PreviewShape(shape = Shapes.rectShape)
+    PreviewShape(shape = Shape.Rect)
 }
 
 @Composable
 @Preview
 public fun PreviewPillShape() {
-    PreviewShape(shape = Shapes.pillShape)
+    PreviewShape(shape = Shape.Pill)
 }
 
 @Composable
 @Preview
 public fun RoundedCorner25Shape() {
-    PreviewShape(shape = Shapes.roundedCornerShape(allPercent = 25))
+    PreviewShape(shape = Shape.rounded(allPercent = 25))
 }
 
 @Composable
 @Preview
 public fun RoundedCornerCustom1Shape() {
-    PreviewShape(shape = Shapes.roundedCornerShape(topLeftPercent = 50, bottomRightPercent = 75))
+    PreviewShape(shape = Shape.rounded(topLeftPercent = 50, bottomRightPercent = 75))
 }
 
 @Composable
 @Preview
 public fun CutCorner25Shape() {
-    PreviewShape(shape = Shapes.cutCornerShape(allPercent = 25))
+    PreviewShape(shape = Shape.cut(allPercent = 25))
 }
 
 @Composable
 @Preview
 public fun CutCornerCustom1Shape() {
-    PreviewShape(shape = Shapes.cutCornerShape(topRightPercent = 100, bottomLeftPercent = 15))
+    PreviewShape(shape = Shape.cut(topRightPercent = 100, bottomLeftPercent = 15))
 }
 
 @Composable
@@ -142,10 +141,10 @@ public fun CutCornerCustom1Shape() {
 public fun DrawableShape() {
     PreviewShape(
         shape =
-            Shapes.drawableShape(
+            Shape.drawable(
                 drawable = getDrawable(id = R.drawable.ic_baseline_android_24),
                 keepAspectRatio = true,
-                otherShape = Shapes.pillShape,
+                otherShape = Shape.Pill,
             ),
     )
 }
@@ -155,10 +154,10 @@ public fun DrawableShape() {
 public fun DrawableShape2() {
     PreviewShape(
         shape =
-            Shapes.drawableShape(
+            Shape.drawable(
                 drawable = getDrawable(id = R.drawable.ic_baseline_android_24),
                 keepAspectRatio = true,
-                otherShape = Shapes.pillShape,
+                otherShape = Shape.Pill,
             ),
     )
 }
@@ -166,7 +165,7 @@ public fun DrawableShape2() {
 @Composable
 @Preview
 public fun DrawableShapeStretched() {
-    PreviewShape(shape = Shapes.drawableShape(getDrawable(id = R.drawable.ic_baseline_android_24)))
+    PreviewShape(shape = Shape.drawable(getDrawable(id = R.drawable.ic_baseline_android_24)))
 }
 
 @Composable
@@ -174,8 +173,8 @@ public fun DrawableShapeStretched() {
 public fun DashedCutCornerCustomShape() {
     PreviewShape(
         shape =
-            Shapes.dashedShape(
-                shape = Shapes.cutCornerShape(topRightPercent = 50, bottomLeftPercent = 50),
+            Shape.dashed(
+                shape = Shape.cut(topRightPercent = 50, bottomLeftPercent = 50),
                 dashLength = 24.dp,
                 gapLength = 8.dp,
             ),

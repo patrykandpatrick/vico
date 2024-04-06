@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.decoration
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.draw.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 
 /**
  * A [Decoration] presents additional information on a [CartesianChart].

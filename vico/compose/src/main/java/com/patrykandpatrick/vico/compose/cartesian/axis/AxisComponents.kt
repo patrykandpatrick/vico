@@ -29,21 +29,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.dimension.dimensionsOf
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.BrushShader
-import com.patrykandpatrick.vico.compose.common.shape.dashedShape
+import com.patrykandpatrick.vico.compose.common.shape.dashed
 import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.dimension.Dimensions
-import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
-import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.Shapes
 
 /**
  * Creates and remembers a [TextComponent] to be used for axis labels.
@@ -66,9 +64,9 @@ public fun rememberAxisLabelComponent(
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
     padding: MutableDimensions =
-        dimensionsOf(Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp, Defaults.AXIS_LABEL_VERTICAL_PADDING.dp),
+        MutableDimensions.of(Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp, Defaults.AXIS_LABEL_VERTICAL_PADDING.dp),
     margins: MutableDimensions =
-        dimensionsOf(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
+        MutableDimensions.of(Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp, Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp),
     typeface: Typeface = Typeface.MONOSPACE,
     textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
 ): TextComponent =
@@ -99,11 +97,11 @@ public fun rememberAxisLabelComponent(
 public fun rememberAxisLineComponent(
     color: Color = vicoTheme.lineColor,
     thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-    shape: Shape = Shapes.rectShape,
+    shape: Shape = Shape.Rect,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: Dimensions = Dimensions.Empty,
 ): LineComponent =
     rememberLineComponent(
         color = color,
@@ -129,7 +127,7 @@ public fun rememberAxisLineComponent(
 public fun rememberAxisTickComponent(
     color: Color = vicoTheme.lineColor,
     thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-    shape: Shape = Shapes.rectShape,
+    shape: Shape = Shape.Rect,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -186,11 +184,11 @@ public fun rememberAxisTickComponent(
 public fun rememberAxisGuidelineComponent(
     color: Color = vicoTheme.lineColor,
     thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
-    shape: Shape = Shapes.dashedShape(Shapes.rectShape, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
+    shape: Shape = Shape.dashed(Shape.Rect, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
-    margins: Dimensions = emptyDimensions(),
+    margins: Dimensions = Dimensions.Empty,
 ): LineComponent =
     rememberLineComponent(
         color = color,

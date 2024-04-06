@@ -17,9 +17,6 @@
 package com.patrykandpatrick.vico.core.common
 
 import com.patrykandpatrick.vico.core.common.component.Component
-import com.patrykandpatrick.vico.core.common.dimension.Dimensions
-import com.patrykandpatrick.vico.core.common.dimension.MutableDimensions
-import com.patrykandpatrick.vico.core.common.dimension.emptyDimensions
 
 /**
  * Draws two [Component]s, [rear] and [front], on top of each other. [padding] defines the padding between them.
@@ -29,7 +26,7 @@ public open class LayeredComponent(
     public val front: Component,
     public val padding: Dimensions,
 ) : Component {
-    override val margins: MutableDimensions = emptyDimensions()
+    override val margins: MutableDimensions = MutableDimensions.empty()
 
     init {
         front.margins.set(padding)
