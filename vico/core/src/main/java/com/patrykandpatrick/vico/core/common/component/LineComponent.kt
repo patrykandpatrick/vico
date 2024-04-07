@@ -48,9 +48,7 @@ public open class LineComponent(
     private val MeasureContext.thickness: Float
         get() = thicknessDp.pixels
 
-    /**
-     * TODO
-     */
+    /** [color] if it’s not [Color.TRANSPARENT], and [strokeColor] otherwise. */
     public val solidOrStrokeColor: Int
         get() = if (color == Color.TRANSPARENT) strokeColor else color
 
