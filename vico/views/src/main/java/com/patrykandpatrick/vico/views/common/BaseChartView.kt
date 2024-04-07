@@ -28,7 +28,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.MutableMeasureContext
@@ -70,9 +69,7 @@ public abstract class BaseChartView<Model>
                 spToPx = context::spToPx,
             )
 
-        /**
-         * The chart model.
-         */
+        /** Houses the chart data. */
         public var model: Model? = null
             protected set
 
@@ -141,9 +138,7 @@ public abstract class BaseChartView<Model>
             placeholder = null
         }
 
-        /**
-         * Updates the placeholder, which is shown when no [CartesianChartModel] is available.
-         */
+        /** Updates the placeholder, which is shown when no chart data is available. */
         public fun setPlaceholder(
             view: View?,
             params: LayoutParams? = null,
