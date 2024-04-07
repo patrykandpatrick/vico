@@ -48,8 +48,7 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
  *
  * @property candles provides the [Candle]s.
  * @property minCandleBodyHeightDp TODO
- * @property candleSpacingDp the horizontal padding between the edges of chart segments and the columns they contain.
- * segments that contain a single column only.
+ * @property candleSpacingDp the spacing between neighboring candles.
  * @property scaleCandleWicks whether the candle wicks should be scaled based on the zoom factor.
  * @property verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
  * associated. Use this for independent [CartesianLayer] scaling.
