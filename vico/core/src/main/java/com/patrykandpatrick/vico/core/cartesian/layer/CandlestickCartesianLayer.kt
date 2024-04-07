@@ -50,8 +50,8 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
  * @property minCandleBodyHeightDp TODO
  * @property candleSpacingDp the spacing between neighboring candles.
  * @property scaleCandleWicks whether the candle wicks should be scaled based on the zoom factor.
- * @property verticalAxisPosition the position of the [VerticalAxis] with which the [ColumnCartesianLayer] should be
- * associated. Use this for independent [CartesianLayer] scaling.
+ * @property verticalAxisPosition the position of the [VerticalAxis] with which the [CandlestickCartesianLayer] should
+ * be associated. Use this for independent [CartesianLayer] scaling.
  */
 public open class CandlestickCartesianLayer(
     public var candles: CandleProvider,
