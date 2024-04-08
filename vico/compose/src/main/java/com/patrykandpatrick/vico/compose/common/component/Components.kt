@@ -25,13 +25,16 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.isSpecified
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.patrykandpatrick.vico.compose.common.pixelSize
 import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
+import com.patrykandpatrick.vico.compose.common.text.toGraphicsTypeFace
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.LayeredComponent
@@ -154,6 +157,9 @@ public fun rememberLayeredComponent(
  * @param textAlignment the text alignment.
  * @param minWidth defines the minimum width.
  */
+@Deprecated(
+    message = "Use the Composable function that accepts a Compose UI TextStyle instead of an android graphics Typeface.",
+)
 @Composable
 public fun rememberTextComponent(
     color: Color = Color.Black,
@@ -181,6 +187,47 @@ public fun rememberTextComponent(
             this.minWidth = minWidth
         }
     }
+
+/**
+ * Create and remember [TextComponent].
+ *
+ * @param textStyle the [TextStyle] for the text. This parameter controls the text's font, the text's color, and the
+ * size of the text. A [Color.Unspecified] text color will default this text's color to [Color.Black].
+ * @param background an optional [ShapeComponent] to be displayed behind the text.
+ * @param ellipsize the text truncation behavior.
+ * @param lineCount the line count.
+ * @param padding the padding between the text and the background.
+ * @param margins the margins around the background.
+ * @param textAlignment the text alignment.
+ * @param minWidth defines the minimum width.
+ */
+@Composable
+public fun rememberTextComponent(
+    textStyle: TextStyle = TextStyle.Default,
+    background: ShapeComponent? = null,
+    ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
+    lineCount: Int = Defaults.LABEL_LINE_COUNT,
+    padding: MutableDimensions = MutableDimensions.empty(),
+    margins: MutableDimensions = MutableDimensions.empty(),
+    textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
+    minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
+): TextComponent {
+    val typeface = textStyle.toGraphicsTypeFace()
+    return remember(textStyle, typeface, background, ellipsize, lineCount, padding, margins, typeface, textAlignment, minWidth) {
+        TextComponent.build {
+            this.color = if (textStyle.color.isSpecified) textStyle.color.toArgb() else Color.Black.toArgb()
+            this.textSizeSp = textStyle.fontSize.pixelSize()
+            this.ellipsize = ellipsize
+            this.lineCount = lineCount
+            this.background = background
+            this.padding = padding
+            this.margins = margins
+            this.typeface = typeface
+            this.textAlignment = textAlignment
+            this.minWidth = minWidth
+        }
+    }
+}
 
 /** A [Dp] version of [TextComponent.MinWidth.fixed]. */
 @Stable
