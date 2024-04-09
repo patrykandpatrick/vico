@@ -47,7 +47,14 @@ public class CandlestickCartesianLayerDrawingModel(
     override fun hashCode(): Int = 31 * entries.hashCode() + opacity.hashCode()
 
     /**
-     * Houses positional information for a [CandlestickCartesianLayer]’s column. TODO
+     * Houses positional information for a [CandlestickCartesianLayer]’s candle. Each position is stored as a distance
+     * from the bottom of the [CandlestickCartesianLayer]. The distances are expressed as fractions of the
+     * [CandlestickCartesianLayer]’s height.
+     *
+     * @property bodyBottomY the position of the body’s bottom edge.
+     * @property bodyTopY the position of the body’s top edge.
+     * @property bottomWickY the position of the bottom wick’s bottom edge.
+     * @property topWickY the position of the top wick’s top edge.
      */
     public class CandleInfo(
         public val bodyBottomY: Float,
