@@ -154,9 +154,7 @@ public open class LineComponent(
             boundingBox.left < right && left < boundingBox.right
         }
 
-    /**
-     * TODO
-     */
+    /** Creates a new [LineComponent] based on this one. */
     public open fun copy(
         color: Int = this.color,
         thicknessDp: Float = this.thicknessDp,
