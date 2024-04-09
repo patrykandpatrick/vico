@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import com.patrykandpatrick.vico.R
@@ -153,6 +154,7 @@ private fun ComposeChart9(
                     rememberStartAxis(
                         label =
                             rememberAxisLabelComponent(
+                                style = TextStyle.Default,
                                 color = MaterialTheme.colorScheme.onBackground,
                                 background =
                                     rememberShapeComponent(

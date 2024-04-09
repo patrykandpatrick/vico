@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.compose.cartesian.axis
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
@@ -46,7 +47,7 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
  */
 @Composable
 public fun rememberTopAxis(
-    label: TextComponent? = rememberAxisLabelComponent(),
+    label: TextComponent? = rememberAxisLabelComponent(style = TextStyle.Default),
     axis: LineComponent? = rememberAxisLineComponent(),
     tick: LineComponent? = rememberAxisTickComponent(),
     tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,
@@ -89,7 +90,7 @@ public fun rememberTopAxis(
  */
 @Composable
 public fun rememberBottomAxis(
-    label: TextComponent? = rememberAxisLabelComponent(),
+    label: TextComponent? = rememberAxisLabelComponent(style = TextStyle.Default),
     axis: LineComponent? = rememberAxisLineComponent(),
     tick: LineComponent? = rememberAxisTickComponent(),
     tickLength: Dp = Defaults.AXIS_TICK_LENGTH.dp,

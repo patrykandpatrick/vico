@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -119,6 +120,7 @@ fun ThresholdLineWithCustomText() {
                                 line = rememberLineComponent(color = Color.Black, thickness = 2.dp),
                                 labelComponent =
                                     rememberTextComponent(
+                                        style = TextStyle.Default,
                                         color = Color.White,
                                         lineCount = 3,
                                         background =
@@ -147,6 +149,7 @@ fun ThresholdLineWithCustomText() {
                                 line = rememberLineComponent(color = Color.DarkGray, thickness = 2.dp),
                                 labelComponent =
                                     rememberTextComponent(
+                                        style = TextStyle.Default,
                                         color = Color.White,
                                         lineCount = 3,
                                         background =
@@ -195,6 +198,7 @@ fun RangedThresholdLine() {
                                 box = rememberShapeComponent(color = Color.Black.copy(alpha = .5f)),
                                 labelComponent =
                                     rememberTextComponent(
+                                        style = TextStyle.Default,
                                         color = Color.Black,
                                         padding = MutableDimensions.of(horizontal = 8.dp),
                                     ),
@@ -236,6 +240,7 @@ fun RangedThresholdLineWithBrushShader() {
                                     ),
                                 labelComponent =
                                     rememberTextComponent(
+                                        style = TextStyle.Default,
                                         color = Color.Black,
                                         padding = MutableDimensions.of(horizontal = 8.dp),
                                     ),
@@ -276,6 +281,7 @@ fun RangedThresholdLineWithComponentShader() {
                                     ),
                                 labelComponent =
                                     rememberTextComponent(
+                                        style = TextStyle.Default,
                                         color = Color.Black,
                                         padding = MutableDimensions.of(horizontal = 8.dp),
                                     ),

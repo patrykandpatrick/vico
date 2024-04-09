@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidViewBinding
@@ -147,6 +148,7 @@ private fun ViewChart7(
 @Composable
 private fun rememberStartAxisLabel() =
     rememberAxisLabelComponent(
+        style = TextStyle.Default,
         color = Color.Black,
         background =
             rememberShapeComponent(

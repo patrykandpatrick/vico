@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.sample.previews
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -46,6 +47,7 @@ private val model = CartesianChartModel(ColumnCartesianLayerModel.build { series
 fun HorizontalAxisTextInside() {
     val label =
         rememberAxisLabelComponent(
+            style = TextStyle.Default,
             background =
                 rememberShapeComponent(
                     shape =
@@ -101,6 +103,7 @@ fun HorizontalAxisTextInside() {
 fun HorizontalAxisTextInsideAndBottomAxis() {
     val label =
         rememberAxisLabelComponent(
+            style = TextStyle.Default,
             background =
                 rememberShapeComponent(
                     shape = Shape.Pill,

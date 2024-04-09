@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -90,14 +91,14 @@ private fun getLineLayer(verticalAxisPosition: Vertical? = null) =
 private val startAxis: Axis<Start>
     @Composable get() =
         rememberStartAxis(
-            label = rememberTextComponent(color = Color.Black),
+            label = rememberTextComponent(style = TextStyle.Default, color = Color.Black),
             itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 5 }) },
         )
 
 private val endAxis: Axis<End>
     @Composable get() =
         rememberEndAxis(
-            label = rememberTextComponent(color = Color.DarkGray),
+            label = rememberTextComponent(style = TextStyle.Default, color = Color.DarkGray),
             itemPlacer = remember { AxisItemPlacer.Vertical.count(count = { 7 }) },
         )
 
