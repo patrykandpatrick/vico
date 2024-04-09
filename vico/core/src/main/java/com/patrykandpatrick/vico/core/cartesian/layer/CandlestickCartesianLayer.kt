@@ -65,11 +65,11 @@ public open class CandlestickCartesianLayer(
     > = DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<CandlestickCartesianLayerModel>() {
     /**
-     * TODO
+     * Defines a candle style.
      *
-     * @param body TODO
-     * @param topWick TODO
-     * @param bottomWick TODO
+     * @param body used for the body.
+     * @param topWick used for the top wick.
+     * @param bottomWick used for the bottom wick.
      */
     public data class Candle(
         public val body: LineComponent,
