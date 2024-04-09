@@ -23,8 +23,8 @@ import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.DefaultAlpha
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.LayeredComponent
-import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
@@ -132,7 +132,7 @@ internal fun TypedArray.getComponent(context: Context): Component? =
                 rear = baseComponent,
                 front = layeredComponent,
                 padding =
-                    MutableDimensions.of(
+                    Dimensions(
                         allDp =
                             getRawDimension(
                                 context = context,

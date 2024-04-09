@@ -35,7 +35,6 @@ import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.LayeredComponent
-import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
@@ -135,9 +134,10 @@ public fun rememberLayeredComponent(
     rear: Component,
     front: Component,
     padding: Dimensions = Dimensions.Empty,
+    margins: Dimensions = Dimensions.Empty,
 ): LayeredComponent =
-    remember(rear, front, padding) {
-        LayeredComponent(rear, front, padding)
+    remember(rear, front, padding, margins) {
+        LayeredComponent(rear, front, padding, margins)
     }
 
 /**
@@ -161,8 +161,8 @@ public fun rememberTextComponent(
     background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = Defaults.LABEL_LINE_COUNT,
-    padding: MutableDimensions = MutableDimensions.empty(),
-    margins: MutableDimensions = MutableDimensions.empty(),
+    padding: Dimensions = Dimensions.Empty,
+    margins: Dimensions = Dimensions.Empty,
     typeface: Typeface? = null,
     textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
     minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),

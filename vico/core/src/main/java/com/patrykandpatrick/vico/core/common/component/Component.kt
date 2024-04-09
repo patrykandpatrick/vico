@@ -16,14 +16,19 @@
 
 package com.patrykandpatrick.vico.core.common.component
 
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.Margins
 
 /**
  * [Component] is a generic concept of an object that can be drawn on a canvas at a given pair of coordinates.
  * Its subclasses are used throughout the library.
  */
-public interface Component : Margins {
+public interface Component {
+    /**
+     * The margins.
+     */
+    public val margins: Dimensions
+
     /**
      * Instructs the [Component] to draw itself at the given coordinates.
      */

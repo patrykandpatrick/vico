@@ -19,27 +19,42 @@ package com.patrykandpatrick.vico.core.common
 /**
  * Defines the size of each edge of a rectangle.
  * Used to store measurements such as padding or margin values.
+ *
+ * @param startDp the value for the start edge in the dp unit.
+ * @param topDp the value for the top edge in the dp unit.
+ * @param endDp the value for the end edge in the dp unit.
+ * @param bottomDp the value for the bottom edge in the dp unit.
  */
-public interface Dimensions {
+public data class Dimensions(
+    public val startDp: Float,
+    public val topDp: Float,
+    public val endDp: Float,
+    public val bottomDp: Float,
+) {
     /**
-     * The value for the start edge in the dp unit.
+     * The sum of [startDp] and [endDp].
      */
-    public val startDp: Float
+    public val horizontalDp: Float
+        get() = startDp + endDp
 
     /**
-     * The value for the top edge in the dp unit.
+     * The sum of [topDp] and [bottomDp].
      */
-    public val topDp: Float
+    public val verticalDp: Float
+        get() = topDp + bottomDp
 
     /**
-     * The value for the end edge in the dp unit.
+     * Creates a [Dimensions] instance using the provided measurements.
      */
-    public val endDp: Float
+    public constructor(
+        horizontalDp: Float,
+        verticalDp: Float,
+    ) : this(horizontalDp, verticalDp, horizontalDp, verticalDp)
 
     /**
-     * The value for the bottom edge in the dp unit.
+     * Creates a [Dimensions] instance using the provided measurements.
      */
-    public val bottomDp: Float
+    public constructor(allDp: Float) : this(allDp, allDp, allDp, allDp)
 
     /**
      * Returns the dimension of the left edge depending on the layout orientation.
@@ -59,18 +74,6 @@ public interface Dimensions {
         /**
          * A [Dimensions] instance with all coordinates set to 0.
          */
-        public val Empty: Dimensions =
-            object : Dimensions {
-                override val startDp: Float = 0f
-                override val topDp: Float = 0f
-                override val endDp: Float = 0f
-                override val bottomDp: Float = 0f
-
-                override fun hashCode(): Int = 0
-
-                override fun equals(other: Any?): Boolean =
-                    this === other || other is Dimensions && startDp == other.startDp && topDp == other.topDp &&
-                        endDp == other.endDp && bottomDp == other.bottomDp
-            }
+        public val Empty: Dimensions = Dimensions(0f, 0f, 0f, 0f)
     }
 }

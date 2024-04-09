@@ -23,18 +23,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberAxisGuidelineComponent
+import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.fixed
 import com.patrykandpatrick.vico.compose.common.component.rememberLayeredComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shape.markerCornered
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
-import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.extension.copyColor
 import com.patrykandpatrick.vico.core.common.shape.Corner
@@ -57,7 +56,7 @@ internal fun rememberMarker(
         rememberTextComponent(
             color = MaterialTheme.colorScheme.onSurface,
             background = labelBackground,
-            padding = MutableDimensions.of(8.dp, 4.dp),
+            padding = Dimensions(8.dp, 4.dp),
             typeface = Typeface.MONOSPACE,
             textAlignment = Layout.Alignment.ALIGN_CENTER,
             minWidth = TextComponent.MinWidth.fixed(40.dp),
@@ -72,9 +71,9 @@ internal fun rememberMarker(
                 rememberLayeredComponent(
                     rear = indicatorCenterComponent,
                     front = indicatorFrontComponent,
-                    padding = MutableDimensions.of(5.dp),
+                    padding = Dimensions(5.dp),
                 ),
-            padding = MutableDimensions.of(10.dp),
+            padding = Dimensions(10.dp),
         )
     val guideline = rememberAxisGuidelineComponent()
     return remember(label, labelPosition, indicator, showIndicator, guideline) {

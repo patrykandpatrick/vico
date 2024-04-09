@@ -20,7 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.legend.HorizontalLegend
@@ -43,7 +43,7 @@ public fun rememberVerticalLegend(
     iconSize: Dp,
     iconPadding: Dp,
     spacing: Dp = 0.dp,
-    padding: MutableDimensions = MutableDimensions.empty(),
+    padding: Dimensions = Dimensions.Empty,
 ): VerticalLegend =
     remember(items, iconSize, iconPadding, spacing, padding) {
         VerticalLegend(
@@ -93,7 +93,7 @@ public fun rememberHorizontalLegend(
     iconPadding: Dp,
     lineSpacing: Dp = 0.dp,
     spacing: Dp = 0.dp,
-    padding: MutableDimensions = MutableDimensions.empty(),
+    padding: Dimensions = Dimensions.Empty,
 ): HorizontalLegend =
     remember(items, iconSize, iconPadding, lineSpacing, spacing, padding) {
         HorizontalLegend(

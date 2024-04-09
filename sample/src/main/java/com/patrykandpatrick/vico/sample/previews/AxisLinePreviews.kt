@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.sample.previews
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,12 +28,11 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.shape.Corner
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.CutCornerTreatment
@@ -66,16 +66,17 @@ fun HorizontalAxisTextInside() {
                     strokeWidth = 1.dp,
                 ),
             padding =
-                MutableDimensions.of(
+                Dimensions(
                     horizontal = 2.dp,
                     vertical = 8.dp,
                 ),
             margins =
-                MutableDimensions.of(
+                Dimensions(
                     horizontal = 4.dp,
                     vertical = 4.dp,
                 ),
         )
+    PaddingValues()
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -107,12 +108,12 @@ fun HorizontalAxisTextInsideAndBottomAxis() {
                     color = Color.LightGray,
                 ),
             padding =
-                MutableDimensions.of(
+                Dimensions(
                     horizontal = 2.dp,
                     vertical = 8.dp,
                 ),
             margins =
-                MutableDimensions.of(
+                Dimensions(
                     horizontal = 4.dp,
                     vertical = 4.dp,
                 ),

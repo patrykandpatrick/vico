@@ -31,10 +31,10 @@ import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontal
 import com.patrykandpatrick.vico.compose.cartesian.fullWidth
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
@@ -43,7 +43,7 @@ import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
-import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -146,11 +146,11 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
             rememberTextComponent(
                 background = rememberShapeComponent(Shape.Pill, color),
                 padding =
-                    MutableDimensions.of(
+                    Dimensions(
                         HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
                         HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
                     ),
-                margins = MutableDimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
+                margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
                 typeface = Typeface.MONOSPACE,
             ),
     )
@@ -164,11 +164,11 @@ private fun getViewHorizontalLine() =
             TextComponent.build {
                 background = ShapeComponent(Shape.Pill, HORIZONTAL_LINE_COLOR)
                 padding =
-                    MutableDimensions.of(
+                    Dimensions(
                         HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP,
                         HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP,
                     )
-                margins = MutableDimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP)
+                margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP)
                 typeface = Typeface.MONOSPACE
             },
     )

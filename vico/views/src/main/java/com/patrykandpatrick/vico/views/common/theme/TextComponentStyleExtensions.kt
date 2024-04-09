@@ -28,7 +28,7 @@ import com.patrykandpatrick.vico.core.common.Defaults.AXIS_LABEL_HORIZONTAL_PADD
 import com.patrykandpatrick.vico.core.common.Defaults.AXIS_LABEL_VERTICAL_PADDING
 import com.patrykandpatrick.vico.core.common.Defaults.LABEL_LINE_COUNT
 import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
-import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.component.TextComponent
 import com.patrykandpatrick.vico.core.common.extension.firstNonNegativeOf
 import com.patrykandpatrick.vico.core.common.extension.orZero
@@ -110,7 +110,7 @@ private fun TypedArray.getTypeface(context: Context): Typeface? {
     }
 }
 
-private fun TypedArray.getPadding(context: Context): MutableDimensions {
+private fun TypedArray.getPadding(context: Context): Dimensions {
     fun getDpDimension(
         @StyleableRes index: Int,
     ): Float = getRawDimension(context, index, -1f)
@@ -122,7 +122,7 @@ private fun TypedArray.getPadding(context: Context): MutableDimensions {
     val paddingTop = getDpDimension(R.styleable.TextComponentStyle_android_paddingTop)
     val paddingEnd = getDpDimension(R.styleable.TextComponentStyle_android_paddingEnd)
     val paddingBottom = getDpDimension(R.styleable.TextComponentStyle_android_paddingBottom)
-    return MutableDimensions(
+    return Dimensions(
         startDp =
             firstNonNegativeOf(paddingStart, paddingHorizontal, padding)
                 ?: AXIS_LABEL_HORIZONTAL_PADDING.toFloat(),
@@ -138,7 +138,7 @@ private fun TypedArray.getPadding(context: Context): MutableDimensions {
     )
 }
 
-private fun TypedArray.getMargins(context: Context): MutableDimensions {
+private fun TypedArray.getMargins(context: Context): Dimensions {
     fun getDpDimension(
         @StyleableRes index: Int,
     ): Float = getRawDimension(context, index, -1f)
@@ -150,7 +150,7 @@ private fun TypedArray.getMargins(context: Context): MutableDimensions {
     val paddingTop = getDpDimension(R.styleable.TextComponentStyle_marginTop)
     val paddingEnd = getDpDimension(R.styleable.TextComponentStyle_marginEnd)
     val paddingBottom = getDpDimension(R.styleable.TextComponentStyle_marginBottom)
-    return MutableDimensions(
+    return Dimensions(
         startDp = firstNonNegativeOf(paddingStart, paddingHorizontal, padding).orZero,
         topDp = firstNonNegativeOf(paddingTop, paddingVertical, padding).orZero,
         endDp = firstNonNegativeOf(paddingEnd, paddingHorizontal, padding).orZero,
