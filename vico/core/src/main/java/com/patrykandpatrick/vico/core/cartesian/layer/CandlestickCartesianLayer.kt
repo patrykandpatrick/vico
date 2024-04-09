@@ -44,7 +44,7 @@ import com.patrykandpatrick.vico.core.common.extension.half
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /**
- * [CandlestickCartesianLayer] displays data as vertical bars. It can draw multiple columns per segment.
+ * Draws the content of candlestick charts.
  *
  * @property candles provides the [Candle]s.
  * @property minCandleBodyHeightDp the minimum height of the candle bodies (in dp).
