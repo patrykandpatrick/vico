@@ -97,7 +97,16 @@ public class CandlestickCartesianLayerModel : CartesianLayerModel {
     }
 
     /**
-     * TODO
+     * Houses a single candle’s data.
+     *
+     * @property x the _x_ value.
+     * @property opening the opening price.
+     * @property closing the closing price.
+     * @property low the low price.
+     * @property high the high price.
+     * @property absoluteChange represents the absolute price change ([closing] vs. [opening]).
+     * @property relativeChange represents the relative price change (this [Entry]’s [closing] vs. the previous
+     * [Entry]’s [closing]).
      */
     public open class Entry internal constructor(
         override val x: Float,
