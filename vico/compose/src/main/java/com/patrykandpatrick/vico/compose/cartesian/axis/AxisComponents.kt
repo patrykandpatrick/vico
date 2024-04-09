@@ -31,13 +31,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.patrykandpatrick.vico.compose.common.VicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.BrushShader
 import com.patrykandpatrick.vico.compose.common.shape.dashed
 import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
-import com.patrykandpatrick.vico.compose.common.VicoTheme
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Dimensions
@@ -62,7 +62,9 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
  * @param textAlignment the text alignment.
  */
 @Deprecated(
-    message = "Use the Composable function that accepts a Compose UI TextStyle instead of an android graphics Typeface.",
+    message = """
+        Use the Composable function that accepts a Compose UI TextStyle instead of an android graphics Typeface.
+    """,
 )
 @Composable
 public fun rememberAxisLabelComponent(
@@ -93,8 +95,10 @@ public fun rememberAxisLabelComponent(
 /**
  * Creates and remembers a [TextComponent] to be used for axis labels.
  *
- * @param textStyle the [TextStyle] for the text. This parameter controls the text's font, the text's color, and the
- * size of the text. A [Color.Unspecified] text color will default this text's color to [VicoTheme.textColor].
+ * @param style the [TextStyle] for the text.
+ * @param color the [Color] of the text. The default value is [style.color][TextStyle.color] if [Color.isSpecified] is
+ * true, otherwise the default is [vicoTheme.textColor][VicoTheme.textColor].
+ * @param size the text's size. The default value is [style.fontSize][TextStyle.fontSize].
  * @param background an optional [ShapeComponent] to be displayed behind the text.
  * @param ellipsize the text truncation behavior.
  * @param lineCount the line count.
@@ -104,29 +108,35 @@ public fun rememberAxisLabelComponent(
  */
 @Composable
 public fun rememberAxisLabelComponent(
-    textStyle: TextStyle = TextStyle.Default,
+    style: TextStyle = TextStyle.Default,
+    color: Color = if (style.color.isSpecified) style.color else vicoTheme.textColor,
+    size: TextUnit = style.fontSize,
     background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = Defaults.AXIS_LABEL_MAX_LINES,
-    padding: MutableDimensions = MutableDimensions.of(
-        Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp,
-        Defaults.AXIS_LABEL_VERTICAL_PADDING.dp
-    ),
-    margins: MutableDimensions = MutableDimensions.of(
-        Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
-        Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp
-    ),
+    padding: MutableDimensions =
+        MutableDimensions.of(
+            Defaults.AXIS_LABEL_HORIZONTAL_PADDING.dp,
+            Defaults.AXIS_LABEL_VERTICAL_PADDING.dp,
+        ),
+    margins: MutableDimensions =
+        MutableDimensions.of(
+            Defaults.AXIS_LABEL_HORIZONTAL_MARGIN.dp,
+            Defaults.AXIS_LABEL_VERTICAL_MARGIN.dp,
+        ),
     textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
-): TextComponent = rememberTextComponent(
-    if (textStyle.color.isSpecified) textStyle else textStyle.copy(color = vicoTheme.textColor),
-    background,
-    ellipsize,
-    lineCount,
-    padding,
-    margins,
-    textAlignment,
-)
-
+): TextComponent =
+    rememberTextComponent(
+        style = style,
+        color = color,
+        size = size,
+        background = background,
+        ellipsize = ellipsize,
+        lineCount = lineCount,
+        padding = padding,
+        margins = margins,
+        textAlignment = textAlignment,
+    )
 
 /**
  * Creates and remembers a [LineComponent] styled as an axis line.

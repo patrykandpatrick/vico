@@ -158,7 +158,9 @@ public fun rememberLayeredComponent(
  * @param minWidth defines the minimum width.
  */
 @Deprecated(
-    message = "Use the Composable function that accepts a Compose UI TextStyle instead of an android graphics Typeface.",
+    message = """
+        Use the Composable function that accepts a Compose UI TextStyle instead of an android graphics Typeface.
+    """,
 )
 @Composable
 public fun rememberTextComponent(
@@ -191,8 +193,10 @@ public fun rememberTextComponent(
 /**
  * Create and remember [TextComponent].
  *
- * @param textStyle the [TextStyle] for the text. This parameter controls the text's font, the text's color, and the
- * size of the text. A [Color.Unspecified] text color will default this text's color to [Color.Black].
+ * @param style the [TextStyle] for the text.
+ * @param color the [Color] of the text. The default value is [style.color][TextStyle.color] if [Color.isSpecified] is
+ * true, otherwise the default is [Color.Black].
+ * @param size the text's size. The default value is [style.fontSize][TextStyle.fontSize].
  * @param background an optional [ShapeComponent] to be displayed behind the text.
  * @param ellipsize the text truncation behavior.
  * @param lineCount the line count.
@@ -203,7 +207,9 @@ public fun rememberTextComponent(
  */
 @Composable
 public fun rememberTextComponent(
-    textStyle: TextStyle = TextStyle.Default,
+    style: TextStyle = TextStyle.Default,
+    color: Color = if (style.color.isSpecified) style.color else Color.Black,
+    size: TextUnit = style.fontSize,
     background: ShapeComponent? = null,
     ellipsize: TextUtils.TruncateAt = TextUtils.TruncateAt.END,
     lineCount: Int = Defaults.LABEL_LINE_COUNT,
@@ -212,11 +218,21 @@ public fun rememberTextComponent(
     textAlignment: Layout.Alignment = Layout.Alignment.ALIGN_NORMAL,
     minWidth: TextComponent.MinWidth = TextComponent.MinWidth.fixed(),
 ): TextComponent {
-    val typeface = textStyle.toGraphicsTypeFace()
-    return remember(textStyle, typeface, background, ellipsize, lineCount, padding, margins, typeface, textAlignment, minWidth) {
+    val typeface = style.toGraphicsTypeFace()
+    return remember(
+        style, typeface, color, size,
+        background,
+        ellipsize,
+        lineCount,
+        padding,
+        margins,
+        typeface,
+        textAlignment,
+        minWidth,
+    ) {
         TextComponent.build {
-            this.color = if (textStyle.color.isSpecified) textStyle.color.toArgb() else Color.Black.toArgb()
-            this.textSizeSp = textStyle.fontSize.pixelSize()
+            this.color = color.toArgb()
+            this.textSizeSp = size.pixelSize()
             this.ellipsize = ellipsize
             this.lineCount = lineCount
             this.background = background
