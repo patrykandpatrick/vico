@@ -96,7 +96,7 @@ public fun CartesianChartHost(
 ) {
     val mutableChartValues = remember(chart) { MutableChartValues() }
     val modelWrapper by modelProducer
-        .collectAsState(chart, modelProducer, diffAnimationSpec, runInitialAnimation, mutableChartValues, getXStep)
+        .collectAsState(chart, diffAnimationSpec, runInitialAnimation, mutableChartValues, getXStep)
     val (model, previousModel, chartValues) = modelWrapper
 
     CartesianChartHostBox(modifier) {

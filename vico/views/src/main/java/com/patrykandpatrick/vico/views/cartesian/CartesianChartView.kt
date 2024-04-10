@@ -40,6 +40,7 @@ import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.toImmutable
 import com.patrykandpatrick.vico.core.common.Defaults
+import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.extension.spToPx
 import com.patrykandpatrick.vico.views.R
@@ -152,7 +153,7 @@ public open class CartesianChartView
         public var modelProducer: CartesianChartModelProducer? = null
             set(value) {
                 if (field === value) return
-                field?.unregisterFromUpdates(key = this)
+                check(field == null) { NEW_PRODUCER_ERROR_MESSAGE }
                 field = value
                 if (isAttachedToWindowCompat) registerForUpdates()
             }

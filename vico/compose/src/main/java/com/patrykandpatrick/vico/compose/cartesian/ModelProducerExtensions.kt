@@ -33,6 +33,10 @@ import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProduce
 import com.patrykandpatrick.vico.core.cartesian.toImmutable
 import com.patrykandpatrick.vico.core.common.Animation
 import com.patrykandpatrick.vico.core.common.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
+import com.patrykandpatrick.vico.core.common.ValueWrapper
+import com.patrykandpatrick.vico.core.common.getValue
+import com.patrykandpatrick.vico.core.common.setValue
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,18 +49,21 @@ internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> = tween(dur
 @Composable
 internal fun CartesianChartModelProducer.collectAsState(
     chart: CartesianChart,
-    producerKey: Any,
     animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
     runInitialAnimation: Boolean = true,
     mutableChartValues: MutableChartValues,
     getXStep: ((CartesianChartModel) -> Float)?,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ): State<CartesianChartModelWrapper> {
-    val modelWrapperState = remember(chart, producerKey) { CartesianChartModelWrapperState() }
+    var previousHashCode by remember { ValueWrapper<Int?>(null) }
+    val hashCode = hashCode()
+    check(previousHashCode == null || hashCode == previousHashCode) { NEW_PRODUCER_ERROR_MESSAGE }
+    previousHashCode = hashCode
+    val modelWrapperState = remember(chart) { CartesianChartModelWrapperState() }
     val extraStore = remember(chart) { MutableExtraStore() }
     val scope = rememberCoroutineScope()
     val isInPreview = LocalInspectionMode.current
-    DisposableEffect(chart, producerKey, runInitialAnimation, isInPreview) {
+    DisposableEffect(chart, runInitialAnimation, isInPreview) {
         var mainAnimationJob: Job? = null
         var animationFrameJob: Job? = null
         var finalAnimationFrameJob: Job? = null

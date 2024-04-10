@@ -21,3 +21,7 @@ internal const val FULL_DEGREES: Float = 360f
 internal const val ERR_REPEATING_COLLECTION_EMPTY = "Cannot get repeated item from empty collection."
 
 internal const val ELLIPSIS: String = "…"
+
+public const val NEW_PRODUCER_ERROR_MESSAGE: String =
+    "A new `CartesianChartModelProducer` was provided. Run data " +
+        "updates via `tryRunTransaction` or `runTransaction`, not by creating new `CartesianChartModelProducer`s."
