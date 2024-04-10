@@ -24,9 +24,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -40,10 +41,10 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesian
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.fromComponent
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
@@ -54,7 +55,6 @@ import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Pill
@@ -67,7 +67,7 @@ private val chartModifier = Modifier.height(100.dp)
 @Composable
 fun ColumnChartCard(): Unit =
     VicoTheme {
-        val colors = MaterialTheme.colors
+        val colors = MaterialTheme.colorScheme
 
         SampleCard {
             CartesianChartHost(
@@ -102,7 +102,7 @@ fun ColumnChartCard(): Unit =
                                                     ).toVicoShape(),
                                                 color = colors.primary.copy(alpha = 0.1f),
                                             ),
-                                        padding = MutableDimensions.of(end = 8.dp, start = 4.dp),
+                                        padding = Dimensions(end = 8.dp, start = 4.dp),
                                     ),
                                 axis = null,
                                 tick = null,
@@ -118,7 +118,7 @@ fun ColumnChartCard(): Unit =
 @Composable
 fun LineChartCard(): Unit =
     VicoTheme {
-        val colors = MaterialTheme.colors
+        val colors = MaterialTheme.colorScheme
 
         SampleCard {
             CartesianChartHost(
@@ -134,8 +134,11 @@ fun LineChartCard(): Unit =
                                         DynamicShader.fromComponent(
                                             componentSize = 4.dp,
                                             component =
-                                                rememberShapeComponent(shape = Pill, color = colors.primary)
-                                                    .apply { setMargins(0.5.dp.value) },
+                                                rememberShapeComponent(
+                                                    shape = Pill,
+                                                    color = colors.primary,
+                                                    margins = Dimensions(0.5.dp),
+                                                ),
                                         ),
                                 ),
                             ),
@@ -148,7 +151,7 @@ fun LineChartCard(): Unit =
                                         color = colors.onSurface,
                                         textSize = 10.sp,
                                         background = rememberShapeComponent(shape = Rect, color = Color.LightGray),
-                                        padding = MutableDimensions.of(horizontal = 4.dp, vertical = 2.dp),
+                                        padding = Dimensions(horizontal = 4.dp, vertical = 2.dp),
                                     ),
                                 axis = null,
                                 tick = null,
@@ -187,18 +190,18 @@ private fun SampleCard(chart: @Composable ColumnScope.() -> Unit) {
     Card(
         modifier = Modifier.padding(8.dp),
         shape = RoundedCornerShape(8.dp),
-        elevation = 4.dp,
+        elevation = CardDefaults.elevatedCardElevation(4.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             chart()
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Title",
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.titleMedium,
             )
             Text(
                 text = "This is a subtitle. It may be long.",
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

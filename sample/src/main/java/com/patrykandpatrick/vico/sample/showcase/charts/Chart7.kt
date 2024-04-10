@@ -35,18 +35,17 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.legend.rememberLegendItem
 import com.patrykandpatrick.vico.compose.common.legend.rememberVerticalLegend
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shape.rounded
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
-import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart7Binding
@@ -153,8 +152,8 @@ private fun rememberStartAxisLabel() =
                 shape = Shape.rounded(4.dp),
                 color = Color(0xfffab94d),
             ),
-        padding = MutableDimensions.of(horizontal = 8.dp, vertical = 2.dp),
-        margins = MutableDimensions.of(all = 4.dp),
+        padding = Dimensions(horizontal = 8.dp, vertical = 2.dp),
+        margins = Dimensions(all = 4.dp),
     )
 
 @Composable
@@ -176,7 +175,7 @@ private fun rememberLegend() =
         iconSize = 8.dp,
         iconPadding = 8.dp,
         spacing = 4.dp,
-        padding = MutableDimensions.of(top = 8.dp),
+        padding = Dimensions(top = 8.dp),
     )
 
 private val chartColors = listOf(Color(0xffb983ff), Color(0xff91b1fd), Color(0xff8fdaff))

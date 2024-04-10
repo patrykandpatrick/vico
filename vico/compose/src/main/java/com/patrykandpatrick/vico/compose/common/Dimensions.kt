@@ -16,15 +16,17 @@
 
 package com.patrykandpatrick.vico.compose.common
 
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.core.common.MutableDimensions
+import com.patrykandpatrick.vico.core.common.Dimensions
 
 /**
- * Creates a [MutableDimensions] instance with a common value for each coordinate.
+ * Creates a [Dimensions] instance with a common value for each coordinate.
  */
-public fun MutableDimensions.Companion.of(all: Dp): MutableDimensions =
-    of(
+@Stable
+public fun Dimensions(all: Dp): Dimensions =
+    Dimensions(
         start = all,
         top = all,
         end = all,
@@ -32,13 +34,14 @@ public fun MutableDimensions.Companion.of(all: Dp): MutableDimensions =
     )
 
 /**
- * Creates a [MutableDimensions] instance using the provided measurements.
+ * Creates a [Dimensions] instance using the provided measurements.
  */
-public fun MutableDimensions.Companion.of(
+@Stable
+public fun Dimensions(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
-): MutableDimensions =
-    MutableDimensions(
+): Dimensions =
+    Dimensions(
         startDp = horizontal.value,
         topDp = vertical.value,
         endDp = horizontal.value,
@@ -46,15 +49,16 @@ public fun MutableDimensions.Companion.of(
     )
 
 /**
- * Creates a [MutableDimensions] instance using the provided measurements.
+ * Creates a [Dimensions] instance using the provided measurements.
  */
-public fun MutableDimensions.Companion.of(
+@Stable
+public fun Dimensions(
     start: Dp = 0.dp,
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
-): MutableDimensions =
-    MutableDimensions(
+): Dimensions =
+    Dimensions(
         startDp = start.value,
         topDp = top.value,
         endDp = end.value,

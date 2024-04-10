@@ -17,11 +17,10 @@
 package com.patrykandpatrick.vico.core.common.legend
 
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.MeasureContext
-import com.patrykandpatrick.vico.core.common.MutableDimensions
-import com.patrykandpatrick.vico.core.common.Padding
 import com.patrykandpatrick.vico.core.common.extension.half
 
 /**
@@ -38,8 +37,8 @@ public open class VerticalLegend(
     public var iconSizeDp: Float,
     public var iconPaddingDp: Float,
     public var spacingDp: Float = 0f,
-    override val padding: MutableDimensions = MutableDimensions.empty(),
-) : Legend, Padding {
+    public val padding: Dimensions = Dimensions.Empty,
+) : Legend {
     private val heights: HashMap<LegendItem, Float> = HashMap()
 
     override val bounds: RectF = RectF()

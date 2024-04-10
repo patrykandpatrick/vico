@@ -37,9 +37,9 @@ import com.patrykandpatrick.vico.compose.cartesian.fullWidth
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.fromComponent
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
@@ -50,7 +50,6 @@ import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
-import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
@@ -121,7 +120,7 @@ private fun ComposeChart9(
                                                     rememberShapeComponent(
                                                         shape = Shape.Pill,
                                                         color = colors[0],
-                                                        margins = remember { MutableDimensions.of(1.dp) },
+                                                        margins = Dimensions(1.dp),
                                                     ),
                                             ),
                                             DynamicShader.verticalGradient(
@@ -136,7 +135,7 @@ private fun ComposeChart9(
                                                     rememberShapeComponent(
                                                         shape = Shape.Rect,
                                                         color = colors[1],
-                                                        margins = remember { MutableDimensions.of(horizontal = 2.dp) },
+                                                        margins = Dimensions(horizontal = 2.dp),
                                                     ),
                                                 checkeredArrangement = false,
                                             ),
@@ -161,8 +160,8 @@ private fun ComposeChart9(
                                         strokeColor = MaterialTheme.colorScheme.outlineVariant,
                                         strokeWidth = 1.dp,
                                     ),
-                                padding = remember { MutableDimensions.of(horizontal = 6.dp, vertical = 2.dp) },
-                                margins = remember { MutableDimensions.of(end = 8.dp) },
+                                padding = Dimensions(horizontal = 6.dp, vertical = 2.dp),
+                                margins = Dimensions(end = 8.dp),
                             ),
                         axis = null,
                         tick = null,
@@ -231,7 +230,7 @@ private fun ViewChart9(
                                                 ShapeComponent(
                                                     shape = Shape.Pill,
                                                     color = colors[0].toArgb(),
-                                                    margins = MutableDimensions.of(1.dp),
+                                                    margins = Dimensions(1.dp),
                                                 ),
                                         ),
                                         DynamicShader.verticalGradient(arrayOf(Color.Black, Color.Transparent)),
@@ -244,7 +243,7 @@ private fun ViewChart9(
                                                 ShapeComponent(
                                                     shape = Shape.Rect,
                                                     color = colors[1].toArgb(),
-                                                    margins = MutableDimensions.of(horizontal = 2.dp),
+                                                    margins = Dimensions(horizontal = 2.dp),
                                                 ),
                                             checkeredArrangement = false,
                                         ),

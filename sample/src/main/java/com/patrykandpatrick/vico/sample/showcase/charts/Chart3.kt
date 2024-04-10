@@ -35,9 +35,9 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberFadingEdges
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
+import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
-import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
@@ -46,7 +46,6 @@ import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.DefaultCartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
-import com.patrykandpatrick.vico.core.common.MutableDimensions
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart3Binding
@@ -101,8 +100,8 @@ private fun ComposeChart3(
                             rememberTextComponent(
                                 color = Color.Black,
                                 background = rememberShapeComponent(Shape.Pill, lineColor),
-                                padding = MutableDimensions.of(horizontal = 8.dp, vertical = 2.dp),
-                                margins = MutableDimensions.of(end = 4.dp),
+                                padding = Dimensions(horizontal = 8.dp, vertical = 2.dp),
+                                margins = Dimensions(end = 4.dp),
                                 typeface = Typeface.MONOSPACE,
                             ),
                         title = stringResource(R.string.y_axis),
@@ -113,8 +112,8 @@ private fun ComposeChart3(
                             rememberTextComponent(
                                 background = rememberShapeComponent(Shape.Pill, bottomAxisLabelBackgroundColor),
                                 color = Color.White,
-                                padding = MutableDimensions.of(horizontal = 8.dp, vertical = 2.dp),
-                                margins = MutableDimensions.of(top = 4.dp),
+                                padding = Dimensions(horizontal = 8.dp, vertical = 2.dp),
+                                margins = Dimensions(top = 4.dp),
                                 typeface = Typeface.MONOSPACE,
                             ),
                         title = stringResource(R.string.x_axis),
