@@ -16,9 +16,9 @@
 
 package com.patrykandpatrick.vico.sample.previews.resource
 
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 
 public val shortColumnModel = CartesianChartModel(ColumnCartesianLayerModel.build { series(1, 2, 4, 8, 3) })
 

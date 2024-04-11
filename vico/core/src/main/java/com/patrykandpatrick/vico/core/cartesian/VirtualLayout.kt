@@ -18,10 +18,8 @@ package com.patrykandpatrick.vico.core.cartesian
 
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
-import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
-import com.patrykandpatrick.vico.core.cartesian.insets.Insets
-import com.patrykandpatrick.vico.core.common.extension.orZero
-import com.patrykandpatrick.vico.core.common.legend.Legend
+import com.patrykandpatrick.vico.core.common.Legend
+import com.patrykandpatrick.vico.core.common.orZero
 
 internal class VirtualLayout(
     private val axisManager: AxisManager,

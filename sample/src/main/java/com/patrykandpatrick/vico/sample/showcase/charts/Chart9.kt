@@ -47,9 +47,9 @@ import com.patrykandpatrick.vico.compose.common.shape.dashed
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.TopBottomShader

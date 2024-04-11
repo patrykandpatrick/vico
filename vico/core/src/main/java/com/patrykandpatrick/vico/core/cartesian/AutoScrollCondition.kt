@@ -16,7 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian
 
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 
 /**
  * Defines when an automatic scroll should be performed.

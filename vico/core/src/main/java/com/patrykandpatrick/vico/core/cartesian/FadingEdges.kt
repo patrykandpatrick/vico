@@ -26,7 +26,7 @@ import android.graphics.Shader
 import android.view.animation.AccelerateDecelerateInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_WIDTH_DP
-import com.patrykandpatrick.vico.core.common.extension.copyColor
+import com.patrykandpatrick.vico.core.common.copyColor
 
 private const val FULL_ALPHA = 0xFF
 private const val FULL_FADE: Int = 0xFF000000.toInt()

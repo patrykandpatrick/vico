@@ -18,29 +18,29 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Color
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.CandlestickCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerDrawingModel
+import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel.Entry.Change
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer.Candle
 import com.patrykandpatrick.vico.core.cartesian.marker.CandlestickCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel.Entry.Change
-import com.patrykandpatrick.vico.core.cartesian.model.forEachIn
-import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.ExtraStore
-import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.component.LineComponent
-import com.patrykandpatrick.vico.core.common.extension.getStart
-import com.patrykandpatrick.vico.core.common.extension.half
+import com.patrykandpatrick.vico.core.common.data.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.getStart
+import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /**

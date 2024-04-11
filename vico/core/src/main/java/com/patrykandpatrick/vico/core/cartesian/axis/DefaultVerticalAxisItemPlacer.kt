@@ -18,11 +18,11 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.common.ExtraStore
-import com.patrykandpatrick.vico.core.common.extension.ceil
-import com.patrykandpatrick.vico.core.common.extension.floor
-import com.patrykandpatrick.vico.core.common.extension.getDivisors
-import com.patrykandpatrick.vico.core.common.extension.half
+import com.patrykandpatrick.vico.core.common.ceil
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.floor
+import com.patrykandpatrick.vico.core.common.getDivisors
+import com.patrykandpatrick.vico.core.common.half
 import kotlin.math.abs
 import kotlin.math.log10
 import kotlin.math.max

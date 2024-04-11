@@ -19,15 +19,15 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
+import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.common.VerticalPosition
-import com.patrykandpatrick.vico.core.common.extension.ceil
-import com.patrykandpatrick.vico.core.common.extension.doubled
-import com.patrykandpatrick.vico.core.common.extension.getStart
-import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.extension.isBoundOf
-import com.patrykandpatrick.vico.core.common.extension.orZero
+import com.patrykandpatrick.vico.core.common.ceil
+import com.patrykandpatrick.vico.core.common.doubled
+import com.patrykandpatrick.vico.core.common.getStart
+import com.patrykandpatrick.vico.core.common.half
+import com.patrykandpatrick.vico.core.common.isBoundOf
+import com.patrykandpatrick.vico.core.common.orZero
 import kotlin.math.min
 
 /**

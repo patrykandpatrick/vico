@@ -34,11 +34,11 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker

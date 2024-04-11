@@ -19,10 +19,10 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.common.ExtraStore
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 /**
  * Determines for what values a [HorizontalAxis] or a [VerticalAxis] is to display labels, ticks, and guidelines.

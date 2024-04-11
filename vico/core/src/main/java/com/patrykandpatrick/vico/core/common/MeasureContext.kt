@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.common
 
 import android.graphics.Canvas
 import android.graphics.RectF
+import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /** Holds data used for measuring and drawing. */
 public interface MeasureContext {

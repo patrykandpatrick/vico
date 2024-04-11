@@ -17,8 +17,8 @@
 package com.patrykandpatrick.vico.core.extension
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.common.extension.rotate
-import com.patrykandpatrick.vico.core.common.extension.set
+import com.patrykandpatrick.vico.core.common.rotate
+import com.patrykandpatrick.vico.core.common.set
 import io.mockk.MockKAnnotations
 import io.mockk.every
 import io.mockk.impl.annotations.MockK

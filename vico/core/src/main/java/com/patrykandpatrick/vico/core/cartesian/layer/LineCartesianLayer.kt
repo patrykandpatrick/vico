@@ -21,42 +21,42 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.LineCartesianLayerDrawingModel
-import com.patrykandpatrick.vico.core.cartesian.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
-import com.patrykandpatrick.vico.core.cartesian.insets.Insets
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerDrawingModel
+import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.forEachIn
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer.LineSpec.PointConnector
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.LineCartesianLayerMarkerTarget
 import com.patrykandpatrick.vico.core.cartesian.marker.MutableLineCartesianLayerMarkerTarget
-import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.forEachIn
-import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.ExtraStore
-import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.extension.doubled
-import com.patrykandpatrick.vico.core.common.extension.getRepeating
-import com.patrykandpatrick.vico.core.common.extension.getStart
-import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.extension.withOpacity
+import com.patrykandpatrick.vico.core.common.data.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.doubled
+import com.patrykandpatrick.vico.core.common.getRepeating
+import com.patrykandpatrick.vico.core.common.getStart
+import com.patrykandpatrick.vico.core.common.half
 import com.patrykandpatrick.vico.core.common.inBounds
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shader.TopBottomShader
+import com.patrykandpatrick.vico.core.common.withOpacity
 import kotlin.math.max
 import kotlin.math.min
 
@@ -605,3 +605,51 @@ public open class LineCartesianLayer(
             }
     }
 }
+
+/**
+ * Creates a new [LineCartesianLayer.LineSpec] based on this one, updating select properties.
+ */
+public fun LineSpec.copy(
+    shader: DynamicShader = this.shader,
+    thicknessDp: Float = this.thicknessDp,
+    backgroundShader: DynamicShader? = this.backgroundShader,
+    cap: Paint.Cap = this.cap,
+    point: Component? = this.point,
+    pointSizeDp: Float = this.pointSizeDp,
+    dataLabel: TextComponent? = this.dataLabel,
+    dataLabelVerticalPosition: VerticalPosition = this.dataLabelVerticalPosition,
+    dataLabelValueFormatter: CartesianValueFormatter = this.dataLabelValueFormatter,
+    dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
+    pointConnector: PointConnector = this.pointConnector,
+): LineSpec =
+    LineSpec(
+        shader = shader,
+        thicknessDp = thicknessDp,
+        backgroundShader = backgroundShader,
+        cap = cap,
+        point = point,
+        pointSizeDp = pointSizeDp,
+        dataLabel = dataLabel,
+        dataLabelVerticalPosition = dataLabelVerticalPosition,
+        dataLabelValueFormatter = dataLabelValueFormatter,
+        dataLabelRotationDegrees = dataLabelRotationDegrees,
+        pointConnector = pointConnector,
+    )
+
+internal fun Component.drawPoint(
+    context: CartesianDrawContext,
+    x: Float,
+    y: Float,
+    halfPointSize: Float,
+) {
+    draw(
+        context = context,
+        left = x - halfPointSize,
+        top = y - halfPointSize,
+        right = x + halfPointSize,
+        bottom = y + halfPointSize,
+    )
+}
+
+internal inline val LineSpec.pointSizeDpOrZero: Float
+    get() = if (point != null) pointSizeDp else 0f

@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
+import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel
 
 /**
  * Houses information on a [CandlestickCartesianLayer] candle to be marked.

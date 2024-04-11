@@ -20,8 +20,7 @@ import android.graphics.Path
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.extension.horizontalCubicTo
+import com.patrykandpatrick.vico.core.common.half
 import kotlin.math.abs
 
 /**
@@ -55,4 +54,15 @@ public class DefaultPointConnector(
     private companion object {
         const val CUBIC_Y_MULTIPLIER = 4
     }
+}
+
+private fun Path.horizontalCubicTo(
+    prevX: Float,
+    prevY: Float,
+    x: Float,
+    y: Float,
+    curvature: Float,
+) {
+    val directionMultiplier = if (x >= prevX) 1f else -1f
+    cubicTo(prevX + directionMultiplier * curvature, prevY, x - directionMultiplier * curvature, y, x, y)
 }

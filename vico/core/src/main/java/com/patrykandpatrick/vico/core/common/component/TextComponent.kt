@@ -31,19 +31,18 @@ import com.patrykandpatrick.vico.core.common.Defaults.LABEL_LINE_COUNT
 import com.patrykandpatrick.vico.core.common.Defaults.TEXT_COMPONENT_TEXT_SIZE
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.VerticalPosition
-import com.patrykandpatrick.vico.core.common.extension.copy
-import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.extension.lineHeight
-import com.patrykandpatrick.vico.core.common.extension.piRad
-import com.patrykandpatrick.vico.core.common.extension.rotate
-import com.patrykandpatrick.vico.core.common.extension.translate
+import com.patrykandpatrick.vico.core.common.copy
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.data.getOrSetCached
 import com.patrykandpatrick.vico.core.common.getBounds
-import com.patrykandpatrick.vico.core.common.getOrSetCached
+import com.patrykandpatrick.vico.core.common.half
+import com.patrykandpatrick.vico.core.common.piRad
+import com.patrykandpatrick.vico.core.common.rotate
 import com.patrykandpatrick.vico.core.common.staticLayout
+import com.patrykandpatrick.vico.core.common.translate
 import com.patrykandpatrick.vico.core.common.widestLineWidth
 import kotlin.math.absoluteValue
 import kotlin.math.cos
@@ -556,3 +555,11 @@ public open class TextComponent protected constructor() {
         public inline fun build(block: Builder.() -> Unit = {}): TextComponent = Builder().apply(block).build()
     }
 }
+
+private val fm: Paint.FontMetrics = Paint.FontMetrics()
+
+internal val Paint.lineHeight: Float
+    get() {
+        getFontMetrics(fm)
+        return fm.bottom - fm.top + fm.leading
+    }

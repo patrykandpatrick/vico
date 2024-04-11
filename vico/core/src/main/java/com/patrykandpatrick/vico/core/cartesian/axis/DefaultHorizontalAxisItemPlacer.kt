@@ -18,13 +18,13 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.common.extension.ceil
-import com.patrykandpatrick.vico.core.common.extension.floor
-import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.extension.round
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.common.ceil
+import com.patrykandpatrick.vico.core.common.floor
+import com.patrykandpatrick.vico.core.common.half
+import com.patrykandpatrick.vico.core.common.round
 
 internal class DefaultHorizontalAxisItemPlacer(
     private val spacing: Int,

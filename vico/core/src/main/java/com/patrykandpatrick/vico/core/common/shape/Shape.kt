@@ -23,7 +23,6 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.os.Build
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.extension.setBounds
 
 /**
  * Defines a shape that can be drawn on a canvas.

@@ -22,18 +22,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.vicoTheme
-import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
-import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
-import com.patrykandpatrick.vico.core.cartesian.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerDrawingModel
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer.MergeMode
-import com.patrykandpatrick.vico.core.common.DefaultDrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.Defaults
-import com.patrykandpatrick.vico.core.common.DrawingModelInterpolator
-import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.data.DefaultDrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.shape.Shape
 
 /** Creates and remembers a [ColumnCartesianLayer]. */

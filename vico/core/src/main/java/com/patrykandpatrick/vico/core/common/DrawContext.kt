@@ -20,7 +20,7 @@ import android.graphics.Canvas
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.extension.saveLayer
+import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /**
  * [DrawContext] is an extension of [MeasureContext] that stores a [Canvas] and other properties.

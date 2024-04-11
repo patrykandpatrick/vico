@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.cartesian.marker
 
+import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
 
 /** Houses information on a set of [LineCartesianLayer] points to be marked. */
 public interface LineCartesianLayerMarkerTarget : CartesianMarker.Target {

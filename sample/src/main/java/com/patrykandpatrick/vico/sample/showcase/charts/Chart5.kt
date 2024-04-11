@@ -32,9 +32,9 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.model.columnSeries
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart5Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults

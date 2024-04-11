@@ -23,8 +23,8 @@ import android.widget.OverScroller
 import com.patrykandpatrick.vico.core.cartesian.Scroll
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.views.cartesian.ScrollHandler
-import com.patrykandpatrick.vico.views.common.extension.fling
-import com.patrykandpatrick.vico.views.common.extension.point
+import com.patrykandpatrick.vico.views.common.fling
+import com.patrykandpatrick.vico.views.common.point
 import kotlin.math.abs
 
 internal class MotionEventHandler(

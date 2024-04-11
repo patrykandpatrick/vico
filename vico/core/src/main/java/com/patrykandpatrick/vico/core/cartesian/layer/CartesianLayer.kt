@@ -19,14 +19,14 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.ChartValues
-import com.patrykandpatrick.vico.core.cartesian.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.ChartInsetter
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.common.BoundsAware
-import com.patrykandpatrick.vico.core.common.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /**
  * Visualizes data on a Cartesian plane. [CartesianLayer]s are combined and drawn by [CartesianChart]s.

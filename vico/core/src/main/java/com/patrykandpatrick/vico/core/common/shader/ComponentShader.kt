@@ -22,7 +22,7 @@ import android.graphics.Canvas
 import android.graphics.Shader
 import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.component.Component
-import com.patrykandpatrick.vico.core.common.extension.half
+import com.patrykandpatrick.vico.core.common.half
 
 /**
  * [ComponentShader] creates a [Shader] out of the provided [component].

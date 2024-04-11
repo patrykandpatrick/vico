@@ -26,9 +26,9 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.absoluteRelative
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
+import com.patrykandpatrick.vico.core.cartesian.data.CandlestickCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.model.CandlestickCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
 
 @Preview(widthDp = 350)
 @Composable

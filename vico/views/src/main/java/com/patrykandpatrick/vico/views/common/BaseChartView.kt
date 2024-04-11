@@ -16,6 +16,8 @@
 
 package com.patrykandpatrick.vico.views.common
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.RectF
@@ -29,17 +31,11 @@ import androidx.core.view.isVisible
 import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.common.Animation
-import com.patrykandpatrick.vico.core.common.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.MutableMeasureContext
 import com.patrykandpatrick.vico.core.common.component.ShapeComponent
-import com.patrykandpatrick.vico.core.common.extension.set
-import com.patrykandpatrick.vico.core.common.extension.spToPx
-import com.patrykandpatrick.vico.views.common.extension.defaultColors
-import com.patrykandpatrick.vico.views.common.extension.density
-import com.patrykandpatrick.vico.views.common.extension.isLtr
-import com.patrykandpatrick.vico.views.common.extension.specSize
-import com.patrykandpatrick.vico.views.common.extension.start
-import com.patrykandpatrick.vico.views.common.extension.verticalPadding
+import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.set
+import com.patrykandpatrick.vico.core.common.spToPx
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -244,3 +240,21 @@ public abstract class BaseChartView<Model>
             measureContext?.isLtr = layoutDirection == ViewCompat.LAYOUT_DIRECTION_LTR
         }
     }
+
+private fun ValueAnimator.start(block: (Float) -> Unit) {
+    val updateListener = ValueAnimator.AnimatorUpdateListener { block(it.animatedFraction) }
+    addUpdateListener(updateListener)
+    addListener(
+        object : AnimatorListenerAdapter() {
+            override fun onAnimationCancel(animation: Animator) {
+                removeUpdateListener(updateListener)
+                removeListener(this)
+            }
+
+            override fun onAnimationEnd(animation: Animator) {
+                onAnimationCancel(animation)
+            }
+        },
+    )
+    start()
+}

@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.common
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
+import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 
 /**
  * A [MeasureContext] implementation that facilitates the mutation of some of its properties.

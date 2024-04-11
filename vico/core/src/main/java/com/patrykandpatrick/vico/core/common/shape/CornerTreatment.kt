@@ -18,7 +18,7 @@ package com.patrykandpatrick.vico.core.common.shape
 
 import android.graphics.Path
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.common.extension.piRad
+import com.patrykandpatrick.vico.core.common.piRad
 
 /**
  * Defines a shape corner style.

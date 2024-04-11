@@ -17,7 +17,6 @@
 package com.patrykandpatrick.vico.core.common
 
 import android.graphics.RectF
-import com.patrykandpatrick.vico.core.common.extension.set
 
 /**
  * Defines an abstract component that has some physical bounds.

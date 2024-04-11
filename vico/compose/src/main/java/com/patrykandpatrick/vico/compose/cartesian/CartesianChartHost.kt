@@ -37,27 +37,29 @@ import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.patrykandpatrick.vico.compose.common.chartTouchEvent
+import com.patrykandpatrick.vico.compose.cartesian.data.component1
+import com.patrykandpatrick.vico.compose.cartesian.data.component2
+import com.patrykandpatrick.vico.compose.cartesian.data.component3
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.drawMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.toImmutable
 import com.patrykandpatrick.vico.core.common.Defaults.CHART_HEIGHT
 import com.patrykandpatrick.vico.core.common.Point
 import com.patrykandpatrick.vico.core.common.ValueWrapper
-import com.patrykandpatrick.vico.core.common.extension.set
-import com.patrykandpatrick.vico.core.common.extension.spToPx
 import com.patrykandpatrick.vico.core.common.getValue
+import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.setValue
+import com.patrykandpatrick.vico.core.common.spToPx
 import kotlinx.coroutines.launch
 
 /**

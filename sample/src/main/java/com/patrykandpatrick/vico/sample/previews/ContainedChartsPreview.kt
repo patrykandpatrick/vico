@@ -39,11 +39,11 @@ import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition.Vertical
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition.Vertical.End
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition.Vertical.Start
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.sample.showcase.rememberMarker

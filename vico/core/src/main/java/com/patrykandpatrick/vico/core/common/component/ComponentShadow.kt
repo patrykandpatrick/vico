@@ -18,9 +18,9 @@ package com.patrykandpatrick.vico.core.common.component
 
 import android.graphics.Paint
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.extension.alphaFloat
-import com.patrykandpatrick.vico.core.common.extension.applyElevationOverlayToColor
-import com.patrykandpatrick.vico.core.common.extension.copyColor
+import com.patrykandpatrick.vico.core.common.alphaFloat
+import com.patrykandpatrick.vico.core.common.applyElevationOverlayToColor
+import com.patrykandpatrick.vico.core.common.copyColor
 
 /**
  * A class that stores shadow properties.

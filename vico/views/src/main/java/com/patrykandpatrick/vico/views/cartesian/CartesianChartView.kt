@@ -26,37 +26,36 @@ import android.widget.OverScroller
 import androidx.core.view.ViewCompat
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.ChartValues
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.MutableCartesianMeasureContext
-import com.patrykandpatrick.vico.core.cartesian.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
-import com.patrykandpatrick.vico.core.cartesian.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.Scroll
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
+import com.patrykandpatrick.vico.core.cartesian.data.toImmutable
 import com.patrykandpatrick.vico.core.cartesian.drawMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarkerVisibilityListener
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.toImmutable
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.NEW_PRODUCER_ERROR_MESSAGE
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.extension.spToPx
+import com.patrykandpatrick.vico.core.common.spToPx
 import com.patrykandpatrick.vico.views.R
 import com.patrykandpatrick.vico.views.common.BaseChartView
-import com.patrykandpatrick.vico.views.common.extension.density
-import com.patrykandpatrick.vico.views.common.extension.dpInt
-import com.patrykandpatrick.vico.views.common.extension.isAttachedToWindowCompat
-import com.patrykandpatrick.vico.views.common.extension.isLtr
+import com.patrykandpatrick.vico.views.common.density
+import com.patrykandpatrick.vico.views.common.dpInt
 import com.patrykandpatrick.vico.views.common.gesture.ChartScaleGestureListener
 import com.patrykandpatrick.vico.views.common.gesture.MotionEventHandler
-import com.patrykandpatrick.vico.views.common.gesture.movedXDistance
-import com.patrykandpatrick.vico.views.common.gesture.movedYDistance
+import com.patrykandpatrick.vico.views.common.isAttachedToWindowCompat
+import com.patrykandpatrick.vico.views.common.isLtr
 import com.patrykandpatrick.vico.views.common.theme.ThemeHandler
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlin.math.abs
 import kotlin.properties.Delegates.observable
 import kotlin.properties.ReadWriteProperty
 
@@ -393,3 +392,9 @@ public open class CartesianChartView
             block(chart, model)
         }
     }
+
+internal val MotionEvent.movedXDistance: Float
+    get() = if (historySize > 0) abs(x - getHistoricalX(historySize - 1)) else 0f
+
+internal val MotionEvent.movedYDistance: Float
+    get() = if (historySize > 0) abs(y - getHistoricalY(historySize - 1)) else 0f

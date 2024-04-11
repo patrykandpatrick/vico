@@ -29,8 +29,8 @@ import android.os.Build
 import android.util.LayoutDirection
 import com.patrykandpatrick.vico.core.common.drawContext
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.views.common.extension.density
-import com.patrykandpatrick.vico.views.common.extension.isLtr
+import com.patrykandpatrick.vico.views.common.density
+import com.patrykandpatrick.vico.views.common.isLtr
 
 /**
  * Creates a [Drawable] out of the provided [shape].

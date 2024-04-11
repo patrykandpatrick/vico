@@ -24,7 +24,7 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
 import com.patrykandpatrick.vico.core.cartesian.Scroll
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.sample.previews.annotation.ChartPreview
 import com.patrykandpatrick.vico.sample.previews.resource.PreviewSurface
 import com.patrykandpatrick.vico.sample.previews.resource.mediumLineModel

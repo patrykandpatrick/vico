@@ -20,9 +20,9 @@ import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
-import com.patrykandpatrick.vico.core.common.extension.appendCompat
-import com.patrykandpatrick.vico.core.common.extension.sumOf
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
+import com.patrykandpatrick.vico.core.common.appendCompat
+import com.patrykandpatrick.vico.core.common.sumOf
 import java.text.DecimalFormat
 
 /**

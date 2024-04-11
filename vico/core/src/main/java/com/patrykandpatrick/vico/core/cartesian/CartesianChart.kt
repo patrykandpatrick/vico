@@ -20,23 +20,22 @@ import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisManager
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.ChartValues
+import com.patrykandpatrick.vico.core.cartesian.data.MutableChartValues
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
-import com.patrykandpatrick.vico.core.cartesian.insets.ChartInsetter
-import com.patrykandpatrick.vico.core.cartesian.insets.HorizontalInsets
-import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.cartesian.layer.CandlestickCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.layer.LineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
 import com.patrykandpatrick.vico.core.common.BoundsAware
-import com.patrykandpatrick.vico.core.common.MutableExtraStore
-import com.patrykandpatrick.vico.core.common.extension.inClip
-import com.patrykandpatrick.vico.core.common.extension.set
-import com.patrykandpatrick.vico.core.common.extension.setAll
-import com.patrykandpatrick.vico.core.common.legend.Legend
+import com.patrykandpatrick.vico.core.common.Legend
+import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
+import com.patrykandpatrick.vico.core.common.inClip
+import com.patrykandpatrick.vico.core.common.set
+import com.patrykandpatrick.vico.core.common.setAll
 
 /**
  * A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s.

@@ -22,12 +22,12 @@ import android.graphics.Path
 import android.graphics.Shader
 import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.extension.alpha
-import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.extension.round
-import com.patrykandpatrick.vico.core.common.extension.withOpacity
+import com.patrykandpatrick.vico.core.common.alpha
+import com.patrykandpatrick.vico.core.common.half
+import com.patrykandpatrick.vico.core.common.round
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
+import com.patrykandpatrick.vico.core.common.withOpacity
 import kotlin.properties.Delegates
 
 /**

@@ -20,11 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.decoration.HorizontalLine
-import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
 
 /** Creates and remembers a [HorizontalLine] */
 @Composable

@@ -35,7 +35,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.Defaults.FADING_EDGE_VISIBILITY_THRESHOLD_DP
 import com.patrykandpatrick.vico.core.common.component.LineComponent
-import com.patrykandpatrick.vico.core.common.extension.hasFlag
+import com.patrykandpatrick.vico.core.common.hasFlag
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.views.R

@@ -31,8 +31,8 @@ import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
-import com.patrykandpatrick.vico.core.cartesian.model.lineSeries
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.lineSeries
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.databinding.Chart1Binding
 import com.patrykandpatrick.vico.sample.showcase.UISystem

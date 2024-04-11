@@ -185,3 +185,28 @@ public fun rememberTextComponent(
 /** A [Dp] version of [TextComponent.MinWidth.fixed]. */
 @Stable
 public fun TextComponent.MinWidth.Companion.fixed(value: Dp = 0.dp): TextComponent.MinWidth = fixed(value.value)
+
+/**
+ * Applies a drop shadow to this [ShapeComponent].
+ *
+ * @param radius the blur radius.
+ * @param dx the horizontal offset.
+ * @param dy the vertical offset.
+ * @param color the shadow color.
+ * @param applyElevationOverlay whether to apply an elevation overlay to the [ShapeComponent].
+ */
+@Suppress("UNCHECKED_CAST")
+public fun <T : ShapeComponent> T.setShadow(
+    radius: Dp,
+    dx: Dp = 0.dp,
+    dy: Dp = 0.dp,
+    color: Color = Color(Defaults.SHADOW_COLOR),
+    applyElevationOverlay: Boolean = false,
+): T =
+    setShadow(
+        radius = radius.value,
+        dx = dx.value,
+        dy = dy.value,
+        color = color.toArgb(),
+        applyElevationOverlay = applyElevationOverlay,
+    ) as T

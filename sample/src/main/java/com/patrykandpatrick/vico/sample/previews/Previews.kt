@@ -49,12 +49,12 @@ import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.fromComponent
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
-import com.patrykandpatrick.vico.core.cartesian.AxisValueOverrider
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
+import com.patrykandpatrick.vico.core.cartesian.data.AxisValueOverrider
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
+import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModel
-import com.patrykandpatrick.vico.core.cartesian.model.ColumnCartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Pill

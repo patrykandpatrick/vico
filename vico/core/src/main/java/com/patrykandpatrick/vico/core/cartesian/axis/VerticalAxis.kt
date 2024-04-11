@@ -19,20 +19,20 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.HorizontalDimensions
+import com.patrykandpatrick.vico.core.cartesian.HorizontalInsets
+import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Outside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Center
-import com.patrykandpatrick.vico.core.cartesian.insets.HorizontalInsets
-import com.patrykandpatrick.vico.core.cartesian.insets.Insets
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.extension.getEnd
-import com.patrykandpatrick.vico.core.common.extension.getStart
-import com.patrykandpatrick.vico.core.common.extension.half
-import com.patrykandpatrick.vico.core.common.extension.orZero
-import com.patrykandpatrick.vico.core.common.extension.translate
+import com.patrykandpatrick.vico.core.common.getEnd
+import com.patrykandpatrick.vico.core.common.getStart
+import com.patrykandpatrick.vico.core.common.half
+import com.patrykandpatrick.vico.core.common.orZero
+import com.patrykandpatrick.vico.core.common.translate
 
 private const val TITLE_ABS_ROTATION_DEGREES = 90f
 

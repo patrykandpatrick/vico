@@ -16,8 +16,8 @@
 
 package com.patrykandpatrick.vico.core.model
 
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianLayerModel
-import com.patrykandpatrick.vico.core.cartesian.model.getXDeltaGcd
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianLayerModel
+import com.patrykandpatrick.vico.core.cartesian.data.getXDeltaGcd
 import io.mockk.every
 import io.mockk.mockk
 import org.junit.Test

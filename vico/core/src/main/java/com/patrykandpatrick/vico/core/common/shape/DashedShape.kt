@@ -20,7 +20,7 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.extension.ceil
+import com.patrykandpatrick.vico.core.common.ceil
 
 /**
  * [DashedShape] draws a dashed line by interchangeably drawing the provided [shape] and leaving a gap.

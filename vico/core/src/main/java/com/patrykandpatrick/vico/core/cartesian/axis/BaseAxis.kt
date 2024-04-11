@@ -20,13 +20,13 @@ package com.patrykandpatrick.vico.core.cartesian.axis
 
 import android.graphics.RectF
 import androidx.annotation.RestrictTo
-import com.patrykandpatrick.vico.core.cartesian.CartesianValueFormatter
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.common.Defaults
 import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.component.LineComponent
 import com.patrykandpatrick.vico.core.common.component.TextComponent
-import com.patrykandpatrick.vico.core.common.extension.orZero
-import com.patrykandpatrick.vico.core.common.extension.setAll
+import com.patrykandpatrick.vico.core.common.orZero
+import com.patrykandpatrick.vico.core.common.setAll
 
 /**
  * A basic implementation of [Axis] used throughout the library.

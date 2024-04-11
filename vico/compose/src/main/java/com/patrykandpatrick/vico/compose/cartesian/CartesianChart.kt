@@ -27,7 +27,7 @@ import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.decoration.Decoration
 import com.patrykandpatrick.vico.core.cartesian.layer.CartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.marker.CartesianMarker
-import com.patrykandpatrick.vico.core.common.legend.Legend
+import com.patrykandpatrick.vico.core.common.Legend
 
 /**
  * Creates and remembers a [CartesianChart] with the given [CartesianLayer]s, axes, [Legend], and [FadingEdges]

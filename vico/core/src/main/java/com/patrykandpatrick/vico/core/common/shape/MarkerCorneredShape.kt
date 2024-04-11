@@ -20,9 +20,9 @@ import android.graphics.Paint
 import android.graphics.Path
 import com.patrykandpatrick.vico.core.common.Defaults.MARKER_TICK_SIZE
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.ExtraStore
-import com.patrykandpatrick.vico.core.common.extension.doubled
-import com.patrykandpatrick.vico.core.common.extension.half
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.doubled
+import com.patrykandpatrick.vico.core.common.half
 
 /**
  * [MarkerCorneredShape] is an extension of [CorneredShape] that supports drawing a triangular tick at a given point.

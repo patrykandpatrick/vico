@@ -28,9 +28,9 @@ import com.patrykandpatrick.vico.compose.cartesian.fullWidth
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberCandlestickCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
-import com.patrykandpatrick.vico.core.cartesian.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
-import com.patrykandpatrick.vico.core.cartesian.model.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
+import com.patrykandpatrick.vico.core.cartesian.data.RandomCartesianModelGenerator
 import com.patrykandpatrick.vico.databinding.Chart10Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
 import com.patrykandpatrick.vico.sample.showcase.UISystem

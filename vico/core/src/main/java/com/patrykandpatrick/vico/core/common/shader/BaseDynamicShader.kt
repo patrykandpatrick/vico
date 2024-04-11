@@ -21,9 +21,9 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.common.DrawContext
-import com.patrykandpatrick.vico.core.common.ExtraStore
 import com.patrykandpatrick.vico.core.common.Point
-import com.patrykandpatrick.vico.core.common.getOrSet
+import com.patrykandpatrick.vico.core.common.data.ExtraStore
+import com.patrykandpatrick.vico.core.common.data.getOrSet
 import kotlin.math.roundToInt
 
 /** A base [DynamicShader] implementation. This overrides [getColorAt]. */
