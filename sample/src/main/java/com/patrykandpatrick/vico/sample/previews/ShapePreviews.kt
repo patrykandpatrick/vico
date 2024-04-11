@@ -42,8 +42,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.res.ResourcesCompat
 import com.patrykandpatrick.vico.R
-import com.patrykandpatrick.vico.compose.common.shape.composeShape
 import com.patrykandpatrick.vico.compose.common.shape.dashed
+import com.patrykandpatrick.vico.compose.common.shape.toComposeShape
 import com.patrykandpatrick.vico.core.common.drawContext
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.Shape
@@ -93,7 +93,7 @@ private fun PreviewShape(shape: Shape) {
                         .fillMaxWidth()
                         .background(
                             color = Color(black),
-                            shape = shape.composeShape(),
+                            shape = shape.toComposeShape(),
                         ),
             )
         }

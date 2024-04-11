@@ -122,7 +122,7 @@ public fun androidx.compose.ui.graphics.Shape.toVicoShape(): Shape =
 /**
  * Converts this [CorneredShape] to an instance of [androidx.compose.ui.graphics.Shape].
  */
-public fun CorneredShape.composeShape(): androidx.compose.ui.graphics.Shape =
+public fun CorneredShape.toComposeShape(): androidx.compose.ui.graphics.Shape =
     object : androidx.compose.ui.graphics.Shape {
         override fun createOutline(
             size: Size,
