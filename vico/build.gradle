@@ -26,7 +26,6 @@ subprojects {
     version = library.version_name
     apply plugin: "org.jetbrains.dokka"
     tasks.withType(DokkaTaskPartial.class).configureEach {
-        suppressInheritedMembers.set true
         dokkaSourceSets.configureEach { includes.from "Module.md" }
     }
 }
