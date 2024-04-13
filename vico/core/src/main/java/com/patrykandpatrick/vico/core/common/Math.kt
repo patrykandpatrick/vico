@@ -53,7 +53,9 @@ internal fun Float.gcdWith(other: Float): Float =
 internal fun <T : Comparable<T>> T.isBoundOf(range: ClosedFloatingPointRange<T>) =
     this == range.start || this == range.endInclusive
 
-internal fun ClosedFloatingPointRange<Float>.random(): Float = start + (endInclusive - start) * Random.nextFloat()
+internal val ClosedFloatingPointRange<Float>.length get() = endInclusive - start
+
+internal fun ClosedFloatingPointRange<Float>.random() = start + Random.nextFloat() * length
 
 internal fun Int.getDivisors(includeDividend: Boolean = true) =
     buildList {

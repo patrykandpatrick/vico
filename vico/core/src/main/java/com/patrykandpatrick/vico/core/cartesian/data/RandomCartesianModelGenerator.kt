@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.core.cartesian.data
 
 import androidx.annotation.RestrictTo
+import com.patrykandpatrick.vico.core.common.length
 import com.patrykandpatrick.vico.core.common.random
 import kotlin.random.Random
 
@@ -48,39 +49,45 @@ public object RandomCartesianModelGenerator {
         openingClosingRange: ClosedFloatingPointRange<Float> = defaultOpeningClosingRange,
         lowHighRange: ClosedFloatingPointRange<Float> = defaultLowHighRange,
     ): CandlestickCartesianLayerModel.Partial {
-        var previousOpeningPrice: Float? = null
         var previousClosingPrice: Float? = null
         val opening = mutableListOf<Float>()
         val closing = mutableListOf<Float>()
         val low = mutableListOf<Float>()
         val high = mutableListOf<Float>()
+        val maxOpeningPriceDelta = .2f * openingClosingRange.length
+        val changeOverrideThreshold = .2f * openingClosingRange.length
+        val maxClosingPriceDelta = .8f * openingClosingRange.length
         for (i in x) {
-            val isBullish = Random.nextBoolean()
-            val openingPrice: Float
-            val closingPrice: Float
-            if (isBullish) {
-                openingPrice =
-                    if (previousOpeningPrice != null && previousClosingPrice != null) {
-                        floatArrayOf(previousOpeningPrice, previousClosingPrice).random().coerceIn(openingClosingRange)
+            val openingPrice =
+                if (previousClosingPrice != null) {
+                    previousClosingPrice +
+                        Random.nextFloat() *
+                        if (Random.nextBoolean()) {
+                            (openingClosingRange.endInclusive - previousClosingPrice).coerceAtMost(maxOpeningPriceDelta)
+                        } else {
+                            (openingClosingRange.start - previousClosingPrice).coerceAtLeast(-maxOpeningPriceDelta)
+                        }
+                } else {
+                    openingClosingRange.random()
+                }
+            val isBullish =
+                when {
+                    openingPrice - openingClosingRange.start < changeOverrideThreshold -> true
+                    openingClosingRange.endInclusive - openingPrice < changeOverrideThreshold -> false
+                    else -> Random.nextBoolean()
+                }
+            val closingPrice =
+                openingPrice +
+                    Random.nextFloat() *
+                    if (isBullish) {
+                        (openingClosingRange.endInclusive - openingPrice).coerceAtMost(maxClosingPriceDelta)
                     } else {
-                        y.random().coerceIn(openingClosingRange)
+                        (openingClosingRange.start - openingPrice).coerceAtLeast(-maxClosingPriceDelta)
                     }
-                closingPrice = (openingPrice + lowHighRange.random())
-            } else {
-                closingPrice =
-                    if (previousOpeningPrice != null && previousClosingPrice != null) {
-                        floatArrayOf(previousOpeningPrice, previousClosingPrice).random().coerceIn(openingClosingRange)
-                    } else {
-                        y.random().coerceIn(openingClosingRange)
-                    }
-                openingPrice = (closingPrice + lowHighRange.random())
-            }
             opening += openingPrice
             closing += closingPrice
             low += minOf(openingPrice, closingPrice) - lowHighRange.random()
             high += maxOf(openingPrice, closingPrice) + lowHighRange.random()
-
-            previousOpeningPrice = openingPrice
             previousClosingPrice = closingPrice
         }
         return CandlestickCartesianLayerModel.partial(x.toList(), opening, closing, low, high)
