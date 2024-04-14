@@ -14,23 +14,26 @@
  * limitations under the License.
  */
 
-package com.patrykandpatrick.vico.compose.common
+package com.patrykandpatrick.vico.compose.m2.common
 
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import com.patrykandpatrick.vico.compose.common.VicoTheme
+import com.patrykandpatrick.vico.compose.common.getDefaultColors
 
-/** Creates and remembers a [VicoTheme] based on [MaterialTheme.colorScheme]. */
+/** Creates and remembers a [VicoTheme] based on [MaterialTheme.colors]. */
 @Composable
-public fun rememberM3VicoTheme(
+public fun rememberM2VicoTheme(
     candlestickCartesianLayerColors: VicoTheme.CandlestickCartesianLayerColors =
         VicoTheme.CandlestickCartesianLayerColors.fromDefaultColors(getDefaultColors()),
-    columnCartesianLayerColors: List<Color> = MaterialTheme.colorScheme.run { listOf(primary, secondary, tertiary) },
+    columnCartesianLayerColors: List<Color> = listOf(MaterialTheme.colors.primary, MaterialTheme.colors.secondary),
     lineCartesianLayerColors: List<Color> = columnCartesianLayerColors,
-    elevationOverlayColor: Color = MaterialTheme.colorScheme.primary,
-    lineColor: Color = MaterialTheme.colorScheme.outline,
-    textColor: Color = MaterialTheme.colorScheme.onBackground,
+    elevationOverlayColor: Color = if (isSystemInDarkTheme()) MaterialTheme.colors.onBackground else Color.Transparent,
+    lineColor: Color = MaterialTheme.colors.onBackground.copy(alpha = .2f),
+    textColor: Color = MaterialTheme.colors.onBackground,
 ): VicoTheme =
     remember(
         candlestickCartesianLayerColors,
