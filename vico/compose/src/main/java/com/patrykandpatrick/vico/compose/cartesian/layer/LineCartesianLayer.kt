@@ -89,7 +89,7 @@ public fun rememberLineCartesianLayer(
  * @param pointSize the size of the [point].
  * @param dataLabel an optional [TextComponent] to use for data labels.
  * @param dataLabelVerticalPosition the vertical position of data labels relative to the line.
- * @param dataLabelValueFormatter the [ValueFormatter] to use for data labels.
+ * @param dataLabelValueFormatter the [CartesianValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
  * @param pointConnector the [LineSpec.PointConnector] for the line.
  */
