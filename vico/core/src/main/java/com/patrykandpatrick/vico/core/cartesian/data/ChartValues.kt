@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.core.cartesian.data
 
+import com.patrykandpatrick.vico.core.cartesian.CartesianChart
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 
 /**
