@@ -19,7 +19,6 @@
 package com.patrykandpatrick.vico.compose.common.shader
 
 import android.graphics.Shader
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
@@ -38,7 +37,7 @@ import com.patrykandpatrick.vico.core.common.shader.LinearGradientShader
  * @property tileXMode the horizontal tiling mode for the [component].
  * @property tileYMode the vertical tiling mode for the [component].
  */
-public fun DynamicShader.Companion.fromComponent(
+public fun DynamicShader.Companion.component(
     component: Component,
     componentSize: Dp,
     checkeredArrangement: Boolean = true,
@@ -52,13 +51,6 @@ public fun DynamicShader.Companion.fromComponent(
         tileXMode = tileXMode,
         tileYMode = tileYMode,
     )
-
-/**
- * Creates a [BrushShader] using the given [Brush].
- *
- * @see BrushShader
- */
-public fun DynamicShader.Companion.fromBrush(brush: Brush): BrushShader = BrushShader(brush)
 
 /**
  * Creates a [ColorShader].

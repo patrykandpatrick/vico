@@ -46,7 +46,7 @@ import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
 import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.compose.common.shader.fromComponent
+import com.patrykandpatrick.vico.compose.common.shader.component
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.toVicoShape
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
@@ -131,7 +131,7 @@ fun LineChartCard(): Unit =
                                     point = null,
                                     shader = DynamicShader.color(colors.primary),
                                     backgroundShader =
-                                        DynamicShader.fromComponent(
+                                        DynamicShader.component(
                                             componentSize = 4.dp,
                                             component =
                                                 rememberShapeComponent(

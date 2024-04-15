@@ -73,7 +73,7 @@ public interface DynamicShader {
         /**
          * Creates a [DynamicShader] out of the given [bitmap].
          */
-        public fun fromBitmap(
+        public fun bitmap(
             bitmap: Bitmap,
             tileXMode: Shader.TileMode = Shader.TileMode.REPEAT,
             tileYMode: Shader.TileMode = tileXMode,
@@ -92,7 +92,7 @@ public interface DynamicShader {
          * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via [mode].
          */
         @RequiresApi(Build.VERSION_CODES.Q)
-        public fun composeShader(
+        public fun compose(
             first: DynamicShader,
             second: DynamicShader,
             mode: BlendMode,
@@ -114,7 +114,7 @@ public interface DynamicShader {
         /**
          * Creates a [ComposeShader] out of two [DynamicShader]s, combining [first] and [second] via [mode].
          */
-        public fun composeShader(
+        public fun compose(
             first: DynamicShader,
             second: DynamicShader,
             mode: PorterDuff.Mode,

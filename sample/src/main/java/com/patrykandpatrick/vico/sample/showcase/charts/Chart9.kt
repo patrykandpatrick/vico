@@ -41,7 +41,7 @@ import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.compose.common.shader.fromComponent
+import com.patrykandpatrick.vico.compose.common.shader.component
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
 import com.patrykandpatrick.vico.compose.common.shape.dashed
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
@@ -113,8 +113,8 @@ private fun ComposeChart9(
                                     ),
                                 backgroundShader =
                                     TopBottomShader(
-                                        DynamicShader.composeShader(
-                                            DynamicShader.fromComponent(
+                                        DynamicShader.compose(
+                                            DynamicShader.component(
                                                 componentSize = 6.dp,
                                                 component =
                                                     rememberShapeComponent(
@@ -128,8 +128,8 @@ private fun ComposeChart9(
                                             ),
                                             PorterDuff.Mode.DST_IN,
                                         ),
-                                        DynamicShader.composeShader(
-                                            DynamicShader.fromComponent(
+                                        DynamicShader.compose(
+                                            DynamicShader.component(
                                                 componentSize = 5.dp,
                                                 component =
                                                     rememberShapeComponent(
@@ -223,8 +223,8 @@ private fun ViewChart9(
                                 ),
                             backgroundShader =
                                 TopBottomShader(
-                                    DynamicShader.composeShader(
-                                        DynamicShader.fromComponent(
+                                    DynamicShader.compose(
+                                        DynamicShader.component(
                                             componentSize = 6.dp,
                                             component =
                                                 ShapeComponent(
@@ -236,8 +236,8 @@ private fun ViewChart9(
                                         DynamicShader.verticalGradient(arrayOf(Color.Black, Color.Transparent)),
                                         PorterDuff.Mode.DST_IN,
                                     ),
-                                    DynamicShader.composeShader(
-                                        DynamicShader.fromComponent(
+                                    DynamicShader.compose(
+                                        DynamicShader.component(
                                             componentSize = 5.dp,
                                             component =
                                                 ShapeComponent(

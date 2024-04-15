@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.patrykandpatrick.vico.compose.common.shader.BrushShader
 import com.patrykandpatrick.vico.compose.common.shader.color
-import com.patrykandpatrick.vico.compose.common.shader.fromBrush
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.DefaultPointConnector
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
@@ -140,7 +140,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
         is ColorShader ->
             TopBottomShader(
                 topShader =
-                    DynamicShader.fromBrush(
+                    BrushShader(
                         brush =
                             Brush.verticalGradient(
                                 listOf(
@@ -150,7 +150,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
                             ),
                     ),
                 bottomShader =
-                    DynamicShader.fromBrush(
+                    BrushShader(
                         brush =
                             Brush.verticalGradient(
                                 listOf(
@@ -167,7 +167,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
             if (topShader is ColorShader && bottomShader is ColorShader) {
                 TopBottomShader(
                     topShader =
-                        DynamicShader.fromBrush(
+                        BrushShader(
                             brush =
                                 Brush.verticalGradient(
                                     listOf(
@@ -177,7 +177,7 @@ private fun DynamicShader.getDefaultBackgroundShader(): DynamicShader? =
                                 ),
                         ),
                     bottomShader =
-                        DynamicShader.fromBrush(
+                        BrushShader(
                             brush =
                                 Brush.verticalGradient(
                                     listOf(
