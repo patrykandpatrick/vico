@@ -28,14 +28,14 @@ import android.graphics.RectF
  * @param spacingDp defines the horizontal spacing between adjacent [LegendItem]s.
  * @param padding defines the padding of the content.
  */
-public open class HorizontalLegend(
+public open class HorizontalLegend<M : MeasureContext, D : DrawContext>(
     public var items: Collection<LegendItem>,
     public var iconSizeDp: Float,
     public var iconPaddingDp: Float,
     public var lineSpacingDp: Float = 0f,
     public var spacingDp: Float = 0f,
     public val padding: Dimensions = Dimensions.Empty,
-) : Legend {
+) : Legend<M, D> {
     private val heights = mutableListOf<Float>()
 
     private val lines = mutableListOf<MutableList<LegendItem>>(mutableListOf())
@@ -43,7 +43,7 @@ public open class HorizontalLegend(
     override val bounds: RectF = RectF()
 
     override fun getHeight(
-        context: MeasureContext,
+        context: M,
         availableWidth: Float,
     ): Float =
         with(context) {
@@ -66,7 +66,7 @@ public open class HorizontalLegend(
         }
 
     override fun draw(
-        context: DrawContext,
+        context: D,
         chartBounds: RectF,
     ): Unit =
         with(context) {

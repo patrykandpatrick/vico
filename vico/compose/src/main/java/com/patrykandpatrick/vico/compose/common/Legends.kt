@@ -21,9 +21,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.core.common.Dimensions
+import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.HorizontalLegend
 import com.patrykandpatrick.vico.core.common.Legend
 import com.patrykandpatrick.vico.core.common.LegendItem
+import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.VerticalLegend
 import com.patrykandpatrick.vico.core.common.component.Component
 import com.patrykandpatrick.vico.core.common.component.TextComponent
@@ -38,13 +40,13 @@ import com.patrykandpatrick.vico.core.common.component.TextComponent
  * @param padding defines the padding of the content.
  */
 @Composable
-public fun rememberVerticalLegend(
+public fun <M : MeasureContext, D : DrawContext> rememberVerticalLegend(
     items: Collection<LegendItem>,
     iconSize: Dp,
     iconPadding: Dp,
     spacing: Dp = 0.dp,
     padding: Dimensions = Dimensions.Empty,
-): VerticalLegend =
+): VerticalLegend<M, D> =
     remember(items, iconSize, iconPadding, spacing, padding) {
         VerticalLegend(
             items = items,
@@ -87,14 +89,14 @@ public fun rememberLegendItem(
  * @param padding defines the padding of the content.
  */
 @Composable
-public fun rememberHorizontalLegend(
+public fun <M : MeasureContext, D : DrawContext> rememberHorizontalLegend(
     items: Collection<LegendItem>,
     iconSize: Dp,
     iconPadding: Dp,
     lineSpacing: Dp = 0.dp,
     spacing: Dp = 0.dp,
     padding: Dimensions = Dimensions.Empty,
-): HorizontalLegend =
+): HorizontalLegend<M, D> =
     remember(items, iconSize, iconPadding, lineSpacing, spacing, padding) {
         HorizontalLegend(
             items = items,

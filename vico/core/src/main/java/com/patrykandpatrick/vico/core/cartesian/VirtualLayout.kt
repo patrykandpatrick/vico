@@ -46,7 +46,7 @@ internal class VirtualLayout(
         context: CartesianMeasureContext,
         contentBounds: RectF,
         chart: CartesianChart,
-        legend: Legend?,
+        legend: Legend<CartesianMeasureContext, *>?,
         horizontalDimensions: HorizontalDimensions,
         vararg chartInsetter: ChartInsetter?,
     ): RectF =

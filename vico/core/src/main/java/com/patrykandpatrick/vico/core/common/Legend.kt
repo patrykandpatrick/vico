@@ -21,12 +21,12 @@ import android.graphics.RectF
 /**
  * Defines the functions required by the library to draw a chart legend.
  */
-public interface Legend : BoundsAware {
+public interface Legend<M : MeasureContext, D : DrawContext> : BoundsAware {
     /**
      * Returns the height of the legend.
      */
     public fun getHeight(
-        context: MeasureContext,
+        context: M,
         availableWidth: Float,
     ): Float
 
@@ -34,7 +34,7 @@ public interface Legend : BoundsAware {
      * Draws the legend.
      */
     public fun draw(
-        context: DrawContext,
+        context: D,
         chartBounds: RectF,
     )
 }

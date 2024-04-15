@@ -27,19 +27,19 @@ import android.graphics.RectF
  * @param spacingDp defines the vertical spacing between each [LegendItem].
  * @param padding defines the padding of the content.
  */
-public open class VerticalLegend(
+public open class VerticalLegend<M : MeasureContext, D : DrawContext>(
     public var items: Collection<LegendItem>,
     public var iconSizeDp: Float,
     public var iconPaddingDp: Float,
     public var spacingDp: Float = 0f,
     public val padding: Dimensions = Dimensions.Empty,
-) : Legend {
+) : Legend<M, D> {
     private val heights: HashMap<LegendItem, Float> = HashMap()
 
     override val bounds: RectF = RectF()
 
     override fun getHeight(
-        context: MeasureContext,
+        context: M,
         availableWidth: Float,
     ): Float =
         with(context) {
@@ -53,7 +53,7 @@ public open class VerticalLegend(
         }
 
     override fun draw(
-        context: DrawContext,
+        context: D,
         chartBounds: RectF,
     ): Unit =
         with(context) {

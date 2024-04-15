@@ -45,7 +45,7 @@ import com.patrykandpatrick.vico.core.common.setAll
  */
 public open class CartesianChart(
     layers: List<CartesianLayer<*>>,
-    public var legend: Legend? = null,
+    public var legend: Legend<CartesianMeasureContext, CartesianDrawContext>? = null,
     public var fadingEdges: FadingEdges? = null,
 ) : BoundsAware, ChartInsetter {
     private val decorations = mutableListOf<Decoration>()
@@ -141,8 +141,11 @@ public open class CartesianChart(
 
     override val bounds: RectF = RectF()
 
-    public constructor(vararg layers: CartesianLayer<*>, legend: Legend? = null, fadingEdges: FadingEdges? = null) :
-        this(layers.toList(), legend, fadingEdges)
+    public constructor(
+        vararg layers: CartesianLayer<*>,
+        legend: Legend<CartesianMeasureContext, CartesianDrawContext>? = null,
+        fadingEdges: FadingEdges? = null,
+    ) : this(layers.toList(), legend, fadingEdges)
 
     override fun setBounds(
         left: Number,

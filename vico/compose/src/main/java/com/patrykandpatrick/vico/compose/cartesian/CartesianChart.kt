@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.core.cartesian.CartesianChart
+import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
+import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
 import com.patrykandpatrick.vico.core.cartesian.FadingEdges
 import com.patrykandpatrick.vico.core.cartesian.axis.Axis
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
@@ -43,7 +45,7 @@ public fun rememberCartesianChart(
     topAxis: Axis<AxisPosition.Horizontal.Top>? = null,
     endAxis: Axis<AxisPosition.Vertical.End>? = null,
     bottomAxis: Axis<AxisPosition.Horizontal.Bottom>? = null,
-    legend: Legend? = null,
+    legend: Legend<CartesianMeasureContext, CartesianDrawContext>? = null,
     fadingEdges: FadingEdges? = null,
     decorations: List<Decoration>? = null,
     persistentMarkers: Map<Float, CartesianMarker>? = null,
