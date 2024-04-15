@@ -41,10 +41,10 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesian
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineSpec
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.color
 import com.patrykandpatrick.vico.compose.common.shader.component
 import com.patrykandpatrick.vico.compose.common.shader.verticalGradient
@@ -55,6 +55,7 @@ import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.data.LineCartesianLayerModel
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Pill
@@ -102,7 +103,7 @@ fun ColumnChartCard(): Unit =
                                                     ).toVicoShape(),
                                                 color = colors.primary.copy(alpha = 0.1f),
                                             ),
-                                        padding = Dimensions(end = 8.dp, start = 4.dp),
+                                        padding = Dimensions.of(end = 8.dp, start = 4.dp),
                                     ),
                                 axis = null,
                                 tick = null,
@@ -137,7 +138,7 @@ fun LineChartCard(): Unit =
                                                 rememberShapeComponent(
                                                     shape = Pill,
                                                     color = colors.primary,
-                                                    margins = Dimensions(0.5.dp),
+                                                    margins = Dimensions.of(0.5.dp),
                                                 ),
                                         ),
                                 ),
@@ -151,7 +152,7 @@ fun LineChartCard(): Unit =
                                         color = colors.onSurface,
                                         textSize = 10.sp,
                                         background = rememberShapeComponent(shape = Rectangle, color = Color.LightGray),
-                                        padding = Dimensions(horizontal = 4.dp, vertical = 2.dp),
+                                        padding = Dimensions.of(horizontal = 4.dp, vertical = 2.dp),
                                     ),
                                 axis = null,
                                 tick = null,

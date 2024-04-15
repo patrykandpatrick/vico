@@ -25,42 +25,24 @@ import com.patrykandpatrick.vico.core.common.Dimensions
  * Creates a [Dimensions] instance with a common value for each coordinate.
  */
 @Stable
-public fun Dimensions(all: Dp): Dimensions =
-    Dimensions(
-        start = all,
-        top = all,
-        end = all,
-        bottom = all,
-    )
+public fun Dimensions.Companion.of(all: Dp): Dimensions = Dimensions(all.value)
 
 /**
  * Creates a [Dimensions] instance using the provided measurements.
  */
 @Stable
-public fun Dimensions(
+public fun Dimensions.Companion.of(
     horizontal: Dp = 0.dp,
     vertical: Dp = 0.dp,
-): Dimensions =
-    Dimensions(
-        startDp = horizontal.value,
-        topDp = vertical.value,
-        endDp = horizontal.value,
-        bottomDp = vertical.value,
-    )
+): Dimensions = Dimensions(horizontal.value, vertical.value)
 
 /**
  * Creates a [Dimensions] instance using the provided measurements.
  */
 @Stable
-public fun Dimensions(
+public fun Dimensions.Companion.of(
     start: Dp = 0.dp,
     top: Dp = 0.dp,
     end: Dp = 0.dp,
     bottom: Dp = 0.dp,
-): Dimensions =
-    Dimensions(
-        startDp = start.value,
-        topDp = top.value,
-        endDp = end.value,
-        bottomDp = bottom.value,
-    )
+): Dimensions = Dimensions(start.value, top.value, end.value, bottom.value)

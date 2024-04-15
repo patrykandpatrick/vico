@@ -28,11 +28,12 @@ import com.patrykandpatrick.vico.compose.cartesian.axis.rememberEndAxis
 import com.patrykandpatrick.vico.compose.cartesian.axis.rememberStartAxis
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.shape.Corner
 import com.patrykandpatrick.vico.core.common.shape.CorneredShape
 import com.patrykandpatrick.vico.core.common.shape.CutCornerTreatment
@@ -66,12 +67,12 @@ fun HorizontalAxisTextInside() {
                     strokeWidth = 1.dp,
                 ),
             padding =
-                Dimensions(
+                Dimensions.of(
                     horizontal = 2.dp,
                     vertical = 8.dp,
                 ),
             margins =
-                Dimensions(
+                Dimensions.of(
                     horizontal = 4.dp,
                     vertical = 4.dp,
                 ),
@@ -108,12 +109,12 @@ fun HorizontalAxisTextInsideAndBottomAxis() {
                     color = Color.LightGray,
                 ),
             padding =
-                Dimensions(
+                Dimensions.of(
                     horizontal = 2.dp,
                     vertical = 8.dp,
                 ),
             margins =
-                Dimensions(
+                Dimensions.of(
                     horizontal = 4.dp,
                     vertical = 4.dp,
                 ),

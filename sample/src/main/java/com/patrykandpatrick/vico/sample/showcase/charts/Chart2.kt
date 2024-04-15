@@ -31,10 +31,10 @@ import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontal
 import com.patrykandpatrick.vico.compose.cartesian.fullWidth
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
-import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.core.cartesian.HorizontalLayout
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.cartesian.axis.BaseAxis
@@ -146,11 +146,11 @@ private fun rememberComposeHorizontalLine(): HorizontalLine {
             rememberTextComponent(
                 background = rememberShapeComponent(Shape.Pill, color),
                 padding =
-                    Dimensions(
+                    Dimensions.of(
                         HORIZONTAL_LINE_LABEL_HORIZONTAL_PADDING_DP.dp,
                         HORIZONTAL_LINE_LABEL_VERTICAL_PADDING_DP.dp,
                     ),
-                margins = Dimensions(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
+                margins = Dimensions.of(HORIZONTAL_LINE_LABEL_MARGIN_DP.dp),
                 typeface = Typeface.MONOSPACE,
             ),
     )

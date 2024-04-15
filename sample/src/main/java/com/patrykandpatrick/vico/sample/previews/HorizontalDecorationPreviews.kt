@@ -34,15 +34,16 @@ import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontal
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoScrollState
-import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.ProvideVicoTheme
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.compose.common.shader.toDynamicShader
 import com.patrykandpatrick.vico.compose.common.vicoTheme
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModel
 import com.patrykandpatrick.vico.core.cartesian.data.ColumnCartesianLayerModel
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.VerticalPosition
 import com.patrykandpatrick.vico.core.common.shader.ComponentShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
@@ -91,7 +92,7 @@ fun ThresholdLine() {
                                 labelComponent =
                                     rememberTextComponent(
                                         Color.Black,
-                                        padding = Dimensions(horizontal = 8.dp),
+                                        padding = Dimensions.of(horizontal = 8.dp),
                                     ),
                             ),
                         ),
@@ -130,13 +131,13 @@ fun ThresholdLineWithCustomText() {
                                                 color = Color.Black,
                                             ),
                                         padding =
-                                            Dimensions(
+                                            Dimensions.of(
                                                 start = 8.dp,
                                                 top = 2.dp,
                                                 end = 8.dp,
                                                 bottom = 4.dp,
                                             ),
-                                        margins = Dimensions(horizontal = 4.dp),
+                                        margins = Dimensions.of(horizontal = 4.dp),
                                     ),
                                 label = { "Horizontal line 1 📐" },
                                 verticalLabelPosition = VerticalPosition.Bottom,
@@ -158,13 +159,13 @@ fun ThresholdLineWithCustomText() {
                                                 color = Color.DarkGray,
                                             ),
                                         padding =
-                                            Dimensions(
+                                            Dimensions.of(
                                                 start = 8.dp,
                                                 top = 4.dp,
                                                 end = 8.dp,
                                                 bottom = 2.dp,
                                             ),
-                                        margins = Dimensions(horizontal = 4.dp),
+                                        margins = Dimensions.of(horizontal = 4.dp),
                                     ),
                                 label = { "Horizontal line 2 📐" },
                             ),
@@ -195,7 +196,7 @@ fun RangedThresholdLine() {
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.Black,
-                                        padding = Dimensions(horizontal = 8.dp),
+                                        padding = Dimensions.of(horizontal = 8.dp),
                                     ),
                             ),
                         ),
@@ -236,7 +237,7 @@ fun RangedThresholdLineWithBrushShader() {
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.Black,
-                                        padding = Dimensions(horizontal = 8.dp),
+                                        padding = Dimensions.of(horizontal = 8.dp),
                                     ),
                             ),
                         ),
@@ -276,7 +277,7 @@ fun RangedThresholdLineWithComponentShader() {
                                 labelComponent =
                                     rememberTextComponent(
                                         color = Color.Black,
-                                        padding = Dimensions(horizontal = 8.dp),
+                                        padding = Dimensions.of(horizontal = 8.dp),
                                     ),
                             ),
                         ),

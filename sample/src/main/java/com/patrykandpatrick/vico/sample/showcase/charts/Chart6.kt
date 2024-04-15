@@ -31,16 +31,17 @@ import com.patrykandpatrick.vico.compose.cartesian.decoration.rememberHorizontal
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberColumnCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.cartesian.rememberVicoZoomState
-import com.patrykandpatrick.vico.compose.common.Dimensions
 import com.patrykandpatrick.vico.compose.common.component.rememberLineComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberShapeComponent
 import com.patrykandpatrick.vico.compose.common.component.rememberTextComponent
+import com.patrykandpatrick.vico.compose.common.of
 import com.patrykandpatrick.vico.core.cartesian.axis.AxisPosition
 import com.patrykandpatrick.vico.core.cartesian.axis.HorizontalAxis
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianChartModelProducer
 import com.patrykandpatrick.vico.core.cartesian.data.CartesianValueFormatter
 import com.patrykandpatrick.vico.core.cartesian.data.columnSeries
 import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
+import com.patrykandpatrick.vico.core.common.Dimensions
 import com.patrykandpatrick.vico.core.common.shape.Shape
 import com.patrykandpatrick.vico.databinding.Chart6Binding
 import com.patrykandpatrick.vico.sample.showcase.Defaults
@@ -140,8 +141,8 @@ private fun rememberHorizontalBox() =
             rememberTextComponent(
                 color = Color.Black,
                 background = rememberShapeComponent(Shape.Rectangle, horizontalBoxColor),
-                padding = Dimensions(8.dp, 2.dp),
-                margins = Dimensions(4.dp),
+                padding = Dimensions.of(8.dp, 2.dp),
+                margins = Dimensions.of(4.dp),
                 typeface = Typeface.MONOSPACE,
             ),
     )
