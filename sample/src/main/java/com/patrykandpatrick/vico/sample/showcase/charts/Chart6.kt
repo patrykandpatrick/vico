@@ -139,7 +139,7 @@ private fun rememberHorizontalBox() =
         labelComponent =
             rememberTextComponent(
                 color = Color.Black,
-                background = rememberShapeComponent(Shape.Rect, horizontalBoxColor),
+                background = rememberShapeComponent(Shape.Rectangle, horizontalBoxColor),
                 padding = Dimensions(8.dp, 2.dp),
                 margins = Dimensions(4.dp),
                 typeface = Typeface.MONOSPACE,

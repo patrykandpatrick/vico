@@ -58,7 +58,7 @@ import com.patrykandpatrick.vico.core.cartesian.layer.ColumnCartesianLayer
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.DashedShape
 import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Pill
-import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rect
+import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rectangle
 import com.patrykandpatrick.vico.sample.VicoTheme
 
 private val chartModifier = Modifier.height(100.dp)
@@ -150,7 +150,7 @@ fun LineChartCard(): Unit =
                                     rememberTextComponent(
                                         color = colors.onSurface,
                                         textSize = 10.sp,
-                                        background = rememberShapeComponent(shape = Rect, color = Color.LightGray),
+                                        background = rememberShapeComponent(shape = Rectangle, color = Color.LightGray),
                                         padding = Dimensions(horizontal = 4.dp, vertical = 2.dp),
                                     ),
                                 axis = null,

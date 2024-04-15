@@ -375,7 +375,7 @@ public fun LineComponent.asWick(): LineComponent =
         color = if (color == Color.TRANSPARENT) strokeColor else color,
         thicknessDp = Defaults.WICK_DEFAULT_WIDTH_DP,
         strokeWidthDp = 0f,
-        shape = Shape.Rect,
+        shape = Shape.Rectangle,
     )
 
 /** Switches between three [Candle]s based on [CandlestickCartesianLayerModel.Entry.absoluteChange]. */

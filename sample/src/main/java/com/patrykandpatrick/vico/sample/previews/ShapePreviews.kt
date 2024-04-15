@@ -103,7 +103,7 @@ private fun PreviewShape(shape: Shape) {
 @Composable
 @Preview
 public fun PreviewRectShape() {
-    PreviewShape(shape = Shape.Rect)
+    PreviewShape(shape = Shape.Rectangle)
 }
 
 @Composable

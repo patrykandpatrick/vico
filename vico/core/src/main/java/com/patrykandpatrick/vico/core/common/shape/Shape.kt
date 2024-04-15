@@ -53,7 +53,7 @@ public interface Shape {
         /**
          * A rectangle with sharp corners.
          */
-        public val Rect: Shape =
+        public val Rectangle: Shape =
             object : Shape {
                 override fun drawShape(
                     context: DrawContext,
@@ -187,7 +187,7 @@ public interface Shape {
             drawable: Drawable,
             tintDrawable: Boolean = true,
             keepAspectRatio: Boolean = false,
-            otherShape: Shape? = Rect,
+            otherShape: Shape? = Rectangle,
         ): Shape =
             object : Shape {
                 private val ratio: Float =

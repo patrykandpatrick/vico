@@ -41,7 +41,7 @@ internal fun TypedArray.getLineComponent(
     context: Context,
     defaultColor: Int = context.defaultColors.lineColor.toInt(),
     defaultThickness: Float = Defaults.AXIS_LINE_WIDTH,
-    defaultShape: Shape = Shape.Rect,
+    defaultShape: Shape = Shape.Rectangle,
 ): LineComponent =
     use { array ->
         LineComponent(

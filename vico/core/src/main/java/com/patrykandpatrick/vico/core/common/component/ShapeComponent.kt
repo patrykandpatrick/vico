@@ -41,7 +41,7 @@ import kotlin.properties.Delegates
  * @param strokeColor the color of the stroke.
  */
 public open class ShapeComponent(
-    public val shape: Shape = Shape.Rect,
+    public val shape: Shape = Shape.Rectangle,
     color: Int = Color.BLACK,
     public val dynamicShader: DynamicShader? = null,
     override val margins: Dimensions = Dimensions.Empty,

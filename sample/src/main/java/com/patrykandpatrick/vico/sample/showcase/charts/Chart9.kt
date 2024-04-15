@@ -133,7 +133,7 @@ private fun ComposeChart9(
                                                 componentSize = 5.dp,
                                                 component =
                                                     rememberShapeComponent(
-                                                        shape = Shape.Rect,
+                                                        shape = Shape.Rectangle,
                                                         color = colors[1],
                                                         margins = Dimensions(horizontal = 2.dp),
                                                     ),
@@ -241,7 +241,7 @@ private fun ViewChart9(
                                             componentSize = 5.dp,
                                             component =
                                                 ShapeComponent(
-                                                    shape = Shape.Rect,
+                                                    shape = Shape.Rectangle,
                                                     color = colors[1].toArgb(),
                                                     margins = Dimensions(horizontal = 2.dp),
                                                 ),

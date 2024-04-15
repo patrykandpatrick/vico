@@ -49,7 +49,7 @@ import com.patrykandpatrick.vico.core.common.shape.Shape
 public fun rememberLineComponent(
     color: Color = Color.Black,
     thickness: Dp = Defaults.LINE_COMPONENT_THICKNESS_DP.dp,
-    shape: Shape = Shape.Rect,
+    shape: Shape = Shape.Rectangle,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = Dimensions.Empty,
     strokeWidth: Dp = 0.dp,
@@ -80,7 +80,7 @@ public fun rememberLineComponent(
  */
 @Composable
 public fun rememberShapeComponent(
-    shape: Shape = Shape.Rect,
+    shape: Shape = Shape.Rectangle,
     color: Color = Color.Black,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = Dimensions.Empty,
@@ -110,7 +110,7 @@ public fun rememberShapeComponent(
  */
 @Composable
 public fun rememberShapeComponent(
-    shape: Shape = Shape.Rect,
+    shape: Shape = Shape.Rectangle,
     color: Color = Color.Black,
     brush: Brush,
     margins: Dimensions = Dimensions.Empty,

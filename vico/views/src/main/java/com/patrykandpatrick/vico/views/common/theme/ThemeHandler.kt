@@ -79,7 +79,7 @@ internal class ThemeHandler(
         fun TypedArray.getLineComponent(
             @StyleableRes resourceId: Int,
             @StyleableRes styleableResourceId: IntArray,
-            defaultShape: Shape = Shape.Rect,
+            defaultShape: Shape = Shape.Rectangle,
         ): LineComponent =
             getNestedTypedArray(
                 context = context,

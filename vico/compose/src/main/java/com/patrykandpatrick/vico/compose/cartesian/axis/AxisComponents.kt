@@ -96,7 +96,7 @@ public fun rememberAxisLabelComponent(
 public fun rememberAxisLineComponent(
     color: Color = vicoTheme.lineColor,
     thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-    shape: Shape = Shape.Rect,
+    shape: Shape = Shape.Rectangle,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     brush: Brush? = null,
@@ -126,7 +126,7 @@ public fun rememberAxisLineComponent(
 public fun rememberAxisTickComponent(
     color: Color = vicoTheme.lineColor,
     thickness: Dp = Defaults.AXIS_LINE_WIDTH.dp,
-    shape: Shape = Shape.Rect,
+    shape: Shape = Shape.Rectangle,
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,
@@ -183,7 +183,7 @@ public fun rememberAxisTickComponent(
 public fun rememberAxisGuidelineComponent(
     color: Color = vicoTheme.lineColor,
     thickness: Dp = Defaults.AXIS_GUIDELINE_WIDTH.dp,
-    shape: Shape = Shape.dashed(Shape.Rect, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
+    shape: Shape = Shape.dashed(Shape.Rectangle, Defaults.DASH_LENGTH.dp, Defaults.DASH_GAP.dp),
     strokeWidth: Dp = 0.dp,
     strokeColor: Color = Color.Transparent,
     dynamicShader: DynamicShader? = null,

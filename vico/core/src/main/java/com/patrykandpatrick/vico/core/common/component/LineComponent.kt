@@ -24,7 +24,7 @@ import com.patrykandpatrick.vico.core.common.DrawContext
 import com.patrykandpatrick.vico.core.common.MeasureContext
 import com.patrykandpatrick.vico.core.common.shader.DynamicShader
 import com.patrykandpatrick.vico.core.common.shape.Shape
-import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rect
+import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rectangle
 
 /**
  * Draws a line.
@@ -39,7 +39,7 @@ import com.patrykandpatrick.vico.core.common.shape.Shape.Companion.Rect
 public open class LineComponent(
     color: Int,
     public var thicknessDp: Float = Defaults.LINE_COMPONENT_THICKNESS_DP,
-    shape: Shape = Rect,
+    shape: Shape = Rectangle,
     dynamicShader: DynamicShader? = null,
     margins: Dimensions = Dimensions.Empty,
     strokeWidthDp: Float = 0f,
