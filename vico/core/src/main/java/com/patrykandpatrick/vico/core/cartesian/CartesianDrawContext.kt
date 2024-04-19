@@ -118,13 +118,12 @@ public fun CartesianDrawContext.drawMarker(
         if (previousX != null) visibilityListener?.onHidden(marker)
         return null
     }
-    var targets = chart.markerTargets.values.first()
-    var previousDistance = abs(markerTouchPoint.x - targets.first().canvasX)
-    for (i in 1..<chart.markerTargets.size) {
-        val potentialTargets = chart.markerTargets.values.elementAt(i)
-        val distance = abs(markerTouchPoint.x - potentialTargets.first().canvasX)
+    var targets = emptyList<CartesianMarker.Target>()
+    var previousDistance = Float.POSITIVE_INFINITY
+    for (xTargets in chart.markerTargets.values) {
+        val (distance, canvasXTargets) = xTargets.groupBy { abs(markerTouchPoint.x - it.canvasX) }.minBy { it.key }
         if (distance > previousDistance) break
-        targets = potentialTargets
+        targets = canvasXTargets
         previousDistance = distance
     }
     marker.draw(this, targets)

@@ -36,6 +36,7 @@ import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.inClip
 import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.setAll
+import java.util.SortedMap
 
 /**
  * A chart based on a Cartesian coordinate plane, composed of [CartesianLayer]s.
@@ -53,7 +54,7 @@ public open class CartesianChart(
     private val tempInsets = Insets()
     private val axisManager = AxisManager()
     private val virtualLayout = VirtualLayout(axisManager)
-    private val _markerTargets = mutableMapOf<Float, MutableList<CartesianMarker.Target>>()
+    private val _markerTargets = sortedMapOf<Float, MutableList<CartesianMarker.Target>>()
 
     private val drawingModelAndLayerConsumer =
         object : ModelAndLayerConsumer {
@@ -117,7 +118,9 @@ public open class CartesianChart(
     public val chartInsetters: Collection<ChartInsetter> = persistentMarkers.values
 
     /** Links _x_ values to [CartesianMarker.Target]s. */
-    public val markerTargets: Map<Float, List<CartesianMarker.Target>> = _markerTargets
+    @Suppress("UNCHECKED_CAST")
+    public val markerTargets: SortedMap<Float, List<CartesianMarker.Target>> =
+        _markerTargets as SortedMap<Float, List<CartesianMarker.Target>>
 
     /**
      * The start axis.

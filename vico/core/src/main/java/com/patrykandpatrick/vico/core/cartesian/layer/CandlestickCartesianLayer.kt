@@ -89,7 +89,7 @@ public open class CandlestickCartesianLayer(
         public companion object
     }
 
-    private val _markerTargets = mutableMapOf<Float, CandlestickCartesianLayerMarkerTarget>()
+    private val _markerTargets = mutableMapOf<Float, List<CandlestickCartesianLayerMarkerTarget>>()
 
     /**
      * Holds information on the [CandlestickCartesianLayer]’s horizontal dimensions.
@@ -98,7 +98,7 @@ public open class CandlestickCartesianLayer(
 
     protected val drawingModelKey: ExtraStore.Key<CandlestickCartesianLayerDrawingModel> = ExtraStore.Key()
 
-    override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
+    override val markerTargets: Map<Float, List<CartesianMarker.Target>> = _markerTargets
 
     override fun drawInternal(
         context: CartesianDrawContext,
@@ -193,20 +193,22 @@ public open class CandlestickCartesianLayer(
         val limitedBodyBottomCanvasY = bodyBottomCanvasY.coerceIn(bounds.top, bounds.bottom)
         val limitedBodyTopCanvasY = bodyTopCanvasY.coerceIn(bounds.top, bounds.bottom)
         _markerTargets[entry.x] =
-            CandlestickCartesianLayerMarkerTarget(
-                x = entry.x,
-                canvasX = canvasX,
-                entry = entry,
-                openingCanvasY =
-                    if (entry.absoluteChange == Change.Bullish) limitedBodyBottomCanvasY else limitedBodyTopCanvasY,
-                closingCanvasY =
-                    if (entry.absoluteChange == Change.Bullish) limitedBodyTopCanvasY else limitedBodyBottomCanvasY,
-                lowCanvasY = lowCanvasY.coerceIn(bounds.top, bounds.bottom),
-                highCanvasY = highCanvasY.coerceIn(bounds.top, bounds.bottom),
-                openingColor = candle.body.solidOrStrokeColor,
-                closingColor = candle.body.solidOrStrokeColor,
-                lowColor = candle.bottomWick.solidOrStrokeColor,
-                highColor = candle.topWick.solidOrStrokeColor,
+            listOf(
+                CandlestickCartesianLayerMarkerTarget(
+                    x = entry.x,
+                    canvasX = canvasX,
+                    entry = entry,
+                    openingCanvasY =
+                        if (entry.absoluteChange == Change.Bullish) limitedBodyBottomCanvasY else limitedBodyTopCanvasY,
+                    closingCanvasY =
+                        if (entry.absoluteChange == Change.Bullish) limitedBodyTopCanvasY else limitedBodyBottomCanvasY,
+                    lowCanvasY = lowCanvasY.coerceIn(bounds.top, bounds.bottom),
+                    highCanvasY = highCanvasY.coerceIn(bounds.top, bounds.bottom),
+                    openingColor = candle.body.solidOrStrokeColor,
+                    closingColor = candle.body.solidOrStrokeColor,
+                    lowColor = candle.bottomWick.solidOrStrokeColor,
+                    highColor = candle.topWick.solidOrStrokeColor,
+                ),
             )
     }
 

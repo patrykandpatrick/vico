@@ -76,7 +76,7 @@ public open class ColumnCartesianLayer(
         DrawingModelInterpolator<ColumnCartesianLayerDrawingModel.ColumnInfo, ColumnCartesianLayerDrawingModel> =
         DefaultDrawingModelInterpolator(),
 ) : BaseCartesianLayer<ColumnCartesianLayerModel>() {
-    private val _markerTargets = mutableMapOf<Float, MutableColumnCartesianLayerMarkerTarget>()
+    private val _markerTargets = mutableMapOf<Float, MutableList<MutableColumnCartesianLayerMarkerTarget>>()
 
     protected val stackInfo: MutableMap<Float, StackInfo> = mutableMapOf()
 
@@ -87,7 +87,7 @@ public open class ColumnCartesianLayer(
 
     protected val drawingModelKey: ExtraStore.Key<ColumnCartesianLayerDrawingModel> = ExtraStore.Key()
 
-    override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
+    override val markerTargets: Map<Float, List<CartesianMarker.Target>> = _markerTargets
 
     override fun drawInternal(
         context: CartesianDrawContext,
@@ -165,7 +165,7 @@ public open class ColumnCartesianLayer(
                         thicknessScale = zoom,
                     )
                 ) {
-                    updateMarkerTargets(entry, columnCenterX, columnSignificantY, column)
+                    updateMarkerTargets(entry, columnCenterX, columnSignificantY, column, mergeMode)
                     column.drawVertical(this, columnTop, columnBottom, columnCenterX, zoom, drawingModel?.opacity ?: 1f)
                 }
 
@@ -310,16 +310,30 @@ public open class ColumnCartesianLayer(
         canvasX: Float,
         canvasY: Float,
         column: LineComponent,
+        mergeMode: MergeMode,
     ) {
         if (canvasX <= bounds.left - 1 || canvasX >= bounds.right + 1) return
-        _markerTargets
-            .getOrPut(entry.x) { MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX) }
-            .columns +=
+        val targetColumn =
             ColumnCartesianLayerMarkerTarget.Column(
                 entry,
                 canvasY.coerceIn(bounds.top, bounds.bottom),
                 column.solidOrStrokeColor,
             )
+        when (mergeMode) {
+            MergeMode.Grouped ->
+                _markerTargets.getOrPut(entry.x) { mutableListOf() } +=
+                    MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX, mutableListOf(targetColumn))
+            MergeMode.Stacked ->
+                _markerTargets
+                    .getOrPut(entry.x) { mutableListOf(MutableColumnCartesianLayerMarkerTarget(entry.x, canvasX)) }
+                    .first()
+                    .columns +=
+                    ColumnCartesianLayerMarkerTarget.Column(
+                        entry,
+                        canvasY.coerceIn(bounds.top, bounds.bottom),
+                        column.solidOrStrokeColor,
+                    )
+        }
     }
 
     override fun updateChartValues(

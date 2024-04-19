@@ -251,7 +251,7 @@ public open class LineCartesianLayer(
         }
     }
 
-    private val _markerTargets = mutableMapOf<Float, MutableLineCartesianLayerMarkerTarget>()
+    private val _markerTargets = mutableMapOf<Float, List<MutableLineCartesianLayerMarkerTarget>>()
 
     /**
      * The [Path] used to draw the lines, each of which corresponds to a [LineSpec].
@@ -265,7 +265,7 @@ public open class LineCartesianLayer(
 
     protected val drawingModelKey: ExtraStore.Key<LineCartesianLayerDrawingModel> = ExtraStore.Key()
 
-    override val markerTargets: Map<Float, CartesianMarker.Target> = _markerTargets
+    override val markerTargets: Map<Float, List<CartesianMarker.Target>> = _markerTargets
 
     override fun drawInternal(
         context: CartesianDrawContext,
@@ -349,7 +349,8 @@ public open class LineCartesianLayer(
         if (canvasX <= bounds.left - 1 || canvasX >= bounds.right + 1) return
         val limitedCanvasY = canvasY.coerceIn(bounds.top, bounds.bottom)
         _markerTargets
-            .getOrPut(entry.x) { MutableLineCartesianLayerMarkerTarget(entry.x, canvasX) }
+            .getOrPut(entry.x) { listOf(MutableLineCartesianLayerMarkerTarget(entry.x, canvasX)) }
+            .first()
             .points +=
             LineCartesianLayerMarkerTarget.Point(
                 entry,
