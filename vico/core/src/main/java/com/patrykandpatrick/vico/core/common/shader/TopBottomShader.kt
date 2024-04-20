@@ -44,6 +44,7 @@ public class TopBottomShader(
     ): Shader {
         val width = (right - left).toInt()
         val height = (bottom - top).toInt()
+        if (width == 0 || height == 0) return EmptyBitmapShader
         val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
         if (splitY > 0f) {
@@ -84,4 +85,9 @@ public class TopBottomShader(
             topShader == other.topShader && bottomShader == other.bottomShader && splitY == other.splitY
 
     override fun hashCode(): Int = 31 * topShader.hashCode() + bottomShader.hashCode()
+
+    private companion object {
+        val EmptyBitmapShader =
+            BitmapShader(Bitmap.createBitmap(1, 1, Bitmap.Config.ALPHA_8), Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+    }
 }
