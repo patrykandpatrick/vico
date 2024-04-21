@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,7 +108,10 @@ public open class ColumnChart(
      * containing the bottom coordinate of the collection’s bottommost column and the top coordinate of the collection’s
      * topmost column. This hash map is used by [drawChart] and [drawChartInternal].
      */
+    @Deprecated("Use `stackInfo` instead.", ReplaceWith("stackInfo"))
     protected val heightMap: HashMap<Float, Pair<Float, Float>> = HashMap()
+
+    protected val stackInfo: MutableMap<Float, StackInfo> = mutableMapOf()
 
     /**
      * Holds information on the [ColumnChart]’s horizontal dimensions.
@@ -130,6 +133,7 @@ public open class ColumnChart(
             drawingModel = model.extraStore.getOrNull(drawingModelKey),
         )
         heightMap.clear()
+        stackInfo.clear()
     }
 
     protected open fun ChartDrawContext.drawChartInternal(
@@ -165,15 +169,16 @@ public open class ColumnChart(
 
                 when (mergeMode) {
                     MergeMode.Stack -> {
+                        val stackInfo = stackInfo.getOrPut(columnCenterX) { StackInfo() }
                         val (stackedNegHeight, stackedPosHeight) = heightMap.getOrElse(entry.x) { 0f to 0f }
-                        columnBottom = zeroLinePosition +
-                            if (entry.y < 0f) {
-                                height + stackedNegHeight
+                        columnBottom =
+                            if (entry.y >= 0f) {
+                                zeroLinePosition - stackInfo.topHeight
                             } else {
-                                -stackedPosHeight
+                                zeroLinePosition + stackInfo.bottomHeight + height
                             }
-
                         columnTop = (columnBottom - height).coerceAtMost(columnBottom)
+                        stackInfo.update(entry.y, height)
                         heightMap[entry.x] =
                             if (entry.y < 0f) {
                                 stackedNegHeight + height to stackedPosHeight
@@ -214,12 +219,12 @@ public open class ColumnChart(
                         isLast = index == model.entries.lastIndex && entry.x == chartValues.maxX,
                     )
                 } else if (index == model.entries.lastIndex) {
-                    val yValues = heightMap[entry.x]
+                    val (positiveY, negativeY) = stackInfo.getValue(columnCenterX)
                     drawStackedDataLabel(
                         modelEntriesSize = model.entries.size,
                         columnThicknessDp = column.thicknessDp,
-                        negativeY = yValues?.first,
-                        positiveY = yValues?.second,
+                        negativeY = negativeY,
+                        positiveY = positiveY,
                         x = columnCenterX,
                         zeroLinePosition = zeroLinePosition,
                         heightMultiplier = heightMultiplier,
@@ -242,13 +247,28 @@ public open class ColumnChart(
         isFirst: Boolean,
         isLast: Boolean,
     ) {
-        if (positiveY != null && positiveY > 0f) {
-            val y = zeroLinePosition - positiveY * heightMultiplier
-            drawDataLabel(modelEntriesSize, columnThicknessDp, positiveY, x, y, isFirst, isLast)
+        val stackInfo = stackInfo.getValue(x)
+        if (stackInfo.topY > 0f) {
+            drawDataLabel(
+                modelEntriesSize = modelEntriesSize,
+                columnThicknessDp = columnThicknessDp,
+                dataLabelValue = stackInfo.topY,
+                x = x,
+                y = zeroLinePosition - stackInfo.topHeight,
+                isFirst = isFirst,
+                isLast = isLast,
+            )
         }
-        if (negativeY != null && negativeY < 0f) {
-            val y = zeroLinePosition + abs(negativeY) * heightMultiplier
-            drawDataLabel(modelEntriesSize, columnThicknessDp, negativeY, x, y, isFirst, isLast)
+        if (stackInfo.bottomY < 0f) {
+            drawDataLabel(
+                modelEntriesSize = modelEntriesSize,
+                columnThicknessDp = columnThicknessDp,
+                dataLabelValue = stackInfo.bottomY,
+                x = x,
+                y = zeroLinePosition + stackInfo.bottomHeight,
+                isFirst = isFirst,
+                isLast = isLast,
+            )
         }
     }
 
@@ -266,44 +286,49 @@ public open class ColumnChart(
             val canUseXSpacing =
                 mergeMode == MergeMode.Stack ||
                     mergeMode == MergeMode.Grouped && modelEntriesSize == 1
-            var maxWidth = when {
-                canUseXSpacing -> horizontalDimensions.xSpacing
-                mergeMode == MergeMode.Grouped ->
-                    (columnThicknessDp + minOf(spacingDp, innerSpacingDp).half).pixels * zoom
+            var maxWidth =
+                when {
+                    canUseXSpacing -> horizontalDimensions.xSpacing
+                    mergeMode == MergeMode.Grouped ->
+                        (columnThicknessDp + minOf(spacingDp, innerSpacingDp).half).pixels * zoom
 
-                else -> error(message = "Encountered an unexpected `MergeMode`.")
-            }
+                    else -> error(message = "Encountered an unexpected `MergeMode`.")
+                }
             if (isFirst && horizontalLayout is HorizontalLayout.FullWidth) {
                 maxWidth = maxWidth.coerceAtMost(horizontalDimensions.startPadding.doubled)
             }
             if (isLast && horizontalLayout is HorizontalLayout.FullWidth) {
                 maxWidth = maxWidth.coerceAtMost(horizontalDimensions.endPadding.doubled)
             }
-            val text = dataLabelValueFormatter.formatValue(
-                value = dataLabelValue,
-                chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
-            )
-            val dataLabelWidth = textComponent.getWidth(
-                context = this,
-                text = text,
-                rotationDegrees = dataLabelRotationDegrees,
-            ).coerceAtMost(maximumValue = maxWidth)
+            val text =
+                dataLabelValueFormatter.formatValue(
+                    value = dataLabelValue,
+                    chartValues = chartValuesProvider.getChartValues(axisPosition = targetVerticalAxisPosition),
+                )
+            val dataLabelWidth =
+                textComponent.getWidth(
+                    context = this,
+                    text = text,
+                    rotationDegrees = dataLabelRotationDegrees,
+                ).coerceAtMost(maximumValue = maxWidth)
 
             if (x - dataLabelWidth.half > bounds.right || x + dataLabelWidth.half < bounds.left) return
 
             val labelVerticalPosition =
                 if (dataLabelValue < 0f) dataLabelVerticalPosition.negative() else dataLabelVerticalPosition
 
-            val verticalPosition = labelVerticalPosition.inBounds(
-                y = y,
-                bounds = bounds,
-                componentHeight = textComponent.getHeight(
-                    context = this,
-                    text = text,
-                    width = maxWidth.toInt(),
-                    rotationDegrees = dataLabelRotationDegrees,
-                ),
-            )
+            val verticalPosition =
+                labelVerticalPosition.inBounds(
+                    y = y,
+                    bounds = bounds,
+                    componentHeight =
+                    textComponent.getHeight(
+                        context = this,
+                        text = text,
+                        width = maxWidth.toInt(),
+                        rotationDegrees = dataLabelRotationDegrees,
+                    ),
+                )
             textComponent.drawText(
                 context = this,
                 text = text,
@@ -366,6 +391,7 @@ public open class ColumnChart(
                         scalableEndPadding = xSpacing.half,
                     )
                 }
+
                 is HorizontalLayout.FullWidth -> {
                     horizontalDimensions.ensureValuesAtLeast(
                         xSpacing = xSpacing,
@@ -487,5 +513,25 @@ public open class ColumnChart(
                 }
             }
             .let(::ColumnChartDrawingModel)
+    }
+
+    protected data class StackInfo(
+        var topY: Float = 0f,
+        var bottomY: Float = 0f,
+        var topHeight: Float = 0f,
+        var bottomHeight: Float = 0f,
+    ) {
+        public fun update(
+            y: Float,
+            height: Float,
+        ) {
+            if (y >= 0f) {
+                topY += y
+                topHeight += height
+            } else {
+                bottomY += y
+                bottomHeight += height
+            }
+        }
     }
 }
