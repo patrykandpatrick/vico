@@ -128,13 +128,13 @@ public open class DefaultCartesianMarker(
                 verticalPosition = VerticalPosition.Top
             } else {
                 val topPointY =
-                    targets.maxOf { target ->
+                    targets.minOf { target ->
                         when (target) {
                             is CandlestickCartesianLayerMarkerTarget -> target.highCanvasY
                             is ColumnCartesianLayerMarkerTarget ->
-                                target.columns.maxOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
+                                target.columns.minOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
                             is LineCartesianLayerMarkerTarget ->
-                                target.points.maxOf(LineCartesianLayerMarkerTarget.Point::canvasY)
+                                target.points.minOf(LineCartesianLayerMarkerTarget.Point::canvasY)
                             else -> error("Unexpected `CartesianMarker.Target` implementation.")
                         }
                     }
