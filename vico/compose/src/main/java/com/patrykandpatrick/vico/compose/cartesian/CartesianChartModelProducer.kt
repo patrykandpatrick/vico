@@ -40,7 +40,6 @@ import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.getValue
 import com.patrykandpatrick.vico.core.common.setValue
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
@@ -51,11 +50,11 @@ internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> = tween(dur
 @Composable
 internal fun CartesianChartModelProducer.collectAsState(
     chart: CartesianChart,
-    animationSpec: AnimationSpec<Float>? = defaultCartesianDiffAnimationSpec,
-    runInitialAnimation: Boolean = true,
+    animationSpec: AnimationSpec<Float>?,
+    runInitialAnimation: Boolean,
     mutableChartValues: MutableChartValues,
     getXStep: ((CartesianChartModel) -> Float)?,
-    dispatcher: CoroutineDispatcher = Dispatchers.Default,
+    dispatcher: CoroutineDispatcher,
 ): State<CartesianChartModelWrapper> {
     var previousHashCode by remember { ValueWrapper<Int?>(null) }
     val hashCode = hashCode()

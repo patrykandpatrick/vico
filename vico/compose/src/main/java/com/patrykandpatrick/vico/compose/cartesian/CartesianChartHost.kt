@@ -60,6 +60,8 @@ import com.patrykandpatrick.vico.core.common.getValue
 import com.patrykandpatrick.vico.core.common.set
 import com.patrykandpatrick.vico.core.common.setValue
 import com.patrykandpatrick.vico.core.common.spToPx
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 /**
@@ -79,6 +81,7 @@ import kotlinx.coroutines.launch
  * @param horizontalLayout defines how the chart’s content is positioned horizontally.
  * @param getXStep overrides the _x_ step (the difference between the _x_ values of neighboring major entries). If this
  * is null, the output of [CartesianChartModel.getXDeltaGcd] is used.
+ * @param dispatcher used for handling [CartesianChartModel] updates.
  * @param placeholder shown when no [CartesianChartModel] is available.
  */
 @Composable
@@ -94,11 +97,12 @@ public fun CartesianChartHost(
     runInitialAnimation: Boolean = true,
     horizontalLayout: HorizontalLayout = HorizontalLayout.segmented(),
     getXStep: ((CartesianChartModel) -> Float)? = null,
+    dispatcher: CoroutineDispatcher = Dispatchers.Default,
     placeholder: @Composable BoxScope.() -> Unit = {},
 ) {
     val mutableChartValues = remember(chart) { MutableChartValues() }
     val modelWrapper by modelProducer
-        .collectAsState(chart, diffAnimationSpec, runInitialAnimation, mutableChartValues, getXStep)
+        .collectAsState(chart, diffAnimationSpec, runInitialAnimation, mutableChartValues, getXStep, dispatcher)
     val (model, previousModel, chartValues) = modelWrapper
 
     CartesianChartHostBox(modifier) {

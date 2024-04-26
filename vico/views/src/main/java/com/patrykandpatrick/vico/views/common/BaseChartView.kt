@@ -95,9 +95,7 @@ public abstract class BaseChartView<Model>
          */
         public var runInitialAnimation: Boolean = true
 
-        /**
-         * The [CoroutineDispatcher] to be used for the handling of difference animations.
-         */
+        /** Used for handling [model] updates. */
         public var dispatcher: CoroutineDispatcher = Dispatchers.Default
 
         override fun onAttachedToWindow() {
