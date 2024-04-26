@@ -18,6 +18,7 @@ package com.patrykandpatrick.vico.core.cartesian.layer
 
 import android.graphics.Paint
 import android.graphics.Path
+import android.graphics.PathEffect
 import android.graphics.RectF
 import com.patrykandpatrick.vico.core.cartesian.CartesianDrawContext
 import com.patrykandpatrick.vico.core.cartesian.CartesianMeasureContext
@@ -106,6 +107,7 @@ public open class LineCartesianLayer(
      * @param dataLabelValueFormatter the [CartesianValueFormatter] to use for data labels.
      * @param dataLabelRotationDegrees the rotation of data labels (in degrees).
      * @param pointConnector the [PointConnector] for the line.
+     * @param pathEffect the [PathEffect] to apply to the line.
      */
     public open class LineSpec(
         public var shader: DynamicShader,
@@ -119,6 +121,7 @@ public open class LineCartesianLayer(
         public var dataLabelValueFormatter: CartesianValueFormatter = CartesianValueFormatter.decimal(),
         public var dataLabelRotationDegrees: Float = 0f,
         public var pointConnector: PointConnector = DefaultPointConnector(),
+        public var pathEffect: PathEffect? = null,
     ) {
         /**
          * Returns `true` if the [backgroundShader] is not null, and `false` otherwise.
@@ -172,6 +175,9 @@ public open class LineCartesianLayer(
             with(context) {
                 linePaint.strokeWidth = thicknessDp.pixels
                 setSplitY(zeroLineYFraction)
+                pathEffect?.let {
+                    linePaint.pathEffect = it
+                }
                 linePaint.shader = shader.provideShader(context, bounds)
                 linePaint.withOpacity(opacity) { canvas.drawPath(path, it) }
             }
@@ -622,6 +628,7 @@ public fun LineSpec.copy(
     dataLabelValueFormatter: CartesianValueFormatter = this.dataLabelValueFormatter,
     dataLabelRotationDegrees: Float = this.dataLabelRotationDegrees,
     pointConnector: PointConnector = this.pointConnector,
+    pathEffect: PathEffect? = this.pathEffect,
 ): LineSpec =
     LineSpec(
         shader = shader,
@@ -635,6 +642,7 @@ public fun LineSpec.copy(
         dataLabelValueFormatter = dataLabelValueFormatter,
         dataLabelRotationDegrees = dataLabelRotationDegrees,
         pointConnector = pointConnector,
+        pathEffect = pathEffect,
     )
 
 internal fun Component.drawPoint(

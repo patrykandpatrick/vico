@@ -17,6 +17,7 @@
 package com.patrykandpatrick.vico.compose.cartesian.layer
 
 import android.graphics.Paint
+import android.graphics.PathEffect
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Brush
@@ -92,6 +93,7 @@ public fun rememberLineCartesianLayer(
  * @param dataLabelValueFormatter the [CartesianValueFormatter] to use for data labels.
  * @param dataLabelRotationDegrees the rotation of data labels in degrees.
  * @param pointConnector the [LineSpec.PointConnector] for the line.
+ * @param pathEffect the [PathEffect] to apply to the line.
  */
 @Composable
 public fun rememberLineSpec(
@@ -106,6 +108,7 @@ public fun rememberLineSpec(
     dataLabelValueFormatter: CartesianValueFormatter = remember { CartesianValueFormatter.decimal() },
     dataLabelRotationDegrees: Float = 0f,
     pointConnector: LineSpec.PointConnector = DefaultPointConnector(),
+    pathEffect: PathEffect? = null,
 ): LineSpec =
     remember(
         shader,
@@ -132,6 +135,7 @@ public fun rememberLineSpec(
             dataLabelValueFormatter = dataLabelValueFormatter,
             dataLabelRotationDegrees = dataLabelRotationDegrees,
             pointConnector = pointConnector,
+            pathEffect = pathEffect,
         )
     }
 
