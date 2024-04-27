@@ -50,6 +50,7 @@ import com.patrykandpatrick.vico.core.common.data.DrawingModelInterpolator
 import com.patrykandpatrick.vico.core.common.data.ExtraStore
 import com.patrykandpatrick.vico.core.common.data.MutableExtraStore
 import com.patrykandpatrick.vico.core.common.doubled
+import com.patrykandpatrick.vico.core.common.getEnd
 import com.patrykandpatrick.vico.core.common.getRepeating
 import com.patrykandpatrick.vico.core.common.getStart
 import com.patrykandpatrick.vico.core.common.half
@@ -195,8 +196,8 @@ public open class LineCartesianLayer(
                     shader = fill.provideShader(context, bounds.left, bounds.top, bounds.right, zeroLineY)
                     lineBackgroundPath.set(path)
                     lineBackgroundPath.computeBounds(pathBounds, false)
-                    lineBackgroundPath.lineTo(pathBounds.right, bounds.bottom)
-                    lineBackgroundPath.lineTo(pathBounds.left, bounds.bottom)
+                    lineBackgroundPath.lineTo(pathBounds.getEnd(context.isLtr), bounds.bottom)
+                    lineBackgroundPath.lineTo(pathBounds.getStart(context.isLtr), bounds.bottom)
                     lineBackgroundPath.close()
                     clipPath.rewind()
                     clipPath.addRect(bounds.left, bounds.top, bounds.right, zeroLineY, Path.Direction.CW)
@@ -210,8 +211,8 @@ public open class LineCartesianLayer(
                     shader = fill.provideShader(context, bounds.left, zeroLineY, bounds.right, bounds.bottom)
                     lineBackgroundPath.set(path)
                     lineBackgroundPath.computeBounds(pathBounds, false)
-                    lineBackgroundPath.lineTo(pathBounds.right, bounds.top)
-                    lineBackgroundPath.lineTo(pathBounds.left, bounds.top)
+                    lineBackgroundPath.lineTo(pathBounds.getEnd(context.isLtr), bounds.top)
+                    lineBackgroundPath.lineTo(pathBounds.getStart(context.isLtr), bounds.top)
                     lineBackgroundPath.close()
                     clipPath.rewind()
                     clipPath.addRect(bounds.left, zeroLineY, bounds.right, bounds.bottom, Path.Direction.CW)
