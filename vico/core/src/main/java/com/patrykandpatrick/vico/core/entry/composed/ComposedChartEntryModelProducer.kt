@@ -383,8 +383,8 @@ public class ComposedChartEntryModelProducer private constructor(dispatcher: Cor
          */
         public fun build(
             dispatcher: CoroutineDispatcher = Dispatchers.Default,
-            transaction: Transaction.() -> Unit = {},
+            transaction: (Transaction.() -> Unit)? = null,
         ): ComposedChartEntryModelProducer =
-            ComposedChartEntryModelProducer(dispatcher).also { it.runTransaction(transaction) }
+            ComposedChartEntryModelProducer(dispatcher).apply { if (transaction != null) runTransaction(transaction) }
     }
 }
