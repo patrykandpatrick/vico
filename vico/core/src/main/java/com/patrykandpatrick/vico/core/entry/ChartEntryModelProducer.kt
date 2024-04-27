@@ -43,7 +43,7 @@ import kotlinx.coroutines.sync.Mutex
  * @see ChartModelProducer
  */
 public class ChartEntryModelProducer(
-    entryCollections: List<List<ChartEntry>>,
+    entryCollections: List<List<ChartEntry>>? = null,
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : ChartModelProducer<ChartEntryModel> {
 
@@ -60,7 +60,7 @@ public class ChartEntryModelProducer(
     ) : this(entryCollections.toList(), dispatcher)
 
     init {
-        setEntries(entryCollections)
+        if (entryCollections != null) setEntries(entryCollections)
     }
 
     /**
