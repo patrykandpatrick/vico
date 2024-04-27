@@ -16,6 +16,7 @@
 
 package com.patrykandpatrick.vico.sample.showcase.charts
 
+import android.graphics.DashPathEffect
 import android.graphics.PorterDuff
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -100,6 +101,8 @@ private fun ComposeChart9(
 ) {
     val colors = chartColors
     val marker = rememberMarker()
+    // Set dashed line style
+    val dashPathEffect = DashPathEffect(floatArrayOf(PATH_EFFECT_DASH_LENGTH, PATH_EFFECT_DASH_GAP), 0f)
     CartesianChartHost(
         chart =
             rememberCartesianChart(
@@ -146,6 +149,7 @@ private fun ComposeChart9(
                                             PorterDuff.Mode.DST_IN,
                                         ),
                                     ),
+                                pathEffect = dashPathEffect,
                             ),
                         ),
                 ),
@@ -207,6 +211,8 @@ private fun ViewChart9(
 ) {
     val marker = rememberMarker()
     val colors = chartColors
+    // Set dashed line style
+    val dashPathEffect = DashPathEffect(floatArrayOf(PATH_EFFECT_DASH_LENGTH, PATH_EFFECT_DASH_GAP), 0f)
     AndroidViewBinding(Chart9Binding::inflate, modifier) {
         with(chartView) {
             runInitialAnimation = false
@@ -252,6 +258,7 @@ private fun ViewChart9(
                                         PorterDuff.Mode.DST_IN,
                                     ),
                                 ),
+                            pathEffect = dashPathEffect,
                         ),
                     )
             }
@@ -269,3 +276,6 @@ private val chartColors
         )
 
 private val x = (1..100).toList()
+
+private const val PATH_EFFECT_DASH_LENGTH = 20f // Length of each dash
+private const val PATH_EFFECT_DASH_GAP = 10f // Length of the gap between dashes
