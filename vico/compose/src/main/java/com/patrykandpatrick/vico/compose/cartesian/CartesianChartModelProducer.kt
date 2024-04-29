@@ -43,7 +43,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 internal val defaultCartesianDiffAnimationSpec: AnimationSpec<Float> = tween(durationMillis = Animation.DIFF_DURATION)
 
@@ -115,11 +114,9 @@ internal fun CartesianChartModelProducer.collectAsState(
             registerForUpdates(
                 key = chart,
                 cancelAnimation = {
-                    runBlocking {
-                        mainAnimationJob?.cancelAndJoin()
-                        animationFrameJob?.cancelAndJoin()
-                        finalAnimationFrameJob?.cancelAndJoin()
-                    }
+                    mainAnimationJob?.cancelAndJoin()
+                    animationFrameJob?.cancelAndJoin()
+                    finalAnimationFrameJob?.cancelAndJoin()
                     isAnimationRunning = false
                     isAnimationFrameGenerationRunning = false
                 },

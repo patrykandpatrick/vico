@@ -54,7 +54,6 @@ import com.patrykandpatrick.vico.views.common.isLtr
 import com.patrykandpatrick.vico.views.common.theme.ThemeHandler
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlin.math.abs
 import kotlin.properties.Delegates.observable
 import kotlin.properties.ReadWriteProperty
@@ -163,10 +162,8 @@ public open class CartesianChartView
                     key = this@CartesianChartView,
                     cancelAnimation = {
                         handler?.post(animator::cancel)
-                        runBlocking {
-                            animationFrameJob?.cancelAndJoin()
-                            finalAnimationFrameJob?.cancelAndJoin()
-                        }
+                        animationFrameJob?.cancelAndJoin()
+                        finalAnimationFrameJob?.cancelAndJoin()
                         isAnimationRunning = false
                         isAnimationFrameGenerationRunning = false
                     },

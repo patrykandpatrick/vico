@@ -123,9 +123,9 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
      * [CartesianChartModel] has been generated.
      */
     @WorkerThread
-    public fun registerForUpdates(
+    public suspend fun registerForUpdates(
         key: Any,
-        cancelAnimation: () -> Unit,
+        cancelAnimation: suspend () -> Unit,
         startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
         prepareForTransformation: (CartesianChartModel?, MutableExtraStore, ChartValues) -> Unit,
         transform: suspend (MutableExtraStore, Float) -> Unit,
@@ -214,7 +214,7 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
     }
 
     private inner class UpdateReceiver(
-        val cancelAnimation: () -> Unit,
+        val cancelAnimation: suspend () -> Unit,
         val startAnimation: (transformModel: suspend (key: Any, fraction: Float) -> Unit) -> Unit,
         val onModelCreated: (CartesianChartModel?, ChartValues) -> Unit,
         val extraStore: MutableExtraStore,
@@ -222,7 +222,7 @@ public class CartesianChartModelProducer private constructor(dispatcher: Corouti
         val transform: suspend (MutableExtraStore, Float) -> Unit,
         val updateChartValues: (CartesianChartModel?) -> ChartValues,
     ) {
-        fun handleUpdate() {
+        suspend fun handleUpdate() {
             cancelAnimation()
             val model = getModel(extraStore)
             val chartValues = updateChartValues(model)
