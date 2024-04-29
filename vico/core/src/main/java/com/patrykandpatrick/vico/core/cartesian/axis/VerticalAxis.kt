@@ -24,6 +24,7 @@ import com.patrykandpatrick.vico.core.cartesian.Insets
 import com.patrykandpatrick.vico.core.cartesian.MutableHorizontalDimensions
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Inside
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.HorizontalLabelPosition.Outside
+import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Top
 import com.patrykandpatrick.vico.core.cartesian.axis.VerticalAxis.VerticalLabelPosition.Center
 import com.patrykandpatrick.vico.core.common.HorizontalPosition
 import com.patrykandpatrick.vico.core.common.VerticalPosition
@@ -177,6 +178,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(
 
             if (
                 horizontalLabelPosition == Outside ||
+                horizontalLabelPosition == Inside && verticalLabelPosition == Top ||
                 isNotInRestrictedBounds(
                     left = textBounds.left,
                     top = textBounds.top,
