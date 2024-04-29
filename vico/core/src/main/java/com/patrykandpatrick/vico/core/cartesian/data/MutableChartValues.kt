@@ -32,7 +32,7 @@ public class MutableChartValues : ChartValues {
 
     private var _xStep: Float? = null
 
-    internal val yRanges: MutableMap<AxisPosition.Vertical?, MutableYRange> = mutableMapOf()
+    internal var yRanges: MutableMap<AxisPosition.Vertical?, MutableYRange> = mutableMapOf()
 
     override val minX: Float
         get() = _minX.orZero
@@ -83,7 +83,7 @@ public class MutableChartValues : ChartValues {
     public fun reset() {
         _minX = null
         _maxX = null
-        yRanges.clear()
+        yRanges = mutableMapOf()
         _xStep = null
         model = CartesianChartModel.empty
     }
@@ -112,7 +112,7 @@ public class MutableChartValues : ChartValues {
 @RestrictTo(RestrictTo.Scope.LIBRARY_GROUP)
 public fun MutableChartValues.toImmutable(): ChartValues =
     object : ChartValues {
-        private val yRanges = this@toImmutable.yRanges.toMap()
+        private val yRanges = this@toImmutable.yRanges
         override val minX: Float = this@toImmutable.minX
         override val maxX: Float = this@toImmutable.maxX
         override val xStep: Float = this@toImmutable.xStep
