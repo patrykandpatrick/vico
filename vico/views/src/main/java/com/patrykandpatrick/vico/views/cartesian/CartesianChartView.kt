@@ -297,6 +297,8 @@ public open class CartesianChartView
         }
 
         override fun onTouchEvent(event: MotionEvent): Boolean {
+            val superHandled = super.onTouchEvent(event)
+            if (!isEnabled) return superHandled
             val scaleHandled =
                 if (zoomHandler.zoomEnabled && event.pointerCount > 1 && scrollHandler.scrollEnabled) {
                     scaleGestureDetector.onTouchEvent(event)
@@ -314,7 +316,7 @@ public open class CartesianChartView
                 scrollDirectionResolved = false
             }
 
-            return touchHandled || scaleHandled
+            return touchHandled || scaleHandled || superHandled
         }
 
         private fun handleZoom(
