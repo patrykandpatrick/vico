@@ -411,6 +411,8 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        val superHandled = super.onTouchEvent(event)
+        if (!isEnabled) return superHandled
         val scaleHandled = if (isZoomEnabled && event.pointerCount > 1 && chartScrollSpec.isScrollEnabled) {
             scaleGestureDetector.onTouchEvent(event)
         } else {
@@ -427,7 +429,7 @@ public abstract class BaseChartView<Model : ChartEntryModel> internal constructo
             scrollDirectionResolved = false
         }
 
-        return touchHandled || scaleHandled
+        return touchHandled || scaleHandled || superHandled
     }
 
     private fun handleZoom(focusX: Float, zoomChange: Float) {
