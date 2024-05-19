@@ -1,5 +1,6 @@
-name: Bug report
-description: Report unexpected behavior.
+name: Bug
+description: Report incorrect behavior.
+labels: ["bug"]
 body:
   - type: textarea
     attributes:
@@ -23,8 +24,8 @@ body:
       description: If you’re using an outdated version, please try updating Vico first.
       multiple: true
       options:
-        - Latest stable version
-        - Latest unstable version
+        - 2.0.0-alpha.19
+        - 1.14.0
     validations:
       required: true
   - type: input
