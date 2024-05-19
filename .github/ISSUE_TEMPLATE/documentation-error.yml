@@ -1,0 +1,19 @@
+name: Documentation error
+description: Report a mistake in the documentation.
+labels: ["documentation error"]
+body:
+  - type: textarea
+    attributes:
+      label: Area
+      description: Which part of the documentation is affected?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Error
+      description: What’s wrong?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional information
