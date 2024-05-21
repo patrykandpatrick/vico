@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -218,11 +218,7 @@ public class VerticalAxis<Position : AxisPosition.Vertical>(
                 horizontalPosition = textHorizontalPosition,
                 verticalPosition = verticalLabelPosition.textPosition,
                 rotationDegrees = labelRotationDegrees,
-                maxTextWidth = when (sizeConstraint) {
-                    // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
-                    is SizeConstraint.Auto -> Int.MAX_VALUE
-                    else -> (bounds.width() - tickLength - axisThickness).toInt()
-                },
+                maxTextWidth = (bounds.width() - tickLength - axisThickness).toInt(),
             )
         }
     }
