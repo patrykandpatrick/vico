@@ -6,7 +6,6 @@ androidXAnnotation = "1.8.0"
 androidXCore = "1.13.1"
 appcompat = "1.7.0"
 composeBom = "2024.05.00"
-composeCompiler = "1.5.8"
 coroutines = "1.8.1"
 detekt = "1.23.6"
 dokka = "1.9.20"
@@ -48,5 +47,6 @@ testCore = { group = "androidx.test", name = "core-ktx", version.ref = "testCore
 viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 
 [plugins]
+composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }

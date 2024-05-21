@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Patryk Goworowski and Patrick Michalik.
+ * Copyright 2024 by Patryk Goworowski and Patrick Michalik.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ buildscript {
 }
 
 plugins {
+    alias(libs.plugins.composeCompiler) apply false
     alias(libs.plugins.detekt)
     alias(libs.plugins.dokka) apply false
 }
