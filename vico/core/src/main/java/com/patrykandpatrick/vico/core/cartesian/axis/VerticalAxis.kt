@@ -192,12 +192,7 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(
                     horizontalPosition = textHorizontalPosition,
                     verticalPosition = verticalLabelPosition.textPosition,
                     rotationDegrees = labelRotationDegrees,
-                    maxTextWidth =
-                        when (sizeConstraint) {
-                            // Let the `TextComponent` use as much width as it needs, based on the measuring phase.
-                            is SizeConstraint.Auto -> Int.MAX_VALUE
-                            else -> (bounds.width() - tickLength - axisThickness).toInt()
-                        },
+                    maxTextWidth = (bounds.width() - tickLength - axisThickness).toInt(),
                 )
             }
         }
