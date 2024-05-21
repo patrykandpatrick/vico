@@ -15,9 +15,10 @@
  */
 
 plugins {
+    id "app.cash.paparazzi"
     id "com.android.application"
     id "kotlin-android"
-    id "app.cash.paparazzi"
+    id "org.jetbrains.kotlin.plugin.compose"
 }
 
 android {
@@ -48,10 +49,6 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion libs.versions.composeCompiler.get()
     }
 
     namespace "com.patrykandpatrick.vico"
