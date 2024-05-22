@@ -270,10 +270,10 @@ public open class VerticalAxis<Position : AxisPosition.Vertical>(
                         }.orZero
                     val labelSpace =
                         when (horizontalLabelPosition) {
-                            Outside -> getMaxLabelWidth(height)
+                            Outside -> getMaxLabelWidth(height) + tickLength
                             Inside -> 0f
                         }
-                    (labelSpace + titleComponentWidth + axisThickness + tickLength)
+                    (labelSpace + titleComponentWidth + axisThickness)
                         .coerceIn(
                             minimumValue = constraint.minSizeDp.pixels,
                             maximumValue = constraint.maxSizeDp.pixels,
