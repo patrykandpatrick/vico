@@ -122,29 +122,39 @@ public open class DefaultCartesianMarker(
             val tickPosition: MarkerCorneredShape.TickPosition
             val y: Float
             val verticalPosition: VerticalPosition
-            if (labelPosition == LabelPosition.Top) {
-                tickPosition = MarkerCorneredShape.TickPosition.Bottom
-                y = context.chartBounds.top - label.tickSizeDp.pixels
-                verticalPosition = VerticalPosition.Top
-            } else {
-                val topPointY =
-                    targets.minOf { target ->
-                        when (target) {
-                            is CandlestickCartesianLayerMarkerTarget -> target.highCanvasY
-                            is ColumnCartesianLayerMarkerTarget ->
-                                target.columns.minOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
-                            is LineCartesianLayerMarkerTarget ->
-                                target.points.minOf(LineCartesianLayerMarkerTarget.Point::canvasY)
-                            else -> error("Unexpected `CartesianMarker.Target` implementation.")
+            when (labelPosition) {
+                LabelPosition.Top -> {
+                    tickPosition = MarkerCorneredShape.TickPosition.Bottom
+                    y = context.chartBounds.top - label.tickSizeDp.pixels
+                    verticalPosition = VerticalPosition.Top
+                }
+
+                LabelPosition.Bottom -> {
+                    tickPosition = MarkerCorneredShape.TickPosition.Top
+                    y = context.chartBounds.bottom + label.tickSizeDp.pixels
+                    verticalPosition = VerticalPosition.Bottom
+                }
+
+                LabelPosition.AroundPoint, LabelPosition.AbovePoint -> {
+                    val topPointY =
+                        targets.minOf { target ->
+                            when (target) {
+                                is CandlestickCartesianLayerMarkerTarget -> target.highCanvasY
+                                is ColumnCartesianLayerMarkerTarget ->
+                                    target.columns.minOf(ColumnCartesianLayerMarkerTarget.Column::canvasY)
+                                is LineCartesianLayerMarkerTarget ->
+                                    target.points.minOf(LineCartesianLayerMarkerTarget.Point::canvasY)
+                                else -> error("Unexpected `CartesianMarker.Target` implementation.")
+                            }
                         }
-                    }
-                val flip =
-                    labelPosition == LabelPosition.AroundPoint &&
-                        topPointY - labelBounds.height() - label.tickSizeDp.pixels < context.chartBounds.top
-                tickPosition =
-                    if (flip) MarkerCorneredShape.TickPosition.Top else MarkerCorneredShape.TickPosition.Bottom
-                y = topPointY + (if (flip) 1 else -1) * label.tickSizeDp.pixels
-                verticalPosition = if (flip) VerticalPosition.Bottom else VerticalPosition.Top
+                    val flip =
+                        labelPosition == LabelPosition.AroundPoint &&
+                            topPointY - labelBounds.height() - label.tickSizeDp.pixels < context.chartBounds.top
+                    tickPosition =
+                        if (flip) MarkerCorneredShape.TickPosition.Top else MarkerCorneredShape.TickPosition.Bottom
+                    y = topPointY + (if (flip) 1 else -1) * label.tickSizeDp.pixels
+                    verticalPosition = if (flip) VerticalPosition.Bottom else VerticalPosition.Top
+                }
             }
             extraStore[MarkerCorneredShape.tickPositionKey] = tickPosition
 
@@ -191,6 +201,11 @@ public open class DefaultCartesianMarker(
          * Positions the label at the top of the [CartesianChart]. Sufficient room is made.
          */
         Top,
+
+        /**
+         * Positions the label at the bottom of the [CartesianChart]. Sufficient room is made.
+         */
+        Bottom,
 
         /**
          * Positions the label above the topmost marked point or, if there isn’t enough room, below it.
